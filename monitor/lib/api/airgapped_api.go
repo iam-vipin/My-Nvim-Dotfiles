@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -118,25 +119,15 @@ func (a *AirgappedPrimeApi) ActivateWorkspace(payload WorkspaceActivationPayload
 Downloads the workspace activation file from the server and returns the response and error
 */
 func (a *AirgappedPrimeApi) SyncWorkspace(payload WorkspaceSyncPayload) (*WorkspaceActivationResponse, *APIError) {
-	// Step 1: Get the file URL and members list from the server
-	fileResponse, err := a.getWorkspaceActivationFile(payload.WorkspaceSlug)
+	// Step 1: Read the file from the local system
+	fileContent, err := os.ReadFile(fmt.Sprintf("%s_%s.json", payload.WorkspaceID, a.AppVersion()))
 	if err != nil {
 		return nil, &APIError{
-			Error:   fmt.Sprintf("Failed to get activation file URL: %v", err),
+			Error:   fmt.Sprintf("Failed to read activation file: %v", err),
 			Success: false,
 		}
 	}
-
-	// Step 2: Download the file content from the URL
-	fileContent, err := a.downloadFileFromURL(fileResponse.URL)
-	if err != nil {
-		return nil, &APIError{
-			Error:   fmt.Sprintf("Failed to download activation file: %v", err),
-			Success: false,
-		}
-	}
-
-	// Step 3: Process the file content (decrypt and parse)
+	// Step 2: Process the file content (decrypt and parse)
 	licensePayload, err := a.processActivationFile(fileContent)
 	if err != nil {
 		return nil, &APIError{
@@ -150,7 +141,7 @@ func (a *AirgappedPrimeApi) SyncWorkspace(payload WorkspaceSyncPayload) (*Worksp
 	licensePayload.WorkspaceSlug = payload.WorkspaceSlug
 
 	response := &licensePayload.WorkspaceActivationResponse
-	response.MemberList = fileResponse.MembersList
+	response.MemberList = payload.MembersList
 
 	return response, nil
 }
@@ -288,6 +279,13 @@ We provide a non nil error here, as the route handler handles the deactivate as
 if the deactivation is successfull, it will proceed to delete the license from the database
 */
 func (a *AirgappedPrimeApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, *APIError) {
+
+	// Delete the license file from the local system
+	err := os.Remove(fmt.Sprintf("%s_%s.json", payload.WorkspaceID, a.AppVersion()))
+	if err != nil {
+		fmt.Println("Failed to delete license file", err)
+	}
+
 	response := GetMockWorkspaceActivationResponse(payload, true)
 	return response, nil
 }

@@ -7,6 +7,7 @@ from .views import (
     TemplateCategoryEndpoint,
     PublishedTemplateEndpoint,
     PublishedTemplateMetaEndpoint,
+    PublishedApplicationMetaEndpoint,
 )
 
 
@@ -42,13 +43,18 @@ urlpatterns = [
         name="published-templates",
     ),
     path(
-        "published-templates/<uuid:pk>/",
+        "published-templates/<str:short_id>/",
         PublishedTemplateEndpoint.as_view(),
-        name="published-template-detail",
+        name="published-template-detail-by-short-id",
     ),
     path(
-        "published-templates/<uuid:pk>/meta/",
+        "published-templates/<str:short_id>/meta/",
         PublishedTemplateMetaEndpoint.as_view(),
-        name="published-template-meta",
+        name="published-template-meta-by-short-id",
+    ),
+    path(
+        "published-applications/<str:slug>/meta/",
+        PublishedApplicationMetaEndpoint.as_view(),
+        name="published-application-meta",
     ),
 ]

@@ -16,7 +16,6 @@ import {
   CustomCodeInlineExtension,
   CustomColorExtension,
   CustomHorizontalRule,
-  CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
   CustomMentionExtension,
@@ -38,21 +37,31 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
+import type { IEditorProps } from "@/types";
+// local imports
+import { CustomImageExtension } from "./custom-image/extension";
 
-type TArguments = {
-  disabledExtensions: TExtensions[];
+type TArguments = Pick<
+  IEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+> & {
   enableHistory: boolean;
   isSmoothCursorEnabled: boolean;
-  fileHandler: TFileHandler;
-  mentionHandler: TMentionHandler;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  tabIndex?: number;
   editable: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex, editable,isSmoothCursorEnabled } = args;
+  const {
+    disabledExtensions,
+    enableHistory,
+    fileHandler,
+    flaggedExtensions,
+    isSmoothCursorEnabled,
+    mentionHandler,
+    placeholder,
+    tabIndex,
+    editable,
+  } = args;
 
   const extensions = [
     StarterKit.configure({
@@ -172,12 +181,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     UtilityExtension({
-      isEditable: editable,
+      disabledExtensions,
       fileHandler,
+      isEditable: editable,
     }),
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      flaggedExtensions,
       fileHandler,
     }),
   ];
@@ -188,12 +199,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(
-      ImageExtension(fileHandler).configure({
-        HTMLAttributes: {
-          class: "rounded-md",
-        },
+      ImageExtension({
+        fileHandler,
       }),
-      CustomImageExtension(fileHandler)
+      CustomImageExtension({
+        fileHandler,
+        isEditable: editable,
+      })
     );
   }
 

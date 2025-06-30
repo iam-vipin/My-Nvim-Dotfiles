@@ -4,6 +4,7 @@ import json
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (
     F,
@@ -16,6 +17,8 @@ from django.db.models import (
     When,
     Count,
     Subquery,
+    Exists,
+    Prefetch,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -38,6 +41,7 @@ from plane.db.models import (
     CycleIssue,
     ProjectIssueType,
     ProjectMember,
+    IssueSubscriber,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -62,6 +66,9 @@ from plane.app.views.issue.version import (
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
 
 
 class EpicViewSet(BaseViewSet):
@@ -163,6 +170,24 @@ class EpicViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
+            ).annotate(
+                initiative_ids=Coalesce(
+                    ArrayAgg(
+                        "initiative_epics__initiative_id",
+                        distinct=True,
+                        filter=Q(
+                            initiative_epics__deleted_at__isnull=True,
+                            initiative_epics__initiative_id__isnull=False,
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "initiative_epics",
+                    queryset=InitiativeEpic.objects.filter(deleted_at__isnull=True),
+                )
             )
         ).distinct()
 
@@ -352,7 +377,21 @@ class EpicViewSet(BaseViewSet):
     )
     @check_feature_flag(FeatureFlag.EPICS)
     def retrieve(self, request, slug, project_id, pk=None):
-        epic = self.get_queryset().filter(pk=pk).first()
+        epic = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+            .first()
+        )
         if not epic:
             return Response(
                 {"error": "The required object does not exist."},
@@ -665,15 +704,18 @@ class WorkspaceEpicEndpoint(BaseAPIView):
     def get(self, request, slug):
         initiative_id = request.query_params.get("initiative_id", None)
 
-        epics_query = Issue.objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__project_projectfeature__is_epic_enabled=True,
-        ).filter(
-            Q(type__isnull=False)
-            & Q(type__is_epic=True)
-            & Q(project__deleted_at__isnull=True)
+        epics_query = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project__project_projectfeature__is_epic_enabled=True,
+            )
+            .filter(
+                Q(type__isnull=False)
+                & Q(type__is_epic=True)
+                & Q(project__deleted_at__isnull=True)
+            )
+            .accessible_to(request.user.id, slug)
+            .distinct()
         )
 
         if initiative_id:
@@ -930,6 +972,9 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

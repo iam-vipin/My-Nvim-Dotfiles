@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class PageAction(str, Enum):
     SUB_PAGE = "sub_page"
     ARCHIVED = "archived"
@@ -15,3 +16,5 @@ class PageAction(str, Enum):
     MOVED_INTERNALLY = "moved_internally"
     DELETED = "deleted"
     RESTORED = "restored"
+    SHARED = "shared"
+    UNSHARED = "unshared"

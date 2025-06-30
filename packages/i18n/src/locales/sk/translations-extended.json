@@ -9,7 +9,6 @@
     "business": "Biznis",
     "customers": "Kastomers"
   },
-
   "workspace_dashboards": "Dešbordy",
   "pi_chat": "Pi Čet",
   "in_app": "V aplikácii",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
   "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
   "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
-
   "common": {
     "worklogs": "Pracovné záznamy",
     "live": "Naživo",
@@ -28,9 +26,9 @@
     "project_updates": "Aktualizácie projektov",
     "overview": "Prehľad",
     "workflows": "Vorkflou",
-    "templates": "Šablóny"
+    "templates": "Šablóny",
+    "members_and_teamspaces": "Členovia a tímspejse"
   },
-
   "updates": {
     "add_update": "Pridať aktualizáciu",
     "add_update_placeholder": "Vložte vašu aktualizáciu tu",
@@ -98,7 +96,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Začína pred",
@@ -108,12 +105,40 @@
     }
   },
 
+  "pages": {
+    "link_pages": "Pripojenie stránok",
+    "show_wiki_pages": "Zobraziť Wiki stránky",
+    "link_pages_to": "Pripojenie stránok k",
+    "linked_pages": "Pripojené stránky",
+    "no_description": "Táto stránka je prázdna. Napíšte niečo sem a pozrite si, ako sa zobrazí tu ako tento placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Stránky aktualizované",
+          "message": "Stránky boli úspešne aktualizované"
+        },
+        "error": {
+          "title": "Stránky neaktualizované",
+          "message": "Stránky sa nepodarilo aktualizovať"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Stránka odstránená",
+          "message": "Stránka bola úspešne odstránená"
+        },
+        "error": {
+          "title": "Stránka neodstránená",
+          "message": "Stránku sa nepodarilo odstrániť"
+        }
+      }
+    }
+  },
   "profile": {
     "actions": {
       "connections": "Pripojenia"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Iniciatívy",
@@ -178,7 +203,6 @@
       "disabled": "Zakázané"
     }
   },
-
   "teamspaces": {
     "label": "Tímspejsy",
     "empty_state": {
@@ -191,16 +215,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Začnite prepojením projektov s týmto tímspejsom.",
-        "description": "Tímspejsy prepájajú projekty, v ktorých sú členovia tímu, takže môžete vidieť iba ich prácu, ich prínos k pokroku v týchto projektoch a metriky práce špecifické pre tím."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatiaľ ste neprepojili žiadne tímspejsy.",
+          "description": "Vlastníci tímspejsu a projektu môžu spravovať prístup k projektom."
+        }
+      },
+      "primary_button": {
+        "text": "Prepojiť tímspejs"
+      },
+      "secondary_button": {
+        "text": "Dozvedieť sa viac"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Názov tímspejsu",
+          "members": "Členovia",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstrániť tímspejs"
+            },
+            "confirm": {
+              "title": "Odstrániť {teamspaceName} z {projectName}",
+              "description": "Keď odstránite tento tímspejs z prepojeného projektu, členovia tu stratia prístup k prepojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Neboli nájdené žiadne zodpovedajúce tímspejsy"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Prepojili ste tímspejs s týmto projektom.} other {Prepojili ste # tímspejsov s týmto projektom.}}",
+            "description": "{additionalCount, plural, =0 {Tímspejs {firstTeamspaceName} je teraz prepojený s týmto projektom.} other {Tímspejs {firstTeamspaceName} a {additionalCount} ďalších je teraz prepojených s týmto projektom.}}"
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstránili ste tento tímspejs z tohto projektu.",
+            "description": "Tímspejs {teamspaceName} bol odstránený z {projectName}."
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hľadať tímspejsy",
+        "info": {
+          "title": "Pridanie tímspejsu poskytuje všetkým členom tímspejsu prístup k tomuto projektu.",
+          "link": "Dozvedieť sa viac"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žiadne tímspejsy na prepojenie.",
+            "description": "Buď nie ste v tímspejse, ktorý môžete prepojiť, alebo ste už prepojili všetky dostupné tímspejsy."
+          },
+          "no_results": {
+            "title": "To nezodpovedá žiadnemu z vašich tímspejsov.",
+            "description": "Skúste iný výraz alebo sa uistite, že máte tímspejsy na prepojenie."
+          }
+        },
+        "primary_button": {
+          "text": "Prepojiť vybrané tímspejsy"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +314,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +330,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +349,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +372,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,9 +400,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Iniciatívy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciatívy}}",
     "add_initiative": "Pridať Iniciatívu",
     "create_initiative": "Vytvoriť Iniciatívu",
     "update_initiative": "Aktualizovať Iniciatívu",
@@ -360,7 +451,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +480,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epiky",
     "no_epics_selected": "Neboli vybrané žiadne epiky",
@@ -414,7 +503,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +513,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +521,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +537,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +673,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +693,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Typy pracovných položiek",
     "label_lowercase": "typy pracovných položiek",
@@ -796,7 +879,24 @@
           "title": "Pridať vlastné vlastnosti",
           "description": "Nové vlastnosti, ktoré pridáte pre tento typ pracovnej položky, sa zobrazia tu."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Odstrániť tento typ",
+        "description": "Odstránenie typov môže viesť k strate existujúcich údajov.",
+        "primary_button": "Áno, odstrániť",
+        "toast": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Typ pracovnej položky bol úspešne odstránený."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodarilo sa odstrániť typ pracovnej položky. Skúste to znova!"
+          }
+        },
+        "can_disable_warning": "Chcete namiesto toho zakázať tento typ?"
+      },
+      "cant_delete_linked_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je prepojený s existujúcimi pracovnými položkami."
     },
     "create": {
       "title": "Vytvoriť typ pracovnej položky",
@@ -808,7 +908,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodarilo sa vytvoriť typ pracovnej položky. Skúste to znova!"
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
         }
       }
     },
@@ -822,7 +924,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodarilo sa aktualizovať typ pracovnej položky. Skúste to znova!"
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
         }
       }
     },
@@ -882,7 +986,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importy",
     "logo": "Logo",
@@ -930,7 +1033,6 @@
     "skip_user_import_description": "Preskočenie importu používateľov bude mať za následok, že pracovné položky, komentáre a ďalšie údaje z {serviceName} budú vytvorené používateľom vykonávajúcim migráciu v Plane. Používateľov môžete stále manuálne pridať neskôr.",
     "invalid_pat": "Neplatný osobný prístupový token"
   },
-
   "integrations": {
     "integrations": "Integrácie",
     "loading": "Načítava sa",
@@ -946,7 +1048,6 @@
     "back_to_integrations": "Späť na integrácie",
     "select_state": "Vyberte stav"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Pripojte a synchronizujte vašu GitHub pracovnú položku s Plane.",
@@ -974,7 +1075,6 @@
     "MR_MERGED": "Pri zlúčení PR nastaviť stav na",
     "MR_CLOSED": "Pri uzavretí PR nastaviť stav na"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Pripojte a synchronizujte vaše Gitlab žiadosti o zlúčenie s Plane.",
@@ -1001,7 +1101,6 @@
     "choose_project": "Vyberte projekt",
     "link_plane_project": "Prepojiť projekt Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Pripojte váš Slack vorkspejs s Plane.",
@@ -1042,7 +1141,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Kliknite sem na nahratie súboru",
     "drag_drop_text": "Drag and Drop",
@@ -1051,7 +1149,6 @@
     "missing_fields": "Chýbajúce polia",
     "success": "{fileName} nahraný!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Poskytnuté parametre dotazu sú neplatné alebo chýbajú povinné polia",
     "invalid_installation_account": "Poskytnutý inštalačný účet nie je platný",
@@ -1064,7 +1161,6 @@
     "invalid_app_credentials": "Poskytnuté údaje aplikácie sú neplatné",
     "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
   },
-
   "import_status": {
     "created": "Vytvorené",
     "initiated": "Iniciované",
@@ -1077,7 +1173,6 @@
     "error": "Chyba",
     "cancelled": "Zrušené"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importujte vaše Jira dáta do projektov Plane.",
     "personal_access_token": "Osobný prístupový token",
@@ -1101,7 +1196,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importujte vaše Asana dáta do projektov Plane.",
     "select_asana_priority_field": "Vyberte pole priority Asana",
@@ -1118,7 +1212,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Asana do Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importujte vaše Linear dáta do projektov Plane.",
     "steps": {
@@ -1134,7 +1227,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Linear do Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importujte vaše Jira Server dáta do projektov Plane.",
     "steps": {
@@ -1150,7 +1242,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importujte vaše CSV dáta do projektov Plane.",
     "steps": {
@@ -1158,6 +1249,26 @@
       "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše CSV dáta. Po vytvorení projektu ho tu vyberte.",
       "title_configure_csv": "Nakonfigurovať CSV",
       "description_configure_csv": "Nahrajte váš CSV súbor a nakonfigurujte polia, ktoré majú byť mapované na polia Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte vaše ClickUp dáta do projektov Plane.",
+    "select_service_space": "Vyberte {serviceName} priestor",
+    "select_service_folder": "Vyberte {serviceName} priečinok",
+    "selected": "Vybrané",
+    "users": "Používatelia",
+    "steps": {
+      "title_configure_plane": "Nakonfigurovať Plane",
+      "description_configure_plane": "Najprv vytvorte projekt v Plane, kam chcete migrovať vaše ClickUp dáta. Po vytvorení projektu ho tu vyberte.",
+      "title_configure_clickup": "Nakonfigurovať ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tím, priestor a priečinok, z ktorého chcete migrovať vaše dáta.",
+      "title_map_states": "Mapovať stavy",
+      "description_map_states": "Máme automaticky mapované ClickUp stavy na stavy Plane podľa našich najlepších schopností. Pred pokračovaním namapujte všetky zostávajúce stavy, môžete tiež vytvoriť stavy a mapovať ich manuálne.",
+      "title_map_priorities": "Mapovať priority",
+      "description_map_priorities": "Vyberte ClickUp priority, ktoré chcete mapovať na priority projektu Plane.",
+      "title_summary": "Súhrn",
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane."
     }
   },
 
@@ -1446,7 +1557,6 @@
       "editing": "Upravuje sa"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Povoliť nové pracovné položky",
@@ -1545,7 +1655,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Zákazník} few {Zákazníci} other {Zákazníkov}}",
     "open": "Otvoriť zákazníka",
@@ -1924,7 +2033,6 @@
       "properties": "Vlastnosti"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Šablóny",
@@ -2043,7 +2151,8 @@
           }
         },
         "publish": {
-          "action": "Publikovať šablónu",
+          "action": "{isPublished, select, true {Nastavenia publikovania} other {Publikovať na Marketplace}}",
+          "unpublish_action": "Odstrániť z Marketplace",
           "title": "Urobte vašu šablónu objaviteľnou a rozpoznateľnou.",
           "name": {
             "label": "Názov šablóny",
@@ -2076,7 +2185,11 @@
           },
           "keywords": {
             "label": "Kľúčové slová",
-            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny."
+            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny.",
+            "helperText": "Zadajte kľúčové slová oddelené čiarkami, ktoré pomôžu ľuďom nájsť túto šablónu z vyhľadávania.",
+            "validation": {
+              "required": "Aspoň jedno kľúčové slovo je povinné"
+            }
           },
           "company_name": {
             "label": "Názov spoločnosti",
@@ -2109,6 +2222,21 @@
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by nemala presiahnuť 800 znakov"
+            }
+          },
+          "cover_image": {
+            "label": "Pridajte obrázok na obálku, ktorý sa zobrazí na trhu",
+            "upload_title": "Nahrať obrázok na obálku",
+            "upload_placeholder": "Kliknite na nahranie alebo pretiahnite a pustite pre nahranie obrázka na obálku",
+            "drop_here": "Pustiť sem",
+            "click_to_upload": "Kliknite na nahranie",
+            "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo prekročený limit veľkosti. Prosím, skúste znova.",
+            "upload_and_save": "Nahrať a uložiť",
+            "uploading": "Nahrávanie",
+            "remove": "Odstrániť",
+            "removing": "Odstraňovanie",
+            "validation": {
+              "required": "Obrázok na obálku je povinný"
             }
           },
           "attach_screenshots": {
@@ -2173,6 +2301,16 @@
           "title": "Nepodarilo sa odstrániť túto šablónu.",
           "message": "Skúste odstrániť ju znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablóna stiahnuta",
+          "message": "{templateName}, šablóna typu {templateType}, bola stiahnutá z marketplace."
+        },
+        "error": {
+          "title": "Nepodarilo sa stiahnuť šablónu.",
+          "message": "Skúste ju stiahnuť znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
+        }
       }
     },
     "delete_confirmation": {
@@ -2180,6 +2318,13 @@
       "description": {
         "prefix": "Ste si istí, že chcete odstrániť šablónu-",
         "suffix": "? Všetky údaje spojené s touto šablónou budú natrvalo odstránené. Tento krok nie je možné vrátiť späť."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stiahnuť šablónu",
+      "description": {
+        "prefix": "Ste si istí, že chcete stiahnuť šablónu-",
+        "suffix": "? Šablóna bude stiahnutá z marketplace a nebude viac dostupná pre ostatných."
       }
     },
     "dropdown": {
@@ -2198,6 +2343,84 @@
         "work_item": "Žiadne šablóny neboli nájdené.",
         "project": "Žiadne šablóny neboli nájdené."
       }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty podľa stavu",
+    "active_users": "Aktívni používatelia",
+    "intake_trends": "Trendy prijímania",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu cyklu sa zobrazí tu. Pridajte pracovné položky do cyklov, aby ste mohli začať sledovať postup."
+      },
+      "module_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu modulu sa zobrazí tu. Pridajte pracovné položky do modulov, aby ste mohli začať sledovať postup."
+      },
+      "intake_trends": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza trendov príjmu sa zobrazí tu. Pridajte pracovné položky do príjmu, aby ste mohli sledovať trendy."
+      }
+    },
+    "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}"
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Notion dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Notion zip súbor sem",
+      "upload_title": "Nahrať Notion export",
+      "drag_drop_description": "Pretiahnite a pustite váš Notion export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Notion",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Notion dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte vaše Confluence dáta do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Confluence dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Confluence zip súbor sem",
+      "upload_title": "Nahrať Confluence export",
+      "drag_drop_description": "Pretiahnite a pustite váš Confluence export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Confluence",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Confluence dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
     }
   }
 }

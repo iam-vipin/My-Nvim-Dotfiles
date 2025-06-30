@@ -1,24 +1,21 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
+import { EMobileAuthSteps, EMobileAuthModes, TMobileAuthSteps, TMobileAuthModes, API_BASE_URL } from "@plane/constants";
+import { TMobileCSRFToken } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
-// helpers
-import { EAuthSteps } from "@/helpers/authentication.helper";
-import { API_BASE_URL } from "@/helpers/common.helper";
-// hooks
-import { useInstance } from "@/hooks/store";
 // services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthPasswordForm = {
+  authMode: TMobileAuthModes;
+  invitationId: string | undefined;
   email: string;
   handleEmail: (value: string) => void;
-  handleAuthStep: (value: EAuthSteps) => void;
+  handleAuthStep: (value: TMobileAuthSteps) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
+  isSMTPConfigured: boolean;
 };
 
 type TFormValues = {
@@ -31,24 +28,22 @@ const defaultFormValues: TFormValues = {
   password: "",
 };
 
-export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = observer((props) => {
-  const { email, handleEmail, handleAuthStep, generateEmailUniqueCode } = props;
+export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
+  const { authMode, invitationId, email, handleEmail, handleAuthStep, generateEmailUniqueCode, isSMTPConfigured } =
+    props;
   // ref
   const authFormRef = useRef<HTMLFormElement>(null);
-  // hooks
-  const { config } = useInstance();
   // states
-  const [csrfPromise, setCsrfPromise] = useState<Promise<{ csrf_token: string }> | undefined>(undefined);
+  const [csrfPromise, setCsrfPromise] = useState<Promise<TMobileCSRFToken> | undefined>(undefined);
   const [formData, setFormData] = useState<TFormValues>({ ...defaultFormValues, email });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // derived values
-  const isSMTPConfigured = config?.is_smtp_configured || false;
   const isButtonDisabled = formData.password.length === 0 || isSubmitting;
 
   useEffect(() => {
     if (csrfPromise === undefined) {
-      const promise = authService.requestCSRFToken();
+      const promise = mobileAuthService.requestCSRFToken();
       setCsrfPromise(promise);
     }
   }, [csrfPromise]);
@@ -68,11 +63,11 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = observer((pro
 
   const handleEmailClear = () => {
     handleEmail("");
-    handleAuthStep(EAuthSteps.EMAIL);
+    handleAuthStep(EMobileAuthSteps.EMAIL);
   };
 
   const redirectToUniqueCodeSignIn = () => {
-    handleAuthStep(EAuthSteps.UNIQUE_CODE);
+    handleAuthStep(EMobileAuthSteps.UNIQUE_CODE);
     // generate unique code
     generateEmailUniqueCode(email);
   };
@@ -82,17 +77,18 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = observer((pro
       ref={authFormRef}
       className="mt-5 space-y-4"
       method="POST"
-      action={`${API_BASE_URL}/auth/mobile/sign-in/`}
+      action={`${API_BASE_URL}/auth/mobile/${authMode === EMobileAuthModes.SIGN_UP ? "sign-up" : "sign-in"}/`}
       onSubmit={async (event) => {
         event.preventDefault(); // Prevent form from submitting by default
         setIsSubmitting(true);
         await handleCSRFToken();
-        authFormRef.current && authFormRef.current.submit();
+        if (authFormRef.current) authFormRef.current.submit();
       }}
       onError={() => setIsSubmitting(false)}
     >
       <input type="hidden" name="csrfmiddlewaretoken" />
       <input type="hidden" value={formData.email} name="email" />
+      <input type="hidden" value={invitationId} name="invitation_id" />
 
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
@@ -168,4 +164,4 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = observer((pro
       </div>
     </form>
   );
-});
+};

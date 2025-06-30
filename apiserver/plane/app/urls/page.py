@@ -3,6 +3,7 @@ from django.urls import path
 
 from plane.app.views import (
     PageViewSet,
+    ProjectPageUserViewSet,
     PageFavoriteViewSet,
     PageLogEndpoint,
     PagesDescriptionViewSet,
@@ -94,5 +95,16 @@ urlpatterns = [
         PageDuplicateEndpoint.as_view(),
         name="page-duplicate",
     ),
-
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/share/",
+        ProjectPageUserViewSet.as_view({"post": "create", "get": "list"}),
+        name="project-page-shared",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/share/<uuid:user_id>/",
+        ProjectPageUserViewSet.as_view(
+            {"patch": "partial_update", "delete": "destroy"}
+        ),
+        name="project-page-shared",
+    ),
 ]

@@ -41,6 +41,7 @@ import {
 // store
 import { CoreRootStore } from "@/store/root.store";
 // dashboards
+import { EZipDriverType } from "../types/importers/zip-importer";
 import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
 import {
@@ -54,8 +55,11 @@ import {
   IAsanaStore,
   AsanaStore,
   FlatfileStore,
+  IZipImporterStore,
+  ZipImporterStore,
 } from "./importers";
 // initiative
+import { ClickUpStore, IClickUpStore } from "./importers/clickup/root.store";
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
 import { IInitiativeStore, InitiativeStore } from "./initiatives/initiatives.store";
 // integrations
@@ -112,6 +116,9 @@ export class RootStore extends CoreRootStore {
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
   flatfileImporter: IFlatfileStore;
+  clickupImporter: IClickUpStore;
+  notionImporter: IZipImporterStore;
+  confluenceImporter: IZipImporterStore;
   // integrations
   connections: IConnectionStore;
   slackIntegration: ISlackStore;
@@ -158,6 +165,9 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.clickupImporter = new ClickUpStore(this);
+    this.notionImporter = new ZipImporterStore(this, EZipDriverType.NOTION);
+    this.confluenceImporter = new ZipImporterStore(this, EZipDriverType.CONFLUENCE);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
@@ -203,6 +213,9 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.clickupImporter = new ClickUpStore(this);
+    this.notionImporter = new ZipImporterStore(this, EZipDriverType.NOTION);
+    this.confluenceImporter = new ZipImporterStore(this, EZipDriverType.CONFLUENCE);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);

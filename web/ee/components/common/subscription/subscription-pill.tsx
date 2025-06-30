@@ -1,4 +1,5 @@
 // plane imports
+import { observer } from "mobx-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
@@ -7,18 +8,21 @@ import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/bi
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-type TProps = { workspace: IWorkspace };
+// In case workspace is not passed, we will use the current workspace's subscription detail from the store
+type TProps = { workspace?: IWorkspace };
 
-export const SubscriptionPill = (props: TProps) => {
+export const SubscriptionPill = observer((props: TProps) => {
   const { workspace } = props;
-  // store hooks
-  const { getIsInTrialPeriod } = useWorkspaceSubscription();
+  //hooks
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
-  const subscriptionName = getSubscriptionName(workspace.current_plan ?? EProductSubscriptionEnum.FREE);
-  const subscriptionColor = getSubscriptionTextAndBackgroundColor(
-    workspace.current_plan ?? EProductSubscriptionEnum.FREE
+  const subscriptionName = getSubscriptionName(
+    workspace?.current_plan ?? subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE
   );
-  const isOnTrial = getIsInTrialPeriod(false);
+  const subscriptionColor = getSubscriptionTextAndBackgroundColor(
+    workspace?.current_plan ?? subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE
+  );
+  const isOnTrial = workspace ? workspace?.is_on_trial : getIsInTrialPeriod(false);
 
   return (
     <div
@@ -33,4 +37,4 @@ export const SubscriptionPill = (props: TProps) => {
       </h1>
     </div>
   );
-};
+});

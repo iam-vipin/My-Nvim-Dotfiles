@@ -1,7 +1,7 @@
 import { createContext } from "react";
 // ce imports
-import { TIssueFields } from "ce/components/issues";
 // react-hook-form
+import { TIssueFields } from "ce/components/issues";
 import { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
@@ -46,6 +46,7 @@ export type THandleParentWorkItemDetailsProps = {
 };
 
 export type TIssueModalContext = {
+  allowedProjectIds: string[];
   workItemTemplateId: string | null;
   setWorkItemTemplateId: React.Dispatch<React.SetStateAction<string | null>>;
   isApplyingTemplate: boolean;

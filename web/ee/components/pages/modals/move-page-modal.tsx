@@ -12,10 +12,9 @@ import { TMovePageModalProps } from "@/ce/components/pages";
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

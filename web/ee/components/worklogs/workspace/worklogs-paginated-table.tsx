@@ -3,8 +3,7 @@
 import { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
-import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { convertMinutesToHoursMinutesString, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember, useProject } from "@/hooks/store";
 // plane web hooks
@@ -90,13 +89,11 @@ export const WorklogsPaginatedTableRoot: FC<TWorklogsPaginatedTableRoot> = (prop
         columns={tableColumns}
         data={worklogTableData}
         keyExtractor={(rowData: TWorklog) => rowData.id || ""}
-        tableClassName="table-auto border-b border-custom-border-100"
         tHeadClassName="border-b border-custom-border-100"
-        tHeadTrClassName="divide-x-0"
-        thClassName="text-left p-2.5"
+        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0"
-        tdClassName="p-2.5"
+        tBodyTrClassName="divide-x-0 p-2 h-[40px] text-custom-text-200"
+        tHeadTrClassName="divide-x-0"
       />
     </div>
   );

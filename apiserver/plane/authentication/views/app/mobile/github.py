@@ -8,10 +8,7 @@ from django.conf import settings
 
 # Module imports
 from plane.authentication.provider.oauth.github import GitHubOAuthProvider
-from plane.authentication.utils.mobile.login import (
-    ValidateAuthToken,
-    mobile_validate_user_onboarding,
-)
+from plane.authentication.utils.mobile.login import ValidateAuthToken
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
@@ -38,7 +35,9 @@ class MobileGitHubOauthInitiateEndpoint(View):
                 base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
             )
             return HttpResponseRedirect(url)
+
         try:
+            invitation_id = request.GET.get("invitation_id")
             scheme = (
                 "https"
                 if settings.IS_HEROKU
@@ -55,6 +54,7 @@ class MobileGitHubOauthInitiateEndpoint(View):
                 request=request, state=state, redirect_uri=redirect_uri
             )
             request.session["state"] = state
+            request.session["invitation_id"] = invitation_id
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
@@ -70,11 +70,17 @@ class MobileGitHubCallbackEndpoint(View):
         code = request.GET.get("code")
         state = request.GET.get("state")
         base_host = request.session.get("host")
+        invitation_id = request.session.get("invitation_id")
+
+        response_payload_params = {}
+        if invitation_id:
+            response_payload_params["invitation_id"] = invitation_id
 
         if state != request.session.get("state", ""):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                payload=response_payload_params,
             )
             params = exc.get_error_dict()
             url = urljoin(base_host, "m/auth/?" + urlencode(params))
@@ -84,6 +90,7 @@ class MobileGitHubCallbackEndpoint(View):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                payload=response_payload_params,
             )
             params = exc.get_error_dict()
             url = urljoin(base_host, "m/auth/?" + urlencode(params))
@@ -104,22 +111,10 @@ class MobileGitHubCallbackEndpoint(View):
                 request=request,
                 code=code,
                 callback=post_user_auth_workflow,
-                is_mobile=True,
                 redirect_uri=redirect_uri,
             )
             # getting the user from the google provider
             user = provider.authenticate()
-
-            # validating if the user is onboarded or not
-            is_onboarded = mobile_validate_user_onboarding(user=user)
-            if not is_onboarded:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["USER_NOT_ONBOARDED"],
-                    error_message="USER_NOT_ONBOARDED",
-                )
-                params = exc.get_error_dict()
-                url = urljoin(base_host, "m/auth/?" + urlencode(params))
-                return HttpResponseRedirect(url)
 
             # Login the user and record his device info
             session_token = ValidateAuthToken()

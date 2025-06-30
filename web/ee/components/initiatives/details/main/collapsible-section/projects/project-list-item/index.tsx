@@ -3,10 +3,9 @@ import { observer } from "mobx-react";
 // Plane
 import { Briefcase } from "lucide-react";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getProgress } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
-import { getProgress } from "@/helpers/common.helper";
 import { useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
@@ -66,7 +65,12 @@ export const ProjectItem = observer((props: Props) => {
         </>
       }
       quickActionElement={
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="block md:hidden">
+          <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} initiativeId={initiativeId} />
+        </div>
+      }
+      actionableItems={
+        <>
           <Attributes
             project={projectDetails}
             isArchived={projectDetails.archived_at !== null}
@@ -81,14 +85,14 @@ export const ProjectItem = observer((props: Props) => {
               date: isProjectGroupingEnabled,
             }}
           />
-          <div className={cn("hidden md:flex")}>
+          <div className="hidden md:flex">
             <QuickActions
               project={projectDetails}
               workspaceSlug={workspaceSlug.toString()}
               initiativeId={initiativeId}
             />
           </div>
-        </div>
+        </>
       }
       itemClassName="overflow-visible"
       isMobile={isMobile}

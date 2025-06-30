@@ -1,11 +1,12 @@
 "use client";
-import React, { FC } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
-import { DoubleCircleIcon } from "@plane/ui";
+import { DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -16,17 +17,17 @@ import {
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { IssueLabel } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProjectEstimates, useProjectState } from "@/hooks/store";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 // helpers
 import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-details/sidebar/customer-list-root";
 import { useCustomers } from "@/plane-web/hooks/store/customers";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEpicOperations } from "../helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;
@@ -45,6 +46,10 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
   const { isCustomersFeatureEnabled } = useCustomers();
+  const {
+    initiative: { isInitiativeModalOpen, toggleInitiativeModal },
+  } = useInitiatives();
+  const { t } = useTranslation();
 
   // derived values
   const issue = getIssueById(epicId);
@@ -63,8 +68,17 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
   return (
     <SidebarContentWrapper title="Properties">
+      <InitiativeMultiSelectModal
+        isOpen={isInitiativeModalOpen === epicId}
+        onClose={() => toggleInitiativeModal()}
+        selectedInitiativeIds={issue.initiative_ids ?? []}
+        onSubmit={(initiativeIds) =>
+          epicOperations.update(workspaceSlug, projectId, epicId, { initiative_ids: initiativeIds })
+        }
+      />
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -135,7 +149,25 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
+            <span>Initiatives</span>
+          </div>
+          <div
+            className={cn(
+              "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start cursor-pointer",
+              {
+                "text-custom-text-400": !issue.initiative_ids?.length,
+              }
+            )}
+            onClick={() => toggleInitiativeModal(epicId)}
+          >
+            {issue.initiative_ids?.length
+              ? t("initiatives.placeholder", { count: issue.initiative_ids?.length })
+              : t("initiatives.add_initiative")}
+          </div>
+        </div>
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
             <CalendarClock className="h-4 w-4 flex-shrink-0" />

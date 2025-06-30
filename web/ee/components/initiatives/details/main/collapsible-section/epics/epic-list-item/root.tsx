@@ -6,11 +6,10 @@ import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
+import { cn, generateWorkItemLink, getProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { cn, getProgress } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -109,7 +108,17 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
         </>
       }
       quickActionElement={
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="block md:hidden">
+          <EpicQuickActions
+            workspaceSlug={workspaceSlug}
+            epicId={epicId}
+            initiativeId={initiativeId}
+            disabled={disabled}
+          />
+        </div>
+      }
+      actionableItems={
+        <>
           <EpicProperties
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
@@ -126,7 +135,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
               disabled={disabled}
             />
           </div>
-        </div>
+        </>
       }
       itemClassName="overflow-visible"
       isMobile={isMobile}

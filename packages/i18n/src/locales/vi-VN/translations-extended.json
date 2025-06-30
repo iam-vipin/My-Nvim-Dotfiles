@@ -9,7 +9,6 @@
     "business": "Doanh nghiệp",
     "customers": "Khách hàng"
   },
-
   "workspace_dashboards": "Bảng điều khiển",
   "pi_chat": "Pi Chat",
   "in_app": "Trong ứng dụng",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Tìm hiểu thêm về không gian làm việc",
   "no_workspaces_to_connect": "Không có không gian làm việc để kết nối",
   "no_workspaces_to_connect_description": "Bạn cần tạo không gian làm việc để kết nối ứng dụng này",
-
   "common": {
     "worklogs": "Nhật ký công việc",
     "live": "Trực tiếp",
@@ -28,9 +26,9 @@
     "project_updates": "Cập nhật dự án",
     "overview": "Tổng quan",
     "workflows": "Quy trình làm việc",
-    "templates": "Mẫu"
+    "templates": "Mẫu",
+    "members_and_teamspaces": "Thành viên và không gian nhóm"
   },
-
   "updates": {
     "add_update": "Thêm cập nhật",
     "add_update_placeholder": "Thêm cập nhật của bạn ở đây",
@@ -88,7 +86,6 @@
       "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Bắt đầu Trước",
@@ -98,12 +95,41 @@
     }
   },
 
+  "pages": {
+    "link_pages": "Kết nối trang",
+    "show_wiki_pages": "Hiển thị trang Wiki",
+    "link_pages_to": "Kết nối trang đến",
+    "linked_pages": "Trang đã kết nối",
+    "no_description": "Trang này trống. Viết điều gì đó và xem nó ở đây như thế này",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Trang đã được cập nhật",
+          "message": "Trang đã được cập nhật thành công"
+        },
+        "error": {
+          "title": "Trang không được cập nhật",
+          "message": "Trang không được cập nhật"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Trang đã được xóa",
+          "message": "Trang đã được xóa thành công"
+        },
+        "error": {
+          "title": "Trang không được xóa",
+          "message": "Trang không được xóa"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Kết nối"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Sáng kiến",
@@ -168,7 +194,6 @@
       "disabled": "Đã vô hiệu hóa"
     }
   },
-
   "teamspaces": {
     "label": "Không gian nhóm",
     "empty_state": {
@@ -181,16 +206,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Bắt đầu bằng cách liên kết các dự án với không gian nhóm này.",
-        "description": "Không gian nhóm liên kết các dự án mà thành viên nhóm tham gia, để bạn có thể chỉ xem công việc của họ, đóng góp của họ vào tiến độ trong những dự án đó, và các số liệu công việc cụ thể của nhóm."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Bạn chưa liên kết bất kỳ không gian nhóm nào.",
+          "description": "Chủ sở hữu không gian nhóm và dự án có thể quản lý quyền truy cập vào các dự án."
+        }
+      },
+      "primary_button": {
+        "text": "Liên kết không gian nhóm"
+      },
+      "secondary_button": {
+        "text": "Tìm hiểu thêm"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Tên không gian nhóm",
+          "members": "Thành viên",
+          "accountType": "Loại tài khoản"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Xóa không gian nhóm"
+            },
+            "confirm": {
+              "title": "Xóa {teamspaceName} khỏi {projectName}",
+              "description": "Khi bạn xóa không gian nhóm này khỏi dự án liên kết, các thành viên ở đây sẽ mất quyền truy cập vào dự án liên kết."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Không tìm thấy không gian nhóm phù hợp"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bạn đã liên kết một không gian nhóm với dự án này.} other {Bạn đã liên kết # không gian nhóm với dự án này.}}",
+            "description": "{additionalCount, plural, =0 {Không gian nhóm {firstTeamspaceName} hiện đã được liên kết với dự án này.} other {Không gian nhóm {firstTeamspaceName} và {additionalCount} không gian khác hiện đã được liên kết với dự án này.}}"
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bạn đã xóa không gian nhóm đó khỏi dự án này.",
+            "description": "Không gian nhóm {teamspaceName} đã được xóa khỏi {projectName}."
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Tìm kiếm không gian nhóm",
+        "info": {
+          "title": "Thêm không gian nhóm cấp cho tất cả thành viên không gian nhóm quyền truy cập vào dự án này.",
+          "link": "Tìm hiểu thêm"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bạn không có không gian nhóm nào để liên kết.",
+            "description": "Hoặc bạn không ở trong không gian nhóm mà bạn có thể liên kết hoặc bạn đã liên kết tất cả các không gian nhóm có sẵn."
+          },
+          "no_results": {
+            "title": "Điều đó không khớp với bất kỳ không gian nhóm nào của bạn.",
+            "description": "Hãy thử một thuật ngữ khác hoặc đảm bảo bạn có không gian nhóm để liên kết."
+          }
+        },
+        "primary_button": {
+          "text": "Liên kết không gian nhóm đã chọn"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -209,7 +305,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -226,7 +321,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -236,17 +330,12 @@
           "text": "Tạo một góc nhìn"
         }
       },
-      "project_view": {
-        "title": "Không có dự án liên kết nào của bạn có bất kỳ góc nhìn công khai nào.",
-        "description": "Góc nhìn công khai trong các dự án liên kết sẽ tự động xuất hiện ở đây. Để xem góc nhìn công khai từ các dự án liên kết ở đây, hãy đảm bảo những dự án đó có góc nhìn công khai truy cập được cho tất cả thành viên dự án."
-      },
       "filter": {
         "title": "Không có góc nhìn phù hợp",
         "description": "Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm. \n Tạo góc nhìn mới thay thế."
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -255,10 +344,6 @@
         "primary_button": {
           "text": "Tạo trang nhóm đầu tiên của bạn"
         }
-      },
-      "project_page": {
-        "title": "Không có dự án liên kết nào của bạn có trang công khai.",
-        "description": "Các trang công khai trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy các trang công khai ở đây, hãy đảm bảo các dự án liên kết của bạn có các trang công khai có sẵn cho tất cả thành viên dự án."
       },
       "filter": {
         "title": "Không có trang phù hợp",
@@ -270,7 +355,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -299,9 +383,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Sáng kiến",
+    "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
     "add_initiative": "Thêm Sáng kiến",
     "create_initiative": "Tạo Sáng kiến",
     "update_initiative": "Cập nhật Sáng kiến",
@@ -350,7 +434,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -380,7 +463,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epics",
     "no_epics_selected": "Không có epic nào được chọn",
@@ -404,7 +486,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -415,7 +496,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -424,7 +504,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -441,7 +520,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -578,7 +656,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -599,7 +676,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Loại mục công việc",
     "label_lowercase": "loại mục công việc",
@@ -786,7 +862,24 @@
           "title": "Thêm thuộc tính tùy chỉnh",
           "description": "Các thuộc tính mới bạn thêm cho loại mục công việc này sẽ hiển thị ở đây."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Xóa loại này",
+        "description": "Việc xóa các loại có thể dẫn đến mất dữ liệu hiện có.",
+        "primary_button": "Vâng, xóa nó",
+        "toast": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã xóa thành công loại mục công việc."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa loại mục công việc. Vui lòng thử lại!"
+          }
+        },
+        "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?"
+      },
+      "cant_delete_linked_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
     },
     "create": {
       "title": "Tạo loại mục công việc",
@@ -798,7 +891,9 @@
         },
         "error": {
           "title": "Lỗi!",
-          "message": "Không thể tạo loại mục công việc. Vui lòng thử lại!"
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
         }
       }
     },
@@ -812,7 +907,9 @@
         },
         "error": {
           "title": "Lỗi!",
-          "message": "Không thể cập nhật loại mục công việc. Vui lòng thử lại!"
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
         }
       }
     },
@@ -872,7 +969,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Nhập",
     "logo": "Logo",
@@ -920,7 +1016,6 @@
     "skip_user_import_description": "Việc bỏ qua nhập người dùng sẽ dẫn đến mục công việc, bình luận và dữ liệu khác từ {serviceName} được tạo bởi người dùng thực hiện việc di chuyển trong Plane. Bạn vẫn có thể thêm người dùng thủ công sau.",
     "invalid_pat": "Mã thông báo truy cập cá nhân không hợp lệ"
   },
-
   "integrations": {
     "integrations": "Tích hợp",
     "loading": "Đang tải",
@@ -936,7 +1031,6 @@
     "back_to_integrations": "Quay lại tích hợp",
     "select_state": "Chọn trạng thái"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Kết nối và đồng bộ mục công việc GitHub của bạn với Plane.",
@@ -964,7 +1058,6 @@
     "MR_MERGED": "Khi PR được hợp nhất, đặt trạng thái thành",
     "MR_CLOSED": "Khi PR đóng, đặt trạng thái thành"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Kết nối và đồng bộ Merge Requests của Gitlab với Plane.",
@@ -991,7 +1084,6 @@
     "choose_project": "Chọn dự án",
     "link_plane_project": "Liên kết dự án Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Kết nối workspace Slack của bạn với Plane.",
@@ -1032,7 +1124,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Nhấp vào đây để tải lên tệp",
     "drag_drop_text": "Kéo và thả",
@@ -1041,7 +1132,6 @@
     "missing_fields": "Thiếu trường",
     "success": "{fileName} đã được tải lên!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Tham số truy vấn được cung cấp không hợp lệ hoặc thiếu trường bắt buộc",
     "invalid_installation_account": "Tài khoản cài đặt được cung cấp không hợp lệ",
@@ -1054,7 +1144,6 @@
     "invalid_app_credentials": "Các thông tin xác thực ứng dụng đã cung cấp không hợp lệ",
     "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
-
   "import_status": {
     "created": "Đã tạo",
     "initiated": "Đã bắt đầu",
@@ -1067,7 +1156,6 @@
     "error": "Lỗi",
     "cancelled": "Đã hủy"
   },
-
   "jira_importer": {
     "jira_importer_description": "Nhập dữ liệu Jira của bạn vào các dự án Plane.",
     "personal_access_token": "Mã thông báo truy cập cá nhân",
@@ -1091,7 +1179,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Nhập dữ liệu Asana của bạn vào các dự án Plane.",
     "select_asana_priority_field": "Chọn trường ưu tiên Asana",
@@ -1108,7 +1195,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Asana sang Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Nhập dữ liệu Linear của bạn vào các dự án Plane.",
     "steps": {
@@ -1124,7 +1210,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Linear sang Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Nhập dữ liệu Jira Server của bạn vào các dự án Plane.",
     "steps": {
@@ -1141,6 +1226,64 @@
     }
   },
 
+  "notion_importer": {
+    "notion_importer_description": "Nhập dữ liệu Notion của bạn vào các dự án Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Notion",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Notion của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Notion của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Notion",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Notion của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Notion",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Notion của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Nhập dữ liệu Confluence của bạn vào wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Confluence",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Confluence của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Confluence của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Confluence",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Confluence của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Confluence",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Confluence của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Nhập dữ liệu CSV của bạn vào các dự án Plane.",
     "steps": {
@@ -1148,6 +1291,26 @@
       "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu CSV của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
       "title_configure_csv": "Cấu hình CSV",
       "description_configure_csv": "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Nhập dữ liệu ClickUp của bạn vào các dự án Plane.",
+    "select_service_space": "Chọn {serviceName} Space",
+    "select_service_folder": "Chọn {serviceName} Folder",
+    "selected": "Đã chọn",
+    "users": "Người dùng",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu ClickUp của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_clickup": "Cấu hình ClickUp",
+      "description_configure_clickup": "Vui lòng chọn nhóm ClickUp, không gian và thư mục từ đó bạn muốn di chuyển dữ liệu của mình.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái ClickUp với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên ClickUp mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane."
     }
   },
 
@@ -1438,7 +1601,6 @@
       "editing": "Đang chỉnh sửa"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Cho phép mục công việc mới",
@@ -1537,7 +1699,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Khách hàng} other {Khách hàng}}",
     "upgrade": {
@@ -1907,7 +2068,6 @@
       "properties": "Thuộc tính"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Mẫu",
@@ -2026,7 +2186,8 @@
           }
         },
         "publish": {
-          "action": "Xuất bản mẫu",
+          "action": "{isPublished, select, true {Cài đặt xuất bản} other {Xuất bản lên Marketplace}}",
+          "unpublish_action": "Gỡ khỏi Marketplace",
           "title": "Làm cho mẫu của bạn dễ khám phá và nhận biết.",
           "name": {
             "label": "Tên mẫu",
@@ -2059,7 +2220,11 @@
           },
           "keywords": {
             "label": "Từ khóa",
-            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này."
+            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này.",
+            "helperText": "Nhập các từ khóa được phân tách bằng dấu phẩy, có khả năng giúp người dùng tìm kiếm từ khóa này.",
+            "validation": {
+              "required": "Cần ít nhất một từ khóa"
+            }
           },
           "company_name": {
             "label": "Tên công ty",
@@ -2092,6 +2257,21 @@
             "validation": {
               "invalid": "URL không hợp lệ",
               "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "cover_image": {
+            "label": "Thêm ảnh bìa sẽ được hiển thị trong marketplace",
+            "upload_title": "Tải lên ảnh bìa",
+            "upload_placeholder": "Nhấp để tải lên hoặc kéo và thả để tải lên ảnh bìa",
+            "drop_here": "Thả vào đây",
+            "click_to_upload": "Nhấp để tải lên",
+            "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước. Vui lòng thử lại.",
+            "upload_and_save": "Tải lên và lưu",
+            "uploading": "Đang tải lên",
+            "remove": "Xóa",
+            "removing": "Đang xóa",
+            "validation": {
+              "required": "Ảnh bìa là bắt buộc"
             }
           },
           "attach_screenshots": {
@@ -2156,6 +2336,16 @@
           "title": "Chúng tôi không thể xóa mẫu đó lần này.",
           "message": "Thử xóa nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Mẫu đã được gỡ xuất bản",
+          "message": "{templateName}, mẫu {templateType}, đã được gỡ xuất bản."
+        },
+        "error": {
+          "title": "Chúng tôi không thể gỡ xuất bản mẫu đó lần này.",
+          "message": "Thử gỡ xuất bản nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
       }
     },
     "delete_confirmation": {
@@ -2163,6 +2353,13 @@
       "description": {
         "prefix": "Bạn có chắc chắn muốn xóa mẫu-",
         "suffix": "? Tất cả dữ liệu liên quan đến mẫu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Gỡ xuất bản mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn gỡ xuất bản mẫu-",
+        "suffix": "? Mẫu này sẽ không còn khả dụng cho người dùng trên marketplace."
       }
     },
     "dropdown": {
@@ -2182,5 +2379,25 @@
         "project": "Không tìm thấy mẫu."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Dự án theo trạng thái",
+    "active_users": "Người dùng hoạt động",
+    "intake_trends": "Xu hướng tiếp nhận",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm các hạng mục công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
+      },
+      "module_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ mô-đun sẽ hiển thị ở đây. Thêm các hạng mục công việc vào mô-đun để bắt đầu theo dõi tiến độ."
+      },
+      "intake_trends": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích xu hướng intake sẽ hiển thị ở đây. Thêm các hạng mục công việc vào intake để bắt đầu theo dõi xu hướng."
+      }
+    },
+    "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
   }
 }

@@ -19,7 +19,6 @@ from plane.ee.utils.entity_state_progress import (
 
 
 class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
@@ -27,6 +26,12 @@ class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
 
         # Get the cycle to check if it has ended
         cycle = Cycle.objects.get(pk=cycle_id)
+
+        if not cycle.start_date or not cycle.end_date:
+            return Response(
+                {"error": "Cycle has no start or end date"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         cycle_state_progress = EntityProgress.objects.filter(
             cycle_id=cycle_id, entity_type="CYCLE", workspace__slug=slug

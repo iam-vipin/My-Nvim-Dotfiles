@@ -9,7 +9,6 @@
     "business": "Business",
     "customers": "Clientes"
   },
-
   "workspace_dashboards": "Tableros",
   "pi_chat": "PI Chat",
   "in_app": "En la aplicación",
@@ -20,16 +19,15 @@
   "learn_more_about_workspaces": "Aprende más sobre espacios de trabajo",
   "no_workspaces_to_connect": "No hay espacios de trabajo para conectar",
   "no_workspaces_to_connect_description": "Necesitarás crear un espacio de trabajo para poder conectar integraciones y plantillas",
-
   "common": {
     "worklogs": "Registros de trabajo",
     "live": "En vivo",
     "epics": "Epics",
     "project_updates": "Actualizaciones del proyecto",
     "overview": "Resumen",
-    "workflows": "Flujos de trabajo"
+    "workflows": "Flujos de trabajo",
+    "members_and_teamspaces": "Miembros y espacios de equipo"
   },
-
   "updates": {
     "add_update": "Agregar actualización",
     "add_update_placeholder": "Escribe tu actualización aquí",
@@ -97,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Comienza antes",
@@ -107,12 +104,41 @@
     }
   },
 
+  "pages": {
+    "link_pages": "Enlazar páginas",
+    "show_wiki_pages": "Mostrar páginas de wiki",
+    "link_pages_to": "Enlazar páginas a",
+    "linked_pages": "Páginas enlazadas",
+    "no_description": "Esta página está vacía. Escriba algo aquí y véalo como este marcador de posición",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Páginas actualizadas",
+          "message": "Páginas actualizadas con éxito"
+        },
+        "error": {
+          "title": "Páginas no actualizadas",
+          "message": "No se pudieron actualizar las páginas"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Página eliminada",
+          "message": "Página eliminada con éxito"
+        },
+        "error": {
+          "title": "Página no eliminada",
+          "message": "No se pudo eliminar la página"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Conexiones"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Iniciativas",
@@ -177,7 +203,6 @@
       "disabled": "Deshabilitado"
     }
   },
-
   "teamspaces": {
     "label": "Espacios de equipo",
     "empty_state": {
@@ -190,16 +215,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Comienza vinculando proyectos a este espacio de equipo.",
-        "description": "Los espacios de equipo vinculan proyectos en los que están los miembros del equipo, para que puedas ver solo su trabajo, su contribución al progreso en esos proyectos y las métricas de trabajo específicas del equipo."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Aún no has vinculado ningún espacio de equipo.",
+          "description": "Los propietarios del espacio de equipo y del proyecto pueden gestionar el acceso a los proyectos."
+        }
+      },
+      "primary_button": {
+        "text": "Vincular un espacio de equipo"
+      },
+      "secondary_button": {
+        "text": "Más información"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nombre del espacio de equipo",
+          "members": "Miembros",
+          "accountType": "Tipo de cuenta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Eliminar espacio de equipo"
+            },
+            "confirm": {
+              "title": "Eliminar {teamspaceName} de {projectName}",
+              "description": "Cuando elimines este espacio de equipo de un proyecto vinculado, los miembros aquí perderán el acceso al proyecto vinculado."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No se encontraron espacios de equipo coincidentes"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Has vinculado un espacio de equipo a este proyecto.} other {Has vinculado # espacios de equipo a este proyecto.}}",
+            "description": "{additionalCount, plural, =0 {El espacio de equipo {firstTeamspaceName} ahora está vinculado a este proyecto.} other {El espacio de equipo {firstTeamspaceName} y {additionalCount} más ahora están vinculados a este proyecto.}}"
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Has eliminado ese espacio de equipo de este proyecto.",
+            "description": "El espacio de equipo {teamspaceName} fue eliminado de {projectName}."
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Buscar espacios de equipo",
+        "info": {
+          "title": "Agregar un espacio de equipo otorga a todos los miembros del espacio de equipo acceso a este proyecto.",
+          "link": "Más información"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "No tienes ningún espacio de equipo para vincular.",
+            "description": "O bien no estás en un espacio de equipo que puedas vincular o ya has vinculado todos los espacios de equipo disponibles."
+          },
+          "no_results": {
+            "title": "Eso no coincide con ninguno de tus espacios de equipo.",
+            "description": "Prueba con otro término o asegúrate de tener espacios de equipo para vincular."
+          }
+        },
+        "primary_button": {
+          "text": "Vincular espacio(s) de equipo seleccionado(s)"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +314,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +330,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -245,17 +339,12 @@
           "text": "Crear una vista"
         }
       },
-      "project_view": {
-        "title": "Ninguno de tus proyectos vinculados tiene vistas públicas.",
-        "description": "Las vistas públicas en proyectos vinculados aparecerán automáticamente aquí. Para ver vistas públicas de proyectos vinculados aquí, asegúrate de que esos proyectos tengan vistas públicas accesibles para todos los miembros del proyecto."
-      },
       "filter": {
         "title": "No hay vistas coincidentes",
         "description": "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar."
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -264,10 +353,6 @@
         "primary_button": {
           "text": "Crea tu primera Page"
         }
-      },
-      "project_page": {
-        "title": "Ninguno de tus proyectos vinculados tiene Pages públicas.",
-        "description": "Las Pages públicas en proyectos vinculados aparecerán automáticamente aquí. Si esperas ver Pages públicas aquí, asegúrate de que tus proyectos vinculados tengan Pages públicas disponibles para todos los miembros del proyecto."
       },
       "filter": {
         "title": "No hay Pages coincidentes",
@@ -279,7 +364,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,9 +392,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Iniciativas",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativas}}",
     "add_initiative": "Agregar Iniciativa",
     "create_initiative": "Crear Iniciativa",
     "update_initiative": "Actualizar Iniciativa",
@@ -359,7 +443,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +472,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epics",
     "no_epics_selected": "No hay Epics seleccionados",
@@ -413,7 +495,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +505,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +513,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +529,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +665,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +685,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Tipos de elementos de trabajo",
     "label_lowercase": "tipos de elementos de trabajo",
@@ -795,7 +871,24 @@
           "title": "Agregar propiedades personalizadas",
           "description": "Las nuevas propiedades que agregues para este tipo de elemento de trabajo aparecerán aquí."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Eliminar este tipo",
+        "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
+        "primary_button": "Sí, eliminarlo",
+        "toast": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Tipo de elemento de trabajo eliminado con éxito."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el tipo de elemento de trabajo. ¡Inténtalo de nuevo!"
+          }
+        },
+        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?"
+      },
+      "cant_delete_linked_message": "No se puede eliminar este tipo de elemento de trabajo porque está vinculado a elementos de trabajo existentes."
     },
     "create": {
       "title": "Crear tipo de elemento de trabajo",
@@ -807,7 +900,9 @@
         },
         "error": {
           "title": "¡Error!",
-          "message": "Error al crear el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
         }
       }
     },
@@ -821,7 +916,9 @@
         },
         "error": {
           "title": "¡Error!",
-          "message": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
         }
       }
     },
@@ -881,7 +978,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importaciones",
     "logo": "Logo",
@@ -929,7 +1025,6 @@
     "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde.",
     "invalid_pat": "Token de acceso personal inválido"
   },
-
   "integrations": {
     "integrations": "Integraciones",
     "loading": "Cargando",
@@ -945,7 +1040,6 @@
     "back_to_integrations": "Volver a integraciones",
     "select_state": "Seleccionar estado"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Conecta y sincroniza tu elemento de trabajo de GitHub con Plane",
@@ -973,7 +1067,6 @@
     "MR_MERGED": "Al fusionar PR, establecer el estado a",
     "MR_CLOSED": "Al cerrar PR, establecer el estado a"
   },
-
   "gitlab_integration": {
     "name": "GitLab",
     "description": "Conecta y sincroniza tus solicitudes de fusión de GitLab con Plane",
@@ -1000,7 +1093,6 @@
     "choose_project": "Elegir proyecto",
     "link_plane_project": "Vincular proyecto de Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Conecta tu espacio de trabajo de Slack con Plane",
@@ -1041,7 +1133,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Haz clic aquí para subir archivo",
     "drag_drop_text": "Arrastrar y soltar",
@@ -1050,7 +1141,6 @@
     "missing_fields": "Campos faltantes",
     "success": "¡{fileName} subido!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Los parámetros de consulta proporcionados son inválidos o faltan campos requeridos",
     "invalid_installation_account": "La cuenta de instalación proporcionada no es válida",
@@ -1064,7 +1154,6 @@
     "invalid_app_credentials": "Las credenciales de la aplicación proporcionadas son inválidas",
     "invalid_app_installation_id": "Error al instalar la aplicación"
   },
-
   "import_status": {
     "created": "Creado",
     "initiated": "Iniciado",
@@ -1077,7 +1166,6 @@
     "error": "Error",
     "cancelled": "Cancelado"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importa tus datos de Jira a proyectos de Plane",
     "personal_access_token": "Token de acceso personal",
@@ -1101,7 +1189,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Jira a Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importa tus datos de Asana a proyectos de Plane",
     "select_asana_priority_field": "Seleccionar campo de prioridad de Asana",
@@ -1118,7 +1205,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Asana a Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importa tus datos de Linear a proyectos de Plane",
     "steps": {
@@ -1134,7 +1220,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Linear a Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importa tus datos de Jira Server a proyectos de Plane",
     "steps": {
@@ -1151,6 +1236,64 @@
     }
   },
 
+  "notion_importer": {
+    "notion_importer_description": "Importa tus datos de Notion a proyectos de Plane.",
+    "steps": {
+      "title_upload_zip": "Subir ZIP exportado de Notion",
+      "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Notion."
+    },
+    "upload": {
+      "drop_file_here": "Suelta tu archivo zip de Notion aquí",
+      "upload_title": "Subir exportación de Notion",
+      "drag_drop_description": "Arrastra y suelta tu archivo zip de exportación de Notion, o haz clic para navegar",
+      "file_type_restriction": "Solo se admiten archivos .zip exportados desde Notion",
+      "select_file": "Seleccionar archivo",
+      "uploading": "Subiendo...",
+      "preparing_upload": "Preparando subida...",
+      "confirming_upload": "Confirmando subida...",
+      "confirming": "Confirmando...",
+      "upload_complete": "Subida completada",
+      "upload_failed": "Fallo en la subida",
+      "start_import": "Iniciar importación",
+      "retry_upload": "Reintentar subida",
+      "upload": "Subir",
+      "ready": "Listo",
+      "error": "Error",
+      "upload_complete_message": "¡Subida completada!",
+      "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Notion.",
+      "upload_progress_message": "Por favor, no cierres esta ventana."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Importa tus datos de Confluence al wiki de Plane.",
+    "steps": {
+      "title_upload_zip": "Subir ZIP exportado de Confluence",
+      "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Suelta tu archivo zip de Confluence aquí",
+      "upload_title": "Subir exportación de Confluence",
+      "drag_drop_description": "Arrastra y suelta tu archivo zip de exportación de Confluence, o haz clic para navegar",
+      "file_type_restriction": "Solo se admiten archivos .zip exportados desde Confluence",
+      "select_file": "Seleccionar archivo",
+      "uploading": "Subiendo...",
+      "preparing_upload": "Preparando subida...",
+      "confirming_upload": "Confirmando subida...",
+      "confirming": "Confirmando...",
+      "upload_complete": "Subida completada",
+      "upload_failed": "Fallo en la subida",
+      "start_import": "Iniciar importación",
+      "retry_upload": "Reintentar subida",
+      "upload": "Subir",
+      "ready": "Listo",
+      "error": "Error",
+      "upload_complete_message": "¡Subida completada!",
+      "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Confluence.",
+      "upload_progress_message": "Por favor, no cierres esta ventana."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importa tus datos CSV a proyectos de Plane",
     "steps": {
@@ -1158,6 +1301,26 @@
       "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos CSV. Una vez creado el proyecto, selecciónalo aquí.",
       "title_configure_csv": "Configurar CSV",
       "description_configure_csv": "Por favor, sube tu archivo CSV y configura los campos que se mapearán a los campos de Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importa tus datos de ClickUp a proyectos de Plane",
+    "select_service_space": "Seleccionar espacio de {serviceName}",
+    "select_service_folder": "Seleccionar carpeta de {serviceName}",
+    "selected": "Seleccionado",
+    "users": "Usuarios",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de ClickUp. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_clickup": "Configurar ClickUp",
+      "description_configure_clickup": "Por favor, selecciona el equipo, espacio y carpeta de ClickUp desde el cual deseas migrar tus datos.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Hemos coincidido automáticamente los estados de ClickUp con los estados de Plane lo mejor posible. Por favor, mapea los estados restantes antes de continuar, también puedes crear estados y mapearlos manualmente.",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Por favor, selecciona las prioridades de ClickUp que deseas mapear a las prioridades del proyecto de Plane.",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de ClickUp a Plane."
     }
   },
 
@@ -1446,7 +1609,6 @@
       "editing": "Editando"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Permitir nuevos elementos de trabajo",
@@ -1545,7 +1707,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
     "drop_down": {
@@ -1922,7 +2083,6 @@
       "properties": "Propiedades"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Plantillas",
@@ -2041,7 +2201,8 @@
           }
         },
         "publish": {
-          "action": "Publicar plantilla",
+          "action": "{isPublished, select, true {Configuración de publicación} other {Publicar en el Marketplace}}",
+          "unpublish_action": "Retirar del Marketplace",
           "title": "Haga que su plantilla sea descubrible y reconocible.",
           "name": {
             "label": "Nombre de la plantilla",
@@ -2074,7 +2235,11 @@
           },
           "keywords": {
             "label": "Palabras clave",
-            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla."
+            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla.",
+            "helperText": "Introduce palabras clave separadas por comas que sean útiles para que los usuarios encuentren esta plantilla en la búsqueda.",
+            "validation": {
+              "required": "Al menos una palabra clave es obligatoria"
+            }
           },
           "company_name": {
             "label": "Nombre de la empresa",
@@ -2107,6 +2272,21 @@
             "validation": {
               "invalid": "URL no válida",
               "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "cover_image": {
+            "label": "Añade una imagen de portada que se mostrará en el Marketplace",
+            "upload_title": "Subir imagen de portada",
+            "upload_placeholder": "Haz clic para subir o arrastra y suelta para subir una imagen de portada",
+            "drop_here": "Soltar aquí",
+            "click_to_upload": "Haz clic para subir",
+            "invalid_file_or_exceeds_size_limit": "Archivo no válido o excede el límite de tamaño. Por favor, inténtalo de nuevo.",
+            "upload_and_save": "Subir y guardar",
+            "uploading": "Subiendo",
+            "remove": "Eliminar",
+            "removing": "Eliminando",
+            "validation": {
+              "required": "La imagen de portada es obligatoria"
             }
           },
           "attach_screenshots": {
@@ -2171,6 +2351,16 @@
           "title": "No pudimos eliminar esa plantilla esta vez.",
           "message": "Intenta eliminarla de nuevo o vuelve a intentarlo más tarde. Si no puedes eliminarla entonces, contacta con nosotros."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Plantilla retirada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido retirada."
+        },
+        "error": {
+          "title": "No pudimos retirar esa plantilla esta vez.",
+          "message": "Intenta retirarla de nuevo o vuelve a intentarlo más tarde. Si no puedes retirarla entonces, contacta con nosotros."
+        }
       }
     },
     "delete_confirmation": {
@@ -2178,6 +2368,13 @@
       "description": {
         "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
         "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retirar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres retirar la plantilla-",
+        "suffix": "? Esta plantilla ya no estará disponible para los usuarios en el marketplace."
       }
     },
     "dropdown": {
@@ -2197,5 +2394,25 @@
         "project": "No se encontraron plantillas."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proyectos por estado",
+    "active_users": "Usuarios activos",
+    "intake_trends": "Tendencias de admisión",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del ciclo aparecerán aquí. Agrega elementos de trabajo a los ciclos para comenzar a rastrear el progreso."
+      },
+      "module_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del módulo aparecerán aquí. Agrega elementos de trabajo a los módulos para comenzar a rastrear el progreso."
+      },
+      "intake_trends": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de tendencias de entrada aparecerán aquí. Agrega elementos de trabajo a la entrada para comenzar a rastrear tendencias."
+      }
+    },
+    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
   }
 }

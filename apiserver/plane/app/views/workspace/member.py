@@ -18,7 +18,14 @@ from plane.app.serializers import (
 )
 from plane.app.views.base import BaseAPIView
 from plane.utils.cache import invalidate_cache
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, Cycle
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    WorkspaceMember,
+    DraftIssue,
+    Cycle,
+)
+from plane.ee.models import TeamspaceMember, PageUser
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.payment.utils.member_payment_count import workspace_member_check
 from .. import BaseViewSet
@@ -70,12 +77,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # If a user is moved to a guest role he can't have any other role in projects
         if "role" in request.data and int(request.data.get("role")) == 5:
+            # If a user is moved to a guest role he can't have any other role in projects
             ProjectMember.objects.filter(
                 workspace__slug=slug, member_id=workspace_member.member_id
             ).update(role=5)
-
+            # When a user is moved to a guest role, they must be removed from all teamspaces
+            TeamspaceMember.objects.filter(
+                workspace__slug=slug, member_id=workspace_member.member_id
+            ).delete()
+            
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
                 slug=slug,
@@ -152,10 +163,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False)
+        ).update(is_active=False, updated_at=timezone.now())
 
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            workspace__slug=slug, user_id=workspace_member.member_id
+        ).delete()
 
         # Sync workspace members
         member_sync_task.delay(slug)
@@ -217,11 +238,21 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False)
+        ).update(is_active=False, updated_at=timezone.now())
 
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            workspace__slug=slug, user_id=workspace_member.member_id
+        ).delete()
 
         # # Sync workspace members
         member_sync_task.delay(slug)

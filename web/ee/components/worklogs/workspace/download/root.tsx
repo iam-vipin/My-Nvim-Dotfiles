@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import {
   WorklogDownloadLoader,
@@ -70,11 +70,7 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
         </div>
       </div>
 
-      {disclosureState && (
-        <div className="py-4">
-          <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-        </div>
-      )}
+      {disclosureState && <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />}
     </Fragment>
   );
 });

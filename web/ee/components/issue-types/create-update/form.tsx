@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { RESTRICTED_WORK_ITEM_TYPES } from "@plane/constants";
+import { Info } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TIssueType } from "@plane/types";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button, Input, TextArea, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
 
@@ -32,9 +32,6 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
     const newErrors: { name?: string } = {};
     if (!data.name || data.name.trim() === "") {
       newErrors.name = t("common.errors.entity_required", { entity: t("common.name") });
-    }
-    if (data.name && RESTRICTED_WORK_ITEM_TYPES.includes(data.name.toLowerCase())) {
-      newErrors.name = t("common.errors.restricted_entity", { entity: t("common.name") });
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -60,7 +57,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
         <h3 className="text-xl font-medium text-custom-text-200">
           {formData.id ? t("work_item_types.update.title") : t("work_item_types.create.title")}
         </h3>
-        <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
+        <div className={"flex items-center gap-2 w-full"}>
           <IssueTypeIconPicker
             isOpen={isEmojiPickerOpen}
             handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
@@ -77,18 +74,29 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
             size="xl"
           />
           <div className="space-y-1 flew-grow w-full">
-            <Input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              placeholder={t("work_item_types.create_update.form.name.placeholder")}
-              className="w-full resize-none text-base"
-              hasError={Boolean(errors.name)}
-              tabIndex={1}
-              autoFocus
-            />
-            {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
+            <div className={cn("relative w-full my-1")}>
+              <Input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder={t("work_item_types.create_update.form.name.placeholder")}
+                className={cn(
+                  "w-full resize-none text-base",
+                  errors?.name ? `border-red-500` : `border-custom-border-200`
+                )}
+                hasError={Boolean(errors.name)}
+                tabIndex={1}
+                autoFocus
+              />
+              {errors?.name && (
+                <Tooltip tooltipContent={errors?.name} position="bottom">
+                  <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 flex justify-center items-center text-red-500 absolute top-1/2 -translate-y-1/2 right-0">
+                    <Info size={14} />
+                  </div>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </div>
         <div className="space-y-0.5">

@@ -10,7 +10,7 @@ import { Crown } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -42,7 +42,7 @@ export const TeamspaceUpgrade: FC = observer(() => {
   };
 
   return (
-    <div className="pr-10">
+    <div className="w-full">
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),

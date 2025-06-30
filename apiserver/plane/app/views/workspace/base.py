@@ -3,7 +3,10 @@ import csv
 import io
 import os
 from datetime import date
+import uuid
 import requests
+import uuid
+
 from dateutil.relativedelta import relativedelta
 
 # Django imports
@@ -31,7 +34,7 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import (
     WorkSpaceSerializer,
-    WorkspaceThemeSerializer, 
+    WorkspaceThemeSerializer,
     WorkspaceUserMeSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
@@ -41,6 +44,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceTheme,
+    Profile,
 )
 from plane.ee.models import WorkspaceLicense
 from plane.app.permissions import ROLE, allow_permission
@@ -50,9 +54,9 @@ from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
+from plane.utils.url import contains_url
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
-
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -118,6 +122,12 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            if contains_url(name):
+                return Response(
+                    {"error": "Name cannot contain a URL"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)
                 # Create Workspace member
@@ -135,12 +145,11 @@ class WorkSpaceViewSet(BaseViewSet):
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
-                
+
                 # seed the workspace
                 workspace_seed.delay(serializer.data["id"])
                 # Sync workspace members
                 member_sync_task.delay(slug)
-
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
@@ -163,10 +172,18 @@ class WorkSpaceViewSet(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
+    def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
+        """
+        Remove the last workspace id from the user settings
+        """
+        Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
+        return
+
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
         workspace = self.get_object()
+        self.remove_last_workspace_ids_from_user_settings(workspace.id)
 
         # Fetch the workspace subcription
         if settings.PAYMENT_SERVER_BASE_URL:
@@ -179,11 +196,18 @@ class WorkSpaceViewSet(BaseViewSet):
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                 )
+                if response.status_code == 404:
+                    self.remove_last_workspace_ids_from_user_settings(workspace.id)
+                    Workspace.objects.filter(id=workspace.id).delete()
+
+                    return Response(status=status.HTTP_200_OK)
+
                 # Check if the response is successful
                 response.raise_for_status()
                 # Return the response
                 response = response.json()
                 # Check if the response contains the product key
+                self.remove_last_workspace_ids_from_user_settings(workspace.id)
                 super().destroy(request, *args, **kwargs)
                 return Response(response, status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
@@ -197,6 +221,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
         else:
             # Delete the workspace
+            self.remove_last_workspace_ids_from_user_settings(workspace.id)
             return super().destroy(request, *args, **kwargs)
 
 
@@ -204,8 +229,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = ["name"]
     filterset_fields = ["owner"]
 
-    @method_decorator(cache_control(private=True, max_age=12))
-    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
@@ -415,10 +438,9 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             actor_id=user_id,
-        ).select_related("actor", "workspace", "issue", "project")[:10000]
+        ).accessible_to(user_id, slug).select_related("actor", "workspace", "issue", "project")[:10000]
+
 
         header = [
             "Actor name",

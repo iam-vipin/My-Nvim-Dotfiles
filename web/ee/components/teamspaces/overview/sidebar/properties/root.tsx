@@ -10,7 +10,7 @@ import { ContrastIcon, LayersIcon } from "@plane/ui";
 import { MemberDropdown } from "@/components/dropdowns";
 import { Props } from "@/components/icons/types";
 // hooks
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useMember } from "@/hooks/store";
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -99,13 +99,6 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(
     () => [
       {
-        key: "projects",
-        label: "Projects",
-        icon: BriefcaseIcon,
-        value: teamspaceEntities?.linked_entities.projects,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
-      },
-      {
         key: "issues",
         label: "Work items",
         icon: LayersIcon,
@@ -118,20 +111,6 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         icon: ContrastIcon,
         value: teamspaceEntities?.linked_entities.cycles,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/cycles`,
-      },
-      {
-        key: "views",
-        label: "Views",
-        icon: Layers,
-        value: teamspaceEntities?.linked_entities.views,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/views`,
-      },
-      {
-        key: "pages",
-        label: "Pages",
-        icon: FileText,
-        value: teamspaceEntities?.linked_entities.pages,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/pages`,
       },
     ],
     [teamspaceId, teamspaceEntities, workspaceSlug]

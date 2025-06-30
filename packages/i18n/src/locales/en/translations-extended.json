@@ -3,12 +3,7 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-  "choose_workspace_for_integration": "Choose a workspace to connect this app to",
-  "integrations_description": "Apps that work with Plane must connect to a workspace where you are an admin.",
-  "create_a_new_workspace": "Create a new workspace",
-  "learn_more_about_workspaces": "Learn more about workspaces",
-  "no_workspaces_to_connect": "No workspaces to connect",
-  "no_workspaces_to_connect_description": "You will need to create a workspace to be able to connect integrations and templates",
+
 
   "common": {
     "worklogs": "Worklogs",
@@ -17,9 +12,10 @@
     "project_updates": "Project Updates",
     "overview": "Overview",
     "workflows": "Workflows",
-    "templates": "Templates"
+    "templates": "Templates",
+    "business": "Business",
+    "members_and_teamspaces": "Members & Teamspaces"
   },
-
   "issue": {
     "relation": {
       "start_before": "Starts Before",
@@ -34,9 +30,55 @@
         "customer": "Customer",
         "requests": "Customer request"
       }
+    },
+    "duplicate": {
+      "modal": {
+        "title": "Make a copy to another project",
+        "description1": "This creates a copy of the work item.",
+        "description2": "All property data will be removed while duplicating.",
+        "placeholder": "Select a project"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Work item duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate work item"
+        }
+      }
+    },
+    "pages":{
+      "link_pages": "Link pages",
+      "show_wiki_pages": "Show Wiki pages",
+      "link_pages_to": "Link pages to",
+      "linked_pages": "Linked pages",
+      "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
+      "toasts": {
+        "link":{
+          "success": {
+            "title": "Pages updated",
+            "message": "Pages updated successfully"
+          },
+          "error":{
+            "title": "Pages update failed",
+            "message": "Pages update failed"
+          }
+        },  
+        "remove":{
+          "success": {
+            "title": "Page removed",
+            "message": "Page removed successfully"
+          },
+          "error":{
+            "title": "Page removal failed",
+            "message": "Page removal failed"
+          }
+        }
+      }
     }
   },
-
   "updates": {
     "progress": {
       "title": "Progress",
@@ -104,14 +146,20 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Connections"
     }
   },
-
   "project_settings": {
+    "workflows": {
+      "heading": "Workflows",
+      "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline."
+    },
+    "work_item_types": {
+      "heading": "Work item Types",
+      "description": "Create and customize different types of work items with unique properties"
+    },
     "initiatives": {
       "heading": "Initiatives",
       "sub_heading": "Unlock the highest level of organization for all your work in Plane.",
@@ -127,7 +175,8 @@
     "customers": {
       "heading": "Customers",
       "settings_heading": "Manage work by what's important to your customers.",
-      "settings_sub_heading": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
+      "settings_sub_heading": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
+      "description": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
     },
     "empty_state": {
       "integrations": {
@@ -178,14 +227,23 @@
       }
     },
     "epics": {
+      "heading": "Epics",
+      "description": "For larger bodies of work that span several cycles and can live across modules",
       "properties": {
         "title": "Properties",
         "description": "Add custom properties to your epic."
       },
       "disabled": "Disabled"
+    },
+    "project_updates": {
+      "heading": "Project Updates",
+      "description": "Consolidated tracking and progress monitoring for this project"
+    },
+    "templates": {
+      "heading": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
     }
   },
-
   "teamspaces": {
     "label": "Teamspaces",
     "empty_state": {
@@ -198,16 +256,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Start by linking projects to this teamspace.",
-        "description": "Teamspaces link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "You haven’t linked any teamspaces yet.",
+          "description": "Teamspace and project owners can manage access to projects."
+        }
+      },
+      "primary_button": {
+        "text": "Add teamspace"
+      },
+      "secondary_button": {
+        "text": "Learn more"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Teamspace name",
+          "members": "Members",
+          "accountType": "Account type"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Remove teamspace"
+            },
+            "confirm": {
+              "title": "Remove {teamspaceName} from {projectName}",
+              "description": "When you remove this teamspace from a linked project, members here will lose access to the linked project."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No matching teamspaces found"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {You linked a teamspace to this project.} other {You linked # teamspaces to this project.}}",
+            "description": "{additionalCount, plural, =0 {Teamspace {firstTeamspaceName} is now linked to this project.} other {Teamspace {firstTeamspaceName} and {additionalCount} more are now linked to this project.}}"
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "You removed that teamspace from this project.",
+            "description": "Teamspace {teamspaceName} was removed from {projectName}."
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Search for teamspaces",
+        "info": {
+          "title": "Adding a teamspace grants all teamspace members access to this project.",
+          "link": "Learn more"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "You don’t have any teamspaces to link.",
+            "description": "Either you aren’t in a teamspace that you can link or you have already linked all available teamspaces."
+          },
+          "no_results": {
+            "title": "That doesn’t match any of your teamspaces.",
+            "description": "Try another term or make sure you have teamspaces to link."
+          }
+        },
+        "primary_button": {
+          "text": "Link selected teamspace(s)"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -226,7 +355,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -243,7 +371,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -253,17 +380,12 @@
           "text": "Create a view"
         }
       },
-      "project_view": {
-        "title": "None of your linked projects have any public views.",
-        "description": "Public views in linked projects will automatically show up here. To see public views from linked projects here, make sure those projects have public views accessible to all project members."
-      },
       "filter": {
         "title": "No matching views",
         "description": "No views match the search criteria. \n Create a new view instead."
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -272,10 +394,6 @@
         "primary_button": {
           "text": "Create your first team page"
         }
-      },
-      "project_page": {
-        "title": "None of your linked projects have public pages.",
-        "description": "Public pages in linked projects will automatically show up here. If you expect to see public pages here, make sure your linked projects have public pages available to all project members."
       },
       "filter": {
         "title": "No matching pages",
@@ -287,7 +405,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -316,9 +433,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Initiatives",
+    "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Add Initiative",
     "create_initiative": "Create Initiative",
     "update_initiative": "Update Initiative",
@@ -367,7 +484,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -394,10 +510,33 @@
       "archived": {
         "title": "No archived pages yet",
         "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
       }
     }
   },
-
+  "workspace_analytics": {
+    "upgrade_to_plan": "Upgrade to {plan} to unlock {tab}",
+    "projects_by_status": "Projects by status",
+    "active_users": "Active users",
+    "intake_trends": "Intake Trends",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "No data yet",
+        "description": "Cycle progress analytics will appear here. Add work items to cycles to start tracking progress."
+      },
+      "module_progress": {
+        "title": "No data yet",
+        "description": "Module progress analytics will appear here. Add work items to modules to start tracking progress."
+      },
+      "intake_trends": {
+        "title": "No data yet",
+        "description": "Intake trends analytics will appear here. Add work items to intake to start tracking trends."
+      }
+    }
+  },
   "epics": {
     "label": "Epics",
     "no_epics_selected": "No epics selected",
@@ -419,9 +558,25 @@
           "text": "Add epics"
         }
       }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "This creates a copy of the epic.",
+        "description2": "All property data will be removed while duplicating.",
+        "epics_not_enabled": "Epics not enabled"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate epic"
+        }
+      }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -432,7 +587,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -441,7 +595,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -458,29 +611,47 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrations"
+        "title": "Integrations",
+        "heading": "Integrations",
+        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem."
       },
       "imports": {
-        "title": "Imports"
+        "title": "Imports",
+        "heading": "Imports",
+        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
       },
       "worklogs": {
-        "title": "Worklogs"
+        "title": "Worklogs",
+        "heading": "Worklogs",
+        "description": "Download worklogs AKA timesheets for anyone in any project."
       },
       "project_states": {
-        "title": "Project states"
+        "title": "Project states",
+        "heading": "See progress overview for all projects.",
+        "description": "Project States is a Plane-only feature for tracking progress of all your projects by any project property."
       },
       "teamspaces": {
-        "title": "Teamspaces"
+        "title": "Teamspaces",
+        "heading": "Teamspaces",
+        "description": "See your team’s work in a separate space with linked projects, tasks, team charts, pages, and views."
       },
       "initiatives": {
-        "title": "Initiatives"
+        "title": "Initiatives",
+        "heading": "Initiatives",
+        "description": "Unlock the highest level of organization for all your work in Plane."
       },
       "customers": {
-        "title": "Customers"
+        "title": "Customers",
+        "heading": "Manage work by what's important to your customers.",
+        "description": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
+      },
+      "templates": {
+        "title": "Templates",
+        "heading": "Templates",
+        "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
       },
       "cancel_trial": {
         "title": "Cancel your trial first.",
@@ -595,7 +766,13 @@
       }
     }
   },
-
+  "account_settings": {
+    "connections": {
+      "title": "Connections",
+      "heading": "Connections",
+      "description": "Manage your workspace connections settings."
+    }
+  },
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -616,12 +793,12 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Work item Types",
     "label_lowercase": "work item types",
     "settings": {
       "title": "Work item Types",
+      "cant_delete_linked_message": "Cannot delete this work item type as it is linked to existing work items.",
       "properties": {
         "title": "Custom properties",
         "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
@@ -803,6 +980,22 @@
           "title": "Add custom properties",
           "description": "New properties you add for this work item type will show here."
         }
+      },
+      "item_delete_confirmation": {
+        "title": "Delete this type",
+        "description": "Deletion of types may lead to loss of existing data.",
+        "can_disable_warning": "Do you want to disable the type instead?",
+        "primary_button": "Yes, delete it",
+        "toast": {
+          "success": {
+            "title": "Success!",
+            "message": "Work item type deleted successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to delete work item type. Please try again!"
+          }
+        }
       }
     },
     "create": {
@@ -815,7 +1008,10 @@
         },
         "error": {
           "title": "Error!",
-          "message": "Failed to create work item type. Please try again!"
+          "message": {
+            "default": "Failed to create work item type. Please try again!",
+            "conflict": "{name} type already exists. Choose a different name."
+          }
         }
       }
     },
@@ -829,7 +1025,10 @@
         },
         "error": {
           "title": "Error!",
-          "message": "Failed to update work item type. Please try again!"
+          "message": {
+            "default": "Failed to update work item type. Please try again!",
+            "conflict": "{name} type already exists. Choose a different name."
+          }
         }
       }
     },
@@ -889,7 +1088,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Imports",
     "logo": "Logo",
@@ -937,7 +1135,6 @@
     "skip_user_import_description": "Skipping user import will result in work items, comments, and other data from {serviceName} being created by the user performing the migration in Plane. You can still manually add users later.",
     "invalid_pat": "Invalid Personal Access Token"
   },
-
   "integrations": {
     "integrations": "Integrations",
     "loading": "Loading",
@@ -953,7 +1150,6 @@
     "back_to_integrations": "Back to integrations",
     "select_state": "Select State"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Connect and sync your GitHub Work item with Plane.",
@@ -981,7 +1177,6 @@
     "MR_MERGED": "On PR merged, set the state to",
     "MR_CLOSED": "On PR closed, set the state to"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Connect and sync your Gitlab Merge Requests with Plane.",
@@ -1008,7 +1203,6 @@
     "choose_project": "Choose Project",
     "link_plane_project": "Link Plane project"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Connect your Slack workspace with Plane.",
@@ -1049,7 +1243,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Click here to upload file",
     "drag_drop_text": "Drag and Drop",
@@ -1058,7 +1251,6 @@
     "missing_fields": "Missing fields",
     "success": "{fileName} Uploaded!"
   },
-
   "silo_errors": {
     "invalid_query_params": "The provided query parameters are invalid or missing required fields",
     "invalid_installation_account": "The installation account provided is not valid",
@@ -1072,12 +1264,12 @@
     "invalid_app_credentials": "The provided app credentials are invalid",
     "invalid_app_installation_id": "Failed to install the app"
   },
-
   "import_status": {
     "created": "Created",
     "initiated": "Initiated",
     "pulling": "Pulling",
     "pulled": "Pulled",
+    "progressing": "Progressing",
     "transforming": "Transforming",
     "transformed": "Transformed",
     "pushing": "Pushing",
@@ -1085,7 +1277,6 @@
     "error": "Error",
     "cancelled": "Cancelled"
   },
-
   "jira_importer": {
     "jira_importer_description": "Import your Jira data into Plane projects.",
     "personal_access_token": "Personal Access Token",
@@ -1109,7 +1300,6 @@
       "description_summary": "Here is a summary of the data that will be migrated from Jira to Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Import your Asana data into Plane projects.",
     "select_asana_priority_field": "Select Asana Priority Field",
@@ -1124,6 +1314,64 @@
       "description_map_priorities": "Please select the Asana priorities which you want to map to Plane project priorities.",
       "title_summary": "Summary",
       "description_summary": "Here is a summary of the data that will be migrated from Asana to Plane."
+    }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Import your Notion data into Plane wiki.",
+    "steps": {
+      "title_upload_zip": "Upload Notion Exported ZIP",
+      "description_upload_zip": "Please upload the ZIP file containing your Notion data."
+    },
+    "upload": {
+      "drop_file_here": "Drop your Notion zip file here",
+      "upload_title": "Upload Notion Export",
+      "drag_drop_description": "Drag and drop your Notion export zip file, or click to browse",
+      "file_type_restriction": "Only .zip files exported from Notion are supported",
+      "select_file": "Select File",
+      "uploading": "Uploading...",
+      "preparing_upload": "Preparing upload...",
+      "confirming_upload": "Confirming upload...",
+      "confirming": "Confirming...",
+      "upload_complete": "Upload complete",
+      "upload_failed": "Upload failed",
+      "start_import": "Start Import",
+      "retry_upload": "Retry Upload",
+      "upload": "Upload",
+      "ready": "Ready",
+      "error": "Error",
+      "upload_complete_message": "Upload complete!",
+      "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
+      "upload_progress_message": "Please don't close this window."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Import your Confluence data into Plane wiki.",
+    "steps": {
+      "title_upload_zip": "Upload Confluence Exported ZIP",
+      "description_upload_zip": "Please upload the ZIP file containing your Confluence data."
+    },
+    "upload": {
+      "drop_file_here": "Drop your Confluence zip file here",
+      "upload_title": "Upload Confluence Export",
+      "drag_drop_description": "Drag and drop your Confluence export zip file, or click to browse",
+      "file_type_restriction": "Only .zip files exported from Confluence are supported",
+      "select_file": "Select File",
+      "uploading": "Uploading...",
+      "preparing_upload": "Preparing upload...",
+      "confirming_upload": "Confirming upload...",
+      "confirming": "Confirming...",
+      "upload_complete": "Upload complete",
+      "upload_failed": "Upload failed",
+      "start_import": "Start Import",
+      "retry_upload": "Retry Upload",
+      "upload": "Upload",
+      "ready": "Ready",
+      "error": "Error",
+      "upload_complete_message": "Upload complete!",
+      "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
+      "upload_progress_message": "Please don't close this window."
     }
   },
 
@@ -1142,7 +1390,6 @@
       "description_summary": "Here is a summary of the data that will be migrated from Linear to Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Import your Jira Server data into Plane projects.",
     "steps": {
@@ -1158,7 +1405,6 @@
       "description_summary": "Here is a summary of the data that will be migrated from Jira to Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Import your CSV data into Plane projects.",
     "steps": {
@@ -1166,6 +1412,26 @@
       "description_configure_plane": "Please first create the project in Plane where you intend to migrate your CSV data. Once the project is created, select it here.",
       "title_configure_csv": "Configure CSV",
       "description_configure_csv": "Please upload your CSV file and configure the fields to be mapped to Plane fields."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Import your ClickUp data into Plane projects.",
+    "select_service_space": "Select {serviceName} Space",
+    "select_service_folder": "Select {serviceName} Folder",
+    "selected": "Selected",
+    "users": "Users",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your ClickUp data. Once the project is created, select it here.",
+      "title_configure_clickup": "Configure ClickUp",
+      "description_configure_clickup": "Please select the ClickUp team, space and folder from which you want to migrate your data.",
+      "title_map_states": "Map States",
+      "description_map_states": "We have automatically matched the ClickUp statuses to Plane states to the best of our ability. Please map any remaining states before proceeding, you can also create states and map them manually.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "Please select the ClickUp priorities which you want to map to Plane project priorities.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane."
     }
   },
 
@@ -1496,7 +1762,6 @@
       "editing": "Editing"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Allow new work items",
@@ -1595,7 +1860,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Customer} other {Customers}}",
     "open": "Open customer",
@@ -1977,11 +2241,13 @@
       "properties": "Properties"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Templates",
       "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
+      "new_project_template": "New project template",
+      "new_work_item_template": "New work item template",
+      "new_page_template": "New page template",
       "options": {
         "project": {
           "label": "Project templates"
@@ -2096,7 +2362,8 @@
           }
         },
         "publish": {
-          "action": "Publish to Marketplace",
+          "action": "{isPublished, select, true {Publish settings} other {Publish to Marketplace}}",
+          "unpublish_action": "Unpublish from Marketplace",
           "title": "Make your template discoverable and recognizable.",
           "name": {
             "label": "Name of template",
@@ -2129,7 +2396,19 @@
           },
           "keywords": {
             "label": "Keywords",
-            "placeholder": "Use terms that you think your users will search for when looking for this template."
+            "placeholder": "Use terms that you think your users will search for when looking for this template.",
+            "helperText": "Enter comma-separated keywords that are likely to help people find this from search.",
+            "validation": {
+              "required": "At least one keyword is required"
+            }
+          },
+          "website": {
+            "label": "Website URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
           },
           "company_name": {
             "label": "Company name",
@@ -2140,12 +2419,11 @@
             }
           },
           "contact_email": {
-            "label": "Support email",
+            "label": "Contact email",
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Invalid email address",
-              "required": "Support email is required",
-              "maxLength": "Support email should be less than 255 characters"
+              "maxLength": "Contact email should be less than 255 characters"
             }
           },
           "privacy_policy_url": {
@@ -2162,6 +2440,21 @@
             "validation": {
               "invalid": "Invalid URL",
               "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "cover_image": {
+            "label": "Add a cover image that will be displayed in the marketplace",
+            "upload_title": "Upload cover image",
+            "upload_placeholder": "Click to upload or drag and drop to upload a cover image",
+            "drop_here": "Drop here",
+            "click_to_upload": "Click to upload",
+            "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit. Please try again.",
+            "upload_and_save": "Upload and save",
+            "uploading": "Uploading",
+            "remove": "Remove",
+            "removing": "Removing",
+            "validation": {
+              "required": "Cover image is required"
             }
           },
           "attach_screenshots": {
@@ -2226,6 +2519,16 @@
           "title": "We couldn't delete that template this.",
           "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Template unpublished",
+          "message": "{templateName}, the {templateType} template, has now been unpublished."
+        },
+        "error": {
+          "title": "We couldn't unpublish that template this.",
+          "message": "Try unpublishing it again or come back to it later. If you can't unpublish it then, reach out to us."
+        }
       }
     },
     "delete_confirmation": {
@@ -2233,6 +2536,13 @@
       "description": {
         "prefix": "Are you sure you want to delete template-",
         "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Unpublish template",
+      "description": {
+        "prefix": "Are you sure you want to unpublish template-",
+        "suffix": "? This template will no longer be available to users on the marketplace."
       }
     },
     "dropdown": {
@@ -2250,6 +2560,49 @@
       "no_results": {
         "work_item": "No templates found.",
         "project": "No templates found."
+      }
+    }
+  },
+  "intake_forms": {
+    "create": {
+      "title": "Create a work item",
+      "sub-title": "Let the team know what you would like them to work on.",
+      "name": "Name",
+      "email": "Email",
+      "about": "What's this work item about?",
+      "description": "Describe what should happen",
+      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
+      "loading": "Creating",
+      "create_work_item": "Create work item",
+      "errors": {
+        "name": "Name is required",
+        "name_max_length": "Name should be less than 255 characters",
+        "email": "Email is required",
+        "email_invalid": "Invalid email address",
+        "title": "Title is required",
+        "title_max_length": "Title should be less than 255 characters"
+      }
+    },
+    "success": {
+      "title": "Yay! Your work item is now in the team's queue.",
+      "description": "The team can now either approve or discard this work item from their Intake queue.",
+      "primary_button": {
+        "text": "Add another work item"
+      },
+      "secondary_button": {
+        "text": "Learn more about Intake"
+      }
+    },
+    "how_it_works": {
+      "title": "How it works?",
+      "heading": "This is an Intake form.",
+      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
+      "steps": {
+        "step_1": "This short form lets you create a new work item in a Plane project.",
+        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
+        "step_3": "Someone from that project or team will review this.",
+        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
+        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
       }
     }
   }

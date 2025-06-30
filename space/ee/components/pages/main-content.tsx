@@ -13,7 +13,7 @@ import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { usePublish } from "@/hooks/store";
 // plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
+import { WorkItemEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
 // local imports
@@ -70,6 +70,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             ref={editorRef}
             id={pageDetails.id}
             disabledExtensions={[]}
+            flaggedExtensions={[]}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getReadOnlyEditorFileHandlers({
@@ -81,7 +82,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             }}
             embedHandler={{
               issue: {
-                widgetCallback: ({ issueId }) => <IssueEmbedCard anchor={anchor} issueId={issueId} />,
+                widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
               },
               page: {
                 widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,

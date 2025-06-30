@@ -21,22 +21,23 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
 // components
+import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useCommandPalette, useIssues, useLabel, useMember, useUserPermissions } from "@/hooks/store";
-// plane web constants
-// plane web hooks
-import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
+// plane web imports
+import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
+import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   // router
-  const { workspaceSlug, teamspaceId, viewId } = useParams();
-    // plane hooks
-    const { t } = useTranslation();
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -47,14 +48,15 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { loader, getTeamspaceById } = useTeamspaces();
+  const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
   const { getTeamspaceViewsLoader, getViewById } = useTeamspaceViews();
   // derived values
-  const teamspaceViewLoader = getTeamspaceViewsLoader(teamspaceId?.toString());
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
+  const teamspaceViewLoader = teamspaceId ? getTeamspaceViewsLoader(teamspaceId) : undefined;
+  const teamspace = teamspaceId ? getTeamspaceById(teamspaceId) : undefined;
   const view = teamspace && viewId ? getViewById(teamspace.id, viewId.toString()) : null;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const publishLink = getPublishViewLink(view?.anchor);
+  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
   // permissions
   const canUserCreateIssue = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -137,9 +139,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
         <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label={t("teamspaces.label")}
@@ -147,9 +148,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {loader === "init-loader" ? (
                     <Loader.Item height="20px" width="140px" />
@@ -163,9 +163,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 </>
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
@@ -173,9 +172,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {teamspaceViewLoader === "init-loader" && !view ? (
                     <Loader.Item height="20px" width="140px" />
@@ -183,10 +181,10 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                     <BreadcrumbLink
                       label={view.name}
                       icon={
-                        view.logo_props?.in_use ? (
-                          <Logo logo={view.logo_props} />
+                        view?.logo_props?.in_use ? (
+                          <Logo logo={view?.logo_props} size={16} type="lucide" />
                         ) : (
-                          <Layers className="h-4 w-4 text-custom-text-300" />
+                          <Layers className="size-4 text-custom-text-300" />
                         )
                       }
                     />
@@ -268,8 +266,11 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
           <></>
         )}
         {canUserCreateIssue ? (
-          <Button onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW)} size="sm">
-            {t("issue.add")}
+          <Button
+            onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds)}
+            size="sm"
+          >
+            <div className="hidden sm:block">Add</div> work item
           </Button>
         ) : (
           <></>

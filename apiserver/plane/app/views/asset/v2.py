@@ -385,19 +385,34 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if entity_type in [
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
-            FileAsset.EntityTypeContext.CUSTOMER_LOGO
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
         ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:
@@ -608,12 +623,28 @@ class ProjectAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -778,3 +809,67 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
                 pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AssetCheckEndpoint(BaseAPIView):
+    """Endpoint to check if an asset exists."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        asset = FileAsset.all_objects.filter(
+            id=asset_id, workspace__slug=slug, deleted_at__isnull=True
+        ).exists()
+        return Response({"exists": asset}, status=status.HTTP_200_OK)
+
+
+class WorkspaceAssetDownloadEndpoint(BaseAPIView):
+    """Endpoint to generate a download link for an asset with content-disposition=attachment."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        try:
+            asset = FileAsset.objects.get(
+                id=asset_id,
+                workspace__slug=slug,
+                is_uploaded=True,
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        storage = S3Storage(request=request)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition=f"attachment; filename={asset.asset.name}",
+        )
+
+        return HttpResponseRedirect(signed_url)
+
+
+class ProjectAssetDownloadEndpoint(BaseAPIView):
+    """Endpoint to generate a download link for an asset with content-disposition=attachment."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, asset_id):
+        try:
+            asset = FileAsset.objects.get(
+                id=asset_id,
+                workspace__slug=slug,
+                project_id=project_id,
+                is_uploaded=True,
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        storage = S3Storage(request=request)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition=f"attachment; filename={asset.asset.name}",
+        )
+
+        return HttpResponseRedirect(signed_url)

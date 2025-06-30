@@ -6,6 +6,8 @@
  */
 
 import { AsanaDataMigrator } from "@/apps/asana-importer/migrator";
+import { ClickUpAdditionalDataMigrator } from "@/apps/clickup-importer/migrator/clickup-additional.migrator";
+import { ClickUpDataMigrator } from "@/apps/clickup-importer/migrator/clickup.migrator";
 import { FlatfileMigrator } from "@/apps/flatfile/migrator/flatfile.migrator";
 import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
@@ -14,11 +16,12 @@ import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
 import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
 import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
+import { NotionDataMigrator } from "@/apps/notion-importer/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "./base";
+import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
 
@@ -47,6 +50,10 @@ class WorkerFactory {
         return new LinearDocsMigrator(mq, store);
       case "asana":
         return new AsanaDataMigrator(mq, store);
+      case "notion":
+        return new NotionDataMigrator(mq, store, s3Client);
+      case "confluence":
+        return new NotionDataMigrator(mq, store, s3Client);
       case "github-webhook":
         return new GithubWebhookWorker(mq, store);
       case "gitlab-webhook":
@@ -59,6 +66,10 @@ class WorkerFactory {
         return new PlaneSlackWebhookWorker(mq, store);
       case "flatfile":
         return new FlatfileMigrator(mq, store);
+      case "clickup":
+        return new ClickUpDataMigrator(mq, store);
+      case "clickup_additional_data":
+        return new ClickUpAdditionalDataMigrator(mq, store);
       default:
         throw new Error(`Unsupported worker type: ${type}`);
     }
@@ -84,14 +95,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-      type: "mq";
-      headers: TaskHeaders;
-      data: any;
-    }
+    type: "mq";
+    headers: TaskHeaders;
+    data: any;
+  }
   | {
-      type: "store";
-      event: string;
-    };
+    type: "store";
+    event: string;
+  };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -164,7 +175,7 @@ export class TaskManager {
       try {
         const data = JSON.parse(msg.content.toString());
         const headers = msg.properties.headers;
-        logger.info("Received message:", headers);
+        // logger.info("Received message:", headers);
         const props: TaskProps = {
           type: "mq",
           headers: headers.headers,

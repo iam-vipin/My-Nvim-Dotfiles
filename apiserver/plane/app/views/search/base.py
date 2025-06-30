@@ -36,6 +36,7 @@ from plane.db.models import (
     ProjectPage,
     WorkspaceMember,
 )
+from plane.db.models.user import BotTypeEnum
 from plane.ee.models import (
     TeamspaceMember,
     TeamspacePage,
@@ -43,7 +44,6 @@ from plane.ee.models import (
     Initiative,
     Teamspace,
 )
-
 
 class GlobalSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the workspace and
@@ -91,12 +91,8 @@ class GlobalSearchEndpoint(BaseAPIView):
                 q |= Q(**{f"{field}__icontains": query})
 
         issues = Issue.issue_objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            workspace__slug=slug,
-        )
+            q, project__archived_at__isnull=True, workspace__slug=slug
+        ).accessible_to(self.request.user.id, slug)
 
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
@@ -118,13 +114,8 @@ class GlobalSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
 
         cycles = Cycle.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            workspace__slug=slug,
-        )
-
+            q, project__archived_at__isnull=True, workspace__slug=slug
+        ).accessible_to(self.request.user.id, slug)
         if workspace_search == "false" and project_id:
             cycles = cycles.filter(project_id=project_id)
 
@@ -139,12 +130,8 @@ class GlobalSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
 
         modules = Module.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            workspace__slug=slug,
-        )
+            q, project__archived_at__isnull=True, workspace__slug=slug
+        ).accessible_to(self.request.user.id, slug)
 
         if workspace_search == "false" and project_id:
             modules = modules.filter(project_id=project_id)
@@ -161,11 +148,7 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         pages = (
             Page.objects.filter(
-                q,
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-                workspace__slug=slug,
+                q, projects__archived_at__isnull=True, workspace__slug=slug
             )
             .annotate(
                 project_ids=Coalesce(
@@ -207,12 +190,8 @@ class GlobalSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
 
         issue_views = IssueView.objects.filter(
-            q,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            workspace__slug=slug,
-        )
+            q, project__archived_at__isnull=True, workspace__slug=slug
+        ).accessible_to(self.request.user.id, slug)
 
         if workspace_search == "false" and project_id:
             issue_views = issue_views.filter(project_id=project_id)
@@ -246,12 +225,10 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         epics = Issue.objects.filter(
             q,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
             workspace__slug=slug,
             type__is_epic=True,
-        )
+        ).accessible_to(self.request.user.id, slug)
 
         if workspace_search == "false" and project_id:
             epics = epics.filter(project_id=project_id)
@@ -338,6 +315,8 @@ class SearchEndpoint(BaseAPIView):
 
         response_data = {}
 
+        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value) # noqa: E501
+
         if team_id:
             team_projects = TeamspaceProject.objects.filter(
                 team_space_id=team_id, workspace__slug=slug
@@ -359,8 +338,8 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         TeamspaceMember.objects.filter(
                             q,
+                            bot_filter,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             team_space_id=team_id,
                         )
                         .annotate(
@@ -427,25 +406,22 @@ class SearchEndpoint(BaseAPIView):
 
                     issues = (
                         Issue.issue_objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project_id__in=team_projects,
+                            q, workspace__slug=slug, project_id__in=team_projects
                         )
                         .order_by("-created_at")
+                        .accessible_to(self.request.user.id, slug)
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "sequence_id",
-                            "project__identifier",
-                            "project_id",
-                            "priority",
-                            "state_id",
-                            "type_id",
-                        )[:count]
                     )
+                    issues = issues.values(
+                        "name",
+                        "id",
+                        "sequence_id",
+                        "project__identifier",
+                        "project_id",
+                        "priority",
+                        "state_id",
+                        "type_id",
+                    )[:count]
                     response_data["issue"] = list(issues)
 
                 elif query_type == "cycle":
@@ -458,11 +434,7 @@ class SearchEndpoint(BaseAPIView):
 
                     cycles = (
                         Cycle.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project__in=team_projects,
+                            q, workspace__slug=slug, project__in=team_projects
                         )
                         .annotate(
                             status=Case(
@@ -489,15 +461,8 @@ class SearchEndpoint(BaseAPIView):
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
                     )
+
                     response_data["cycle"] = list(cycles)
 
                 elif query_type == "module":
@@ -510,23 +475,21 @@ class SearchEndpoint(BaseAPIView):
 
                     modules = (
                         Module.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project_id__in=team_projects,
+                            q, workspace__slug=slug, project_id__in=team_projects
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    modules = modules.values(
+                        "name",
+                        "id",
+                        "project_id",
+                        "project__identifier",
+                        "status",
+                        "workspace__slug",
+                    )[:count]
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":
@@ -588,9 +551,9 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         ProjectMember.objects.filter(
                             q,
+                            bot_filter,
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             project_id=project_id,
                         )
                         .annotate(
@@ -679,25 +642,24 @@ class SearchEndpoint(BaseAPIView):
 
                     issues = (
                         Issue.issue_objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project_id=project_id,
+                            q, workspace__slug=slug, project_id=project_id
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "sequence_id",
-                            "project__identifier",
-                            "project_id",
-                            "priority",
-                            "state_id",
-                            "type_id",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    issues = issues.values(
+                        "name",
+                        "id",
+                        "sequence_id",
+                        "project__identifier",
+                        "project_id",
+                        "priority",
+                        "state_id",
+                        "type_id",
+                    )[:count]
+
                     response_data["issue"] = list(issues)
 
                 elif query_type == "cycle":
@@ -710,11 +672,7 @@ class SearchEndpoint(BaseAPIView):
 
                     cycles = (
                         Cycle.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project_id=project_id,
+                            q, workspace__slug=slug, project_id=project_id
                         )
                         .annotate(
                             status=Case(
@@ -741,15 +699,19 @@ class SearchEndpoint(BaseAPIView):
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+
+                    cycles = cycles.values(
+                        "name",
+                        "id",
+                        "project_id",
+                        "project__identifier",
+                        "status",
+                        "workspace__slug",
+                    )[:count]
+
                     response_data["cycle"] = list(cycles)
 
                 elif query_type == "module":
@@ -762,23 +724,22 @@ class SearchEndpoint(BaseAPIView):
 
                     modules = (
                         Module.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            project_id=project_id,
+                            q, workspace__slug=slug, project_id=project_id
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    modules = modules.values(
+                        "name",
+                        "id",
+                        "project_id",
+                        "project__identifier",
+                        "status",
+                        "workspace__slug",
+                    )[:count]
+
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":
@@ -827,9 +788,9 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         WorkspaceMember.objects.filter(
                             q,
+                            bot_filter,
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                         )
                         .annotate(
                             member__avatar_url=Case(
@@ -892,25 +853,22 @@ class SearchEndpoint(BaseAPIView):
                                 q |= Q(**{f"{field}__icontains": query})
 
                     issues = (
-                        Issue.issue_objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                        )
+                        Issue.issue_objects.filter(q, workspace__slug=slug)
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "sequence_id",
-                            "project__identifier",
-                            "project_id",
-                            "priority",
-                            "state_id",
-                            "type_id",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    issues = issues.values(
+                        "name",
+                        "id",
+                        "sequence_id",
+                        "project__identifier",
+                        "project_id",
+                        "priority",
+                        "state_id",
+                        "type_id",
+                    )[:count]
                     response_data["issue"] = list(issues)
 
                 elif query_type == "cycle":
@@ -922,12 +880,7 @@ class SearchEndpoint(BaseAPIView):
                             q |= Q(**{f"{field}__icontains": query})
 
                     cycles = (
-                        Cycle.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                        )
+                        Cycle.objects.filter(q, workspace__slug=slug)
                         .annotate(
                             status=Case(
                                 When(
@@ -953,15 +906,17 @@ class SearchEndpoint(BaseAPIView):
                         )
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    cycles = cycles.values(
+                        "name",
+                        "id",
+                        "project_id",
+                        "project__identifier",
+                        "status",
+                        "workspace__slug",
+                    )[:count]
                     response_data["cycle"] = list(cycles)
 
                 elif query_type == "module":
@@ -973,23 +928,21 @@ class SearchEndpoint(BaseAPIView):
                             q |= Q(**{f"{field}__icontains": query})
 
                     modules = (
-                        Module.objects.filter(
-                            q,
-                            project__project_projectmember__member=self.request.user,
-                            project__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                        )
+                        Module.objects.filter(q, workspace__slug=slug)
                         .order_by("-created_at")
                         .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "project_id",
-                            "project__identifier",
-                            "status",
-                            "workspace__slug",
-                        )[:count]
+                        .accessible_to(self.request.user.id, slug)
                     )
+
+                    modules = modules.values(
+                        "name",
+                        "id",
+                        "project_id",
+                        "project__identifier",
+                        "status",
+                        "workspace__slug",
+                    )[:count]
+
                     response_data["module"] = list(modules)
 
                 elif query_type == "page":

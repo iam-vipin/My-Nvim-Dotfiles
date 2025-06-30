@@ -563,25 +563,67 @@ OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": is_pkce_required,
 }
 
-# ElasticSearch settings
-ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
-if ELASTICSEARCH_ENABLED:
-    # Elastic Search Config
-    ELASTICSEARCH_DSL = {
+# OpenSearch settings
+OPENSEARCH_ENABLED = os.environ.get("OPENSEARCH_ENABLED", "0") == "1"
+OPENSEARCH_INDEX_PREFIX = os.environ.get("OPENSEARCH_INDEX_PREFIX", "")
+OPENSEARCH_SHARD_COUNT = os.environ.get("OPENSEARCH_SHARD_COUNT", 1)
+OPENSEARCH_REPLICA_COUNT = os.environ.get("OPENSEARCH_REPLICA_COUNT", 0)
+
+# Text Search Performance Optimization
+OPENSEARCH_SEARCH_TIMEOUT = int(
+    os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
+)  # seconds
+OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
+OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
+
+# Optimizations for 2-active-data-node setup with heavy indexing
+OPENSEARCH_BULK_CHUNK_SIZE = int(
+    os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500")
+)  # Smaller chunks
+OPENSEARCH_INDEXING_TIMEOUT = int(
+    os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120")
+)  # Longer indexing timeout
+
+OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE = os.environ.get(
+    "OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE", None
+)
+OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get(
+    "OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None
+)
+
+if OPENSEARCH_ENABLED:
+    # OpenSearch Config
+    OPENSEARCH_DSL = {
         "default": {
-            "hosts": os.environ.get("ELASTICSEARCH_URL"),
-            "api_key": os.environ.get("ELASTICSEARCH_API_KEY"),
+            "hosts": os.environ.get("OPENSEARCH_URL"),
+            "http_auth": (
+                os.environ.get("OPENSEARCH_USERNAME"),
+                os.environ.get("OPENSEARCH_PASSWORD"),
+            ),
+            "use_ssl": True,
+            "verify_certs": False,
+            "ssl_show_warn": False,
+            "timeout": OPENSEARCH_SEARCH_TIMEOUT,
+            # Connection pool optimization for 2-data-node setup
+            "maxsize": 15,  # Reduced from 25 to not overwhelm 2 data nodes
+            "max_retries": 3,
+            "retry_on_timeout": True,
+            # Bulk indexing optimizations
+            "http_compress": True,  # Reduce network overhead
         }
     }
-    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
-        "ELASTICSEARCH_SIGNAL_PROCESSOR",
-        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
+    OPENSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
+        "OPENSEARCH_DSL_SIGNAL_PROCESSOR",
+        "django_opensearch_dsl.signals.CelerySignalProcessor",
     )
 
-    INSTALLED_APPS += ["django_elasticsearch_dsl"]
+    INSTALLED_APPS += ["django_opensearch_dsl"]
 
 # Web URL
 WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
+
+# admin email for user deletion
+MOBILE_USER_DELETE_ADMIN_EMAILS = os.environ.get("MOBILE_USER_DELETE_ADMIN_EMAILS", "")
 
 # Intake Email Domain
 INTAKE_EMAIL_DOMAIN = os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")

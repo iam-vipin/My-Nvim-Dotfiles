@@ -1,5 +1,5 @@
-// helpers
-import { PI_BASE_URL } from "@/helpers/common.helper";
+// constants
+import { PI_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 import { TFeedback, TQuery, TSearchQuery, TTemplate, TChatHistory, TUserThreads, TAiModels } from "../types";
@@ -88,13 +88,13 @@ export class PiChatService extends APIService {
     return this.post(`/api/v1/chat/get-chat-history-object/`, { chat_id: chatId })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error;
       });
   }
 
   // get user threads
-  async getUserThreads(userId: string): Promise<TUserThreadsResponse> {
-    return this.post(`/api/v1/chat/get-user-threads/`, { user_id: userId })
+  async getUserThreads(userId: string, workspaceId: string): Promise<TUserThreadsResponse> {
+    return this.post(`/api/v1/chat/get-user-threads/`, { user_id: userId, workspace_id: workspaceId })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

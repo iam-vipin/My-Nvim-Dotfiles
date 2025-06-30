@@ -3,13 +3,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel, EUserProjectRoles, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { TInboxForm } from "@plane/types";
 import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, copyTextToClipboard, } from "@plane/utils";
 import { TProperties } from "@/ce/constants";
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
@@ -133,7 +131,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                   <div className="flex gap-2 w-full">
                     <div className="flex justify-center rounded mt-1">{feature.icon}</div>
                     <div className="w-full">
-                      <div className={cn("flex justify-between gap-2", {})}>
+                      <div className={cn("flex justify-between gap-4", {})}>
                         <div className="flex-1 w-full">
                           <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
                           <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>

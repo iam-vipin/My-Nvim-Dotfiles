@@ -5,9 +5,7 @@ import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { ensureUrlHasProtocol, getTemplateSettingsBasePath, getTemplateTypeI18nName } from "@plane/utils";
-// helpers
-import { getAssetIdFromUrl } from "@/helpers/file.helper";
+import { ensureUrlHasProtocol, getAssetIdFromUrl, getTemplateSettingsBasePath, getTemplateTypeI18nName } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -41,11 +39,15 @@ export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props:
         // Process URLs and attachments in a more structured way
         const processedData = {
           ...data,
+          // Process cover image asset
+          cover_image_asset: data.cover_image_url ? getAssetIdFromUrl(data.cover_image_url) : undefined,
           // Process attachments if they exist
           attachments: data.attachments_urls?.map((attachment) => getAssetIdFromUrl(attachment)) || [],
           // Ensure URLs have http protocol
           privacy_policy_url: data.privacy_policy_url ? ensureUrlHasProtocol(data.privacy_policy_url) : undefined,
           terms_of_service_url: data.terms_of_service_url ? ensureUrlHasProtocol(data.terms_of_service_url) : undefined,
+          // Set is_published to true
+          is_published: true,
         };
         // Update template with processed data
         await templateInstance.update(processedData as T); // This is done just to satisfy the typescript (publish data is always partial of the base template)
@@ -75,7 +77,7 @@ export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props:
   };
 
   return (
-    <div className="w-full max-w-4xl px-page-x py-page-y mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between border-b border-custom-border-200 pb-3 tracking-tight w-full">
         <h3 className="text-lg font-semibold">{t("templates.settings.form.publish.title")}</h3>
       </div>

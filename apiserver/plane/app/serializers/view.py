@@ -5,6 +5,80 @@ from rest_framework import serializers
 from .base import DynamicBaseSerializer
 from plane.db.models import IssueView
 from plane.utils.issue_filters import issue_filters
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
+
+class ViewIssueListSerializer(serializers.Serializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
+
+        # Check if the user has access to the customer request count
+        if slug and user_id:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
+            ):
+                self.fields["customer_request_ids"] = serializers.ListField(
+                    read_only=True
+                )
+                self.fields["customer_ids"] = serializers.ListField(read_only=True)
+
+    def get_assignee_ids(self, instance):
+        return [assignee.assignee_id for assignee in instance.issue_assignee.all()]
+
+    def get_label_ids(self, instance):
+        return [label.label_id for label in instance.label_issue.all()]
+
+    def get_module_ids(self, instance):
+        return [module.module_id for module in instance.issue_module.all()]
+
+    def get_customer_ids(self, instance):
+        return [
+            customer.customer_id for customer in instance.customer_request_issues.all()
+        ]
+
+    def get_customer_request_ids(self, instance):
+        return [
+            customer_request.customer_request_id
+            for customer_request in instance.customer_request_issues.all()
+        ]
+
+    def to_representation(self, instance):
+        data = {
+            "id": instance.id,
+            "name": instance.name,
+            "state_id": instance.state_id,
+            "sort_order": instance.sort_order,
+            "completed_at": instance.completed_at,
+            "estimate_point": instance.estimate_point_id,
+            "priority": instance.priority,
+            "start_date": instance.start_date,
+            "target_date": instance.target_date,
+            "sequence_id": instance.sequence_id,
+            "project_id": instance.project_id,
+            "parent_id": instance.parent_id,
+            "cycle_id": instance.cycle_id,
+            "sub_issues_count": instance.sub_issues_count,
+            "created_at": instance.created_at,
+            "updated_at": instance.updated_at,
+            "created_by": instance.created_by_id,
+            "updated_by": instance.updated_by_id,
+            "attachment_count": instance.attachment_count,
+            "link_count": instance.link_count,
+            "is_draft": instance.is_draft,
+            "archived_at": instance.archived_at,
+            "state__group": instance.state.group if instance.state else None,
+            "type_id": instance.type_id,
+            "assignee_ids": self.get_assignee_ids(instance),
+            "label_ids": self.get_label_ids(instance),
+            "module_ids": self.get_module_ids(instance),
+            "customer_ids": self.get_customer_ids(instance),
+            "customer_request_ids": self.get_customer_request_ids(instance),
+        }
+        return data
 
 
 class IssueViewSerializer(DynamicBaseSerializer):

@@ -5,34 +5,32 @@ import { useEffect, useMemo, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
-// helpers
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 import { useRealtimeEvents } from "@/hooks/use-realtime-events";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeEditorHookProps } from "@/types";
+// local imports
 import { useEditorNavigation } from "./use-editor-navigation";
 import { useTitleEditor } from "./use-title-editor";
 
-/**
- * Hook that creates a collaborative editor with title and main editor components
- * Handles real-time collaboration, local persistence, and keyboard navigation between editors
- */
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
     onChange,
     onTransaction,
     isSmoothCursorEnabled,
     disabledExtensions,
     editable,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
     embedHandler,
-    extensions,
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
@@ -125,7 +123,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   // Initialize main document editor
   const editor = useEditor({
-    embedConfig: embedHandler,
     disabledExtensions,
     id,
     editable,
@@ -139,20 +136,18 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         dragDropEnabled: true,
       }),
       HeadingListExtension,
-
       // Collaboration extension
       Collaboration.configure({
         document: provider.document,
         field: "default",
       }),
-
-      // User-provided extensions
-      ...(extensions ?? []),
-
-      // Additional document editor extensions
+      ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
         embedConfig: embedHandler,
+        fileHandler,
+        flaggedExtensions,
+        isEditable: editable,
         provider,
         userDetails: user,
       }),
@@ -161,9 +156,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       mainNavigationExtension,
     ],
     fileHandler,
+    flaggedExtensions,
+    forwardedRef,
     handleEditorReady,
     isSmoothCursorEnabled,
-    forwardedRef,
     mentionHandler,
     onChange,
     onTransaction,
@@ -216,7 +212,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         // Focus the title editor if it's empty
         titleEditor.commands.focus("start");
       } else {
-        editor.commands.focus("start");
+        if (editor.state.doc.firstChild?.type.name === CORE_EXTENSIONS.PARAGRAPH) {
+          // If the title editor is empty, focus the main editor at the start
+          editor.commands.focus("start");
+        } else {
+          // Otherwise, focus the title editor at the end
+          titleEditor.commands.focus("end");
+        }
       }
       // Mark initial focus as set to prevent re-running
       setInitialFocusSet(true);

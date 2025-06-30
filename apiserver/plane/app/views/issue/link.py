@@ -15,6 +15,7 @@ from plane.app.serializers import IssueLinkSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 from plane.utils.host import base_host
 
 
@@ -31,19 +32,20 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project__archived_at__isnull=True)
             .order_by("-created_at")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
+
 
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -55,6 +57,10 @@ class IssueLinkViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -66,9 +72,14 @@ class IssueLinkViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
+
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
+
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -80,6 +91,9 @@ class IssueLinkViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

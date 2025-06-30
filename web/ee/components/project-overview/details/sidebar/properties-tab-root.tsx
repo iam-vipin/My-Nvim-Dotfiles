@@ -1,31 +1,33 @@
 "use client";
 
-import React, { FC } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
-import { Button, DoubleCircleIcon } from "@plane/ui";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useMember, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
 import { PriorityDropdown, StateDropdown } from "@/plane-web/components/projects";
 import MembersDropdown from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // assets
 import ImagelLight from "@/public/empty-state/empty-updates-light.png";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;
@@ -36,11 +38,14 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById, updateProject } = useProject();
-  const { workspaceProjectsPermissions } = useUserPermissions();
+  const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { getUserDetails } = useMember();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-
+  const {
+    initiative: { isInitiativeModalOpen, isInitiativesFeatureEnabled, toggleInitiativeModal },
+  } = useInitiatives();
+  const { t } = useTranslation();
   // derived values
   const project = getProjectById(projectId.toString());
 
@@ -55,10 +60,12 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
 
-  const isEditingAllowed =
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
+  const isEditingAllowed = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {
@@ -67,6 +74,12 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
 
   return (
     <>
+      <InitiativeMultiSelectModal
+        isOpen={isInitiativeModalOpen === projectId}
+        onClose={() => toggleInitiativeModal()}
+        selectedInitiativeIds={project.initiative_ids ?? []}
+        onSubmit={(initiativeIds) => handleUpdateProject({ initiative_ids: initiativeIds })}
+      />
       {isProjectGroupingEnabled ? (
         <SidebarContentWrapper title="Properties">
           <div className={`mb-2 space-y-2.5 ${!isEditingAllowed ? "opacity-60" : ""}`}>
@@ -157,7 +170,29 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                 }
               />
             </div>
-
+            {isInitiativesFeatureEnabled && (
+              <div className="flex h-8 items-center gap-2">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                  <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
+                  <span>Initiatives</span>
+                </div>
+                <Button
+                  variant="link-neutral"
+                  className={cn(
+                    "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start w-full font-normal",
+                    {
+                      "text-custom-text-350": !project.initiative_ids?.length,
+                    }
+                  )}
+                  onClick={() => toggleInitiativeModal(projectId)}
+                  disabled={!isEditingAllowed || isArchived}
+                >
+                  {project.initiative_ids?.length
+                    ? t("initiatives.placeholder", { count: project.initiative_ids?.length })
+                    : t("initiatives.add_initiative")}
+                </Button>
+              </div>
+            )}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarClock className="h-4 w-4 flex-shrink-0" />

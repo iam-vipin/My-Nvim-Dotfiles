@@ -22,7 +22,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
 
   if (!workspaceSlug) return <></>;
   return (
-    <Header className="my-auto">
+    <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
         {isSidebarToggleVisible() && (
           <div className="block bg-custom-sidebar-background-100 md:hidden">
@@ -30,9 +30,8 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
           </div>
         )}
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={t("notification.label")}
                 icon={<Inbox className="h-4 w-4 text-custom-text-300" />}

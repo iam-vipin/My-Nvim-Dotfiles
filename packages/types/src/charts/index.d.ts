@@ -1,7 +1,5 @@
-
-
 // ============================================================
-// Chart Base 
+// Chart Base
 // ============================================================
 export * from "./common";
 export type TChartLegend = {
@@ -48,11 +46,14 @@ type TChartProps<K extends string, T extends string> = {
     y?: number;
   };
   showTooltip?: boolean;
+  customTooltipContent?: (props: { active?: boolean; label: string; payload: any }) => React.ReactNode;
 };
 
 // ============================================================
-// Bar Chart 
+// Bar Chart
 // ============================================================
+
+export type TBarChartShapeVariant = "bar" | "lollipop" | "lollipop-dotted";
 
 export type TBarItem<T extends string> = {
   key: T;
@@ -63,6 +64,7 @@ export type TBarItem<T extends string> = {
   stackId: string;
   showTopBorderRadius?: (barKey: string, payload: any) => boolean;
   showBottomBorderRadius?: (barKey: string, payload: any) => boolean;
+  shapeVariant?: TBarChartShapeVariant;
 };
 
 export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {
@@ -71,7 +73,7 @@ export type TBarChartProps<K extends string, T extends string> = TChartProps<K, 
 };
 
 // ============================================================
-// Line Chart 
+// Line Chart
 // ============================================================
 
 export type TLineItem<T extends string> = {
@@ -90,7 +92,7 @@ export type TLineChartProps<K extends string, T extends string> = TChartProps<K,
 };
 
 // ============================================================
-// Scatter Chart 
+// Scatter Chart
 // ============================================================
 
 export type TScatterPointItem<T extends string> = {
@@ -105,7 +107,7 @@ export type TScatterChartProps<K extends string, T extends string> = TChartProps
 };
 
 // ============================================================
-// Area Chart 
+// Area Chart
 // ============================================================
 
 export type TAreaItem<T extends string> = {
@@ -130,7 +132,7 @@ export type TAreaChartProps<K extends string, T extends string> = TChartProps<K,
 };
 
 // ============================================================
-// Pie Chart 
+// Pie Chart
 // ============================================================
 
 export type TCellItem<T extends string> = {
@@ -161,7 +163,7 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
 };
 
 // ============================================================
-// Tree Map 
+// Tree Map
 // ============================================================
 
 export type TreeMapItem = {
@@ -171,13 +173,13 @@ export type TreeMapItem = {
   textClassName?: string;
   icon?: React.ReactElement;
 } & (
-    | {
+  | {
       fillColor: string;
     }
-    | {
+  | {
       fillClassName: string;
     }
-  );
+);
 
 export type TreeMapChartProps = {
   data: TreeMapItem[];
@@ -217,8 +219,8 @@ export type TRadarItem<T extends string> = {
   dot?: {
     r: number;
     fillOpacity: number;
-  }
-}
+  };
+};
 
 export type TRadarChartProps<K extends string, T extends string> = Pick<
   TChartProps<K, T>,
@@ -231,4 +233,4 @@ export type TRadarChartProps<K extends string, T extends string> = Pick<
     label?: string;
     strokeColor?: string;
   };
-}
+};

@@ -9,7 +9,6 @@
     "business": "ビジネス",
     "customers": "顧客"
   },
-
   "workspace_dashboards": "ダッシュボード",
   "pi_chat": "PIチャット",
   "in_app": "アプリ内",
@@ -20,16 +19,15 @@
   "learn_more_about_workspaces": "ワークスペースについて詳しくはこちら",
   "no_workspaces_to_connect": "接続するワークスペースがありません",
   "no_workspaces_to_connect_description": "接続するワークスペースを作成する必要があります",
-
   "common": {
     "worklogs": "作業ログ",
     "live": "ライブ",
     "epics": "エピック",
     "project_updates": "プロジェクトの更新",
     "overview": "概要",
-    "workflows": "ワークフロー"
+    "workflows": "ワークフロー",
+    "members_and_teamspaces": "メンバーとチームスペース"
   },
-
   "updates": {
     "add_update": "更新を追加",
     "add_update_placeholder": "ここに更新を入力してください",
@@ -97,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "開始前",
@@ -107,12 +104,41 @@
     }
   },
 
+  "pages": {
+    "link_pages": "ページを接続",
+    "show_wiki_pages": "Wikiページを表示",
+    "link_pages_to": "ページを接続",
+    "linked_pages": "リンクされたページ",
+    "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "ページが更新されました",
+          "message": "ページが正常に更新されました"
+        },
+        "error": {
+          "title": "ページが更新されませんでした",
+          "message": "ページを更新できませんでした"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "ページが削除されました",
+          "message": "ページが正常に削除されました"
+        },
+        "error": {
+          "title": "ページが削除されませんでした",
+          "message": "ページを削除できませんでした"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "接続"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "イニシアチブ",
@@ -177,7 +203,6 @@
       "disabled": "無効"
     }
   },
-
   "teamspaces": {
     "label": "チームスペース",
     "empty_state": {
@@ -190,16 +215,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "このチームスペースにプロジェクトをリンクすることから始めましょう。",
-        "description": "チームスペースはチームメンバーが所属するプロジェクトをリンクし、彼らの作業、プロジェクトの進捗への貢献、チーム固有の作業指標を確認できます。"
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "まだチームスペースをリンクしていません。",
+          "description": "チームスペースとプロジェクトの所有者はプロジェクトへのアクセスを管理できます。"
+        }
+      },
+      "primary_button": {
+        "text": "チームスペースをリンク"
+      },
+      "secondary_button": {
+        "text": "詳細を見る"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "チームスペース名",
+          "members": "メンバー",
+          "accountType": "アカウントタイプ"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "チームスペースを削除"
+            },
+            "confirm": {
+              "title": "{projectName}から{teamspaceName}を削除",
+              "description": "リンクされたプロジェクトからこのチームスペースを削除すると、ここのメンバーはリンクされたプロジェクトへのアクセス権を失います。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {このプロジェクトにチームスペースをリンクしました。} other {このプロジェクトに#つのチームスペースをリンクしました。}}",
+            "description": "{additionalCount, plural, =0 {チームスペース{firstTeamspaceName}がこのプロジェクトにリンクされました。} other {チームスペース{firstTeamspaceName}と{additionalCount}つのチームスペースがこのプロジェクトにリンクされました。}}"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "このプロジェクトからチームスペースを削除しました。",
+            "description": "チームスペース{teamspaceName}が{projectName}から削除されました。"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "チームスペースを検索",
+        "info": {
+          "title": "チームスペースを追加すると、そのチームスペースの全メンバーがこのプロジェクトにアクセスできるようになります。",
+          "link": "詳細を見る"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "リンクできるチームスペースがありません。",
+            "description": "リンクできるチームスペースに所属していないか、利用可能なチームスペースをすべてリンク済みです。"
+          },
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません。",
+            "description": "別の検索語を試すか、リンクできるチームスペースがあることを確認してください。"
+          }
+        },
+        "primary_button": {
+          "text": "選択したチームスペースをリンク"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +314,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +330,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -245,17 +339,12 @@
           "text": "ビューを作成"
         }
       },
-      "project_view": {
-        "title": "リンクされたプロジェクトに公開ビューがありません。",
-        "description": "リンクされたプロジェクトの公開ビューは自動的にここに表示されます。リンクされたプロジェクトの公開ビューをここで見るには、それらのプロジェクトにすべてのプロジェクトメンバーがアクセスできる公開ビューがあることを確認してください。"
-      },
       "filter": {
         "title": "一致するビューがありません",
         "description": "検索条件に一致するビューがありません。\n 代わりに新しいビューを作成してください。"
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -264,10 +353,6 @@
         "primary_button": {
           "text": "最初のチームページを作成"
         }
-      },
-      "project_page": {
-        "title": "リンクされたプロジェクトに公開ページがありません。",
-        "description": "リンクされたプロジェクトの公開ページは自動的にここに表示されます。公開ページが表示されるはずの場合は、リンクされたプロジェクトにすべてのプロジェクトメンバーが利用できる公開ページがあることを確認してください。"
       },
       "filter": {
         "title": "一致するページがありません",
@@ -279,7 +364,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,9 +392,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "イニシアチブ",
+    "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
     "add_initiative": "イニシアチブを追加",
     "create_initiative": "イニシアチブを作成",
     "update_initiative": "イニシアチブを更新",
@@ -359,7 +443,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +472,6 @@
       }
     }
   },
-
   "epics": {
     "label": "エピック",
     "no_epics_selected": "エピックが選択されていません",
@@ -413,7 +495,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +505,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +513,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +529,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +665,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +685,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "作業項目タイプ",
     "label_lowercase": "作業項目タイプ",
@@ -795,7 +871,24 @@
           "title": "カスタムプロパティを追加",
           "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "このタイプを削除",
+        "description": "タイプの削除は既存データの損失につながる可能性があります。",
+        "primary_button": "はい、削除します",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "作業項目のタイプが正常に削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "作業項目のタイプを削除できませんでした。もう一度お試しください！"
+          }
+        },
+        "can_disable_warning": "代わりにタイプを無効にしますか？"
+      },
+      "cant_delete_linked_message": "既存の作業項目にリンクされているため、この作業項目タイプは削除できません。"
     },
     "create": {
       "title": "作業項目タイプを作成",
@@ -807,7 +900,9 @@
         },
         "error": {
           "title": "エラー！",
-          "message": "作業項目タイプの作成に失敗しました。もう一度お試しください！"
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
         }
       }
     },
@@ -821,7 +916,9 @@
         },
         "error": {
           "title": "エラー！",
-          "message": "作業項目タイプの更新に失敗しました。もう一度お試しください！"
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
         }
       }
     },
@@ -881,7 +978,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "インポート",
     "logo": "ロゴ",
@@ -929,7 +1025,6 @@
     "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。",
     "invalid_pat": "無効な個人アクセストークン"
   },
-
   "integrations": {
     "integrations": "インテグレーション",
     "loading": "読み込み中",
@@ -945,7 +1040,6 @@
     "back_to_integrations": "インテグレーションに戻る",
     "select_state": "状態を選択"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "GitHubの作業項目をPlaneと連携・同期します。",
@@ -973,7 +1067,6 @@
     "MR_MERGED": "PRがマージされたとき、状態を次に設定",
     "MR_CLOSED": "PRがクローズされたとき、状態を次に設定"
   },
-
   "gitlab_integration": {
     "name": "GitLab",
     "description": "GitLabのマージリクエストをPlaneと連携・同期します。",
@@ -1000,7 +1093,6 @@
     "choose_project": "プロジェクトを選択",
     "link_plane_project": "Planeプロジェクトをリンク"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "SlackワークスペースをPlaneと接続します。",
@@ -1041,7 +1133,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "クリックしてファイルをアップロード",
     "drag_drop_text": "ドラッグ＆ドロップ",
@@ -1050,7 +1141,6 @@
     "missing_fields": "必須フィールドが不足しています",
     "success": "{fileName}がアップロードされました！"
   },
-
   "silo_errors": {
     "invalid_query_params": "提供されたクエリパラメータが無効か、必須フィールドが不足しています",
     "invalid_installation_account": "提供されたインストールアカウントが無効です",
@@ -1064,7 +1154,6 @@
     "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
     "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
-
   "import_status": {
     "created": "作成済み",
     "initiated": "開始済み",
@@ -1077,7 +1166,6 @@
     "error": "エラー",
     "cancelled": "キャンセル済み"
   },
-
   "jira_importer": {
     "jira_importer_description": "JiraのデータをPlaneプロジェクトにインポートします。",
     "personal_access_token": "個人アクセストークン",
@@ -1101,7 +1189,6 @@
       "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "AsanaのデータをPlaneプロジェクトにインポートします。",
     "select_asana_priority_field": "Asana優先度フィールドを選択",
@@ -1118,7 +1205,6 @@
       "description_summary": "AsanaからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "LinearのデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1134,7 +1220,6 @@
       "description_summary": "LinearからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Jira ServerのデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1151,6 +1236,64 @@
     }
   },
 
+  "notion_importer": {
+    "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_upload_zip": "Notion エクスポート ZIP をアップロード",
+      "description_upload_zip": "Notionデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Notion zip ファイルをここにドロップ",
+      "upload_title": "Notion エクスポートをアップロード",
+      "drag_drop_description": "Notion エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Notionからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Notionデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
+    "steps": {
+      "title_upload_zip": "Confluence エクスポート ZIP をアップロード",
+      "description_upload_zip": "Confluenceデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip ファイルをここにドロップ",
+      "upload_title": "Confluence エクスポートをアップロード",
+      "drag_drop_description": "Confluence エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Confluenceからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Confluenceデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1158,6 +1301,26 @@
       "description_configure_plane": "まずCSVデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
       "title_configure_csv": "CSVを設定",
       "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUpのデータをPlaneプロジェクトにインポートします。",
+    "select_service_space": "{serviceName}スペースを選択",
+    "select_service_folder": "{serviceName}フォルダーを選択",
+    "selected": "選択済み",
+    "users": "ユーザー",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずClickUpデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_clickup": "ClickUpを設定",
+      "description_configure_clickup": "ClickUpチーム、スペース、フォルダーを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "ClickUpのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
+      "title_summary": "サマリー",
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。"
     }
   },
 
@@ -1446,7 +1609,6 @@
       "editing": "エディティング"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "新しい作業項目を許可",
@@ -1545,7 +1707,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {顧客} other {顧客たち}}",
     "dropdown": {
@@ -2041,7 +2202,8 @@
           }
         },
         "publish": {
-          "action": "テンプレートを公開",
+          "action": "{isPublished, select, true {公開設定} other {マーケットプレイスに公開}}",
+          "unpublish_action": "マーケットプレイスから削除",
           "title": "テンプレートを発見可能かつ認識可能にする",
           "name": {
             "label": "テンプレート名",
@@ -2074,7 +2236,11 @@
           },
           "keywords": {
             "label": "キーワード",
-            "placeholder": "ユーザーがこのテンプレートを検索するときに使用する用語を使用してください。"
+            "placeholder": "ユーザーがこのテンプレートを検索するときに使用する用語を使用してください。",
+            "helperText": "カンマで区切られたキーワードを入力して、人々がこれを検索から見つけるのに役立つようにしてください。",
+            "validation": {
+              "required": "少なくとも1つのキーワードが必要です"
+            }
           },
           "company_name": {
             "label": "会社名",
@@ -2107,6 +2273,21 @@
             "validation": {
               "invalid": "無効なURL",
               "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "cover_image": {
+            "label": "マーケットプレイスに表示されるカバー画像を追加",
+            "upload_title": "カバー画像をアップロード",
+            "upload_placeholder": "クリックしてアップロードするか、ドラッグ＆ドロップでカバー画像をアップロード",
+            "drop_here": "ここにドロップ",
+            "click_to_upload": "クリックしてアップロード",
+            "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズ制限を超えています。もう一度お試しください。",
+            "upload_and_save": "アップロードして保存",
+            "uploading": "アップロード中",
+            "remove": "削除",
+            "removing": "削除中",
+            "validation": {
+              "required": "カバー画像は必須です"
             }
           },
           "attach_screenshots": {
@@ -2171,6 +2352,16 @@
           "title": "今回はそのテンプレートを削除できませんでした。",
           "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」が削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
       }
     },
     "delete_confirmation": {
@@ -2178,6 +2369,13 @@
       "description": {
         "prefix": "テンプレート「",
         "suffix": "」を削除してもよろしいですか？テンプレートに関連するすべてのデータは完全に削除されます。このアクションは元に戻せません。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？このテンプレートはマーケットプレイスでユーザーが利用できなくなります。"
       }
     },
     "dropdown": {
@@ -2197,5 +2395,25 @@
         "project": "テンプレートが見つかりません。"
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "ステータス別のプロジェクト",
+    "active_users": "アクティブユーザー",
+    "intake_trends": "受け入れの傾向",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "データがまだありません",
+        "description": "サイクルの進捗分析がここに表示されます。作業項目をサイクルに追加して進捗の追跡を開始してください。"
+      },
+      "module_progress": {
+        "title": "データがまだありません",
+        "description": "モジュールの進捗分析がここに表示されます。作業項目をモジュールに追加して進捗の追跡を開始してください。"
+      },
+      "intake_trends": {
+        "title": "データがまだありません",
+        "description": "インテークの傾向分析がここに表示されます。作業項目をインテークに追加して傾向の追跡を開始してください。"
+      }
+    },
+    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
   }
 }

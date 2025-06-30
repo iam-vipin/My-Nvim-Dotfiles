@@ -39,7 +39,7 @@ from plane.db.models import (
     ProjectMember,
     IssueType,
 )
-from plane.ee.models import Customer
+from plane.ee.models import Customer, TeamspaceProject, TeamspaceMember
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -128,14 +128,78 @@ class IssueCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         if attrs.get("assignee_ids", []):
-            attrs["assignee_ids"] = ProjectMember.objects.filter(
-                project_id=self.context["project_id"],
-                role__gte=15,
-                is_active=True,
-                member_id__in=attrs["assignee_ids"],
-            ).values_list("member_id", flat=True)
+            assignee_ids = attrs["assignee_ids"]
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.TEAMSPACES,
+                user_id=self.context["user_id"],
+                slug=self.context["slug"],
+            ):
+                # Then get all the teamspace members for the project with project member
+                teamspace_ids = TeamspaceProject.objects.filter(
+                    project_id=self.context["project_id"],
+                ).values_list("team_space_id", flat=True)
+
+                teamspace_member_ids = list(
+                    TeamspaceMember.objects.filter(
+                        team_space_id__in=teamspace_ids,
+                        member_id__in=assignee_ids,
+                    ).values_list("member_id", flat=True)
+                )
+
+                project_member_ids = list(
+                    ProjectMember.objects.filter(
+                        project_id=self.context["project_id"],
+                        role__gte=15,
+                        is_active=True,
+                        member_id__in=assignee_ids,
+                    ).values_list("member_id", flat=True)
+                )
+
+                # Then get all the teamspace members for the project with project member
+                attrs["assignee_ids"] = list(set(teamspace_member_ids + project_member_ids))
+
+            else:
+                attrs["assignee_ids"] = ProjectMember.objects.filter(
+                    project_id=self.context["project_id"],
+                    role__gte=15,
+                    is_active=True,
+                    member_id__in=assignee_ids,
+                ).values_list("member_id", flat=True)
 
         return attrs
+
+    def _is_valid_assignee(self, assignee_id, project_id):
+        """
+        Check if an assignee is valid for the project.
+        Returns True if the assignee is either a project member or teamspace member (if enabled).
+        """
+        # Check if assignee is a valid project member
+        is_project_member = ProjectMember.objects.filter(
+            member_id=assignee_id,
+            project_id=project_id,
+            role__gte=15,
+            is_active=True,
+        ).exists()
+        
+        if is_project_member:
+            return True
+        
+        # Check teamspace membership if feature is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            user_id=self.context["user_id"],
+            slug=self.context["slug"],
+        ):
+            teamspace_ids = TeamspaceProject.objects.filter(
+                project_id=project_id,
+            ).values_list("team_space_id", flat=True)
+            
+            return TeamspaceMember.objects.filter(
+                member_id=assignee_id,
+                team_space_id__in=teamspace_ids,
+            ).exists()
+        
+        return False
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -184,15 +248,9 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
         else:
-            # Then assign it to default assignee, if it is a valid assignee
-            if (
-                default_assignee_id is not None
-                and ProjectMember.objects.filter(
-                    member_id=default_assignee_id,
-                    project_id=project_id,
-                    role__gte=15,
-                    is_active=True,
-                ).exists()
+            # Assign to default assignee if valid
+            if default_assignee_id is not None and self._is_valid_assignee(
+                default_assignee_id, project_id
             ):
                 try:
                     IssueAssignee.objects.create(
@@ -438,6 +496,19 @@ class RelatedIssueSerializer(BaseSerializer):
             "updated_by",
             "updated_at",
         ]
+
+
+class IssueDuplicateSerializer(BaseSerializer):
+    sequence_id = serializers.IntegerField(
+        source="related_issue.sequence_id", read_only=True
+    )
+    project_identifier = serializers.CharField(
+        source="related_issue.project.identifier", read_only=True
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = ["id", "project_id", "sequence_id", "project_identifier"]
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -775,6 +846,110 @@ class IssueSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
+class IssueListDetailSerializer(serializers.Serializer):
+
+    def __init__(self, *args, **kwargs):
+        # Extract expand parameter and store it as instance variable
+        self.expand = kwargs.pop("expand", []) or []
+        # Extract fields parameter and store it as instance variable
+        self.fields = kwargs.pop("fields", []) or []
+        super().__init__(*args, **kwargs)
+
+    def get_module_ids(self, obj):
+        return [module.module_id for module in obj.issue_module.all()]
+
+    def get_label_ids(self, obj):
+        return [label.label_id for label in obj.label_issue.all()]
+
+    def get_assignee_ids(self, obj):
+        return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
+
+    def to_representation(self, instance):
+        data = {
+            # Basic fields
+            "id": instance.id,
+            "name": instance.name,
+            "state_id": instance.state_id,
+            "sort_order": instance.sort_order,
+            "completed_at": instance.completed_at,
+            "estimate_point": instance.estimate_point_id,
+            "priority": instance.priority,
+            "start_date": instance.start_date,
+            "target_date": instance.target_date,
+            "sequence_id": instance.sequence_id,
+            "project_id": instance.project_id,
+            "parent_id": instance.parent_id,
+            "created_at": instance.created_at,
+            "updated_at": instance.updated_at,
+            "created_by": instance.created_by_id,
+            "updated_by": instance.updated_by_id,
+            "is_draft": instance.is_draft,
+            "archived_at": instance.archived_at,
+            # Computed fields
+            "cycle_id": instance.cycle_id,
+            "module_ids": self.get_module_ids(instance),
+            "label_ids": self.get_label_ids(instance),
+            "assignee_ids": self.get_assignee_ids(instance),
+            "sub_issues_count": instance.sub_issues_count,
+            "attachment_count": instance.attachment_count,
+            "link_count": instance.link_count,
+        }
+
+        # Handle expanded fields only when requested - using direct field access
+        if self.expand:
+            if "issue_relation" in self.expand:
+                relations = []
+                for relation in instance.issue_relation.all():
+                    related_issue = relation.related_issue
+                    # If the related issue is deleted, skip it
+                    if not related_issue:
+                        continue
+                    # Add the related issue to the relations list
+                    relations.append(
+                        {
+                            "id": related_issue.id,
+                            "project_id": related_issue.project_id,
+                            "sequence_id": related_issue.sequence_id,
+                            "name": related_issue.name,
+                            "relation_type": relation.relation_type,
+                            "state_id": related_issue.state_id,
+                            "priority": related_issue.priority,
+                            "created_by": related_issue.created_by_id,
+                            "created_at": related_issue.created_at,
+                            "updated_at": related_issue.updated_at,
+                            "updated_by": related_issue.updated_by_id,
+                        }
+                    )
+                data["issue_relation"] = relations
+
+            if "issue_related" in self.expand:
+                related = []
+                for relation in instance.issue_related.all():
+                    issue = relation.issue
+                    # If the related issue is deleted, skip it
+                    if not issue:
+                        continue
+                    # Add the related issue to the related list
+                    related.append(
+                        {
+                            "id": issue.id,
+                            "project_id": issue.project_id,
+                            "sequence_id": issue.sequence_id,
+                            "name": issue.name,
+                            "relation_type": relation.relation_type,
+                            "state_id": issue.state_id,
+                            "priority": issue.priority,
+                            "created_by": issue.created_by_id,
+                            "created_at": issue.created_at,
+                            "updated_at": issue.updated_at,
+                            "updated_by": issue.updated_by_id,
+                        }
+                    )
+                data["issue_related"] = related
+
+        return data
+
+
 class IssueLiteSerializer(DynamicBaseSerializer):
     is_epic = serializers.SerializerMethodField()
 
@@ -815,6 +990,7 @@ class IssueDetailSerializer(IssueSerializer):
                 self.fields["customer_request_ids"] = serializers.ListField(
                     read_only=True
                 )
+                self.fields["initiative_ids"] = serializers.ListField(read_only=True)
 
 
 class IssuePublicSerializer(BaseSerializer):

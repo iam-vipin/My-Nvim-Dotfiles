@@ -7,6 +7,7 @@ import {
   EditorReadOnlyRefApi,
   EditorRefApi,
   EditorTitleRefApi,
+  ICollaborativeDocumentEditorProps,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -46,7 +47,7 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
-  updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
+  updatePageProperties: ICollaborativeDocumentEditorProps["updatePageProperties"];
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {

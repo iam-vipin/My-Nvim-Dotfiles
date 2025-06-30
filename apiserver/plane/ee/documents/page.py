@@ -1,19 +1,11 @@
+from django.conf import settings as django_settings
+from django.db.models import Prefetch
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import (
-    Q,
-    UUIDField,
-    Value,
-    Prefetch
-)
-from django.db.models.functions import Coalesce
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from plane.db.models import Page, Project, WorkspaceMember, ProjectMember
 
-from plane.db.models import Page, Project, WorkspaceMember
-
-from .base import BaseDocument, JsonKeywordField
+from .base import BaseDocument, JsonKeywordField, KnnVectorField, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -26,14 +18,47 @@ class PageDocument(BaseDocument):
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
-    class Index:
-        name = "pages"
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+
+    # KNN Vector fields for semantic search
+    description_semantic = KnnVectorField(
+        dimension=1536,
+        method={
+            "name": "hnsw",
+            "engine": "lucene",
+            "space_type": "cosinesimil",
+            "parameters": {"m": 16, "ef_construction": 512},
+        },
+    )
+
+    name_semantic = KnnVectorField(
+        dimension=1536,
+        method={
+            "name": "hnsw",
+            "engine": "lucene",
+            "space_type": "cosinesimil",
+            "parameters": {"m": 16, "ef_construction": 512},
+        },
+    )
+
+    class Index(BaseDocument.Index):
+        # Enable KNN for the index
+        settings = {
+            **BaseDocument.Index.settings,
+            "index": {
+                "knn": True,
+                "default_pipeline": django_settings.OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE,  # noqa: E501
+            },
+        }
+        name = (
+            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_pages"
+            if django_settings.OPENSEARCH_INDEX_PREFIX
+            else "pages"
+        )
 
     class Django:
         model = Page
-        fields = [
-            "id", "name", "deleted_at"
-        ]
+        fields = ["id", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -42,24 +67,20 @@ class PageDocument(BaseDocument):
         related_models = [WorkspaceMember]
 
     def apply_related_to_queryset(self, qs):
-        return qs.select_related(
-            "workspace"
-        ).prefetch_related(
+        return qs.select_related("workspace").prefetch_related(
             Prefetch(
-                "projects",
-                queryset=Project.objects.filter(
-                    archived_at__isnull=True
-                ).only('id', 'identifier')
-            )
-        ).annotate(
-            active_member_user_ids=Coalesce(
-                ArrayAgg(
-                    "workspace__workspace_member__member_id",
-                    distinct=True,
-                    filter=Q(workspace__workspace_member__is_active=True)
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
-            )
+                "projects", queryset=Project.objects.filter(archived_at__isnull=True)
+            ),
+            Prefetch(
+                "workspace__workspace_member",
+                queryset=WorkspaceMember.objects.filter(is_active=True),
+                to_attr="workspace_members",
+            ),
+            Prefetch(
+                "projects__project_projectmember",
+                queryset=ProjectMember.objects.filter(is_active=True),
+                to_attr="project_members",
+            ),
         )
 
     def get_instances_from_related(self, related_instance):
@@ -91,13 +112,31 @@ class PageDocument(BaseDocument):
         """
         Data preparation method for active_member_user_ids field
         """
-        if hasattr(instance, "active_member_user_ids"):
-            return instance.active_member_user_ids
+        if instance.projects.count() > 0:
+            project_member_ids = []
+            for project in instance.projects.all():
+                if hasattr(project, "project_members"):
+                    project_member_ids.extend(
+                        [member.member_id for member in project.project_members]
+                    )
+                else:
+                    project_member_ids.extend(
+                        [
+                            member.member_id
+                            for member in project.project_projectmember.all()
+                        ]
+                    )
+            return project_member_ids
         else:
-            active_member_user_ids = instance.workspace.workspace_member.filter(
-                is_active=True
-            ).values_list('member_id')
-            return list(active_member_user_ids)
+            if hasattr(instance.workspace, "workspace_members"):
+                return [
+                    member.member_id for member in instance.workspace.workspace_members
+                ]
+            else:
+                return [
+                    member.member_id
+                    for member in instance.workspace.workspace_member.all()
+                ]
 
     def prepare_is_deleted(self, instance):
         """

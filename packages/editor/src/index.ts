@@ -28,6 +28,7 @@ export * from "@/constants/common";
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
 export * from "@/helpers/yjs-utils";
+export * from "@/helpers/parser";
 export * from "@/extensions/table/table";
 
 // components
@@ -35,9 +36,8 @@ export * from "@/components/menus";
 
 // hooks
 export { useEditor } from "@/hooks/use-editor";
-export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 
 // types
-export type { CustomEditorProps } from "@/hooks/use-editor";
 export * from "@/types";

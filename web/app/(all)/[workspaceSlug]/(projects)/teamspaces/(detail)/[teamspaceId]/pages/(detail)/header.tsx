@@ -5,13 +5,13 @@ import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, CustomSearchSelect, Header, Loader, TeamsIcon } from "@plane/ui";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, TeamsIcon } from "@plane/ui";
+import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
-import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
@@ -53,7 +53,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!workspaceSlug || !page) return;
+  if (!workspaceSlug || !page || !page.canCurrentUserAccessPage) return;
 
   return (
     <Header>
@@ -61,9 +61,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
         <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
@@ -71,9 +70,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {loader === "init-loader" ? (
                     <Loader.Item height="20px" width="140px" />
@@ -87,9 +85,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                 </>
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/pages`}
                   label="Pages"
@@ -97,18 +94,21 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
+            <Breadcrumbs.Item
               component={
-                <CustomSearchSelect
-                  value={pageId}
-                  options={switcherOptions}
-                  label={
-                    <SwitcherLabel logo_props={page?.logo_props} name={getPageName(page?.name)} LabelIcon={FileText} />
-                  }
+                <BreadcrumbNavigationSearchDropdown
+                  selectedItem={pageId?.toString()}
+                  navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${value}`);
                   }}
+                  title={page?.name}
+                  icon={
+                    <Breadcrumbs.Icon>
+                      <FileText className="size-4 flex-shrink-0 text-custom-text-300" />
+                    </Breadcrumbs.Icon>
+                  }
+                  isLast
                 />
               }
             />

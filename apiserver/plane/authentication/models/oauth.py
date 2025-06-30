@@ -1,5 +1,8 @@
 import uuid
 
+from django.contrib.auth.hashers import make_password
+from django.db import models
+
 from oauth2_provider.models import (
     AbstractAccessToken,
     AbstractApplication,
@@ -9,15 +12,12 @@ from oauth2_provider.models import (
     ApplicationManager,
 )
 
-from django.db import models
-from django.contrib.auth.hashers import make_password
-
-from plane.db.mixins import UserAuditModel, SoftDeleteModel
-from plane.db.models import BaseModel, User, WorkspaceMember, ProjectMember, Project
 from plane.app.permissions.base import ROLE
-
-from plane.utils.html_processor import strip_tags
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
+from plane.db.mixins import SoftDeleteModel, UserAuditModel
+from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember
+from plane.db.models.user import BotTypeEnum
+from plane.utils.html_processor import strip_tags
 
 
 # oauth models
@@ -51,7 +51,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         "db.FileAsset",
         related_name="applications",
         through="authentication.ApplicationAttachment",
-        blank=True
+        blank=True,
     )
     categories = models.ManyToManyField(
         "authentication.ApplicationCategory",
@@ -64,6 +64,9 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     support_url = models.URLField(max_length=800, null=True, blank=True)
     setup_url = models.CharField(max_length=800, null=True, blank=True)
     video_url = models.URLField(max_length=800, null=True, blank=True)
+    website = models.URLField(max_length=800, null=True, blank=True)
+
+    is_mentionable = models.BooleanField(default=False)
 
     objects = ApplicationManager()
 
@@ -214,12 +217,16 @@ class WorkspaceAppInstallation(BaseModel):
         # create bot user and attach
         if not self.app_bot:
             username = f"{self.workspace.slug}_{self.application.slug}_bot"
+            bot_type = (
+                BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
+            )
             self.app_bot = User.objects.create(
                 username=username,
                 display_name=f"{self.application.name} Bot",
                 first_name=f"{self.application.name}",
                 last_name="Bot",
                 is_bot=True,
+                bot_type=bot_type,
                 email=f"{username}@plane.so",
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
@@ -262,7 +269,7 @@ class ApplicationAttachment(BaseModel):
         verbose_name = "Application attachment"
         verbose_name_plural = "Application attachments"
         db_table = "oauth_application_attachments"
-    
+
     @property
     def file_asset_url(self):
         # Return the file asset url if it exists
@@ -270,10 +277,13 @@ class ApplicationAttachment(BaseModel):
             return self.file_asset.asset_url
         return None
 
+
 class ApplicationCategory(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
     logo_props = models.JSONField(default=dict)
+    is_active = models.BooleanField(default=True)
+
     class Meta:
         db_table = "oauth_application_categories"
         verbose_name = "Application Category"

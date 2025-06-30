@@ -16,32 +16,32 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.ee.models import ProjectReaction
 from plane.ee.bgtasks.project_activites_task import project_activity
 
+
 class ProjectReactionViewSet(BaseViewSet):
     serializer_class = ProjectReactionSerializer
     model = ProjectReaction
 
     def get_queryset(self):
-        return (
+        queryset = (
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .order_by("-created_at")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id):
         serializer = ProjectReactionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, actor=request.user
-            )
+            serializer.save(project_id=project_id, actor=request.user)
             project_activity.delay(
                 type="project_reaction.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

@@ -1,12 +1,11 @@
 "use-client";
 
+import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
-import { PiChatEditor } from "@plane/editor";
+// plane imports
 import { ControlLink } from "@plane/ui";
-// helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
@@ -15,11 +14,12 @@ import { TUserThreads } from "@/plane-web/types";
 import { groupThreadsByDate } from "./helper";
 
 type TProps = {
+  activeChatId?: string;
   userThreads: TUserThreads[];
   initPiChat: (chat_id?: string) => void;
 };
 const HistoryList = observer((props: TProps) => {
-  const { userThreads, initPiChat } = props;
+  const { userThreads, initPiChat, activeChatId } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -42,18 +42,19 @@ const HistoryList = observer((props: TProps) => {
 
           <div className="flex flex-col space-y-2">
             {threads && threads.length > 0 ? (
-              threads.map((thread) => (
+              uniqBy(threads, "chat_id").map((thread) => (
                 <ControlLink
                   key={`${thread.chat_id}-${thread.last_modified}`}
                   href={`/${workspaceSlug}/pi-chat?chat_id=${thread.chat_id}`}
                   onClick={() => handleThreadClick(thread.chat_id)}
-                  className="p-2 rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90"
+                  className={cn(
+                    "text-sm font-medium p-2 text-custom-text-300 truncate rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90 pointer",
+                    {
+                      "hover:bg-custom-primary-100/10 !text-custom-primary-100": activeChatId === thread.chat_id,
+                    }
+                  )}
                 >
-                  <PiChatEditor
-                    editable={false}
-                    content={thread.title}
-                    editorClass="!font-medium !text-sm !text-custom-text-300 !text-left !truncate !pointer"
-                  />
+                  {thread.title || "Untitled"}
                 </ControlLink>
               ))
             ) : (

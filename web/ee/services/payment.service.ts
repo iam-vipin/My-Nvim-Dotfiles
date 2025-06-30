@@ -1,6 +1,6 @@
 import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck, TProrationPreview } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL  } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -43,14 +43,6 @@ export class PaymentService extends APIService {
 
   async getWorkspaceSubscriptionPageLink(workspaceSlug: string) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/subscriptions/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getPaymentLink(data = {}) {
-    return this.post(`/api/payments/website/payment-link/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -7,10 +7,9 @@ import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { isEditorEmpty } from "@/helpers/editor.helper";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // plane web imports
 import {
   COMMON_ERROR_TEXT_CLASS_NAME,
@@ -136,13 +135,11 @@ export const TemplateBasicDetails = observer(
               <RichTextEditor
                 id="template-publish-description"
                 initialValue={value ?? "<p></p>"}
-                workspaceSlug={workspaceSlug}
+                workspaceSlug={workspaceSlug.toString()}
                 workspaceId={workspaceId}
-                projectId={projectId ? projectId : undefined}
+                projectId={projectId ?? undefined}
                 ref={editorRef}
-                onChange={(description_json: object, description_html: string) => {
-                  onChange(description_html);
-                }}
+                onChange={(_description_json, description_html) => onChange(description_html)}
                 searchMentionCallback={searchEntity}
                 placeholder={(isFocused, value) =>
                   isEditorEmpty(value)
@@ -150,7 +147,7 @@ export const TemplateBasicDetails = observer(
                     : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
                 }
                 containerClassName="min-h-[240px] md:min-h-[120px] border-[0.5px] py-2 border-custom-border-200 rounded-md"
-                disabledExtensions={["image", "issue-embed"]}
+                disabledExtensions={["image", "issue-embed", "attachments"]}
                 uploadFile={() => Promise.resolve("")}
               />
             )}

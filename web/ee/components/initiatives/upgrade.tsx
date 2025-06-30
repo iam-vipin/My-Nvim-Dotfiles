@@ -10,7 +10,7 @@ import { Crown } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types
@@ -95,7 +95,7 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="pr-10">
+    <div className="">
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),

@@ -5,13 +5,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// ui
+// plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, CustomSearchSelect, Header, InitiativeIcon } from "@plane/ui";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, InitiativeIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -54,31 +54,35 @@ export const InitiativesDetailsHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div>
-          <Breadcrumbs onBack={router.back}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={t("initiatives.label")}
-                  href={`/${workspaceSlug}/initiatives`}
-                  icon={<InitiativeIcon className="size-4" />}
-                />
-              }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
-              component={
-                <CustomSearchSelect
-                  label={<SwitcherLabel name={initiativesDetails?.name} LabelIcon={InitiativeIcon} />}
-                  value={initiativeId.toString()}
-                  onChange={() => {}}
-                  options={switcherOptions}
-                />
-              }
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs onBack={router.back}>
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label={t("initiatives.label")}
+                href={`/${workspaceSlug}/initiatives`}
+                icon={<InitiativeIcon className="size-4" />}
+              />
+            }
+          />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbNavigationSearchDropdown
+                selectedItem={initiativeId.toString()}
+                navigationItems={switcherOptions}
+                onChange={(value: string) => {
+                  router.push(`/${workspaceSlug}/initiatives/${value}`);
+                }}
+                title={initiativesDetails?.name}
+                icon={
+                  <Breadcrumbs.Icon>
+                    <InitiativeIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                  </Breadcrumbs.Icon>
+                }
+                isLast
+              />
+            }
+          />
+        </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>
         {initiativesDetails && (

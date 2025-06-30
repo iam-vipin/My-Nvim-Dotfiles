@@ -5,17 +5,23 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Camera } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
+// components
 import { RichTextEditor } from "@/components/editor";
-import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
-import { useWorkspace, useEditorAsset, useUserProfile } from "@/hooks/store";
+import { SettingsHeading } from "@/components/settings";
+// hooks
+import { useWorkspace, useEditorAsset } from "@/hooks/store";
+// plane web imports
 import { AppImageUploadModal } from "@/plane-web/components/common/modal";
 import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
+// local imports
 import { SelectCategories } from "./select-categories";
 import { UploadAppAttachments } from "./upload-attachments";
 
@@ -148,6 +154,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
   };
 
   const handleCredentialsModalClose = () => {
+    setIsCredentialsModalOpen(false);
     router.push(`/${workspaceSlug}/settings/applications`);
     setClientId(undefined);
     setClientSecret(undefined);
@@ -159,10 +166,8 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleAppFormSubmit}>
-      <div className="space-y-4 py-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {!watch("id") ? "Let's get all the necessary info" : "Edit your app's details"}
-        </h3>
+      <div className="space-y-4">
+        <SettingsHeading title={!watch("id") ? "Let's get all the necessary info" : "Edit your app's details"} />
         <AppImageUploadModal
           isOpen={isImageModalOpen}
           onClose={() => setIsImageModalOpen(false)}
@@ -261,6 +266,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                       throw new Error("Asset upload failed. Please try again later.");
                     }
                   }}
+                  disabledExtensions={["attachments"]}
                 />
               )}
             />

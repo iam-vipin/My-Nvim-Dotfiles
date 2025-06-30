@@ -1,36 +1,40 @@
 "use client";
 
 import { FC, FormEvent, useMemo, useRef, useState } from "react";
-import { observer } from "mobx-react";
 import { CircleAlert, XCircle } from "lucide-react";
+import {
+  EMobileAuthSteps,
+  EMobileAuthModes,
+  TMobileAuthSteps,
+  TMobileAuthModes,
+  TMobileAuthErrorInfo,
+} from "@plane/constants";
 import { IEmailCheckData } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
+import { checkEmailValidity, cn } from "@plane/utils";
 // helpers
-import {
-  authErrorHandler,
-  EAuthenticationErrorCodes,
-  EAuthSteps,
-  TAuthErrorInfo,
-} from "@/helpers/authentication.helper";
-import { cn } from "@/helpers/common.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
 // plane web services
-import mobileService from "@/plane-web/services/mobile.service";
-// services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthEmailValidationForm = {
   email: string;
   handleEmail: (value: string) => void;
-  handleAuthStep: (value: EAuthSteps) => void;
-  handleErrorInfo: (value: TAuthErrorInfo | undefined) => void;
+  handleAuthStep: (value: TMobileAuthSteps) => void;
+  handleAuthMode: (value: TMobileAuthModes) => void;
+  handleErrorInfo: (value: TMobileAuthErrorInfo | undefined) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
 
-export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> = observer((props) => {
-  const { email: defaultEmail, handleEmail, handleAuthStep, handleErrorInfo, generateEmailUniqueCode } = props;
+export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> = (props) => {
+  const {
+    email: defaultEmail,
+    handleEmail,
+    handleAuthStep,
+    handleAuthMode,
+    handleErrorInfo,
+    generateEmailUniqueCode,
+  } = props;
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -56,7 +60,7 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
     let userCanAuthenticate = true;
 
     try {
-      await mobileService.currentUser();
+      await mobileAuthService.currentUser();
       userExists = true;
     } catch {
       userExists = false;
@@ -64,7 +68,7 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
 
     if (userExists) {
       try {
-        await mobileService.signOut();
+        await mobileAuthService.signOut();
         userCanAuthenticate = true;
       } catch {
         userCanAuthenticate = false;
@@ -80,23 +84,23 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       email: email,
     };
 
-    await authService
+    await mobileAuthService
       .emailCheck(payload)
       .then(async (response) => {
+        // setting auth mode
         if (response.existing) {
-          if (response.status === "MAGIC_CODE") {
-            handleAuthStep(EAuthSteps.UNIQUE_CODE);
-            // generating unique code
-            generateEmailUniqueCode(email);
-          } else if (response.status === "CREDENTIAL") {
-            handleAuthStep(EAuthSteps.PASSWORD);
-          }
+          handleAuthMode(EMobileAuthModes.SIGN_IN);
         } else {
-          handleEmail("");
-          setEmail("");
-          handleAuthStep(EAuthSteps.EMAIL);
-          const errorhandler = authErrorHandler(EAuthenticationErrorCodes.USER_DOES_NOT_EXIST, undefined);
-          if (errorhandler?.type) handleErrorInfo(errorhandler);
+          handleAuthMode(EMobileAuthModes.SIGN_UP);
+        }
+
+        // setting auth step
+        if (response.status === "MAGIC_CODE") {
+          handleAuthStep(EMobileAuthSteps.UNIQUE_CODE);
+          // generating unique code
+          generateEmailUniqueCode(email);
+        } else if (response.status === "CREDENTIAL") {
+          handleAuthStep(EMobileAuthSteps.PASSWORD);
         }
       })
       .catch((error) => {
@@ -159,4 +163,4 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       </form>
     </div>
   );
-});
+};

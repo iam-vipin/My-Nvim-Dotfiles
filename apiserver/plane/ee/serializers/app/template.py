@@ -3,14 +3,15 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers import BaseSerializer
+from plane.db.models import FileAsset
 from plane.ee.models import (
-    Template,
-    WorkitemTemplate,
     PageTemplate,
     ProjectTemplate,
+    Template,
     TemplateCategory,
+    WorkitemTemplate,
 )
-from plane.db.models import FileAsset
+from plane.utils.url import contains_url
 
 
 class TemplateSerializer(BaseSerializer):
@@ -21,13 +22,25 @@ class TemplateSerializer(BaseSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=TemplateCategory.objects.all(), many=True, required=False
     )
+
     class Meta:
         model = Template
         fields = "__all__"
-        read_only_fields = ["workspace", "template_type"]
+        read_only_fields = [
+            "workspace",
+            "template_type",
+            "slug",
+            "short_id",
+        ]
 
     def get_attachments_urls(self, obj):
         return [attachment.asset_url for attachment in obj.attachments.all()]
+
+    def validate_name(self, value):
+        # Check if the name contains a URL
+        if contains_url(value):
+            raise serializers.ValidationError("Name must not contain URLs")
+        return value
 
 
 class WorkitemTemplateSerializer(BaseSerializer):
@@ -136,6 +149,7 @@ class ProjectTemplateDataSerializer(BaseSerializer):
 class TemplateDataSerializer(BaseSerializer):
     template_data = serializers.SerializerMethodField()
     attachments_urls = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
     attachments = serializers.PrimaryKeyRelatedField(
         queryset=FileAsset.objects.all(), many=True, required=False
     )
@@ -172,6 +186,8 @@ class TemplateDataSerializer(BaseSerializer):
             "video_url",
             "company_name",
             "supported_languages",
+            "cover_image_asset",
+            "cover_image_url",
         ]
 
     def get_template_data(self, obj):
@@ -189,6 +205,11 @@ class TemplateDataSerializer(BaseSerializer):
 
     def get_attachments_urls(self, obj):
         return [attachment.asset_url for attachment in obj.attachments.all()]
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None
 
 
 class TemplateCategorySerializer(BaseSerializer):

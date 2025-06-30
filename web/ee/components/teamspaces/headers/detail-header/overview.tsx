@@ -3,11 +3,10 @@ import { useParams } from "next/navigation";
 import { Link2, Sidebar } from "lucide-react";
 // plane imports
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // plane web components
 import { TeamQuickActions } from "@/plane-web/components/teamspaces/actions";
 // plane web hooks
@@ -23,10 +22,10 @@ export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActi
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { isTeamSidebarCollapsed, isUserMemberOfTeamspace, toggleTeamsSidebar, getTeamspaceNameDescriptionLoaderById } =
+  const { isTeamSidebarCollapsed, isCurrentUserMemberOfTeamspace, toggleTeamsSidebar, getTeamspaceNameDescriptionLoaderById } =
     useTeamspaces();
   // derived values
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
   const isSubmitting = getTeamspaceNameDescriptionLoaderById(teamspaceId);
   const teamLink = `${workspaceSlug}/teamspaces/${teamspaceId}`;
 

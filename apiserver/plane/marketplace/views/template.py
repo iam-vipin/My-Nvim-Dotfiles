@@ -26,7 +26,9 @@ class TemplateCategoryEndpoint(BaseAPIView):
     serializer_class = TemplateCategorySerializer
 
     def get(self, request: Request) -> Response:
-        template_categories: QuerySet[TemplateCategory] = self.model.objects.all()
+        template_categories: QuerySet[TemplateCategory] = self.model.objects.filter(
+            is_active=True
+        )
         serialised_template_categories = self.serializer_class(
             template_categories, many=True
         )
@@ -38,12 +40,7 @@ class PublishedTemplateFilter(FilterSet):
 
     class Meta:
         model = Template
-        fields = [
-            "template_type",
-            "is_verified",
-            "company_name",
-            "category"
-        ]
+        fields = ["template_type", "is_verified", "company_name", "category"]
 
 
 class PublishedTemplateEndpoint(BaseAPIView):
@@ -53,23 +50,14 @@ class PublishedTemplateEndpoint(BaseAPIView):
     detail_serializer_class = PublishedTemplateDetailSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PublishedTemplateFilter
-    search_fields = [
-        "name",
-        "description_stripped",
-        "company_name",
-        "categories__name",
-    ]
+    search_fields = ["name", "description_stripped", "company_name", "categories__name"]
     ordering_fields = ["name", "created_at"]
 
     def get_queryset(self) -> QuerySet[Template]:
         queryset = self.model.objects.filter(
             is_published=True,
-            is_verified=True,
-            template_type=Template.TemplateType.PROJECT
-        ).prefetch_related(
-            "attachments",
-            "categories",
-        )
+            template_type=Template.TemplateType.PROJECT,
+        ).prefetch_related("attachments", "categories")
 
         # Filter by category name if provided
         category = self.request.query_params.get("category", None)
@@ -77,7 +65,7 @@ class PublishedTemplateEndpoint(BaseAPIView):
             queryset = queryset.filter(categories__name=category)
         return queryset
 
-    def get(self, request: Request, pk: uuid.UUID | None = None) -> Response:
+    def get(self, request: Request, short_id: str | None = None) -> Response:
         order_by = request.query_params.get("order_by", "-created_at")
         queryset = self.get_queryset()
         if order_by.lstrip("-") in self.ordering_fields:
@@ -85,8 +73,8 @@ class PublishedTemplateEndpoint(BaseAPIView):
 
         filtered_queryset = self.filter_queryset(queryset)
 
-        if pk:
-            template = filtered_queryset.get(id=pk)
+        if short_id:
+            template = filtered_queryset.get(short_id=short_id)
             serialised_template = self.detail_serializer_class(template)
             return Response(serialised_template.data, status=status.HTTP_200_OK)
 
@@ -107,14 +95,11 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
     def get_queryset(self) -> QuerySet[Template]:
         queryset = self.model.objects.filter(
             is_published=True,
-            is_verified=True,
-            template_type=Template.TemplateType.PROJECT
-        ).prefetch_related(
-            "categories",
+            template_type=Template.TemplateType.PROJECT,
         )
         return queryset
 
-    def get(self, request: Request, pk: uuid.UUID) -> Response:
-        template = self.get_queryset().get(id=pk)
+    def get(self, request: Request, short_id: str) -> Response:
+        template = self.get_queryset().get(short_id=short_id)
         serialised_template = self.serializer_class(template)
         return Response(serialised_template.data, status=status.HTTP_200_OK)

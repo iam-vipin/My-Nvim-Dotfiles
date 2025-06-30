@@ -105,7 +105,12 @@ from .asset.v2 import (
     AssetRestoreEndpoint,
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
+    AssetCheckEndpoint,
+    WorkspaceAssetDownloadEndpoint,
+    ProjectAssetDownloadEndpoint,
 )
+from .asset.silo import SiloAssetsEndpoint
+
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
@@ -165,6 +170,7 @@ from .page.base import (
     PageDuplicateEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.shared import ProjectPageUserViewSet
 from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint

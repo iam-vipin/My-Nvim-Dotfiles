@@ -33,8 +33,11 @@ const DEFAULT_PUBLISH_TEMPLATE_FORM_VALUES: TPublishTemplateFormWithData = {
   contact_email: "",
   privacy_policy_url: "",
   terms_of_service_url: "",
+  cover_image_asset: "",
+  cover_image_url: "",
   attachments: [],
   attachments_urls: [],
+  website: "",
 };
 
 export const PublishTemplateFormRoot = observer(

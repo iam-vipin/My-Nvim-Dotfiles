@@ -4,6 +4,8 @@ import { computedFn } from "mobx-utils";
 // constants
 import { EPageAccess, EUserPermissions } from "@plane/constants";
 import { TPage } from "@plane/types";
+// utils
+import { getPageName } from "@plane/utils";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -87,11 +89,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
 
   get subPageIds() {
     const pages = Object.values(this.rootStore.projectPages.data);
-    const subPageIds = pages
-      .filter((page) => page.parent_id === this.id && !page.deleted_at)
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
-    return subPageIds;
+    const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
+
+    // Sort pages alphabetically by name
+    const sortedPages = filteredPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
+    );
+
+    return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
 
   get subPages() {
@@ -103,7 +108,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
     if (!workspaceSlug || !this.project_ids?.length) return;
     let highestRole: EUserPermissions | undefined = undefined;
     this.project_ids.map((projectId) => {
-      const currentUserProjectRole = this.rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      const currentUserProjectRole = this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
         workspaceSlug?.toString() || "",
         projectId?.toString() || ""
       );
@@ -119,26 +124,50 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can access the page
    */
   get canCurrentUserAccessPage() {
+    // Owner can always access
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.hasSharedAccess) {
+      return this.canViewWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic || this.isCurrentUserOwner;
+    return isPagePublic;
   }
 
   /**
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
+    // Owner can always edit
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return (
-      (isPagePublic && !!highestRole && highestRole >= EUserPermissions.MEMBER) ||
-      (!isPagePublic && this.isCurrentUserOwner)
-    );
+    return isPagePublic && !!highestRole && highestRole >= EUserPermissions.MEMBER;
   }
 
   /**
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
+    // Owner can always duplicate
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can only duplicate if they have edit access
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return !!highestRole && highestRole >= EUserPermissions.MEMBER;
   }
@@ -147,6 +176,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
+    // Only owner can lock/unlock pages with shared access
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
@@ -155,6 +190,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can change the access of the page
    */
   get canCurrentUserChangeAccess() {
+    // Only owner can change access with shared access
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
@@ -163,6 +204,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
+    // Shared access users cannot archive pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
@@ -171,6 +218,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
+    // Shared access users cannot delete pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
@@ -179,6 +232,15 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
+    // Owner can always favorite
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can favorite if they have at least view access
+    if (this.hasSharedAccess) {
+      return this.canViewWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return !!highestRole && highestRole >= EUserPermissions.MEMBER;
   }
@@ -187,6 +249,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
+    // Shared access users cannot move pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
   }
@@ -195,15 +263,25 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
-    const highestRole = this.getHighestRoleAcrossProjects();
-    const isOwner = this.isCurrentUserOwner;
-    const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 
-    return (
-      !isArchived && !isLocked && (isOwner || (isPublic && !!highestRole && highestRole >= EUserPermissions.MEMBER))
-    );
+    // Can't edit if archived or locked
+    if (isArchived || isLocked) return false;
+
+    // Owner can always edit (if not archived/locked)
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const highestRole = this.getHighestRoleAcrossProjects();
+    const isPublic = this.access === EPageAccess.PUBLIC;
+
+    return isPublic && !!highestRole && highestRole >= EUserPermissions.MEMBER;
   }
 
   getRedirectionLink = computedFn(() => {

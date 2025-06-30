@@ -26,19 +26,20 @@ class ProjectLinkViewSet(BaseViewSet):
     serializer_class = ProjectLinkSerializer
 
     def get_queryset(self):
-        return (
+        queryset = (
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .order_by("-created_at")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission(
@@ -53,9 +54,7 @@ class ProjectLinkViewSet(BaseViewSet):
             serializer.save(project_id=project_id)
             project_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,

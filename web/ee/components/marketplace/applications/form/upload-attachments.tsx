@@ -3,16 +3,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Accept, useDropzone } from "react-dropzone";
-import { ImageUp, Upload, X, Loader as Spinner, Plus } from "lucide-react";
-import { Transition, Dialog } from "@headlessui/react";
+import { ImageUp, Plus, Loader as Spinner, Upload, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+import { cn, checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web imports
@@ -153,7 +150,7 @@ export const UploadAppAttachments: React.FC<Props> = observer((props) => {
           )}
           {...getRootProps()}
         >
-          <ImageUp className="size-7 text-custom-text-400" />
+          <ImageUp className="size-5 text-custom-text-400" />
           <div className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
             Drag and drop to upload external files
           </div>

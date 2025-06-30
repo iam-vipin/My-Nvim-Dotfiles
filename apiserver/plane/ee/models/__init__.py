@@ -17,6 +17,7 @@ from .issue import (
     EntityIssueStateActivity,
     EpicUserProperties,
     EntityTypeEnum,
+    WorkItemPage
 )
 
 from .project import (
@@ -90,4 +91,12 @@ from .dashboard import (
     Widget,
 )
 
-from .template import Template, WorkitemTemplate, PageTemplate, ProjectTemplate, TemplateCategory
+from .template import (
+    Template,
+    WorkitemTemplate,
+    PageTemplate,
+    ProjectTemplate,
+    TemplateCategory,
+)
+
+from .page import PageUser

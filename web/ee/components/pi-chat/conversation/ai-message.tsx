@@ -1,23 +1,31 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Markdown from "react-markdown";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Loader, PiChatLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { cn, copyTextToClipboard } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
+import { FeedbackModal } from "../input/feedback-modal";
+import { ReasoningBlock } from "./reasoning";
 import { Thinking } from "./thinking";
+import Link from "next/link";
 
 type TProps = {
   id: string;
   message?: string;
-  isPiTyping?: boolean;
+  reasoning?: string;
+  isPiThinking?: boolean;
   isLoading?: boolean;
   feedback?: EFeedback;
+  isLatest?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
-  const { message = "", isPiTyping = false, id, isLoading = false, feedback } = props;
-  const { sendFeedback } = usePiChat();
+  // store
+  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
+  const { sendFeedback, activeChatId } = usePiChat();
+  // state
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const handleCopyLink = () => {
     copyTextToClipboard(message).then(() => {
@@ -28,9 +36,9 @@ export const AiMessage = observer((props: TProps) => {
       });
     });
   };
-  const handleFeedback = async (feedback: EFeedback) => {
+  const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
     try {
-      await sendFeedback(parseInt(id), feedback);
+      await sendFeedback(activeChatId, parseInt(id), feedback, feedbackMessage);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Feedback sent!",
@@ -50,15 +58,31 @@ export const AiMessage = observer((props: TProps) => {
   return (
     <div className="flex gap-4 mr-[50px]" id={id}>
       {/* Avatar */}
-      <div className="bg-pi-700 rounded-full h-9 w-9 flex">
+      <div className="bg-pi-700 rounded-full h-9 w-9 flex flex-shrink-0">
         <PiChatLogo className="size-6 text-white fill-current m-auto align-center" />
       </div>
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
-        {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{handleMessage()}</Markdown>}
+        {!isPiThinking && !isLoading && (
+          <div className="flex flex-col gap-4">
+            {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
+            <Markdown
+              className="pi-chat-root [&>*:first-child]:mt-0"
+              components={{
+                a: ({ children, href }) => (
+                  <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {handleMessage()}
+            </Markdown>
+          </div>
+        )}
 
         {/* Typing */}
-        {isPiTyping && <Thinking />}
+        {isPiThinking && <Thinking />}
 
         {isLoading && (
           <Loader>
@@ -66,7 +90,7 @@ export const AiMessage = observer((props: TProps) => {
           </Loader>
         )}
         {/* Action bar */}
-        {!isPiTyping && !isLoading && (
+        {!isPiThinking && !isLoading && (
           <div className="flex gap-4 mt-6">
             {/* Copy */}
             <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
@@ -98,7 +122,7 @@ export const AiMessage = observer((props: TProps) => {
                   className={cn({
                     "!cursor-default": feedback === EFeedback.NEGATIVE,
                   })}
-                  onClick={() => !feedback && handleFeedback(EFeedback.NEGATIVE)}
+                  onClick={() => !feedback && setIsFeedbackModalOpen(true)}
                 >
                   <ThumbsDown
                     size={16}
@@ -108,6 +132,11 @@ export const AiMessage = observer((props: TProps) => {
                 </button>
               </Tooltip>
             )}
+            <FeedbackModal
+              isOpen={isFeedbackModalOpen}
+              onClose={() => setIsFeedbackModalOpen(false)}
+              onSubmit={(feedbackMessage) => handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
+            />
 
             {/* Rewrite will be available in the future */}
             {/* <div className="flex text-sm font-medium gap-1 cursor-pointer">

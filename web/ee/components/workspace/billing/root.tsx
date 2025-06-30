@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,6 +8,7 @@ import {
   EProductSubscriptionEnum,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import {
   IPaymentProduct,
   IPaymentProductPrice,
@@ -18,6 +19,7 @@ import {
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
+import { SettingsHeading } from "@/components/settings";
 import { getBillingAndPlansCardVariantStyle } from "@/components/workspace/billing/subscription";
 // plane web imports
 import {
@@ -37,10 +39,7 @@ const paymentService = new PaymentService();
 export const BillingRoot = observer(() => {
   // router
   const { workspaceSlug } = useParams();
-  // refs
-  const containerRef = useRef<HTMLDivElement>(null);
   // states
-  const [isScrolled, setIsScrolled] = useState(false);
   const [productBillingFrequency, setProductBillingFrequency] = useState<TProductBillingFrequency>(
     DEFAULT_PRODUCT_BILLING_FREQUENCY
   );
@@ -53,6 +52,7 @@ export const BillingRoot = observer(() => {
     freeTrialSubscription,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
+  const { t } = useTranslation();
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
     workspaceSlug ? ["PAYMENT_PRODUCTS", workspaceSlug.toString()] : null,
@@ -65,24 +65,11 @@ export const BillingRoot = observer(() => {
   );
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
+  const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
   const planCardVariantStyle =
     subscriptionDetail?.product && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE
       ? getBillingAndPlansCardVariantStyle(subscriptionDetail?.product)
       : null;
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const isScrolled = isCompareAllFeaturesSectionOpen ? scrollTop > 0 : false;
-      setIsScrolled(isScrolled);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [isCompareAllFeaturesSectionOpen]);
 
   /**
    * Initiates a free trial for a selected subscription plan
@@ -96,6 +83,7 @@ export const BillingRoot = observer(() => {
   const handleTrial = async (trialParams: TUpgradeParams): Promise<void> => {
     const { selectedSubscriptionType, selectedProductId, selectedPriceId } = trialParams;
     if (isSelfManaged) return; // Self-hosted workspaces can't have trials
+    if (isOfflinePayment) return; // Offline payments can't have trials
     if (!selectedProductId || !selectedPriceId) {
       setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Missing product or price ID" });
       return;
@@ -134,6 +122,10 @@ export const BillingRoot = observer(() => {
     const { selectedSubscriptionType, selectedProductId, selectedPriceId, isActive } = upgradeParams;
     if (!isActive) {
       window.open("https://plane.so/talk-to-sales", "_blank");
+      return;
+    }
+    if (isOfflinePayment) {
+      window.open("mailto:support@plane.so", "_blank");
       return;
     }
     if (!selectedProductId || !selectedPriceId) {
@@ -228,17 +220,11 @@ export const BillingRoot = observer(() => {
 
   return (
     <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <div>
-        <div className="flex items-center">
-          <h3 className="text-xl font-medium flex gap-4">Billing and plans</h3>
-        </div>
-      </div>
-      <div
-        className={cn(
-          "transition-all duration-500 ease-in-out will-change-[height,opacity]",
-          isScrolled ? "h-0 opacity-0 pointer-events-none" : "h-[300px] opacity-100"
-        )}
-      >
+      <SettingsHeading
+        title={t("workspace_settings.settings.billing_and_plans.heading")}
+        description={t("workspace_settings.settings.billing_and_plans.description")}
+      />
+      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
           <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg", planCardVariantStyle)}>
             {!subscriptionDetail && (
@@ -254,7 +240,7 @@ export const BillingRoot = observer(() => {
                     <SelfHostedFreePlanCard />
                   ) : (
                     <CloudFreePlanCard
-                      upgradeProductType={EProductSubscriptionEnum.PRO}
+                      upgradeProductType={EProductSubscriptionEnum.BUSINESS}
                       isProductsAPILoading={isProductsAPILoading}
                       trialLoader={trialLoader}
                       upgradeLoader={upgradeLoader}
@@ -279,9 +265,7 @@ export const BillingRoot = observer(() => {
         <div className="text-xl font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
-        ref={containerRef}
         products={data}
-        isScrolled={isScrolled}
         isProductsAPILoading={isProductsAPILoading}
         trialLoader={trialLoader}
         upgradeLoader={upgradeLoader}
@@ -291,7 +275,6 @@ export const BillingRoot = observer(() => {
         getBillingFrequency={getBillingFrequency}
         setBillingFrequency={setBillingFrequency}
         setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-        setIsScrolled={setIsScrolled}
       />
     </section>
   );

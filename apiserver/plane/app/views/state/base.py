@@ -26,13 +26,18 @@ from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
+
 class StateViewSet(BaseViewSet):
     serializer_class = StateSerializer
     model = State
 
     def update_workflow_state(self, slug, project_id, state_id):
         """Method to update the default workflow state's issue creation"""
-        if check_workspace_feature_flag(feature_key=FeatureFlag.WORKFLOWS, slug=slug, user_id=str(self.request.user.id)):
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.WORKFLOWS,
+            slug=slug,
+            user_id=str(self.request.user.id),
+        ):
             workflow = Workflow.objects.filter(
                 workspace__slug=slug, project_id=project_id, state_id=state_id
             ).first()
@@ -47,15 +52,15 @@ class StateViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .filter(is_triage=False)
             .select_related("project")
             .select_related("workspace")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
+        
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])

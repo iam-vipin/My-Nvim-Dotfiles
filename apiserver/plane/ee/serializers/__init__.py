@@ -1,6 +1,6 @@
 from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
 
-from .app.issue import IssueLiteSerializer
+from .app.issue import IssueLiteSerializer, WorkItemPageSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
 from .app.page import (
     WorkspacePageSerializer,
@@ -75,6 +75,7 @@ from .app.epic import (
     EpicTypeSerializer,
     EpicUserPropertySerializer,
     EpicReactionSerializer,
+    EpicSubscriberSerializer,
 )
 
 from .app.workflow import (
@@ -121,3 +122,10 @@ from .api.workspace.credential import WorkspaceCredentialAPISerializer
 from .api.workspace.connection import WorkspaceConnectionAPISerializer
 from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
 from .api.worklog import IssueWorkLogAPISerializer
+
+
+# mobile app endpoints serializers
+from .app.mobile import (
+    MobileWorkspaceLiteSerializer,
+    MobileInvitationDetailsSerializer,
+)

@@ -3,19 +3,17 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssuePropertyType } from "@plane/constants";
 import { IIssueProperty, IIssueType, TIssueType } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore, getRandomIconName } from "@plane/ui";
 import {
   getRandomBackgroundColor,
   mockCreateCustomProperty,
   mockCreateCustomPropertyOption,
   mockCreateWorkItemType,
-  mockDeleteCustomPropertyOption,
   mockDeleteCustomProperty,
+  mockDeleteCustomPropertyOption,
   mockUpdateCustomProperty,
   mockUpdateWorkItemType,
 } from "@plane/utils";
-// helpers
-import { getRandomIconName } from "@/helpers/emoji.helper";
 // plane web imports
 import { rootStore } from "@/lib/store-context";
 import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";

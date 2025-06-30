@@ -7,7 +7,6 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
-import { IssuePeekOverview } from "@/components/issues";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useEditorAsset, useMember, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
@@ -37,10 +36,10 @@ export const PageTemplateEditor = observer((props: Props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   const { getEditorFileHandlers } = useEditorConfig();
-  const { documentEditor: documentEditorDisabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // derived values
   const additionalDisabledExtensions: TExtensions[] = ["issue-embed"];
-  const disabledExtensions = [...documentEditorDisabledExtensions, ...additionalDisabledExtensions];
+  const disabledExtensions = [...documentEditorExtensions.disabled, ...additionalDisabledExtensions];
   const workspaceId = useMemo(
     () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : ""),
     [getWorkspaceBySlug, workspaceSlug]
@@ -96,30 +95,29 @@ export const PageTemplateEditor = observer((props: Props) => {
   });
 
   return (
-    <>
-      <DocumentEditorWithRef
-        disabledExtensions={disabledExtensions}
-        fileHandler={fileHandler}
-        id="page-template-editor"
-        initialValue={initialValue}
-        onChange={(json, html) => onChange(json, html)}
-        user={userConfig}
-        embedHandler={{
-          issue: issueEmbedProps,
-        }}
-        mentionHandler={{
-          searchCallback: async (query) => {
-            const res = await fetchMentions(query);
-            if (!res) throw new Error("Failed in fetching mentions");
-            return res;
-          },
-          renderComponent: (props) => <EditorMentionsRoot {...props} />,
-          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-        }}
-        containerClassName="min-h-[120px] border-none"
-        isSmoothCursorEnabled={is_smooth_cursor_enabled}
-      />
-      <IssuePeekOverview />
-    </>
+    <DocumentEditorWithRef
+      disabledExtensions={disabledExtensions}
+      flaggedExtensions={documentEditorExtensions.flagged}
+      fileHandler={fileHandler}
+      id="page-template-editor"
+      initialValue={initialValue}
+      onChange={(json, html) => onChange(json, html)}
+      user={userConfig}
+      embedHandler={{
+        issue: issueEmbedProps,
+      }}
+      mentionHandler={{
+        searchCallback: async (query) => {
+          const res = await fetchMentions(query);
+          if (!res) throw new Error("Failed in fetching mentions");
+          return res;
+        },
+        renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+      }}
+      containerClassName="min-h-[120px] border-none pl-4 -ml-4"
+      isSmoothCursorEnabled={is_smooth_cursor_enabled}
+      bubbleMenuEnabled
+    />
   );
 });

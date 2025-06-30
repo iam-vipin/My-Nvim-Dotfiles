@@ -4,8 +4,6 @@ from .views import (
     ProductEndpoint,
     PaymentLinkEndpoint,
     WorkspaceProductEndpoint,
-    WebsitePaymentLinkEndpoint,
-    WebsiteUserWorkspaceEndpoint,
     SubscriptionEndpoint,
     WorkspaceLicenseEndpoint,
     UpgradeSubscriptionEndpoint,
@@ -13,12 +11,12 @@ from .views import (
     WorkspaceLicenseRefreshEndpoint,
     WorkspaceLicenseSyncEndpoint,
     WorkspaceFreeTrialEndpoint,
-    WorkspaceTrialUpgradeEndpoint,
     PurchaseSubscriptionSeatEndpoint,
     RemoveUnusedSeatsEndpoint,
     LicenseDeActivateEndpoint,
     CancelTrialSubscriptionEndpoint,
     ProrationPreviewEndpoint,
+    FeatureFlagProxySpaceEndpoint,
     LicenseActivateUploadEndpoint,
     LicenseFileFetchEndpoint,
 )
@@ -34,16 +32,6 @@ urlpatterns = [
         "workspaces/<str:slug>/payment-link/",
         PaymentLinkEndpoint.as_view(),
         name="products",
-    ),
-    path(
-        "website/payment-link/",
-        WebsitePaymentLinkEndpoint.as_view(),
-        name="website-payment-link",
-    ),
-    path(
-        "website/workspaces/",
-        WebsiteUserWorkspaceEndpoint.as_view(),
-        name="website-workspaces",
     ),
     path(
         "workspaces/<str:slug>/subscriptions/",
@@ -79,11 +67,6 @@ urlpatterns = [
         name="trial-subscriptions",
     ),
     path(
-        "workspaces/<str:slug>/trial-subscriptions/upgrade/",
-        WorkspaceTrialUpgradeEndpoint.as_view(),
-        name="trial-upgrade",
-    ),
-    path(
         "workspaces/<str:slug>/subscriptions/seats/",
         PurchaseSubscriptionSeatEndpoint.as_view(),
         name="purchase-subscription-seats",
@@ -117,5 +100,14 @@ urlpatterns = [
         "workspaces/<str:slug>/license-file/",
         LicenseFileFetchEndpoint.as_view(),
         name="license-fetch",
+    ),
+]
+
+
+space_urlpatterns = [
+    path(
+        "anchor/<str:anchor>/flags/",
+        FeatureFlagProxySpaceEndpoint.as_view(),
+        name="flags",
     ),
 ]

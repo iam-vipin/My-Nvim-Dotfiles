@@ -1,10 +1,10 @@
-import { useCallback, useRef } from "react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef } from "react";
+import { observer } from "mobx-react";
+import { useParams, useSearchParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { generateQueryParams } from "@/helpers/router.helper";
+import { cn, generateQueryParams, isCommentEmpty } from "@plane/utils";
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -24,16 +24,17 @@ type TProps = {
   shouldRedirect?: boolean;
 };
 
-export const InputBox = (props: TProps) => {
-  const { isFullScreen, className, activeChatId, shouldRedirect = false } = props;
+export const InputBox = observer((props: TProps) => {
+  const { className, activeChatId, shouldRedirect = false } = props;
+  // router
   const router = useAppRouter();
   // store hooks
   const { getAnswer, searchCallback, isPiTyping } = usePiChat();
   const { data: currentUser } = useUser();
   const { workspaceSlug } = useParams();
-
+  //ref
+  const isPiTypingRef = useRef(false);
   // query params
-  const pathName = usePathname();
   const searchParams = useSearchParams();
   const router_chat_id = searchParams.get("chat_id");
   // states
@@ -41,22 +42,24 @@ export const InputBox = (props: TProps) => {
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
+  // refs
+  const activeChatIdRef = useRef<string | null>(null);
 
   const handleRedirect = (path: string) => {
-    if (!activeChatId) return; // Don't redirect if we don't have an activeChatId
+    if (!activeChatIdRef.current) return; // Don't redirect if we don't have an activeChatIdRef.current
 
     const query = generateQueryParams(searchParams, ["chat_id"]);
-    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatId}`);
+    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatIdRef.current}`);
   };
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
-      if (!currentUser) return;
+      if (!currentUser || !activeChatIdRef.current || isPiTypingRef.current) return;
       e?.preventDefault();
-      if (!router_chat_id) handleRedirect(shouldRedirect ? `/${workspaceSlug}/pi-chat` : pathName);
+      if (!router_chat_id && shouldRedirect) handleRedirect(`/${workspaceSlug}/pi-chat`);
       const query = editorCommands.current?.getHTML();
-      if (!query) return;
-      getAnswer(query, currentUser?.id);
+      if (!query || isCommentEmpty(query)) return;
+      getAnswer(activeChatIdRef.current, query, currentUser?.id);
       editorCommands.current?.clear();
     },
     [currentUser, editorCommands, getAnswer, activeChatId]
@@ -108,6 +111,15 @@ export const InputBox = (props: TProps) => {
     return parsedResponse;
   };
 
+  useEffect(() => {
+    if (!activeChatId) return;
+    activeChatIdRef.current = activeChatId;
+  }, [activeChatId]);
+
+  useEffect(() => {
+    isPiTypingRef.current = isPiTyping;
+  }, [isPiTyping]);
+
   return (
     <form className={className}>
       <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">
@@ -138,4 +150,4 @@ export const InputBox = (props: TProps) => {
       </div>
     </form>
   );
-};
+});

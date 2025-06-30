@@ -13,21 +13,20 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
+import { cn, getDate, renderFormattedPayloadDate, generateWorkItemLink, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import {
-  DateDropdown,
   EstimateDropdown,
   PriorityDropdown,
   MemberDropdown,
   ModuleDropdown,
   CycleDropdown,
   StateDropdown,
+  DateRangeDropdown,
+  DateDropdown,
 } from "@/components/dropdowns";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { generateWorkItemLink, shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -263,13 +262,15 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties || !issue.project_id) return null;
 
+  // date range is enabled only when both dates are available and both dates are enabled
+  const isDateRangeEnabled: boolean = Boolean(
+    issue.start_date && issue.target_date && displayProperties.start_date && displayProperties.due_date
+  );
+
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
   const minDate = getDate(issue.start_date);
-  minDate?.setDate(minDate.getDate());
-
   const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -310,8 +311,45 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
+      {/* merged dates */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey={["start_date", "due_date"]}
+        shouldRenderProperty={() => isDateRangeEnabled}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateRangeDropdown
+            value={{
+              from: getDate(issue.start_date) || undefined,
+              to: getDate(issue.target_date) || undefined,
+            }}
+            onSelect={(range) => {
+              handleStartDate(range?.from ?? null);
+              handleTargetDate(range?.to ?? null);
+            }}
+            hideIcon={{
+              from: false,
+            }}
+            isClearable
+            mergeDates
+            buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+            renderPlaceholder={false}
+            customTooltipHeading="Date Range"
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
       {/* start date */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="start_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue.start_date ?? null}
@@ -329,7 +367,11 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       </WithDisplayPropertiesHOC>
 
       {/* target/due date */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="due_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
             value={issue?.target_date ?? null}
@@ -517,7 +559,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
           projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
+          value={issue?.label_ids || []}
           defaultOptions={defaultLabelOptions}
           onChange={handleLabel}
           disabled={isReadOnly}

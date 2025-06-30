@@ -1,6 +1,5 @@
 import { startOfToday, format, differenceInWeeks } from "date-fns";
-import { TCycleProgress } from "@plane/types";
-import { TProgressChartData } from "@/helpers/cycle.helper";
+import { TCycleProgress, TProgressChartData } from "@plane/types";
 
 type TProps = {
   x?: number;
@@ -106,7 +105,7 @@ const CustomizedYAxisTicks = (props: TProps) => {
   if (x === undefined || y === undefined || payload === undefined) return null;
   return (
     <text x={x - 10} y={y} dy={3} textAnchor="middle" fill={text} style={{ fontSize: "10px" }}>
-      {payload.value}
+      {payload.value % 1 === 0 ? payload.value : payload.value.toFixed(1)}
     </text>
   );
 };

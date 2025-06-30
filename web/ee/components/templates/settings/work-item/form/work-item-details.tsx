@@ -8,10 +8,9 @@ import { TWorkItemTemplateForm } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Input } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { isEditorEmpty } from "@/helpers/editor.helper";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks
@@ -107,21 +106,19 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
             <RichTextEditor
               id="work-item-description"
               initialValue={value ?? "<p></p>"}
-              workspaceSlug={workspaceSlug as string}
+              workspaceSlug={workspaceSlug.toString()}
               workspaceId={workspaceId}
-              projectId={projectId ? projectId : undefined}
+              projectId={projectId ?? undefined}
               ref={editorRef}
               searchMentionCallback={searchEntity}
-              onChange={(description_json: object, description_html: string) => {
-                onChange(description_html);
-              }}
+              onChange={(_description_json, description_html) => onChange(description_html)}
               placeholder={(isFocused, value) =>
                 isEditorEmpty(value)
                   ? t("templates.settings.form.work_item.description.placeholder")
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
               containerClassName="min-h-[80px] px-0"
-              disabledExtensions={["image"]}
+              disabledExtensions={["image", "attachments"]}
               uploadFile={async (blockId, file) => {
                 try {
                   const { asset_id } = await uploadEditorAsset({

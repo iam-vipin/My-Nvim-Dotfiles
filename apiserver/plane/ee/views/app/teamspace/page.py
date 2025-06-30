@@ -23,13 +23,12 @@ from plane.ee.permissions import TeamspacePermission
 from plane.db.models import (
     Workspace,
     Page,
-    ProjectPage,
     UserFavorite,
     DeployBoard,
     PageVersion,
     ProjectMember,
 )
-from plane.ee.models import TeamspacePage, TeamspaceProject
+from plane.ee.models import TeamspacePage
 from plane.ee.serializers import (
     TeamspacePageDetailSerializer,
     TeamspacePageSerializer,
@@ -44,6 +43,7 @@ from plane.bgtasks.page_version_task import page_version
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
+
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [TeamspacePermission]
@@ -66,11 +66,11 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
             .annotate(
-                project_ids=Coalesce(
+                label_ids=Coalesce(
                     ArrayAgg(
-                        "projects__id",
+                        "page_labels__label_id",
                         distinct=True,
-                        filter=~Q(projects__id__isnull=True),
+                        filter=~Q(page_labels__label_id__isnull=True),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -96,25 +96,6 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         if pk:
             page = self.get_queryset().get(workspace__slug=slug, pk=pk)
             serializer = TeamspacePageDetailSerializer(page)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # Get all the page of the team space
-        scope = request.GET.get("scope", "teams")
-        # Check if the user has access to the workspace
-        if scope == "projects":
-            # Get all the project ids
-            project_ids = TeamspaceProject.objects.filter(
-                team_space_id=team_space_id
-            ).values_list("project_id", flat=True)
-
-            # Get all the pages that are part of the team space
-            project_page_ids = ProjectPage.objects.filter(
-                workspace__slug=slug, project_id__in=project_ids
-            ).values_list("page_id", flat=True)
-            pages = self.get_queryset().filter(
-                workspace__slug=slug, pk__in=project_page_ids, access=0
-            )
-            serializer = TeamspacePageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all the pages that are part of the team space
@@ -196,7 +177,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Only update access if the page owner is the requesting  user
-        if page.access == 1:
+        if page.access == Page.PRIVATE_ACCESS:
             return Response(
                 {"error": "Access cannot be updated to private for teams page"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -340,16 +321,6 @@ class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
                     page_id=OuterRef("pk"),
                     team_space_id=self.kwargs.get("team_space_id"),
                 ).values("team_space_id")
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    ArrayAgg(
-                        "projects__id",
-                        distinct=True,
-                        filter=~Q(projects__id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
             )
             .first()
         )

@@ -21,6 +21,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-attachment-component",
   ".page-embed-component",
 ].join(", ");
 
@@ -66,7 +67,7 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement) => {
+export const getScrollParent = (node: HTMLElement | SVGElement) => {
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }

@@ -3,20 +3,21 @@ import orderBy from "lodash/orderBy";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TEpicStats, TLoader } from "@plane/types";
-// helpers
-import { convertToISODateString, getDate } from "@/helpers/date-time.helper";
-import { satisfiesDateFilter } from "@/helpers/filter.helper";
-// Plane-web
+import { convertToISODateString, getDate, satisfiesDateFilter } from "@plane/utils";
+// plane-web importss
 import { InitiativeService } from "@/plane-web/services/initiative.service";
 import { TInitiativeFilters, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@/plane-web/types/initiative";
 import {
-  TInitiativeReaction,
   TInitiative,
   TInitiativeAnalytics,
+  TInitiativeReaction,
   TInitiativeStats,
 } from "@/plane-web/types/initiative/initiative";
-//
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import { RootStore } from "../root.store";
 import { IUpdateStore, UpdateStore } from "../updates/base.store";
 import { IInitiativeAttachmentStore, InitiativeAttachmentStore } from "./initiative-attachment.store";
@@ -40,6 +41,7 @@ export interface IInitiativeStore {
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
   initiativesLoader: boolean;
   updatesStore: IUpdateStore;
+  isInitiativeModalOpen: string | null;
 
   openCollapsibleSection: InitiativeCollapsible[];
   lastCollapsibleAction: InitiativeCollapsible | null;
@@ -47,8 +49,10 @@ export interface IInitiativeStore {
   setOpenCollapsibleSection: (section: InitiativeCollapsible[]) => void;
   setLastCollapsibleAction: (section: InitiativeCollapsible) => void;
   toggleOpenCollapsibleSection: (section: InitiativeCollapsible) => void;
+  toggleInitiativeModal: (value?: string | null) => void;
 
   currentGroupedInitiativeIds: { [key: string]: string[] } | undefined;
+  isInitiativesFeatureEnabled: boolean;
 
   getInitiativeById: (initiativeId: string) => TInitiative | undefined;
   getInitiativeStatsById: (initiativeId: string) => TInitiativeStats | undefined;
@@ -85,7 +89,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
 
   initiativesLoader: boolean = false;
-
+  isInitiativeModalOpen: string | null = null;
   openCollapsibleSection: InitiativeCollapsible[] = ["projects", "epics"];
   lastCollapsibleAction: InitiativeCollapsible | null = null;
 
@@ -106,6 +110,7 @@ export class InitiativeStore implements IInitiativeStore {
       initiativesStatsMap: observable,
       initiativeAnalyticsLoader: observable,
       initiativeAnalyticsMap: observable,
+      isInitiativeModalOpen: observable,
 
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
@@ -123,6 +128,7 @@ export class InitiativeStore implements IInitiativeStore {
       setOpenCollapsibleSection: action,
       setLastCollapsibleAction: action,
       toggleOpenCollapsibleSection: action,
+      toggleInitiativeModal: action,
     });
 
     this.rootStore = _rootStore;
@@ -144,6 +150,15 @@ export class InitiativeStore implements IInitiativeStore {
     if (!workspaceSlug) return;
 
     return this.getGroupedInitiativeIds(workspaceSlug);
+  }
+
+  get isInitiativesFeatureEnabled() {
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
+    if (!workspaceSlug) return false;
+    return (
+      this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED) &&
+      this.rootStore.featureFlags.flags?.[workspaceSlug]?.[E_FEATURE_FLAGS.INITIATIVES]
+    );
   }
 
   get initiativeIds() {
@@ -439,6 +454,8 @@ export class InitiativeStore implements IInitiativeStore {
       throw e;
     }
   };
+
+  toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
 }
 
 export const shouldFilterInitiative = (initiative: TInitiative, filters: TInitiativeFilters): boolean => {

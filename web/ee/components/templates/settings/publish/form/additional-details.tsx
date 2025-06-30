@@ -4,10 +4,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { TPublishTemplateFormWithData } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-import { Input } from "@plane/ui";
-import { cn } from "@plane/utils";
-// plane web imports
-import { checkEmailValidity, checkURLValidity } from "@/helpers/string.helper";
+import { Input, PillInput } from "@plane/ui";
+import { cn, checkEmailValidity, checkURLValidity } from "@plane/utils";
 import { UploadAppAttachments } from "@/plane-web/components/marketplace/applications/form/upload-attachments";
 import {
   COMMON_ERROR_TEXT_CLASS_NAME,
@@ -16,7 +14,7 @@ import {
 } from "@/plane-web/components/templates/settings/common";
 // local imports
 import { TemplateCategoriesDropdown } from "./template-categories-dropdown";
-import { TemplateKeywordsDropdown } from "./template-keywords-dropdown";
+import { TemplateCoverImageUpload } from "./template-cover-image-upload";
 
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
   "bg-custom-background-100 border-[0.5px] border-custom-border-200 rounded-md px-2 py-1 h-8 w-full";
@@ -65,28 +63,6 @@ export const TemplateAdditionalDetails = observer(() => {
             <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.categories.message}</span>
           )}
         </div>
-        {/* Keywords */}
-        <div className="space-y-1.5">
-          <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.keywords.label")}</h3>
-          <Controller
-            control={control}
-            name="keywords"
-            render={({ field: { value, onChange } }) => (
-              <TemplateKeywordsDropdown
-                value={value}
-                handleChange={onChange}
-                buttonContainerClassName={cn(COMMON_DROPDOWN_CONTAINER_CLASSNAME, {
-                  "border-red-500": Boolean(errors.keywords),
-                })}
-              />
-            )}
-          />
-          {errors?.keywords && typeof errors.keywords.message === "string" && (
-            <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.keywords.message}</span>
-          )}
-        </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Company Name */}
         <div className="space-y-1.5">
           <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.company_name.label")}</h3>
@@ -128,9 +104,14 @@ export const TemplateAdditionalDetails = observer(() => {
             <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.company_name.message}</span>
           )}
         </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Contact Email */}
         <div className="space-y-1.5">
-          <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.contact_email.label")}</h3>
+          <h3 className={cn(COMMON_LABEL_TEXT_CLASS_NAME, "flex items-center gap-1")}>
+            {t("templates.settings.form.publish.contact_email.label")}
+            {renderOptionalTag()}
+          </h3>
           <Controller
             control={control}
             name="contact_email"
@@ -144,7 +125,6 @@ export const TemplateAdditionalDetails = observer(() => {
                 }
                 return undefined;
               },
-              required: t("templates.settings.form.publish.contact_email.validation.required"),
               maxLength: {
                 value: 255,
                 message: t("templates.settings.form.publish.contact_email.validation.maxLength"),
@@ -170,6 +150,74 @@ export const TemplateAdditionalDetails = observer(() => {
             <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.contact_email.message}</span>
           )}
         </div>
+        {/* Website */}
+        <div className="space-y-1.5">
+          <h3 className={cn(COMMON_LABEL_TEXT_CLASS_NAME, "flex items-center gap-1")}>
+            {t("templates.settings.form.publish.website.label")}
+            {renderOptionalTag()}
+          </h3>
+          <Controller
+            control={control}
+            name="website"
+            rules={{
+              validate: (value) => {
+                if (!value) return undefined;
+                const result = validateWhitespaceI18n(value);
+                if (result) return t(result);
+                if (!checkURLValidity(value)) {
+                  return t("templates.settings.form.publish.website.validation.invalid");
+                }
+                return undefined;
+              },
+              maxLength: {
+                value: 800,
+                message: t("templates.settings.form.publish.website.validation.maxLength"),
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="website"
+                name="website"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                placeholder={t("templates.settings.form.publish.website.placeholder")}
+                className="w-full"
+                inputSize="sm"
+                hasError={Boolean(errors.website)}
+                autoFocus
+              />
+            )}
+          />
+          {errors?.website && typeof errors.website.message === "string" && (
+            <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.website.message}</span>
+          )}
+        </div>
+      </div>
+      {/* Keywords */}
+      <div className="space-y-1.5">
+        <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.keywords.label")}</h3>
+        <Controller
+          control={control}
+          name="keywords"
+          rules={{
+            required: t("templates.settings.form.publish.keywords.validation.required"),
+          }}
+          render={({ field: { value, onChange } }) => (
+            <PillInput
+              id="keywords"
+              name="keywords"
+              value={value}
+              onChange={onChange}
+              placeholder={t("templates.settings.form.publish.keywords.placeholder")}
+              helperText={t("templates.settings.form.publish.keywords.helperText")}
+            />
+          )}
+        />
+        {errors?.keywords && typeof errors.keywords.message === "string" && (
+          <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.keywords.message}</span>
+        )}
       </div>
       {/* Privacy Policy URL */}
       <div className="space-y-1.5">
@@ -259,6 +307,28 @@ export const TemplateAdditionalDetails = observer(() => {
           <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.terms_of_service_url.message}</span>
         )}
       </div>
+      {/* Cover Image */}
+      <div className="space-y-1.5">
+        <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.cover_image.label")}</h3>
+        <Controller
+          name="cover_image_url"
+          control={control}
+          rules={{
+            required: t("templates.settings.form.publish.cover_image.validation.required"),
+          }}
+          render={({ field: { value, onChange } }) => (
+            <TemplateCoverImageUpload
+              initialValue={value ?? null}
+              onImageUpload={onChange}
+              hasError={Boolean(errors.cover_image_url)}
+            />
+          )}
+        />
+        {errors?.cover_image_url && typeof errors.cover_image_url.message === "string" && (
+          <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.cover_image_url.message}</span>
+        )}
+      </div>
+      {/* Attach Screenshots */}
       <div className="space-y-1.5">
         <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>
           {t("templates.settings.form.publish.attach_screenshots.label")}

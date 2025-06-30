@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { EUpdateStatus } from "@plane/types/src/enums";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { cn, renderFormattedDate } from "@plane/utils";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import Progress from "@/plane-web/components/updates/progress";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
@@ -113,7 +112,7 @@ export const UpdateBlock = observer((props: TProps) => {
           </div>
 
           {/* Update */}
-          <div className="text-base my-3 break-words w-full">{updateData.description}</div>
+          <div className="text-base my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
 
           {/* Progress */}
           <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />

@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 // ce imports
 import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/app-search";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useAppTheme, useInstance } from "@/hooks/store";
 // plane web imports
@@ -21,7 +21,7 @@ export const AppSearch = observer(() => {
   const isOnSearchPage = pathname.includes(`${workspaceSlug}/search`);
   const { config } = useInstance();
 
-  if (!config?.is_elasticsearch_enabled) return <BaseAppSearch />;
+  if (!config?.is_opensearch_enabled) return <BaseAppSearch />;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="ADVANCED_SEARCH" fallback={<BaseAppSearch />}>
       <Link

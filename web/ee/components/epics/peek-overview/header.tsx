@@ -8,8 +8,8 @@ import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 import {
   EIssueServiceType,
   EIssuesStoreType,
-  EUserProjectRoles,
   EUserPermissionsLevel,
+  EUserProjectRoles,
   EWorkItemConversionType,
 } from "@plane/constants";
 import { TIssue } from "@plane/types";
@@ -22,12 +22,9 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
-// components
-import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // store hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -37,7 +34,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
-import { ProjectEpicQuickActions } from "../epic-quick-action";
+import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
@@ -199,6 +196,12 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+        <IssueSubscription
+          serviceType={EIssueServiceType.EPICS}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+        />
         <div className="flex items-center gap-4">
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
             <ConvertWorkItemAction

@@ -43,7 +43,8 @@
   "your_account": "Your account",
   "security": "Security",
   "activity": "Activity",
-  "appearance": "Appearance",
+  "preferences": "Preferences",
+  "language_and_time": "Language & Time",
   "notifications": "Notifications",
   "workspaces": "Workspaces",
   "create_workspace": "Create workspace",
@@ -56,7 +57,15 @@
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
   "smooth_cursor": "Smooth Cursor",
   "system_preference": "System Preference",
@@ -150,6 +159,8 @@
   "failed_to_remove_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "project_created_successfully": "Project created successfully",
   "project_created_successfully_description": "Project created successfully. You can now start adding work items to it.",
+  "project_name_already_taken": "The project name is already taken.",
+  "project_identifier_already_taken": "The project identifier is already taken.",
   "project_cover_image_alt": "Project cover image",
   "name_is_required": "Name is required",
   "title_should_be_less_than_255_characters": "Title should be less than 255 characters",
@@ -336,6 +347,8 @@
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
   "bot": "Bot",
+  "settings_description": "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+  "back_to_workspace": "Back to workspace",
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -471,6 +484,9 @@
     "modules": "Modules",
     "labels": "Labels",
     "label": "Label",
+    "admins": "Admins",
+    "users": "Users",
+    "guests": "Guests",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
@@ -609,6 +625,16 @@
     "quarter": "Quarter",
     "press_for_commands": "Press '/' for commands",
     "click_to_add_description": "Click to add description",
+    "on_track": "On-Track",
+    "off_track": "Off-Track",
+    "at_risk": "At risk",
+    "timeline": "Timeline",
+    "completion": "Completion",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "in_progress": "In progress",
+    "planned": "Planned",
+    "paused": "Paused",
     "search": {
       "label": "Search",
       "placeholder": "Type to search",
@@ -694,6 +720,7 @@
     "live": "Live",
     "change_history": "Change History",
     "coming_soon": "Coming soon",
+    "member": "Member",
     "members": "Members",
     "you": "You",
     "upgrade_cta": {
@@ -712,7 +739,8 @@
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
     "applying": "Applying",
-    "overview": "Overview"
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
   "chart": {
     "x_axis": "X-axis",
@@ -927,7 +955,9 @@
     "select": {
       "error": "Please select at least one work item",
       "empty": "No work items selected",
-      "add_selected": "Add selected work items"
+      "add_selected": "Add selected work items",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
     },
     "open_in_full_screen": "Open work item in full screen"
   },
@@ -1159,29 +1189,11 @@
       "scope_and_demand": "Scope and Demand",
       "custom": "Custom Analytics"
     },
-    "empty_state": {
-      "general": {
-        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
-        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
-        "primary_button": {
-          "text": "Start your first project",
-          "comic": {
-            "title": "Analytics works best with Cycles + Modules",
-            "description": "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav."
-          }
-        }
-      }
-    },
-    "total_work_items": "Total work items",
-    "started_work_items": "Started work items",
-    "backlog_work_items": "Backlog work items",
-    "un_started_work_items": "Unstarted work items",
-    "completed_work_items": "Completed work items",
-    "total_guests": "Total Guests",
-    "total_intake": "Total Intake",
-    "total_users": "Total Users",
-    "total_admins": "Total Admins",
-    "total_projects": "Total Projects",
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
     "project_insights": "Project Insights",
     "summary_of_projects": "Summary of Projects",
     "all_projects": "All Projects",
@@ -1189,7 +1201,7 @@
     "active_projects": "Active Projects",
     "customized_insights": "Customized Insights",
     "created_vs_resolved": "Created vs Resolved",
-    "empty_state_v2": {
+    "empty_state": {
       "project_insights": {
         "title": "No data yet",
         "description": "Work items assigned to you, broken down by state, will show up here."
@@ -1312,6 +1324,28 @@
       }
     }
   },
+  "account_settings": {
+    "profile": {},
+    "preferences": {
+      "heading": "Preferences",
+      "description": "Customize your app experience the way you work"
+    },
+    "notifications": {
+      "heading": "Email notifications",
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
+    },
+    "security": {
+      "heading": "Security"
+    },
+    "api_tokens": {
+      "heading": "Personal Access Tokens",
+      "description": "Generate secure API tokens to integrate your data with external systems and applications."
+    },
+    "activity": {
+      "heading": "Activity",
+      "description": "Track your recent actions and changes across all projects and work items."
+    }
+  },
   "workspace_settings": {
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
@@ -1378,16 +1412,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Billing & Plans",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
         "view_plans": "View plans"
       },
       "exports": {
+        "heading": "Exports",
+        "description": "Export your project data in various formats and access your export history with download links.",
         "title": "Exports",
         "exporting": "Exporting",
         "previous_exports": "Previous exports",
         "export_separate_files": "Export the data into separate files",
+        "exporting_projects": "Exporting project",
+        "format": "Format",
         "modal": {
           "title": "Export to",
           "toasts": {
@@ -1403,6 +1443,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automate notifications to external services when project events occur.",
         "title": "Webhooks",
         "add_webhook": "Add webhook",
         "modal": {
@@ -1454,29 +1496,29 @@
         }
       },
       "api_tokens": {
-        "title": "API Tokens",
-        "add_token": "Add API token",
+        "title": "Personal Access Tokens",
+        "add_token": "Add personal access token",
         "create_token": "Create token",
         "never_expires": "Never expires",
         "generate_token": "Generate token",
         "generating": "Generating",
         "delete": {
-          "title": "Delete API token",
+          "title": "Delete personal access token",
           "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
           "success": {
             "title": "Success!",
-            "message": "The API token has been successfully deleted"
+            "message": "The token has been successfully deleted"
           },
           "error": {
             "title": "Error!",
-            "message": "The API token could not be deleted"
+            "message": "The token could not be deleted"
           }
         }
       }
     },
     "empty_state": {
       "api_tokens": {
-        "title": "No API tokens created",
+        "title": "No personal access tokens created",
         "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
       },
       "webhooks": {
@@ -1526,8 +1568,9 @@
       "profile": "Profile",
       "security": "Security",
       "activity": "Activity",
-      "appearance": "Appearance",
-      "notifications": "Notifications"
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "api-tokens": "Personal Access Tokens"
     },
     "tabs": {
       "summary": "Summary",
@@ -1589,6 +1632,8 @@
       }
     },
     "states": {
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
       "describe_this_state_for_your_members": "Describe this state for your members.",
       "empty_state": {
         "title": "No states available for the {groupKey} group",
@@ -1596,6 +1641,8 @@
       }
     },
     "labels": {
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
       "label_title": "Label title",
       "label_title_is_required": "Label title is required",
       "label_max_char": "Label name should not exceed 255 characters",
@@ -1604,9 +1651,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
       "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team.",
+      "enable_description": "They help you in communicating complexity and workload of the team.",
       "no_estimate": "No estimate",
       "new": "New estimate system",
       "create": {
@@ -1688,6 +1737,8 @@
     },
     "automations": {
       "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       "auto-archive": {
         "title": "Auto-archive closed work items",
         "description": "Plane will auto archive work items that have been completed or canceled.",
@@ -1963,6 +2014,10 @@
       "archived": {
         "title": "No archived pages yet",
         "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
       }
     }
   },
@@ -2307,47 +2362,8 @@
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
   },
-  "intake_forms": {
-    "create": {
-      "title": "Create a work item",
-      "sub-title": "Let the team know what you would like them to work on.",
-      "name": "Name",
-      "email": "Email",
-      "about": "What's this work item about?",
-      "description": "Describe what should happen",
-      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
-      "loading": "Creating",
-      "create_work_item": "Create work item",
-      "errors": {
-        "name": "Name is required",
-        "name_max_length": "Name should be less than 255 characters",
-        "email": "Email is required",
-        "email_invalid": "Invalid email address",
-        "title": "Title is required",
-        "title_max_length": "Title should be less than 255 characters"
-      }
-    },
-    "success": {
-      "title": "Yay! Your work item is now in the team's queue.",
-      "description": "The team can now either approve or discard this work item from their Intake queue.",
-      "primary_button": {
-        "text": "Add another work item"
-      },
-      "secondary_button": {
-        "text": "Learn more about Intake"
-      }
-    },
-    "how_it_works": {
-      "title": "How it works?",
-      "heading": "This is an Intake form.",
-      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
-      "steps": {
-        "step_1": "This short form lets you create a new work item in a Plane project.",
-        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
-        "step_3": "Someone from that project or team will review this.",
-        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
-        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
-      }
-    }
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   }
 }

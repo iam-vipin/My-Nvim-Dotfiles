@@ -19,6 +19,7 @@ from plane.db.models import Project, Label
 from plane.utils.cache import invalidate_cache
 from plane.ee.bgtasks.project_activites_task import project_activity
 
+
 class LabelViewSet(BaseViewSet):
     serializer_class = LabelSerializer
     model = Label
@@ -30,13 +31,14 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("sort_order")
         )
+
 
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True
@@ -50,13 +52,11 @@ class LabelViewSet(BaseViewSet):
                 project_activity.delay(
                     type="project.activity.updated",
                     requested_data=json.dumps(
-                        {"label": serializer.data.get("id")},cls=DjangoJSONEncoder
+                        {"label": serializer.data.get("id")}, cls=DjangoJSONEncoder
                     ),
                     actor_id=str(request.user.id),
                     project_id=str(project_id),
-                    current_instance=json.dumps(
-                        {"label": None},cls=DjangoJSONEncoder
-                    ),
+                    current_instance=json.dumps({"label": None}, cls=DjangoJSONEncoder),
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
                     origin=request.META.get("HTTP_ORIGIN"),
@@ -91,14 +91,10 @@ class LabelViewSet(BaseViewSet):
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
-        label = Label.objects.get(
-            pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        label = Label.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         project_activity.delay(
             type="project.activity.updated",
-            requested_data=json.dumps(
-                {"label": None}, cls=DjangoJSONEncoder
-            ),
+            requested_data=json.dumps({"label": None}, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             project_id=str(project_id),
             current_instance=json.dumps(

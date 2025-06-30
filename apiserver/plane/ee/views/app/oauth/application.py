@@ -120,14 +120,13 @@ class OAuthApplicationEndpoint(BaseAPIView):
             if not pk:
                 # Get all applications that is either owned by workspace
                 # OR published
-                applications = Application.objects.filter(
-                    Q(application_owners__workspace__slug=slug)
-                    | Q(published_at__isnull=False)
-                ).select_related(
-                    "logo_asset"
-                ).prefetch_related(
-                    "attachments",
-                    "categories"
+                applications = (
+                    Application.objects.filter(
+                        Q(application_owners__workspace__slug=slug)
+                        | Q(published_at__isnull=False)
+                    )
+                    .select_related("logo_asset")
+                    .prefetch_related("attachments", "categories")
                 )
                 # Annotate with ownership information
                 applications = applications.annotate(
@@ -155,11 +154,15 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 return Response(serialised_applications.data, status=status.HTTP_200_OK)
 
             # Single application case
-            application = Application.objects.filter(
-                id=pk, application_owners__workspace__slug=slug
-            ).select_related(
-                "logo_asset",
-            ).first()
+            application = (
+                Application.objects.filter(
+                    id=pk, application_owners__workspace__slug=slug
+                )
+                .select_related(
+                    "logo_asset",
+                )
+                .first()
+            )
 
             if not application:
                 return Response(
@@ -339,6 +342,6 @@ class OAuthApplicationClientIdEndpoint(BaseAPIView):
 
 class OAuthApplicationCategoryEndpoint(BaseAPIView):
     def get(self, request):
-        application_categories = ApplicationCategory.objects.all()
+        application_categories = ApplicationCategory.objects.filter(is_active=True)
         serializer = ApplicationCategorySerializer(application_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

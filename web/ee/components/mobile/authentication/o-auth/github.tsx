@@ -4,23 +4,26 @@ import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL  } from "@plane/constants";
 // images
 import githubLightModeImage from "/public/logos/github-black.png";
 import githubDarkModeImage from "/public/logos/github-dark.svg";
 
 export type TGitHubAuthButton = {
   title: string;
+  invitationId?: string;
 };
 
 export const GitHubAuthButton: FC<TGitHubAuthButton> = (props) => {
   // props
-  const { title } = props;
+  const { title, invitationId } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/mobile/github/`);
+    let url = `${API_BASE_URL}/auth/mobile/github/`;
+    if (invitationId) url += `?invitation_id=${invitationId}`;
+    window.location.assign(url);
   };
 
   return (

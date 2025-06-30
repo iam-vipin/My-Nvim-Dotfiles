@@ -36,7 +36,6 @@ export class BroadcastController {
   async handleBroadcast(req: Request<any, any, BroadcastPayloadUnion>, res: Response) {
     try {
       const payload = req.body;
-
       // Destructure common properties
       const { action, descendants_ids, page_id, parent_id, data, workspace_slug, user_id } = payload;
 
@@ -78,6 +77,8 @@ export class BroadcastController {
         this.handleDuplicated(payload, connectionContext);
       } else if (action === "deleted" && parent_id && page_id) {
         this.handleDeleted(payload, connectionContext);
+      } else if (action === "sub_page") {
+        this.handleSubPage(payload, connectionContext);
       }
     } catch (error) {
       manualLogger.error("Error in broadcast handler:", error);
@@ -160,7 +161,7 @@ export class BroadcastController {
               newPageEmbedNode.setAttribute("entity_identifier", data.new_page_id as string);
               newPageEmbedNode.setAttribute("entity_name", "sub_page");
               newPageEmbedNode.setAttribute("id", uuidv4());
-              newPageEmbedNode.setAttribute("workspace-identifier", workspace_slug || "");
+              newPageEmbedNode.setAttribute("workspace_identifier", workspace_slug || "");
               insertNodeAfter(parent, indexInParent, newPageEmbedNode);
             });
           }
@@ -170,6 +171,14 @@ export class BroadcastController {
       .catch((error) => {
         manualLogger.error("Error handling duplicated action:", error);
       });
+  }
+
+  private handleSubPage(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
+    if (payload.action !== "sub_page" || !payload.parent_id || !payload.page_id) return;
+
+    const { parent_id, page_id } = payload;
+
+    this.addPageEmbedToParent(parent_id, page_id, context.workspaceSlug || "", context);
   }
 
   private handleDeleted(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
@@ -245,7 +254,7 @@ export class BroadcastController {
           newPageEmbedNode.setAttribute("entity_identifier", pageId);
           newPageEmbedNode.setAttribute("entity_name", "sub_page");
           newPageEmbedNode.setAttribute("id", uuidv4());
-          newPageEmbedNode.setAttribute("workspace-identifier", workspaceSlug);
+          newPageEmbedNode.setAttribute("workspace_identifier", workspaceSlug);
           xmlFragment.push([newPageEmbedNode]);
         },
         {

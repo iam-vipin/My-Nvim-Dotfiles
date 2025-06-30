@@ -8,12 +8,13 @@ from plane.ee.models import TemplateCategory, Template
 class TemplateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateCategory
-        fields = "__all__"
+        fields = ["id", "name", "description", "logo_props", "is_active"]
 
 
 class PublishedTemplateSerializer(DynamicBaseSerializer):
     attachments = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Template
@@ -27,6 +28,11 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             "categories",
             "attachments",
             "keywords",
+            "website",
+            "company_name",
+            "cover_image_url",
+            "short_id",
+            "slug",
         ]
 
     def get_attachments(self, obj):
@@ -34,23 +40,23 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
 
     def get_categories(self, obj):
         return [
-            {
-                "id": category.id,
-                "name": category.name,
-            }
+            {"id": category.id, "name": category.name}
             for category in obj.categories.all()
         ]
 
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None
+
 
 class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
-
     class Meta(PublishedTemplateSerializer.Meta):
         fields = PublishedTemplateSerializer.Meta.fields + [
             "created_at",
             "updated_at",
             "description_stripped",
             "description_html",
-            "company_name",
             "supported_languages",
             "privacy_policy_url",
             "terms_of_service_url",
@@ -60,7 +66,7 @@ class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
 
 
 class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
-    categories = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Template
@@ -68,12 +74,14 @@ class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "company_name",
-            "created_at",
-            "updated_at",
-            "description_stripped",
             "short_description",
-            "categories",
+            "keywords",
+            "cover_image_url",
+            "short_id",
+            "slug",
         ]
 
-    def get_categories(self, obj):
-        return [category.name for category in obj.categories.all()]
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None

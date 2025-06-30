@@ -36,6 +36,7 @@ export type TFeedback = {
   chat_id: string;
   message_index: number;
   feedback: EFeedback;
+  feedback_message?: string;
 };
 
 export type TFocus = {
@@ -54,17 +55,18 @@ export type TDialogue = {
   answer?: string;
   llm?: string;
   feedback?: EFeedback;
+  reasoning?: string;
 };
 
 export type TChatHistory = {
   chat_id: string;
   dialogue: TDialogue[];
   title: string;
+  last_modified: string;
 };
 
 export type TUserThreads = {
   chat_id: string;
-  dialogue: string[];
   title: string;
   last_modified: string;
 };

@@ -1,10 +1,10 @@
-
+from django.conf import settings
 from django.db.models import Prefetch
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 from plane.db.models import Project, ProjectMember
 
-from .base import BaseDocument, JsonKeywordField
+from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -16,14 +16,18 @@ class ProjectDocument(BaseDocument):
     workspace_slug = fields.KeywordField()
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
-    class Index:
-        name = "projects"
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+
+    class Index(BaseDocument.Index):
+        name = (
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_projects"
+            if settings.OPENSEARCH_INDEX_PREFIX
+            else "projects"
+        )
 
     class Django:
         model = Project
-        fields = [
-            "id", "name", "identifier", "archived_at", "deleted_at"
-        ]
+        fields = ["id", "identifier", "archived_at", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -35,8 +39,8 @@ class ProjectDocument(BaseDocument):
         return qs.select_related("workspace").prefetch_related(
             Prefetch(
                 "project_projectmember",
-                queryset=ProjectMember.objects.filter(is_active=True).only("member_id"),
-                to_attr="active_members"
+                queryset=ProjectMember.objects.filter(is_active=True),
+                to_attr="active_members",
             )
         )
 
@@ -54,9 +58,9 @@ class ProjectDocument(BaseDocument):
         if hasattr(instance, "active_members"):
             members = instance.active_members
         else:
-            members = instance.project_projectmember.filter(
-                is_active=True
-            ).only("member_id")
+            members = instance.project_projectmember.filter(is_active=True).only(
+                "member_id"
+            )
         return [member.member_id for member in members]
 
     def prepare_is_archived(self, instance):

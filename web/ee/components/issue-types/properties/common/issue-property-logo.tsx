@@ -1,11 +1,9 @@
 import React, { FC } from "react";
 import { TriangleAlert } from "lucide-react";
-// types
+// plane imports
 import { TLogoProps } from "@plane/types";
-// ui
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   icon_props: TLogoProps["icon"];

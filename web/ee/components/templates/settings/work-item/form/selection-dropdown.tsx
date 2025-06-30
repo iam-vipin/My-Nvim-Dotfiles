@@ -6,16 +6,14 @@ import { ChevronRight } from "lucide-react";
 import { ETemplateLevel } from "@plane/constants";
 import { PartialDeep, TWorkItemTemplateForm } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
 import { ProjectDropdown } from "@/components/dropdowns";
-// helpers
-import { shouldRenderProject } from "@/helpers/project.helper";
 // hooks
-import { useProjectState, useUser } from "@/hooks/store";
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 
 type TSelectionDropdownProps = {
   workspaceSlug: string;
@@ -35,9 +33,10 @@ export const SelectionDropdown = observer((props: TSelectionDropdownProps) => {
     reset,
   } = useFormContext<TWorkItemTemplateForm>();
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
   const { getProjectDefaultStateId } = useProjectState();
   const { isWorkItemTypeEnabledForProject, getProjectDefaultIssueType } = useIssueTypes();
+  // context hooks
+  const { allowedProjectIds } = useIssueModal();
   // derived values
   const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
 
@@ -88,9 +87,7 @@ export const SelectionDropdown = observer((props: TSelectionDropdownProps) => {
                 buttonClassName={cn(COMMON_BUTTON_CLASS_NAME, {
                   [COMMON_ERROR_CLASS_NAME]: Boolean(errors?.work_item?.project_id),
                 })}
-                renderCondition={(project) =>
-                  shouldRenderProject(project) && !!projectsWithCreatePermissions?.[project.id]
-                }
+                renderCondition={(project) => allowedProjectIds.includes(project.id)}
                 disabled={currentLevel === ETemplateLevel.PROJECT || !!templateId}
               />
             </div>

@@ -9,7 +9,6 @@
     "business": "Byznys",
     "customers": "Zákazníci"
   },
-
   "workspace_dashboards": "Dashboards",
   "pi_chat": "Pi Chat",
   "in_app": "V aplikaci",
@@ -20,8 +19,6 @@
   "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
   "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
   "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
-
-
   "common": {
     "worklogs": "Pracovní záznamy",
     "live": "Živě",
@@ -29,9 +26,9 @@
     "project_updates": "Aktualizace projektu",
     "overview": "Přehled",
     "workflows": "Workflow",
-    "templates": "Šablony"
+    "templates": "Šablony",
+    "members_and_teamspaces": "Členové a týmové prostory"
   },
-
   "updates": {
     "progress": {
       "title": "Průběh",
@@ -99,7 +96,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Začíná před",
@@ -109,12 +105,41 @@
     }
   },
 
+  "pages": {
+    "link_pages": "Propojit stránky", 
+    "show_wiki_pages": "Zobrazit wikipedií",
+    "link_pages_to": "Propojit stránky k",
+    "linked_pages": "Propojené stránky",
+    "no_description": "Tato stránka je prázdná. Napište něco do ní a uvidíte to zde jako tento placeholder",
+    "toasts": {
+      "link":  {
+        "success": {
+          "title": "Stránky aktualizovány",
+          "message": "Stránky byly úspěšně aktualizovány"
+        },
+        "error": {
+          "title": "Stránky nebyly aktualizovány",
+          "message": "Nepodařilo se aktualizovat stránky"
+        }
+      },
+      "remove": {
+        "success": {  
+          "title": "Stránka odstraněna",
+          "message": "Stránka byla úspěšně odstraněna"
+        },
+        "error": {
+          "title": "Stránka nebyla odstraněna",
+          "message": "Nepodařilo se odstranit stránku"
+        }
+      }
+    }
+  },
+  
   "profile": {
     "actions": {
       "connections": "Spojení"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Iniciativy",
@@ -179,7 +204,6 @@
       "disabled": "Zakázáno"
     }
   },
-
   "teamspaces": {
     "label": "Týmové prostory",
     "empty_state": {
@@ -192,16 +216,87 @@
       }
     }
   },
-
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Začněte propojením projektů s tímto týmovým prostorem.",
-        "description": "Týmové prostory propojují projekty, ve kterých jsou členové týmu, takže můžete vidět pouze jejich práci, jejich příspěvek k pokroku v těchto projektech a metriky práce specifické pro tým."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatím jste nepropojili žádné týmové prostory.",
+          "description": "Vlastníci týmového prostoru a projektu mohou spravovat přístup k projektům."
+        }
+      },
+      "primary_button": {
+        "text": "Propojit týmový prostor"
+      },
+      "secondary_button": {
+        "text": "Zjistit více"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Název týmového prostoru",
+          "members": "Členové",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstranit týmový prostor"
+            },
+            "confirm": {
+              "title": "Odstranit {teamspaceName} z {projectName}",
+              "description": "Když odstraníte tento týmový prostor z propojeného projektu, členové zde ztratí přístup k propojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nebyly nalezeny žádné odpovídající týmové prostory"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Propojili jste týmový prostor s tímto projektem.} other {Propojili jste # týmových prostorů s tímto projektem.}}",
+            "description": "{additionalCount, plural, =0 {Týmový prostor {firstTeamspaceName} je nyní propojen s tímto projektem.} other {Týmový prostor {firstTeamspaceName} a {additionalCount} dalších je nyní propojeno s tímto projektem.}}"
+          },
+          "error": {
+            "title": "To se nepodařilo.",
+            "description": "Zkuste to znovu nebo obnovte tuto stránku před dalším pokusem."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstranili jste tento týmový prostor z projektu.",
+            "description": "Týmový prostor {teamspaceName} byl odstraněn z {projectName}."
+          },
+          "error": {
+            "title": "To se nepodařilo.",
+            "description": "Zkuste to znovu nebo obnovte tuto stránku před dalším pokusem."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hledat týmové prostory",
+        "info": {
+          "title": "Přidání týmového prostoru poskytne všem členům týmového prostoru přístup k tomuto projektu.",
+          "link": "Zjistit více"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žádné týmové prostory k propojení.",
+            "description": "Buď nejste v týmovém prostoru, který můžete propojit, nebo jste již propojili všechny dostupné týmové prostory."
+          },
+          "no_results": {
+            "title": "To neodpovídá žádnému z vašich týmových prostorů.",
+            "description": "Zkuste jiný výraz nebo se ujistěte, že máte týmové prostory k propojení."
+          }
+        },
+        "primary_button": {
+          "text": "Propojit vybrané týmové prostory"
+        }
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -220,7 +315,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -237,7 +331,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -247,17 +340,12 @@
           "text": "Vytvořit pohled"
         }
       },
-      "project_view": {
-        "title": "Žádné z vašich propojených projektů nemají veřejné pohledy.",
-        "description": "Veřejné pohledy v propojených projektech se zde automaticky zobrazí. Abyste viděli veřejné pohledy z propojených projektů zde, ujistěte se, že tyto projekty mají veřejné pohledy přístupné všem členům projektu."
-      },
       "filter": {
         "title": "Žádné shodné pohledy",
         "description": "Žádné pohledy neodpovídají kritériím vyhledávání. \n Vytvořte nový pohled místo toho."
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -266,10 +354,6 @@
         "primary_button": {
           "text": "Vytvořit svou první týmovou stránku"
         }
-      },
-      "project_page": {
-        "title": "Žádné z vašich propojených projektů nemají veřejné stránky.",
-        "description": "Veřejné stránky v propojených projektech se zde automaticky zobrazí. Pokud očekáváte, že zde uvidíte veřejné stránky, ujistěte se, že vaše propojené projekty mají veřejné stránky dostupné všem členům projektu."
       },
       "filter": {
         "title": "Žádné shodné stránky",
@@ -281,7 +365,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -310,9 +393,9 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Iniciativy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativy}}",
     "add_initiative": "Přidat iniciativu",
     "create_initiative": "Vytvořit iniciativu",
     "update_initiative": "Aktualizovat iniciativu",
@@ -361,7 +444,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -391,7 +473,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epiky",
     "no_epics_selected": "Žádné epiky nejsou vybrány",
@@ -415,7 +496,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -426,7 +506,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -435,7 +514,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -452,7 +530,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -589,7 +666,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -610,7 +686,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Typy pracovních položek",
     "label_lowercase": "typy pracovních položek",
@@ -797,7 +872,24 @@
           "title": "Přidat vlastní vlastnosti",
           "description": "Nové vlastnosti, které přidáte pro tento typ pracovních položek, se zde zobrazí."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Smazat tento typ",
+        "description": "Odstranění typů může vést ke ztrátě stávajících dat.",
+        "primary_button": "Ano, smazat",
+        "toast": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Typ pracovního položky byl úspěšně odstraněn."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodařilo se odstranit typ pracovního položky. Zkuste to prosím znovu!"
+          }
+        },
+        "can_disable_warning": "Chcete místo toho zakázat tento typ?"
+      },
+      "cant_delete_linked_message": "Tento typ pracovního položky nelze odstranit, protože je propojen s existujícími pracovními položkami."
     },
     "create": {
       "title": "Vytvořit typ pracovních položek",
@@ -809,7 +901,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodařilo se vytvořit typ pracovních položek. Zkuste to prosím znovu!"
+          "message": {
+            "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
+          }
         }
       }
     },
@@ -823,7 +917,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodařilo se aktualizovat typ pracovních položek. Zkuste to prosím znovu!"
+          "message": {
+            "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
+          }
         }
       }
     },
@@ -883,7 +979,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importy",
     "logo": "Logo",
@@ -931,7 +1026,6 @@
     "skip_user_import_description": "Přeskočení importu uživatelů povede k tomu, že pracovní položky, komentáře a další data z {serviceName} budou vytvořeny uživatelem provádějícím migraci v Plane. Uživatelé mohou být později stále přidáni ručně.",
     "invalid_pat": "Neplatný osobní přístupový token"
   },
-
   "integrations": {
     "integrations": "Integrace",
     "loading": "Načítání",
@@ -947,7 +1041,6 @@
     "back_to_integrations": "Zpět k integracím",
     "select_state": "Vyberte stav"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Připojte a synchronizujte své pracovní položky GitHub s Plane.",
@@ -975,7 +1068,6 @@
     "MR_MERGED": "Při sloučení PR nastavte stav na",
     "MR_CLOSED": "Při uzavření PR nastavte stav na"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Připojte a synchronizujte své žádosti o sloučení Gitlab s Plane.",
@@ -1002,7 +1094,6 @@
     "choose_project": "Vyberte projekt",
     "link_plane_project": "Propojit projekt Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Propojte svůj Slack workspace s Plane.",
@@ -1043,7 +1134,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Klikněte zde pro nahrání souboru",
     "drag_drop_text": "Přetáhnout a upustit",
@@ -1052,7 +1142,6 @@
     "missing_fields": "Chybějící pole",
     "success": "{fileName} nahráno!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Poskytnuté dotazové parametry jsou neplatné nebo chybí povinná pole",
     "invalid_installation_account": "Poskytnutý instalační účet není platný",
@@ -1066,7 +1155,6 @@
     "invalid_app_credentials": "Poskytnuté přihlašovací údaje aplikace jsou neplatné",
     "invalid_app_installation_id": "Nepodařilo se nainstalovat aplikaci"
   },
-
   "import_status": {
     "created": "Vytvořeno",
     "initiated": "Zahájeno",
@@ -1079,7 +1167,6 @@
     "error": "Chyba",
     "cancelled": "Zrušeno"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importujte svá Jira data do projektů Plane.",
     "personal_access_token": "Osobní přístupový token",
@@ -1103,7 +1190,6 @@
       "description_summary": "Zde je shrnutí dat, která budou migrována z Jira do Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importujte svá Asana data do projektů Plane.",
     "select_asana_priority_field": "Vyberte Asana pole priority",
@@ -1120,7 +1206,6 @@
       "description_summary": "Zde je shrnutí dat, která budou migrována z Asana do Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importujte svá Linear data do projektů Plane.",
     "steps": {
@@ -1136,7 +1221,6 @@
       "description_summary": "Zde je shrnutí dat, která budou migrována z Linear do Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importujte svá Jira Server data do projektů Plane.",
     "steps": {
@@ -1153,6 +1237,64 @@
     }
   },
 
+  "notion_importer": {
+    "notion_importer_description": "Importujte svá data z Notion do projektů Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrát exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Notion."
+    },
+    "upload": {
+      "drop_file_here": "Přetáhněte váš Notion zip soubor sem",
+      "upload_title": "Nahrát export z Notion",
+      "drag_drop_description": "Přetáhněte váš Notion export zip soubor nebo klikněte pro procházení",
+      "file_type_restriction": "Podporovány jsou pouze .zip soubory exportované z Notion",
+      "select_file": "Vybrat soubor",
+      "uploading": "Nahrávání...",
+      "preparing_upload": "Příprava nahrávání...",
+      "confirming_upload": "Potvrzování nahrávání...",
+      "confirming": "Potvrzování...",
+      "upload_complete": "Nahrávání dokončeno",
+      "upload_failed": "Nahrávání selhalo",
+      "start_import": "Spustit import",
+      "retry_upload": "Opakovat nahrávání",
+      "upload": "Nahrát",
+      "ready": "Připraveno",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávání dokončeno!",
+      "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Notion.",
+      "upload_progress_message": "Prosím nezavírejte toto okno."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte svá data z Confluence do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrát exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Přetáhněte váš Confluence zip soubor sem",
+      "upload_title": "Nahrát export z Confluence",
+      "drag_drop_description": "Přetáhněte váš Confluence export zip soubor nebo klikněte pro procházení",
+      "file_type_restriction": "Podporovány jsou pouze .zip soubory exportované z Confluence",
+      "select_file": "Vybrat soubor",
+      "uploading": "Nahrávání...",
+      "preparing_upload": "Příprava nahrávání...",
+      "confirming_upload": "Potvrzování nahrávání...",
+      "confirming": "Potvrzování...",
+      "upload_complete": "Nahrávání dokončeno",
+      "upload_failed": "Nahrávání selhalo",
+      "start_import": "Spustit import",
+      "retry_upload": "Opakovat nahrávání",
+      "upload": "Nahrát",
+      "ready": "Připraveno",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávání dokončeno!",
+      "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Confluence.",
+      "upload_progress_message": "Prosím nezavírejte toto okno."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importujte svá CSV data do projektů Plane.",
     "steps": {
@@ -1160,6 +1302,26 @@
       "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá CSV data. Jakmile je projekt vytvořen, vyberte ho zde.",
       "title_configure_csv": "Nastavte CSV",
       "description_configure_csv": "Nahrajte svůj CSV soubor a nakonfigurujte pole, která mají být mapována na pole Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte svá ClickUp data do projektů Plane.",
+    "select_service_space": "Vyberte {serviceName} Space",
+    "select_service_folder": "Vyberte {serviceName} Folder",
+    "selected": "Vybráno",
+    "users": "Uživatelé",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá ClickUp data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_clickup": "Nastavte ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tým, prostor a složku, ze které chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Automaticky jsme přiřadili ClickUp stavy k stavům Plane co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající stavy, můžete také vytvořit stavy a mapovat je ručně.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte ClickUp priority, kterou chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z ClickUp do Plane."
     }
   },
 
@@ -1448,7 +1610,6 @@
       "editing": "Úpravy"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Povolit nové pracovní položky",
@@ -1547,7 +1708,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Zákazník} other {Zákazníci}}",
     "drop_down": {
@@ -1925,7 +2085,6 @@
       "properties": "Vlastnosti"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Šablony",
@@ -2044,7 +2203,8 @@
           }
         },
         "publish": {
-          "action": "Publikovat šablonu",
+          "action": "{isPublished, select, true {Nastavení publikování} other {Publikovat na Marketplace}}",
+          "unpublish_action": "Odebrat z Marketplace",
           "title": "Uložte svou šablonu, aby byla pro vaše uživatele dostupná.",
           "name": {
             "label": "Název šablony",
@@ -2077,7 +2237,11 @@
           },
           "keywords": {
             "label": "Klíčová slova",
-            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí."
+            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí.",
+            "helperText": "Zadejte klíčová slova oddělená čárkami, která pomůžou lidem najít tuto šablonu z hledání.",
+            "validation": {
+              "required": "Alespoň jedno klíčové slovo je povinné"
+            }
           },
           "company_name": {
             "label": "Název společnosti",
@@ -2110,6 +2274,21 @@
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
+          "cover_image": {
+            "label": "Přidejte obrázek, který bude zobrazen na Marketplace",
+            "upload_title": "Nahrát obrázek",
+            "upload_placeholder": "Klikněte pro nahrání nebo přetáhněte a upustěte obrázek",
+            "drop_here": "Sem",
+            "click_to_upload": "Klikněte pro nahrání",
+            "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překročen limit velikosti. Zkuste to znovu.",
+            "upload_and_save": "Nahrát a uložit",
+            "uploading": "Nahrávání",
+            "remove": "Odstranit",
+            "removing": "Odstraňování",
+            "validation": {
+              "required": "Obrázek je povinný"
             }
           },
           "attach_screenshots": {
@@ -2174,6 +2353,16 @@
           "title": "Chyba!",
           "message": "Nepodařilo se smazat šablonu. Zkuste to znovu!"
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablona stažena",
+          "message": "{templateName}, šablona typu {templateType}, byla stažena z marketplace."
+        },
+        "error": {
+          "title": "Nepodařilo se stáhnout šablonu.",
+          "message": "Zkuste ji stáhnout znovu nebo se k ní vraťte později. Pokud ji stále nemůžete stáhnout, kontaktujte nás."
+        }
       }
     },
     "delete_confirmation": {
@@ -2181,6 +2370,13 @@
       "description": {
         "prefix": "Opravdu chcete smazat šablonu-",
         "suffix": "? Všechna data související se šablonou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stáhnout šablonu",
+      "description": {
+        "prefix": "Opravdu chcete stáhnout šablonu-",
+        "suffix": "? Šablona bude stažena z marketplace a nebude více dostupná pro ostatní."
       }
     },
     "dropdown": {
@@ -2200,5 +2396,25 @@
         "project": "Nebyly nalezeny žádné šablony."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty podle stavu",
+    "active_users": "Aktivní uživatelé",
+    "intake_trends": "Trendy příjmů",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu cyklu se zobrazí zde. Přidejte pracovní položky do cyklů, abyste mohli sledovat postup."
+      },
+      "module_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu modulu se zobrazí zde. Přidejte pracovní položky do modulů, abyste mohli sledovat postup."
+      },
+      "intake_trends": {
+        "title": "Zatím žádná data",
+        "description": "Analýza trendů příjmu se zobrazí zde. Přidejte pracovní položky do příjmu, abyste mohli sledovat trendy."
+      }
+    },
+    "upgrade_to_plan": "Přejděte na plán {plan}, abyste odemkli kartu {tab}"
   }
 }

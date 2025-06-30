@@ -11,11 +11,8 @@ import { TCustomerPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // utils
-import { getFileURL } from "@plane/utils";
+import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor";
-// helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -229,6 +226,7 @@ export const DefaultProperties: FC<Props> = (props) => {
                 })
               }
               containerClassName="pt-3 min-h-[120px] border-[0.5px] border-custom-border-200 rounded-lg relative focus:ring-1 focus:ring-custom-primary"
+              disabledExtensions={["attachments"]}
               uploadFile={async (blockId, file) => {
                 try {
                   const { asset_id } = await uploadEditorAsset({

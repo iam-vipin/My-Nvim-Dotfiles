@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane editor
@@ -6,11 +6,10 @@ import { DocumentReadOnlyEditorWithRef } from "@plane/editor";
 // plane types
 import { TPage } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
-import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
@@ -34,7 +33,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -169,7 +168,8 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   initialValue={description_html ?? "<p></p>"}
                   containerClassName="p-0 pl-3 border-none"
                   editorClassName="p-2.5 text-xs"
-                  disabledExtensions={disabledExtensions}
+                  disabledExtensions={documentEditorExtensions.disabled}
+                  flaggedExtensions={documentEditorExtensions.flagged}
                   displayConfig={{
                     fontSize: "small-font",
                   }}

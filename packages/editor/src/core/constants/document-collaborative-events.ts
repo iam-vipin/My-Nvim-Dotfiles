@@ -1,6 +1,6 @@
-import { EPageAccess } from "@plane/constants";
-import { CreatePayload, BaseActionPayload } from "@/types";
+import { EPageAccess, EPageSharedUserAccess } from "@plane/constants";
 import { TCollaborator } from "@plane/types";
+import { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.
 export type ArchivedPayload = CreatePayload<{ archived_at: string | null }>;
@@ -29,7 +29,14 @@ export type MovedPayload = CreatePayload<{
   new_page_id: string;
 }>;
 export type CollaboratorsUpdatedPayload = CreatePayload<{ users: TCollaborator[] }>;
+export type SharedPayload = CreatePayload<{
+  users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
+}>;
+export type UnsharedPayload = CreatePayload<{
+  users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
+}>;
 export type RestoredPayload = CreatePayload<{ deleted_page_ids?: string[] }>;
+export type SubPagePayload = BaseActionPayload;
 
 // Enhanced DocumentCollaborativeEvents with payload types.
 // Both the client name and server name are defined, and we add a "payloadType" property
@@ -109,5 +116,20 @@ export const DocumentCollaborativeEvents = {
     client: "restored",
     server: "restore",
     payloadType: {} as RestoredPayload,
+  },
+  sub_page: {
+    client: "sub_page",
+    server: "sub_page",
+    payloadType: {} as SubPagePayload,
+  },
+  shared: {
+    client: "shared",
+    server: "shared",
+    payloadType: {} as SharedPayload,
+  },
+  unshared: {
+    client: "unshared",
+    server: "unshared",
+    payloadType: {} as UnsharedPayload,
   },
 } as const;

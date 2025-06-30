@@ -1,7 +1,5 @@
 # Third party imports
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.response import Response
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
@@ -25,10 +23,12 @@ from plane.db.models import (
     WorkspaceUserPreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.url import contains_url
 
 # Django imports
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+import re
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
@@ -36,10 +36,21 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True)
 
+    def validate_name(self, value):
+        # Check if the name contains a URL
+        if contains_url(value):
+            raise serializers.ValidationError("Name must not contain URLs")
+        return value
+
     def validate_slug(self, value):
         # Check if the slug is restricted
         if value in RESTRICTED_WORKSPACE_SLUGS:
             raise serializers.ValidationError("Slug is not valid")
+        # Slug should only contain alphanumeric characters, hyphens, and underscores
+        if not re.match(r"^[a-zA-Z0-9_-]+$", value):
+            raise serializers.ValidationError(
+                "Slug can only contain letters, numbers, hyphens (-), and underscores (_)"
+            )
         return value
 
     class Meta:
@@ -211,6 +222,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField()
     is_epic = serializers.SerializerMethodField()
 
     class Meta:
@@ -230,8 +242,14 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
     def get_project_identifier(self, obj):
         project = obj.project
-
         return project.identifier if project else None
+
+    def get_assignees(self, obj):
+        return list(
+            obj.assignees.filter(issue_assignee__deleted_at__isnull=True).values_list(
+                "id", flat=True
+            )
+        )
 
     def get_is_epic(self, obj):
         return obj.type.is_epic if obj.type else False

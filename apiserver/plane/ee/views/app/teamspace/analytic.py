@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import Cycle, Issue, IssueView, Page, IssueRelation, IssueAssignee
+from plane.db.models import Cycle, Issue, IssueRelation, IssueAssignee
 from plane.ee.models import (
     TeamspacePage,
     TeamspaceProject,
@@ -31,7 +31,7 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
     def get(self, request, slug, team_space_id):
         # Get team entities count
         team_page_count = TeamspacePage.objects.filter(
-            team_space_id=team_space_id, page__access=0
+            team_space_id=team_space_id, page__access=0, page__archived_at__isnull=True
         ).count()
         team_view_count = TeamspaceView.objects.filter(
             team_space_id=team_space_id, view__access=1
@@ -42,35 +42,32 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("project_id", flat=True)
 
-        issue_count = Issue.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
+        team_member_ids = TeamspaceMember.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("member_id", flat=True)
+
+        issue_ids = IssueAssignee.objects.filter(
+            workspace__slug=slug, assignee_id__in=team_member_ids
+        ).values_list("issue_id", flat=True)
+
+        issue_count = Issue.issue_objects.filter(
+            id__in=issue_ids,
+            project_id__in=project_ids,
+            workspace__slug=slug,
         ).count()
 
         cycles_count = Cycle.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
-        ).count()
-
-        pages_count = Page.objects.filter(
-            projects__in=project_ids, workspace__slug=slug, access=0
-        ).count()
-
-        views_count = IssueView.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug, access=1
+            project_id__in=project_ids,
+            workspace__slug=slug,
+            archived_at__isnull=True,
         ).count()
 
         return Response(
             {
                 "linked_entities": {
-                    "projects": project_ids.count(),
                     "issues": issue_count,
                     "cycles": cycles_count,
-                    "pages": pages_count,
-                    "views": views_count,
-                    "total": project_ids.count()
-                    + issue_count
-                    + cycles_count
-                    + pages_count
-                    + views_count,
+                    "total": issue_count + cycles_count,
                 },
                 "team_entities": {
                     "pages": team_page_count,
@@ -413,7 +410,7 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
-    def project_tree(self, team_space_id, project_ids, scope, filters):
+    def project_tree(self, team_space_id, project_ids, filters):
         # Get team space issues queryset
         issues_queryset = Issue.issue_objects.filter(project_id__in=project_ids)
         # Get all team member ids
@@ -421,15 +418,12 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
-        # Get issue filter based on scope
-        if scope == "teams":
-            issue_filter = {
-                "id__in": IssueAssignee.objects.filter(
-                    assignee_id__in=team_member_ids
-                ).values_list("issue_id", flat=True)
-            }
-        else:
-            issue_filter = {}
+        # Generate issue filter
+        issue_filter = {
+            "id__in": IssueAssignee.objects.filter(
+                assignee_id__in=team_member_ids
+            ).values_list("issue_id", flat=True)
+        }
 
         issue_map = (
             issues_queryset.filter(**issue_filter)
@@ -441,7 +435,7 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    def member_tree(self, team_space_id, project_ids, scope, filters):
+    def member_tree(self, team_space_id, project_ids, filters):
         # Get all team member ids
         team_member_ids = TeamspaceMember.objects.filter(
             team_space_id=team_space_id
@@ -453,14 +447,11 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
             .values_list("id", flat=True)
         )
 
-        # Get assignee filter based on scope
-        if scope == "teams":
-            assignee_filter = {
-                "assignee_id__in": team_member_ids,
-                "issue__in": issue_ids,
-            }
-        else:
-            assignee_filter = {"issue__in": issue_ids}
+        # Generate assignee filter
+        assignee_filter = {
+            "assignee_id__in": team_member_ids,
+            "issue__in": issue_ids,
+        }
 
         # Get the issue map:
         issue_map = (
@@ -480,12 +471,11 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         ).values_list("project_id", flat=True)
 
         # Get the tab
-        scope = request.GET.get("scope", "projects")
         data_key = request.GET.get("data_key", "projects")
         filters = issue_filters(request.query_params, "GET")
 
         # Get the tree map based on the data_key
         if data_key == "projects":
-            return self.project_tree(team_space_id, project_ids, scope, filters)
+            return self.project_tree(team_space_id, project_ids, filters)
         else:
-            return self.member_tree(team_space_id, project_ids, scope, filters)
+            return self.member_tree(team_space_id, project_ids, filters)

@@ -26,10 +26,9 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
         issue_types = (
             IssueType.objects.filter(
                 workspace__slug=slug,
-                project_issue_types__project__project_projectmember__member=request.user,
-                project_issue_types__project__project_projectmember__is_active=True,
                 is_epic=False,
             )
+            .accessible_to(request.user.id, slug)
             .annotate(
                 issue_exists=Exists(
                     Issue.objects.filter(workspace__slug=slug, type_id=OuterRef("pk"))
@@ -110,7 +109,10 @@ class IssueTypeEndpoint(BaseAPIView):
 
         if request.data.get("name") in issue_types:
             return Response(
-                {"error": "Issue type with this name already exists"},
+                {
+                    "error": "Issue type with this name already exists",
+                    "code": "ISSUE_TYPE_ALREADY_EXIST",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -173,11 +175,32 @@ class IssueTypeEndpoint(BaseAPIView):
             is_epic=False,
             pk=pk,
         )
+        issue_types = (
+            IssueType.objects.filter(
+                workspace__slug=slug,
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+            )
+            .exclude(pk=pk)
+            .values_list("name", flat=True)
+        )
 
         # Default cannot be made in active
         if issue_type.is_default and not request.data.get("is_active"):
             return Response(
-                {"error": "Default work item type cannot be inactive"},
+                {
+                    "error": "Default work item type cannot be inactive",
+                    "code": "DEFAULT_ISSUE_TYPE_CANNOT_BE_INACTIVE",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if request.data.get("name") in issue_types:
+            return Response(
+                {
+                    "error": "Issue type with this name already exists",
+                    "code": "ISSUE_TYPE_ALREADY_EXIST",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -305,6 +328,10 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             WorkitemTemplate.objects.filter(
                 project_id=project_id, workspace__slug=slug, type__exact={}
             ).update(type=work_item_type_template_schema)
+
+            # Update the project
+            project.is_issue_type_enabled = True
+            project.save()
 
             # Serialize the data
             serializer = IssueTypeSerializer(work_item_type)

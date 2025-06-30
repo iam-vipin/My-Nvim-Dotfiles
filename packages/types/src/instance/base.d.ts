@@ -67,6 +67,18 @@ export interface IInstanceConfig extends IInstanceConfigExtended {
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
   instance_changelog_url?: string;
+  // enterprise
+  is_oidc_enabled: boolean;
+  oidc_provider_name: string | undefined;
+  is_saml_enabled: boolean;
+  saml_provider_name: string | undefined;
+  payment_server_base_url?: string;
+  prime_server_base_url?: string;
+  feature_flag_server_base_url?: string;
+  // silo
+  silo_base_url: string | undefined;
+  // opensearch
+  is_opensearch_enabled: boolean;
 }
 
 export interface IInstanceUpdate {

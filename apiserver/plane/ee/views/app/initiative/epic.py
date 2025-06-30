@@ -18,11 +18,10 @@ from rest_framework import status
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers.app.initiative import (
     InitiativeEpicSerializer,
-    InitiativeSerializer,
 )
-from plane.ee.models.initiative import InitiativeEpic, InitiativeProject
+from plane.ee.models.initiative import InitiativeEpic
 from plane.db.models import Workspace, Issue
-from plane.ee.models import Initiative, EntityUpdates
+from plane.ee.models import EntityUpdates
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -31,7 +30,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from plane.utils.order_queryset import order_issue_queryset
 from collections import defaultdict
-
 
 class InitiativeEpicViewSet(BaseViewSet):
     serializer_class = InitiativeEpicSerializer
@@ -58,10 +56,20 @@ class InitiativeEpicViewSet(BaseViewSet):
             largest_sort_order = 10000
         else:
             largest_sort_order += 1000
+            
+        #  Current initiative epics
+        current_initiative_epics = InitiativeEpic.objects.filter(
+            workspace=workspace,
+            initiative_id=initiative_id,
+        ).values_list("epic_id", flat=True)
 
+        # Get epics to delete and create using symmetric difference (XOR)
+        epics_to_delete = set(current_initiative_epics) - set(epic_ids)
+        epics_to_create = set(epic_ids) - set(current_initiative_epics)
+        
         # Create the initiative_epics
         initiative_epics = []
-        for epic_id in epic_ids:
+        for epic_id in epics_to_create:
             initiative_epics.append(
                 InitiativeEpic(
                     workspace=workspace,
@@ -71,6 +79,13 @@ class InitiativeEpicViewSet(BaseViewSet):
                 )
             )
             largest_sort_order += 1000
+
+        # Delete the initiative_epics
+        InitiativeEpic.objects.filter(
+            workspace=workspace,
+            initiative_id=initiative_id,
+            epic_id__in=epics_to_delete,
+        ).delete()
 
         # Bulk create the initiative_epics
         initiative_epics = InitiativeEpic.objects.bulk_create(
@@ -149,8 +164,6 @@ class InitiativeEpicViewSet(BaseViewSet):
             Issue.objects.filter(
                 workspace__slug=slug,
                 id__in=initiative_epics,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
             )
             .filter(Q(project__deleted_at__isnull=True))
             .filter(Q(type__isnull=False) & Q(type__is_epic=True))
@@ -190,24 +203,26 @@ class InitiativeEpicViewSet(BaseViewSet):
                     ).values("status")[:1]
                 )
             )
-            .values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "archived_at",
-                "state__group",
-                "label_ids",
-                "assignee_ids",
-                "type_id",
-                "update_status",
-            )
+            .accessible_to(request.user.id, slug)
+        )
+
+        epics = epics.values(
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "archived_at",
+            "state__group",
+            "label_ids",
+            "assignee_ids",
+            "type_id",
+            "update_status",
         )
 
         # Ordering

@@ -17,14 +17,16 @@ import { EditorRefApi, IDocumentEditor } from "@/types";
 
 const DocumentEditor = (props: IDocumentEditor) => {
   const {
+    bubbleMenuEnabled = false,
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
     fileHandler,
-    id,
+    flaggedExtensions,
     forwardedRef,
+    id,
     handleEditorReady,
     initialValue,
     isSmoothCursorEnabled,
@@ -50,6 +52,9 @@ const DocumentEditor = (props: IDocumentEditor) => {
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
         embedConfig: embedHandler,
+        flaggedExtensions,
+        isEditable: true,
+        fileHandler,
         userDetails: user,
       })
     );
@@ -63,8 +68,10 @@ const DocumentEditor = (props: IDocumentEditor) => {
     enableHistory: true,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
+    id,
     initialValue,
     isSmoothCursorEnabled,
     mentionHandler,
@@ -79,7 +86,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   return (
     <PageRenderer
-      bubbleMenuEnabled={false}
+      bubbleMenuEnabled={bubbleMenuEnabled}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={editorContainerClassName}

@@ -2,27 +2,46 @@ import { Metadata, Viewport } from "next";
 import Script from "next/script";
 // styles
 import "@/styles/globals.css";
+// plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web components
+import { cn } from "@plane/utils";
+// plane web imports
 import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
-import { FreeTrialBanner } from "@/plane-web/components/license";
+import { TrialBanner } from "@/plane-web/components/license";
+
 // local
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
   title: "Plane | Simple, extensible, open-source project management tool.",
   description: SITE_DESCRIPTION,
+  metadataBase: new URL("https://app.plane.so"),
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
     description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Plane - Modern project management",
+      },
+    ],
   },
   keywords:
     "software development, plan, ship, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
+    card: "summary_large_image",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Plane - Modern project management",
+      },
+    ],
   },
 };
 
@@ -71,8 +90,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
           >
             {/* free trial banner */}
-            <FreeTrialBanner />
-            <div className="w-full h-full overflow-hidden relative">{children}</div>
+            <TrialBanner />
+            <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>
       </body>

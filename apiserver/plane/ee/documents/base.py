@@ -1,7 +1,25 @@
+# Standard library imports
 import json
 
-from django_elasticsearch_dsl import Document, fields
-from elasticsearch_dsl import analysis
+# Third-party imports
+from django_opensearch_dsl import Document, fields
+from django_opensearch_dsl.fields import DODField
+from opensearchpy.helpers import analysis
+from django.conf import settings
+
+lowercase_normalizer = analysis.normalizer("lowercase_normalizer", filter=["lowercase"])
+
+edge_ngram_tokenizer = analysis.tokenizer(
+    "edge_ngram_tokenizer",
+    type="edge_ngram",
+    min_gram=2,
+    max_gram=15,
+    token_chars=["letter", "digit"],
+)
+
+edge_ngram_analyzer = analysis.analyzer(
+    "edge_ngram_analyzer", tokenizer=edge_ngram_tokenizer, filter=["lowercase"]
+)
 
 
 class BaseDocument(Document):
@@ -10,13 +28,46 @@ class BaseDocument(Document):
     that're needed to be applied to all the indexes, should go here.
     """
 
-    def get_queryset(self):
+    class Index:
+        settings = {
+            "number_of_shards": settings.OPENSEARCH_SHARD_COUNT,
+            "number_of_replicas": settings.OPENSEARCH_REPLICA_COUNT,
+            # Text search performance optimizations during heavy indexing
+            "refresh_interval": "30s",  # Reduce refresh frequency (default: 1s)
+            # Indexing performance settings
+            "index.translog.flush_threshold_size": "1gb",  # Larger translog before flush
+            "index.translog.sync_interval": "30s",  # Less frequent syncing
+            # Search performance during indexing
+            "index.search.slowlog.threshold.query.warn": "1s",
+            "index.search.slowlog.threshold.query.info": "500ms",
+            "index.indexing.slowlog.threshold.index.warn": "5s",
+            "index.indexing.slowlog.threshold.index.info": "2s",
+            "analysis": {
+                "normalizer": {
+                    "lowercase_normalizer": lowercase_normalizer.get_definition()
+                },
+                "tokenizer": {
+                    "edge_ngram_tokenizer": edge_ngram_tokenizer.get_definition()
+                },
+                "analyzer": {
+                    "edge_ngram_analyzer": edge_ngram_analyzer.get_definition()
+                },
+            },
+        }
+
+    def get_queryset(self, filter_=None, exclude=None, count=None):
         """
         Customized get_queryset method that returns the queryset from objects manager,
         and apply any related models to the queryset.
         Return the queryset that should be indexed by this doc type.
         """
         qs = self.django.model.all_objects.all()
+        if filter_:
+            qs = qs.filter(filter_)
+        if exclude:
+            qs = qs.exclude(exclude)
+        if count is not None:
+            qs = qs[:count]
         return self.apply_related_to_queryset(qs)
 
 
@@ -41,7 +92,10 @@ class JsonKeywordField(fields.KeywordField):
             return "{}"
 
 
-lowercase_normalizer = analysis.normalizer(
-    'lowercase_normalizer',
-    filter=['lowercase']
-)
+class KnnVectorField(DODField):
+    """
+    A custom field for KNN vector data type in OpenSearch.
+    This field allows for vector similarity search using k-NN algorithms.
+    """
+
+    name = "knn_vector"

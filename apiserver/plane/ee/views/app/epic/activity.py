@@ -38,13 +38,13 @@ class EpicActivityEndpoint(BaseAPIView):
             IssueActivity.objects.filter(issue_id=epic_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
+            .accessible_to(request.user.id, slug)
+            .distinct()
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
@@ -55,8 +55,6 @@ class EpicActivityEndpoint(BaseAPIView):
         epic_comments = (
             IssueComment.objects.filter(issue_id=epic_id)
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
@@ -69,7 +67,10 @@ class EpicActivityEndpoint(BaseAPIView):
                     queryset=CommentReaction.objects.select_related("actor"),
                 )
             )
+            .accessible_to(request.user.id, slug)
+            .distinct()
         )
+
         epic_activities = EpicActivitySerializer(epic_activities, many=True).data
         epic_comments = EpicCommentSerializer(epic_comments, many=True).data
 

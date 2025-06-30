@@ -1,5 +1,7 @@
+// tiptap
 import { Extensions } from "@tiptap/core";
-import React, { useMemo } from "react";
+import { useEditorState } from "@tiptap/react";
+import React, { useEffect, useMemo } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -8,13 +10,16 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
 
-const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
+const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
+    onChange,
     onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
@@ -25,11 +30,11 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     editorClassName = "",
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
-    onChange,
     pageRestorationInProgress,
     placeholder,
     realtimeConfig,
@@ -62,9 +67,11 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       embedHandler,
       extensions,
       fileHandler,
+      flaggedExtensions,
       forwardedRef,
       handleEditorReady,
       id,
+      isSmoothCursorEnabled,
       mentionHandler,
       onChange,
       onTransaction,
@@ -73,9 +80,8 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       serverHandler,
       tabIndex,
       titleRef,
-      user,
       updatePageProperties,
-      isSmoothCursorEnabled,
+      user,
     });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -91,21 +97,26 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   return (
-    <PageRenderer
-      aiHandler={aiHandler}
-      bubbleMenuEnabled={bubbleMenuEnabled}
-      displayConfig={displayConfig}
-      editor={editor}
-      titleEditor={titleEditor}
-      editorContainerClassName={editorContainerClassNames}
-      id={id}
-      isLoading={(!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress}
-      tabIndex={tabIndex}
-    />
+    <>
+      <RealtimeEventsHandler editor={editor} id={id} updatePageProperties={updatePageProperties} />
+      <PageRenderer
+        aiHandler={aiHandler}
+        bubbleMenuEnabled={bubbleMenuEnabled}
+        displayConfig={displayConfig}
+        editor={editor}
+        titleEditor={titleEditor}
+        editorContainerClassName={editorContainerClassNames}
+        id={id}
+        isLoading={
+          (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
+        }
+        tabIndex={tabIndex}
+      />
+    </>
   );
 };
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditor>(
+const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
   (props, ref) => (
     <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
   )
@@ -114,3 +125,27 @@ const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, IColla
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
 export { CollaborativeDocumentEditorWithRef };
+
+const RealtimeEventsHandler = ({ editor, id, updatePageProperties }) => {
+  const { users } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      users: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR)?.users || [],
+    }),
+  });
+
+  // Update page properties when collaborators change
+  useEffect(() => {
+    if (!users || !updatePageProperties) return;
+
+    const currentUsers = users;
+
+    const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
+      users: currentUsers,
+    };
+
+    updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);
+  }, [users, updatePageProperties, id, editor]);
+
+  return null;
+};

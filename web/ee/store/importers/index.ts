@@ -5,3 +5,5 @@ export * from "./linear";
 export * from "./flatfile";
 export * from "./asana";
 export * from "./jira-server";
+export * from "./clickup";
+export * from "./zip-importer";

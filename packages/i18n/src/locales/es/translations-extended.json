@@ -571,6 +571,8 @@
         "your_apps": "Tus aplicaciones",
         "connect": "Conectar",
         "connected": "Conectado",
+        "install": "Instalar",
+        "installed": "Instalado",
         "app_available": "Has hecho que esta aplicación esté disponible para usar con un espacio de trabajo de Plane",
         "app_available_description": "Conecta un espacio de trabajo de Plane para comenzar a usarla",
         "client_id_and_secret": "ID y Secreto de Cliente",
@@ -652,6 +654,9 @@
         "setup_url_title": "URL de Configuración",
         "setup_url_error": "La URL de Configuración es requerida",
         "invalid_setup_url_error": "URL de Configuración inválida",
+        "configuration_url_title": "URL de Configuración",
+        "configuration_url_error": "La URL de Configuración es requerida",
+        "invalid_configuration_url_error": "URL de Configuración inválida",
         "contact_email_title": "Correo de Contacto",
         "contact_email_error": "El correo de contacto es requerido",
         "invalid_contact_email_error": "Correo de contacto inválido",
@@ -1132,6 +1137,62 @@
         "failed_loading_project_connections": "No pudimos cargar tus conexiones de proyecto. Esto podría deberse a un problema de red o un problema con la integración."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Conecta tu espacio de trabajo de Sentry con Plane.",
+    "connected_sentry_workspaces": "Espacios de trabajo de Sentry conectados",
+    "connected_on": "Conectado el {date}",
+    "disconnect_workspace": "Desconectar espacio de trabajo {name}",
+    "state_mapping": {
+      "title": "Mapeo de estados",
+      "description": "Mapea los estados de incidencias de Sentry a los estados de tu proyecto. Configura qué estados usar cuando una incidencia de Sentry se resuelve o no se resuelve.",
+      "add_new_state_mapping": "Agregar nuevo mapeo de estado",
+      "empty_state": "No hay mapeos de estado configurados. Crea tu primer mapeo para sincronizar los estados de incidencias de Sentry con los estados de tu proyecto.",
+      "failed_loading_state_mappings": "No pudimos cargar tus mapeos de estado. Esto podría deberse a un problema de red o un problema con la integración.",
+      "loading_project_states": "Cargando estados del proyecto...",
+      "error_loading_states": "Error al cargar estados",
+      "no_states_available": "No hay estados disponibles",
+      "no_permission_states": "No tienes permiso para acceder a los estados de este proyecto",
+      "states_not_found": "Estados del proyecto no encontrados",
+      "server_error_states": "Error del servidor al cargar estados"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Conecta y sincroniza tu organización de GitHub Enterprise con Plane.",
+    "app_form_title": "Configuración de GitHub Enterprise",
+    "app_form_description": "Configura GitHub Enterprise para conectarse con Plane.",
+    "app_id_title": "ID de la app",
+    "app_id_description": "El ID de la app que creaste en tu organización de GitHub Enterprise.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID es requerido",
+    "app_name_title": "Slug de la app",
+    "app_name_description": "El slug de la app que creaste en tu organización de GitHub Enterprise.",
+    "app_name_error": "App slug es requerido",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "URL base",
+    "base_url_description": "La URL base de tu organización de GitHub Enterprise.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "URL base es requerida",
+    "invalid_base_url_error": "URL base inválida",
+    "client_id_title": "ID del cliente",
+    "client_id_description": "El ID del cliente de la app que creaste en tu organización de GitHub Enterprise.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID del cliente es requerido",
+    "client_secret_title": "Secret del cliente",
+    "client_secret_description": "El secret del cliente de la app que creaste en tu organización de GitHub Enterprise.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Secret del cliente es requerido",
+    "webhook_secret_title": "Secret del webhook",
+    "webhook_secret_description": "El secret del webhook de la app que creaste en tu organización de GitHub Enterprise.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Secret del webhook es requerido",
+    "private_key_title": "Clave privada (Base64 codificado)",
+    "private_key_description": "Clave privada de la app que creaste en tu organización de GitHub Enterprise.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Clave privada es requerida",
+    "connect_app": "Conectar app"
   },
   "file_upload": {
     "upload_text": "Haz clic aquí para subir archivo",
@@ -2309,6 +2370,12 @@
       },
       "no_labels": {
         "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "no_work_items": {
+        "description": "Aún no hay elementos de trabajo. Añade uno para estructurar tu trabajo mejor."
+      },
+      "no_sub_work_items": {
+        "description": "No hay sub-elementos de trabajo aún. Añade uno para estructurar tu trabajo mejor."
       },
       "page": {
         "no_templates": {

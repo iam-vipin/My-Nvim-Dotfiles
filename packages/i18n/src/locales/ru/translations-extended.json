@@ -562,6 +562,8 @@
         "your_apps": "Ваши приложения",
         "connect": "Подключить",
         "connected": "Подключено",
+        "install": "Установить",
+        "installed": "Установлено",
         "app_available": "Вы сделали это приложение доступным для использования с рабочим пространством Plane",
         "app_available_description": "Подключите рабочее пространство Plane, чтобы начать использование",
         "client_id_and_secret": "ID и Секрет Клиента",
@@ -643,6 +645,9 @@
         "setup_url_title": "URL настройки",
         "setup_url_error": "URL настройки обязателен",
         "invalid_setup_url_error": "Неверный URL настройки",
+        "configuration_url_title": "URL настройки",
+        "configuration_url_error": "URL настройки обязателен",
+        "invalid_configuration_url_error": "Неверный URL настройки",
         "contact_email_title": "Email контакта",
         "contact_email_error": "Email контакта обязателен",
         "invalid_contact_email_error": "Неверный email контакта",
@@ -1123,6 +1128,62 @@
         "failed_loading_project_connections": "Мы не смогли загрузить ваши подключения проектов. Это может быть связано с проблемой сети или проблемой с интеграцией."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Подключите ваше рабочее пространство Sentry к Plane.",
+    "connected_sentry_workspaces": "Подключенные рабочие пространства Sentry",
+    "connected_on": "Подключено {date}",
+    "disconnect_workspace": "Отключить рабочее пространство {name}",
+    "state_mapping": {
+      "title": "Сопоставление состояний",
+      "description": "Сопоставьте состояния инцидентов Sentry с состояниями вашего проекта. Настройте, какие состояния использовать, когда инцидент Sentry разрешен или не разрешен.",
+      "add_new_state_mapping": "Добавить новое сопоставление состояний",
+      "empty_state": "Сопоставления состояний не настроены. Создайте первое сопоставление для синхронизации состояний инцидентов Sentry с состояниями вашего проекта.",
+      "failed_loading_state_mappings": "Не удалось загрузить ваши сопоставления состояний. Это может быть связано с проблемой сети или проблемой с интеграцией.",
+      "loading_project_states": "Загрузка состояний проекта...",
+      "error_loading_states": "Ошибка загрузки состояний",
+      "no_states_available": "Состояния недоступны",
+      "no_permission_states": "У вас нет разрешения на доступ к состояниям для этого проекта",
+      "states_not_found": "Состояния проекта не найдены",
+      "server_error_states": "Ошибка сервера при загрузке состояний"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Подключите и синхронизируйте вашу организацию GitHub Enterprise с Plane.",
+    "app_form_title": "Настройка GitHub Enterprise",
+    "app_form_description": "Настройте GitHub Enterprise для подключения к Plane.",
+    "app_id_title": "ID приложения",
+    "app_id_description": "ID приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "ID приложения является обязательным",
+    "app_name_title": "Slug приложения",
+    "app_name_description": "Slug приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "app_name_error": "Slug приложения является обязательным",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Базовая URL",
+    "base_url_description": "Базовая URL вашей организации GitHub Enterprise.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Базовая URL является обязательной",
+    "invalid_base_url_error": "Неверная базовая URL",
+    "client_id_title": "ID клиента",
+    "client_id_description": "ID клиента приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID клиента является обязательным",
+    "client_secret_title": "Секрет клиента",
+    "client_secret_description": "Секрет клиента приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Секрет клиента является обязательным",
+    "webhook_secret_title": "Секрет вебхука",
+    "webhook_secret_description": "Секрет вебхука приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Секрет вебхука является обязательным",
+    "private_key_title": "Приватный ключ (Base64 encoded)",
+    "private_key_description": "Base64 encoded private key приложения, которое вы создали в вашей организации GitHub Enterprise.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Приватный ключ является обязательным",
+    "connect_app": "Подключить приложение"
   },
   "file_upload": {
     "upload_text": "Нажмите здесь, чтобы загрузить файл",
@@ -2301,6 +2362,12 @@
       },
       "no_labels": {
         "description": "Еще нет меток. Создайте метки, чтобы помочь организовать и фильтровать элементы работы в вашем проекте."
+      },
+      "no_work_items": {
+        "description": "Еще нет элементов работы. Добавьте один, чтобы лучше структурировать свою работу."
+      },
+      "no_sub_work_items": {
+        "description": "Еще нет под-элементов работы. Добавьте один, чтобы лучше структурировать свою работу."
       },
       "page": {
         "no_templates": {

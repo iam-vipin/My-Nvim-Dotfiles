@@ -572,6 +572,8 @@
         "your_apps": "Ваші додатки",
         "connect": "Підключити",
         "connected": "Підключено",
+        "install": "Встановити",
+        "installed": "Встановлено",
         "app_available": "Ви зробили цей додаток доступним для використання з робочим простором Plane",
         "app_available_description": "Підключіть робочий простір Plane, щоб почати використання",
         "client_id_and_secret": "ID та Секрет Клієнта",
@@ -653,6 +655,9 @@
         "setup_url_title": "URL налаштування",
         "setup_url_error": "URL налаштування обов'язковий",
         "invalid_setup_url_error": "Недійсний URL налаштування",
+        "configuration_url_title": "URL налаштування",
+        "configuration_url_error": "URL налаштування обов'язковий",
+        "invalid_configuration_url_error": "Недійсний URL налаштування",
         "contact_email_title": "Email контакту",
         "contact_email_error": "Email контакту обов'язковий",
         "invalid_contact_email_error": "Недійсний email контакту",
@@ -1133,6 +1138,62 @@
         "failed_loading_project_connections": "Ми не змогли завантажити ваші з'єднання проєкту. Це може бути пов'язано з проблемою мережі або проблемою з інтеграцією."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Підключіть ваш робочий простір Sentry до Plane.",
+    "connected_sentry_workspaces": "Підключені робочі простори Sentry",
+    "connected_on": "Підключено {date}",
+    "disconnect_workspace": "Відключити робочий простір {name}",
+    "state_mapping": {
+      "title": "Відображення станів",
+      "description": "Відображіть стани інцидентів Sentry до станів вашого проекту. Налаштуйте, які стани використовувати, коли інцидент Sentry вирішено або не вирішено.",
+      "add_new_state_mapping": "Додати нове відображення стану",
+      "empty_state": "Відображення станів не налаштовано. Створіть перше відображення для синхронізації станів інцидентів Sentry зі станами вашого проекту.",
+      "failed_loading_state_mappings": "Не вдалося завантажити ваші відображення станів. Це може бути пов'язано з проблемою мережі або проблемою з інтеграцією.",
+      "loading_project_states": "Завантаження станів проекту...",
+      "error_loading_states": "Помилка завантаження станів",
+      "no_states_available": "Стани недоступні",
+      "no_permission_states": "У вас немає дозволу на доступ до станів для цього проекту",
+      "states_not_found": "Стани проекту не знайдено",
+      "server_error_states": "Помилка сервера при завантаженні станів"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Підключіть та синхронізуйте вашу організацію GitHub Enterprise з Плейн.",
+    "app_form_title": "Налаштування GitHub Enterprise",
+    "app_form_description": "Налаштуйте GitHub Enterprise для підключення до Плейн.",
+    "app_id_title": "ID Застосунку",
+    "app_id_description": "ID вашого застосунку в організації GitHub Enterprise.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID є обов'язковим",
+    "app_name_title": "Слаг Застосунку",
+    "app_name_description": "Слаг вашого застосунку в організації GitHub Enterprise.",
+    "app_name_error": "Слаг застосунку є обов'язковим",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Базова URL",
+    "base_url_description": "Базова URL вашої організації GitHub Enterprise.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Базова URL є обов'язковою",
+    "invalid_base_url_error": "Недійсна базова URL",
+    "client_id_title": "ID Клієнта",
+    "client_id_description": "ID клієнта вашого застосунку в організації GitHub Enterprise.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID клієнта є обов'язковим",
+    "client_secret_title": "Секретний Клієнт",
+    "client_secret_description": "Секретний ключ вашого застосунку в організації GitHub Enterprise.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Секретний ключ є обов'язковим",
+    "webhook_secret_title": "Секретний Webhook",
+    "webhook_secret_description": "Секретний ключ вашого застосунку в організації GitHub Enterprise.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Секретний ключ webhook є обов'язковим",
+    "private_key_title": "Приватний Ключ (Base64)",
+    "private_key_description": "Base64 закодований приватний ключ вашого застосунку в організації GitHub Enterprise.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Приватний ключ є обов'язковим",
+    "connect_app": "Підключити Застосунок"
   },
   "file_upload": {
     "upload_text": "Натисніть тут, щоб завантажити файл",
@@ -2311,6 +2372,12 @@
       },
       "no_labels": {
         "description": " Поки що немає лейблів. Створіть лейбли, щоб допомогти організувати та фільтрувати робочі елементи у вашому проджекті."
+      },
+      "no_work_items": {
+        "description": "Немає робочих елементів. Додайте один, щоб краще структурувати свою роботу."
+      },
+      "no_sub_work_items": {
+        "description": "Немає під-робочих елементів. Додайте один, щоб краще структурувати свою роботу."
       },
       "page": {
         "no_templates": {

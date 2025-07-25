@@ -587,6 +587,8 @@
         "your_apps": "Aplikasyonlarınız",
         "connect": "Bağlan",
         "connected": "Bağlandı",
+        "install": "Yükle",
+        "installed": "Yüklendi",
         "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
         "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
         "client_id_and_secret": "Klayınt ID ve Sikrıt",
@@ -668,6 +670,9 @@
         "setup_url_title": "Kurulum URL",
         "setup_url_error": "Kurulum URL gerekli",
         "invalid_setup_url_error": "Geçersiz kurulum URL",
+        "configuration_url_title": "Yapılandırma URL",
+        "configuration_url_error": "Yapılandırma URL gerekli",
+        "invalid_configuration_url_error": "Geçersiz yapılandırma URL",
         "contact_email_title": "İletişim Email",
         "contact_email_error": "İletişim Email gerekli",
         "invalid_contact_email_error": "Geçersiz iletişim email",
@@ -1148,6 +1153,62 @@
         "failed_loading_project_connections": "Proje bağlantılarınızı yükleyemedik. Bu, bir ağ sorunu veya entegrasyonla ilgili bir sorundan kaynaklanıyor olabilir."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Sentry çalışma alanınızı Plane ile bağlayın.",
+    "connected_sentry_workspaces": "Bağlı Sentry çalışma alanları",
+    "connected_on": "{date} tarihinde bağlandı",
+    "disconnect_workspace": "{name} çalışma alanını bağlantısını kes",
+    "state_mapping": {
+      "title": "Durum eşleştirme",
+      "description": "Sentry olay durumlarını proje durumlarınızla eşleştirin. Bir Sentry olayı çözüldüğünde veya çözülmediğinde hangi durumların kullanılacağını yapılandırın.",
+      "add_new_state_mapping": "Yeni durum eşleştirme ekle",
+      "empty_state": "Durum eşleştirme yapılandırılmamış. Sentry olay durumlarını proje durumlarınızla senkronize etmek için ilk eşleştirmenizi oluşturun.",
+      "failed_loading_state_mappings": "Durum eşleştirmelerinizi yükleyemedik. Bu, ağ sorunu veya entegrasyon sorunu nedeniyle olabilir.",
+      "loading_project_states": "Proje durumları yükleniyor...",
+      "error_loading_states": "Durumlar yüklenirken hata",
+      "no_states_available": "Kullanılabilir durum yok",
+      "no_permission_states": "Bu proje için durumlara erişim izniniz yok",
+      "states_not_found": "Proje durumları bulunamadı",
+      "server_error_states": "Durumlar yüklenirken sunucu hatası"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "GitHub Enterprise organizasyonunuzu Plane ile bağlayın ve senkronize edin.",
+    "app_form_title": "GitHub Enterprise Yapılandırması",
+    "app_form_description": "GitHub Enterprise'ı Plane ile bağlamak için yapılandırın.",
+    "app_id_title": "App ID",
+    "app_id_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın ID'si.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID gereklidir",
+    "app_name_title": "App Slug",
+    "app_name_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın slug'ı.",
+    "app_name_error": "App slug gereklidir",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "GitHub Enterprise organizasyonunuzun base URL'si.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Base URL gereklidir",
+    "invalid_base_url_error": "Geçersiz base URL",
+    "client_id_title": "Client ID",
+    "client_id_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın client ID'si.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "Client ID gereklidir",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın client secret'i.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Client secret gereklidir",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın webhook secret'i.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Webhook secret gereklidir",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "GitHub Enterprise organizasyonunuzda oluşturduğunuz uygulamanın private key'i.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key gereklidir",
+    "connect_app": "Uygulamayı Bağla"
   },
   "file_upload": {
     "upload_text": "Dosya yüklemek için buraya tıklayın",
@@ -2369,6 +2430,12 @@
       },
       "no_labels": {
         "description": "Henüz etiket yok. Projenizde iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "no_work_items": {
+        "description": "Henüz iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."
+      },
+      "no_sub_work_items": {
+        "description": "Henüz alt iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."
       },
       "page": {
         "no_templates": {

@@ -1,8 +1,7 @@
-import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
+import { EIssuesStoreType, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 import {
   TIssueFilterPriorityObject,
   ISSUE_DISPLAY_PROPERTIES_KEYS,
-  EIssuesStoreType,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
 
@@ -10,6 +9,7 @@ import {
 
 import {
   ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   EActivityFilterTypeEE,
   shouldRenderActivity,
 } from "./filter-extended";
@@ -198,6 +198,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         values: [],
       },
     },
+    ...ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   },
   issues: {
     list: {

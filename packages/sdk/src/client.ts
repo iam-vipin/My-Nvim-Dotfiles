@@ -15,7 +15,7 @@ import { UserService } from "@/services/user.service";
 
 // types
 import { ClientOptions } from "@/types/types";
-import { AssetService } from "./services";
+import { AssetService, IntakeService } from "./services";
 
 export class Client {
   options: ClientOptions;
@@ -23,6 +23,7 @@ export class Client {
   label: LabelService;
   state: StateService;
   issue: IssueService;
+  intake: IntakeService;
   assets: AssetService;
   cycles: CycleService;
   modules: ModuleService;
@@ -39,6 +40,7 @@ export class Client {
     this.label = new LabelService(options);
     this.state = new StateService(options);
     this.issue = new IssueService(options);
+    this.intake = new IntakeService(options);
     this.users = new UserService(options);
     this.project = new ProjectService(options);
     this.issueComment = new IssueCommentService(options);

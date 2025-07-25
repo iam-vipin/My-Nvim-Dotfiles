@@ -571,6 +571,8 @@
         "your_apps": "您的应用",
         "connect": "连接",
         "connected": "已连接",
+        "install": "安装",
+        "installed": "已安装",
         "app_available": "您已使此应用可用于Plane工作空间",
         "app_available_description": "连接Plane工作空间以开始使用",
         "client_id_and_secret": "客户端ID和密钥",
@@ -652,6 +654,9 @@
         "setup_url_title": "设置URL",
         "setup_url_error": "设置URL是必填项",
         "invalid_setup_url_error": "无效的设置URL",
+        "configuration_url_title": "配置URL",
+        "configuration_url_error": "配置URL是必填项",
+        "invalid_configuration_url_error": "无效的配置URL",
         "contact_email_title": "联系邮箱",
         "contact_email_error": "联系邮箱是必填项",
         "invalid_contact_email_error": "无效的联系邮箱",
@@ -1132,6 +1137,62 @@
         "failed_loading_project_connections": "无法加载您的项目连接。这可能是由于网络问题或集成问题。"
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "将您的Sentry工作空间连接到Plane。",
+    "connected_sentry_workspaces": "已连接的Sentry工作空间",
+    "connected_on": "连接于{date}",
+    "disconnect_workspace": "断开{name}工作空间",
+    "state_mapping": {
+      "title": "状态映射",
+      "description": "将Sentry事件状态映射到您的项目状态。配置当Sentry事件已解决或未解决时使用哪些状态。",
+      "add_new_state_mapping": "添加新状态映射",
+      "empty_state": "未配置状态映射。创建您的第一个映射以同步Sentry事件状态与您的项目状态。",
+      "failed_loading_state_mappings": "我们无法加载您的状态映射。这可能是由于网络问题或集成问题。",
+      "loading_project_states": "正在加载项目状态...",
+      "error_loading_states": "加载状态时出错",
+      "no_states_available": "没有可用状态",
+      "no_permission_states": "您没有权限访问此项目的状态",
+      "states_not_found": "未找到项目状态",
+      "server_error_states": "加载状态时服务器错误"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "连接并同步您的 GitHub Enterprise 组织与 Plane。",
+    "app_form_title": "GitHub Enterprise 配置",
+    "app_form_description": "配置 GitHub Enterprise 以连接到 Plane。",
+    "app_id_title": "App ID",
+    "app_id_description": "您在 GitHub Enterprise 组织中创建的应用程序的 ID。",
+    "app_id_placeholder": "例如，\"1234567890\"",
+    "app_id_error": "App ID 是必需的",
+    "app_name_title": "App Slug",
+    "app_name_description": "您在 GitHub Enterprise 组织中创建的应用程序的 slug。",
+    "app_name_error": "App slug 是必需的",
+    "app_name_placeholder": "例如，\"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "您的 GitHub Enterprise 组织的基 URL。",
+    "base_url_placeholder": "例如，\"https://gh.plane.town\"",
+    "base_url_error": "Base URL 是必需的",
+    "invalid_base_url_error": "无效的基 URL",
+    "client_id_title": "Client ID",
+    "client_id_description": "您在 GitHub Enterprise 组织中创建的应用程序的客户端 ID。",
+    "client_id_placeholder": "例如，\"1234567890\"",
+    "client_id_error": "Client ID 是必需的",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "您在 GitHub Enterprise 组织中创建的应用程序的客户端密钥。",
+    "client_secret_placeholder": "例如，\"1234567890\"",
+    "client_secret_error": "Client secret 是必需的",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "您在 GitHub Enterprise 组织中创建的应用程序的 webhook 密钥。",
+    "webhook_secret_placeholder": "例如，\"1234567890\"",
+    "webhook_secret_error": "Webhook secret 是必需的",
+    "private_key_title": "私钥 (Base64 编码)",
+    "private_key_description": "您在 GitHub Enterprise 组织中创建的应用程序的 Base64 编码的私钥。",
+    "private_key_placeholder": "例如，\"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key 是必需的",
+    "connect_app": "连接应用"
   },
   "file_upload": {
     "upload_text": "点击此处上传文件",
@@ -2310,6 +2371,12 @@
       },
       "no_labels": {
         "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      },
+      "no_work_items": {
+        "description": "还没有工作项。添加一个以更好地组织您的工作。"
+      },
+      "no_sub_work_items": {
+        "description": "还没有子工作项。添加一个以更好地组织您的工作。"
       },
       "page": {
         "no_templates": {

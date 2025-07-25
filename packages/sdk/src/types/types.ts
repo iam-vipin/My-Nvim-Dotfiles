@@ -183,6 +183,29 @@ export type ExIssueAttachment = {
   external_source: string;
 };
 
+export type ExIntakeIssue<T = ExIssue> = {
+  id: string;
+  issue_detail: T;
+  inbox: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  status: number;
+  snoozed_till: string | null;
+  source: string;
+  source_email: string | null;
+  external_source: string | null;
+  external_id: string | null;
+  created_by: string;
+  updated_by: string | null;
+  project: string;
+  workspace: string;
+  intake: string;
+  issue: string;
+  duplicate_to: string | null;
+  extra: Record<string, any>;
+}
+
 /* ----------------- Project Type --------------------- */
 type IProject = {
   id: string;
@@ -206,6 +229,7 @@ type IProject = {
   issue_views_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
+  intake_view: boolean;
   is_time_tracking_enabled: boolean;
   is_issue_type_enabled: boolean;
   cover_image: string;
@@ -242,8 +266,18 @@ export type ExState = IState &
   };
 
 export type ExIssueLink = {
-  name: string;
+  title: string;
   url: string;
+  id: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  created_by: string;
+  updated_by: string | null;
+  project: string;
+  workspace: string;
+  issue: string;
+  metadata: Record<string, any>;
 };
 
 export type ExIssue = IIsssue &
@@ -308,6 +342,48 @@ export interface StorageMetadata {
   // Empty object in this case, but we'll define it for completeness
   [key: string]: any;
 }
+
+export enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
+export type TInboxIssueStatus = EInboxIssueStatus;
+
+export type TPaginationInfo = {
+  count: number;
+  extra_stats: string | null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  total_pages: number;
+  per_page?: number;
+  total_results: number;
+};
+
+export type TInboxIssue = {
+  id: string;
+  status: TInboxIssueStatus;
+  snoozed_till: Date | null;
+  duplicate_to: string | undefined;
+  source: string | undefined;
+  issue: ExIssue;
+  created_by: string;
+  duplicate_issue_detail: any | undefined;
+}
+
+export type TInboxIssuePaginationInfo = TPaginationInfo & {
+  total_results: number;
+};
+
+export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
+  results: TInboxIssue[];
+};
+
 
 export interface Attachment {
   id: string;

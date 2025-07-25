@@ -18,10 +18,10 @@ module.exports = {
       "./pages/**/*.tsx",
       "./app/**/*.tsx",
       "./ui/**/*.tsx",
-      "../packages/ui/src/**/*.{js,ts,jsx,tsx}",
-      "../packages/propel/src/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/src/**/*.{js,ts,jsx,tsx}",
-      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
+      "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/propel/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/editor/src/**/*.{js,ts,jsx,tsx}",
+      "!../../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -410,6 +410,9 @@ module.exports = {
         80: "18rem",
         96: "21.6rem",
       },
+      height: {
+        header: "3.25rem",
+      },
       space: {
         0: "0",
         0.5: "0.1125rem",
@@ -500,10 +503,10 @@ module.exports = {
         },
         // Hide scrollbar but keep functionality
         ".scrollbar-hide": {
-          "-ms-overflow-style": "none", /* IE and Edge */
-          "scrollbar-width": "none", /* Firefox */
+          "-ms-overflow-style": "none" /* IE and Edge */,
+          "scrollbar-width": "none" /* Firefox */,
           "&::-webkit-scrollbar": {
-            display: "none", /* Chrome, Safari and Opera */
+            display: "none" /* Chrome, Safari and Opera */,
           },
         },
       };

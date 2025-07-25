@@ -3,8 +3,6 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-
-
   "common": {
     "worklogs": "Worklogs",
     "live": "Live",
@@ -49,29 +47,29 @@
         }
       }
     },
-    "pages":{
+    "pages": {
       "link_pages": "Link pages",
       "show_wiki_pages": "Show Wiki pages",
       "link_pages_to": "Link pages to",
       "linked_pages": "Linked pages",
       "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
       "toasts": {
-        "link":{
+        "link": {
           "success": {
             "title": "Pages updated",
             "message": "Pages updated successfully"
           },
-          "error":{
+          "error": {
             "title": "Pages update failed",
             "message": "Pages update failed"
           }
-        },  
-        "remove":{
+        },
+        "remove": {
           "success": {
             "title": "Page removed",
             "message": "Page removed successfully"
           },
-          "error":{
+          "error": {
             "title": "Page removal failed",
             "message": "Page removal failed"
           }
@@ -636,7 +634,7 @@
       "teamspaces": {
         "title": "Teamspaces",
         "heading": "Teamspaces",
-        "description": "See your team’s work in a separate space with linked projects, tasks, team charts, pages, and views."
+        "description": "See your team's work in a separate space with linked projects, tasks, team charts, pages, and views."
       },
       "initiatives": {
         "title": "Initiatives",
@@ -672,6 +670,8 @@
         "your_apps": "Your apps",
         "connect": "Connect",
         "connected": "Connected",
+        "install": "Install",
+        "installed": "Installed",
         "app_available": "You have made this app available to use with a Plane workspace",
         "app_available_description": "Connect a Plane workspace to start using it",
         "client_id_and_secret": "Client ID and Secret",
@@ -692,6 +692,8 @@
         "app_description_error": "App description is required",
         "app_slug_title": "App slug",
         "app_slug_error": "App slug is required",
+        "website_title": "Website",
+        "invalid_website_error": "Invalid website",
         "app_maker_title": "App Maker",
         "app_maker_error": "App maker is required",
         "webhook_url_title": "Webhook URL",
@@ -753,6 +755,9 @@
         "setup_url_title": "Setup URL",
         "setup_url_error": "Setup URL is required",
         "invalid_setup_url_error": "Invalid setup URL",
+        "configuration_url_title": "Configuration URL",
+        "configuration_url_error": "Configuration URL is required",
+        "invalid_configuration_url_error": "Invalid configuration URL",
         "contact_email_title": "Contact Email",
         "contact_email_error": "Contact Email is required",
         "invalid_contact_email_error": "Invalid contact email",
@@ -1242,6 +1247,62 @@
         "failed_loading_project_connections": "We couldn't load your project connections. This could be due to a network issue or a problem with the integration."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Connect your Sentry workspace with Plane.",
+    "connected_sentry_workspaces": "Connected Sentry workspaces",
+    "connected_on": "Connected on {date}",
+    "disconnect_workspace": "Disconnect {name} workspace",
+    "state_mapping": {
+      "title": "State Mapping",
+      "description": "Map Sentry issue states to your project states. Configure which states to use when a Sentry issue is resolved or unresolved.",
+      "add_new_state_mapping": "Add new state mapping",
+      "empty_state": "No state mappings configured. Create your first mapping to sync Sentry issue states with your project states.",
+      "failed_loading_state_mappings": "We couldn't load your state mappings. This could be due to a network issue or a problem with the integration.",
+      "loading_project_states": "Loading project states...",
+      "error_loading_states": "Error loading states",
+      "no_states_available": "No states available",
+      "no_permission_states": "You don't have permission to access states for this project",
+      "states_not_found": "Project states not found",
+      "server_error_states": "Server error while loading states"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Connect and sync your GitHub Enterprise organization with Plane.",
+    "app_form_title": "GitHub Enterprise Configuration",
+    "app_form_description": "Configure GitHub Enterprise to connect with Plane.",
+    "app_id_title": "App ID",
+    "app_id_description": "The ID of the app you created in your GitHub Enterprise organization.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID is required",
+    "app_name_title": "App Slug",
+    "app_name_description": "The slug of the app you created in your GitHub Enterprise organization.",
+    "app_name_error": "App slug is required",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "The base URL of your GitHub Enterprise organization.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Base URL is required",
+    "invalid_base_url_error": "Invalid base URL",
+    "client_id_title": "Client ID",
+    "client_id_description": "The client ID of the app you created in your GitHub Enterprise organization.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "Client ID is required",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "The client secret of the app you created in your GitHub Enterprise organization.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Client secret is required",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "The webhook secret of the app you created in your GitHub Enterprise organization.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Webhook secret is required",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "Base64 encoded private key of the app you created in your GitHub Enterprise organization.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key is required",
+    "connect_app": "Connect App"
   },
   "file_upload": {
     "upload_text": "Click here to upload file",
@@ -2476,7 +2537,13 @@
         "button": "Create your first template"
       },
       "no_labels": {
-        "description": " No labels yet. Create labels to help organize and filter work items in you project."
+        "description": "No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "no_work_items": {
+        "description": "No work items yet. Add one to structure your work better."
+      },
+      "no_sub_work_items": {
+        "description": "No sub-work items yet. Add one to structure your work better."
       },
       "page": {
         "no_templates": {

@@ -571,6 +571,8 @@
         "your_apps": "あなたのアプリ",
         "connect": "接続",
         "connected": "接続済み",
+        "install": "インストール",
+        "installed": "インストール済み",
         "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
         "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
         "client_id_and_secret": "クライアントIDとシークレット",
@@ -652,6 +654,9 @@
         "setup_url_title": "セットアップURL",
         "setup_url_error": "セットアップURLは必須です",
         "invalid_setup_url_error": "無効なセットアップURL",
+        "configuration_url_title": "設定URL",
+        "configuration_url_error": "設定URLは必須です",
+        "invalid_configuration_url_error": "無効な設定URL",
         "contact_email_title": "連絡先メール",
         "contact_email_error": "連絡先メールは必須です",
         "invalid_contact_email_error": "無効な連絡先メール",
@@ -1132,6 +1137,62 @@
         "failed_loading_project_connections": "プロジェクト接続を読み込めませんでした。ネットワークの問題または統合の問題が原因かもしれません。"
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "SentryワークスペースをPlaneに接続します。",
+    "connected_sentry_workspaces": "接続されたSentryワークスペース",
+    "connected_on": "{date}に接続",
+    "disconnect_workspace": "{name}ワークスペースを切断",
+    "state_mapping": {
+      "title": "状態マッピング",
+      "description": "Sentryインシデントの状態をプロジェクトの状態にマッピングします。Sentryインシデントが解決されたり未解決の場合に使用する状態を設定します。",
+      "add_new_state_mapping": "新しい状態マッピングを追加",
+      "empty_state": "状態マッピングが設定されていません。Sentryインシデントの状態をプロジェクトの状態と同期するための最初のマッピングを作成してください。",
+      "failed_loading_state_mappings": "状態マッピングを読み込めませんでした。ネットワークの問題または統合の問題が原因である可能性があります。",
+      "loading_project_states": "プロジェクトの状態を読み込み中...",
+      "error_loading_states": "状態の読み込みエラー",
+      "no_states_available": "利用可能な状態がありません",
+      "no_permission_states": "このプロジェクトの状態にアクセスする権限がありません",
+      "states_not_found": "プロジェクトの状態が見つかりません",
+      "server_error_states": "状態の読み込み中にサーバーエラーが発生しました"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "GitHub Enterpriseの組織をPlaneと連携・同期します。",
+    "app_form_title": "GitHub Enterpriseの設定",
+    "app_form_description": "GitHub EnterpriseをPlaneと連携するための設定を行います。",
+    "app_id_title": "App ID",
+    "app_id_description": "GitHub Enterpriseの組織に作成したAppのIDです。",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App IDは必須です",
+    "app_name_title": "App Slug",
+    "app_name_description": "GitHub Enterpriseの組織に作成したAppのSlugです。",
+    "app_name_error": "App slugは必須です",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "Base URL",
+    "base_url_description": "GitHub Enterpriseの組織のBase URLです。",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "Base URLは必須です",
+    "invalid_base_url_error": "Base URLが無効です",
+    "client_id_title": "Client ID",
+    "client_id_description": "GitHub Enterpriseの組織に作成したAppのClient IDです。",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "Client IDは必須です",
+    "client_secret_title": "Client Secret",
+    "client_secret_description": "GitHub Enterpriseの組織に作成したAppのClient Secretです。",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Client Secretは必須です",
+    "webhook_secret_title": "Webhook Secret",
+    "webhook_secret_description": "GitHub Enterpriseの組織に作成したAppのWebhook Secretです。",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Webhook Secretは必須です",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "GitHub Enterpriseの組織に作成したAppのPrivate Keyです。",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private Keyは必須です",
+    "connect_app": "Appを接続"
   },
   "file_upload": {
     "upload_text": "クリックしてファイルをアップロード",
@@ -2310,6 +2371,12 @@
       },
       "no_labels": {
         "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      },
+      "no_work_items": {
+        "description": "まだ作業項目がありません。1つ追加して、より良い構造にしてください。"
+      },
+      "no_sub_work_items": {
+        "description": "まだサブ作業項目がありません。1つ追加して、より良い構造にしてください。"
       },
       "page": {
         "no_templates": {

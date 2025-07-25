@@ -525,7 +525,7 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   pointer-events: none;
   left: 0;
   top: 0;
-  transition: transform 0.2s var(--ease-out-quart);
+  transition: transform 0.2s var(--ease-out-quart) !important;
   will-change: transform;
   opacity: 0.8;
   z-index: 1000;
@@ -547,4 +547,14 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   50% {
     opacity: 0;
   }
+}
+
+/* emoji styles */
+span[data-name][data-type="emoji"] img {
+  display: inline !important;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  max-width: 1.25em;
+  max-height: 1.25em;
 }

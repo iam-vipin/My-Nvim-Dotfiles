@@ -562,6 +562,8 @@
         "your_apps": "Ứng dụng của bạn",
         "connect": "Kết nối",
         "connected": "Đã kết nối",
+        "install": "Cài đặt",
+        "installed": "Đã cài đặt",
         "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
         "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",
@@ -643,6 +645,9 @@
         "setup_url_title": "URL Cài đặt",
         "setup_url_error": "URL Cài đặt là bắt buộc",
         "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
+        "configuration_url_title": "URL Cấu hình",
+        "configuration_url_error": "URL Cấu hình là bắt buộc",
+        "invalid_configuration_url_error": "URL Cấu hình không hợp lệ",
         "contact_email_title": "Email Liên hệ",
         "contact_email_error": "Email Liên hệ là bắt buộc",
         "invalid_contact_email_error": "Email Liên hệ không hợp lệ",
@@ -1123,6 +1128,62 @@
         "failed_loading_project_connections": "Chúng tôi không thể tải kết nối dự án của bạn. Điều này có thể do sự cố mạng hoặc sự cố với tích hợp."
       }
     }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Kết nối không gian làm việc Sentry của bạn với Plane.",
+    "connected_sentry_workspaces": "Không gian làm việc Sentry đã kết nối",
+    "connected_on": "Đã kết nối vào {date}",
+    "disconnect_workspace": "Ngắt kết nối không gian làm việc {name}",
+    "state_mapping": {
+      "title": "Ánh xạ trạng thái",
+      "description": "Ánh xạ trạng thái sự cố Sentry với trạng thái dự án của bạn. Cấu hình trạng thái nào sử dụng khi sự cố Sentry được giải quyết hoặc chưa giải quyết.",
+      "add_new_state_mapping": "Thêm ánh xạ trạng thái mới",
+      "empty_state": "Chưa cấu hình ánh xạ trạng thái. Tạo ánh xạ đầu tiên để đồng bộ trạng thái sự cố Sentry với trạng thái dự án của bạn.",
+      "failed_loading_state_mappings": "Chúng tôi không thể tải ánh xạ trạng thái của bạn. Điều này có thể do vấn đề mạng hoặc vấn đề với tích hợp.",
+      "loading_project_states": "Đang tải trạng thái dự án...",
+      "error_loading_states": "Lỗi khi tải trạng thái",
+      "no_states_available": "Không có trạng thái khả dụng",
+      "no_permission_states": "Bạn không có quyền truy cập trạng thái cho dự án này",
+      "states_not_found": "Không tìm thấy trạng thái dự án",
+      "server_error_states": "Lỗi máy chủ khi tải trạng thái"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Kết nối và đồng bộ tổ chức GitHub Enterprise của bạn với Plane.",
+    "app_form_title": "Cấu hình GitHub Enterprise",
+    "app_form_description": "Cấu hình GitHub Enterprise để kết nối với Plane.",
+    "app_id_title": "ID Ứng dụng",
+    "app_id_description": "ID ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID là bắt buộc",
+    "app_name_title": "Slug Ứng dụng",
+    "app_name_description": "Slug ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "app_name_error": "Slug ứng dụng là bắt buộc",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "URL Cơ Bản",
+    "base_url_description": "URL cơ bản của tổ chức GitHub Enterprise của bạn.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "URL cơ bản là bắt buộc",
+    "invalid_base_url_error": "URL cơ bản không hợp lệ",
+    "client_id_title": "ID Khách Hàng",
+    "client_id_description": "ID khách hàng của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID khách hàng là bắt buộc",
+    "client_secret_title": "Secret Khách Hàng",
+    "client_secret_description": "Secret khách hàng của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Secret khách hàng là bắt buộc",
+    "webhook_secret_title": "Secret Webhook",
+    "webhook_secret_description": "Secret webhook của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Secret webhook là bắt buộc",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "Private key của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key là bắt buộc",
+    "connect_app": "Kết nối Ứng dụng"
   },
   "file_upload": {
     "upload_text": "Nhấp vào đây để tải lên tệp",
@@ -2294,6 +2355,12 @@
       },
       "no_labels": {
         "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "no_work_items": {
+        "description": "Chưa có mục công việc nào. Thêm một để cấu trúc công việc của bạn tốt hơn."
+      },
+      "no_sub_work_items": {
+        "description": "Chưa có mục công việc con. Thêm một để cấu trúc công việc của bạn tốt hơn."
       },
       "page": {
         "no_templates": {

@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon, BriefcaseIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomMenu, EpicIcon, setToast, TOAST_TYPE } from "@plane/ui";
-import { ProjectMultiSelectModal } from "@/components/project";
-import { useProject } from "@/hooks/store";
+// components
+import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// local imports
 import { WorkspaceEpicsListModal } from "../details/main/collapsible-section/epics/workspace-epic-modal";
 
 type Props = {
@@ -82,12 +87,12 @@ export const AddScopeButton = observer((props: Props) => {
   // options
   const optionItems = [
     {
-      label: "Epics",
+      i18n_label: "common.epics",
       icon: <EpicIcon className="h-3 w-3" />,
       onClick: () => setIsEpicModalOpen(true),
     },
     {
-      label: "Projects",
+      i18n_label: "common.projects",
       icon: <BriefcaseIcon className="h-3 w-3" />,
       onClick: () => setIsProjectsOpen(true),
     },
@@ -98,7 +103,7 @@ export const AddScopeButton = observer((props: Props) => {
   ) : (
     <Button variant="neutral-primary" size="sm">
       <PlusIcon className="size-4" />
-      Add scope
+      {t("initiatives.scope.add_scope")}
     </Button>
   );
 
@@ -116,7 +121,7 @@ export const AddScopeButton = observer((props: Props) => {
           >
             <div className="flex items-center gap-2">
               {item.icon}
-              <span>{item.label}</span>
+              <span>{t(item.i18n_label)}</span>
             </div>
           </CustomMenu.MenuItem>
         ))}

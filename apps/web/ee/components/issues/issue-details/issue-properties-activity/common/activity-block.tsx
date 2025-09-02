@@ -1,18 +1,17 @@
 "use client";
 
 import { FC, ReactNode, useEffect, useRef } from "react";
-// ui
+// plane imports
 import { Tooltip } from "@plane/ui";
-// helpers
 import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssuePropertyLogo } from "@/plane-web/components/issue-types";
-import { IssueUser } from "@/plane-web/components/issues";
-// plane web hooks
+// plane web imports
+import { IssuePropertyLogo } from "@/plane-web/components/issue-types/properties/common/issue-property-logo";
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { IssueUser } from "./issue-user";
 
 type TIssueActivityBlockComponent = {
   activityId: string;

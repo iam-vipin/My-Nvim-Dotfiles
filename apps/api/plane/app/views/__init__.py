@@ -165,12 +165,10 @@ from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,
-    PageLogEndpoint,
     PageFavoriteViewSet,
     PageDuplicateEndpoint,
     PagesDescriptionViewSet,
 )
-from .page.shared import ProjectPageUserViewSet
 from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
@@ -263,3 +261,6 @@ from .user.base import (
 )
 
 from .timezone.base import TimezoneEndpoint
+
+
+from .asset.proxy import ProxyUploadEndpoint, ProxyDownloadEndpoint

@@ -10,10 +10,10 @@ import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { SettingsHeading } from "@/components/settings";
+import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.png";
-import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.png";
+import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.webp";
+import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.webp";
 
 export const EpicsUpgrade: FC = observer(() => {
   // store hooks
@@ -48,7 +48,8 @@ export const EpicsUpgrade: FC = observer(() => {
       <div
         className={cn("flex flex-col md:flex-row rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
+            !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>

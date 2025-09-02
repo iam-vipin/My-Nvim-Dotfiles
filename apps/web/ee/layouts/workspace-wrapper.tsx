@@ -6,9 +6,9 @@ import useSWR from "swr";
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // layouts
-import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout";
+import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
 // plane web components
 import { WorkspaceDisabledPage } from "@/plane-web/components/license";
 // plane web hooks
@@ -70,7 +70,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
-  const isPiEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT);
+  const isPiEnabled =
+    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
+    workspaceFeatures[workspaceSlug.toString()] &&
+    workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PI_ENABLED];
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(

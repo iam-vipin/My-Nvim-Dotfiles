@@ -3,18 +3,21 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { EWorkItemTypeEntity } from "@plane/types";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
+// components
+import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { SettingsHeading } from "@/components/settings";
-import { useProject } from "@/hooks/store";
-// plane web components
-import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
-// plane web hooks
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+// local imports
+import { epicsTrackers } from "../trackers";
+import { EpicPropertiesRoot } from "./epics-properties";
+import { EpicsEmptyState } from "./empty-state";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -32,8 +35,13 @@ export const EpicsRoot = observer(() => {
   const projectFeatures = getProjectFeatures(projectId?.toString());
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
+  // trackers
+  const trackers = epicsTrackers({ workspaceSlug: workspaceSlug?.toString(), projectId: projectId?.toString() });
+
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);
+    trackers.toggleEpicsClicked();
+
     const epicStatusPromise = isEpicsEnabled
       ? disableEpics(workspaceSlug?.toString(), projectId?.toString())
       : enableEpics(workspaceSlug?.toString(), projectId?.toString());
@@ -50,9 +58,17 @@ export const EpicsRoot = observer(() => {
           `${epicDetails?.name} epic could not be ${isEpicsEnabled ? "disabled" : "enabled"}. Please try again.`,
       },
     });
-    await epicStatusPromise.finally(() => {
-      setIsLoading(false);
-    });
+
+    // trackers
+    await epicStatusPromise
+      .then(() => {
+        trackers.toggleEpicsSuccess(isEpicsEnabled ? "disable" : "enable");
+      })
+      .catch(() => {
+        trackers.toggleEpicsError(isEpicsEnabled ? "disable" : "enable");
+      });
+
+    setIsLoading(false);
   };
 
   if (!isEpicsEnabled && project) {

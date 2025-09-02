@@ -15,6 +15,7 @@ import {
 import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
+import { ITeamProjectWorkItemsFilter, TeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project";
 import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,
@@ -23,7 +24,7 @@ import {
 } from "@/plane-web/store/issue/team-views";
 // root store
 import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 import { IStateStore, StateStore } from "../state.store";
 // issues data store
@@ -49,6 +50,7 @@ import {
   WorkspaceDraftIssues,
   WorkspaceDraftIssuesFilter,
 } from "./workspace-draft";
+import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -101,6 +103,9 @@ export interface IIssueRootStore {
 
   teamViewIssuesFilter: ITeamViewIssuesFilter;
   teamViewIssues: ITeamViewIssues;
+
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
@@ -169,6 +174,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   teamViewIssuesFilter: ITeamViewIssuesFilter;
   teamViewIssues: ITeamViewIssues;
+
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
@@ -260,6 +268,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.teamViewIssuesFilter = new TeamViewIssuesFilter(this);
     this.teamViewIssues = new TeamViewIssues(this, this.teamViewIssuesFilter);
+
+    this.teamProjectWorkItemsFilter = new TeamProjectWorkItemsFilter(this);
+    this.teamProjectWorkItems = new TeamProjectWorkItems(this, this.teamProjectWorkItemsFilter);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
     this.projectViewIssues = new ProjectViewIssues(this, this.projectViewIssuesFilter);

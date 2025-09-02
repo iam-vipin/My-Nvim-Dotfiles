@@ -7,16 +7,16 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { SPACE_BASE_PATH } from "@plane/constants";
+import { PlaneLockup } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common";
-import { InstanceFailureView } from "@/components/instance";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { InstanceFailureView } from "@/components/instance/instance-failure-view";
 // hooks
-import { useInstance, useUser } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useUser } from "@/hooks/store/use-user";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
 export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();
@@ -38,20 +38,19 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
 
   if (!instance && !error)
     return (
-      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+      <div className="flex items-center justify-center h-screen w-full">
         <LogoSpinner />
       </div>
     );
 
-  const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
   if (error) {
     return (
       <div className="relative">
         <div className="h-screen w-full overflow-hidden overflow-y-auto flex flex-col">
           <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
             <div className="flex items-center gap-x-2 py-10">
-              <Link href={`${SPACE_BASE_PATH}/`} className="h-[30px] w-[133px]">
-                <Image src={logo} alt="Plane logo" />
+              <Link href={`${SPACE_BASE_PATH}/`}>
+                <PlaneLockup className="h-7 w-auto text-custom-text-100" />
               </Link>
             </div>
           </div>

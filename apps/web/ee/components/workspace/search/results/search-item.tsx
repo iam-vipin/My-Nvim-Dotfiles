@@ -1,5 +1,4 @@
 "use client";
-
 // types
 import { Briefcase, FileText, Layers } from "lucide-react";
 import {
@@ -8,17 +7,19 @@ import {
   IWorkspaceIssueEnhancedSearchResult,
   IWorkspacePageEnhancedSearchResult,
   IWorkspaceProjectEnhancedSearchResult,
+  IWorkspaceCommentEnhancedSearchResult,
 } from "@plane/constants";
 
 // ui
 import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, Logo, TeamsIcon } from "@plane/ui";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
+import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { ActorAvatar, CommentItem } from "./comment-item";
 
 export const SearchItems: {
   [key in ESearchFilterKeys]: {
-    icon: (item: any) => JSX.Element | null;
+    icon: (item: any) => React.ReactNode | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any) => string;
     title: string;
@@ -154,5 +155,21 @@ export const SearchItems: {
     itemName: (teamspace: IWorkspaceDefaultEnhancedSearchResult) => <h6>{teamspace.name}</h6>,
     path: (teamspace: IWorkspaceDefaultEnhancedSearchResult) =>
       `/${teamspace?.workspace_slug}/teamspaces/${teamspace?.id}`,
+  },
+  [ESearchFilterKeys.WORK_ITEM_COMMENT]: {
+    title: "Comments",
+    icon: (comment: IWorkspaceCommentEnhancedSearchResult) => <ActorAvatar actorId={comment.actor_id} size="sm" />,
+    itemName: (comment: IWorkspaceCommentEnhancedSearchResult) => <CommentItem comment={comment} />,
+    path: (comment: IWorkspaceCommentEnhancedSearchResult) => {
+      const workItemLink = generateWorkItemLink({
+        workspaceSlug: comment?.workspace_slug,
+        projectId: comment?.project_id,
+        issueId: comment?.issue_id,
+        projectIdentifier: comment?.project_identifier,
+        sequenceId: comment?.issue_sequence_id,
+      });
+      const commentLink = `${workItemLink}#comment-${comment?.id}`;
+      return commentLink;
+    },
   },
 };

@@ -18,20 +18,20 @@ import {
 } from "@plane/types";
 import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
-// plane web components
-import {
-  AttributePill,
-  IssuePropertyLogo,
-  IssuePropertyQuickActions,
-  PropertyActiveCheckbox,
-  PropertyAttributes,
-  PropertyMandatoryFieldCheckbox,
-  PropertyTitleDescriptionInput,
-  PropertyTypeDropdown,
-  TIssuePropertyCreateList,
-} from "@/plane-web/components/issue-types";
-// plane web hooks
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
+// local imports
+import { PropertyActiveCheckbox } from "./active-checkbox";
+import { AttributePill } from "./attributes/attribute-pill";
+import { IssuePropertyLogo } from "./common/issue-property-logo";
+import { PropertyAttributes } from "./dropdowns/property-attributes";
+import { PropertyTitleDescriptionInput } from "./dropdowns/property-title";
+import { PropertyTypeDropdown } from "./dropdowns/property-type";
+import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
+import { IssuePropertyQuickActions } from "./quick-actions";
+import { TIssuePropertyCreateList } from "./root";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;
@@ -48,6 +48,12 @@ type TIssuePropertyListItem = {
   operationMode?: TOperationMode;
   customPropertyOperations: TCustomPropertyOperations;
   isUpdateAllowed: boolean;
+  trackers?: {
+    [key in "create" | "update" | "delete" | "quickActions"]?: {
+      button?: string;
+      eventName?: string;
+    };
+  };
 };
 
 export type TIssuePropertyFormError = {
@@ -62,8 +68,14 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
 };
 
 export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) => {
-  const { customPropertyId, issuePropertyCreateListData, operationMode, customPropertyOperations, isUpdateAllowed } =
-    props;
+  const {
+    customPropertyId,
+    issuePropertyCreateListData,
+    operationMode,
+    customPropertyOperations,
+    isUpdateAllowed,
+    trackers,
+  } = props;
   const {
     getPropertyDetail,
     getSortedActivePropertyOptions,
@@ -178,6 +190,14 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       options: optionsPayload,
     })
       .then(async (response) => {
+        if (trackers?.create?.eventName) {
+          captureSuccess({
+            eventName: trackers.create.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+          });
+        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.create.success.title"),
@@ -188,6 +208,15 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         return response;
       })
       .catch((error) => {
+        if (trackers?.create?.eventName) {
+          captureError({
+            eventName: trackers.create.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+            error: error,
+          });
+        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.create.error.title"),
@@ -238,6 +267,14 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
       options: optionsPayload,
     })
       .then(() => {
+        if (trackers?.update?.eventName) {
+          captureSuccess({
+            eventName: trackers.update.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+          });
+        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -248,6 +285,15 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
           });
       })
       .catch((error) => {
+        if (trackers?.update?.eventName) {
+          captureError({
+            eventName: trackers.update.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+            error: error,
+          });
+        }
         if (showToast)
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -282,6 +328,14 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     setIsSubmitting(true);
     await deleteProperty(propertyId)
       .then(() => {
+        if (trackers?.delete?.eventName) {
+          captureSuccess({
+            eventName: trackers.delete.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+          });
+        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.settings.properties.toast.delete.success.title"),
@@ -291,6 +345,14 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         });
       })
       .catch(() => {
+        if (trackers?.delete?.eventName) {
+          captureError({
+            eventName: trackers.delete.eventName,
+            payload: {
+              name: issuePropertyData?.display_name,
+            },
+          });
+        }
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("work_item_types.settings.properties.toast.delete.error.title"),
@@ -457,6 +519,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
               onDisable={async () => handlePropertyDataChange("is_active", false, true)}
               onDelete={handleDelete}
               onIssuePropertyOperationMode={(mode) => setIssuePropertyOperationMode(mode)}
+              trackers={trackers}
             />
           </div>
         </div>

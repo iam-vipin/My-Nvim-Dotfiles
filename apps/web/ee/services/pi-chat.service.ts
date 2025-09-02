@@ -48,6 +48,34 @@ export class PiChatService extends APIService {
     return r;
   }
 
+  async retrieveToken(data: TQuery): Promise<string> {
+    const streamToken = await this.post(`/api/v1/chat/queue-answer/`, data)
+      .then((response) => response?.data?.stream_token)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+
+    return streamToken;
+  }
+
+  async transcribeAudio(workspace_id: string, formData: FormData, chat_id: string): Promise<string> {
+    try {
+      const response = await this.post(`/api/v1/transcription/transcribe`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        params: {
+          workspace_id,
+          chat_id,
+        },
+      });
+
+      return response?.data?.detail;
+    } catch (error: any) {
+      throw error?.response?.data;
+    }
+  }
+
   // fetch answer
   async retrieveAnswer(data: TQuery): Promise<string> {
     const r = await this.post(`/api/v1/chat/get-answer/`, data)
@@ -60,8 +88,12 @@ export class PiChatService extends APIService {
   }
 
   // fetch templates
-  async listTemplates(): Promise<TTemplateResponse> {
-    return this.get(`/api/v1/chat/get-templates/`)
+  async listTemplates(workspaceId: string | undefined): Promise<TTemplateResponse> {
+    return this.get(`/api/v1/chat/get-templates/`, {
+      params: {
+        ...(workspaceId && { workspace_id: workspaceId }),
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -69,8 +101,11 @@ export class PiChatService extends APIService {
   }
 
   // generate title
-  async retrieveTitle(chatId: string): Promise<TTitleResponse> {
-    return this.post(`/api/v1/chat/generate-title/`, { chat_id: chatId })
+  async retrieveTitle(chatId: string, workspaceId: string | undefined): Promise<TTitleResponse> {
+    return this.post(`/api/v1/chat/generate-title/`, {
+      chat_id: chatId,
+      ...(workspaceId && { workspace_id: workspaceId }),
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -96,10 +131,11 @@ export class PiChatService extends APIService {
   }
 
   // get chat by id
-  async retrieveChat(chatId: string): Promise<TChatHistoryResponse> {
+  async retrieveChat(chatId: string, workspaceId: string | undefined): Promise<TChatHistoryResponse> {
     return this.get(`/api/v1/chat/get-chat-history-object/`, {
       params: {
         chat_id: chatId,
+        ...(workspaceId && { workspace_id: workspaceId }),
       },
     })
       .then((response) => response?.data)
@@ -110,16 +146,16 @@ export class PiChatService extends APIService {
 
   // get user threads
   async listUserThreads(
-    workspaceId: string,
+    workspaceId: string | undefined,
     is_project_chat: boolean,
     cursor: string = "0"
   ): Promise<TUserThreadsResponse> {
     return this.get(`/api/v1/chat/get-user-threads/`, {
       params: {
         per_page: 100,
-        workspace_id: workspaceId,
         is_project_chat,
         cursor,
+        ...(workspaceId && { workspace_id: workspaceId }),
       },
     })
       .then((response) => response?.data)
@@ -129,8 +165,12 @@ export class PiChatService extends APIService {
   }
 
   // get recent chats
-  async listRecentChats(): Promise<TUserThreadsResponse> {
-    return this.get(`/api/v1/chat/get-recent-user-threads/`)
+  async listRecentChats(workspaceId: string | undefined): Promise<TUserThreadsResponse> {
+    return this.get(`/api/v1/chat/get-recent-user-threads/`, {
+      params: {
+        ...(workspaceId && { workspace_id: workspaceId }),
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -138,8 +178,12 @@ export class PiChatService extends APIService {
   }
 
   // get models
-  async listAiModels(): Promise<TAiModelsResponse> {
-    return this.get(`/api/v1/chat/get-models/`)
+  async listAiModels(workspaceId?: string): Promise<TAiModelsResponse> {
+    return this.get(`/api/v1/chat/get-models/`, {
+      params: {
+        ...(workspaceId && { workspace_id: workspaceId }),
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -147,8 +191,11 @@ export class PiChatService extends APIService {
   }
 
   // favorite chat
-  async favoriteChat(chatId: string): Promise<void> {
-    return this.post(`/api/v1/chat/favorite-chat/`, { chat_id: chatId })
+  async favoriteChat(chatId: string, workspaceId: string | undefined): Promise<void> {
+    return this.post(`/api/v1/chat/favorite-chat/`, {
+      chat_id: chatId,
+      ...(workspaceId && { workspace_id: workspaceId }),
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -156,8 +203,11 @@ export class PiChatService extends APIService {
   }
 
   // unfavorite chat
-  async unfavoriteChat(chatId: string): Promise<void> {
-    return this.post(`/api/v1/chat/unfavorite-chat/`, { chat_id: chatId })
+  async unfavoriteChat(chatId: string, workspaceId: string | undefined): Promise<void> {
+    return this.post(`/api/v1/chat/unfavorite-chat/`, {
+      chat_id: chatId,
+      ...(workspaceId && { workspace_id: workspaceId }),
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -165,9 +215,11 @@ export class PiChatService extends APIService {
   }
 
   // get favorite chats
-  async listFavoriteChats(workspaceId: string): Promise<TUserThreads[]> {
+  async listFavoriteChats(workspaceId: string | undefined): Promise<TUserThreads[]> {
     return this.get(`/api/v1/chat/get-favorite-chats/`, {
-      params: { workspace_id: workspaceId },
+      params: {
+        ...(workspaceId && { workspace_id: workspaceId }),
+      },
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -176,8 +228,12 @@ export class PiChatService extends APIService {
   }
 
   // rename chat
-  async renameChat(chatId: string, title: string): Promise<void> {
-    return this.post(`/api/v1/chat/rename-chat/`, { chat_id: chatId, title })
+  async renameChat(chatId: string, title: string, workspaceId: string | undefined): Promise<void> {
+    return this.post(`/api/v1/chat/rename-chat/`, {
+      chat_id: chatId,
+      title,
+      ...(workspaceId && { workspace_id: workspaceId }),
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -5,25 +5,26 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Button, getButtonStyling, PlaneLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
-import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
@@ -35,8 +36,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
-  // next themes
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
   const { fetchPartialProjects } = useProject();
@@ -54,7 +53,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
@@ -150,7 +148,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <Image src={planeLogo} height={26} className="h-[26px]" alt="Plane logo" />
+              <PlaneLogo className="h-9 w-auto text-custom-text-100" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>

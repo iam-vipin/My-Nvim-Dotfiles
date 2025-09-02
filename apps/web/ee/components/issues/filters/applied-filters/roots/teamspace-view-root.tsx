@@ -6,15 +6,17 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
-import { AppliedFiltersList } from "@/components/issues";
+import { AppliedFiltersList } from "@/components/issues/issue-layouts/filters";
 import { getAreFiltersEqual } from "@/components/issues/issue-layouts/utils";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 // hooks
-import { useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues"
+import { useLabel } from "@/hooks/store/use-label"
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
@@ -147,6 +149,7 @@ export const TeamspaceViewAppliedFiltersRoot: React.FC = observer(() => {
           isAuthorizedUser={isAuthorizedUser}
           setIsModalOpen={setIsModalOpen}
           handleUpdateView={handleUpdateView}
+          trackerElement={TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON}
         />
       </Header.RightItem>
     </Header>

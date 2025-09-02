@@ -5,8 +5,13 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { CustomSelect, Loader, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { WorkspaceLogo } from "@/components/workspace";
-import { useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+// components
+import { WorkspaceLogo } from "@/components/workspace/logo";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { TFocus } from "@/plane-web/types";
 
 type TProps = {
@@ -101,7 +106,7 @@ export const FocusFilter = observer((props: TProps) => {
                     value={`project_id%${id}`}
                     className="text-sm text-custom-text-200 font-medium"
                   >
-                    <div className="flex flex-start gap-2">
+                    <div className="flex flex-start gap-2 max-w-full">
                       <div className="size-4 m-auto">{project && <Logo logo={project?.logo_props} />}</div>{" "}
                       <span className="truncate">{project?.name}</span>
                     </div>

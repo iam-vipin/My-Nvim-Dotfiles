@@ -5,15 +5,17 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { ViewListLoader } from "@/components/ui";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web components
-import { TeamspaceViewListItem } from "@/plane-web/components/teamspaces/views";
-// plane web hooks
+// plane web imports
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
+// local imports
+import { TeamspaceViewListItem } from "./view-list-item";
 
 type Props = {
   teamspaceId: string;

@@ -2,22 +2,23 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<
     ILiteTextEditorProps,
-    "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "isSmoothCursorEnabled" | "mentionHandler"
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled"
   > {
   workspaceSlug: string;
   workspaceId: string;
@@ -64,7 +65,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -75,6 +75,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
         flaggedExtensions={liteTextEditorExtensions.flagged}
+        editable
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

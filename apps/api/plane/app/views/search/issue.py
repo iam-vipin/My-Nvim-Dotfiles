@@ -13,6 +13,7 @@ from rest_framework.request import Request
 from .base import BaseAPIView
 from plane.db.models import Issue, ProjectMember, IssueRelation
 from plane.utils.issue_search import search_issues
+from plane.db.models.intake import IntakeIssueStatus
 
 
 class IssueSearchEndpoint(BaseAPIView):
@@ -61,6 +62,7 @@ class IssueSearchEndpoint(BaseAPIView):
         )
 
         related_issue_ids = [item for sublist in related_issue_ids for item in sublist]
+        related_issue_ids.append(issue_id)
 
         if issue:
             issues = issues.exclude(pk__in=related_issue_ids)
@@ -142,6 +144,16 @@ class IssueSearchEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     project__archived_at__isnull=True,
                     project__deleted_at__isnull=True,
+                )
+                .filter(
+                    Q(issue_intake__isnull=True)
+                    | Q(
+                        issue_intake__status__in=[
+                            IntakeIssueStatus.ACCEPTED.value,
+                            IntakeIssueStatus.REJECTED.value,
+                            IntakeIssueStatus.DUPLICATE.value,
+                        ]
+                    )
                 )
                 .filter(deleted_at__isnull=True)
                 .filter(state__is_triage=False)

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -12,11 +13,13 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { PageListBlockRoot, PageLoader } from "@/components/pages";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { PageListBlockRoot } from "@/components/pages/list/block-root";
+import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -34,6 +37,8 @@ export const TeamspacePagesList = observer((props: Props) => {
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  // states
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -70,6 +75,7 @@ export const TeamspacePagesList = observer((props: Props) => {
   });
   // handlers
   const handleCreatePage = async () => {
+    setIsCreatingPage(true);
     captureClick({
       elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON,
     });
@@ -78,15 +84,17 @@ export const TeamspacePagesList = observer((props: Props) => {
       access: EPageAccess.PUBLIC,
     })
       .then((res) => {
-        const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
-        router.push(pageId);
-        captureSuccess({
-          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
-          payload: {
-            id: res?.id,
-            teamspaceId,
-          },
-        });
+        if (res?.id) {
+          const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
+          router.push(pageId);
+          captureSuccess({
+            eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+            payload: {
+              id: res?.id,
+              teamspaceId,
+            },
+          });
+        }
       })
       .catch((err) => {
         setToast({
@@ -100,6 +108,9 @@ export const TeamspacePagesList = observer((props: Props) => {
             teamspaceId,
           },
         });
+      })
+      .finally(() => {
+        setIsCreatingPage(false);
       });
   };
 
@@ -145,9 +156,11 @@ export const TeamspacePagesList = observer((props: Props) => {
           description={t("teamspace_pages.empty_state.team_page.description")}
           assetPath={generalPageResolvedPath}
           primaryButton={{
-            text: t("teamspace_pages.empty_state.team_page.primary_button.text"),
+            text: isCreatingPage
+              ? t("common.creating")
+              : t("teamspace_pages.empty_state.team_page.primary_button.text"),
             onClick: handleCreatePage,
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
           }}
         />
       )}

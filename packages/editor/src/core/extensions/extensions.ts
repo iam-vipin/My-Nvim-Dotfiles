@@ -27,10 +27,12 @@ import {
   TableRow,
   UtilityExtension,
 } from "@/extensions";
+// helpers
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, TEmbedConfig } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -39,12 +41,18 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isTouchDevice"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "embedHandler"
 > & {
   enableHistory: boolean;
-  isSmoothCursorEnabled: boolean;
   editable: boolean;
-};
+} & Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions" | "isSmoothCursorEnabled">;
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -52,11 +60,15 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
-    isSmoothCursorEnabled,
+    isTouchDevice = false,
     mentionHandler,
     placeholder,
     tabIndex,
     editable,
+    // additional props
+    embedHandler,
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = args;
 
   const extensions = [
@@ -105,11 +117,15 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: editable,
+      isTouchDevice,
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      // additional props
+      embedHandler,
+      extensionOptions,
     }),
   ];
 

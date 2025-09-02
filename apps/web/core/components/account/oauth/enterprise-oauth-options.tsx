@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
-// components
-import { OIDCOAuthButton, SAMLOAuthButton } from "@/components/account";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+// components
+import { OIDCOAuthButton } from "./oidc-button";
+import { SAMLOAuthButton } from "./saml-button";
 
 export const EnterpriseOAuthOptions = observer(() => {
   // hooks

@@ -10,11 +10,11 @@ import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
-import { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues";
+import type { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues/issue-modal";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
+import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => {

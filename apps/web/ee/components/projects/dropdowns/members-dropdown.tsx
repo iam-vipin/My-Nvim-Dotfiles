@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
+// plane imports
 import { cn } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
 type Props = {
   value: string[];
@@ -10,7 +11,8 @@ type Props = {
   disabled?: boolean;
   button?: React.ReactNode;
 };
-const MembersDropdown: React.FC<Props> = (props) => {
+
+export const MembersDropdown: React.FC<Props> = (props) => {
   const { value, onChange, disabled = false, buttonClassName = "", className = "", button } = props;
   const DropdownLabel = () => (
     <div
@@ -39,5 +41,3 @@ const MembersDropdown: React.FC<Props> = (props) => {
     />
   );
 };
-
-export default MembersDropdown;

@@ -3,7 +3,8 @@
 import { FC } from "react";
 import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 // plane web components
-import { GoogleAuthButton, GitHubAuthButton } from "@/plane-web/components/mobile";
+import { GitHubAuthButton } from "./github";
+import { GoogleAuthButton } from "./google";
 
 type TOAuthRoot = {
   invitationDetails: TMobileWorkspaceInvitation | undefined;
@@ -20,12 +21,6 @@ export const OAuthRoot: FC<TOAuthRoot> = (props) => {
   if (!isOAuthEnabled) return null;
   return (
     <div className="relative space-y-6">
-      <div className="mt-4 flex items-center pt-2">
-        <hr className="w-full border-onboarding-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">or</p>
-        <hr className="w-full border-onboarding-border-100" />
-      </div>
-
       <div className="space-y-2">
         {/* google authentication */}
         {config?.is_google_enabled && (
@@ -40,6 +35,12 @@ export const OAuthRoot: FC<TOAuthRoot> = (props) => {
             <GitHubAuthButton title="Continue with Github" invitationId={invitationId} />
           </div>
         )}
+      </div>
+
+      <div className="mt-4 flex items-center pt-2">
+        <hr className="w-full border-custom-border-100" />
+        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+        <hr className="w-full border-custom-border-100" />
       </div>
     </div>
   );

@@ -8,11 +8,11 @@ import { IGanttBlock } from "@plane/types";
 import { Logo, Tooltip } from "@plane/ui";
 import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import JoinButton from "../../common/join-button";
+import { JoinButton } from "../../common/join-button";
 
 type Props = {
   projectId: string;

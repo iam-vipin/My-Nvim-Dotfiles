@@ -2,8 +2,21 @@ import factory
 from uuid import uuid4
 from django.utils import timezone
 
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
-from plane.authentication.models import Application, ApplicationOwner, WorkspaceAppInstallation
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    Project,
+    ProjectMember,
+    Page,
+    Issue,
+    IssueType,
+)
+from plane.authentication.models import (
+    Application,
+    ApplicationOwner,
+    WorkspaceAppInstallation,
+)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -102,6 +115,7 @@ class ApplicationFactory(factory.django.DjangoModelFactory):
     client_secret = factory.Sequence(lambda n: f"test-client-secret-{n}")
     client_type = Application.CLIENT_CONFIDENTIAL
     authorization_grant_type = Application.GRANT_AUTHORIZATION_CODE
+    webhook_url = factory.Sequence(lambda n: f"https://test-webhook-url-{n}")
 
 
 class ApplicationOwnerFactory(factory.django.DjangoModelFactory):
@@ -127,3 +141,60 @@ class WorkspaceAppInstallationFactory(factory.django.DjangoModelFactory):
     application = factory.SubFactory(ApplicationFactory)
     installed_by = factory.SubFactory(UserFactory)
     status = WorkspaceAppInstallation.Status.INSTALLED
+
+
+class IssueTypeFactory(factory.django.DjangoModelFactory):
+    """Factory for creating IssueType instances"""
+
+    class Meta:
+        model = IssueType
+
+    id = factory.LazyFunction(uuid4)
+    workspace = factory.SubFactory(WorkspaceFactory)
+    name = factory.Sequence(lambda n: f"Issue Type {n}")
+    description = factory.Sequence(lambda n: f"Issue type {n}")
+    is_epic = False
+    is_default = False
+    is_active = True
+    level = 0
+    external_source = None
+    external_id = None
+
+
+class EpicFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Epic instances"""
+
+    class Meta:
+        model = Issue
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"Epic {n}")
+    project = factory.SubFactory(ProjectFactory)
+    created_by = factory.SubFactory(UserFactory)
+    updated_by = factory.SubFactory(UserFactory)
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+    type = factory.SubFactory(IssueTypeFactory)
+
+
+class PageFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Page instances"""
+
+    class Meta:
+        model = Page
+
+    id = factory.LazyFunction(uuid4)
+    workspace = factory.SubFactory(WorkspaceFactory)
+    name = factory.Sequence(lambda n: f"Page {n}")
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+    access = Page.PUBLIC_ACCESS
+    color = "#000000"
+    logo_props = {}
+    is_global = False
+    external_id = None
+    external_source = None
+    description = {}
+    description_binary = None
+    description_html = "<p></p>"
+    description_stripped = None

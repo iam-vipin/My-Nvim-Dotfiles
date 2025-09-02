@@ -9,7 +9,7 @@ import { EpicIcon } from "@plane/ui";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
-import { ProjectGanttSidebarBlock } from "@/plane-web/components/projects/layouts/gantt";
+import { ProjectGanttSidebarBlock } from "@/plane-web/components/projects/layouts/gantt/blocks";
 import { ListHeader } from "../../list/header";
 import { EpicSidebarBlock } from "./epic-block";
 
@@ -43,7 +43,7 @@ export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
     }
   }, [ganttContainerRef]);
 
-  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: JSX.Element }> = {
+  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: React.ReactNode }> = {
     [EGanttBlockType.EPIC]: {
       title: t("common.epics"),
       icon: <EpicIcon className="size-4" />,

@@ -1,16 +1,20 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Database, LayersIcon, PlusIcon } from "lucide-react";
+import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
-import { RichTextEditor } from "@/components/editor";
-// plane web imports
-import { useWorkspace } from "@/hooks/store";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { RichTextEditor } from "@/components/editor/rich-text";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web components
 import {
   SourceItem,
   CustomerRequestForm,
@@ -59,6 +63,13 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
   const handleUpdateSource = (link: string) => {
     updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
       .then(() => {
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.update_request,
+          payload: {
+            id: customerId,
+            request_id: requestId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("customers.requests.toasts.source.update.success.title"),
@@ -66,6 +77,15 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.update_request,
+          payload: {
+            id: customerId,
+            request_id: requestId,
+            state: "FAILED",
+            element: "Customer request list item",
+          },
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.requests.toasts.source.update.error.title"),
@@ -79,6 +99,14 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
     const workItemIds = data.map((item) => item.id);
     await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, requestId)
       .then(() => {
+        captureSuccess({
+          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+          payload: {
+            work_item_ids: workItemIds,
+            id: customerId,
+            request_id: requestId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("customers.requests.toasts.work_item.add.success.title"),
@@ -86,6 +114,15 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: CUSTOMER_TRACKER_EVENTS.add_work_items_to_customer,
+          payload: {
+            work_item_ids: workItemIds,
+            id: customerId,
+            request_id: requestId,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("customers.requests.toasts.work_item.add.error.title"),

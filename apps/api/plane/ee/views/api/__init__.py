@@ -1,7 +1,10 @@
 from .issue_property import (
-    IssuePropertyAPIEndpoint,
-    IssuePropertyOptionAPIEndpoint,
+    IssuePropertyListCreateAPIEndpoint,
+    IssuePropertyDetailAPIEndpoint,
+    IssuePropertyOptionListCreateAPIEndpoint,
+    IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
+    IssuePropertyValueListAPIEndpoint,
 )
 
 from plane.ee.views.api.base import BaseServiceAPIView
@@ -16,3 +19,5 @@ from plane.ee.views.api.worklog.issue_worklog import (
 )
 
 from plane.ee.views.api.page import WikiBulkOperationAPIView
+
+from .epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint

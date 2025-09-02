@@ -8,7 +8,7 @@ import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -231,7 +231,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
               type="button"
               onClick={handleSubPagesToggle}
               className="rounded hover:bg-custom-background-80 grid place-items-center"
-              data-prevent-NProgress
+              data-prevent-progress
             >
               {isFetchingSubPages ? (
                 <Loader className="size-3.5 animate-spin" />

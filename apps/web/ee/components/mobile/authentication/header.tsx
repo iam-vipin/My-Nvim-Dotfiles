@@ -1,11 +1,9 @@
 "use client";
 
 import { FC } from "react";
-import Image from "next/image";
 import { EMobileAuthModes, EMobileAuthSteps, TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
 import { TMobileWorkspaceInvitation } from "@plane/types";
-// assets
-import planeLogo from "@/public/plane-logos/blue-without-text.png";
+import { PlaneLogo } from "@plane/ui";
 
 const AUTH_SIGNUP_HEADER_CONTENT_OPTIONS = {
   [EMobileAuthSteps.EMAIL]: {
@@ -55,7 +53,7 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
   const isInvitation = invitationDetails?.id || undefined;
   const workspaceName = invitationDetails?.workspace?.name || "";
   const title = isInvitation ? (
-    <div className="relative flex items-center gap-2 text-3xl font-semibold text-onboarding-text-100">
+    <div className="relative flex items-center gap-2 text-3xl font-semibold text-custom-text-100">
       Join
       <div className="relative flex justify-center items-center !text-2xl !w-8 !h-8 border border-custom-primary-500 bg-custom-primary-500 text-white uppercase rounded">
         {workspaceName[0]}
@@ -69,12 +67,10 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
 
   return (
     <div className="relative space-y-6">
-      <div className="relative h-[50px] w-[50px]">
-        <Image src={planeLogo} alt="Plane logo" className="object-contain" />
-      </div>
-      <div className="space-y-1">
-        <h3 className="text-3xl font-semibold text-onboarding-text-100">{title}</h3>
-        {description && <p className="font-medium text-onboarding-text-400">{description}</p>}
+      <PlaneLogo height={51} width={84} className="text-custom-text-100" />
+      <div className="flex flex-col gap-1">
+        <h3 className="text-2xl font-semibold text-custom-text-100 leading-7">{title}</h3>
+        {description && <p className="font-medium text-custom-text-400 leading-7">{description}</p>}
       </div>
     </div>
   );

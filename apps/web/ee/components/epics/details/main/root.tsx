@@ -6,9 +6,9 @@ import { EIssueServiceType } from "@plane/types";
 // components
 import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web components
-import { MainWrapper } from "@/plane-web/components/common";
+import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 // local imports
 import { EpicInfoSection } from "./info-section-root";
 import { EpicOverviewRoot } from "./overview-section-root";

@@ -7,7 +7,7 @@ import { cn } from "@plane/utils";
 // local imports
 import { IMentionSuggestion } from "./extension";
 
-interface IItem {
+type IItem = {
   id: string;
   label: string;
   entity_name: string;
@@ -19,15 +19,16 @@ interface IItem {
   sequence_id?: string;
   title?: string;
   subTitle?: string;
-  icon?: JSX.Element;
-}
-interface MentionListProps {
+  icon?: React.ReactNode;
+};
+
+type MentionListProps = {
   command: (item: IItem) => void;
   items: IItem;
   query: string;
   editor: Editor;
   mentionSuggestions: () => Promise<IMentionSuggestion[]>;
-}
+};
 const suggestionTypes = ["issue", "page", "cycle", "module"];
 
 type TSuggestion = {

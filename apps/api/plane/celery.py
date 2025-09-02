@@ -51,8 +51,20 @@ app.conf.beat_schedule = {
         "schedule": crontab(hour=2, minute=0),  # UTC 02:00
     },
     "check-every-day-to-delete-api-logs": {
-        "task": "plane.bgtasks.api_logs_task.delete_api_logs",
+        "task": "plane.bgtasks.cleanup_task.delete_api_logs",
         "schedule": crontab(hour=2, minute=30),  # UTC 02:30
+    },
+    "check-every-day-to-delete-email-notification-logs": {
+        "task": "plane.bgtasks.cleanup_task.delete_email_notification_logs",
+        "schedule": crontab(hour=3, minute=0),  # UTC 03:00
+    },
+    "check-every-day-to-delete-page-versions": {
+        "task": "plane.bgtasks.cleanup_task.delete_page_versions",
+        "schedule": crontab(hour=3, minute=30),  # UTC 03:30
+    },
+    "check-every-day-to-delete-issue-description-versions": {
+        "task": "plane.bgtasks.cleanup_task.delete_issue_description_versions",
+        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
     },
 }
 
@@ -104,6 +116,11 @@ EE_JOBS = {
     "log-opensearch-update-queue-metrics": {
         "task": "plane.ee.bgtasks.batched_search_update_task.log_opensearch_update_queue_metrics",  # noqa: E501
         "schedule": crontab(minute="*/15"),  # Every 15 minutes
+    },
+    # Outbox cleaner
+    "check-every-day-to-delete-outbox-records": {
+        "task": "plane.event_stream.bgtasks.outbox_cleaner.delete_outbox_records",
+        "schedule": crontab(hour=0, minute=30),  # UTC 00:30
     },
 }
 

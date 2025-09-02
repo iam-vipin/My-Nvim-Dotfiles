@@ -3,13 +3,16 @@
 import { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { useProject, useUserPermissions } from "@/hooks/store";
-// plane web components
-import { EpicsEmptyState } from "@/plane-web/components/epics";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+// plane web imports
+import { EpicsEmptyState } from "@/plane-web/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
@@ -29,12 +32,7 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   if (project && !isEpicsEnabled)
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EpicsEmptyState
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          className="items-center"
-          redirect
-        />
+        <EpicsEmptyState workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} redirect />
       </div>
     );
 

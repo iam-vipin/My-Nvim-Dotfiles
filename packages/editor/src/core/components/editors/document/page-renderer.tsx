@@ -5,18 +5,22 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import type { IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
   id: string;
   isLoading?: boolean;
+  isTouchDevice: boolean;
   tabIndex?: number;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
+  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
@@ -24,12 +28,16 @@ export const PageRenderer = (props: Props) => {
     aiHandler,
     bubbleMenuEnabled,
     displayConfig,
+    documentLoaderClassName,
     editor,
     editorContainerClassName,
     id,
+    isLoading,
+    isTouchDevice,
     tabIndex,
     titleEditor,
-    isLoading = false,
+    flaggedExtensions,
+    disabledExtensions,
   } = props;
 
   return (
@@ -39,7 +47,7 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
           {titleEditor && (
@@ -47,6 +55,7 @@ export const PageRenderer = (props: Props) => {
               <EditorContainer
                 editor={titleEditor}
                 id={id + "-title"}
+                isTouchDevice={isTouchDevice}
                 editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
                 displayConfig={displayConfig}
               >
@@ -64,12 +73,17 @@ export const PageRenderer = (props: Props) => {
             editor={editor}
             editorContainerClassName={editorContainerClassName}
             id={id}
+            isTouchDevice={isTouchDevice}
           >
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-            {editor.isEditable && (
+            {editor.isEditable && !isTouchDevice && (
               <div>
                 {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-                <BlockMenu editor={editor} />
+                <BlockMenu
+                  editor={editor}
+                  flaggedExtensions={flaggedExtensions}
+                  disabledExtensions={disabledExtensions}
+                />
                 <AIFeaturesMenu menu={aiHandler?.menu} />
               </div>
             )}

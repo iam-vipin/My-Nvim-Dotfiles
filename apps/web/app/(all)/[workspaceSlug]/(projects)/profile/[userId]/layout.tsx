@@ -6,15 +6,15 @@ import useSWR from "swr";
 // components
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AppHeader, ContentWrapper } from "@/components/core";
-import { ProfileSidebar } from "@/components/profile";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+import { ProfileSidebar } from "@/components/profile/sidebar";
 // constants
 import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import useSize from "@/hooks/use-window-size";
 // local components
-import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { UserService } from "@/services/user.service";
 import { UserProfileHeader } from "./header";
 import { ProfileIssuesMobileHeader } from "./mobile-header";
@@ -58,7 +58,7 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
   const currentTab = tabsList.find((tab) => pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`);
 
   return (
-    <WorkspaceAccessWrapper pageKey="your_work">
+    <>
       {/* Passing the type prop from the current route value as we need the header as top most component.
       TODO: We are depending on the route path to handle the mobile header type. If the path changes, this logic will break. */}
       <div className="h-full w-full flex flex-col md:flex-row overflow-hidden">
@@ -91,7 +91,7 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
         </div>
         {isSmallerScreen && <ProfileSidebar userProjectsData={userProjectsData} />}
       </div>
-    </WorkspaceAccessWrapper>
+    </>
   );
 });
 

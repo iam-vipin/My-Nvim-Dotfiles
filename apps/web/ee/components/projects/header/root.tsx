@@ -5,21 +5,20 @@ import { useParams, usePathname } from "next/navigation";
 import { Briefcase } from "lucide-react";
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { ProjectsBaseHeader } from "@/components/project/header";
-import { useWorkspace } from "@/hooks/store";
-// plane web components
-import {
-  ProjectAttributesDropdown,
-  ProjectCreateButton,
-  ProjectDisplayFiltersDropdown,
-  ProjectLayoutSelection,
-  ProjectScopeDropdown,
-  ProjectSearch,
-} from "@/plane-web/components/projects/";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
+import { ProjectScopeDropdown } from "../dropdowns/scope-dropdown";
+import { ProjectAttributesDropdown } from "./attributes-dropdown";
+import { ProjectCreateButton } from "./create-project-button";
+import { ProjectDisplayFiltersDropdown } from "./display-filters-dropdown";
+import { ProjectLayoutSelection } from "./layout-selection";
+import { ProjectSearch } from "./search-projects";
 
 export const ProjectsListHeader = observer(() => {
   const { workspaceSlug } = useParams();

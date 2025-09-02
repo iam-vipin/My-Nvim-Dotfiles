@@ -12,7 +12,9 @@ from django.db.models import Q
 # Module imports
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.color import get_random_color
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -115,7 +117,7 @@ def slug_validator(value):
 
 
 class Workspace(BaseModel):
-    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.TextField(verbose_name="Logo", blank=True, null=True)
@@ -136,6 +138,7 @@ class Workspace(BaseModel):
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    background_color = models.CharField(max_length=255, default=get_random_color)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -192,10 +195,11 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
         from plane.payment.flags.flag_decorator import check_workspace_feature_flag
         from plane.payment.flags.flag import FeatureFlag
 
-        base_query = Q(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-        )
+        member_project_ids = ProjectMember.objects.filter(
+            member_id=user_id, workspace__slug=slug, is_active=True
+        ).values_list("project_id", flat=True)
+
+        base_query = Q(project_id__in=member_project_ids)
 
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
@@ -205,10 +209,6 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
                 member_id=user_id, workspace__slug=slug
             ).values_list("team_space_id", flat=True)
 
-            member_project_ids = ProjectMember.objects.filter(
-                member_id=user_id, workspace__slug=slug, is_active=True
-            ).values_list("project_id", flat=True)
-
             # Get all the projects in the respective teamspaces
             teamspace_project_ids = (
                 TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids)
@@ -217,7 +217,7 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
             )
 
             return self.filter(
-                Q(project_id__in=teamspace_project_ids) | Q(base_query),
+                Q(project_id__in=teamspace_project_ids) | base_query,
             )
 
         return self.filter(base_query)

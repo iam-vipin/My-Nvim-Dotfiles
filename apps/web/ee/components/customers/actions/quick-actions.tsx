@@ -4,13 +4,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Link2, Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { DeleteCustomerModal } from "@/plane-web/components/customers/actions";
 
@@ -94,6 +96,7 @@ export const CustomerQuickActions: React.FC<Props> = observer((props) => {
                 e.preventDefault();
                 e.stopPropagation();
                 item.action();
+                captureClick({ elementName: CUSTOMER_TRACKER_ELEMENTS.QUICK_ACTIONS });
               }}
               className={cn(
                 "flex items-center gap-2",

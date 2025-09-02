@@ -19,6 +19,7 @@ import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 import {
   BUSINESS_PLAN_FEATURES_MAP,
   ENTERPRISE_PLAN_FEATURES_MAP,
+  ONE_PLAN_FEATURES_MAP,
   PRO_PLAN_FEATURES_MAP,
 } from "@/plane-web/constants/license";
 // plane web hooks
@@ -64,7 +65,7 @@ export const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
     return PRO_PLAN_FEATURES_MAP;
   }
   if (variant === EProductSubscriptionEnum.ONE) {
-    return PRO_PLAN_FEATURES_MAP;
+    return ONE_PLAN_FEATURES_MAP;
   }
   return [];
 };
@@ -74,10 +75,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
   // router
   const { workspaceSlug } = useParams();
   // hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, refreshWorkspaceSubscribedPlan } =
-    useWorkspaceSubscription();
-  // derived values
-  const isSelfHosted = !!subscriptionDetail?.is_self_managed;
+  const { refreshWorkspaceSubscribedPlan } = useWorkspaceSubscription();
 
   useEffect(() => {
     if (isOpen && workspaceSlug) {
@@ -113,7 +111,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
         </div>
         <div className="py-4 px-4 rounded-xl bg-custom-background-90/70">
           <div className="text-sm text-custom-text-200 font-semibold pb-2.5">
-            Everything in {getBaseSubscriptionName(variant, isSelfHosted)} +
+            Everything in {getBaseSubscriptionName(variant)} +
           </div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
             {getPlanFeatures(variant).map((feature) => (

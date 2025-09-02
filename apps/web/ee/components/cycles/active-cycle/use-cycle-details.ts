@@ -10,8 +10,11 @@ import {
   IIssueFilterOptions,
   TCycleEstimateType,
   TCyclePlotType,
+  TCycleEstimateSystemAdvanced,
 } from "@plane/types";
-import { useCycle, useIssues } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle"
+import { useIssues } from "@/hooks/store/use-issues"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { formatActiveCycle } from "./formatter";
 
 interface IActiveCycleDetails {
@@ -40,6 +43,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
     currentProjectActiveCycleId,
     progressLoader,
   } = useCycle();
+  const { currentProjectEstimateType } = useProjectEstimates();
 
   // props
   const { workspaceSlug, projectId, cycleId = currentProjectActiveCycleId, defaultCycle } = props;
@@ -102,7 +106,6 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   };
 
   const handleEstimateChange = async (value: TCyclePlotType | TCycleEstimateType) => {
-    console.log(workspaceSlug, projectId, cycleId);
     if (!workspaceSlug || !projectId || !cycleId) return;
     setEstimateType(cycleId, value as TCycleEstimateType);
   };
@@ -142,6 +145,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
       formatActiveCycle({
         isTypeIssue: estimateType === "issues",
         isBurnDown: plotType === "burndown",
+        estimateType: currentProjectEstimateType as TCycleEstimateSystemAdvanced,
         cycle: {
           ...storeCycle,
           ...cycle,

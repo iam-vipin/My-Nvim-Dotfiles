@@ -49,16 +49,19 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.automations",
     "plane.ee",
     "plane.graphql",
     "plane.payment",
     "plane.silo",
+    "plane.event_stream",
     # Third-party things
     "strawberry.django",
     "rest_framework",
     "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
+    "pgtrigger",
 ]
 
 # Middlewares
@@ -88,6 +91,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
+    # Preserve original Django URL parameter names (pk) instead of converting to 'id'
+    "SCHEMA_COERCE_PATH_PK": False,
 }
 
 # Django Auth Backend
@@ -159,6 +164,29 @@ else:
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
+
+
+if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
+    if bool(os.environ.get("DATABASE_READ_REPLICA_URL")):
+        # Parse database configuration from $DATABASE_URL
+        DATABASES["replica"] = dj_database_url.parse(
+            os.environ.get("DATABASE_READ_REPLICA_URL")
+        )
+    else:
+        DATABASES["replica"] = {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_READ_REPLICA_DB"),
+            "USER": os.environ.get("POSTGRES_READ_REPLICA_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_READ_REPLICA_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_READ_REPLICA_HOST"),
+            "PORT": os.environ.get("POSTGRES_READ_REPLICA_PORT", "5432"),
+        }
+
+    # Database Routers
+    DATABASE_ROUTERS = ["plane.utils.core.dbrouters.ReadReplicaRouter"]
+    # Add middleware at the end for read replica routing
+    MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
+
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
@@ -266,6 +294,15 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 
+# Automation Consumer Settings
+AUTOMATION_EVENT_TYPES = os.environ.get("AUTOMATION_EVENT_TYPES", "issue.").split(",")
+AUTOMATION_EVENT_STREAM_QUEUE_NAME = os.environ.get(
+    "AUTOMATION_EVENT_STREAM_QUEUE_NAME", "plane.event_stream.automations"
+)
+AUTOMATION_EXCHANGE_NAME = os.environ.get(
+    "AUTOMATION_EXCHANGE_NAME", "plane.event_stream"
+)
+
 
 CELERY_IMPORTS = (
     # scheduled tasks
@@ -274,7 +311,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.data_import_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
-    "plane.bgtasks.api_logs_task",
+    "plane.bgtasks.cleanup_task",
     "plane.license.bgtasks.tracer",
     "plane.license.bgtasks.version_check_task",
     # payment tasks
@@ -293,8 +330,11 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.app_bot_task",
     "plane.authentication.bgtasks.send_app_uninstall_webhook",
     "plane.ee.bgtasks.batched_search_update_task",
+    "plane.ee.bgtasks.recurring_work_item_task",
     # silo tasks
     "plane.silo.bgtasks.integration_apps_task",
+    # event stream tasks
+    "plane.event_stream.bgtasks.outbox_cleaner",
 )
 
 # Application Envs
@@ -311,15 +351,9 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
-
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
-
-# instance key
-INSTANCE_KEY = os.environ.get(
-    "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
-)
 
 # Skip environment variable configuration
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
@@ -640,4 +674,21 @@ MOBILE_USER_DELETE_ADMIN_EMAILS = os.environ.get("MOBILE_USER_DELETE_ADMIN_EMAIL
 # Intake Email Domain
 INTAKE_EMAIL_DOMAIN = os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
 
+# DRF Spectacular settings
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+
+if ENABLE_DRF_SPECTACULAR:
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+    INSTALLED_APPS.append("drf_spectacular")
+    from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
+
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
+MONGO_DB_DATABASE = os.environ.get("MONGO_DB_DATABASE", False)
+
+# Airgapped settings
 IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"
+
+ENABLE_OUTBOX_POLLER = os.environ.get("ENABLE_OUTBOX_POLLER", "0") == "1"
+
+USE_STORAGE_PROXY = os.environ.get("USE_STORAGE_PROXY", "0") == "1"

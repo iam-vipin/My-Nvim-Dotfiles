@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // ce imports
 import { TSendWorkspaceInvitationModalProps } from "@/ce/components/workspace/members/invite-modal";
 // components
-import { InvitationFields, InvitationModalActions } from "@/components/workspace/invite-modal";
+import { InvitationModalActions } from "@/components/workspace/invite-modal/actions";
+import { InvitationFields } from "@/components/workspace/invite-modal/fields";
 import { InvitationForm } from "@/components/workspace/invite-modal/form";
 // hooks
 import { useWorkspaceInvitationActions } from "@/hooks/use-workspace-invitation";
@@ -36,7 +36,7 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
   // router
   const { workspaceSlug } = useParams();
   // plane web hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { isSeatManagementEnabled } = useWorkspaceSubscription();
   // derived values
   const {
     control,
@@ -51,8 +51,6 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
     onSubmit,
     onClose,
   });
-  const isSeatsManagementEnabled =
-    subscriptionDetail && SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail.product);
   // swr
   const {
     isLoading: isMemberInviteCheckLoading,
@@ -86,12 +84,12 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
     (memberInviteCheckData?.allowed_admin_members === 0 && memberInviteCheckData?.allowed_guests === 0);
   // check if the invitation limit is reached
   const isInvitationLimitReached =
-    isSeatsManagementEnabled &&
+    isSeatManagementEnabled &&
     (isInviteStatusDisabled ||
       totalAdminAndMembers > (memberInviteCheckData?.allowed_admin_members ?? 0) ||
       totalGuests > (memberInviteCheckData?.allowed_guests ?? 0));
   // compute if the invite button is disabled
-  const isInviteDisabled = isSeatsManagementEnabled ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
+  const isInviteDisabled = isSeatManagementEnabled ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
 
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
@@ -122,7 +120,14 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
           )}
         </InvitationForm>
       ) : (
-        <AddSeatsForm onClose={handleClose} onPreviousStep={() => setCurrentStep("INVITE_MEMBERS")} />
+        <AddSeatsForm
+          onClose={handleClose}
+          onSuccess={() => {
+            mutateMemberInviteCheck();
+            setCurrentStep("INVITE_MEMBERS");
+          }}
+          onPreviousStep={() => setCurrentStep("INVITE_MEMBERS")}
+        />
       )}
     </ModalCore>
   );

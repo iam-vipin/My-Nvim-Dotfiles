@@ -7,13 +7,14 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
-import { IssuePeekOverview } from "@/components/issues";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
-import { LayoutRoot } from "../../common";
 import { EpicEmptyState } from "./empty-state";
 import { EpicMainContentRoot } from "./main/root";
 import { EpicDetailsSidebar } from "./sidebar/root";

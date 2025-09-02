@@ -1,26 +1,30 @@
 import { ReactNode } from "react";
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { Tooltip, PiIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { AppSidebarToggleButton } from "@/components/sidebar";
+import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { isSidebarToggleVisible } from "../desktop/helper";
 
-export const ExtendedAppHeader = (props: { header: ReactNode }) => {
+export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
   const { header } = props;
   // router
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   // store hooks
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
   const { sidebarCollapsed } = useAppTheme();
   const shouldRenderPiChat =
     useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
-    isPiAllowed(pathname.replace(`/${workspaceSlug}`, ""));
+    isPiAllowed(pathname.replace(`/${workspaceSlug}`, "")) &&
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
   return (
     <>
@@ -43,8 +47,8 @@ export const ExtendedAppHeader = (props: { header: ReactNode }) => {
               </button>
             </Tooltip>
           </div>
-        )}{" "}
+        )}
       </div>
     </>
   );
-};
+});

@@ -4,20 +4,20 @@ import Image from "next/image";
 import { ArrowRight, Hash, Briefcase } from "lucide-react";
 
 // Plane components
-import { Logo } from "@/components/common";
+import { SlackConversation } from "@plane/etl/slack";
+import { useTranslation } from "@plane/i18n";
+import { PlaneLogo } from "@plane/ui";
+import { Logo } from "@/components/common/logo";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 
 // Hooks
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 
 // Types
-import { SlackConversation } from "@plane/etl/slack";
+import SlackLogo from "@/public/services/slack.png";
 import { SlackProjectNotificationMap } from "./form";
 
 // Assets
-import SlackLogo from "@/public/services/slack.png";
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
-import { useTranslation } from "@plane/i18n";
 
 type TSlackProjectChannelForm = {
   value: SlackProjectNotificationMap;
@@ -63,14 +63,11 @@ export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((p
       return project.id === value.projectId || !connectedProjectIds.includes(project.id);
     });
 
-  const availableChannels = channels.filter((channel) => {
-    // Check if it's a valid channel type
-    const isValidChannelType = (channel.is_channel || channel.is_group) && !channel.is_im;
-    if (!isValidChannelType) return false;
-    // Always include the currently selected channel (for editing scenario)
-    // Filter out channels that are already connected
-    return channel.id === value.channelId || !connectedChannelIds.includes(channel.id);
-  });
+  const availableChannels = channels.filter(
+    (channel) =>
+      // Check if it's a valid channel type
+      (channel.is_channel || channel.is_group) && !channel.is_im
+  );
 
   return (
     <div className="relative space-y-4">
@@ -80,7 +77,7 @@ export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((p
           {/* Project Selection - Left side */}
           <div className="flex-1 space-y-1 min-w-[100px]">
             <div className="flex items-center gap-1.5 ml-2">
-              <Image src={PlaneLogo} alt="Plane" width={12} height={12} />
+              <PlaneLogo className="h-3 w-auto flex-shrink-0 text-custom-primary-100" />
               <div className="text-sm font-medium text-custom-text-200">
                 {t("slack_integration.project_updates.project_updates_form.project_dropdown.label")}
               </div>

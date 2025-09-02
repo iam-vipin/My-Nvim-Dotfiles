@@ -6,16 +6,14 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list/list-root";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces, useTeamspaceFilter } from "@/plane-web/hooks/store";
-// assets
-import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
 // components
 import { TeamsLoader } from "./loader";
 import { TeamspaceListItem } from "./teamspace-list-item";
@@ -40,6 +38,11 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     EUserPermissionsLevel.WORKSPACE
   );
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/teams" });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/project/name-filter",
+    extension: "svg",
+  });
 
   if (!allTeamSpaceIds || loader === "init-loader") return <TeamsLoader />;
 
@@ -67,7 +70,7 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <Image
-            src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
+            src={searchQuery.trim() === "" ? resolvedFiltersImage : resolvedNameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching teamspace"
           />

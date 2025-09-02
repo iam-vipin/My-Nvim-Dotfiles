@@ -13,7 +13,7 @@ import { ContentWrapper, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
+import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 const CARDS_LIST = [
   {
@@ -61,7 +61,7 @@ export const DashboardsFeatureFlagFallback = observer(() => {
       <div
         className={cn("min-h-[25rem] flex item-center justify-between rounded-xl mb-5 lg:mb-12", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": isDarkMode,
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !isDarkMode,
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400": !isDarkMode,
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">

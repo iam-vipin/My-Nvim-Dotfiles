@@ -10,8 +10,6 @@ DEBUG = int(os.environ.get("DEBUG", 0)) == 1
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-INSTALLED_APPS += ("scout_apm.django",)  # noqa
-
 if os.environ.get("IS_MULTI_CLOUD", "0") == "1":
     SECURE_SSL_REDIRECT = True
 else:
@@ -87,8 +85,23 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.mongo": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.silo": {
             "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.event_stream": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.automations.consumer": {
+            "level": "INFO",
             "handlers": ["console"],
             "propagate": False,
         },

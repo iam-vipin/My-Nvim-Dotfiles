@@ -1,10 +1,10 @@
 "use client";
 import { observer } from "mobx-react";
-import { IssuePeekOverview } from "@/components/issues";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { CustomerUpgrade } from "@/plane-web/components/customers";
-import { EpicPeekOverview } from "@/plane-web/components/epics";
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 const CustomersLayout = observer(({ children }: { children: React.ReactNode }) => {

@@ -40,6 +40,7 @@ export type TClickUpConfig = {
   state: TClickUpStateConfig[];
   priority: TClickUpPriorityConfig[];
   skipUserImport: boolean;
+  skipAdditionalDataImport: boolean;
 };
 
 export type TClickUpListsWithTasks = TClickUpList & {

@@ -5,17 +5,19 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 // ui
-import { Spinner, Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
+import { Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 // helpers
-import { cn } from "@plane/utils";
+import { cn, joinUrlPath } from "@plane/utils";
 // hooks
-import { useAppTheme, useProject, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import JoinButton from "../../common/join-button";
-import QuickActions from "../../quick-actions";
-import Attributes from "../attributes";
+import { JoinButton } from "../../common/join-button";
+import { QuickActions } from "../../quick-actions";
+import { Attributes } from "../attributes";
 
 interface ProjectBlockProps {
   projectId: string;
@@ -29,7 +31,7 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   // ref
   const projectRef = useRef<HTMLDivElement | null>(null);
   // router
-  const { workspaceSlug: routerWorkspaceSlug } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId } = useParams();
   const router = useRouter();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
@@ -40,6 +42,12 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
   const { isMobile } = usePlatformOS();
 
   const projectDetails = getProjectById(projectId);
+
+  const projectLink = workspaceSlug
+    ? teamspaceId
+      ? joinUrlPath(workspaceSlug, "teamspaces", teamspaceId.toString(), "projects", projectId)
+      : joinUrlPath(workspaceSlug, "projects", projectId, "issues")
+    : undefined;
 
   if (!projectDetails || !currentWorkspace) return <></>;
   return (
@@ -71,14 +79,14 @@ export const ProjectBlock = observer((props: ProjectBlockProps) => {
             </div>
           </div>
 
-          {!!projectDetails.member_role ? (
+          {!!projectDetails.member_role && projectLink ? (
             <Link
               id={`project-${projectDetails.id}`}
-              href={`/${workspaceSlug}/projects/${projectId}/issues`}
+              href={projectLink}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+                router.push(projectLink);
               }}
               className={cn("w-full truncate cursor-pointer text-sm text-custom-text-100", {})}
             >

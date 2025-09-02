@@ -14,11 +14,12 @@ import { TProjectTemplateSelect } from "@/ce/components/projects/create/template
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
+
 export const ProjectTemplateSelect = observer((props: TProjectTemplateSelect) => {
   const { disabled = false, size = "sm", placeholder, dropDownContainerClassName, handleModalClose } = props;
   // router

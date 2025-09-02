@@ -20,7 +20,7 @@ import {
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
@@ -145,7 +145,7 @@ export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 

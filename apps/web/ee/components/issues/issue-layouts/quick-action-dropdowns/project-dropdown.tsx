@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // plane web types
 import { TProject } from "@/plane-web/types";
@@ -52,7 +52,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
         Array<{
           value: string;
           query: string;
-          content: JSX.Element;
+          content: React.ReactNode;
           disabled: boolean;
           isEpicsEnabled: boolean;
         }>
@@ -91,14 +91,14 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       options={options}
       disabled={disabled}
       label={
-        <div className="flex items-center gap-2">
+        <div className="w-full truncate text-left">
           {selectedProject ? (
-            <>
+            <div className="flex items-center gap-2 truncate">
               <span className="grid place-items-center flex-shrink-0 h-4 w-4">
                 <Logo logo={selectedProject.logo_props} size={12} />
               </span>
               <span className="truncate">{selectedProject.name}</span>
-            </>
+            </div>
           ) : (
             <span className="text-custom-text-400">{placeholder}</span>
           )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -10,16 +10,17 @@ import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryPar
 import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { IssuePeekOverview } from "@/components/issues";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
-import { useEditorConfig } from "@/hooks/editor";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor/use-editor-config";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { EpicPeekOverview } from "@/plane-web/components/epics";
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";

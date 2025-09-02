@@ -16,10 +16,11 @@ import {
 } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types/projects";
 
@@ -30,7 +31,8 @@ type Props = {
   setArchiveRestoreProject: (value: boolean) => void;
   setDeleteProjectModal: (value: boolean) => void;
 };
-const Details: React.FC<Props> = observer((props) => {
+
+export const Details: React.FC<Props> = observer((props) => {
   const { project, workspaceSlug, setArchiveRestoreProject, setDeleteProjectModal } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
@@ -157,7 +159,7 @@ const Details: React.FC<Props> = observer((props) => {
             )}
           />
         </div>
-        <div className="flex gap-2 absolute top-2 right-2" data-prevent-nprogress>
+        <div className="flex gap-2 absolute top-2 right-2" data-prevent-progress>
           {(isOwner || !isArchived) && (
             <CustomMenu
               customButton={
@@ -198,7 +200,7 @@ const Details: React.FC<Props> = observer((props) => {
           )}
 
           {!!project.member_role && !isArchived && shouldRenderFavorite && (
-            <div data-prevent-nprogress>
+            <div data-prevent-progress>
               {" "}
               <FavoriteStar
                 buttonClassName={cn(
@@ -241,4 +243,3 @@ const Details: React.FC<Props> = observer((props) => {
     </div>
   );
 });
-export default Details;

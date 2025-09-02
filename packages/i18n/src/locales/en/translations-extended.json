@@ -12,7 +12,8 @@
     "workflows": "Workflows",
     "templates": "Templates",
     "business": "Business",
-    "members_and_teamspaces": "Members & Teamspaces"
+    "members_and_teamspaces": "Members & Teamspaces",
+    "recurring_work_items": "Recurring work items"
   },
   "issue": {
     "relation": {
@@ -432,6 +433,7 @@
     }
   },
   "initiatives": {
+    "overview": "Overview",
     "label": "Initiatives",
     "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Add Initiative",
@@ -479,6 +481,19 @@
         "title": "You don't have epics that match the filters you have applied.",
         "subHeading": "To see all epics, clear all applied filters.",
         "action": "Clear filters"
+      }
+    },
+    "scope": {
+      "view_scope": "View scope",
+      "breakdown": "Scope breakdown",
+      "add_scope": "Add scope",
+      "label": "Scope",
+      "empty_state": {
+        "title": "No scope added to this initiative yet",
+        "description": "Link projects and epics and track that work in this space.",
+        "primary_button": {
+          "text": "Add scope"
+        }
       }
     }
   },
@@ -768,6 +783,11 @@
         "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit ({size} MB)",
         "uploading": "Uploading...",
         "upload_and_save": "Upload & Save"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. "
       }
     }
   },
@@ -803,7 +823,7 @@
     "label_lowercase": "work item types",
     "settings": {
       "title": "Work item Types",
-      "cant_delete_linked_message": "Cannot delete this work item type as it is linked to existing work items.",
+      "cant_delete_default_message": "This work item type cannot be deleted because it's set as the default for this project",
       "properties": {
         "title": "Custom properties",
         "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
@@ -1326,6 +1346,7 @@
     "invalid_app_installation_id": "Failed to install the app"
   },
   "import_status": {
+    "queued": "Queued",
     "created": "Created",
     "initiated": "Initiated",
     "pulling": "Pulling",
@@ -1492,7 +1513,8 @@
       "title_map_priorities": "Map Priorities",
       "description_map_priorities": "Please select the ClickUp priorities which you want to map to Plane project priorities.",
       "title_summary": "Summary",
-      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane."
+      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane.",
+      "pull_additional_data_title": "Import comments and attachments"
     }
   },
 
@@ -2630,6 +2652,7 @@
       }
     }
   },
+
   "intake_forms": {
     "create": {
       "title": "Create a work item",
@@ -2670,6 +2693,250 @@
         "step_3": "Someone from that project or team will review this.",
         "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
         "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
+      }
+    }
+  },
+
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Recurring work items",
+      "description": "Set your repeatable work once, and we’ll take care of the repeats. You’ll see everything right here when it’s time.",
+      "new_recurring_work_item": "New recurring work item",
+      "update_recurring_work_item": "Update recurring work item",
+      "form": {
+        "interval": {
+          "title": "Schedule",
+          "start_date": {
+            "validation": {
+              "required": "Start date is required"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Interval type is required"
+            }
+          }
+        },
+        "button": {
+          "create": "Create recurring work item",
+          "update": "Update recurring work item"
+        }
+      },
+      "create_button": {
+        "label": "Create recurring work item",
+        "no_permission": "Contact your project admin to create recurring work items"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Your work, on autopilot",
+        "description": "Set it once. We’ll bring it back when it’s due. Upgrade to Business to make recurring work feel effortless."
+      },
+      "no_templates": {
+        "button": "Create your first recurring work item"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Recurring work item created",
+          "message": "{name}, the recurring work item, is now available for your workspace."
+        },
+        "error": {
+          "title": "We couldn't create that recurring work item this time.",
+          "message": "Try saving your details again or copy them over to a new recurring work item, preferably in another tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Recurring work item changed",
+          "message": "{name}, the recurring work item, was changed."
+        },
+        "error": {
+          "title": "We couldn't save changes to this recurring work item.",
+          "message": "Try saving your details again or come back to this recurring work item later. If there's trouble still, reach out to us."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Recurring work item deleted",
+          "message": "{name}, the recurring work item, has now been deleted from your workspace."
+        },
+        "error": {
+          "title": "We couldn't delete that recurring work item this.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Delete recurring work item",
+      "description": {
+        "prefix": "Are you sure you want to delete recurring work item-",
+        "suffix": "? All of the data related to the recurring work item will be permanently removed. This action cannot be undone."
+      }
+    }
+  },
+
+  "automations": {
+    "settings": {
+      "title": "Custom automations",
+      "create_automation": "Create automation"
+    },
+    "scope": {
+      "label": "Scope",
+      "run_on": "Run on"
+    },
+    "trigger": {
+      "label": "Trigger",
+      "add_trigger": "Add trigger",
+      "sidebar_header": "Trigger configuration",
+      "input_label": "What’s the trigger for this automation?",
+      "input_placeholder": "Select an option",
+      "button": {
+        "previous": "Back",
+        "next": "Add action"
+      }
+    },
+    "condition": {
+      "label": "Provided",
+      "add_condition": "Add condition",
+      "adding_condition": "Adding condition"
+    },
+    "action": {
+      "label": "Action",
+      "add_action": "Add action",
+      "sidebar_header": "Actions",
+      "input_label": "What does the automation do?",
+      "input_placeholder": "Select an option",
+      "handler_name": {
+        "add_comment": "Add comment",
+        "change_property": "Change property"
+      },
+      "configuration": {
+        "label": "Configuration",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Select a property",
+            "change_type": "Select",
+            "property_value_select": "{count, plural, one{Select value} other{Select values}}",
+            "property_value_select_date": "Select date"
+          },
+          "validation": {
+            "property_name_required": "Property name is required",
+            "change_type_required": "Change type is required",
+            "property_value_required": "Property value is required"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Add comment"
+      },
+      "change_property_block": {
+        "title": "Change property"
+      },
+      "validation": {
+        "delete_only_action": "Disable the automation before deleting its only action."
+      }
+    },
+    "conjunctions": {
+      "and": "And",
+      "or": "Or",
+      "if": "If",
+      "then": "Then"
+    },
+    "enable": {
+      "alert": "Hit 'Enable' whenever your automation is complete. Once enabled, the automation will be ready to run.",
+      "validation": {
+        "required": "Automation must have a trigger and at least one action to be enabled."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Automation must be disabled before deleting it."
+      }
+    },
+    "table": {
+      "title": "Automation title",
+      "last_run_on": "Last run on",
+      "created_on": "Created on",
+      "last_updated_on": "Last updated on",
+      "last_run_status": "Last run status",
+      "average_duration": "Average duration",
+      "owner": "Owner",
+      "executions": "Executions"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Create automation",
+        "update": "Update automation"
+      },
+      "title": {
+        "placeholder": "Name your automation.",
+        "required_error": "Title is required"
+      },
+      "description": {
+        "placeholder": "Describe your automation."
+      },
+      "submit_button": {
+        "create": "Create automation",
+        "update": "Update automation"
+      }
+    },
+    "delete_modal": {
+      "heading": "Delete automation"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Show fails",
+        "all": "All",
+        "only_activity": "Only activity",
+        "only_run_history": "Only run history"
+      },
+      "run_history": {
+        "initiator": "Initiator"
+      }
+    },
+    "toasts": {
+      "enable": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation enabled successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation enable failed."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Success!",
+          "message": "Automation disabled successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Automation disable failed."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automation deleted",
+          "message": "{name}, the automation, has now been deleted from your project."
+        },
+        "error": {
+          "title": "We couldn't delete that automation this time.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "There’re no automations to show yet.",
+        "description": "Automations help you eliminate repetitive tasks by setting triggers, conditions, and actions. Create one to save time and keep work moving effortlessly."
+      },
+      "upgrade": {
+        "title": "Automations",
+        "description": "Automations are a way to automate tasks in your project.",
+        "sub_description": "Get 80% of your admin time back when you use Automations."
       }
     }
   }

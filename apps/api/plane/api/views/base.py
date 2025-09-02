@@ -19,6 +19,7 @@ from oauth2_provider.contrib.rest_framework import (
     IsAuthenticatedOrTokenHasScope,
 )
 
+from rest_framework.generics import GenericAPIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
@@ -27,6 +28,7 @@ from plane.authentication.rate_limit import OAuthTokenRateThrottle
 from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 class TimezoneMixin:
@@ -43,7 +45,9 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(
+    TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator
+):
     authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
     permission_classes = [
         IsAuthenticated,
@@ -51,6 +55,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         OauthApplicationWorkspacePermission,
     ]
     required_scopes = ["read", "write"]
+
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):

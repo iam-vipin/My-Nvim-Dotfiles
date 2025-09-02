@@ -12,7 +12,7 @@ import { cn, getSubscriptionName } from "@plane/utils";
 import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common";
+import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const CloudEditionBadge = observer(() => {
@@ -36,7 +36,7 @@ export const CloudEditionBadge = observer(() => {
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success" && currentSubscription === EProductSubscriptionEnum.PRO) {
-      router.replace(pathname, {}, { showProgressBar: false });
+      router.replace(pathname, { showProgress: false });
       handleSuccessModalToggle(true);
     }
   }, [pathname, router, searchParams, currentSubscription, handleSuccessModalToggle]);
@@ -92,7 +92,7 @@ export const CloudEditionBadge = observer(() => {
             `
           ) : (
             <>
-              <PlaneIcon className="size-3 flex-shrink-0" />
+              <PlaneIcon className="size-4 flex-shrink-0" />
               <span className="truncate ">{getSubscriptionName(currentSubscription)}</span>
             </>
           )}

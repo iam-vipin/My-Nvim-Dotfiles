@@ -15,17 +15,16 @@ import {
 import { Loader, Tooltip } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
-// plane web components
-import {
-  TextValueInput,
-  BooleanInput,
-  NumberValueInput,
-  MemberValueSelect,
-  DateValueSelect,
-  OptionValueSelect,
-  IssuePropertyLogo,
-} from "@/plane-web/components/issue-types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// local imports
+import { IssuePropertyLogo } from "../properties/common/issue-property-logo";
+import { BooleanInput } from "./components/boolean-input";
+import { DateValueSelect } from "./components/date-select";
+import { MemberValueSelect } from "./components/member-select";
+import { NumberValueInput } from "./components/number-input";
+import { OptionValueSelect } from "./components/option-select";
+import { TextValueInput } from "./components/text-input";
+import { UrlValueInput } from "./components/url-input";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -81,7 +80,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     </>
   );
 
-  const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
+  const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (
       <>
         <TextValueInput
@@ -160,6 +159,19 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           buttonClassName="h-8"
           isDisabled={isDisabled}
           onMemberValueChange={onPropertyValueChange}
+        />
+      </>
+    ),
+    URL: (
+      <>
+        <UrlValueInput
+          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.URL>}
+          value={propertyValue}
+          error={propertyValueError}
+          variant={variant}
+          className="min-h-8"
+          isDisabled={isDisabled}
+          onTextValueChange={onPropertyValueChange}
         />
       </>
     ),

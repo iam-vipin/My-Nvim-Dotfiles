@@ -32,12 +32,18 @@ const defaultImporterData: TImporterClickUpDataPayload = {
     teamId: undefined,
     spaceId: undefined,
     folderIds: [],
+    skipAdditionalDataImport: true,
   },
   [E_CLICKUP_IMPORTER_STEPS.MAP_STATES]: {},
   [E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES]: {},
   [E_CLICKUP_IMPORTER_STEPS.SUMMARY]: {
     skipUserImport: false,
   },
+};
+
+const defaultConfigData: Partial<TClickUpConfig> = {
+  skipAdditionalDataImport: true,
+  skipUserImport: false,
 };
 
 export interface IClickUpStore extends IImporterBaseStore {
@@ -70,7 +76,7 @@ export class ClickUpStore extends ImporterBaseStore implements IClickUpStore {
   dashboardView: boolean = true;
   stepper: TClickUpImporterStepKeys = E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP;
   importerData: TImporterClickUpDataPayload = defaultImporterData;
-  configData: Partial<TClickUpConfig> = {};
+  configData: Partial<TClickUpConfig> = defaultConfigData;
   // store instances
   job: IImporterJobStore<TClickUpConfig>;
   auth: IClickUpAuthStore;
@@ -181,6 +187,6 @@ export class ClickUpStore extends ImporterBaseStore implements IClickUpStore {
     this.dashboardView = true;
     this.stepper = E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP;
     this.importerData = defaultImporterData;
-    this.configData = {};
+    this.configData = defaultConfigData;
   };
 }

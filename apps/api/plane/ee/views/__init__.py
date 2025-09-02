@@ -1,9 +1,11 @@
 # Api imports
 from plane.ee.views.api import (
-    # issue property, property option, property value
-    IssuePropertyAPIEndpoint,
-    IssuePropertyOptionAPIEndpoint,
+    IssuePropertyListCreateAPIEndpoint,
+    IssuePropertyDetailAPIEndpoint,
+    IssuePropertyOptionListCreateAPIEndpoint,
+    IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
+    IssuePropertyValueListAPIEndpoint,
 )
 
 # App imports
@@ -36,6 +38,7 @@ from plane.ee.views.app.page import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
+    ProjectPageUserViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
 )
@@ -134,3 +137,7 @@ from plane.ee.views.app.workspace.asset import WorkspaceBulkAssetEndpoint
 
 # mobile views and endpoints
 from plane.ee.views.app.mobile import MobileWorkspaceInvitationEndpoint
+
+
+# Epic views
+from plane.ee.views.api.epic import EpicListCreateAPIEndpoint, EpicDetailAPIEndpoint

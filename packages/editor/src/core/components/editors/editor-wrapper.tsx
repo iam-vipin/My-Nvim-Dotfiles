@@ -25,43 +25,55 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
+    editorProps,
     extensions,
     id,
     initialValue,
+    isTouchDevice,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
-    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
+    onEditorFocus,
     onTransaction,
     autofocus,
     placeholder,
     tabIndex,
     value,
+    // additional props
+    embedHandler,
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = props;
 
   const editor = useEditor({
     editable,
     disabledExtensions,
     editorClassName,
+    editorProps,
     enableHistory: true,
     extensions,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
-    isSmoothCursorEnabled,
     id,
+    isTouchDevice,
     initialValue,
     mentionHandler,
     onChange,
+    onEditorFocus,
     onTransaction,
     autofocus,
     placeholder,
     tabIndex,
     value,
+    // additional props
+    embedHandler,
+    extensionOptions,
+    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -78,6 +90,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
+      isTouchDevice={!!isTouchDevice}
     >
       {children?.(editor)}
       <div className="flex flex-col">

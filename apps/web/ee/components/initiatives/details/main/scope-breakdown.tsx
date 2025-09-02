@@ -1,8 +1,13 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
-import { CircularProgressIndicator, Loader, ScopeIcon } from "@plane/ui";
-import { SectionEmptyState, SectionWrapper } from "@/plane-web/components/common";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { CircularProgressIndicator, ControlLink, Loader, ScopeIcon } from "@plane/ui";
+// plane web imports
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
+import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
@@ -19,8 +24,8 @@ type TDataCardProps = {
 
 const DataCard = (props: TDataCardProps) => {
   const { type, data, workspaceSlug, initiativeId } = props;
+  const router = useRouter();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
-
   const total =
     (data?.backlog_issues ?? 0) +
     (data?.unstarted_issues ?? 0) +
@@ -29,8 +34,16 @@ const DataCard = (props: TDataCardProps) => {
     (data?.cancelled_issues ?? 0);
   const completed = (data?.completed_issues ?? 0) + (data?.cancelled_issues ?? 0);
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  const handleControlLinkClick = () => {
+    router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`);
+  };
   return (
-    <div className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2">
+    <ControlLink
+      href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
+      className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2 hover:cursor-pointer hover:bg-custom-background-80 transition-colors block"
+      onClick={handleControlLinkClick}
+    >
       <div className="flex w-full justify-between text-custom-text-300 ">
         <div className="font-semibold text-base capitalize">{type}s</div>
       </div>
@@ -55,17 +68,19 @@ const DataCard = (props: TDataCardProps) => {
           </div>
           <div className="flex-1 flex flex-col gap-3">
             <div className="text-custom-text-350 font-medium text-sm">Updates</div>
-            <UpdateStatusPills
-              defaultTab={type}
-              handleUpdateOperations={handleUpdateOperations}
-              workspaceSlug={workspaceSlug.toString()}
-              initiativeId={initiativeId}
-              analytics={{
-                on_track_updates: data?.on_track_updates ?? 0,
-                at_risk_updates: data?.at_risk_updates ?? 0,
-                off_track_updates: data?.off_track_updates ?? 0,
-              }}
-            />
+            <div role="group" aria-label="update-status-pills">
+              <UpdateStatusPills
+                defaultTab={type}
+                handleUpdateOperations={handleUpdateOperations}
+                workspaceSlug={workspaceSlug.toString()}
+                initiativeId={initiativeId}
+                analytics={{
+                  on_track_updates: data?.on_track_updates ?? 0,
+                  at_risk_updates: data?.at_risk_updates ?? 0,
+                  off_track_updates: data?.off_track_updates ?? 0,
+                }}
+              />
+            </div>
           </div>
         </div>
       ) : (
@@ -73,7 +88,7 @@ const DataCard = (props: TDataCardProps) => {
           <Loader.Item height="71px" width="100%" />
         </Loader>
       )}
-    </div>
+    </ControlLink>
   );
 };
 
@@ -94,6 +109,8 @@ export const ScopeBreakdown = observer((props: Props) => {
     },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
@@ -106,14 +123,14 @@ export const ScopeBreakdown = observer((props: Props) => {
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div className="text-custom-text-300 font-semibold text-base">Scope breakdown</div>
+        <div className="text-custom-text-300 font-semibold text-base">{t("initiatives.scope.breakdown")}</div>
         {/* button */}
         <div className="flex gap-2">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
             className="text-custom-primary-100 font-medium text-sm"
           >
-            View scope
+            {t("initiatives.scope.view_scope")}
           </Link>
           <AddScopeButton
             disabled={disabled}
@@ -126,8 +143,8 @@ export const ScopeBreakdown = observer((props: Props) => {
       {/* content */}
       {projectsCount === 0 && epicsCount === 0 ? (
         <SectionEmptyState
-          heading="No scope added to this initiative yet"
-          subHeading="Link projects and epics and track that work in this space."
+          heading={t("initiatives.scope.empty_state.title")}
+          subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
           actionElement={
             <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />

@@ -7,7 +7,8 @@
     "upgrade_plan": "Nâng cấp gói",
     "plane_pro": "Plane Pro",
     "business": "Doanh nghiệp",
-    "customers": "Khách hàng"
+    "customers": "Khách hàng",
+    "recurring_work_items": "Công việc lặp lại"
   },
   "workspace_dashboards": "Bảng điều khiển",
   "pi_chat": "Pi Chat",
@@ -384,6 +385,7 @@
     }
   },
   "initiatives": {
+    "overview": "Tổng quan",
     "label": "Sáng kiến",
     "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
     "add_initiative": "Thêm Sáng kiến",
@@ -431,6 +433,19 @@
         "title": "Không có sáng kiến phù hợp",
         "subHeading": "Tạo một sáng kiến mới thay thế.",
         "action": "Tạo sáng kiến"
+      }
+    },
+    "scope": {
+      "view_scope": "Xem phạm vi",
+      "breakdown": "Phân tích phạm vi",
+      "add_scope": "Thêm phạm vi",
+      "label": "Phạm vi",
+      "empty_state": {
+        "title": "Chưa thêm phạm vi nào đến sáng kiến này",
+        "description": "Kết nối dự án và epic với sáng kiến này để bắt đầu.",
+        "primary_button": {
+          "text": "Thêm phạm vi"
+        }
       }
     }
   },
@@ -658,6 +673,11 @@
         "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu"
+      },
+      "plane-intelligence": { 
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
       }
     }
   },
@@ -884,7 +904,7 @@
         },
         "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?"
       },
-      "cant_delete_linked_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
+      "cant_delete_default_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
     },
     "create": {
       "title": "Tạo loại mục công việc",
@@ -1206,6 +1226,7 @@
     "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
   "import_status": {
+    "queued": "Đang chờ",
     "created": "Đã tạo",
     "initiated": "Đã bắt đầu",
     "pulling": "Đang kéo",
@@ -1371,7 +1392,8 @@
       "title_map_priorities": "Ánh xạ ưu tiên",
       "description_map_priorities": "Vui lòng chọn ưu tiên ClickUp mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
       "title_summary": "Tóm tắt",
-      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane."
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane.",
+      "pull_additional_data_title": "Nhập bình luận và đính kèm"
     }
   },
 
@@ -2466,5 +2488,84 @@
       }
     },
     "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Công việc lặp lại",
+      "description": "Thiết lập công việc lặp lại một lần, và chúng tôi sẽ chăm sóc các lặp lại. Bạn sẽ thấy tất cả ở đây khi đến lúc.",
+      "new_recurring_work_item": "Tạo mục công việc lặp lại mới",
+      "update_recurring_work_item": "Cập nhật mục công việc lặp lại",
+      "form": {
+        "interval": {
+          "title": "Lịch trình",
+          "start_date": {
+            "validation": {
+              "required": "Ngày bắt đầu là bắt buộc"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Loại khoảng thời gian là bắt buộc"
+            }
+          }
+        },
+        "button": {
+          "create": "Tạo mục công việc lặp lại",
+          "update": "Cập nhật mục công việc lặp lại"
+        }
+      },
+      "create_button": {
+        "label": "Tạo mục công việc lặp lại",
+        "no_permission": "Liên hệ quản trị viên dự án của bạn để tạo mục công việc lặp lại"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Công việc của bạn, tự động hóa",
+        "description": "Thiết lập một lần. Chúng tôi sẽ tự động lặp lại khi đến hạn. Nâng cấp lên Doanh nghiệp để công việc lặp lại trở nên dễ dàng."
+      },
+      "no_templates": {
+        "button": "Tạo mục công việc lặp lại đầu tiên của bạn"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Đã tạo mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, hiện đã có trong không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể tạo mục công việc lặp lại lần này.",
+          "message": "Hãy thử lưu lại thông tin của bạn hoặc sao chép sang một mục công việc lặp lại mới, tốt nhất ở tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Đã thay đổi mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã được thay đổi."
+        },
+        "error": {
+          "title": "Không thể lưu thay đổi cho mục công việc lặp lại này.",
+          "message": "Hãy thử lưu lại thông tin hoặc quay lại mục công việc lặp lại này sau. Nếu vẫn gặp sự cố, hãy liên hệ với chúng tôi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Đã xóa mục công việc lặp lại",
+          "message": "{name}, mục công việc lặp lại, đã bị xóa khỏi không gian làm việc của bạn."
+        },
+        "error": {
+          "title": "Không thể xóa mục công việc lặp lại này.",
+          "message": "Hãy thử xóa lại hoặc quay lại sau. Nếu vẫn không thể xóa, hãy liên hệ với chúng tôi."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Xóa mục công việc lặp lại",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn xóa mục công việc lặp lại-",
+        "suffix": "? Tất cả dữ liệu liên quan đến mục công việc lặp lại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    }
   }
 }

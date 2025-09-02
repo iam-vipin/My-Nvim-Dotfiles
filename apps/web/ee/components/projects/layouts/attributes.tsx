@@ -8,13 +8,18 @@ import { EUserProjectRoles, IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
-import { PriorityDropdown, StateDropdown } from "../dropdowns";
-import MembersDropdown from "../dropdowns/members-dropdown";
+// local imports
+import { MembersDropdown } from "../dropdowns/members-dropdown";
+import { PriorityDropdown } from "../dropdowns/priority-dropdown";
+import { StateDropdown } from "../dropdowns/state-dropdown";
 
 type Props = {
   project: TProject;
@@ -28,7 +33,7 @@ type Props = {
   displayProperties: { [key: string]: boolean };
 };
 
-const Attributes: React.FC<Props> = observer((props) => {
+export const Attributes: React.FC<Props> = observer((props) => {
   const {
     project,
     isArchived,
@@ -59,7 +64,7 @@ const Attributes: React.FC<Props> = observer((props) => {
     e.preventDefault();
   };
   return (
-    <div className={cn("flex gap-2 flex-wrap p-4", containerClass)} data-prevent-nprogress>
+    <div className={cn("flex gap-2 flex-wrap p-4", containerClass)} data-prevent-progress>
       {displayProperties["state"] && (
         <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <StateDropdown
@@ -198,4 +203,3 @@ const Attributes: React.FC<Props> = observer((props) => {
     </div>
   );
 });
-export default Attributes;

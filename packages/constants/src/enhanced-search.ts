@@ -10,6 +10,7 @@ export enum ESearchFilterKeys {
   PAGE = "page",
   EPIC = "epic",
   TEAMSPACE = "teamspace",
+  WORK_ITEM_COMMENT = "work_item_comment",
 }
 
 export type TSearchFilterKeys = `${ESearchFilterKeys}`;
@@ -42,6 +43,7 @@ export const SEARCH_FILTERS: TSearchFilter[] = [
   { key: ESearchFilterKeys.PAGE, i18n_label: "common.pages" },
   { key: ESearchFilterKeys.EPIC, i18n_label: "common.epics" },
   { key: ESearchFilterKeys.TEAMSPACE, i18n_label: "teamspaces.label" },
+  { key: ESearchFilterKeys.WORK_ITEM_COMMENT, i18n_label: "common.comments" },
 ];
 
 export interface IWorkspaceDefaultEnhancedSearchResult {
@@ -95,4 +97,17 @@ export interface IWorkspaceEnhancedSearchResults {
     page: IWorkspacePageEnhancedSearchResult[];
     epic: IWorkspaceIssueEnhancedSearchResult[];
   };
+}
+
+export interface IWorkspaceCommentEnhancedSearchResult {
+  actor_id: string;
+  comment: string;
+  id: string;
+  issue_id: string;
+  project_id: string;
+  project_identifier: string;
+  workspace_slug: string;
+  issue_sequence_id: string;
+  issue_name: string;
+  issue_type_id: string;
 }

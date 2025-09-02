@@ -7,11 +7,11 @@ import { EIssueServiceType } from "@plane/types";
 import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { RelationActionButton, RelationsCollapsibleContent } from "@/components/issues";
+import { RelationActionButton, RelationsCollapsibleContent } from "@/components/issues/issue-detail-widgets/relations";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
+import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 
 type Props = {
   workspaceSlug: string;

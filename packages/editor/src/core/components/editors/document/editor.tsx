@@ -15,26 +15,30 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { EditorRefApi, IDocumentEditor } from "@/types";
+import { EditorRefApi, IDocumentEditorProps } from "@/types";
 
-const DocumentEditor = (props: IDocumentEditor) => {
+const DocumentEditor = (props: IDocumentEditorProps) => {
   const {
     bubbleMenuEnabled = false,
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     embedHandler,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
     id,
+    isTouchDevice,
     handleEditorReady,
-    initialValue,
-    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
     user,
+    value,
+    // additional props
+    extensionOptions,
+    isSmoothCursorEnabled,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
@@ -55,9 +59,13 @@ const DocumentEditor = (props: IDocumentEditor) => {
         disabledExtensions,
         embedConfig: embedHandler,
         flaggedExtensions,
-        isEditable: true,
+        isEditable: editable,
         fileHandler,
-        userDetails: user,
+        userDetails: user ?? {
+          id: "",
+          name: "",
+          color: "",
+        },
       })
     );
     return additionalExtensions;
@@ -65,7 +73,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
 
   const editor = useEditor({
     disabledExtensions,
-    editable: true,
+    editable,
     editorClassName,
     enableHistory: true,
     extensions,
@@ -74,10 +82,13 @@ const DocumentEditor = (props: IDocumentEditor) => {
     forwardedRef,
     handleEditorReady,
     id,
-    initialValue,
-    isSmoothCursorEnabled,
+    initialValue: value,
     mentionHandler,
     onChange,
+    // additional props
+    embedHandler,
+    extensionOptions,
+    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -93,11 +104,14 @@ const DocumentEditor = (props: IDocumentEditor) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      flaggedExtensions={flaggedExtensions}
+      disabledExtensions={disabledExtensions}
+      isTouchDevice={!!isTouchDevice}
     />
   );
 };
 
-const DocumentEditorWithRef = forwardRef<EditorRefApi, IDocumentEditor>((props, ref) => (
+const DocumentEditorWithRef = forwardRef<EditorRefApi, IDocumentEditorProps>((props, ref) => (
   <DocumentEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />
 ));
 

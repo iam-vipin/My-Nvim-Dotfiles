@@ -8,12 +8,11 @@ import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } fro
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { ProIcon } from "@/components/common";
-// helper
+// components
+import { ProIcon } from "@/components/common/pro-icon";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/use-user-profile";
 
 export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   {
@@ -70,7 +69,8 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": userProfile?.theme.theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": userProfile?.theme.theme === "light",
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
+            userProfile?.theme.theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">

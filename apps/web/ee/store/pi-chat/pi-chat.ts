@@ -41,26 +41,40 @@ export interface IPiChatStore {
   isPiChatDrawerOpen: boolean;
   // computed fn
   geUserThreads: () => TUserThreads[];
-  geUserThreadsByWorkspaceId: (workspaceId: string) => TUserThreads[];
+  geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
+  getChatFocus: (chatId: string) => TFocus | undefined;
   // actions
   initPiChat: (chatId?: string) => void;
-  fetchChatById: (chatId: string) => void;
-  getAnswer: (chatId: string, query: string, focus: TFocus, isProjectChat: boolean) => Promise<string | undefined>;
-  getTemplates: () => Promise<TTemplate[]>;
-  fetchUserThreads: (workspaceId: string, isProjectChat: boolean) => void;
+  fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
+  getAnswer: (
+    chatId: string,
+    query: string,
+    focus: TFocus,
+    isProjectChat: boolean,
+    workspaceSlug: string,
+    workspaceId: string | undefined
+  ) => Promise<string | undefined>;
+  getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
+  fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
-  sendFeedback: (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
-  fetchModels: () => Promise<void>;
+  sendFeedback: (
+    chatId: string,
+    message_index: number,
+    feedback: EFeedback,
+    workspaceId?: string,
+    feedbackMessage?: string
+  ) => Promise<void>;
+  fetchModels: (workspaceId?: string) => Promise<void>;
   setActiveModel: (model: TAiModels) => void;
-  createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string) => Promise<string>;
-  renameChat: (chatId: string, title: string) => Promise<void>;
+  createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
+  renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
   deleteChat: (chatId: string, workspaceSlug: string) => Promise<void>;
-  favoriteChat: (chatId: string) => Promise<void>;
-  unfavoriteChat: (chatId: string) => Promise<void>;
-  fetchRecentChats: (isProjectChat: boolean) => Promise<void>;
-  fetchFavoriteChats: (workspaceId: string) => Promise<void>;
+  favoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
+  unfavoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
+  fetchRecentChats: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
+  fetchFavoriteChats: (workspaceId: string | undefined) => Promise<void>;
   togglePiChatDrawer: (value?: boolean) => void;
 }
 
@@ -158,7 +172,7 @@ export class PiChatStore implements IPiChatStore {
   // computed
   geUserThreads = computedFn(() => this.piThreads.map((chatId) => this.chatMap[chatId]) || []);
 
-  geUserThreadsByWorkspaceId = computedFn((workspaceId: string) => {
+  geUserThreadsByWorkspaceId = computedFn((workspaceId: string | undefined) => {
     if (!workspaceId) return [];
     return (
       this.projectThreads
@@ -174,27 +188,40 @@ export class PiChatStore implements IPiChatStore {
 
   getChatById = computedFn((chatId: string) => this.chatMap[chatId]);
 
+  getChatFocus = computedFn((chatId: string) => {
+    const chat = this.chatMap[chatId];
+    if (!chat) return;
+    return {
+      isInWorkspaceContext: chat.is_focus_enabled,
+      entityType: chat.focus_project_id ? "project_id" : "workspace_id",
+      entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
+    };
+  });
+
   // actions
   initPiChat = async (chatId?: string | undefined) => {
     // Existing chat
     if (chatId) {
       this.activeChatId = chatId;
+      this.isNewChat = false;
     } else {
       this.activeChatId = "";
     }
     this.isAuthorized = true;
   };
 
-  createNewChat = async (focus: TFocus, isProjectChat: boolean = false, workspaceId: string) => {
+  createNewChat = async (focus: TFocus, isProjectChat: boolean = false, workspaceId: string | undefined) => {
     this.isNewChat = true;
     let payload: TInitPayload = {
       workspace_in_context: focus.isInWorkspaceContext,
       is_project_chat: isProjectChat,
+      workspace_id: workspaceId,
     };
     if (focus.isInWorkspaceContext) {
       payload = {
         ...payload,
         [focus.entityType]: focus.entityIdentifier,
+        workspace_id: workspaceId,
       };
     }
 
@@ -215,12 +242,78 @@ export class PiChatStore implements IPiChatStore {
     return newChatId;
   };
 
-  getTemplates = async () => {
-    const response = await this.piChatService.listTemplates();
+  getTemplates = async (workspaceId: string | undefined) => {
+    const response = await this.piChatService.listTemplates(workspaceId);
     return response?.templates;
   };
 
-  getAnswer = async (chatId: string, query: string, focus: TFocus, isProjectChat: boolean = false) => {
+  getStreamingAnswer = async (
+    isNewChat: boolean,
+    chatId: string,
+    payload: TQuery,
+    workspaceId: string | undefined,
+    callback: (property: "answer" | "reasoning", value: string) => void
+  ) => {
+    const token = await this.piChatService.retrieveToken(payload);
+    const url = `${PI_BASE_URL}/api/v1/chat/stream-answer/${token}`;
+
+    const eventSource = new EventSource(url, {
+      withCredentials: true,
+    });
+
+    // 🔹 Handles `delta` chunks
+    eventSource.addEventListener("delta", (event: MessageEvent) => {
+      try {
+        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
+        const data = JSON.parse(event.data);
+        callback("answer", data.chunk);
+      } catch (e) {
+        console.error("Delta parse error", e);
+      }
+    });
+
+    // 🔹 Handles reasoning events
+    eventSource.addEventListener("reasoning", (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        callback("reasoning", data.reasoning);
+      } catch (e) {
+        console.error("Reasoning parse error", e);
+      }
+    });
+
+    // 🔹 Handles done event
+    eventSource.addEventListener("done", async () => {
+      eventSource.close();
+      this.isPiTypingMap[chatId] = false;
+      // Call the title api if its a new chat
+      if (isNewChat) {
+        const title = await this.piChatService.retrieveTitle(chatId, workspaceId);
+        runInAction(() => {
+          this.isNewChat = false;
+          update(this.chatMap, chatId, (chat) => {
+            chat.title = title.title;
+            chat.last_modified = new Date().toISOString();
+            return chat; // same reference, mutated
+          });
+        });
+      }
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      eventSource.close();
+    };
+  };
+
+  getAnswer = async (
+    chatId: string,
+    query: string,
+    focus: TFocus,
+    isProjectChat: boolean = false,
+    workspaceSlug: string,
+    workspaceId: string | undefined
+  ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
     }
@@ -229,6 +322,8 @@ export class PiChatStore implements IPiChatStore {
     const newDialogue: TDialogue = {
       query,
       llm: this.activeModel?.id,
+      answer: "",
+      reasoning: "",
     };
 
     try {
@@ -236,21 +331,22 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         this.isPiThinkingMap[chatId] = true;
         this.isPiTypingMap[chatId] = true;
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          dialogue: [...dialogueHistory, newDialogue],
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.dialogue = [...dialogueHistory, newDialogue];
+          return chat; // same reference, mutated
+        });
+
         if (isNewChat) {
           if (isProjectChat) {
             this.projectThreads = [chatId, ...this.projectThreads];
           } else {
             this.piThreads = [chatId, ...this.piThreads];
           }
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            title: "New Chat",
-            last_modified: new Date().toISOString(),
-          }));
+          update(this.chatMap, chatId, (chat) => {
+            chat.title = "New Chat";
+            chat.last_modified = new Date().toISOString();
+            return chat; // same reference, mutated
+          });
         }
       });
 
@@ -270,103 +366,58 @@ export class PiChatStore implements IPiChatStore {
             }
           : {},
         is_project_chat: isProjectChat,
+        workspace_slug: workspaceSlug,
+        workspace_id: workspaceId,
       };
       if (focus.isInWorkspaceContext) {
         payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
       }
 
       // Api call here
-      const response = await fetch(`${PI_BASE_URL}/api/v1/chat/get-answer/`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
+      this.getStreamingAnswer(isNewChat, chatId, payload, workspaceId, (property, value) => {
+        newDialogue[property] += value;
+        runInAction(() => {
+          update(this.chatMap, chatId, (chat) => {
+            chat.dialogue = [...dialogueHistory, newDialogue];
+            return chat; // same reference, mutated
+          });
+        });
       });
 
-      // Parse code for a streaming response
-      if (!response.ok) throw new Error(await response.text());
-      const reader = response?.body?.pipeThrough(new TextDecoderStream()).getReader();
-
-      let latestAiMessage = "";
-      let latestAiReasoning = "";
-      let isReasoning = false;
-
-      while (true) {
-        const { done, value } = await (reader?.read() as Promise<ReadableStreamReadResult<string>>);
-        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
-        if (done) break;
-        if (value.startsWith("title: ")) continue; // Use this title value and remove the api call to get title in the future
-        if (value.startsWith("reasoning: ")) isReasoning = true;
-        if (value.startsWith("data: ")) isReasoning = false;
-        if (isReasoning) {
-          latestAiReasoning += value.replaceAll("reasoning: ", "");
-          newDialogue.reasoning = latestAiReasoning;
-        } else {
-          latestAiMessage += value.replaceAll("data: ", "");
-          newDialogue.answer = latestAiMessage;
-        }
-        // Update the store with the latest ai message
-        runInAction(() => {
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            dialogue: [...dialogueHistory, newDialogue],
-          }));
-        });
-      }
-
-      this.isPiTypingMap[chatId] = false;
-      // Call the title api if its a new chat
-      if (isNewChat) {
-        const title = await this.piChatService.retrieveTitle(chatId);
-        runInAction(() => {
-          this.isNewChat = false;
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            title: title.title,
-            last_modified: new Date().toISOString(),
-          }));
-        });
-      }
-      // Todo: Optimistically update the chat history
-      return latestAiMessage;
+      return newDialogue.answer;
     } catch (e) {
       console.log(e);
       runInAction(() => {
         newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          dialogue: [...dialogueHistory, newDialogue],
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.dialogue = [...dialogueHistory, newDialogue];
+          return chat; // same reference, mutated
+        });
         this.isPiThinkingMap[chatId] = false;
         this.isPiTypingMap[chatId] = false;
       });
     }
   };
 
-  fetchChatById = async (chatId: string) => {
+  fetchChatById = async (chatId: string, workspaceId: string | undefined) => {
     if (this.isNewChat) return;
     try {
       // Call api here
       runInAction(() => {
         this.isLoadingMap[chatId] = true;
       });
-      const response = await this.piChatService.retrieveChat(chatId);
+      const response = await this.piChatService.retrieveChat(chatId, workspaceId);
       runInAction(() => {
         update(this.chatMap, chatId, (chat) => ({
           ...chat,
           ...response.results,
         }));
         this.isLoadingMap[chatId] = false;
-        this.isNewChat = response.results.dialogue.length === 0;
       });
     } catch (e: any) {
       runInAction(() => {
         if (e?.status === 403) {
           this.isAuthorized = false;
-          this.isNewChat = false;
         } else {
           this.isNewChat = true;
         }
@@ -375,7 +426,7 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchUserThreads = async (workspaceId: string, isProjectChat: boolean = false) => {
+  fetchUserThreads = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
     const threads = isProjectChat ? this.projectThreads : this.piThreads;
     try {
       runInAction(() => {
@@ -403,13 +454,13 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchRecentChats = async (isProjectChat: boolean = false) => {
+  fetchRecentChats = async (workspaceId: string | undefined, isProjectChat: boolean = false) => {
     try {
       const threads = isProjectChat ? this.projectThreads : this.piThreads;
       runInAction(() => {
         this.isLoadingThreads = true;
       });
-      const response = await this.piChatService.listRecentChats();
+      const response = await this.piChatService.listRecentChats(workspaceId);
       runInAction(() => {
         response.results.forEach((chat) => {
           update(this.chatMap, chat.chat_id, (prev) => ({
@@ -430,9 +481,9 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchModels = async () => {
+  fetchModels = async (workspaceId: string | undefined) => {
     try {
-      const response = await this.piChatService.listAiModels();
+      const response = await this.piChatService.listAiModels(workspaceId);
       runInAction(() => {
         this.models = response.models;
         response.models.forEach((model) => {
@@ -460,7 +511,13 @@ export class PiChatStore implements IPiChatStore {
     return response.results;
   };
 
-  sendFeedback = async (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => {
+  sendFeedback = async (
+    chatId: string,
+    message_index: number,
+    feedback: EFeedback,
+    workspaceId?: string,
+    feedbackMessage?: string
+  ) => {
     const initialState = this.chatMap[chatId]?.dialogue?.[message_index]?.feedback;
     runInAction(() => {
       runInAction(() => {
@@ -475,6 +532,7 @@ export class PiChatStore implements IPiChatStore {
         chat_id: chatId,
         feedback,
         feedback_message: feedbackMessage,
+        ...(workspaceId && { workspace_id: workspaceId }),
       });
       return response;
     } catch (e) {
@@ -487,13 +545,14 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchFavoriteChats = async (workspaceId: string) => {
+  fetchFavoriteChats = async (workspaceId: string | undefined) => {
     this.isLoadingFavoriteChats = true;
     const response = await this.piChatService.listFavoriteChats(workspaceId);
     runInAction(() => {
       response.forEach((chat) => {
         update(this.chatMap, chat.chat_id, (prev) => ({
           ...prev,
+          chat_id: chat.chat_id,
           title: chat.title,
           is_favorite: true,
         }));
@@ -503,66 +562,66 @@ export class PiChatStore implements IPiChatStore {
     });
   };
 
-  favoriteChat = async (chatId: string) => {
+  favoriteChat = async (chatId: string, workspaceId: string | undefined) => {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: true,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = true;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = [...this.favoriteChats, chatId];
       });
-      await this.piChatService.favoriteChat(chatId);
+      await this.piChatService.favoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: false,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = false;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats;
       });
     }
   };
 
-  unfavoriteChat = async (chatId: string) => {
+  unfavoriteChat = async (chatId: string, workspaceId: string | undefined) => {
     const favoriteChats = this.favoriteChats;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: false,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = false;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats.filter((id) => id !== chatId);
       });
-      await this.piChatService.unfavoriteChat(chatId);
+      await this.piChatService.unfavoriteChat(chatId, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          is_favorite: true,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.is_favorite = true;
+          return chat; // same reference, mutated
+        });
         this.favoriteChats = favoriteChats;
       });
     }
   };
 
-  renameChat = async (chatId: string, title: string) => {
+  renameChat = async (chatId: string, title: string, workspaceId: string | undefined) => {
     const initialState = this.chatMap[chatId]?.title;
     try {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          title,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.title = title;
+          return chat; // same reference, mutated
+        });
       });
-      await this.piChatService.renameChat(chatId, title);
+      await this.piChatService.renameChat(chatId, title, workspaceId);
     } catch (e) {
       runInAction(() => {
-        update(this.chatMap, chatId, (chat) => ({
-          ...chat,
-          title: initialState,
-        }));
+        update(this.chatMap, chatId, (chat) => {
+          chat.title = initialState;
+          return chat; // same reference, mutated
+        });
       });
     }
   };

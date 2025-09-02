@@ -4,11 +4,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
-import { FileText, Search, X } from "lucide-react";
+import { Earth, FileText, Lock, Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
-import { TIssuePage, TIssueServiceType } from "@plane/types";
+import { EPageAccess, TIssuePage, TIssueServiceType } from "@plane/types";
 import {
   setToast,
   TOAST_TYPE,
@@ -19,13 +19,14 @@ import {
   EModalWidth,
   EModalPosition,
   Loader,
+  Checkbox,
 } from "@plane/ui";
 // types
 // components
 import { getPageName, getTabIndex } from "@plane/utils";
 import { IssueIdentifier } from "@/ce/components/issues/issue-details/issue-identifier";
 
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";
@@ -164,7 +165,7 @@ const PagesMultiSelectModal = observer(
               />
             </div>
             <div className="w-full flex items-center gap-2 text-sm text-custom-text-200 justify-end">
-              <span className="text-sm font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
+              <span className="text-xs font-medium text-custom-text-200">{t("issue.pages.show_wiki_pages")}</span>
               <ToggleSwitch value={showWikiPages} onChange={() => setShowWikiPages(!showWikiPages)} />
             </div>
           </div>
@@ -174,14 +175,16 @@ const PagesMultiSelectModal = observer(
               {selectedPages.map((page) => (
                 <div
                   key={page.id}
-                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer w-fit overflow-hidden"
+                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer max-w-[150px] overflow-hidden"
                   onClick={() => setSelectedPages((prev) => prev.filter((p) => p.id !== page.id))}
                 >
-                  {page?.logo_props && page.logo_props?.in_use ? (
-                    <Logo logo={page.logo_props} size={16} type="lucide" />
-                  ) : (
-                    <FileText className="size-4 text-custom-text-300" />
-                  )}
+                  <div className="shrink-0">
+                    {page?.logo_props && page.logo_props?.in_use ? (
+                      <Logo logo={page.logo_props} size={16} type="lucide" />
+                    ) : (
+                      <FileText className="size-4 text-custom-text-300" />
+                    )}
+                  </div>
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {getPageName(page?.name ?? "")}
                   </p>
@@ -218,7 +221,7 @@ const PagesMultiSelectModal = observer(
                     }
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <input type="checkbox" checked={selected} readOnly />
+                      <Checkbox checked={selected} readOnly />
                       <div className="flex-shrink-0">
                         {page.logo_props && page.logo_props?.in_use ? (
                           <Logo logo={page.logo_props} size={16} type="lucide" />
@@ -226,8 +229,17 @@ const PagesMultiSelectModal = observer(
                           <FileText className="size-4 text-custom-text-300" />
                         )}
                       </div>
-                      <span className="truncate text-base">{getPageName(page.name)}</span>
+                      <span className="truncate text-sm">{getPageName(page.name)}</span>
                     </div>
+                    {page.access != null && (
+                      <div className="hidden flex-shrink-0 text-custom-text-350 group-hover:flex">
+                        {page.access === EPageAccess.PUBLIC ? (
+                          <Earth className="size-4" />
+                        ) : (
+                          <Lock className="size-4" />
+                        )}
+                      </div>
+                    )}
                   </Combobox.Option>
                 );
               })
@@ -238,8 +250,7 @@ const PagesMultiSelectModal = observer(
             )}
           </Combobox.Options>
         </Combobox>
-
-        <div className="flex items-center justify-end gap-2 p-3">
+        <div className="flex items-center justify-end gap-2 p-3 border-t-[0.5px] border-custom-border-200 ">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>

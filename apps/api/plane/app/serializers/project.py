@@ -12,6 +12,9 @@ from plane.db.models import (
     ProjectIdentifier,
     ProjectPublicMember,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+)
 from plane.ee.models.initiative import InitiativeProject
 
 
@@ -60,6 +63,23 @@ class ProjectSerializer(BaseSerializer):
             )
 
         return identifier
+
+    def validate(self, data):
+        # Validate description content for security
+        if "description_html" in data and data["description_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                str(data["description_html"])
+            )
+            # Update the data with sanitized HTML if available
+            if sanitized_html is not None:
+                data["description_html"] = sanitized_html
+
+            if not is_valid:
+                raise serializers.ValidationError(
+                    {"error": "html content is not valid"}
+                )
+
+        return data
 
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
@@ -111,7 +131,7 @@ class ProjectSerializer(BaseSerializer):
                 project_identifier.name = identifier
                 project_identifier.save()
             return project
-        # If found check if the project_id to be updated and identifier project id is same
+        # If found check if the project_id to be updated and identifier project id is same  # noqa: E501
         if project_identifier.project_id == instance.id:
             # If same pass update
 

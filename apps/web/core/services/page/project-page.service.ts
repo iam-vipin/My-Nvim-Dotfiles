@@ -22,8 +22,12 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async fetchById(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
+  async fetchById(workspaceSlug: string, projectId: string, pageId: string, trackVisit: boolean): Promise<TPage> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, {
+      params: {
+        track_visit: trackVisit,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -198,6 +202,21 @@ export class ProjectPageService extends APIService {
 
   async fetchParentPages(workspaceSlug: string, projectId: string, pageId: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/parent-pages`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchPagesByType(
+    workspaceSlug: string,
+    projectId: string,
+    type: string,
+    searchQuery?: string
+  ): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages`, {
+      params: { search: searchQuery, type },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

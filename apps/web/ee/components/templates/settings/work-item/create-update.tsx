@@ -24,7 +24,11 @@ import {
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useLabel, useMember, useModule, useProjectState, useWorkspace } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label"
+import { useMember } from "@/hooks/store/use-member"
+import { useModule } from "@/hooks/store/use-module"
+import { useProjectState } from "@/hooks/store/use-project-state"
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
@@ -75,7 +79,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   const {
     isApplyingTemplate,
     issuePropertyValues,
-    setWorkItemTemplateId,
     setIsApplyingTemplate,
     setIssuePropertyValues,
     handleProjectEntitiesFetch,
@@ -177,7 +180,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     };
 
     if (templateId) {
-      setWorkItemTemplateId(templateId);
       handleTemplateDataPreload();
     } else {
       resetLocalStates();

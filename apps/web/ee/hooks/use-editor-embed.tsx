@@ -3,20 +3,22 @@ import { useParams } from "next/navigation";
 // plane constants
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // plane editor
-import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 // plane types
-import { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
 import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// plane editor
 
 export type TEmbedHookProps = {
   fetchEmbedSuggestions?: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
@@ -90,14 +92,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
 
   // Page Embed Implementation
   const pageEmbedProps: TPageEmbedConfig | undefined = useMemo(() => {
-    if (
-      !storeType ||
-      !page ||
-      !getPageById ||
-      !createPage ||
-      !getRedirectionLink ||
-      storeType !== EPageStoreType.WORKSPACE
-    ) {
+    if (!storeType || !page || !getPageById || !createPage || !getRedirectionLink) {
       return undefined;
     }
 
@@ -237,6 +232,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     () => ({
       issue: issueEmbedProps,
       ...(pageEmbedProps && { page: pageEmbedProps }),
+      externalEmbedComponent: { widgetCallback: EmbedHandler },
     }),
     [issueEmbedProps, pageEmbedProps]
   );

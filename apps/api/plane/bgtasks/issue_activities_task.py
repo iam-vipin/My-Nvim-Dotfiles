@@ -14,6 +14,7 @@ from django.db.models import Q
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
+from plane.bgtasks.webhook_task import webhook_activity
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -33,7 +34,6 @@ from plane.db.models import (
 from plane.db.models.workspace import Workspace
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
-from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
 from plane.utils.uuid import is_valid_uuid
 
@@ -1890,16 +1890,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
+                        else "intake_issue" if intake else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake
-                        if intake
-                        else activity.issue_id
+                        else intake if intake else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

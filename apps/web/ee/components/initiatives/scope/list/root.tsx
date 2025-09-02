@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button, Collapsible, EpicIcon } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { EpicListItem } from "@/plane-web/components/initiatives/details/main/collapsible-section/epics/epic-list-item/root";
@@ -32,14 +32,14 @@ export const InitiativeScopeListView = observer((props: Props) => {
     return (
       <DetailedEmptyState
         assetPath={resolvedAssetPath}
-        title={"No scope added yet."}
-        description={"Add projects or epics to this initiative to get started."}
+        title={t("initiatives.scope.empty_state.title")}
+        description={t("initiatives.scope.empty_state.description")}
         customPrimaryButton={
           <AddScopeButton
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
             disabled={disabled}
-            customButton={<Button>Add scope</Button>}
+            customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
           />
         }
       />

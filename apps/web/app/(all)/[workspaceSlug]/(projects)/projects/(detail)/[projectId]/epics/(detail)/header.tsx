@@ -10,14 +10,17 @@ import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, TIssue } from "
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-// plane-web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
+// plane-web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
 export const ProjectEpicDetailsHeader = observer(() => {
   // router

@@ -6,7 +6,7 @@ import { EStartOfTheWeek, IUserTheme, TUserProfile } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 type TError = {
   status: string;
@@ -57,10 +57,12 @@ export class ProfileStore implements IUserProfileStore {
     billing_address_country: undefined,
     billing_address: undefined,
     has_billing_address: false,
+    has_marketing_email_consent: true,
     created_at: "",
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    is_app_rail_docked: true,
   };
 
   // services

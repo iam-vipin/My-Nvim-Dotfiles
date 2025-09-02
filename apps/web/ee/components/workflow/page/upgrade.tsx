@@ -10,11 +10,10 @@ import { useTheme } from "next-themes";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 // assets
 import WorkflowsUpgradeDark from "@/public/empty-state/workflows/upgrade-dark.webp";
 import WorkflowsUpgradeLight from "@/public/empty-state/workflows/upgrade-light.webp";
+import { UpgradeEmptyStateButton } from "../../workspace/upgrade-empty-state-button";
 
 export const WorkflowUpgrade: FC = observer(() => {
   // router
@@ -28,7 +27,8 @@ export const WorkflowUpgrade: FC = observer(() => {
     <div
       className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
         "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-        "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
+        "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400":
+          !resolvedTheme?.includes("dark"),
       })}
     >
       <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>

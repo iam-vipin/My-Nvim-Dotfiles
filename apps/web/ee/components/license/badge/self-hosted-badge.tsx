@@ -7,7 +7,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
-import { SubscriptionButton } from "@/plane-web/components/common";
+import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -42,7 +42,7 @@ export const SelfHostedEditionBadge = observer(() => {
       subscriptionType={subscriptionDetail.product}
       handleClick={() => handleSuccessModalToggle(true)}
     >
-      <PlaneIcon className="size-3 flex-shrink-0" />
+      <PlaneIcon className="size-4 flex-shrink-0" />
       <span className="truncate">{getSubscriptionName(subscriptionDetail.product)}</span>
     </SubscriptionButton>
   );

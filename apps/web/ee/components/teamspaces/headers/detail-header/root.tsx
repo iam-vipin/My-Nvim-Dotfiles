@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Rss, FileText, Layers, Loader as Spinner } from "lucide-react";
+import { Rss, FileText, Layers, Loader as Spinner, Briefcase } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -20,9 +20,9 @@ import {
   Loader,
 } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -30,6 +30,7 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 import { TeamspaceWorkItemListHeaderActions } from "./issues";
 import { TeamOverviewHeaderActions } from "./overview";
 import { TeamspacePagesListHeaderActions } from "./pages-list";
+import { TeamspaceProjectListHeaderActions } from "./projects-list";
 import { TeamspaceViewsListHeaderActions } from "./views-list";
 
 type TTeamspaceDetailHeaderProps = {
@@ -66,6 +67,12 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
         title: "Overview",
         icon: Rss,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`),
+      },
+      {
+        key: ETeamspaceNavigationItem.PROJECTS,
+        title: "Projects",
+        icon: Briefcase,
+        action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`),
       },
       {
         key: ETeamspaceNavigationItem.ISSUES,
@@ -129,6 +136,14 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
             key={ETeamspaceNavigationItem.PAGES}
             teamspaceId={teamspaceId?.toString()}
             isEditingAllowed={hasMemberLevelPermissions}
+          />,
+        ],
+        [
+          ETeamspaceNavigationItem.PROJECTS,
+          <TeamspaceProjectListHeaderActions
+            key={ETeamspaceNavigationItem.PROJECTS}
+            teamspaceId={teamspaceId?.toString()}
+            isEditingAllowed={hasAdminLevelPermissions}
           />,
         ],
       ]),

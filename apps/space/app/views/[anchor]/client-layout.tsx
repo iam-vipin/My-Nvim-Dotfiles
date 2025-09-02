@@ -3,11 +3,11 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
 import { PageNotFound } from "@/components/ui/not-found";
-import { usePublish, usePublishList } from "@/hooks/store";
+import { usePublish, usePublishList } from "@/hooks/store/publish";
 // Plane web
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
 import { useView } from "@/plane-web/hooks/store";
@@ -40,7 +40,12 @@ export const ViewsClientLayout = observer((props: Props) => {
 
   if (error) return <SomethingWentWrongError />;
 
-  if (!publishSettings || !viewData) return <LogoSpinner />;
+  if (!publishSettings || !viewData)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">

@@ -4,14 +4,13 @@ import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FileText, Loader } from "lucide-react";
-import { TPageNavigationTabs } from "@plane/types";
 // plane imports
+import { TPageNavigationTabs } from "@plane/types";
 import { Logo, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { BlockItemAction } from "@/components/pages/list";
-// helpers
+import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -21,14 +20,26 @@ import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 type TPageListBlock = {
   handleToggleExpanded: () => void;
   isExpanded: boolean;
+  isDropping: boolean;
   paddingLeft: number;
   pageId: string;
   storeType: EPageStoreType;
   pageType?: TPageNavigationTabs;
+  isDragging?: boolean;
+  isHovered?: boolean;
+  canShowAddButton?: boolean;
 };
 
 export const PageListBlock: FC<TPageListBlock> = observer((props) => {
-  const { handleToggleExpanded, isExpanded, paddingLeft, pageId, storeType, pageType } = props;
+  const {
+    handleToggleExpanded,
+    isExpanded,
+    paddingLeft,
+    pageId,
+    storeType,
+    isDragging = false,
+    isDropping = false,
+  } = props;
   // states
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   // refs
@@ -80,7 +91,12 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
   }
 
   return (
-    <div ref={parentRef} className="relative">
+    <div
+      ref={parentRef}
+      className={cn("relative", {
+        "opacity-50": isDragging,
+      })}
+    >
       <ListItem
         title={
           isNestedPagesDisabledForPage
@@ -92,6 +108,9 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
         itemLink={getRedirectionLink?.()}
         onItemClick={() => router.push(getRedirectionLink?.() ?? "")}
         leftElementClassName="gap-2"
+        className={cn("outline-none rounded-md transition-colors", {
+          "is-dragging": isDropping,
+        })}
         prependTitleElement={
           <div
             className="flex-shrink-0 flex items-center gap-1"
@@ -109,7 +128,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
                   handleSubPagesToggle();
                 }}
                 disabled={isFetchingSubPages}
-                data-prevent-NProgress
+                data-prevent-progress
               >
                 {isFetchingSubPages ? (
                   <Loader className="size-4 animate-spin" />

@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// ui
-import { useTranslation } from "@plane/i18n";
-import { TIssueType } from "@plane/types";
-import { EModalPosition, EModalWidth, getRandomIconName, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { getRandomBackgroundColor } from "@plane/utils";
-// plane web components
-import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
-// plane web
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 // plane imports
+import { WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import type { TIssueType } from "@plane/types";
+import { EModalPosition, EModalWidth, getRandomIconName, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { getRandomBackgroundColor } from "@plane/utils";
+// plane web imports
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { CreateOrUpdateIssueTypeForm } from "./form";
 
 type Props = {
   issueTypeId: string | null;
@@ -69,12 +69,18 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
     if (!issueTypeFormData) return;
     setIsSubmitting(true);
     await createType(issueTypeFormData)
-      .then(() => {
+      .then((res) => {
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("work_item_types.create.toast.success.title"),
           message: t("work_item_types.create.toast.success.message"),
+        });
+        captureSuccess({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.CREATE,
+          payload: {
+            work_item_type_id: res?.id,
+          },
         });
       })
       .catch((error) => {
@@ -91,6 +97,10 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
             message: t("work_item_types.create.toast.error.message.default"),
           });
         }
+        captureError({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.CREATE,
+          error: error as Error,
+        });
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -110,6 +120,12 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
           title: t("work_item_types.update.toast.success.title"),
           message: t("work_item_types.update.toast.success.message", { name: issueTypeFormData?.name }),
         });
+        captureSuccess({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.UPDATE,
+          payload: {
+            work_item_type_id: issueTypeFormData?.id,
+          },
+        });
       })
       .catch((error) => {
         if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
@@ -125,6 +141,10 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
             message: t("work_item_types.update.toast.error.message.default"),
           });
         }
+        captureError({
+          eventName: WORK_ITEM_TYPE_TRACKER_EVENTS.UPDATE,
+          error: error as Error,
+        });
       })
       .finally(() => {
         setIsSubmitting(false);

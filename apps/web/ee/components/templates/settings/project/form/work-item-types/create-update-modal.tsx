@@ -15,7 +15,7 @@ import {
 } from "@plane/utils";
 // plane web imports
 import { rootStore } from "@/lib/store-context";
-import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
+import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/create-update/form";
 import { IssuePropertyOption } from "@/plane-web/store/issue-types/issue-property-option";
 import { IssueType } from "@/plane-web/store/issue-types/issue-type";
 
@@ -36,7 +36,6 @@ const defaultIssueTypeData: Partial<TIssueType> = {
   description: "",
   is_active: true,
   is_default: false,
-  issue_exists: false,
   level: 0,
   is_epic: false,
 };

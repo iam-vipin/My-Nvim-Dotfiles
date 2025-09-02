@@ -1,4 +1,5 @@
 const workspaceScopes: string[] = [
+  "app_mentions:read",
   "channels:read",
   "channels:join",
   "users:read",
@@ -24,6 +25,6 @@ const workspaceScopes: string[] = [
 
 export const getWorkspaceAuthScopes = () => workspaceScopes.join(",");
 
-const userScopes: string[] = ["chat:write", "links:write", "identify", "im:read", "im:write"];
+const userScopes: string[] = ["chat:write", "links:write", "im:read", "im:write", "links:read", "mpim:read"];
 
 export const getUserAuthScopes = () => userScopes.join(",");

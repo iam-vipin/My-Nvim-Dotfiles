@@ -1,5 +1,6 @@
 export * from "./ai";
 export * from "./auth";
+export * from "./automation";
 export * from "./chart";
 export * from "./dashboards";
 export * from "./endpoints";
@@ -55,3 +56,4 @@ export * from "./analytics";
 export * from "./mobile";
 export * from "./initiatives";
 export * from "./sidebar";
+export * from "./rich-filters";

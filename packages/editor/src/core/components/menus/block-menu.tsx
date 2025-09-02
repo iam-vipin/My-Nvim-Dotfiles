@@ -8,19 +8,25 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
-import { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { type Editor, useEditorState } from "@tiptap/react";
+import { Copy, LucideIcon, Trash2, Link, Code, Bookmark } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+// plane imports
+// import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// cotatast
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// types
+import { EExternalEmbedAttributeNames, IEditorProps } from "@/types";
 
-interface BlockMenuProps {
+type Props = {
   editor: Editor;
-}
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  disabledExtensions?: IEditorProps["disabledExtensions"];
+};
 
-export const BlockMenu = (props: BlockMenuProps) => {
+export const BlockMenu = (props: Props) => {
   const { editor } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
@@ -28,6 +34,9 @@ export const BlockMenu = (props: BlockMenuProps) => {
   const virtualReferenceRef = useRef<{ getBoundingClientRect: () => DOMRect }>({
     getBoundingClientRect: () => new DOMRect(),
   });
+  // const { t } = useTranslation();
+  const isEmbedFlagged =
+    props.flaggedExtensions?.includes("external-embed") || props.disabledExtensions?.includes("external-embed");
 
   // Set up Floating UI with virtual reference element
   const { refs, floatingStyles, context } = useFloating({
@@ -70,6 +79,51 @@ export const BlockMenu = (props: BlockMenuProps) => {
     },
     [refs]
   );
+
+  const editorState = useEditorState({
+    editor,
+    selector: ({ editor }) => {
+      const selection = editor.state.selection;
+      const content = selection.content().content;
+      const firstChild = content.firstChild;
+      let linkUrl: string | null = null;
+      const foundLinkMarks: string[] = [];
+
+      const isEmbedActive = editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+      const isRichCard = firstChild?.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD];
+      const isNotEmbeddable = firstChild?.attrs[EExternalEmbedAttributeNames.HAS_EMBED_FAILED];
+
+      if (firstChild) {
+        for (let i = 0; i < firstChild.childCount; i++) {
+          const node = firstChild.child(i);
+          const linkMarks = node.marks?.filter(
+            (mark) => mark.type.name === CORE_EXTENSIONS.CUSTOM_LINK && mark.attrs?.href
+          );
+
+          if (linkMarks && linkMarks.length > 0) {
+            linkMarks.forEach((mark) => {
+              foundLinkMarks.push(mark.attrs.href);
+            });
+          }
+        }
+        if (firstChild.attrs.src) {
+          foundLinkMarks.push(firstChild.attrs.src);
+        }
+      }
+
+      if (foundLinkMarks.length === 1) {
+        linkUrl = foundLinkMarks[0];
+      }
+
+      return {
+        isEmbedActive,
+        isLinkEmbeddable: isEmbedActive || !!linkUrl,
+        linkUrl,
+        isRichCard,
+        isNotEmbeddable,
+      };
+    },
+  });
 
   // Set up event listeners
   useEffect(() => {
@@ -121,6 +175,95 @@ export const BlockMenu = (props: BlockMenuProps) => {
     isDisabled?: boolean;
   }[] = [
     {
+      icon: Link,
+      key: "link",
+      label: "Convert to Link",
+      // label: "externalEmbedComponent.block_menu.convert_to_link",
+      isDisabled: !editorState.isEmbedActive || !editorState.linkUrl || isEmbedFlagged,
+      onClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const { state } = editor;
+        const { selection } = state;
+        const node = selection.content().content.firstChild;
+        if (node?.type.name === ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED) {
+          const LinkValue = node.attrs.src;
+          editor
+            .chain()
+            .insertContentAt(selection, {
+              type: "text",
+              marks: [
+                {
+                  type: "link",
+                  attrs: {
+                    href: LinkValue,
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                  },
+                },
+              ],
+              text: LinkValue,
+            })
+            .run();
+        }
+        setIsOpen(false);
+      },
+    },
+    {
+      icon: Code,
+      key: "embed",
+      label: "Convert to Embed",
+      // label: "externalEmbedComponent.block_menu.convert_to_embed",
+      isDisabled:
+        editorState.isNotEmbeddable ||
+        !editorState.isLinkEmbeddable ||
+        (editorState.isEmbedActive && !editorState.isRichCard) ||
+        isEmbedFlagged,
+      onClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const { state } = editor;
+        const { selection } = state;
+        const LinkValue = editorState.linkUrl;
+        if (LinkValue) {
+          editor
+            .chain()
+            .insertExternalEmbed({
+              [EExternalEmbedAttributeNames.IS_RICH_CARD]: false,
+              [EExternalEmbedAttributeNames.SOURCE]: LinkValue,
+              pos: selection,
+            })
+            .run();
+        }
+        setIsOpen(false);
+      },
+    },
+    {
+      icon: Bookmark,
+      key: "richcard",
+      label: "Convert to Rich Card",
+      // label: "externalEmbedComponent.block_menu.convert_to_richcard",
+      isDisabled: !editorState.isLinkEmbeddable || !editorState.linkUrl || editorState.isRichCard || isEmbedFlagged,
+      onClick: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const { state } = editor;
+        const { selection } = state;
+        const LinkValue = editorState.linkUrl;
+        if (LinkValue) {
+          editor
+            .chain()
+            .insertExternalEmbed({
+              [EExternalEmbedAttributeNames.IS_RICH_CARD]: true,
+              [EExternalEmbedAttributeNames.SOURCE]: LinkValue,
+              pos: selection,
+            })
+            .run();
+        }
+        setIsOpen(false);
+      },
+    },
+    {
       icon: Trash2,
       key: "delete",
       label: "Delete",
@@ -155,6 +298,27 @@ export const BlockMenu = (props: BlockMenuProps) => {
             throw new Error("The insertion position is invalid or outside the document.");
           }
           const contentToInsert = firstChild.toJSON();
+          if (contentToInsert.type === ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED) {
+            return editor
+              .chain()
+              .insertExternalEmbed({
+                [EExternalEmbedAttributeNames.IS_RICH_CARD]:
+                  contentToInsert.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD],
+                [EExternalEmbedAttributeNames.SOURCE]: contentToInsert.attrs.src,
+                pos: insertPos,
+              })
+              .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
+              .run();
+          } else if (contentToInsert.type === ADDITIONAL_EXTENSIONS.BLOCK_MATH) {
+            return editor
+              .chain()
+              .setBlockMath({
+                latex: contentToInsert.attrs.latex,
+                pos: insertPos,
+              })
+              .focus(Math.min(insertPos + 1, docSize), { scrollIntoView: false })
+              .run();
+          }
           editor
             .chain()
             .insertContentAt(insertPos, contentToInsert, {
@@ -209,6 +373,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
             >
               <item.icon className="h-3 w-3" />
               {item.label}
+              {/* {t(item.label)} */}
             </button>
           );
         })}

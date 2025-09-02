@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Button, EpicIcon, Loader } from "@plane/ui";
+import { Button, Checkbox, EpicIcon, Loader } from "@plane/ui";
 // helpers
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // hooks
@@ -16,11 +16,9 @@ import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { getSelectedEpicDetails } from "@/plane-web/components/initiatives/utils";
-import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
+import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/plane-web/services";
 import { EpicSearchModalEmptyState } from "./issue-search-modal-empty-state";
-
-// services
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -214,7 +212,7 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                                   }
                                 >
                                   <div className="flex items-center gap-2 truncate">
-                                    <input type="checkbox" checked={selected} readOnly />
+                                    <Checkbox checked={selected} readOnly />
                                     <span
                                       className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                       style={{

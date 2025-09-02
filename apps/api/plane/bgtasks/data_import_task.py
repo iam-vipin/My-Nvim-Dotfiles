@@ -1,10 +1,12 @@
+# Python imports
+import logging
+
 # Third party imports
 from celery import shared_task
 import requests
-from django.db import transaction
+from django.db import transaction, connection
 from django.conf import settings
 
-import logging
 from plane.utils.exception_logger import log_exception
 from plane.utils.helpers import get_boolean_value
 from plane.api.serializers.issue import IssueSerializer
@@ -141,10 +143,25 @@ def update_job_batch_completion(
         log_exception(e)
 
 
+def sanitize_issue_data(issue_data):
+    """
+    Sanitize the issue data
+    """
+    # limit the name to 255 characters
+    issue_data["name"] = issue_data["name"][:255]
+
+    return issue_data
+
+
 def process_single_issue(slug, project, user_id, issue_data):
     try:
         with transaction.atomic():
+            with connection.cursor() as cur:
+                cur.execute(
+                    "SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)"
+                )
             # Process the main issue
+            issue_data = sanitize_issue_data(issue_data)
             serializer = IssueSerializer(
                 data=issue_data,
                 context={
@@ -184,6 +201,7 @@ def process_single_issue(slug, project, user_id, issue_data):
 
             # Update the issue with the created_by_id
             issue.created_by_id = issue_data.get("created_by")
+            issue.updated_by_id = issue_data.get("created_by")
             issue.save(disable_auto_set_user=True)
 
             # Process links
@@ -237,6 +255,8 @@ def process_issue_links(issue, links):
                     workspace_id=issue.workspace_id,
                     title=link_data["name"],
                     url=link_data["url"],
+                    created_by_id=issue.created_by_id,
+                    updated_by_id=issue.created_by_id,
                 )
             )
 
@@ -285,6 +305,7 @@ def process_issue_comments(user_id, issue, comments):
             existing_comment = existing_comments_map[external_id]
             existing_comment.actor_id = comment_actor
             existing_comment.created_by_id = comment_actor
+            existing_comment.updated_by_id = comment_actor
             existing_comment.comment_html = comment_data["comment_html"]
             bulk_update_comments.append(existing_comment)
         else:
@@ -299,6 +320,7 @@ def process_issue_comments(user_id, issue, comments):
                 created_by_id=comment_actor,
                 external_id=external_id,
                 external_source=comment_data.get("external_source"),
+                updated_by_id=comment_actor,
             )
             bulk_create_comments.append(comment)
 
@@ -311,7 +333,7 @@ def process_issue_comments(user_id, issue, comments):
     if bulk_update_comments:
         IssueComment.objects.bulk_update(
             bulk_update_comments,
-            ["comment_html", "actor_id", "created_by_id"],
+            ["comment_html", "actor_id", "created_by_id", "updated_by_id"],
             batch_size=100,
         )
 
@@ -351,6 +373,10 @@ def process_issue_cycles(issue, cycle_ids):
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
             cycle_id=cycle_id,
+            defaults={
+                "created_by_id": issue.created_by_id,
+                "updated_by_id": issue.created_by_id,
+            },
         )
     return
 
@@ -363,6 +389,10 @@ def process_issue_modules(issue, module_ids):
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
             module_id=module_id,
+            defaults={
+                "created_by_id": issue.created_by_id,
+                "updated_by_id": issue.created_by_id,
+            },
         )
     return
 
@@ -382,6 +412,8 @@ def process_comment_file_assets(comment, file_assets):
         comment_id=comment.id,
         project_id=comment.project_id,
         workspace_id=comment.workspace_id,
+        created_by_id=comment.created_by_id,
+        updated_by_id=comment.updated_by_id,
     )
     return
 
@@ -401,6 +433,8 @@ def process_issue_file_assets(issue, file_assets):
         issue_id=issue.id,
         project_id=issue.project_id,
         workspace_id=issue.workspace_id,
+        created_by_id=issue.created_by_id,
+        updated_by_id=issue.created_by_id,
     )
     return
 

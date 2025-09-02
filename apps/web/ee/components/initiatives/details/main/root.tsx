@@ -3,9 +3,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
-import { MainWrapper } from "@/plane-web/components/common";
+import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 // local components
 import { InitiativeCollapsibleSection } from "./collapsible-section-root";
 import { InitiativeInfoSection } from "./info-section-root";

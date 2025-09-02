@@ -1,3 +1,6 @@
-from .base import IssuePropertyAPIEndpoint
-from .option import IssuePropertyOptionAPIEndpoint
-from .value import IssuePropertyValueAPIEndpoint
+from .base import IssuePropertyListCreateAPIEndpoint, IssuePropertyDetailAPIEndpoint
+from .option import (
+    IssuePropertyOptionListCreateAPIEndpoint,
+    IssuePropertyOptionDetailAPIEndpoint,
+)
+from .value import IssuePropertyValueAPIEndpoint, IssuePropertyValueListAPIEndpoint

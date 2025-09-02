@@ -144,20 +144,20 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: metadata,
-              text: message,
-            }
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: metadata,
+            text: message,
+          }
           : {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: {
-                event_type: "issue",
-                event_payload: metadata,
-              },
-              ...message,
-            };
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: {
+              event_type: "issue",
+              event_payload: metadata,
+            },
+            ...message,
+          };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
@@ -183,28 +183,30 @@ export class SlackService {
     threadTs: string,
     message: string | { text?: string; blocks?: any[] },
     metadata?: any,
-    unfurlLinks = true
+    unfurlLinks = false
   ): Promise<SlackMessageResponse> {
     try {
       const payload =
         typeof message === "string"
           ? {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: metadata,
-              text: message,
-              unfurl_links: unfurlLinks,
-            }
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: metadata,
+            text: message,
+            unfurl_links: unfurlLinks,
+            unfurl_media: unfurlLinks,
+          }
           : {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: {
-                event_type: "issue",
-                event_payload: metadata,
-              },
-              unfurl_links: unfurlLinks,
-              ...message,
-            };
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: {
+              event_type: "issue",
+              event_payload: metadata,
+            },
+            unfurl_links: unfurlLinks,
+            unfurl_media: unfurlLinks,
+            ...message,
+          };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
@@ -234,7 +236,8 @@ export class SlackService {
 
   async sendMessageToChannel(
     channelId: string,
-    message: { text?: string; blocks?: any[] }
+    message: { text?: string; blocks?: any[] },
+    unfurlLinks = false,
   ): Promise<SlackMessageResponse> {
     try {
       // Check if bot is in channel
@@ -247,6 +250,8 @@ export class SlackService {
         channel: channelId,
         text: message.text,
         blocks: message.blocks,
+        unfurl_links: unfurlLinks,
+        unfurl_media: unfurlLinks,
       });
       return response.data;
     } catch (error) {

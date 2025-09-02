@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
+import { type EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
 import { EFileAssetType, TPageTemplate } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";

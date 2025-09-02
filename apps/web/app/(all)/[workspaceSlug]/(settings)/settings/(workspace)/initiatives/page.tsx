@@ -1,18 +1,21 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // component
 import { InitiativeIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
@@ -41,6 +44,9 @@ const InitiativesSettingsPage = observer(() => {
 
   const toggleInitiativesFeature = async () => {
     try {
+      captureClick({
+        elementName: INITIATIVES_TRACKER_ELEMENTS.SETTINGS_PAGE_ENABLE_DISABLE_BUTTON,
+      });
       const payload = {
         [EWorkspaceFeatures.IS_INITIATIVES_ENABLED]: !isInitiativesFeatureEnabled,
       };
@@ -58,8 +64,21 @@ const InitiativesSettingsPage = observer(() => {
         },
       });
       await toggleInitiativesFeaturePromise;
+      captureSuccess({
+        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
+        payload: {
+          value: !isInitiativesFeatureEnabled,
+        },
+      });
     } catch (error) {
       console.error(error);
+      captureError({
+        eventName: INITIATIVE_TRACKER_EVENTS.TOGGLE,
+        error: error as Error,
+        payload: {
+          value: !isInitiativesFeatureEnabled,
+        },
+      });
     }
   };
 

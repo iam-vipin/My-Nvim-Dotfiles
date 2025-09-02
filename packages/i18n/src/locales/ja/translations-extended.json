@@ -7,7 +7,8 @@
     "upgrade_plan": "プランをアップグレード",
     "plane_pro": "Plane Pro",
     "business": "ビジネス",
-    "customers": "顧客"
+    "customers": "顧客",
+    "recurring_work_items": "繰り返し作業項目"
   },
   "workspace_dashboards": "ダッシュボード",
   "pi_chat": "PIチャット",
@@ -393,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "概要",
     "label": "イニシアチブ",
     "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
     "add_initiative": "イニシアチブを追加",
@@ -440,6 +442,19 @@
         "title": "イニシアチブが存在しません",
         "subHeading": "すべてのイニシアチブを表示するには、すべての適用されたフィルターを削除してください。",
         "action": "フィルターを削除"
+      }
+    },
+    "scope": {
+      "view_scope": "スコープを表示",
+      "breakdown": "スコープの分解",
+      "add_scope": "スコープを追加",
+      "label": "スコープ",
+      "empty_state": {
+        "title": "まだスコープが追加されていません",
+        "description": "このイニシアチブにプロジェクトとエピックをリンクし、その作業をこのスペースで追跡します。",
+        "primary_button": {
+          "text": "スコープを追加"
+        }
       }
     }
   },
@@ -667,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
         "uploading": "アップロード中...",
         "upload_and_save": "アップロードして保存"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
       }
     }
   },
@@ -893,7 +913,7 @@
         },
         "can_disable_warning": "代わりにタイプを無効にしますか？"
       },
-      "cant_delete_linked_message": "既存の作業項目にリンクされているため、この作業項目タイプは削除できません。"
+      "cant_delete_default_message": "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。"
     },
     "create": {
       "title": "作業項目タイプを作成",
@@ -1216,6 +1236,7 @@
     "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
   "import_status": {
+    "queued": "キューに登録済み",
     "created": "作成済み",
     "initiated": "開始済み",
     "pulling": "取得中",
@@ -1381,7 +1402,8 @@
       "title_map_priorities": "優先度をマッピング",
       "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
       "title_summary": "サマリー",
-      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。"
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。",
+      "pull_additional_data_title": "コメントと添付ファイルをインポート"
     }
   },
 
@@ -2482,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "定期作業項目",
+      "description": "繰り返しの作業を1回設定するだけで、繰り返しを管理します。時間が来たらここにすべて表示されます。",
+      "new_recurring_work_item": "新しい定期作業項目",
+      "update_recurring_work_item": "定期作業項目を更新",
+      "form": {
+        "interval": {
+          "title": "スケジュール",
+          "start_date": {
+            "validation": {
+              "required": "開始日は必須です"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "間隔タイプは必須です"
+            }
+          }
+        },
+        "button": {
+          "create": "定期作業項目を作成",
+          "update": "定期作業項目を更新"
+        }
+      },
+      "create_button": {
+        "label": "定期作業項目を作成",
+        "no_permission": "定期作業項目を作成するにはプロジェクト管理者に連絡してください"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "あなたの作業を自動化",
+        "description": "一度設定すれば、期限が来たときに自動で再作成します。定期作業をより簡単にするにはBusinessへアップグレードしてください。"
+      },
+      "no_templates": {
+        "button": "最初の定期作業項目を作成"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "定期作業項目が作成されました",
+          "message": "{name}（定期作業項目）がワークスペースで利用可能になりました。"
+        },
+        "error": {
+          "title": "定期作業項目を作成できませんでした。",
+          "message": "もう一度詳細を保存するか、別のタブで新しい定期作業項目にコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "定期作業項目が変更されました",
+          "message": "{name}（定期作業項目）が変更されました。"
+        },
+        "error": {
+          "title": "この定期作業項目の変更を保存できませんでした。",
+          "message": "もう一度詳細を保存するか、後でこの定期作業項目に戻ってください。問題が解決しない場合はご連絡ください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "定期作業項目が削除されました",
+          "message": "{name}（定期作業項目）がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "定期作業項目を削除できませんでした。",
+          "message": "もう一度削除するか、後で再度お試しください。それでも削除できない場合はご連絡ください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "定期作業項目を削除",
+      "description": {
+        "prefix": "定期作業項目「",
+        "suffix": "」を削除してもよろしいですか？この定期作業項目に関連するすべてのデータは完全に削除されます。この操作は元に戻せません。"
+      }
+    }
   }
 }

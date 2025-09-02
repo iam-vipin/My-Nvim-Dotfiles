@@ -65,6 +65,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/templates/`),
   },
+  "plane-intelligence": {
+    key: "plane-intelligence",
+    i18n_label: "workspace_settings.settings.plane-intelligence.title",
+    href: `/settings/plane-intelligence`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/plane-intelligence/`,
+  },
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -73,30 +80,35 @@ export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string,
     labelTranslationKey: "workspace_dashboards",
     href: `/dashboards/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   "active-cycles": {
     key: "active_cycles",
     labelTranslationKey: "cycles",
     href: `/active-cycles/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   initiatives: {
     key: "initiatives",
     labelTranslationKey: "initiatives.label",
     href: `/initiatives/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   teamspaces: {
     key: "team_spaces",
     labelTranslationKey: "teamspaces.label",
     href: `/teamspaces/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   customers: {
     key: "customers",
     labelTranslationKey: "sidebar.customers",
-    href: `/customers`,
+    href: `/customers/`,
     access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
 
@@ -106,6 +118,7 @@ export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, 
     labelTranslationKey: "pi_chat",
     href: `/pi-chat/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
 

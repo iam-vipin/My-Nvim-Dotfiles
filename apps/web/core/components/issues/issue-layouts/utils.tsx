@@ -33,7 +33,7 @@ import {
 import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 // store
 import { store } from "@/lib/store-context";
@@ -71,7 +71,8 @@ export const isWorkspaceLevel = (type: EIssuesStoreType) =>
     EIssuesStoreType.GLOBAL,
     EIssuesStoreType.TEAM,
     EIssuesStoreType.TEAM_VIEW,
-    EIssuesStoreType.PROJECT_VIEW,
+    EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
+    EIssuesStoreType.WORKSPACE_DRAFT,
   ].includes(type)
     ? true
     : false;

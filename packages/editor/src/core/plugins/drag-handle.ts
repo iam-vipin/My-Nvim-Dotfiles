@@ -16,13 +16,15 @@ const generalSelectors = [
   "blockquote",
   "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
-  "table",
+  "table:not(.table-drag-preview)",
   ".issue-embed",
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-embed-component",
   ".editor-attachment-component",
   ".page-embed-component",
+  ".editor-mathematics-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -92,7 +94,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
   for (const elem of elements) {
     // Check for table wrapper first
-    if (elem.matches("table")) {
+    if (elem.matches("table:not(.table-drag-preview)")) {
       return elem;
     }
 
@@ -102,6 +104,11 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
     // Skip table cells
     if (elem.closest("table")) {
+      continue;
+    }
+
+    // Skip elements inside .editor-embed-component
+    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
       continue;
     }
 
@@ -381,8 +388,9 @@ const handleNodeSelection = (
   let draggedNodePos = nodePosAtDOM(node, view, options);
   if (draggedNodePos == null || draggedNodePos < 0) return;
 
-  // Handle blockquote separately
-  if (node.matches("blockquote")) {
+  if (node.matches("table")) {
+    draggedNodePos = draggedNodePos - 2;
+  } else if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
   } else {

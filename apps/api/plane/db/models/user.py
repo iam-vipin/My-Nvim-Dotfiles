@@ -19,7 +19,9 @@ from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import FileAsset
-from plane.db.mixins import TimeAuditModel
+from ..mixins import TimeAuditModel
+from plane.utils.color import get_random_color
+
 
 
 def get_default_onboarding():
@@ -44,6 +46,7 @@ class BotTypeEnum(models.TextChoices):
     GITHUB_BOT = "GITHUB_BOT", "Github Bot"
     INTAKE_BOT = "INTAKE_BOT", "Intake Bot"
     APP_BOT = "APP_BOT", "App Bot"
+    AUTOMATION_BOT = "AUTOMATION_BOT", "Automation Bot"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -113,7 +116,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     # timezone
-    USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    USER_TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     user_timezone = models.CharField(
         max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
     )
@@ -234,6 +237,11 @@ class Profile(TimeAuditModel):
     start_of_the_week = models.PositiveSmallIntegerField(
         choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY
     )
+    goals = models.JSONField(default=dict)
+    background_color = models.CharField(max_length=255, default=get_random_color)
+
+    # marketing
+    has_marketing_email_consent = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Profile"
@@ -282,11 +290,11 @@ def create_user_notification(sender, instance, created, **kwargs):
 
         UserNotificationPreference.objects.create(
             user=instance,
-            property_change=False,
-            state_change=False,
-            comment=False,
-            mention=False,
-            issue_completed=False,
+            property_change=True,
+            state_change=True,
+            comment=True,
+            mention=True,
+            issue_completed=True,
         )
 
 

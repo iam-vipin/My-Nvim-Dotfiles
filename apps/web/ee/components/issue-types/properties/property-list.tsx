@@ -3,14 +3,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssuePropertyType, IIssueProperty } from "@plane/types";
 // plane web imports
-import {
-  IssuePropertyCreateListItem,
-  IssuePropertyListItem,
-  TIssuePropertyCreateList,
-  TCustomPropertyOperations,
-} from "@/plane-web/components/issue-types";
-// plane web lib
 import { IssuePropertyOptionsProvider } from "@/plane-web/lib";
+// local imports
+import type { TIssuePropertyCreateList } from "./root";
+import { IssuePropertyCreateListItem } from "./property-create-list-item";
+import { IssuePropertyListItem, type TCustomPropertyOperations } from "./property-list-item";
 
 type TIssuePropertyList = {
   properties: IIssueProperty<EIssuePropertyType>[] | undefined;
@@ -19,6 +16,12 @@ type TIssuePropertyList = {
   containerRef: React.RefObject<HTMLDivElement>;
   lastElementRef: React.RefObject<HTMLDivElement>;
   isUpdateAllowed: boolean;
+  trackers?: {
+    [key in "create" | "update" | "delete" | "quickActions"]?: {
+      button?: string;
+      eventName?: string;
+    };
+  };
 };
 
 export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
@@ -29,6 +32,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
     containerRef,
     lastElementRef,
     isUpdateAllowed,
+    trackers,
   } = props;
 
   return (
@@ -45,6 +49,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
                 customPropertyId={property.id}
                 customPropertyOperations={customPropertyOperations}
                 isUpdateAllowed={isUpdateAllowed}
+                trackers={trackers}
               />
             </IssuePropertyOptionsProvider>
           ))}
@@ -60,6 +65,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
               issuePropertyCreateListData={issueProperty}
               customPropertyOperations={customPropertyOperations}
               isUpdateAllowed
+              trackers={trackers}
             />
           </IssuePropertyOptionsProvider>
         ))}

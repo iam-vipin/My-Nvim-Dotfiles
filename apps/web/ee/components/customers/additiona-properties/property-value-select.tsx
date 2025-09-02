@@ -15,15 +15,13 @@ import {
 import { Loader, Tooltip } from "@plane/ui";
 import { getIssuePropertyTypeKey, cn } from "@plane/utils";
 // plane web components
-import {
-  TextValueInput,
-  BooleanInput,
-  NumberValueInput,
-  MemberValueSelect,
-  DateValueSelect,
-  OptionValueSelect,
-  IssuePropertyLogo,
-} from "@/plane-web/components/issue-types";
+import { BooleanInput } from "@/plane-web/components/issue-types/values/components/boolean-input";
+import { DateValueSelect } from "@/plane-web/components/issue-types/values/components/date-select";
+import { MemberValueSelect } from "@/plane-web/components/issue-types/values/components/member-select";
+import { NumberValueInput } from "@/plane-web/components/issue-types/values/components/number-input";
+import { OptionValueSelect } from "@/plane-web/components/issue-types/values/components/option-select";
+import { TextValueInput } from "@/plane-web/components/issue-types/values/components/text-input";
+import { UrlValueInput } from "@/plane-web/components/issue-types/values/components/url-input";
 
 type TPropertyValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType>>;
@@ -68,7 +66,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     </>
   );
 
-  const CUSTOMER_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, JSX.Element>> = {
+  const CUSTOMER_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (
       <>
         <TextValueInput
@@ -150,6 +148,19 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
         />
       </>
     ),
+    URL: (
+      <>
+        <UrlValueInput
+          propertyDetail={propertyDetail as TIssueProperty<EIssuePropertyType.URL>}
+          value={propertyValue}
+          error={propertyValueError}
+          variant={variant}
+          className="min-h-8"
+          isDisabled={isDisabled}
+          onTextValueChange={onPropertyValueChange}
+        />
+      </>
+    ),
   };
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
@@ -179,7 +190,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
           <div className={cn("gap-1 flex-shrink-0 text-sm text-custom-text-300 w-2/5")}>
             <CustomerPropertyDetail />
           </div>
-          <div className={cn("relative h-full flex flex-col gap-0.5 w-3/5", {})}>{CurrentPropertyAttribute}</div>
+          <div className={cn("relative h-full flex flex-col gap-0.5 w-3/5")}>{CurrentPropertyAttribute}</div>
         </div>
       )}
     </>

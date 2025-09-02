@@ -7,7 +7,8 @@
     "upgrade_plan": "Mettre à niveau",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clients"
+    "customers": "Clients",
+    "recurring_work_items": "Tâches récurrentes"
   },
   "workspace_dashboards": "Tableaux de bord",
   "pi_chat": "PI Chat",
@@ -393,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Vue d'ensemble",
     "label": "Initiatives",
     "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Ajouter une initiative",
@@ -440,6 +442,19 @@
         "title": "Vous n'avez pas d'Epics qui correspondent aux filtres que vous avez appliqués.",
         "subHeading": "Pour voir tous les Epics, effacez tous les filtres appliqués.",
         "action": "Effacer les filtres"
+      }
+    },
+    "scope": {
+      "view_scope": "Voir le périmètre",
+      "breakdown": "Décomposition du périmètre",
+      "add_scope": "Ajouter un périmètre",
+      "label": "Périmètre",
+      "empty_state": {
+        "title": "Aucun périmètre ajouté à cette initiative",
+        "description": "Connectez des projets et des épiques et suivez ce travail dans cet espace.",
+        "primary_button": {
+          "text": "Ajouter un périmètre"
+        }
       }
     }
   },
@@ -667,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "Fichier invalide ou dépasse la limite de taille ({size} MB)",
         "uploading": "Téléchargement...",
         "upload_and_save": "Télécharger et enregistrer"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Voir votre travail devenir plus intelligent et plus rapide avec l'IA qui est connectée de manière native à votre travail et à votre base de connaissances."
       }
     }
   },
@@ -893,7 +913,7 @@
         },
         "can_disable_warning": "Voulez-vous désactiver le type à la place ?"
       },
-      "cant_delete_linked_message": "Impossible de supprimer ce type d’élément de travail car il est lié à des éléments de travail existants."
+      "cant_delete_default_message": "Ce type d'élément de travail ne peut pas être supprimé car il est défini comme le type par défaut pour ce projet."
     },
     "create": {
       "title": "Créer un type d'élément de travail",
@@ -1216,6 +1236,7 @@
     "invalid_app_installation_id": "Échec de l'installation de l'application"
   },
   "import_status": {
+    "queued": "En attente",
     "created": "Créé",
     "initiated": "Initié",
     "pulling": "Extraction",
@@ -1381,7 +1402,8 @@
       "title_map_priorities": "Mapper les priorités",
       "description_map_priorities": "Veuillez sélectionner les priorités ClickUp que vous souhaitez mapper aux priorités du projet Plane.",
       "title_summary": "Résumé",
-      "description_summary": "Voici un résumé des données qui seront migrées de ClickUp vers Plane."
+      "description_summary": "Voici un résumé des données qui seront migrées de ClickUp vers Plane.",
+      "pull_additional_data_title": "Importer les commentaires et les pièces jointes"
     }
   },
 
@@ -2482,5 +2504,84 @@
       }
     },
     "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Éléments de travail récurrents",
+      "description": "Configurez votre travail récurrent une fois, et nous nous occuperons des répétitions. Vous verrez tout ici lorsque c'est le moment.",
+      "new_recurring_work_item": "Nouvel élément de travail récurrent",
+      "update_recurring_work_item": "Mettre à jour l'élément de travail récurrent",
+      "form": {
+        "interval": {
+          "title": "Planification",
+          "start_date": {
+            "validation": {
+              "required": "La date de début est requise"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Le type d'intervalle est requis"
+            }
+          }
+        },
+        "button": {
+          "create": "Créer un élément de travail récurrent",
+          "update": "Mettre à jour l'élément de travail récurrent"
+        }
+      },
+      "create_button": {
+        "label": "Créer un élément de travail récurrent",
+        "no_permission": "Contactez votre administrateur de projet pour créer des éléments de travail récurrents"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Votre travail, en pilote automatique",
+        "description": "Configurez-le une fois. Nous vous le rappellerons quand il sera dû. Passez à Business pour rendre le travail récurrent sans effort."
+      },
+      "no_templates": {
+        "button": "Créez votre premier élément de travail récurrent"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Élément de travail récurrent créé",
+          "message": "{name}, l'élément de travail récurrent, est maintenant disponible dans votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu créer cet élément de travail récurrent cette fois.",
+          "message": "Essayez d'enregistrer vos informations à nouveau ou copiez-les dans un nouvel élément de travail récurrent, de préférence dans un autre onglet."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Élément de travail récurrent modifié",
+          "message": "{name}, l'élément de travail récurrent, a été modifié."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu enregistrer les modifications de cet élément de travail récurrent.",
+          "message": "Essayez d'enregistrer vos informations à nouveau ou revenez à cet élément de travail récurrent plus tard. Si le problème persiste, contactez-nous."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Élément de travail récurrent supprimé",
+          "message": "{name}, l'élément de travail récurrent, a été supprimé de votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu supprimer cet élément de travail récurrent.",
+          "message": "Essayez de le supprimer à nouveau ou revenez plus tard. Si vous ne pouvez toujours pas le supprimer, contactez-nous."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Supprimer l'élément de travail récurrent",
+      "description": {
+        "prefix": "Êtes-vous sûr de vouloir supprimer l'élément de travail récurrent-",
+        "suffix": "? Toutes les données liées à l'élément de travail récurrent seront définitivement supprimées. Cette action ne peut pas être annulée."
+      }
+    }
   }
 }

@@ -16,6 +16,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // plane web  types
 import { E_CLICKUP_IMPORTER_STEPS, TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import { SkipAdditionalDataToggle } from "./skip-additional-data";
 
 type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP];
 
@@ -31,6 +32,7 @@ export const ConfigureClickUpRoot: FC = observer(() => {
     spaceId: undefined,
     folderIds: [],
     teamId: undefined,
+    skipAdditionalDataImport: true,
   });
 
   // derived values
@@ -71,6 +73,10 @@ export const ConfigureClickUpRoot: FC = observer(() => {
           value={formData.folderIds}
           spaceId={formData.spaceId}
           handleFormData={(value: string[]) => handleFormData("folderIds", value)}
+        />
+        <SkipAdditionalDataToggle
+          skipAdditionalData={formData.skipAdditionalDataImport}
+          handleSkipAdditionalDataToggle={(value: boolean) => handleFormData("skipAdditionalDataImport", value)}
         />
       </div>
 

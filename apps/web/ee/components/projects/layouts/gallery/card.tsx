@@ -4,17 +4,23 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
+// plane imports
 import { cn } from "@plane/utils";
-import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
+// components
+import { DeleteProjectModal } from "@/components/project/delete-project-modal";
+import { JoinProjectModal } from "@/components/project/join-project-modal";
+import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
 // hooks
-import { useProject, useWorkspace } from "@/hooks/store";
-// types
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
-import JoinButton from "../../common/join-button";
-import Attributes from "../attributes";
-import Details from "./details";
+// local imports
+import { JoinButton } from "../../common/join-button";
+import { Attributes } from "../attributes";
+import { Details } from "./details";
 
 type Props = {
   project: TProject;
@@ -87,7 +93,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
           }
         }}
-        data-prevent-nprogress={!isMemberOfProject || isArchived}
+        data-prevent-progress={!isMemberOfProject || isArchived}
         className={cn("group/project-card flex flex-col justify-between w-full", {
           "bg-custom-background-80": isArchived,
         })}

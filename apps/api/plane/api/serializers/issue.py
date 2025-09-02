@@ -20,6 +20,11 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    EstimatePoint,
+)
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_binary_data,
 )
 
 from .base import BaseSerializer
@@ -27,6 +32,7 @@ from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
+from .issue_type import IssueTypeAPISerializer
 
 # Django imports
 from django.core.exceptions import ValidationError
@@ -34,6 +40,13 @@ from django.core.validators import URLValidator
 
 
 class IssueSerializer(BaseSerializer):
+    """
+    Comprehensive work item serializer with full relationship management.
+
+    Handles complete work item lifecycle including assignees, labels, validation,
+    and related model updates. Supports dynamic field expansion and HTML content processing.
+    """
+
     assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
             queryset=User.objects.values_list("id", flat=True)
@@ -75,6 +88,26 @@ class IssueSerializer(BaseSerializer):
         except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
 
+        # Validate description content for security
+        if data.get("description_html"):
+            is_valid, error_msg, sanitized_html = validate_html_content(
+                data["description_html"]
+            )
+            if not is_valid:
+                raise serializers.ValidationError(
+                    {"error": "html content is not valid"}
+                )
+            # Update the data with sanitized HTML if available
+            if sanitized_html is not None:
+                data["description_html"] = sanitized_html
+
+        if data.get("description_binary"):
+            is_valid, error_msg = validate_binary_data(data["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError(
+                    {"description_binary": "Invalid binary data"}
+                )
+
         # Validate assignees are from project
         if data.get("assignees", []):
             data["assignees"] = ProjectMember.objects.filter(
@@ -105,11 +138,25 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError(
                 "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
+        if (
+            data.get("estimate_point")
+            and not EstimatePoint.objects.filter(
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("estimate_point").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Estimate point is not valid please pass a valid estimate_point_id"
             )
 
         return data
@@ -212,7 +259,22 @@ class IssueSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            # Get the current assignees
+            current_assignees = IssueAssignee.objects.filter(
+                issue=instance
+            ).values_list("assignee_id", flat=True)
+
+            # Get the assignees to add
+            assignees_to_add = list(set(assignees) - set(current_assignees))
+
+            # Get the assignees to remove
+            assignees_to_remove = list(set(current_assignees) - set(assignees))
+
+            # Delete the assignees to remove
+            IssueAssignee.objects.filter(
+                issue=instance, assignee_id__in=assignees_to_remove
+            ).delete()
+
             try:
                 IssueAssignee.objects.bulk_create(
                     [
@@ -224,7 +286,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for assignee_id in assignees
+                        for assignee_id in assignees_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -233,7 +295,23 @@ class IssueSerializer(BaseSerializer):
                 pass
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            # Get the current labels
+            current_labels = IssueLabel.objects.filter(issue=instance).values_list(
+                "label_id", flat=True
+            )
+
+            # Get the labels to add
+            labels_to_add = list(set(labels) - set(current_labels))
+
+            # Get the labels to remove
+            labels_to_remove = list(set(current_labels) - set(labels))
+
+            # Delete the labels to remove
+            IssueLabel.objects.filter(
+                issue=instance, label_id__in=labels_to_remove
+            ).delete()
+
+            # Create the labels to add
             try:
                 IssueLabel.objects.bulk_create(
                     [
@@ -245,7 +323,7 @@ class IssueSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label_id in labels
+                        for label_id in labels_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -296,17 +374,66 @@ class IssueSerializer(BaseSerializer):
                     )
                 ]
 
+        if "type" in self.fields:
+            if "type" in self.expand:
+                data["type"] = IssueTypeAPISerializer(instance.type).data
+
         return data
 
 
 class IssueLiteSerializer(BaseSerializer):
+    """
+    Lightweight work item serializer for minimal data transfer.
+
+    Provides essential work item identifiers optimized for list views,
+    references, and performance-critical operations.
+    """
+
     class Meta:
         model = Issue
         fields = ["id", "sequence_id", "project_id"]
         read_only_fields = fields
 
 
+class LabelCreateUpdateSerializer(BaseSerializer):
+    """
+    Serializer for creating and updating work item labels.
+
+    Manages label metadata including colors, descriptions, hierarchy,
+    and sorting for work item categorization and filtering.
+    """
+
+    class Meta:
+        model = Label
+        fields = [
+            "name",
+            "color",
+            "description",
+            "external_source",
+            "external_id",
+            "parent",
+            "sort_order",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
+
 class LabelSerializer(BaseSerializer):
+    """
+    Full serializer for work item labels with complete metadata.
+
+    Provides comprehensive label information including hierarchical relationships,
+    visual properties, and organizational data for work item tagging.
+    """
+
     class Meta:
         model = Label
         fields = "__all__"
@@ -322,10 +449,17 @@ class LabelSerializer(BaseSerializer):
         ]
 
 
-class IssueLinkSerializer(BaseSerializer):
+class IssueLinkCreateSerializer(BaseSerializer):
+    """
+    Serializer for creating work item external links with validation.
+
+    Handles URL validation, format checking, and duplicate prevention
+    for attaching external resources to work items.
+    """
+
     class Meta:
         model = IssueLink
-        fields = "__all__"
+        fields = ["url", "issue_id"]
         read_only_fields = [
             "id",
             "workspace",
@@ -361,6 +495,22 @@ class IssueLinkSerializer(BaseSerializer):
             )
         return IssueLink.objects.create(**validated_data)
 
+
+class IssueLinkUpdateSerializer(IssueLinkCreateSerializer):
+    """
+    Serializer for updating work item external links.
+
+    Extends link creation with update-specific validation to prevent
+    URL conflicts and maintain link integrity during modifications.
+    """
+
+    class Meta(IssueLinkCreateSerializer.Meta):
+        model = IssueLink
+        fields = IssueLinkCreateSerializer.Meta.fields + [
+            "issue_id",
+        ]
+        read_only_fields = IssueLinkCreateSerializer.Meta.read_only_fields
+
     def update(self, instance, validated_data):
         if (
             IssueLink.objects.filter(
@@ -376,7 +526,37 @@ class IssueLinkSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
+class IssueLinkSerializer(BaseSerializer):
+    """
+    Full serializer for work item external links.
+
+    Provides complete link information including metadata and timestamps
+    for managing external resource associations with work items.
+    """
+
+    class Meta:
+        model = IssueLink
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
 class IssueAttachmentSerializer(BaseSerializer):
+    """
+    Serializer for work item file attachments.
+
+    Manages file asset associations with work items including metadata,
+    storage information, and access control for document management.
+    """
+
     class Meta:
         model = FileAsset
         fields = "__all__"
@@ -390,7 +570,47 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
+class IssueCommentCreateSerializer(BaseSerializer):
+    """
+    Serializer for creating work item comments.
+
+    Handles comment creation with JSON and HTML content support,
+    access control, and external integration tracking.
+    """
+
+    class Meta:
+        model = IssueComment
+        fields = [
+            "comment_json",
+            "comment_html",
+            "access",
+            "external_source",
+            "external_id",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "actor",
+            "comment_stripped",
+            "edited_at",
+        ]
+
+
 class IssueCommentSerializer(BaseSerializer):
+    """
+    Full serializer for work item comments with membership context.
+
+    Provides complete comment data including member status, content formatting,
+    and edit tracking for collaborative work item discussions.
+    """
+
     is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -420,12 +640,26 @@ class IssueCommentSerializer(BaseSerializer):
 
 
 class IssueActivitySerializer(BaseSerializer):
+    """
+    Serializer for work item activity and change history.
+
+    Tracks and represents work item modifications, state changes,
+    and user interactions for audit trails and activity feeds.
+    """
+
     class Meta:
         model = IssueActivity
         exclude = ["created_by", "updated_by"]
 
 
 class CycleIssueSerializer(BaseSerializer):
+    """
+    Serializer for work items within cycles.
+
+    Provides cycle context for work items including cycle metadata
+    and timing information for sprint and iteration management.
+    """
+
     cycle = CycleSerializer(read_only=True)
 
     class Meta:
@@ -433,6 +667,13 @@ class CycleIssueSerializer(BaseSerializer):
 
 
 class ModuleIssueSerializer(BaseSerializer):
+    """
+    Serializer for work items within modules.
+
+    Provides module context for work items including module metadata
+    and organizational information for feature-based work grouping.
+    """
+
     module = ModuleSerializer(read_only=True)
 
     class Meta:
@@ -440,19 +681,32 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class LabelLiteSerializer(BaseSerializer):
+    """
+    Lightweight label serializer for minimal data transfer.
+
+    Provides essential label information with visual properties,
+    optimized for UI display and performance-critical operations.
+    """
+
     class Meta:
         model = Label
         fields = ["id", "name", "color"]
 
 
 class IssueExpandSerializer(BaseSerializer):
+    """
+    Extended work item serializer with full relationship expansion.
+
+    Provides work items with expanded related data including cycles, modules,
+    labels, assignees, and states for comprehensive data representation.
+    """
+
     cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
     module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
 
     labels = serializers.SerializerMethodField()
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
-
 
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
@@ -471,7 +725,6 @@ class IssueExpandSerializer(BaseSerializer):
             ).data
         return [ia.assignee_id for ia in obj.issue_assignee.all()]
 
-
     class Meta:
         model = Issue
         fields = "__all__"
@@ -484,3 +737,73 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class IssueAttachmentUploadSerializer(serializers.Serializer):
+    """
+    Serializer for work item attachment upload request validation.
+
+    Handles file upload metadata validation including size, type, and external
+    integration tracking for secure work item document attachment workflows.
+    """
+
+    name = serializers.CharField(help_text="Original filename of the asset")
+    type = serializers.CharField(required=False, help_text="MIME type of the file")
+    size = serializers.IntegerField(help_text="File size in bytes")
+    external_id = serializers.CharField(
+        required=False,
+        help_text="External identifier for the asset (for integration tracking)",
+    )
+    external_source = serializers.CharField(
+        required=False, help_text="External source system (for integration tracking)"
+    )
+
+
+class IssueSearchItemSerializer(serializers.Serializer):
+    """
+    Individual issue component for search results.
+
+    Provides standardized search result structure including work item identifiers,
+    project context, and workspace information for search API responses.
+    """
+
+    id = serializers.CharField(required=True, help_text="Issue ID")
+    name = serializers.CharField(required=True, help_text="Issue name")
+    sequence_id = serializers.CharField(required=True, help_text="Issue sequence ID")
+    project__identifier = serializers.CharField(
+        required=True, help_text="Project identifier"
+    )
+    project_id = serializers.CharField(required=True, help_text="Project ID")
+    workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
+
+
+class IssueSearchSerializer(serializers.Serializer):
+    """
+    Search results for work items.
+
+    Provides list of issues with their identifiers, names, and project context.
+    """
+
+    issues = IssueSearchItemSerializer(many=True)
+
+
+class IssueDetailSerializer(IssueSerializer):
+    """
+    Comprehensive work item serializer with full relationship management.
+
+    Handles complete work item lifecycle including assignees, labels, validation,
+    and related model updates. Supports dynamic field expansion and HTML content processing.
+    """
+
+    assignees = UserLiteSerializer(many=True)
+
+    labels = LabelSerializer(many=True)
+
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Issue
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        exclude = ["description"]

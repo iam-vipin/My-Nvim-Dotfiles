@@ -9,6 +9,7 @@ export type TProjectBaseFilters = "All projects" | "My projects" | "Private" | "
 export enum EProjectScope {
   ALL_PROJECTS = "ALL_PROJECTS",
   MY_PROJECTS = "MY_PROJECTS",
+  TEAMSPACE_PROJECTS = "TEAMSPACE_PROJECTS",
 }
 export type TProjectScope = EProjectScope;
 
@@ -78,6 +79,6 @@ export type TProjectsLayoutStructure = {
 };
 export type GroupDetails = {
   title: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   prePopulatedPayload: any;
 };

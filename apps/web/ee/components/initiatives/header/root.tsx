@@ -17,7 +17,8 @@ import {
   ScopeIcon,
 } from "@plane/ui";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -74,13 +75,13 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
     () => [
       {
         key: EInitiativeNavigationItem.OVERVIEW,
-        title: "Overview",
+        title: t("initiatives.overview"),
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/`),
         icon: Rss,
       },
       {
         key: EInitiativeNavigationItem.SCOPE,
-        title: "Scope",
+        title: t("initiatives.scope.label"),
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`),
         icon: ScopeIcon,
       },

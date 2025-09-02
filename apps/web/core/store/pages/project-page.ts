@@ -7,12 +7,12 @@ import { TPage } from "@plane/types";
 // utils
 import { getPageName } from "@plane/utils";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 // store
-import { BasePage, TPageInstance } from "./base-page";
+import { BasePage, type TPageInstance } from "./base-page";
 
 export type TProjectPage = TPageInstance;
 
@@ -60,6 +60,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       // computed
       parentPageIds: computed,
       subPageIds: computed,
+      subPages: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -298,7 +299,14 @@ export class ProjectPage extends BasePage implements TProjectPage {
 
       runInAction(() => {
         for (const page of subPages) {
-          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new ProjectPage(this.rootStore, page));
+          if (page?.id) {
+            const pageInstance = this.rootStore.projectPages.getPageById(page.id);
+            if (pageInstance) {
+              pageInstance.mutateProperties(page);
+            } else {
+              set(this.rootStore.projectPages.data, [page.id], new ProjectPage(this.rootStore, page));
+            }
+          }
         }
       });
     } catch (error) {

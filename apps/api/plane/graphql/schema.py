@@ -8,6 +8,7 @@ from .mutations.asset import (
     WorkspaceAssetMutation,
 )
 from .mutations.auth import SetPasswordMutation
+from .mutations.catch_up import CatchUpMarkAsReadMutation
 from .mutations.cycle import (
     CycleFavoriteMutation,
     CycleIssueMutation,
@@ -81,6 +82,7 @@ from .mutations.workspace import (
 
 # queries
 from .queries.asset import ProjectAssetQuery, WorkspaceAssetQuery
+from .queries.catch_up import CatchUpQuery
 from .queries.cycle import (
     CycleIssueQuery,
     CycleIssuesInformationQuery,
@@ -106,6 +108,7 @@ from .queries.feature_flag import FeatureFlagQuery
 from .queries.instance import InstanceQuery
 from .queries.intake import (
     IntakeCountQuery,
+    IntakeSearchQuery,
     IntakeWorkItemActivityQuery,
     IntakeWorkItemAttachmentQuery,
     IntakeWorkItemCommentQuery,
@@ -137,7 +140,7 @@ from .queries.module import (
     ModuleIssueUserPropertyQuery,
     ModuleQuery,
 )
-from .queries.notification import NotificationQuery
+from .queries.notification import NotificationCountQuery, NotificationQuery
 from .queries.page import (
     NestedChildPagesQuery,
     NestedParentPagesQuery,
@@ -204,6 +207,7 @@ class Query(
     UserProjectRolesQuery,
     # notification
     NotificationQuery,
+    NotificationCountQuery,
     # search
     GlobalSearchQuery,
     # workspace
@@ -283,6 +287,9 @@ class Query(
     IntakeWorkItemCommentQuery,
     IntakeWorkItemCommentReactionQuery,
     IntakeWorkItemAttachmentQuery,
+    IntakeSearchQuery,
+    # catch up
+    CatchUpQuery,
 ):
     pass
 
@@ -366,6 +373,8 @@ class Mutation(
     IntakeWorkItemCommentReactionMutation,
     IntakeWorkItemAttachmentMutation,
     IntakeWorkItemStatusMutation,
+    # catch up
+    CatchUpMarkAsReadMutation,
 ):
     pass
 

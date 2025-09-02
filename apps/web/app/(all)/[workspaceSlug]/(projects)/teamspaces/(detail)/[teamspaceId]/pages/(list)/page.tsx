@@ -6,10 +6,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TPageFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
-// constants
-import { PageAppliedFiltersList } from "@/components/pages";
+// components
+import { PageAppliedFiltersList } from "@/components/pages/list/applied-filters";
 // plane web imports
-import { TeamspacePagesList } from "@/plane-web/components/teamspaces/pages";
+import { TeamspacePagesList } from "@/plane-web/components/teamspaces/pages/pages-list";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 const storeType = EPageStoreType.TEAMSPACE;

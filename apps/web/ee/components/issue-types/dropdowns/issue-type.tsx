@@ -4,9 +4,9 @@ import { IIssueType } from "@plane/types";
 import { CustomSearchSelect, LayersIcon, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports
-import { TIssueTypeDropdownVariant } from "@/ce/components/issues";
+import type { TIssueTypeDropdownVariant } from "@/ce/components/issues/issue-modal";
 // plane web types
-import { IssueTypeLogo } from "@/plane-web/components/issue-types";
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
 
 export type TIssueTypeOptionTooltip = {
   [issueTypeId: string]: string; // issue type id --> tooltip content

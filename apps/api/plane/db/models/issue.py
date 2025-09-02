@@ -12,12 +12,18 @@ from django.db.models import Q
 from django import apps
 from django.db import connection
 
+# Third party imports
+import pgtrigger
+
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.models.project import ProjectManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+
+# ee imports
+from plane.db.models.intake import IntakeIssueStatus
 
 
 def get_default_properties():
@@ -106,6 +112,29 @@ class IssueManager(ProjectManager):
         )
 
 
+class IssueAndEpicsManager(ProjectManager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                models.Q(
+                    issue_intake__status__in=[
+                        IntakeIssueStatus.ACCEPTED,
+                        IntakeIssueStatus.REJECTED,
+                        IntakeIssueStatus.DUPLICATE,
+                    ]
+                )
+                | models.Q(issue_intake__isnull=True)
+            )
+            .filter(deleted_at__isnull=True)
+            .filter(state__is_triage=False)
+            .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
+            .exclude(is_draft=True)
+        )
+
+
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
@@ -177,6 +206,7 @@ class Issue(ProjectBaseModel):
     )
 
     issue_objects = IssueManager()
+    issue_and_epics_objects = IssueAndEpicsManager()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

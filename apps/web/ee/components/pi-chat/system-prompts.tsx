@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon, PiChatLogo } from "@plane/ui";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -39,7 +39,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
       case "issues":
         return LayersIcon;
       default:
-        return PiChatLogo;
+        return LayersIcon;
     }
   };
 
@@ -50,11 +50,11 @@ const SystemPrompts = (props: TSystemPrompt) => {
       entityType: projectId ? "project_id" : "workspace_id",
       entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
     };
-    const newChatId = await createNewChat(focus, isProjectLevel, workspaceId || "");
+    const newChatId = await createNewChat(focus, isProjectLevel, workspaceId);
     setIsInitializing("");
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
-    getAnswer(newChatId, prompt.text, focus, isProjectLevel);
+    getAnswer(newChatId, prompt.text, focus, isProjectLevel, workspaceSlug?.toString(), workspaceId?.toString());
   };
   const promptIcon = getIcon(prompt.type);
 

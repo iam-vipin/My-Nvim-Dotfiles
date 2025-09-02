@@ -7,7 +7,8 @@
     "upgrade_plan": "Apgrejd plán",
     "plane_pro": "Plejn Pro",
     "business": "Biznis",
-    "customers": "Kastomers"
+    "customers": "Kastomers",
+    "recurring_work_items": "Opakujúce sa pracovné položky"
   },
   "workspace_dashboards": "Dešbordy",
   "pi_chat": "Pi Čet",
@@ -401,6 +402,7 @@
     }
   },
   "initiatives": {
+    "overview": "Prehľad",
     "label": "Iniciatívy",
     "placeholder": "{count, plural, one{# iniciativa} other{# iniciatívy}}",
     "add_initiative": "Pridať Iniciatívu",
@@ -448,6 +450,19 @@
         "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
         "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
         "action": "Vymazať filtre"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobraziť rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Pridať rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatiaľ nebol pridaný žiadny rozsah do tejto iniciatívy",
+        "description": "Prepojte projekty a epiky s iniciatívou, aby ste mohli začať.",
+        "primary_button": {
+          "text": "Pridať rozsah"
+        }
       }
     }
   },
@@ -675,6 +690,11 @@
         "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo presahuje limit veľkosti ({size} MB)",
         "uploading": "Nahrávanie...",
         "upload_and_save": "Nahrať a uložiť"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni."
       }
     }
   },
@@ -901,7 +921,7 @@
         },
         "can_disable_warning": "Chcete namiesto toho zakázať tento typ?"
       },
-      "cant_delete_linked_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je prepojený s existujúcimi pracovnými položkami."
+      "cant_delete_default_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je nastavený ako predvolený pre tento projekt."
     },
     "create": {
       "title": "Vytvoriť typ pracovnej položky",
@@ -1223,6 +1243,7 @@
     "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
   },
   "import_status": {
+    "queued": "V poradí",
     "created": "Vytvorené",
     "initiated": "Iniciované",
     "pulling": "Sťahuje sa",
@@ -1329,7 +1350,8 @@
       "title_map_priorities": "Mapovať priority",
       "description_map_priorities": "Vyberte ClickUp priority, ktoré chcete mapovať na priority projektu Plane.",
       "title_summary": "Súhrn",
-      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane."
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane.",
+      "pull_additional_data_title": "Importovať komentáre a prílohy"
     }
   },
 
@@ -2488,6 +2510,85 @@
       "upload_complete_message": "Nahrávanie dokončené!",
       "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Confluence dát.",
       "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Opakujúce sa pracovné položky",
+      "description": "Nastavte opakujúce sa pracovné položky raz a my sa postaráme o opakovanie. Všetko sa tu zobrazí, keď bude čas.",
+      "new_recurring_work_item": "Nová opakujúca sa úloha",
+      "update_recurring_work_item": "Upraviť opakujúcu sa úlohu",
+      "form": {
+        "interval": {
+          "title": "Plán",
+          "start_date": {
+            "validation": {
+              "required": "Dátum začiatku je povinný"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Typ intervalu je povinný"
+            }
+          }
+        },
+        "button": {
+          "create": "Vytvoriť opakujúcu sa úlohu",
+          "update": "Upraviť opakujúcu sa úlohu"
+        }
+      },
+      "create_button": {
+        "label": "Vytvoriť opakujúcu sa úlohu",
+        "no_permission": "Kontaktujte správcu projektu pre vytvorenie opakujúcich sa úloh"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Vaša práca na autopilote",
+        "description": "Nastavte raz. Pripomenieme vám to, keď bude čas. Upgradujte na Business, aby bola opakovaná práca bez námahy."
+      },
+      "no_templates": {
+        "button": "Vytvorte svoju prvú opakujúcu sa úlohu"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Opakujúca sa úloha vytvorená",
+          "message": "{name}, opakujúca sa úloha, je teraz dostupná vo vašom pracovnom priestore."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa tentokrát nepodarilo vytvoriť.",
+          "message": "Skúste znova uložiť detaily alebo ich skopírujte do novej opakujúcej sa úlohy, ideálne v inom okne."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Opakujúca sa úloha upravená",
+          "message": "{name}, opakujúca sa úloha, bola upravená."
+        },
+        "error": {
+          "title": "Zmeny tejto opakujúcej sa úlohy sa nepodarilo uložiť.",
+          "message": "Skúste znova uložiť detaily alebo sa k tejto úlohe vráťte neskôr. Ak problém pretrváva, kontaktujte nás."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Opakujúca sa úloha odstránená",
+          "message": "{name}, opakujúca sa úloha, bola odstránená z vášho pracovného priestoru."
+        },
+        "error": {
+          "title": "Túto opakujúcu sa úlohu sa nepodarilo odstrániť.",
+          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak sa vám ju stále nedarí odstrániť, kontaktujte nás."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Odstrániť opakujúcu sa úlohu",
+      "description": {
+        "prefix": "Naozaj chcete odstrániť opakujúcu sa úlohu-",
+        "suffix": "? Všetky údaje súvisiace s touto opakujúcou sa úlohou budú natrvalo odstránené. Táto akcia je nevratná."
+      }
     }
   }
 }

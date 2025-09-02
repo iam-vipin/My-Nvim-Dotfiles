@@ -7,7 +7,7 @@ import { TCustomer } from "@plane/types";
 import { Button, CustomersIcon, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
 type TProps = {
   customer: TCustomer;
@@ -48,7 +48,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                 {customer.website_url && (
                   <Link
                     className="text-sm text-custom-text-300 truncate cursor-pointer hover:underline flex gap-1 items-center w-full"
-                    data-prevent-nprogress
+                    data-prevent-progress
                     href={customer.website_url}
                     onClick={(e) => {
                       e.stopPropagation();

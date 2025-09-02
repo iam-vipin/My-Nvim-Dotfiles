@@ -4,14 +4,63 @@ export const EPIC_TRACKER_EVENTS = {
   delete: "epic_deleted",
   archive: "epic_archived",
   restore: "epic_restored",
+  toggle: "epic_toggled",
+  enable: "epic_enabled",
+  disable: "epic_disabled",
 };
+
+export const CUSTOMER_TRACKER_EVENTS = {
+  create_customer: "customer_created",
+  update_customer: "customer_updated",
+  delete_customer: "customer_deleted",
+  create_request: "customer_request_created",
+  update_request: "customer_request_updated",
+  delete_request: "customer_request_deleted",
+  create_attachment: "attachment_created",
+  delete_attachment: "attachment_deleted",
+  add_work_items_to_customer: "work_items_added_to_customer",
+  remove_work_items_from_customer: "work_items_removed_from_customer",
+};
+
+export const CUSTOMER_TRACKER_ELEMENTS = {
+  QUICK_ACTIONS: "customer_quick_actions",
+  CREATE_CUSTOMER: "create_customer",
+};
+
 export const EPIC_TRACKER_ELEMENTS = {
   QUICK_ACTIONS: "epic_quick_actions",
+  TOGGLE_EPICS_BUTTON: "toggle_epics_button",
+};
+
+export const EPIC_PROPERTIES_TRACKER_EVENTS = {
+  create: "epic_properties_created",
+  update: "epic_properties_updated",
+  delete: "epic_properties_deleted",
+};
+
+export const EPIC_PROPERTIES_TRACKER_ELEMENTS = {
+  ACTION_BUTTON: "epic_properties_action_button",
 };
 
 export const LICENSE_TRACKER_EVENTS = {
   purchase_modal_opened: "purchase_modal_opened",
   success_modal_opened: "success_modal_opened",
+  trial_started: "trial_started",
+  upgrade_url_received: "upgrade_url_received",
+  upgrade_product_or_price_not_found: "upgrade_product_or_price_not_found",
+};
+
+export const LICENSE_TRACKER_ELEMENTS = {
+  MODAL_TRIAL_BUTTON: "modal_trial_button",
+  BILLING_PAGE_TRIAL_BUTTON: "billing_page_trial_button",
+  MODAL_UPGRADE_BUTTON: "modal_upgrade_button",
+  BILLING_PAGE_COMPARISON_SECTION_UPGRADE_BUTTON: "billing_page_comparison_section_upgrade_button",
+  BILLING_PAGE_PLAN_CARD_UPGRADE_BUTTON: "billing_page_plan_card_upgrade_button",
+};
+
+export const PROJECT_GROUPING_TRACKER_EVENTS = {
+  ENABLE: "project_grouping_enabled",
+  DISABLE: "project_grouping_disabled",
 };
 
 export const PROJECT_OVERVIEW_TRACKER_EVENTS = {
@@ -65,6 +114,7 @@ export const TEAMSPACE_TRACKER_ELEMENTS = {
   OVERVIEW_UPDATE_PROJECT_BUTTON: "teamspace_overview_update_project_button",
   EMPTY_STATE_UPDATE_PROJECT_BUTTON: "teamspace_empty_state_update_project_button",
   LIST_ITEM_UPDATE_PROJECT_BUTTON: "teamspace_list_item_update_project_button",
+  HEADER_UPDATE_PROJECT_BUTTON: "teamspace_header_update_project_button",
 };
 
 export const TEAMSPACE_UPGRADE_TRACKER_ELEMENTS = {
@@ -161,14 +211,181 @@ export const TEAMSPACE_VIEW_TRACKER_EVENTS = {
 };
 export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   HEADER_CREATE_VIEW_BUTTON: "teamspace_header_create_view_button",
+  HEADER_SAVE_VIEW_BUTTON: "teamspace_header_save_view_button",
   EMPTY_STATE_ADD_WORK_ITEM_BUTTON: "teamspace_empty_state_add_work_item_button",
   LIST_ITEM_QUICK_ACTIONS: "teamspace_view_list_item_quick_actions",
   LIST_ITEM_FAVORITE_BUTTON: "teamspace_view_list_item_favorite_button",
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
-// Project Template Tracker Start
+export const PROJECT_STATE_TRACKER_EVENTS = {
+  create: "project_state_created",
+  update: "project_state_updated",
+  delete: "project_state_deleted",
+  mark_as_default: "project_state_mark_as_default",
+  toggle: "project_state_toggled",
+};
+export const PROJECT_STATE_TRACKER_ELEMENTS = {
+  STATE_GROUP_ADD_BUTTON: "project_state_group_add_button",
+  STATE_LIST_DELETE_BUTTON: "project_state_list_delete_button",
+  STATE_LIST_EDIT_BUTTON: "project_state_list_edit_button",
+  STATE_MARK_AS_DEFAULT_BUTTON: "project_state_mark_as_default_button",
+  STATE_TOGGLE_BUTTON: "project_state_toggle_button",
+};
+export const WORK_ITEM_TYPE_TRACKER_EVENTS = {
+  TYPES_ENABLED: "work_item_types_enabled",
+  CREATE: "work_item_type_created",
+  UPDATE: "work_item_type_updated",
+  DELETE: "work_item_type_deleted",
+  ENABLE: "work_item_type_enabled",
+  DISABLE: "work_item_type_disabled",
+  CREATE_PROPERTY: "work_item_type_create_property",
+};
 
+export const WORK_ITEM_TYPE_TRACKER_ELEMENTS = {
+  HEADER_CREATE_WORK_ITEM_TYPE_BUTTON: "work_item_type_header_create_button",
+  HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON: "work_item_type_header_enable_work_item_types_button",
+  HEADER_ENABLE_DISABLE_WORK_ITEM_TYPE_BUTTON: "work_item_type_header_enable_disable_button",
+  CREATE_PROPERTY_BUTTON: "work_item_type_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "work_item_type_property_quick_actions",
+};
+
+export const EPIC_CUSTOM_PROPERTY_TRACKER_EVENTS = {
+  CREATE: "epic_custom_property_created",
+  UPDATE: "epic_custom_property_updated",
+  DELETE: "epic_custom_property_deleted",
+};
+export const EPIC_CUSTOM_PROPERTY_TRACKER_ELEMENTS = {
+  CREATE_PROPERTY_BUTTON: "epic_custom_property_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "epic_custom_property_property_quick_actions",
+};
+
+export const CUSTOMER_PROPERTY_TRACKER_EVENTS = {
+  CREATE: "customer_custom_property_created",
+  UPDATE: "customer_custom_property_updated",
+  DELETE: "customer_custom_property_deleted",
+};
+export const CUSTOMER_PROPERTY_TRACKER_ELEMENTS = {
+  CREATE_PROPERTY_BUTTON: "customer_custom_property_create_property_button",
+  PROPERTY_QUICK_ACTIONS: "customer_custom_property_property_quick_actions",
+};
+// Project Template Tracker Start
+export const INTEGRATION_TRACKER_ELEMENTS = {
+  INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON: "integrations_mapping_entity_item_button",
+};
+export const INTEGRATION_TRACKER_EVENTS = {
+  integration_started: "integration_started",
+  integration_disconnected: "integration_disconnected",
+};
+
+export const SLACK_INTEGRATION_TRACKER_EVENTS = {
+  create_project_connection: "slack_project_connection_created",
+  update_project_connection: "slack_project_connection_updated",
+  delete_project_connection: "slack_project_connection_deleted",
+};
+export const SLACK_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU: "slack_connect_disconnect_personal_account_context_menu",
+  CONNECT_DISCONNECT_WORKSPACE_CONTEXT_MENU: "slack_connect_disconnect_workspace_context_menu",
+  CONNECT_DISCONNECT_APP_BUTTON: "slack_connect_disconnect_app_button",
+  CHANNEL_MAPPING_HEADER_ADD_BUTTON: "slack_channel_mapping_header_add_button",
+};
+
+export const GITHUB_INTEGRATION_TRACKER_EVENTS = {
+  create_entity_connection: "github_entity_connection_created",
+  update_entity_connection: "github_entity_connection_updated",
+  delete_entity_connection: "github_entity_connection_deleted",
+};
+export const GITHUB_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_ORGANIZATION_BUTTON: "github_connect_disconnect_organization_button",
+  CONNECT_DISCONNECT_PERSONAL_ACCOUNT_BUTTON: "github_connect_disconnect_personal_account_button",
+  REPOSITORY_MAPPING_HEADER_ADD_BUTTON: "github_repository_mapping_header_add_button",
+};
+
+export const GITLAB_INTEGRATION_TRACKER_EVENTS = {
+  create_entity_connection: "gitlab_entity_connection_created",
+  update_entity_connection: "gitlab_entity_connection_updated",
+  delete_entity_connection: "gitlab_entity_connection_deleted",
+  create_project_entity_connection: "gitlab_project_entity_connection_created",
+  add_gitlab_project: "gitlab_project_added",
+  add_plane_project: "plane_project_added",
+};
+export const GITLAB_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_ORGANIZATION_BUTTON: "gitlab_connect_disconnect_organization_button",
+  REPOSITORY_MAPPING_HEADER_ADD_BUTTON: "gitlab_repository_mapping_header_add_button",
+  GITLAB_ADD_PROJECT_BUTTON: "gitlab_add_project_button",
+  PLANE_ADD_PROJECT_BUTTON: "plane_add_project_button",
+  GITLAB_MAPPING_ENTITY_ITEM_BUTTON: "gitlab_mapping_entity_item_button",
+  PLANE_MAPPING_ENTITY_ITEM_BUTTON: "plane_mapping_entity_item_button",
+};
+export const USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS = {
+  CONNECTION_CONNECT_DISCONNECT_BUTTON: "connections_view_connection_connect_disconnect_button",
+};
+
+export const WORKSPACE_WORKLOG_TRACKER_ELEMENTS = {
+  HEADER_DOWNLOAD_CONTEXT_MENU: "workspace_worklog_header_download_context_menu",
+  TABLE_DOWNLOAD_BUTTON: "workspace_worklog_table_download_button",
+};
+
+export const WORKSPACE_WORKLOG_TRACKER_EVENTS = {
+  CREATE_WORKLOG_DOWNLOAD: "workspace_worklog_created_worklog_download",
+  DOWNLOAD_WORKLOG: "workspace_worklog_worklog_downloaded",
+};
+
+export const INITIATIVES_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_ENABLE_DISABLE_BUTTON: "initiatives_settings_page_enable_disable_button",
+};
+export const INITIATIVE_TRACKER_EVENTS = {
+  TOGGLE: "initiatives_toggled",
+};
+
+export const PLANE_INTELLIGENCE_TRACKER_EVENTS = {
+  TOGGLE: "plane_intelligence_toggled",
+};
+export const PLANE_INTELLIGENCE_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_TOGGLE_BUTTON: "plane_intelligence_settings_page_toggle_button",
+  HIGHER_SUBSCRIPTION_BUTTON: "plane_intelligence_higher_subscription_button",
+  UPGRADE_BUTTON: "plane_intelligence_upgrade_button",
+};
+
+export const IMPORTER_TRACKER_ELEMENTS = {
+  IMPORTER_DASHBOARD_RE_RUN_BUTTON: "importer_dashboard_re_run_button",
+  IMPORTER_DASHBOARD_CANCEL_BUTTON: "importer_dashboard_cancel_button",
+  IMPORTER_DASHBOARD_DEACTIVATE_BUTTON: "importer_dashboard_deactivate_button",
+  IMPORTER_DASHBOARD_REFRESH_BUTTON: "importer_dashboard_refresh_button",
+  IMPORTER_DASHBOARD_IMPORT_BUTTON: "importer_dashboard_import_button",
+  IMPORTER_CONFIRGURE_NEXT_BUTTON: "importer_configure_next_button",
+  IMPORTER_CONFIRGURE_BACK_BUTTON: "importer_configure_back_button",
+};
+
+export const IMPORTER_TRACKER_EVENTS = {
+  RE_RUN: "importer_re_run_job",
+  CANCEL: "importer_cancel_job",
+  REFRESH: "importer_refresh_jobs",
+  DEACTIVATE: "importer_auth_deactivated",
+  UPLOAD_ZIP_FILE: "importer_upload_zip_file",
+  START_IMPORTER_JOB: "importer_job_started",
+  CREATE_IMPORTER_JOB: "importer_job_created",
+};
+
+export const WORKFLOW_TRACKER_EVENTS = {
+  TRANSITION_CREATED: "workflow_transition_created",
+  TRANSITION_DELETED: "workflow_transition_deleted",
+  WORKFLOW_ENABLED_DISABLED: "workflow_enabled_disabled",
+  WORKFLOW_RESET: "workflow_reset",
+  APPROVERS_UPDATED: "workflow_approvers_updated",
+  TOGGLE_WORK_ITEM_CREATION: "workflow_toggle_work_item_creation",
+  STATE_UPDATED: "workflow_state_updated",
+};
+
+export const WORKFLOW_TRACKER_ELEMENTS = {
+  WORK_FLOW_ENABLE_DISABLE_BUTTON: "workflow_enable_disable_button",
+  WORKFLOW_RESET_BUTTON: "workflow_reset_button",
+  CREATE_TRANSITION_BUTTON: "workflow_create_transition_button",
+  DELETE_TRANSITION_BUTTON: "workflow_delete_transition_button",
+  ADD_NEW_WORK_ITEMS_TOGGLE_BUTTON: "workflow_add_new_work_items_toggle_button",
+};
+
+// Project Template Tracker Start
 export const PROJECT_TEMPLATE_TRACKER_EVENTS = {
   CREATE: "project_template_created",
   UPDATE: "project_template_updated",

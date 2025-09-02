@@ -40,8 +40,10 @@ import {
 } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
-// dashboards
 import { EZipDriverType } from "../types/importers/zip-importer";
+// automations
+import { AutomationsRootStore, IAutomationsRootStore } from "./automations/root.store";
+// dashboards
 import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
 import {
@@ -88,6 +90,7 @@ import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
 import { IProjectStore, ProjectStore } from "./projects/projects";
 // templates
+import { IRecurringWorkItemsRootStore, RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
 import { ITemplatesRootStore, TemplatesRootStore } from "./templates/store/root.store";
 // timeline
 import { ITimelineStore } from "./timeline";
@@ -141,6 +144,10 @@ export class RootStore extends CoreRootStore {
   applicationStore: IApplicationStore;
   // templates
   templatesRoot: ITemplatesRootStore;
+  // recurring work items
+  recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
+  // automations
+  automationsRoot: IAutomationsRootStore;
 
   constructor() {
     super();
@@ -192,6 +199,10 @@ export class RootStore extends CoreRootStore {
     this.applicationStore = new ApplicationStore(this);
     // templates
     this.templatesRoot = new TemplatesRootStore(this);
+    // recurring work items
+    this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
+    // automations
+    this.automationsRoot = new AutomationsRootStore(this);
   }
 
   resetOnSignOut() {
@@ -241,5 +252,9 @@ export class RootStore extends CoreRootStore {
     this.applicationStore = new ApplicationStore(this);
     // templates
     this.templatesRoot = new TemplatesRootStore(this);
+    // recurring work items
+    this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
+    // automations
+    this.automationsRoot = new AutomationsRootStore(this);
   }
 }

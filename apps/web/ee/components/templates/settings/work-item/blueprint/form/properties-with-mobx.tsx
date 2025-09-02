@@ -3,7 +3,7 @@ import { FieldValues, useFormContext } from "react-hook-form";
 // plane imports
 import { EWorkItemTypeEntity } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // plane web imports
 import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
 import { DefaultWorkItemBlueprintProperties } from "@/plane-web/components/templates/settings/work-item/blueprint/form/default-properties";
@@ -18,7 +18,7 @@ import { TWorkItemBlueprintPropertiesWithMobxProps } from "./common";
  */
 export const WorkItemBlueprintPropertiesWithMobx = observer(
   <T extends FieldValues>(props: TWorkItemBlueprintPropertiesWithMobxProps<T>) => {
-    const { fieldPaths, projectId } = props;
+    const { fieldPaths, projectId, shouldLoadDefaultValues = false } = props;
     // form state
     const { watch } = useFormContext<T>();
     // store hooks
@@ -41,6 +41,7 @@ export const WorkItemBlueprintPropertiesWithMobx = observer(
               issueId={undefined}
               issueTypeId={watch(fieldPaths.issueTypeId)}
               projectId={projectId}
+              shouldLoadDefaultValues={shouldLoadDefaultValues}
             />
           </div>
         )}

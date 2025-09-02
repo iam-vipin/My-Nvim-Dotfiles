@@ -8,13 +8,15 @@ import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/consta
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useWorkspace, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUserPermissions } from "@/hooks/store/user";
 // helpers
 // plane web components
-import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header";
+import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header/search-teamspaces";
 
 export const TeamspaceListItemHeader = observer(() => {
   const { workspaceSlug } = useParams();

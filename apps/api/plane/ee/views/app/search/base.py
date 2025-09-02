@@ -3,6 +3,7 @@
 # Third-party imports
 from django.conf import settings
 from opensearchpy.exceptions import ConnectionError, NotFoundError, RequestError
+from opensearchpy.helpers.query import Q
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -191,11 +192,21 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         return helper
 
     def filter_pages(self, query, slug):
-        # permission filters
-        filters = [
-            {"workspace_slug": slug},
-            {"active_member_user_ids": self.request.user.id},
-        ]
+        # Build custom filter Q object for page access control
+        # Base filters (workspace and not deleted)
+        base_filter = Q("term", workspace_slug=slug)
+
+        # Access control OR filter - simplified approach:
+        # (access = 0 AND user in active_member_user_ids) OR (owned_by_id = user)
+        # This handles both public pages accessible to workspace members AND any page owned by user
+        access_filter = (
+            Q("term", access=0)
+            & Q("term", active_member_user_ids=str(self.request.user.id))
+        ) | Q("term", owned_by_id=str(self.request.user.id))
+
+        # Combine base filters with access control
+        custom_filter = base_filter & access_filter
+
         # Ensure all fields required by PageSearchSerializer are included
         fields_to_retrieve = [
             "name",
@@ -204,12 +215,13 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             "project_identifiers",
             "logo_props",
             "workspace_slug",
+            "is_global",
         ]
         boosts = {"name": 2.0, "description": 1.0}
 
         helper = OpenSearchHelper(
             document_cls=PageDocument,
-            filters=filters,
+            custom_filter_q=custom_filter,  # Use custom Q object for complex logic
             query=query,
             search_fields=["name", "description"],
             source_fields=fields_to_retrieve,
@@ -292,12 +304,16 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         fields_to_retrieve = [
             "id",
-            "comment",
             "project_identifier",
             "project_id",
             "workspace_slug",
             "actor_id",
             "issue_id",
+            "issue_sequence_id",
+            "issue_type_id",
+            "issue_name",
+            # Keep comment field for fallback
+            "comment",
         ]
 
         result_key = "work_item_comment"
@@ -315,6 +331,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             result_key=result_key,
             serializer_class=IssueCommentSearchSerializer,
         )
+
+        # Add highlighting directly to the search object
+        if query:
+            search = helper.to_search()
+            search = search.highlight(
+                "comment",
+                fragment_size=100,
+                number_of_fragments=2,
+                pre_tags=["<mark>"],
+                post_tags=["</mark>"],
+            )
+            # Replace the helper's search object with our highlighted version
+            helper.search = search
 
         return helper
 

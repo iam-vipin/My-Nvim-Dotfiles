@@ -1,10 +1,14 @@
 "use client";
 
 import { observer } from "mobx-react";
+// plane imports
 import { cn } from "@plane/utils";
-import { PageHead } from "@/components/core";
-import { useUser } from "@/hooks/store";
-import { NewConversation } from "@/plane-web/components/pi-chat/conversation";
+// components
+import { PageHead } from "@/components/core/page-title";
+// hooks
+import { useUser } from "@/hooks/store/user/user-user";
+// plane web imports
+import { NewConversation } from "@/plane-web/components/pi-chat/conversation/new-converstaion";
 import { InputBox } from "@/plane-web/components/pi-chat/input";
 
 const NewChatPage = observer(() => {

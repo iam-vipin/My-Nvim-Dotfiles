@@ -7,7 +7,8 @@
     "upgrade_plan": "Actualizare plan",
     "plane_pro": "Plane Pro",
     "business": "Business",
-    "customers": "Clienți"
+    "customers": "Clienți",
+    "recurring_work_items": "Elemente de lucru repetitive"
   },
   "workspace_dashboards": "Dashboarduri",
   "pi_chat": "Pi Chat",
@@ -393,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Prezentare generală",
     "label": "Inițiative",
     "placeholder": "{count, plural, one{# inițiativă} other{# inițiative}}",
     "add_initiative": "Adaugă Inițiativă",
@@ -440,6 +442,19 @@
         "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
         "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
         "action": "Șterge filtrele"
+      }
+    },
+    "scope": {
+      "view_scope": "Vezi domeniu",
+      "breakdown": "Descompune domeniu",
+      "add_scope": "Adaugă domeniu",
+      "label": "Domeniu",
+      "empty_state": {
+        "title": "Nu a fost adăugat încă niciun domeniu la această inițiativă",
+        "description": "Conectează proiecte și epice la inițiativă pentru a începe.",
+        "primary_button": {
+          "text": "Adaugă domeniu"
+        }
       }
     }
   },
@@ -667,6 +682,11 @@
         "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune ({size} MB)",
         "uploading": "Încarcă...",
         "upload_and_save": "Încarcă și salvează"
+      },
+      "plane-intelligence": {
+        "title": "Plane Intelligence",
+        "heading": "Plane Intelligence",
+        "description": "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe."
       }
     }
   },
@@ -893,7 +913,7 @@
         },
         "can_disable_warning": "Doriți să dezactivați tipul în schimb?"
       },
-      "cant_delete_linked_message": "Nu se poate șterge acest tip de element de lucru deoarece este legat de elemente de lucru existente."
+      "cant_delete_default_message": "Nu se poate șterge acest tip de element de lucru deoarece este setat ca tip implicit pentru acest proiect."
     },
     "create": {
       "title": "Creează tip de element de lucru",
@@ -1215,6 +1235,7 @@
     "invalid_app_installation_id": "A apărut o eroare la instalarea aplicației"
   },
   "import_status": {
+    "queued": "În coadă",
     "created": "Creat",
     "initiated": "Inițiat",
     "pulling": "Se extrag",
@@ -1380,7 +1401,8 @@
       "title_map_priorities": "Mapează Prioritățile",
       "description_map_priorities": "Te rugăm să selectezi prioritățile ClickUp pe care dorești să le mapezi la prioritățile proiectului Plane.",
       "title_summary": "Sumar",
-      "description_summary": "Iată un sumar al datelor care vor fi migrate de la ClickUp la Plane."
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la ClickUp la Plane.",
+      "pull_additional_data_title": "Importă comentarii și atașamente"
     }
   },
 
@@ -2479,5 +2501,84 @@
       }
     },
     "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}"
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elemente de lucru recurente",
+      "description": "Setează munca recurentă o singură dată și noi vom face munca. Vei vedea totul aici când este momentul.",
+      "new_recurring_work_item": "Element de lucru recurent nou",
+      "update_recurring_work_item": "Actualizează elementul de lucru recurent",
+      "form": {
+        "interval": {
+          "title": "Programare",
+          "start_date": {
+            "validation": {
+              "required": "Data de început este obligatorie"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Tipul de interval este obligatoriu"
+            }
+          }
+        },
+        "button": {
+          "create": "Creează element de lucru recurent",
+          "update": "Actualizează elementul de lucru recurent"
+        }
+      },
+      "create_button": {
+        "label": "Creează element de lucru recurent",
+        "no_permission": "Contactează administratorul proiectului pentru a crea elemente de lucru recurente"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Munca ta, pe pilot automat",
+        "description": "Setează o dată. Îl readucem când este necesar. Fă upgrade la Business pentru ca munca recurentă să fie fără efort."
+      },
+      "no_templates": {
+        "button": "Creează primul tău element de lucru recurent"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Element de lucru recurent creat",
+          "message": "{name}, elementul de lucru recurent, este acum disponibil în spațiul tău de lucru."
+        },
+        "error": {
+          "title": "Nu am putut crea acest element de lucru recurent de data aceasta.",
+          "message": "Încearcă să salvezi din nou detaliile sau copiază-le într-un nou element de lucru recurent, de preferat într-un alt tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Element de lucru recurent modificat",
+          "message": "{name}, elementul de lucru recurent, a fost modificat."
+        },
+        "error": {
+          "title": "Nu am putut salva modificările la acest element de lucru recurent.",
+          "message": "Încearcă să salvezi din nou detaliile sau revino la acest element de lucru recurent mai târziu. Dacă problema persistă, contactează-ne."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Element de lucru recurent șters",
+          "message": "{name}, elementul de lucru recurent, a fost șters din spațiul tău de lucru."
+        },
+        "error": {
+          "title": "Nu am putut șterge acest element de lucru recurent.",
+          "message": "Încearcă să-l ștergi din nou sau revino mai târziu. Dacă nu poți să-l ștergi nici atunci, contactează-ne."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Șterge elementul de lucru recurent",
+      "description": {
+        "prefix": "Ești sigur că vrei să ștergi elementul de lucru recurent-",
+        "suffix": "? Toate datele legate de acest element de lucru recurent vor fi eliminate permanent. Această acțiune nu poate fi anulată."
+      }
+    }
   }
 }

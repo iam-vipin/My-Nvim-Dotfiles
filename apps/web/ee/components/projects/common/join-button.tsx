@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { JoinProjectModal } from "@/components/project";
+import { JoinProjectModal } from "@/components/project/join-project-modal";
 // plane web imports
 import { TProject } from "@/plane-web/types/projects";
 
@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-const JoinButton: React.FC<Props> = (props) => {
+export const JoinButton: React.FC<Props> = (props) => {
   const { project, className } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -79,5 +79,3 @@ const JoinButton: React.FC<Props> = (props) => {
     </>
   );
 };
-
-export default JoinButton;

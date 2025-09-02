@@ -7,11 +7,11 @@ import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
-import { ImagePickerPopover } from "@/components/core";
-// helpers
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { TProject } from "@/plane-web/types";
 
@@ -87,6 +87,10 @@ export const HeroSection = observer((props: THeroSection) => {
 
   const handleCoverChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
+    if (payload.cover_image_url?.startsWith("http")) {
+      payload.cover_image = payload.cover_image_url;
+      payload.cover_image_asset = null;
+    }
     return updateProject(workspaceSlug.toString(), project.id, payload);
   };
 
@@ -94,7 +98,7 @@ export const HeroSection = observer((props: THeroSection) => {
     <div>
       <div className="relative h-[118px] w-full ">
         <img
-          src={getFileURL(project.cover_image ?? DEFAULT_COVER_IMAGE)}
+          src={getFileURL(project.cover_image_url ?? DEFAULT_COVER_IMAGE)}
           alt={project.name}
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
@@ -104,10 +108,10 @@ export const HeroSection = observer((props: THeroSection) => {
               label="Change cover"
               control={control}
               onChange={(data) => {
-                if (data === project.cover_image) return;
-                handleCoverChange({ cover_image: data });
+                if (data === project.cover_image_url) return;
+                handleCoverChange({ cover_image_url: data });
               }}
-              value={project.cover_image ?? DEFAULT_COVER_IMAGE}
+              value={project.cover_image_url ?? DEFAULT_COVER_IMAGE}
               disabled={!isAdmin}
               projectId={project.id}
             />

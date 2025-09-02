@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -79,7 +79,7 @@ const PageDetailsPage = observer(() => {
       },
       fetchDescriptionBinary: async () => {
         if (!workspaceSlug || !id) return;
-        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), id);
+        return await workspacePageService.fetchDescriptionBinary({ workspaceSlug: workspaceSlug.toString() }, id);
       },
       fetchEntity: fetchEntityCallback,
       fetchVersionDetails: async (pageId, versionId) => {

@@ -4,15 +4,19 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { PROJECT_GROUPING_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { PageHead } from "@/components/core/page-title";
 // store hooks
-import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { SettingsHeading } from "@/components/settings/heading";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import {
@@ -44,13 +48,24 @@ const WorklogsPage = observer(() => {
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   const toggleProjectGroupingFeature = async () => {
+    const willEnableProjectGrouping = !isProjectGroupingEnabled;
     try {
       const payload = {
-        [EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED]: !isProjectGroupingEnabled,
+        [EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED]: willEnableProjectGrouping,
       };
       await updateWorkspaceFeature(workspaceSlug.toString(), payload);
+      captureSuccess({
+        eventName: willEnableProjectGrouping
+          ? PROJECT_GROUPING_TRACKER_EVENTS.ENABLE
+          : PROJECT_GROUPING_TRACKER_EVENTS.DISABLE,
+      });
     } catch (error) {
       console.error(error);
+      captureError({
+        eventName: willEnableProjectGrouping
+          ? PROJECT_GROUPING_TRACKER_EVENTS.DISABLE
+          : PROJECT_GROUPING_TRACKER_EVENTS.ENABLE,
+      });
     }
   };
 

@@ -70,6 +70,8 @@ class FeatureFlagsTypesEnum(Enum):
     WORKSPACE_PAGES = "WORKSPACE_PAGES"
     SHARED_PAGES = "SHARED_PAGES"
     EDITOR_ATTACHMENTS = "EDITOR_ATTACHMENTS"
+    EDITOR_MATHEMATICS = "EDITOR_MATHEMATICS"
+    EDITOR_EXTERNAL_EMBEDS = "EDITOR_EXTERNAL_EMBEDS"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -100,10 +102,7 @@ class FeatureFlagsTypesEnum(Enum):
     # PI
     PI_CHAT = "PI_CHAT"
     PI_DEDUPE = "PI_DEDUPE"
-
-    # Mobile specific flags
-    PI_CHAT_MOBILE = "PI_CHAT_MOBILE"
-    PI_DEDUPE_MOBILE = "PI_DEDUPE_MOBILE"
+    PI_CONVERSE = "PI_CONVERSE"
 
     # advanced search
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
@@ -176,6 +175,8 @@ class FeatureFlagType:
     workspace_pages: bool
     shared_pages: bool
     editor_attachments: bool
+    editor_mathematics: bool
+    editor_external_embeds: bool
 
     # Silo importers and integrations
     silo: bool
@@ -206,10 +207,7 @@ class FeatureFlagType:
     # PI
     pi_chat: bool
     pi_dedupe: bool
-
-    # Mobile specific flags
-    pi_chat_mobile: bool
-    pi_dedupe_mobile: bool
+    pi_converse: bool
 
     # advanced search
     advanced_search: bool

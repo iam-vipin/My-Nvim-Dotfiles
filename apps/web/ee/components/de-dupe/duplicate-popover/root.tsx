@@ -4,24 +4,24 @@ import React, { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
-// helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
 import { TDeDupeIssue } from "@plane/types";
-// ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
-import { MultipleSelectGroup } from "@/components/core";
-import { TIssueOperations } from "@/components/issues";
-// helpers
 import { cn } from "@plane/utils";
+// components
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
-import { useIssueDetail, useMultipleSelectStore } from "@/hooks/store";
-// plane-web
-import { DeDupeIssueButtonLabel } from "@/plane-web/components/de-dupe";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
+// plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { DE_DUPE_SELECT_GROUP } from "@/plane-web/constants/de-dupe";
-// local-components
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
+import { DeDupeIssueButtonLabel } from "../issue-block/button-label";
 import { DeDupeIssueBlockRoot } from "./block-root";
 
 type TDeDupeIssuePopoverRootProps = {
@@ -55,6 +55,7 @@ export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer
   // store
   const { isArchiveIssueModalOpen, isDeleteIssueModalOpen, createRelation } = useIssueDetail();
   const { selectedEntityIds, clearSelection } = useMultipleSelectStore();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-end",
@@ -96,7 +97,8 @@ export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer
 
   const deDupeIds = issues.map((issue) => issue.id);
 
-  if (!workspaceSlug || !projectId || !rootIssueId) return <></>;
+  if (!workspaceSlug || !projectId || !rootIssueId || !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED))
+    return <></>;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_DEDUPE" fallback={<></>}>
       <Popover as="div" className={cn("relative")}>

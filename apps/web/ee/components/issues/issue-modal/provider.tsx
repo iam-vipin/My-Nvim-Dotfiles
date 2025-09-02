@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { mutate } from "swr";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
@@ -19,7 +19,7 @@ import {
   getPropertiesDefaultValues,
 } from "@plane/utils";
 // ce imports
-import { TIssueModalProviderProps } from "@/ce/components/issues";
+import type { TIssueModalProviderProps } from "@/ce/components/issues/issue-modal/provider";
 // components
 import {
   IssueModalContext,
@@ -29,7 +29,7 @@ import {
   THandleProjectEntitiesFetchProps,
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
-} from "@/components/issues";
+} from "@/components/issues/issue-modal/context";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";

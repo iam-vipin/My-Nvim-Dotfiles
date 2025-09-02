@@ -1,4 +1,5 @@
 # Python imports
+import re
 from typing import Optional
 
 # Third Party Imports
@@ -212,6 +213,7 @@ def get_intake_work_items(
     filters: Optional[JSON] = {},
     orderBy: Optional[str] = "-created_at",
     is_snoozed_work_items_required: Optional[bool] = False,
+    search: Optional[str] = None,
 ):
     base_query = intake_work_item_base_query(
         workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
@@ -225,6 +227,18 @@ def get_intake_work_items(
             )
             | Q(snoozed_till__isnull=True)
         )
+
+    if search:
+        q = Q()
+        fields = ["issue__name", "issue__sequence_id", "issue__project__identifier"]
+        for field in fields:
+            if field == "issue__sequence_id":
+                sequences = re.findall(r"\b\d+\b", search)
+                for sequence_id in sequences:
+                    q |= Q(**{"issue__sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": search})
+        base_query = base_query.filter(q)
 
     intakes = (
         base_query.filter(**filters)
@@ -244,6 +258,7 @@ def get_intake_work_items_async(
     filters: Optional[JSON] = {},
     orderBy: Optional[str] = "-created_at",
     is_snoozed_work_items_required: Optional[bool] = False,
+    search: Optional[str] = None,
 ):
     return get_intake_work_items(
         workspace_slug=workspace_slug,
@@ -252,6 +267,7 @@ def get_intake_work_items_async(
         filters=filters,
         orderBy=orderBy,
         is_snoozed_work_items_required=is_snoozed_work_items_required,
+        search=search,
     )
 
 
@@ -259,7 +275,8 @@ def get_intake_work_items_async(
 def get_intake_work_item(
     workspace_slug: str,
     project_id: str,
-    intake_work_item_id: str,
+    intake_work_item_id: Optional[str] = None,
+    work_item_id: Optional[str] = None,
     user_id: Optional[str] = None,
 ):
     base_query = intake_work_item_base_query(
@@ -267,7 +284,10 @@ def get_intake_work_item(
     )
 
     try:
-        return base_query.get(id=intake_work_item_id)
+        if intake_work_item_id:
+            return base_query.get(id=intake_work_item_id)
+        elif work_item_id:
+            return base_query.get(issue_id=work_item_id)
     except IntakeIssue.DoesNotExist:
         message = "Intake work item not found"
         error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
@@ -278,12 +298,19 @@ def get_intake_work_item(
 def get_intake_work_item_async(
     workspace_slug: str,
     project_id: str,
-    intake_work_item_id: str,
+    intake_work_item_id: Optional[str] = None,
+    work_item_id: Optional[str] = None,
     user_id: Optional[str] = None,
 ):
+    if intake_work_item_id is None and work_item_id is None:
+        message = "Intake work item id or work item id is required"
+        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        raise GraphQLError(message, extensions=error_extensions)
+
     return get_intake_work_item(
         workspace_slug=workspace_slug,
         project_id=project_id,
         intake_work_item_id=intake_work_item_id,
+        work_item_id=work_item_id,
         user_id=user_id,
     )

@@ -2,12 +2,12 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// types
-import { TDeDupeIssue } from "@plane/types";
-// ui
+// plane imports
+import type { TDeDupeIssue } from "@plane/types";
 import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // hooks
-import { useMember, useProjectState } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TDeDupeIssueBlockContentProps = { issue: TDeDupeIssue };
 

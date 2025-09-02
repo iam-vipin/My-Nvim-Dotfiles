@@ -31,7 +31,7 @@ export abstract class BasePageService extends APIService {
   /**
    * Gets the base URL path for API requests based on the context (workspace, project, teamspace)
    */
-  protected abstract getBasePath(params: Record<string, any>): string;
+  protected abstract getBasePath(_params: Record<string, any>): string;
 
   /**
    * Gets the common headers used for requests
@@ -80,8 +80,7 @@ export abstract class BasePageService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        console.log("error", error);
-        // throw error?.response?.data;
+        throw error;
       });
   }
 
@@ -133,7 +132,7 @@ export abstract class BasePageService extends APIService {
   /**
    * Updates the description of a page
    */
-  async updateDescription<TConfig extends Record<string, any>>(params: IUpdateDescriptionParams<TConfig>) {
+  async updateDescription<TConfig extends Record<string, unknown>>(params: IUpdateDescriptionParams<TConfig>) {
     const { pageId, data, cookie, config } = params;
 
     return this.patch(`${this.getBasePath({ pageId, cookie, config })}/description/`, data, {

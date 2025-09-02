@@ -19,8 +19,10 @@ import {
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomersIcon, InitiativeIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
-import { SettingsSidebar } from "@/components/settings";
+import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
+// components
+import { SettingsSidebar } from "@/components/settings/sidebar";
+// hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
@@ -39,6 +41,7 @@ const ICONS = {
   integrations: Cable,
   project_states: ProjectStatesIcon,
   applications: ToyBrick,
+  "plane-intelligence": PiIcon,
 };
 
 export const WorkspaceActionIcons = ({

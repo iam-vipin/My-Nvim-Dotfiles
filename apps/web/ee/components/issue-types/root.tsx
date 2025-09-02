@@ -3,13 +3,17 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane web components
-import { SettingsHeading } from "@/components/settings";
-import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
-// plane web hooks
+// plane web imports
+import { SettingsHeading } from "@/components/settings/heading";
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+// local imports
+import { CreateOrUpdateIssueTypeModal } from "./create-update/modal";
+import { IssueTypeEmptyState } from "./empty-state";
 import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
+import { IssueTypesList } from "./issue-types-list";
 
 export const IssueTypesRoot = observer(() => {
   // router
@@ -62,7 +66,12 @@ export const IssueTypesRoot = observer(() => {
         showButton={isWorkItemTypeEnabled}
         button={{
           label: t("work_item_types.create.button"),
-          onClick: () => setIsModalOpen(true),
+          onClick: () => {
+            captureClick({
+              elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_CREATE_WORK_ITEM_TYPE_BUTTON,
+            });
+            setIsModalOpen(true);
+          },
         }}
       />
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">

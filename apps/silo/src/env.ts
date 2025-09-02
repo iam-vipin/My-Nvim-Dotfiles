@@ -17,6 +17,7 @@ const envSchema = z.object({
   PG_SCHEMA: z.string().optional(),
   MAX_STORE_CONNECTION_ATTEMPTS: z.string().default("20"),
   MAX_DB_CONNECTION_ATTEMPTS: z.string().default("5"),
+  IMPORTERS_QUEUE_NAME: z.string().default("celery"),
   APP_BASE_URL: z
     .string()
     .default("")
@@ -25,6 +26,10 @@ const envSchema = z.object({
     .string()
     .default("")
     // Remove the slash at the end of the URL
+    .transform((str) => str.replace(/\/$/, "")),
+  SPACE_BASE_URL: z
+    .string()
+    .default("https://sites.plane.so")
     .transform((str) => str.replace(/\/$/, "")),
   SILO_API_BASE_URL: z
     .string()
@@ -63,6 +68,7 @@ const envSchema = z.object({
   // Slack Env Variables
   SLACK_CLIENT_ID: z.string().optional(),
   SLACK_CLIENT_SECRET: z.string().optional(),
+  SLACK_SIGNING_SECRET: z.string().optional(),
   // Sentry Env Variables
   SENTRY_BASE_URL: z
     .string()

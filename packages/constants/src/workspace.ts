@@ -3,17 +3,9 @@ import {
   EXTENDED_WORKSPACE_RESULT_ENTITIES,
   EXTENDED_WORKSPACE_SETTINGS,
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS,
-  EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS,
 } from "./workspace-extended";
 
-export const ORGANIZATION_SIZE = [
-  "Just myself", // TODO: translate
-  "2-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "500+",
-];
+export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
 export const RESTRICTED_URLS = [
   "404",
@@ -269,46 +261,45 @@ export interface IWorkspaceSidebarNavigationItem {
   labelTranslationKey: string;
   href: string;
   access: EUserWorkspaceRoles[];
+  highlight: (pathname: string, url: string) => boolean;
 }
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
-  "your-work": {
-    key: "your_work",
-    labelTranslationKey: "your_work",
-    href: `/profile/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-  },
   views: {
     key: "views",
     labelTranslationKey: "views",
     href: `/workspace-views/all-issues/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   analytics: {
     key: "analytics",
     labelTranslationKey: "analytics",
     href: `/analytics/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   drafts: {
     key: "drafts",
     labelTranslationKey: "drafts",
     href: `/drafts/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   archives: {
     key: "archives",
     labelTranslationKey: "archives",
     href: `/projects/archives/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
+
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["dashboards"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["active-cycles"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["your-work"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["initiatives"],
@@ -322,28 +313,39 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     labelTranslationKey: "home.title",
     href: `/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname === url,
   },
   inbox: {
     key: "inbox",
     labelTranslationKey: "notification.label",
     href: `/notifications/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  "your-work": {
+    key: "your_work",
+    labelTranslationKey: "your_work",
+    href: `/profile/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   projects: {
     key: "projects",
     labelTranslationKey: "projects",
     href: `/projects/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+    highlight: (pathname: string, url: string) => pathname === url,
   },
 };
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"]!,
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["your-work"]!,
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
-  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"]!,
 ];
 
 export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
@@ -359,3 +361,11 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
   },
 };
+
+export const USE_CASES = [
+  "Plan and track product roadmaps",
+  "Manage engineering sprints",
+  "Coordinate cross-functional projects",
+  "Replace our current tool",
+  "Just exploring",
+];

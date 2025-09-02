@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/utils";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { Header } from "./header";
+import { Header } from "./header/header";
 import { RightSidePanel } from "./sidebar/right-side-panel";
 
 type TProps = {
@@ -34,24 +34,23 @@ export const PiChatLayout = observer((props: TProps) => {
   const pathName = usePathname();
   // derived states
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
 
   useSWR(
     workspaceSlug ? `PI_USER_THREADS_${workspaceSlug}_${isProjectLevel}` : null,
-    workspaceSlug
-      ? () => fetchUserThreads(getWorkspaceBySlug(workspaceSlug as string)?.id || "", isProjectLevel)
-      : null,
+    workspaceSlug ? () => fetchUserThreads(workspaceId, isProjectLevel) : null,
     {
-      revalidateOnFocus: true,
-      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
       errorRetryCount: 0,
     }
   );
   useSWR(
     activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
-    activeChatId ? () => fetchChatById(activeChatId) : null,
+    activeChatId ? () => fetchChatById(activeChatId, workspaceId) : null,
     {
-      revalidateOnFocus: true,
-      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
       errorRetryCount: 0,
     }
   );
@@ -66,7 +65,7 @@ export const PiChatLayout = observer((props: TProps) => {
 
   if (!isOpen) return <></>;
   return (
-    <div className={cn("md:flex h-full rounded-lg bg-custom-background-100", {})}>
+    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-100", {})}>
       <div className="flex flex-col flex-1 h-full">
         {/* Header */}
         <Header

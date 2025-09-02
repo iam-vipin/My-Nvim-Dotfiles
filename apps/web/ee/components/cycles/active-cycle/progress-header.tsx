@@ -2,14 +2,14 @@
 
 import React, { FC, useRef } from "react";
 import { format, startOfToday } from "date-fns";
-// types
-// icons
+// plane imports
 import { ICycle, TCycleProgress } from "@plane/types";
 import { BetaBadge, ControlLink, Loader, Tooltip } from "@plane/ui";
-import { CycleListItemAction } from "@/components/cycles";
-// helpers
 import { findHowManyDaysLeft } from "@plane/utils";
+import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-action";
+// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// local imports
 import ProgressDonut from "./progress-donut";
 
 type Props = {
@@ -29,7 +29,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
   const progressToday = progress && progress.find((d) => d.date === format(startOfToday(), "yyyy-MM-dd"));
   // handlers
   const handleControlLinkClick = () => {
-    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, {}, { showProgressBar: false });
+    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, { showProgress: false });
   };
 
   const handleEventPropagation = (e: React.MouseEvent) => {

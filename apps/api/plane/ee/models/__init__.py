@@ -99,9 +99,25 @@ from .template import (
     TemplateCategory,
 )
 
-from .page import PageUser
+from .page import PageUser, PageComment, PageCommentReaction
 
 from .recurring import (
     RecurringWorkitemTask,
     RecurringWorkitemTaskLog,
+    RecurringWorkItemTaskActivity,
+)
+
+from .automation import (
+    Automation,
+    AutomationVersion,
+    AutomationNode,
+    AutomationEdge,
+    AutomationRun,
+    NodeExecution,
+    AutomationStatusChoices,
+    NodeTypeChoices,
+    RunStatusChoices,
+    AutomationScopeChoices,
+    AutomationActivity,
+    ProcessedAutomationEvent,
 )

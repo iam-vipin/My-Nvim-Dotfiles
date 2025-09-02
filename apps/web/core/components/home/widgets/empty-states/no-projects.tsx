@@ -12,7 +12,10 @@ import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
 export const NoProjectsEmptyState = observer(() => {
@@ -99,7 +102,7 @@ export const NoProjectsEmptyState = observer(() => {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 capitalize text-white text-sm">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>

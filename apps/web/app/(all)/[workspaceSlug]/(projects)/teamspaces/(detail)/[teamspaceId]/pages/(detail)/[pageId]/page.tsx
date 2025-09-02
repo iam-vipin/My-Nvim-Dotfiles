@@ -12,15 +12,16 @@ import { getButtonStyling } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { IssuePeekOverview } from "@/components/issues";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { EpicPeekOverview } from "@/plane-web/components/epics";
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";

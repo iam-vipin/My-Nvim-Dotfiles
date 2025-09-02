@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
-import { TPageEmbedConfig } from "@plane/editor";
-import { TPage } from "@plane/types";
+import type { TPageEmbedConfig } from "@plane/editor";
+import type { TPage } from "@plane/types";
 import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
@@ -85,7 +85,9 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     const getPage = async () => {
       if (storeType === EPageStoreType.WORKSPACE && isNestedPagesEnabled(workspaceSlug?.toString() ?? "")) {
         // @ts-expect-error - fix this
-        await fetchPageDetails(embedPageId, false);
+        await fetchPageDetails(embedPageId, {
+          shouldFetchSubPages: false,
+        });
       }
     };
     if (!storePageData) {

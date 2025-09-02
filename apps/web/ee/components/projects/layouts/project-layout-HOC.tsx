@@ -6,17 +6,21 @@ import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constant
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-import { GanttLayoutLoader, KanbanLayoutLoader, ListLayoutLoader, ProjectsLoader } from "@/components/ui";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
+import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
+import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useUserPermissions, useProject } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useUserPermissions } from "@/hooks/store/user"
+import { useProject } from "@/hooks/store/use-project";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
-// assets
-import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 
 const ActiveLoader = (props: { layout: EProjectLayouts }) => {
   const { layout } = props;
@@ -35,7 +39,7 @@ const ActiveLoader = (props: { layout: EProjectLayouts }) => {
 };
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   layout: EProjectLayouts;
 }
 
@@ -54,6 +58,8 @@ export const ProjectLayoutHOC = observer((props: Props) => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+
   const hasProjectMemberPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -89,7 +95,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image src={AllFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
+          <Image src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
           <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}

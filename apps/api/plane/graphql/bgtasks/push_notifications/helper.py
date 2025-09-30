@@ -52,8 +52,17 @@ def notification_count(
 
         # filter by workspace
         if workspace_slug:
-            workspace = Workspace.objects.get(slug=workspace_slug)
-            notification_query = notification_query.filter(workspace=workspace)
+            workspace_id = (
+                Workspace.objects.filter(slug=workspace_slug)
+                .values_list("id", flat=True)
+                .first()
+            )
+            if workspace_id:
+                notification_query = notification_query.filter(
+                    workspace_id=workspace_id
+                )
+            else:
+                return 0
 
         # filter by mentioned
         if combined:
@@ -69,8 +78,6 @@ def notification_count(
         total_notification_count = notification_query.count()
 
         return total_notification_count
-    except Workspace.DoesNotExist:
-        return 0
     except Exception as e:
         print(f"Error fetching unread notification count: {e}")
         return 0

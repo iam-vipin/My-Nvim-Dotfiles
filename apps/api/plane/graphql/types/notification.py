@@ -2,22 +2,58 @@
 from datetime import datetime
 from typing import Optional
 
-# Strawberry imports
+# Third-Party Imports
 import strawberry
 import strawberry_django
-from asgiref.sync import sync_to_async
 
 # Django imports
+from asgiref.sync import sync_to_async
 from django.db.models import Q
+from django.core.cache import cache
+
+# Strawberry imports
 from strawberry.scalars import JSON
 
+# Module imports
 from plane.db.models import Issue, Notification
 from plane.graphql.types.project import ProjectType
 from plane.graphql.types.user import UserType
 from plane.graphql.utils.issue_activity import issue_activity_comment_string
-
-# Module imports
 from plane.graphql.utils.timezone import user_timezone_converter
+
+
+_NO_VALUE = object()
+
+
+@sync_to_async
+def cache_notification_intake_id(issue_id: str) -> Optional[str]:
+    key = f"notification_intake_{issue_id}"
+    cache_key = cache.make_key(key)
+
+    cache_value = cache.get(cache_key, _NO_VALUE)
+
+    if cache_value is not _NO_VALUE:
+        return cache_value
+
+    issue = Issue.objects.filter(pk=issue_id, issue_intake__status__in=[0, 2, -2]).first()
+    intake_id = str(issue.issue_intake.id) if issue and issue.issue_intake else None
+    cache.set(cache_key, intake_id, timeout=60 * 5)
+    return intake_id
+
+
+@sync_to_async
+def cache_notification_epic_id(issue_id: str) -> Optional[bool]:
+    key = f"notification_epic_{issue_id}"
+    cache_key = cache.make_key(key)
+
+    cache_value = cache.get(cache_key, _NO_VALUE)
+
+    if cache_value is not _NO_VALUE:
+        return cache_value
+
+    issue = Issue.objects.filter(pk=issue_id).filter(Q(type__isnull=False) & Q(type__is_epic=True)).exists()
+    cache.set(cache_key, issue, timeout=60 * 5)
+    return issue
 
 
 @strawberry.type
@@ -89,32 +125,16 @@ class NotificationType:
 
                 if field == "comment":
                     # handling the old value
-                    if (
-                        old_value is not None
-                        and old_value != ""
-                        and old_value != "None"
-                    ):
-                        stripped_old_value = issue_activity_comment_string(
-                            old_value
-                        ).get("content")
+                    if old_value is not None and old_value != "" and old_value != "None":
+                        stripped_old_value = issue_activity_comment_string(old_value).get("content")
                         if stripped_old_value is not None:
-                            self.data["issue_activity"]["old_value"] = (
-                                stripped_old_value
-                            )
+                            self.data["issue_activity"]["old_value"] = stripped_old_value
 
                     # handling the new value
-                    if (
-                        new_value is not None
-                        and new_value != ""
-                        and new_value != "None"
-                    ):
-                        stripped_new_value = issue_activity_comment_string(
-                            new_value
-                        ).get("content")
+                    if new_value is not None and new_value != "" and new_value != "None":
+                        stripped_new_value = issue_activity_comment_string(new_value).get("content")
                         if stripped_new_value is not None:
-                            self.data["issue_activity"]["new_value"] = (
-                                stripped_new_value
-                            )
+                            self.data["issue_activity"]["new_value"] = stripped_new_value
 
             return self.data
 
@@ -122,63 +142,35 @@ class NotificationType:
 
     @strawberry.field
     async def is_intake_issue(self) -> bool:
-        workspace_slug = await sync_to_async(lambda: self.workspace.slug)()
         work_item_id = self.entity_identifier
-
-        if not workspace_slug or not work_item_id:
+        if not work_item_id:
             return False
 
-        is_intake_issue = await sync_to_async(list)(
-            Issue.objects.filter(
-                workspace__slug=workspace_slug,
-                pk=work_item_id,
-                issue_intake__status__in=[0, 2, -2],
-            )
-        )
-
-        return bool(is_intake_issue)
+        intake_issue = await cache_notification_intake_id(work_item_id)
+        is_intake_issue = intake_issue is not None
+        return is_intake_issue
 
     @strawberry.field
     async def intake_id(self) -> Optional[str]:
-        workspace_slug = await sync_to_async(lambda: self.workspace.slug)()
         work_item_id = self.entity_identifier
-
-        if not workspace_slug or not work_item_id:
+        if not work_item_id:
             return None
 
-        intake_issue = await sync_to_async(list)(
-            Issue.objects.filter(
-                workspace__slug=workspace_slug,
-                pk=work_item_id,
-                issue_intake__status__in=[0, 2, -2],
-            ).values_list("issue_intake", flat=True)
-        )
-
-        if not intake_issue or len(intake_issue) == 0:
+        intake_issue = await cache_notification_intake_id(work_item_id)
+        if not intake_issue:
             return None
 
-        return intake_issue[0]
+        return str(intake_issue)
 
     @strawberry.field
     async def is_mentioned_notification(self) -> bool:
-        is_mentioned_notification = (
-            True if "mentioned" in self.sender.lower() else False
-        )
-
-        return is_mentioned_notification
+        return True if "mentioned" in self.sender.lower() else False
 
     @strawberry.field
     async def is_epic(self) -> bool:
-        workspace_slug = await sync_to_async(lambda: self.workspace.slug)()
         work_item_id = self.entity_identifier
-
-        if not work_item_id or not workspace_slug:
+        if not work_item_id:
             return False
 
-        is_epic_work_item = await sync_to_async(list)(
-            Issue.objects.filter(
-                pk=work_item_id, workspace__slug=workspace_slug
-            ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
-        )
-
-        return bool(is_epic_work_item)
+        is_epic_work_item = await cache_notification_epic_id(work_item_id)
+        return is_epic_work_item

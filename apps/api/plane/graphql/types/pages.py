@@ -47,7 +47,7 @@ class PageType:
     description_stripped: Optional[str]
     description_binary: Optional[str]
     workspace: strawberry.ID
-    project: strawberry.ID
+    project: Optional[strawberry.ID]
     owned_by: strawberry.ID
     access: int
     color: Optional[str]
@@ -71,9 +71,9 @@ class PageType:
     def workspace(self) -> int:
         return self.workspace_id
 
-    # @strawberry.field
-    def project(self) -> int:
-        return self.project_id
+    @strawberry.field
+    def project(self) -> Optional[strawberry.ID]:
+        return self.project_id if self.project_id else None
 
     @strawberry.field
     def owned_by(self) -> int:

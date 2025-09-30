@@ -243,6 +243,9 @@ class FeatureFlagQuery:
             pi_converse=feature_flags.get(
                 FeatureFlagsTypesEnum.PI_CONVERSE.value, False
             ),
+            pi_file_uploads=feature_flags.get(
+                FeatureFlagsTypesEnum.PI_FILE_UPLOADS.value, False
+            ),
             # advanced search
             advanced_search=feature_flags.get(
                 FeatureFlagsTypesEnum.ADVANCED_SEARCH.value, False

@@ -55,7 +55,6 @@ class TeamspaceMemberQuery:
 
             teamspace_members = await sync_to_async(list)(
                 TeamspaceMember.objects.filter(
-                    member_id=user_id,
                     workspace__slug=slug,
                     team_space__projects__project_id=project,
                 )

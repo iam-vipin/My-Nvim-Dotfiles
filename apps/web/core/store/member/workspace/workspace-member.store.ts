@@ -51,7 +51,7 @@ export interface IWorkspaceMemberStore {
     data: Partial<IWorkspaceMemberInvitation>
   ) => Promise<void>;
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
-  isUserSuspended: (userId: string) => boolean;
+  isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
 }
 export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // observables
@@ -130,6 +130,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
     members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(
       members,
@@ -325,8 +326,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
         );
       });
     });
-  isUserSuspended = computedFn((userId: string) => {
-    const workspaceSlug = this.routerStore.workspaceSlug;
+
+  isUserSuspended = computedFn((userId: string, workspaceSlug: string) => {
     if (!workspaceSlug) return false;
     const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
     return workspaceMember?.is_active === false;

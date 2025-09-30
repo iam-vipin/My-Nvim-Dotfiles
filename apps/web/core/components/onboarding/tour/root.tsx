@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
-import { Avatar, Button } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

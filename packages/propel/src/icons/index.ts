@@ -78,6 +78,7 @@ export * from "./ai-icon";
 export * from "./plane-icon";
 export * from "./wiki-icon";
 export * from "./brand";
+export * from "./suspended-user";
 export * from "./scope-icon";
 export * from "./chat-icon";
 export * from "./pi";

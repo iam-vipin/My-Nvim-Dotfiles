@@ -29,6 +29,12 @@ const createFilterInstance = (
     onExpressionChange: (expression) => {
       onExpressionChange(expression);
     },
+    options: {
+      visibility: {
+        autoSetVisibility: false,
+        isVisibleOnMount: true,
+      },
+    },
   });
 
 const InitiativesFilterRowContent = observer(
@@ -114,6 +120,9 @@ const InitiativesFilterRowContent = observer(
         filter={filterInstance}
         buttonConfig={{
           variant: "neutral-primary",
+          label: "Filters",
+          defaultOpen: false,
+          className: "bg-custom-background-100",
         }}
       />
     );

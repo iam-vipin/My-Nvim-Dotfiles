@@ -20,7 +20,7 @@ const TeamspaceProjectDetailPage = observer(() => {
 
   // derived values
   const teamspace = getTeamspaceById(teamspaceId.toString());
-  const pageTitle = teamspace?.name ? `${teamspace?.name} - Issues` : undefined;
+  const pageTitle = teamspace?.name ? `${teamspace?.name} - Work items` : undefined;
 
   return (
     <>

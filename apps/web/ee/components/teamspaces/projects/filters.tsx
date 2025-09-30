@@ -13,6 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -109,6 +110,7 @@ export const TeamspaceProjectWorkItemFilters = observer((props: Props) => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
+      <WorkItemFiltersToggle entityType={EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS} entityId={projectId} />
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={

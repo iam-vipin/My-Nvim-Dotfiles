@@ -22,7 +22,7 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/
 import { Logo } from "@/components/common/logo";
 import { LayoutDropDown } from "@/components/dropdowns/layout";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // plane web imports
 import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
 
@@ -247,12 +247,13 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                   initialWorkItemFilters={workItemFilters}
                   isTemporary
                   updateFilters={(updatedFilters) => onFiltersChange(updatedFilters)}
+                  showOnMount
                   teamspaceId={teamspaceId}
                   workspaceSlug={workspaceSlug}
                 >
                   {({ filter: teamspaceViewWorkItemsFilter }) =>
                     teamspaceViewWorkItemsFilter && (
-                      <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} variant="default" />
+                      <WorkItemFiltersRow filter={teamspaceViewWorkItemsFilter} variant="modal" />
                     )
                   }
                 </TeamspaceLevelWorkItemFiltersHOC>

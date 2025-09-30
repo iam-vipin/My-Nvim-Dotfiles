@@ -37,6 +37,13 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   // derived values
   const showConfigureButton = app.is_default;
   const showInstallButton = !app.is_installed || !app.is_default;
+  const showOptionsButton =
+    (app.is_default &&
+      app.is_owned &&
+      allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE)) ||
+    (!app.is_default &&
+      (app.is_owned ||
+        (allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE) && app.is_installed)));
   const isNotSupported = app.is_not_supported || false;
   const isSelfManaged = subscriptionDetail?.is_self_managed || false;
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
@@ -123,15 +130,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
                     </div>
                   )}
                   {/* Three Dots Menu */}
-                  {!app.is_default &&
-                    (app.is_owned ||
-                      (allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE) &&
-                        app.is_installed)) && (
-                      <div className="size-5">
-                        {" "}
-                        <ApplicationTileMenuOptions app={app} />{" "}
-                      </div>
-                    )}
+                  {showOptionsButton && (
+                    <div className="size-5">
+                      <ApplicationTileMenuOptions app={app} />{" "}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

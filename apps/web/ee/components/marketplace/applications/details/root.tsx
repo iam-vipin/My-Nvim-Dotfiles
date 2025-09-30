@@ -119,6 +119,13 @@ export const AppListRoot: React.FC<AppListProps> = observer((props) => {
   const internalApps = getInternalApps(supportedIntegrations);
   // filter apps which has same slug as internal apps
   const apps = props.apps.filter((app) => !internalApps.some((internalApp) => internalApp.slug === app.slug));
+  // update app is_owned to true if it's installed
+  internalApps.forEach((app) => {
+    const marketplaceApp = props.apps.find((a) => a.slug === app.slug);
+    if (marketplaceApp) {
+      app.is_owned = marketplaceApp.is_owned;
+    }
+  });
   const isInstalled = (app: TUserApplication) => app.is_installed;
   const isInternal = (app: TUserApplication) => app.is_internal;
 

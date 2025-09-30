@@ -24,6 +24,7 @@ import {
   TArtifact,
 } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
+import { PiChatAttachmentStore } from "./attachment.store";
 
 export interface IPiChatStore {
   isNewChat: boolean;
@@ -42,6 +43,7 @@ export interface IPiChatStore {
   isPiChatDrawerOpen: boolean;
   isPiArtifactsDrawerOpen: string | undefined;
   artifactsStore: ArtifactsStore;
+  attachmentStore: PiChatAttachmentStore;
   // computed fn
   geUserThreads: () => TUserThreads[];
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
@@ -58,7 +60,8 @@ export interface IPiChatStore {
     isProjectChat: boolean,
     workspaceSlug: string,
     workspaceId: string | undefined,
-    callbackUrl: string
+    callbackUrl: string,
+    attachmentIds: string[]
   ) => Promise<void>;
   getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
@@ -115,6 +118,7 @@ export class PiChatStore implements IPiChatStore {
   // store
   artifactsStore;
 
+  attachmentStore: PiChatAttachmentStore;
   constructor(public store: RootStore) {
     makeObservable(this, {
       //observables
@@ -160,6 +164,7 @@ export class PiChatStore implements IPiChatStore {
     //services
     this.rootStore = store;
     this.userStore = store.user;
+    this.attachmentStore = new PiChatAttachmentStore(this);
     this.piChatService = new PiChatService();
     this.workspaceService = new WorkspaceService();
     this.artifactsStore = new ArtifactsStore();
@@ -302,7 +307,8 @@ export class PiChatStore implements IPiChatStore {
     isProjectChat: boolean = false,
     workspaceSlug: string,
     workspaceId: string | undefined,
-    callbackUrl: string | undefined
+    callbackUrl: string | undefined,
+    attachmentIds: string[]
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
@@ -322,6 +328,7 @@ export class PiChatStore implements IPiChatStore {
       is_project_chat: isProjectChat,
       workspace_slug: workspaceSlug,
       workspace_id: workspaceId,
+      attachment_ids: attachmentIds,
     };
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
@@ -421,7 +428,8 @@ export class PiChatStore implements IPiChatStore {
     isProjectChat: boolean = false,
     workspaceSlug: string,
     workspaceId: string | undefined,
-    callbackUrl: string
+    callbackUrl: string,
+    attachmentIds: string[]
   ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
@@ -436,6 +444,7 @@ export class PiChatStore implements IPiChatStore {
       isPiThinking: true,
       // execution_status: "pending",
       actions: [],
+      attachment_ids: attachmentIds,
     };
 
     // Optimistically update conversation with user query
@@ -449,7 +458,16 @@ export class PiChatStore implements IPiChatStore {
     });
 
     // Api call here
-    const payload = this.buildPayload(chatId, query, focus, isProjectChat, workspaceSlug, workspaceId, callbackUrl);
+    const payload = this.buildPayload(
+      chatId,
+      query,
+      focus,
+      isProjectChat,
+      workspaceSlug,
+      workspaceId,
+      callbackUrl,
+      attachmentIds
+    );
     const token = await this.piChatService.retrieveToken(payload);
     runInAction(() => {
       update(this.chatMap, chatId, (chat) => {

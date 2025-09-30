@@ -32,6 +32,7 @@ export const PiChatLayout = observer((props: TProps) => {
     fetchUserThreads,
     fetchChatById,
     initPiChat,
+    attachmentStore: { fetchAttachmentsByChatId },
     artifactsStore: { fetchArtifactsByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -61,6 +62,15 @@ export const PiChatLayout = observer((props: TProps) => {
     }
   );
   useSWR(
+    activeChatId ? `PI_CHAT_ATTACHMENTS_${activeChatId}` : null,
+    activeChatId ? () => fetchAttachmentsByChatId(activeChatId) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
+  useSWR(
     activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
     activeChatId ? () => fetchChatById(activeChatId, workspaceId) : null,
     {
@@ -80,7 +90,7 @@ export const PiChatLayout = observer((props: TProps) => {
 
   if (!isOpen) return <></>;
   return (
-    <div data-prevent-outside-click className={cn("md:flex h-full rounded-lg bg-custom-background-100")}>
+    <div className={cn("md:flex h-full rounded-lg bg-custom-background-100")}>
       <div className="flex flex-col flex-1 h-full w-full">
         {/* Header */}
         <Header

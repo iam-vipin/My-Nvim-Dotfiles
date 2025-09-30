@@ -61,7 +61,8 @@ const SystemPrompts = (props: TSystemPrompt) => {
       isProjectLevel,
       workspaceSlug?.toString(),
       workspaceId?.toString(),
-      pathname
+      pathname,
+      []
     );
   };
   const promptIcon = getIcon(prompt.type);

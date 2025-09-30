@@ -11,7 +11,7 @@ export const SPEECH_LOADERS = ["recording", "transcribing"];
 
 type TProps = {
   workspaceId: string;
-  chatId: string;
+  chatId: string | undefined;
   editorRef: React.RefObject<EditorRefApi>;
   isProjectLevel: boolean;
   isFullScreen: boolean;
@@ -109,7 +109,7 @@ const AudioRecorder = (props: TProps) => {
     try {
       setLoader("transcribing");
       let chatIdToUse = chatId;
-      if (!chatId) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
+      if (!chatIdToUse) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
       const response = await piChatService.transcribeAudio(workspaceId, formData, chatIdToUse);
       editorRef.current?.appendText(" " + response);
     } catch (err) {
@@ -119,6 +119,19 @@ const AudioRecorder = (props: TProps) => {
       setLoader("");
     }
   };
+  if (!SPEECH_LOADERS.includes(loader))
+    return (
+      <button
+        onClick={() => startRecording()}
+        type="button"
+        disabled={isSubmitting}
+        className={cn(
+          "flex items-center justify-center w-8 h-8 rounded-full hover:bg-custom-background-80 flex-shrink-0"
+        )}
+      >
+        <MicIcon className="w-4 h-4" />
+      </button>
+    );
 
   return (
     <div

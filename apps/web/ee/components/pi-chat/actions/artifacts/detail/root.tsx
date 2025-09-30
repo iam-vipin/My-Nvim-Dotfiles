@@ -31,7 +31,7 @@ export const PiChatArtifactsRoot = observer(() => {
           : "px-0 translate-x-[100%] w-0 border-none"
       )}
     >
-      <div data-prevent-outside-click className={cn("flex flex-col h-full rounded-lg bg-custom-background-90")}>
+      <div className={cn("flex flex-col h-full rounded-lg bg-custom-background-90")}>
         {/* Header */}
         <Header artifact={artifactsData} />
         <div className="flex-1 flex justify-center items-center px-4">

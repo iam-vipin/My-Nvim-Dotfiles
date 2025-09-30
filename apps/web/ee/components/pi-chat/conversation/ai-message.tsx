@@ -16,14 +16,14 @@ import { Feedback } from "./feedback";
 import { ReasoningBlock } from "./reasoning";
 
 type TProps = {
-  id: string;
+  id?: string;
   dialogue?: TDialogue;
   isLatest?: boolean;
   isLoading?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
   // props
-  const { dialogue, id, isLatest, isLoading } = props;
+  const { dialogue, id = "", isLatest, isLoading } = props;
   // store
   const { workspaceSlug } = useParams();
   const { activeChatId, isPiTyping } = usePiChat();

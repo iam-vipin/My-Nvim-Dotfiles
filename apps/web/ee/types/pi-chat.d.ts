@@ -1,4 +1,4 @@
-import { TLogoProps } from "@plane/types";
+import { TLogoProps, TFileSignedURLResponse } from "@plane/types";
 
 export enum EFeedback {
   POSITIVE = "positive",
@@ -37,6 +37,7 @@ export type TQuery = {
   workspace_slug?: string;
   pi_sidebar_open?: boolean;
   sidebar_open_url?: string;
+  attachment_ids?: string[];
 };
 export type TInitPayload = Pick<
   TQuery,
@@ -131,6 +132,7 @@ export type TDialogue = {
     failed: number;
     total_planned: number;
   };
+  attachment_ids?: string[];
 };
 
 export type TChatHistory = {
@@ -201,3 +203,22 @@ export interface IFormattedValue {
 }
 
 export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";
+export type TPiAttachment = {
+  attachment_url: string;
+  file_size: number;
+  file_type: string;
+  filename: string;
+  id: string;
+};
+
+export type TPiAttachmentUploadResponse = TFileSignedURLResponse & {
+  attachment_id: string;
+  attachment: TPiAttachment;
+};
+export type TPiAttachmentMap = {
+  [chatId: string]: TPiAttachment;
+};
+
+export type TPiAttachmentIdMap = {
+  [chatId: string]: string[];
+};

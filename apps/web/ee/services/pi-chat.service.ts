@@ -1,7 +1,10 @@
 // constants
+import { AxiosRequestConfig } from "axios";
 import { PI_BASE_URL } from "@plane/constants";
 // services
+import { generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/utils";
 import { APIService } from "@/services/api.service";
+import { FileUploadService } from "@/services/file-upload.service";
 import {
   TFeedback,
   TQuery,
@@ -14,6 +17,8 @@ import {
   TExecuteActionResponse,
   TDialogue,
   TArtifact,
+  TPiAttachmentUploadResponse,
+  TPiAttachment,
 } from "../types";
 
 type TTemplateResponse = {
@@ -46,9 +51,24 @@ type TAiModelsResponse = {
   models: TAiModels[];
 };
 
+/**
+ * @description combine the file path with the base URL
+ * @param {string} path
+ * @returns {string} final URL with the base URL
+ */
+export const getPiFileURL = (path: string): string | undefined => {
+  if (!path) return undefined;
+  const isValidURL = path.startsWith("http");
+  if (isValidURL) return path;
+  return `${PI_BASE_URL}${path}`;
+};
+
 export class PiChatService extends APIService {
+  private fileUploadService: FileUploadService;
   constructor() {
     super(PI_BASE_URL);
+    // upload service
+    this.fileUploadService = new FileUploadService();
   }
 
   // initiatialize chat
@@ -276,6 +296,64 @@ export class PiChatService extends APIService {
   async listArtifacts(chatId: string): Promise<TArtifact[]> {
     return this.get(`/api/v1/artifacts/chat/${chatId}/`)
       .then((response) => response.data.artifacts)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get attachments
+  async listAttachments(chatId: string): Promise<TPiAttachment[]> {
+    return this.get(`/api/v1/attachments/chat`, {
+      params: {
+        chat_id: chatId,
+      },
+    })
+      .then((response) => response.data.attachments)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // upload attachments
+  async uploadAttachment(
+    file: File,
+    workspaceId: string,
+    chatId: string,
+    uploadProgressHandler: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TPiAttachment | void> {
+    const fileMetaData = getFileMetaDataForUpload(file);
+
+    const response = await this.post(`/api/v1/attachments/upload-attachment/`, {
+      filename: fileMetaData.name,
+      file_size: fileMetaData.size,
+      content_type: fileMetaData.type,
+      workspace_id: workspaceId,
+      chat_id: chatId,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TPiAttachmentUploadResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        const finalResponse = await this.completeAttachmentUpload(signedURLResponse.attachment_id, chatId);
+        return finalResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+    return response;
+  }
+
+  // complete attachment upload
+  async completeAttachmentUpload(attachmentId: string, chatId: string): Promise<TPiAttachment> {
+    return this.patch(`/api/v1/attachments/complete-upload/`, {
+      attachment_id: attachmentId,
+      chat_id: chatId,
+    })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -12,12 +12,15 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import { TFocus, TPiLoaders } from "@/plane-web/types";
+import { TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";
 import { formatSearchQuery } from "../helper";
+import { InputPreviewUploads } from "../uploads/input-preview-uploads";
+import { DndWrapper } from "./dnd-wrapper";
 import { FocusFilter } from "./focus-filter";
+import { AttachmentActionButton } from "./quick-action-button";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -51,6 +54,7 @@ export const InputBox = observer((props: TProps) => {
     createNewChat,
     getChatFocus,
     fetchModels,
+    attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // router
@@ -61,9 +65,11 @@ export const InputBox = observer((props: TProps) => {
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   const chatFocus = getChatFocus(activeChatId, projectId?.toString(), workspaceId?.toString());
+  const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
   const [focus, setFocus] = useState<TFocus>(chatFocus);
   const [loader, setLoader] = useState<TPiLoaders>("");
+  const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<EditorRefApi>(null);
@@ -81,7 +87,13 @@ export const InputBox = observer((props: TProps) => {
   const handleSubmit = useEvent(async (e?: React.FormEvent) => {
     e?.preventDefault();
     const query = editorCommands.current?.getHTML();
-    if (isPiTyping || loader === "submitting" || !query || isCommentEmpty(query) || !workspaceId) return;
+    if (
+      isPiTyping ||
+      loader === "submitting" ||
+      ((!query || isCommentEmpty(query)) && !attachments.length) ||
+      !workspaceId
+    )
+      return;
     let chatIdToUse = activeChatId;
     setLoader("submitting");
     if (!chatIdToUse) {
@@ -92,9 +104,20 @@ export const InputBox = observer((props: TProps) => {
       (showProgress ? routerWithProgress : router).push(
         joinUrlPath(workspaceSlug?.toString(), isProjectLevel ? "projects" : "", "pi-chat", chatIdToUse)
       );
-    await getAnswer(chatIdToUse || "", query, focus, isProjectLevel, workspaceSlug?.toString(), workspaceId, pathname);
+    const attachmentIds = attachments.map((attachment) => attachment.id);
+    await getAnswer(
+      chatIdToUse || "",
+      query || "",
+      focus,
+      isProjectLevel,
+      workspaceSlug?.toString(),
+      workspaceId,
+      pathname,
+      attachmentIds
+    );
     editorCommands.current?.clear();
     setLoader("");
+    setAttachments([]);
   });
 
   const getMentionSuggestions = async (query: string) => {
@@ -113,14 +136,15 @@ export const InputBox = observer((props: TProps) => {
     }
   }, [isChatLoading]);
 
+  if (!workspaceId) return;
   return (
     <form
       className={cn(
-        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-lg w-full",
+        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-xl w-full",
         className
       )}
     >
-      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100 max-h-[250px]")}>
+      <div className={cn("bg-custom-background-90 rounded-xl transition-[max-height] duration-100")}>
         {/* Audio Recorder Loader */}
         {SPEECH_LOADERS.includes(loader) && (
           <div className="flex gap-2 p-2 items-center">
@@ -128,68 +152,94 @@ export const InputBox = observer((props: TProps) => {
             <span className="text-sm text-custom-text-300 font-medium">Recording...</span>
           </div>
         )}
-        <div
-          className={cn(
-            "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 justify-between h-fit",
-            {
-              "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
-            }
-          )}
+        {/* Input Box */}
+        <DndWrapper
+          workspaceSlug={workspaceSlug?.toString()}
+          workspaceId={workspaceId}
+          chatId={activeChatId}
+          setAttachments={setAttachments}
+          isProjectLevel={isProjectLevel}
+          createNewChat={createNewChat}
+          focus={focus}
         >
-          {/* Input Box */}
-          <PiChatEditorWithRef
-            setEditorCommand={(command) => {
-              setEditorCommands({ ...command });
-            }}
-            handleSubmit={handleSubmit}
-            mentionSuggestions={(query: string) => getMentionSuggestions(query)}
-            className={cn("flex-1", {
-              "absolute w-0": SPEECH_LOADERS.includes(loader),
-            })}
-            ref={editorRef}
-          />
-          <div className="flex w-full gap-3 justify-between">
-            {/* Focus */}
-            {!SPEECH_LOADERS.includes(loader) && (
-              <FocusFilter focus={focus} setFocus={setFocus} isLoading={isChatLoading && !!activeChatId} />
-            )}
-            <div className="flex items-center w-full justify-end">
-              {/* Audio Recorder */}
-              <WithFeatureFlagHOC
-                workspaceSlug={workspaceSlug?.toString() || ""}
-                flag={E_FEATURE_FLAGS.PI_CONVERSE}
-                fallback={<></>}
-              >
-                <AudioRecorder
-                  workspaceId={workspaceId || ""}
-                  chatId={activeChatId || ""}
-                  editorRef={editorRef}
-                  createNewChat={createNewChat}
-                  isProjectLevel={isProjectLevel}
-                  loader={loader}
-                  setLoader={setLoader}
-                  isFullScreen={isFullScreen}
-                  focus={focus}
-                />
-              </WithFeatureFlagHOC>
-              {/* Submit button */}
-              {!SPEECH_LOADERS.includes(loader) && (
-                <button
-                  className="rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-pi-700/10"
-                  type="submit"
-                  onClick={handleSubmit}
-                  disabled={isPiTyping || loader === "submitting"}
-                >
-                  <ArrowUp size={16} />
-                </button>
+          {(isUploading: boolean, open: () => void) => (
+            <div
+              className={cn(
+                "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 justify-between h-fit",
+                {
+                  "min-h-[120px]": !SPEECH_LOADERS.includes(loader),
+                }
               )}
+            >
+              {/* file input view */}
+              {((attachmentsUploadStatus && attachmentsUploadStatus.length > 0) || attachments?.length > 0) && (
+                <div className="mb-2">
+                  <InputPreviewUploads
+                    chatId={activeChatId}
+                    attachments={attachments}
+                    setAttachments={setAttachments}
+                  />
+                </div>
+              )}
+              {/* editor view */}
+              <PiChatEditorWithRef
+                setEditorCommand={(command) => {
+                  setEditorCommands({ ...command });
+                }}
+                handleSubmit={handleSubmit}
+                mentionSuggestions={(query: string) => getMentionSuggestions(query)}
+                className={cn("flex-1  max-h-[250px]", {
+                  "absolute w-0": SPEECH_LOADERS.includes(loader),
+                })}
+                ref={editorRef}
+                editorClass="min-h-[70px]"
+              />
+              <div className="flex w-full gap-3 justify-between">
+                {/* Focus */}
+                {!SPEECH_LOADERS.includes(loader) && (
+                  <FocusFilter focus={focus} setFocus={setFocus} isLoading={isChatLoading && !!activeChatId} />
+                )}
+                <div className="flex items-center w-full justify-end gap-2">
+                  {/* speech recorder */}
+                  <WithFeatureFlagHOC
+                    workspaceSlug={workspaceSlug?.toString()}
+                    flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                    fallback={<></>}
+                  >
+                    <AudioRecorder
+                      workspaceId={workspaceId}
+                      chatId={activeChatId}
+                      editorRef={editorRef}
+                      createNewChat={createNewChat}
+                      isProjectLevel={isProjectLevel}
+                      loader={loader}
+                      setLoader={setLoader}
+                      isFullScreen={isFullScreen}
+                      focus={focus}
+                    />
+                  </WithFeatureFlagHOC>
+                  <WithFeatureFlagHOC
+                    workspaceSlug={workspaceSlug?.toString()}
+                    flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
+                    fallback={<></>}
+                  >
+                    {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
+                  </WithFeatureFlagHOC>
+                  {!SPEECH_LOADERS.includes(loader) && (
+                    <button
+                      className="rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-pi-700/10"
+                      type="submit"
+                      onClick={handleSubmit}
+                      disabled={isPiTyping || loader === "submitting"}
+                    >
+                      <ArrowUp size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="text-xs text-custom-text-350 pt-2 text-center">
-        Plane AI can make mistakes, please double-check responses.
+          )}
+        </DndWrapper>
       </div>
     </form>
   );

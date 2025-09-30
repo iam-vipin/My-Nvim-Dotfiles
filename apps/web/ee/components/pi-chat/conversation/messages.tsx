@@ -103,15 +103,15 @@ export const Messages = observer((props: TProps) => {
         const message = activeChat?.dialogueMap[query_id];
         return (
           <div key={index} className="space-y-4">
-            <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />
+            <MyMessage message={message.query} id={index.toString()} attachments={message.attachment_ids} />
             <AiMessage dialogue={message} id={index.toString()} isLatest={index === activeChat?.dialogue.length - 1} />
           </div>
         );
       })}
 
       {/* Loading */}
-      {isLoading && <AiMessage isLoading={isLoading} id={""} />}
-      {isLoading && <MyMessage isLoading={isLoading} currentUser={currentUser} id={""} />}
+      {isLoading && <AiMessage isLoading={isLoading} />}
+      {isLoading && <MyMessage isLoading={isLoading} />}
       {/* observer element */}
       <div id="observer-element" />
     </div>

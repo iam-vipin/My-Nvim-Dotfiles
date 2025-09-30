@@ -40,7 +40,7 @@ export const PiChatDetail = observer((props: TProps) => {
         >
           <div className={cn("flex-1 my-auto flex flex-co h-full relative")}>
             {isLoading ? (
-              <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} /> // loading
+              <Loading isLoading={isLoading} isFullScreen={isFullScreen} /> // loading
             ) : (
               <Messages
                 currentUser={currentUser}

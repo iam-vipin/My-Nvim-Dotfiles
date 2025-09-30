@@ -11,13 +11,8 @@ import { WorkspaceService } from "@/plane-web/services/workspace.service";
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
 // store
-
-import type { CoreRootStore } from "../../root.store";
-import type { IMemberRootStore } from "../index.ts";
-import { WorkspaceMemberFiltersStore, IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
-
-import { CoreRootStore } from "../root.store";
-import { IMemberRootStore } from ".";
+import type { CoreRootStore } from "../root.store";
+import type { IMemberRootStore } from "./index";
 
 export interface IWorkspaceMembership {
   id: string;
@@ -29,8 +24,6 @@ export interface IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]>;
-  // filters store
-  filtersStore: IWorkspaceMemberFiltersStore;
   // computed
   workspaceMemberIds: string[] | null;
   workspaceMemberInvitationIds: string[] | null;
@@ -64,8 +57,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     [workspaceSlug: string]: Record<string, IWorkspaceMembership>;
   } = {}; // { workspaceSlug: { userId: userDetails } }
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
-  // filters store
-  filtersStore: IWorkspaceMemberFiltersStore;
   // stores
   routerStore: IRouterStore;
   userStore: IUserStore;
@@ -90,8 +81,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       deleteMemberInvitation: action,
       isUserSuspended: action,
     });
-    // initialize filters store
-    this.filtersStore = new WorkspaceMemberFiltersStore();
     // root store
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
@@ -134,14 +123,15 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
-    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
-    // Use filters store to get filtered member ids
-    const memberIds = this.filtersStore.getFilteredMemberIds(
-      members,
-      this.memberRoot?.memberMap || {},
-      (member) => member.member
-    );
-    return memberIds;
+    members = members.filter((m) => m.is_active !== false && !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+
+    // Sort members by display name
+    members = sortBy(members, [
+      (m) => m.member !== this.userStore?.data?.id,
+      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+    ]);
+
+    return members.map((m) => m.member);
   });
   /**
    * @description get the list of all the user ids that match the search query of all the members of the current workspace

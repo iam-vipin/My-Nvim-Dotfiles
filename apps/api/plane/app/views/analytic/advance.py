@@ -398,11 +398,19 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 project_id__in=project_ids, is_active=True, member__is_bot=False
             ).values_list("member_id", flat=True)
         else:
-            member_ids = WorkspaceMember.objects.filter(
+            active_member_ids = WorkspaceMember.objects.filter(
                 workspace__slug=self._workspace_slug,
                 is_active=True,
                 member__is_bot=False,
             ).values_list("member_id", flat=True)
+            inactive_member_ids = WorkspaceMember.objects.filter(
+                workspace__slug=self._workspace_slug,
+                is_active=False,
+                member__is_bot=False,
+            ).values_list("member_id", flat=True)
+
+        # Combine active and inactive ids for filtering issues
+        member_ids = list(active_member_ids) + list(inactive_member_ids)
 
         # Get stats for all members in a single query
         return (
@@ -450,8 +458,17 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     default=Value(None),
                     output_field=models.CharField(),
                 ),
+                is_active=Case(
+                    When(
+                        Q(created_by__in=active_member_ids)
+                        | Q(assignees__in=active_member_ids),
+                        then=Value(True),
+                    ),
+                    default=Value(False),
+                    output_field=models.BooleanField(),
+                ),
             )
-            .values("display_name", "user_id", "avatar_url")
+            .values("display_name", "user_id", "avatar_url", "is_active")
             .annotate(
                 cancelled_work_items=Count(
                     "id",
@@ -480,7 +497,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 ),
                 created_work_items=Count("id", filter=Q(created_by__in=member_ids), distinct=True),
             )
-            .order_by("display_name")
+            .order_by("-is_active", "display_name")
         )
 
     def get_cycle_stats(self, filters: Dict[str, Any]) -> QuerySet:

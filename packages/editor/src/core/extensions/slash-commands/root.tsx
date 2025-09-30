@@ -67,7 +67,7 @@ const Command = Extension.create<SlashCommandOptions>({
               const element = component.element as HTMLElement;
               element.style.position = "absolute";
               element.style.zIndex = "100";
-              (props.editor.options.element || document.body).appendChild(element);
+              document.body.appendChild(element);
 
               updateFloatingUIFloaterPosition(props.editor, element);
             },

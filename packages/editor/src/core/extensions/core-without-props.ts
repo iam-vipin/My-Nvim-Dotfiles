@@ -4,8 +4,11 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import StarterKit from "@tiptap/starter-kit";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// plane editor imports
-import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
+// plane editor extensions
+import {
+  CoreEditorAdditionalExtensionsWithoutProps,
+  DocumentEditorAdditionalExtensionsWithoutProps,
+} from "@/plane-editor/extensions/core/without-props";
 // extensions
 import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
@@ -100,4 +103,7 @@ export const CoreEditorExtensionsWithoutProps = [
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
-export const DocumentEditorExtensionsWithoutProps = [WorkItemEmbedExtensionConfig];
+export const DocumentEditorExtensionsWithoutProps = [
+  WorkItemEmbedExtensionConfig,
+  ...DocumentEditorAdditionalExtensionsWithoutProps,
+];

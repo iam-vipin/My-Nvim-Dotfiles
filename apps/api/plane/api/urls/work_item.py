@@ -11,9 +11,9 @@ from plane.api.views import (
     IssueActivityDetailAPIEndpoint,
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
+    WorkspaceIssueAPIEndpoint,
     IssueRelationListCreateAPIEndpoint,
     IssueRelationRemoveAPIEndpoint,
-    WorkspaceIssueAPIEndpoint,
     IssueAttachmentServerEndpoint,
     IssueSearchEndpoint,
 )
@@ -155,14 +155,34 @@ new_url_patterns = [
         name="work-item-activity-detail",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/",
         IssueAttachmentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="work-item-attachment-list",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/<uuid:pk>/",
         IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="work-item-attachment-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="work-item-attachment-server",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/<uuid:pk>/server/",
+        IssueAttachmentServerEndpoint.as_view(),
+        name="work-item-attachment-server",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/",
+        IssueRelationListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="work-item-relation-list",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/relations/remove/",
+        IssueRelationRemoveAPIEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-relation-remove",
     ),
 ]
 

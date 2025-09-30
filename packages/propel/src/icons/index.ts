@@ -85,3 +85,4 @@ export * from "./pi";
 export * from "./recurring-work-item";
 export * from "./filled-check";
 export * from "./filled-cross";
+export * from "./suspended-user";

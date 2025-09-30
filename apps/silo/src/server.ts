@@ -5,7 +5,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 
 // lib
 import expressWinston from "express-winston";
-import { registerControllers } from "@plane/decorators";
+import { registerController } from "@plane/decorators";
 import { logger } from "@plane/logger";
 import AsanaController from "@/apps/asana-importer/controllers";
 // controllers
@@ -138,7 +138,10 @@ export default class Server {
       ...Server.CONTROLLERS.APPS,
     ];
 
-    registerControllers(router, allControllers, []);
+    allControllers.forEach((controller) => {
+      registerController(router, controller);
+    });
+
     this.app.use(env.SILO_BASE_PATH || "/", router);
   }
 

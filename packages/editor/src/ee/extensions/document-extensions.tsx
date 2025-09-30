@@ -16,7 +16,7 @@ import { TExtensions } from "@/types";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
-import { CustomCollaborationCursor } from "./collaboration-cursor";
+import { CustomCollaborationCaret } from "./collaboration-caret";
 import { CommentsExtension } from "./comments";
 import { DrawioExtension } from "./drawio/extension";
 import { EDrawioMode } from "./drawio/types";
@@ -198,7 +198,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
     getExtension: ({ provider, userDetails }) =>
       provider &&
-      CustomCollaborationCursor({
+      CustomCollaborationCaret({
         provider,
         userDetails,
       }),

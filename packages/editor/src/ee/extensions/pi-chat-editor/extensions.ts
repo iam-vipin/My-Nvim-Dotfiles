@@ -1,7 +1,7 @@
 import { Extension, type Extensions } from "@tiptap/core";
-import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
+import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
 // extensions
 import { CustomCodeBlockExtension } from "@/extensions/code";
@@ -15,12 +15,12 @@ import { PiChatEditorMentionExtension } from "./mention/extension";
 type Props = {
   editorClass: string;
   handleSubmit?: () => void;
-  mentionSuggestions?: (query: string) => Promise<any>;
+  searchCallback?: (query: string) => Promise<any>;
   setEditorCommand?: (command: any) => void;
 };
 
 export const PiChatEditorExtensions = (props: Props): Extensions => {
-  const { editorClass, handleSubmit, mentionSuggestions, setEditorCommand } = props;
+  const { editorClass, handleSubmit, searchCallback, setEditorCommand } = props;
 
   return [
     StarterKit.configure({
@@ -57,7 +57,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       },
     }),
     PiChatEditorMentionExtension({
-      mentionSuggestions,
+      searchCallback,
     }),
     PiChatEditorEnterKeyExtension(handleSubmit),
     TaskList.configure({

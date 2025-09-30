@@ -1,36 +1,16 @@
-import { computePosition, flip, shift } from "@floating-ui/dom";
-import { Editor, Range, Extension } from "@tiptap/core";
-import { ReactRenderer, posToDOMRect } from "@tiptap/react";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
-import { FC } from "react";
+import { type Editor, type Range, Extension } from "@tiptap/core";
+import { ReactRenderer } from "@tiptap/react";
+import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
-
-const updatePosition = (editor: Editor, element: HTMLElement) => {
-  const virtualElement = {
-    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
-  };
-
-  computePosition(virtualElement, element, {
-    placement: "bottom-start",
-    strategy: "absolute",
-    middleware: [shift(), flip()],
-  }).then(({ x, y, strategy }) => {
-    Object.assign(element.style, {
-      width: "max-content",
-      position: strategy,
-      left: `${x}px`,
-      top: `${y}px`,
-    });
-  });
-};
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
@@ -75,11 +55,7 @@ const Command = Extension.create<SlashCommandOptions>({
             onStart: (props) => {
               // Track active dropdown
               props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
-
-              const MenuComponent = SlashCommandsMenu as unknown as FC<
-                SlashCommandsMenuProps & { ref: React.Ref<CommandListInstance> }
-              >;
-              component = new ReactRenderer(MenuComponent, {
+              component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
                 props,
                 editor: props.editor,
               });
@@ -93,7 +69,7 @@ const Command = Extension.create<SlashCommandOptions>({
               element.style.zIndex = "100";
               (props.editor.options.element || document.body).appendChild(element);
 
-              updatePosition(props.editor, element);
+              updateFloatingUIFloaterPosition(props.editor, element);
             },
 
             onUpdate: (props) => {
@@ -106,7 +82,7 @@ const Command = Extension.create<SlashCommandOptions>({
               }
 
               const element = component.element as HTMLElement;
-              updatePosition(props.editor, element);
+              updateFloatingUIFloaterPosition(props.editor, element);
             },
 
             onKeyDown: (props) => {

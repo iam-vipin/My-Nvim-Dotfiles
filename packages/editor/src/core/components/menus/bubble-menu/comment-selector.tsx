@@ -25,9 +25,7 @@ export const BubbleMenuCommentSelector: FC<Props> = (props) => {
     const selectedText = editor.state.doc.textBetween(from, to, " ");
 
     // Call the callback to start a new comment with reference text
-    if (onStartNewComment) {
-      onStartNewComment({ from, to, referenceText: selectedText });
-    }
+    onStartNewComment?.({ from, to, referenceText: selectedText });
 
     setIsOpen(false);
   }, [editor, setIsOpen, onStartNewComment]);

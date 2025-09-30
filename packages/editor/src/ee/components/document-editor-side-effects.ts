@@ -1,9 +1,10 @@
-import { type Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useEffect } from "react";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { type ICollaborativeDocumentEditorProps, EventToPayloadMap, IEditorPropsExtended } from "@/types";
-import { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
+// plane imports
+import type { TCollaborator } from "@plane/types";
+// types
+import type { ICollaborativeDocumentEditorProps, EventToPayloadMap, IEditorPropsExtended } from "@/types";
 
 type DocumentEditorSideEffectsProps = {
   editor: Editor;
@@ -22,14 +23,14 @@ export const DocumentEditorSideEffects = ({
   const { users } = useEditorState({
     editor,
     selector: (ctx) => ({
-      users: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR)?.users || [],
+      users: ctx.editor.storage.collaborationCaret?.users || [],
     }),
   });
 
   const { commentsOrder } = useEditorState({
     editor,
     selector: (ctx) => ({
-      commentsOrder: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COMMENTS)?.commentsOrder || [],
+      commentsOrder: ctx.editor.storage.commentMark?.commentsOrder || [],
     }),
   });
 
@@ -40,7 +41,7 @@ export const DocumentEditorSideEffects = ({
     const currentUsers = users;
 
     const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
-      users: currentUsers,
+      users: currentUsers as TCollaborator[],
     };
 
     updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);

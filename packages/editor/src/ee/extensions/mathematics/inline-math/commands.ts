@@ -1,12 +1,14 @@
 import type { RawCommands } from "@tiptap/core";
 import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
-// plane imports
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// local imports
 import { EMathAttributeNames } from "../types";
 // types
-import { TInlineMathSetCommandOptions, TInlineMathUnsetCommandOptions, TInlineMathUpdateCommandOptions } from "./types";
+import type {
+  TInlineMathSetCommandOptions,
+  TInlineMathUnsetCommandOptions,
+  TInlineMathUpdateCommandOptions,
+} from "./types";
 
 export const inlineMathCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   setInlineMath:
@@ -15,7 +17,7 @@ export const inlineMathCommands = (nodeType: NodeType): Partial<RawCommands> => 
       const { latex, pos } = options;
       const targetPos = pos ?? editor.state.selection.$from.pos;
 
-      const mathStorage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.MATHEMATICS);
+      const mathStorage = editor.storage.mathematics;
       if (mathStorage) {
         mathStorage.openMathModal = true;
       }

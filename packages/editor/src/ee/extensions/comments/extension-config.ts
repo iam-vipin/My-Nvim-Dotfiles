@@ -1,6 +1,4 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
-import { CORE_EXTENSIONS } from "@/constants/extension";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
@@ -19,7 +17,14 @@ import {
   ECommentMarkCSSClasses,
   ECommentAttributeNames,
   DEFAULT_COMMENT_ATTRIBUTES,
+  TCommentMarkAttributes,
 } from "./types";
+
+declare module "@tiptap/core" {
+  interface Storage {
+    [ADDITIONAL_EXTENSIONS.COMMENTS]: TCommentMarkStorage;
+  }
+}
 
 export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TCommentMarkStorage>({
   name: ADDITIONAL_EXTENSIONS.COMMENTS,
@@ -44,12 +49,15 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
   addAttributes() {
     const attributes = {
       // Reduce instead of map to accumulate the attributes directly into an object
-      ...Object.values(ECommentAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_COMMENT_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(ECommentAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_COMMENT_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<ECommentAttributeNames, { default: TCommentMarkAttributes[ECommentAttributeNames] }>
+      ),
     };
     return attributes;
   },
@@ -89,7 +97,7 @@ export const CommentsExtensionConfig = Mark.create<TCommentMarkOptions, TComment
       // Click handler plugin
       createClickHandlerPlugin({
         onCommentClick,
-        isTouchDevice: getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice,
+        isTouchDevice: this.editor.storage.utility?.isTouchDevice,
       }),
       // Hover handler plugin
       createHoverHandlerPlugin(),

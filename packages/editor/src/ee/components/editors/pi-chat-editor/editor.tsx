@@ -29,7 +29,7 @@ export type IMentions = {
 type PiChatEditorProps = {
   className?: string;
   setEditorCommand?: (command: any) => void;
-  mentionSuggestions?: (query: string) => Promise<any>;
+  searchCallback?: (query: string) => Promise<any>;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleSubmit?: (e?: any) => void;
   editable?: boolean;
@@ -41,7 +41,7 @@ const PiChatEditor = (props: PiChatEditorProps) => {
   const {
     className,
     setEditorCommand,
-    mentionSuggestions,
+    searchCallback,
     editable = true,
     content = "<p></p>",
     forwardedRef,
@@ -53,7 +53,7 @@ const PiChatEditor = (props: PiChatEditorProps) => {
     extensions: PiChatEditorExtensions({
       editorClass,
       handleSubmit,
-      mentionSuggestions,
+      searchCallback,
       setEditorCommand,
     }),
     content: content,

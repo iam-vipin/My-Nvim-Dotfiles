@@ -4,10 +4,6 @@ import { type CSSProperties, useState, useRef, useEffect } from "react";
 // import { useTranslation } from "@plane/i18n";
 import { Input, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-// constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import { ExternalEmbedNodeViewProps } from "@/types";
@@ -61,10 +57,7 @@ export const ExternalEmbedInputView: React.FC<ExternalEmbedInputViewProps> = ({
         })
         .run();
       setIsOpen(false);
-      const ExternalEmbedExtensionStorage = getExtensionStorage(
-        externalEmbedProps.editor,
-        ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED
-      );
+      const ExternalEmbedExtensionStorage = externalEmbedProps.editor.storage.externalEmbedComponent;
       ExternalEmbedExtensionStorage.openInput = false;
     } else {
       setError(true);

@@ -1,9 +1,9 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-// constants
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { ECommentAttributeNames, TCommentMarkAttributes } from "../types";
+// local imports
+import { ECommentAttributeNames, type TCommentMarkAttributes } from "../types";
 
 const COMMENT_RESTORE_PLUGIN_KEY = new PluginKey("comment-restore-utility");
 
@@ -48,12 +48,13 @@ export const TrackCommentRestorationPlugin = (editor: Editor, restoreHandler: TC
 
         // Check each added comment to see if it was previously deleted
         addedComments.forEach(async (commentId) => {
+          const commentsStorage = editor.storage.commentMark;
           // Initialize comment storage if it doesn't exist
-          if (!getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments) {
-            getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments = new Map();
+          if (!commentsStorage?.deletedComments) {
+            commentsStorage.deletedComments = new Map();
           }
 
-          const commentStorage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments;
+          const commentStorage = commentsStorage.deletedComments;
           const wasDeleted = commentStorage?.get(commentId);
 
           if (wasDeleted === undefined) {

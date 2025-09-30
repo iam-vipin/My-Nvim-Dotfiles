@@ -1,9 +1,13 @@
-import { Editor } from "@tiptap/core";
-import { type CollaborationCursorOptions } from "@tiptap/extension-collaboration-cursor";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Editor } from "@tiptap/core";
+import type { CollaborationCaretOptions } from "@tiptap/extension-collaboration-caret";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+// plane imports
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
+// plane editor imports
 import { EAwarenessKeys } from "@/plane-editor/constants/awareness";
-import { TUserDetails } from "@/types";
+// types
+import type { TUserDetails } from "@/types";
 
 type TDrawioEditing = {
   diagramId: string;
@@ -34,28 +38,28 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
   const [imageKey, setImageKey] = useState(0);
   const [failedToLoadDiagram, setFailedToLoadDiagram] = useState(false);
 
-  const getAwarenessProvider = useMemo(() => {
+  const awarenessProvider = useMemo(() => {
     if (!editor) return null;
-    const collaborationCursor = editor.extensionManager.extensions.find(
-      (ext) => ext.name === ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR
+    const collaborationCaret = editor.extensionManager.extensions.find(
+      (ext) => ext.name === ADDITIONAL_EXTENSIONS.COLLABORATION_CARET
     );
-    const collaborationCursorOptions = collaborationCursor?.options as CollaborationCursorOptions;
-    return collaborationCursorOptions?.provider?.awareness || null;
+    const collaborationCaretOptions = collaborationCaret?.options as CollaborationCaretOptions;
+    return (collaborationCaretOptions?.provider as HocuspocusProvider)?.awareness || null;
   }, [editor]);
 
   const setEditingState = useCallback(
     (isEditing: boolean) => {
-      getAwarenessProvider?.setLocalStateField(EAwarenessKeys.DRAWIO_EDITING, {
+      awarenessProvider?.setLocalStateField(EAwarenessKeys.DRAWIO_EDITING, {
         diagramId: diagramId,
         isEditing,
       });
     },
-    [getAwarenessProvider, diagramId]
+    [awarenessProvider, diagramId]
   );
 
   const broadcastDiagramUpdate = useCallback(
     (imageData?: string, imageSrc?: string) => {
-      if (getAwarenessProvider && diagramId) {
+      if (awarenessProvider && diagramId) {
         const updateInfo: TDrawioUpdate = {
           diagramId,
           timestamp: Date.now(),
@@ -63,40 +67,39 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
           imageSrc, // S3 URL for persistence
         };
 
-        getAwarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, updateInfo);
+        awarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, updateInfo);
 
         // Clear the update state after a longer moment to ensure other users receive it
         setTimeout(() => {
-          getAwarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, null);
+          awarenessProvider.setLocalStateField(EAwarenessKeys.DRAWIO_UPDATE, null);
         }, 1000);
       }
     },
-    [getAwarenessProvider, diagramId]
+    [awarenessProvider, diagramId]
   );
 
   useEffect(() => {
-    if (!getAwarenessProvider) return;
+    if (!awarenessProvider) return;
+    const awarenessStates = Array.from(awarenessProvider.states?.entries?.() ?? []) as [
+      number,
+      Record<string, unknown>,
+    ][];
 
     const updateAwarenessUsers = () => {
-      const states = Array.from(getAwarenessProvider.states?.entries?.() ?? []).map(
-        ([clientId, state]: [number, Record<string, unknown>]) => ({
-          clientId,
-          user: (state.user as TUserDetails) || { color: "", id: "", name: "" },
-          drawioEditing: state.drawioEditing as TDrawioEditing | undefined,
-        })
-      );
+      const states = awarenessStates.map(([clientId, state]) => ({
+        clientId,
+        user: (state.user as TUserDetails) || { color: "", id: "", name: "" },
+        drawioEditing: state.drawioEditing as TDrawioEditing | undefined,
+      }));
       setAwarenessUsers(states);
 
       // Check for diagram updates from other users
-      const diagramUpdates = Array.from(getAwarenessProvider.states?.entries?.() ?? [])
-        .map(([clientId, state]: [number, Record<string, unknown>]) => ({
+      const diagramUpdates = awarenessStates
+        .map(([clientId, state]) => ({
           clientId,
           update: state.drawioUpdate as TDrawioUpdate | undefined,
         }))
-        .filter(
-          ({ update, clientId }) =>
-            update && update.diagramId === diagramId && clientId !== getAwarenessProvider.clientID
-        )
+        .filter(({ update, clientId }) => update?.diagramId === diagramId && clientId !== awarenessProvider.clientID)
         .sort((a, b) => (b.update?.timestamp || 0) - (a.update?.timestamp || 0));
 
       if (diagramUpdates.length > 0) {
@@ -108,12 +111,12 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
       }
     };
 
-    getAwarenessProvider.on("update", updateAwarenessUsers);
+    awarenessProvider.on("update", updateAwarenessUsers);
 
     return () => {
-      getAwarenessProvider.off("update", updateAwarenessUsers);
+      awarenessProvider.off("update", updateAwarenessUsers);
     };
-  }, [editor, diagramId, getAwarenessProvider]);
+  }, [editor, diagramId, awarenessProvider]);
 
   // Listen for diagram updates and update image states
   useEffect(() => {

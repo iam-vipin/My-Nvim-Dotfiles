@@ -187,7 +187,7 @@ export const InputBox = observer((props: TProps) => {
                   setEditorCommands({ ...command });
                 }}
                 handleSubmit={handleSubmit}
-                mentionSuggestions={(query: string) => getMentionSuggestions(query)}
+                searchCallback={getMentionSuggestions}
                 className={cn("flex-1  max-h-[250px]", {
                   "absolute w-0": SPEECH_LOADERS.includes(loader),
                 })}

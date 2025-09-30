@@ -13,7 +13,7 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
   addNodeView() {
     return ReactNodeViewRenderer(CodeBlockComponent);
   },
-  // @ts-expect-error keyboard shortcuts are not typed
+
   addKeyboardShortcuts() {
     return {
       Enter: ({ editor }) => {
@@ -58,7 +58,7 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
 
             // Add tabs to each line
             let currentOffset = 0;
-            lines.forEach((line, index) => {
+            lines.forEach((line) => {
               const pos = startPos + currentOffset;
               tr = tr.insertText("\t", pos, pos);
               currentOffset += line.length + 1 + 1; // +1 for newline, +1 for the inserted tab

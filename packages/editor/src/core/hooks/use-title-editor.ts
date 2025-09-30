@@ -1,6 +1,6 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Extensions } from "@tiptap/core";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Placeholder } from "@tiptap/extensions";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";
 // constants
@@ -9,10 +9,11 @@ import { CORE_EDITOR_META } from "@/constants/meta";
 import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
-// types
+// plane editor imports
 import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
-import { IEditorPropsExtended } from "@/types";
-import { EditorTitleRefApi } from "@/types/editor";
+// types
+import type { IEditorPropsExtended } from "@/types";
+import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
 
 type Props = {
   editable?: boolean;
@@ -22,7 +23,7 @@ type Props = {
   initialValue?: string;
   field?: string;
   placeholder?: string;
-  updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
+  updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   id: string;
   extendedEditorProps?: IEditorPropsExtended;
 };

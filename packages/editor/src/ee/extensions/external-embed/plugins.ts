@@ -3,10 +3,6 @@ import type { Slice } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import { find } from "linkifyjs";
-// plane editor imports
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 
 export const EXTERNAL_EMBED_PASTE_PLUGIN_KEY = new PluginKey("externalEmbedPastePlugin");
 
@@ -33,7 +29,7 @@ export const createExternalEmbedPastePlugin = (options: { isFlagged: boolean; ed
           const urlText = link.href;
           const to = from + urlText.length;
 
-          const storage = getExtensionStorage(options.editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+          const storage = options.editor.storage.externalEmbedComponent;
           if (storage) {
             storage.url = urlText;
             storage.isPasteDialogOpen = true;

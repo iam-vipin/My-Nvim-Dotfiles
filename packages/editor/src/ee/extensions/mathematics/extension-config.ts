@@ -5,7 +5,13 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { BlockMathExtension } from "./block-math/extension";
 import { InlineMathExtension } from "./inline-math/extension";
 // types
-import { MathematicsExtensionOptions, MathematicsExtensionStorage } from "./types";
+import type { MathematicsExtensionOptions, MathematicsExtensionStorage } from "./types";
+
+declare module "@tiptap/core" {
+  interface Storage {
+    [ADDITIONAL_EXTENSIONS.MATHEMATICS]: MathematicsExtensionStorage;
+  }
+}
 
 export const MathematicsExtensionConfig = Extension.create<MathematicsExtensionOptions, MathematicsExtensionStorage>({
   name: ADDITIONAL_EXTENSIONS.MATHEMATICS,

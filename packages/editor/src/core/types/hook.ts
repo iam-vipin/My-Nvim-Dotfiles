@@ -1,7 +1,7 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Content } from "@tiptap/core";
 // local imports
-import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
+import type { ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
 
 type TCoreHookProps = Pick<
   IEditorProps,
@@ -55,6 +55,6 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     ICollaborativeDocumentEditorProps,
     "dragDropEnabled" | "extendedDocumentEditorProps" | "realtimeConfig" | "serverHandler" | "user"
   > & {
-    titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
-    updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
+    titleRef?: ICollaborativeDocumentEditorProps["titleRef"];
+    updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   };

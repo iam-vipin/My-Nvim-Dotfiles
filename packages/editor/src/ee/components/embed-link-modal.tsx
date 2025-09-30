@@ -11,9 +11,7 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
 import { FC } from "react";
-// storage
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// local imports
 import { EmbedLinkView } from "./embed-link-view";
 
 type EmbedLinkModalProps = {
@@ -50,7 +48,7 @@ export const EmbedLinkModal: FC<EmbedLinkModalProps> = ({ isOpen, setIsOpen, vir
 
   const closeModal = () => {
     setIsOpen(false);
-    const storage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+    const storage = editor.storage.externalEmbedComponent;
     if (storage) {
       storage.isPasteDialogOpen = false;
       storage.url = "";
@@ -60,7 +58,7 @@ export const EmbedLinkModal: FC<EmbedLinkModalProps> = ({ isOpen, setIsOpen, vir
   if (!isOpen || !virtualElement) return null;
 
   // Get stored position where URL was pasted
-  const storage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+  const storage = editor.storage.externalEmbedComponent;
   const { from, to } = storage?.posToInsert || { from: 0, to: 0 };
   const url = storage?.url || "";
 

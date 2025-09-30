@@ -1,9 +1,6 @@
-import { Editor, useEditorState } from "@tiptap/react";
+import { type Editor, useEditorState } from "@tiptap/react";
 import { FC, useEffect, useRef, useState } from "react";
-// storage
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-// components
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// local imports
 import { EmbedLinkModal } from "./embed-link-modal";
 
 type LinkViewContainerProps = {
@@ -11,7 +8,7 @@ type LinkViewContainerProps = {
   containerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const EmbedLinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containerRef }) => {
+export const EmbedLinkViewContainer: FC<LinkViewContainerProps> = ({ editor }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<Element | null>(null);
   const lastPosRef = useRef<{ from: number; to: number } | null>(null);
@@ -20,14 +17,14 @@ export const EmbedLinkViewContainer: FC<LinkViewContainerProps> = ({ editor, con
   const editorState = useEditorState({
     editor,
     selector: ({ editor }) => ({
-      embedExtensionStorage: getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED),
+      embedExtensionStorage: editor.storage.externalEmbedComponent,
       storageSnapshot: JSON.stringify(editor.storage.externalEmbedComponent || {}),
     }),
   });
 
   const closeModal = () => {
     setIsOpen(false);
-    const storage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+    const storage = editor.storage.externalEmbedComponent;
     if (storage) {
       storage.isPasteDialogOpen = false;
       storage.url = "";

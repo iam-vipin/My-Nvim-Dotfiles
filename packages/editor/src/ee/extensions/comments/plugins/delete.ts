@@ -2,7 +2,6 @@ import { Editor } from "@tiptap/core";
 import { isChangeOrigin } from "@tiptap/extension-collaboration";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { ECommentAttributeNames, TCommentMarkAttributes } from "../types";
 
@@ -49,13 +48,14 @@ export const TrackCommentDeletionPlugin = (editor: Editor, deleteHandler: TComme
       deletedCommentIds.forEach(async (commentId) => {
         setTimeout(async () => {
           try {
+            const commentsStorage = editor.storage.commentMark;
             // Initialize comment storage if it doesn't exist
-            if (!getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments) {
-              getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments = new Map();
+            if (!commentsStorage?.deletedComments) {
+              commentsStorage.deletedComments = new Map();
             }
 
             // Mark comment as deleted in storage
-            const commentStorage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.COMMENTS).deletedComments;
+            const commentStorage = commentsStorage.deletedComments;
             commentStorage?.set(commentId, true);
 
             // Call the delete handler

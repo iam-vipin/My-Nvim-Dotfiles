@@ -1,11 +1,10 @@
-import type { Commands } from "@tiptap/core";
+import type { RawCommands } from "@tiptap/core";
 import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { EDrawioAttributeNames, TDrawioBlockAttributes } from "./types";
 import { DEFAULT_DRAWIO_ATTRIBUTES } from "./utils/attribute";
 
-export const drawioCommands = (nodeType: NodeType): Commands[ADDITIONAL_EXTENSIONS.DRAWIO] => ({
+export const drawioCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   insertDrawioDiagram:
     (props) =>
     ({ commands }) => {

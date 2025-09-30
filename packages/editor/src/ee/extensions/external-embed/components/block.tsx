@@ -4,11 +4,6 @@ import React, { useEffect, useRef, useState, memo, useCallback } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// helpers
-import { CORE_EXTENSIONS } from "@/constants/extension";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-// constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // components
 import { ExternalEmbedNodeViewProps } from "@/types";
 import { ExternalEmbedInputModal } from "./floating-input-modal";
@@ -19,14 +14,14 @@ export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((ex
   const embedButtonRef = useRef<HTMLDivElement>(null);
 
   const { isFlagged, onClick } = externalEmbedProps.extension.options;
-  const isTouchDevice = !!getExtensionStorage(externalEmbedProps.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+  const isTouchDevice = !!externalEmbedProps.editor.storage.utility?.isTouchDevice;
   // const { t } = useTranslation();
 
   // subscribe to external embed storage state
   const shouldOpenInput = useEditorState({
     editor: externalEmbedProps.editor,
     selector: ({ editor }) => {
-      const storage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+      const storage = editor.storage.externalEmbedComponent;
       return editor.isEditable && storage.openInput;
     },
   });
@@ -47,10 +42,7 @@ export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((ex
     if (shouldOpenInput) {
       setIsOpen(true);
       // Reset the openInput flag using proper pattern
-      const ExternalEmbedExtensionStorage = getExtensionStorage(
-        externalEmbedProps.editor,
-        ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED
-      );
+      const ExternalEmbedExtensionStorage = externalEmbedProps.editor.storage.externalEmbedComponent;
       ExternalEmbedExtensionStorage.openInput = false;
     }
   }, [shouldOpenInput, externalEmbedProps.editor]);

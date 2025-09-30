@@ -27,8 +27,11 @@ const toHours = (estimateType: TCycleEstimateSystemAdvanced) => (value: number) 
 const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   const today = format(startOfToday(), "yyyy-MM-dd");
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
+  const startMinusOneDate = new Date(cycle.start_date!);
+  startMinusOneDate.setDate(startMinusOneDate.getDate() - 1);
+  const startMinusOne = format(startMinusOneDate, "yyyy-MM-dd");
   const extendedArray = generateDateArray(endDate, endDate)
-    .filter((d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!)
+    .filter((d) => d.date >= startMinusOne && d.date <= cycle.end_date!)
     .map((d) => d.date);
   if (!data?.completion_chart) return null;
   if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
@@ -57,7 +60,10 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     };
   });
 
-  progress = uniqBy(orderBy(progress, "date"), "date");
+  // Ensure chart data is clamped to the current cycle window
+  progress = uniqBy(orderBy(progress, "date"), "date").filter(
+    (d) => d.date >= startMinusOne && d.date <= (cycle.end_date as string)
+  );
   return progress;
 };
 
@@ -78,6 +84,9 @@ const formatV2Data = (
   if (!cycle?.progress) return null;
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);
   const startDate = cycle.start_date && format(new Date(cycle.start_date), "yyyy-MM-dd");
+  const startMinusOneDate = new Date(cycle.start_date!);
+  startMinusOneDate.setDate(startMinusOneDate.getDate() - 1);
+  const startMinusOne = format(startMinusOneDate, "yyyy-MM-dd");
   const todaysData = cycle?.progress[cycle?.progress.length - 1];
   const toHoursHandler = toHours(estimateType);
   const scopeToday = scope(todaysData, isTypeIssue, toHoursHandler);
@@ -130,7 +139,8 @@ const formatV2Data = (
     };
   });
   progress = uniqBy(orderBy(progress, "date"), "date");
-
+  // Ensure chart data is strictly within the cycle start and end dates
+  progress = progress.filter((d) => d.date && d.date >= startMinusOne && d.date <= (cycle.end_date as string));
   return progress;
 };
 

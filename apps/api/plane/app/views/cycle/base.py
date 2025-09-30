@@ -1,7 +1,7 @@
 # Python imports
 import json
 import pytz
-from datetime import date, timedelta
+from datetime import timedelta, datetime
 from dateutil.parser import parse as datetime_parse
 
 
@@ -362,65 +362,132 @@ class CycleViewSet(BaseViewSet):
 
         serializer = CycleWriteSerializer(cycle, data=request.data, partial=True, context={"project_id": project_id})
 
-        if request_data.get("start_date", None) and cycle.start_date and cycle.end_date:
-            if cycle.start_date.date() <= date.today() and cycle.end_date.date() >= date.today():
-                # Convert the given string date
-                parsed_request_start_date = datetime_parse(request_data["start_date"]).date()
-
-                last_entity_progress = (
-                    EntityProgress.objects.filter(cycle_id=pk, workspace__slug=slug, entity_type="CYCLE")
-                    .order_by("progress_date")
-                    .first()
-                )
-                if parsed_request_start_date < cycle.start_date.date():
-                    # Find all the dates between the requested start date and the cycle's start date
-                    start_date = parsed_request_start_date
-                    end_date = cycle.start_date.date()
-
-                    delta = (end_date - start_date).days
-
-                    dates = []
-
-                    for i in range(delta):
-                        day = start_date + timedelta(days=i)
-                        dates.append(day)
-
-                    if last_entity_progress:
-                        EntityProgress.objects.bulk_create(
-                            [
-                                EntityProgress(
-                                    cycle_id=pk,
-                                    progress_date=date,
-                                    entity_type="CYCLE",
-                                    total_issues=last_entity_progress.total_issues,
-                                    total_estimate_points=last_entity_progress.total_estimate_points,
-                                    backlog_issues=last_entity_progress.backlog_issues,
-                                    unstarted_issues=last_entity_progress.unstarted_issues,
-                                    started_issues=last_entity_progress.started_issues,
-                                    completed_issues=last_entity_progress.completed_issues,
-                                    cancelled_issues=last_entity_progress.cancelled_issues,
-                                    backlog_estimate_points=last_entity_progress.backlog_estimate_points,
-                                    unstarted_estimate_points=last_entity_progress.unstarted_estimate_points,
-                                    started_estimate_points=last_entity_progress.started_estimate_points,
-                                    completed_estimate_points=last_entity_progress.completed_estimate_points,
-                                    cancelled_estimate_points=last_entity_progress.cancelled_estimate_points,
-                                    created_at=timezone.now(),
-                                    updated_at=timezone.now(),
-                                    workspace_id=last_entity_progress.workspace.id,
-                                )
-                                for date in dates
-                            ]
-                        )
-                elif parsed_request_start_date > cycle.start_date.date():
-                    EntityProgress.objects.filter(
-                        progress_date__lte=(parsed_request_start_date - timedelta(days=1)),
-                        workspace__slug=slug,
-                        entity_type="CYCLE",
-                    ).delete()
-                    last_entity_progress.delete()
+        if cycle.start_date and cycle.end_date:
+            cycle_start_date = cycle.start_date.date()
+            cycle_end_date = cycle.end_date.date()
+        else:
+            cycle_start_date = None
+            cycle_end_date = None
 
         if serializer.is_valid():
             serializer.save()
+
+            # Create EntityProgress for updation of the start_date only for active cycle
+            if (
+                request_data.get("start_date", None)
+                and (cycle_start_date and cycle_start_date <= timezone.now().date())
+                and (cycle_end_date and cycle_end_date >= timezone.now().date())
+            ):
+                parsed_requested_start_date = datetime_parse(request_data["start_date"]).date()
+
+                # Only when moving the start date backwards
+                if parsed_requested_start_date < cycle_start_date:
+                    list_of_entitiy_progress = list(
+                        EntityProgress.objects.filter(cycle_id=pk, workspace__slug=slug, entity_type="CYCLE")
+                        .values(
+                            "total_issues",
+                            "total_estimate_points",
+                            "backlog_issues",
+                            "unstarted_issues",
+                            "started_issues",
+                            "completed_issues",
+                            "cancelled_issues",
+                            "backlog_estimate_points",
+                            "unstarted_estimate_points",
+                            "started_estimate_points",
+                            "completed_estimate_points",
+                            "cancelled_estimate_points",
+                            "workspace_id",
+                            "progress_date",
+                        )
+                        .order_by("progress_date")
+                    )
+
+                    # All existing progress dates for the cycle
+                    existing_progress_dates = set(
+                        progress["progress_date"].date() for progress in list_of_entitiy_progress
+                    )
+
+                    # Get all the dates between the two dates without those that
+                    # already has EntityProgress and add them to the list
+                    dates = []
+                    for i in range((cycle_start_date - parsed_requested_start_date).days):
+                        day = parsed_requested_start_date + timedelta(days=i)
+
+                        if day in existing_progress_dates:
+                            continue
+
+                        # Convert the day into datetime.datetime
+                        day_datetime = datetime.combine(day, datetime.min.time(), tzinfo=pytz.UTC)
+
+                        dates.append(day_datetime)
+
+                    if dates:
+                        dates = sorted(dates)
+                        new_progress_entities = []
+                        # Get the nearer EntityProgress for each date.
+                        for date_without_entity_progress in dates:
+                            previous = [
+                                p
+                                for p in list_of_entitiy_progress
+                                if p["progress_date"].date() < date_without_entity_progress.date()
+                            ]
+
+                            if previous:
+                                entity_progress = previous[-1]
+                            else:
+                                # fallback: nearest after
+                                future = [
+                                    p
+                                    for p in list_of_entitiy_progress
+                                    if p["progress_date"].date() > date_without_entity_progress.date()
+                                ]
+
+                                entity_progress = future[0] if future else None
+
+                            # Validate entity_progress has all required fields
+                            required_fields = [
+                                "total_issues",
+                                "total_estimate_points",
+                                "backlog_issues",
+                                "unstarted_issues",
+                                "started_issues",
+                                "completed_issues",
+                                "cancelled_issues",
+                                "backlog_estimate_points",
+                                "unstarted_estimate_points",
+                                "started_estimate_points",
+                                "completed_estimate_points",
+                                "cancelled_estimate_points",
+                                "workspace_id",
+                            ]
+
+                            if entity_progress and all(field in entity_progress for field in required_fields):
+                                new_progress_entities.append(
+                                    EntityProgress(
+                                        cycle_id=pk,
+                                        progress_date=date_without_entity_progress,
+                                        entity_type="CYCLE",
+                                        total_issues=entity_progress["total_issues"],
+                                        total_estimate_points=entity_progress["total_estimate_points"],
+                                        backlog_issues=entity_progress["backlog_issues"],
+                                        unstarted_issues=entity_progress["unstarted_issues"],
+                                        started_issues=entity_progress["started_issues"],
+                                        completed_issues=entity_progress["completed_issues"],
+                                        cancelled_issues=entity_progress["cancelled_issues"],
+                                        backlog_estimate_points=entity_progress["backlog_estimate_points"],
+                                        unstarted_estimate_points=entity_progress["unstarted_estimate_points"],
+                                        started_estimate_points=entity_progress["started_estimate_points"],
+                                        completed_estimate_points=entity_progress["completed_estimate_points"],
+                                        cancelled_estimate_points=entity_progress["cancelled_estimate_points"],
+                                        created_at=timezone.now(),
+                                        updated_at=timezone.now(),
+                                        workspace_id=entity_progress["workspace_id"],
+                                    )
+                                )
+
+                        if new_progress_entities:
+                            EntityProgress.objects.bulk_create(new_progress_entities)
 
             cycle = queryset.values(
                 # necessary fields
@@ -602,12 +669,14 @@ class CycleDateCheckEndpoint(BaseAPIView):
         cycles = Cycle.objects.filter(
             Q(workspace__slug=slug)
             & Q(project_id=project_id)
+            & Q(archived_at__isnull=True)
             & (
                 Q(start_date__lte=start_date, end_date__gte=start_date)
                 | Q(start_date__lte=end_date, end_date__gte=end_date)
                 | Q(start_date__gte=start_date, end_date__lte=end_date)
             )
         ).exclude(pk=cycle_id)
+
         if cycles.exists():
             return Response(
                 {

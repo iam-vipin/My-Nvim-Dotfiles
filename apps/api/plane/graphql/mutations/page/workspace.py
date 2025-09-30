@@ -1,4 +1,5 @@
 # Python imports
+import base64
 from typing import Optional
 
 # Third-party imports
@@ -15,6 +16,7 @@ from plane.db.models import Page, ProjectMember, WorkspaceMember
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.pages import PageType
 from plane.graphql.utils.roles import Roles
+from plane.graphql.helpers import get_workspace
 
 
 @sync_to_async
@@ -39,6 +41,40 @@ def get_project_member(slug: str, project: str, user_id: str):
 
 @strawberry.type
 class WorkspacePageMutation:
+    @strawberry.mutation(
+        extensions=[
+            PermissionExtension(
+                permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
+    )
+    async def create_workspace_page(
+        self,
+        info: Info,
+        slug: str,
+        name: Optional[str] = "",
+        description_html: Optional[str] = "",
+        logo_props: Optional[JSON] = {},
+        access: int = 2,
+        description_binary: Optional[str] = None,
+    ) -> PageType:
+        workspace = await get_workspace(workspace_slug=slug)
+
+        if description_binary is not None:
+            description_binary = base64.b64decode(description_binary)
+
+        page = await sync_to_async(Page.objects.create)(
+            workspace=workspace,
+            name=name,
+            description_html=description_html,
+            description_binary=description_binary,
+            logo_props=logo_props,
+            access=access,
+            owned_by=info.context.user,
+        )
+
+        return page
+
     @strawberry.mutation(
         extensions=[
             PermissionExtension(

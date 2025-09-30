@@ -103,6 +103,7 @@ class FeatureFlagsTypesEnum(Enum):
     PI_CHAT = "PI_CHAT"
     PI_DEDUPE = "PI_DEDUPE"
     PI_CONVERSE = "PI_CONVERSE"
+    PI_FILE_UPLOADS = "PI_FILE_UPLOADS"
 
     # advanced search
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
@@ -208,6 +209,7 @@ class FeatureFlagType:
     pi_chat: bool
     pi_dedupe: bool
     pi_converse: bool
+    pi_file_uploads: bool
 
     # advanced search
     advanced_search: bool

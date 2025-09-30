@@ -24,7 +24,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
+import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 import { BubbleMenuCommentSelector } from "./comment-selector";

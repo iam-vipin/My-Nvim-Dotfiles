@@ -303,7 +303,7 @@ export class PiChatService extends APIService {
 
   // get attachments
   async listAttachments(chatId: string): Promise<TPiAttachment[]> {
-    return this.get(`/api/v1/attachments/chat`, {
+    return this.get(`/api/v1/attachments/chat/`, {
       params: {
         chat_id: chatId,
       },

@@ -23,7 +23,6 @@ export const useEditorConfig = () => {
   const { assetsUploadPercentage } = useEditorAsset();
   // file size
   const { maxFileSize } = useFileSize();
-  // extended config
   const { getExtendedEditorFileHandlers } = useExtendedEditorConfig();
 
   const getEditorFileHandlers = useCallback(

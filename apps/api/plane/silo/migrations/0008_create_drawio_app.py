@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-def create_gitlab_enterprise_app(apps, schema_editor):
+def create_drawio_app(apps, schema_editor):
     # Getting the models from apps to avoid circular imports
     Application = apps.get_model("authentication", "Application")
     ApplicationSecret = apps.get_model("silo", "ApplicationSecret")
@@ -18,7 +18,7 @@ def create_gitlab_enterprise_app(apps, schema_editor):
     if instance_admin:
         generate_application(
             user_id=instance_admin.user.id,
-            app_key=APPLICATIONS["gitlab_enterprise"]["key"],
+            app_key=APPLICATIONS["drawio"]["key"],
             application_model=Application,
             application_secret_model=ApplicationSecret,
             user_model=User
@@ -27,9 +27,9 @@ def create_gitlab_enterprise_app(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('silo', '0006_split_github_entityconnections'),
+        ('silo', '0007_create_gitlab_enterprise_app'),
     ]
 
     operations = [
-        migrations.RunPython(create_gitlab_enterprise_app, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(create_drawio_app, reverse_code=migrations.RunPython.noop),
     ]

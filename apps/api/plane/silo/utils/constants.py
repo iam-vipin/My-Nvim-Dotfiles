@@ -58,4 +58,14 @@ APPLICATIONS = {
         "description_html": "<p>Importer</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/importer/plane-oauth/callback",
     },
+    "drawio": {
+        "key": "drawio",
+        "name": "Drawio",
+        "slug": "drawio",
+        "short_description": "Drawio Integration",
+        "description_html": "<p>Drawio Integration</p>",
+        "setup_url": f"{settings.SILO_URL}/api/apps/drawio/auth/consent-url/",
+        "redirect_uris": f"{settings.SILO_URL}/api/apps/drawio/auth/callback",
+        "skip_authorization": False,
+    },
 }

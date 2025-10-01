@@ -186,7 +186,7 @@ export class AppController {
       });
 
       // Redirect to success page
-      const redirectUri = getCallbackSuccessUrl(provider, appInstallation.workspace_detail.slug);
+      const redirectUri = getCallbackSuccessUrl(appInstallation.workspace_detail.slug);
       res.redirect(redirectUri);
     } catch (error: any) {
       logger.error("OAuth app callback error:", error);

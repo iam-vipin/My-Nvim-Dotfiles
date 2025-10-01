@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
-import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { E_INTEGRATION_KEYS } from "@plane/types";
@@ -17,7 +16,7 @@ import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const SentryIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // router

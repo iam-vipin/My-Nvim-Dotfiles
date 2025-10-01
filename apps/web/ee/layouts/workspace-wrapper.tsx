@@ -40,7 +40,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // hooks
   const { currentWorkspace } = useWorkspace();
   // store hooks
-  const { fetchFeatureFlags } = useFeatureFlags();
+  const { fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
@@ -73,6 +73,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false, errorRetryCount: 1 }
+  );
+  // fetching integrations
+  useSWR(
+    workspaceSlug ? `WORKSPACE_INTEGRATIONS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchIntegrations(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
   // fetch workspace current plane information

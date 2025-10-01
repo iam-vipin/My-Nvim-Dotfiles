@@ -1,13 +1,14 @@
 import axios, { AxiosInstance } from "axios";
+import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 
 export class SiloAppService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
+  constructor() {
+    this.baseURL = encodeURI(SILO_BASE_URL + SILO_BASE_PATH);
+    this.axiosInstance = axios.create({ baseURL: this.baseURL, withCredentials: true });
   }
 
   async getSupportedIntegrations(): Promise<E_INTEGRATION_KEYS[]> {

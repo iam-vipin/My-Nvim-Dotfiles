@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
-import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { E_INTEGRATION_KEYS } from "@plane/types";
@@ -20,7 +20,7 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 import GithubDarkLogo from "@/public/services/github-dark.svg";
 import GithubLightLogo from "@/public/services/github-light.svg";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // hooks

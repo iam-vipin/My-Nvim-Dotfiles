@@ -1,18 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 // plane imports
-import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 // ce imports
 import type { TEditorFlaggingHookReturnType, TEditorFlaggingHookProps } from "@/ce/hooks/use-editor-flagging";
-// hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
 // lib
 import { store } from "@/lib/store-context";
 // plane web imports
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
-import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+// hooks
+import { useFeatureFlags } from "../hooks/store/use-feature-flags";
 import { EWorkspaceFeatures } from "../types/workspace-feature";
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 /**
  * @description extensions disabled in various editors
@@ -20,8 +18,7 @@ const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PA
 export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => {
   const { workspaceSlug, storeType } = props;
   // store hooks
-  const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
+  const { getIntegrations } = useFeatureFlags();
   // feature flags
   const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const isEditorAIOpsEnabled =
@@ -32,7 +29,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
-  const [isLoadingIntegrations, setIsLoadingIntegrations] = useState(true);
+  // check integrations
+  const integrations = getIntegrations(workspaceSlug);
+  const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
 
   // disabled and flagged in the document editor
   const document = useMemo(
@@ -90,31 +89,9 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   }
 
   // check for drawio integration
-  useEffect(() => {
-    const checkIntegrations = async () => {
-      if (!workspaceId) {
-        document.flagged.add("drawio");
-        setIsLoadingIntegrations(false);
-        return;
-      }
-
-      try {
-        const integrations = await siloAppService.getEnabledIntegrations(workspaceId);
-        const hasDrawio = integrations.some(
-          (integration: { connection_provider: TExtensions }) => integration.connection_provider === "drawio"
-        );
-        if (!hasDrawio) {
-          document.flagged.add("drawio");
-        }
-      } catch (_error) {
-        document.flagged.add("drawio");
-      } finally {
-        setIsLoadingIntegrations(false);
-      }
-    };
-
-    checkIntegrations();
-  }, [document, workspaceId]);
+  if (!hasDrawioIntegration) {
+    document.flagged.add("drawio");
+  }
 
   return {
     document: {
@@ -129,6 +106,5 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
       disabled: Array.from(richText.disabled),
       flagged: Array.from(richText.flagged),
     },
-    isLoadingIntegrations,
   };
 };

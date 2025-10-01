@@ -15,7 +15,6 @@ export type TEditorFlaggingHookReturnType = {
     disabled: TExtensions[];
     flagged: TExtensions[];
   };
-  isLoadingIntegrations: boolean;
 };
 
 export type TEditorFlaggingHookProps = {
@@ -39,5 +38,4 @@ export const useEditorFlagging = (_props: TEditorFlaggingHookProps): TEditorFlag
     disabled: ["ai", "collaboration-caret"],
     flagged: [],
   },
-  isLoadingIntegrations: false,
 });

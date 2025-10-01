@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
-import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { E_INTEGRATION_KEYS } from "@plane/types";
@@ -18,7 +18,7 @@ import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // router

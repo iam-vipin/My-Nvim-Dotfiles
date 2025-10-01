@@ -122,7 +122,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions, isLoadingIntegrations } = useEditorFlagging({
+  const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug,
     storeType,
   });
@@ -225,7 +225,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isPageLoading = pageId === undefined || !realtimeConfig || isLoadingIntegrations;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (

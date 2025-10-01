@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // component
 import Link from "next/link";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -20,7 +20,7 @@ import { AppListRoot } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const IntegrationsListPage = observer(() => {
   // i18n

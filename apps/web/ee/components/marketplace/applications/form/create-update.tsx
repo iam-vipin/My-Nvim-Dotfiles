@@ -278,6 +278,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                 ...payload,
               })
             }
+            initialValue={formData?.description_html || "<p></p>"}
             validation={{ required: t("workspace_settings.settings.applications.app_description_error") }}
             placeholder={t("workspace_settings.settings.applications.app_description_title.placeholder")}
             error={errors.description_html}

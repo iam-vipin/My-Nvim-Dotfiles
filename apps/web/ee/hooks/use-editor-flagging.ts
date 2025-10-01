@@ -66,7 +66,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
     document.disabled.add("ai");
   }
   if (!isCollaborationCursorEnabled) {
-    document.disabled.add("collaboration-cursor");
+    document.disabled.add("collaboration-caret");
   }
   if (storeType && !isNestedPagesEnabled(workspaceSlug)) {
     document.flagged.add("nested-pages");

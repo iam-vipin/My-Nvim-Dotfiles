@@ -28,7 +28,7 @@ export const useEditorFlagging = (): {
 
   // extensions disabled in the document editor
   if (!isIssueEmbedEnabled) disabledExtensions?.push("issue-embed");
-  if (!isCollaborationCursorEnabled) disabledExtensions?.push("collaboration-cursor");
+  if (!isCollaborationCursorEnabled) disabledExtensions?.push("collaboration-caret");
   return {
     disabledExtensions,
     isIssueEmbedEnabled,

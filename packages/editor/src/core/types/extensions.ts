@@ -1,6 +1,6 @@
 export type TExtensions =
   | "ai"
-  | "collaboration-cursor"
+  | "collaboration-caret"
   | "issue-embed"
   | "page-embed"
   | "slash-commands"

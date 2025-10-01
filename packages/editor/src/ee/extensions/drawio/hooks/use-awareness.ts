@@ -80,12 +80,14 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
 
   useEffect(() => {
     if (!awarenessProvider) return;
-    const awarenessStates = Array.from(awarenessProvider.states?.entries?.() ?? []) as [
-      number,
-      Record<string, unknown>,
-    ][];
 
     const updateAwarenessUsers = () => {
+      // Capture fresh awareness states on each update
+      const awarenessStates = Array.from(awarenessProvider.states?.entries?.() ?? []) as [
+        number,
+        Record<string, unknown>,
+      ][];
+
       const states = awarenessStates.map(([clientId, state]) => ({
         clientId,
         user: (state.user as TUserDetails) || { color: "", id: "", name: "" },

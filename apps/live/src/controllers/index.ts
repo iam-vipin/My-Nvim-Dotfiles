@@ -1,5 +1,6 @@
 import { BroadcastController } from "./broadcast.controller";
 import { CollaborationController } from "./collaboration.controller";
+import { ContentController } from "./content.controller";
 import { ConvertDocumentController } from "./convert-document.controller";
 import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
@@ -12,6 +13,8 @@ export const CONTROLLERS = [
   DocumentController,
   LiveDocumentController,
   ConvertDocumentController,
+  // Content service
+  ContentController,
   // websocket
   CollaborationController,
   BroadcastController,

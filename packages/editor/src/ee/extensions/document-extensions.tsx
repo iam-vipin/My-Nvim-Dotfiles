@@ -195,7 +195,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   },
   {
     // Collaboration cursor extension
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-caret"),
     getExtension: ({ provider, userDetails }) =>
       provider &&
       CustomCollaborationCaret({

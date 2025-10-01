@@ -1,8 +1,8 @@
 packages:
-- apps/*
-- packages/*
-- "!apps/api"
-- "!apps/proxy"
+  - apps/*
+  - packages/*
+  - "!apps/api"
+  - "!apps/proxy"
 
 catalog:
   axios: 1.12.0
@@ -27,5 +27,5 @@ catalog:
   "@tiptap/html": ^3.5.3
 
 onlyBuiltDependencies:
-- turbo
-- sharp
+  - turbo
+  - sharp

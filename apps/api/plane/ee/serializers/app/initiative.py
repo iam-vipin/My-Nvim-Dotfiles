@@ -40,9 +40,11 @@ class InitiativeSerializer(BaseSerializer):
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     epic_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    reactions = InitiativeCommentReactionSerializer(
-        read_only=True, many=True, source="initiative_reactions"
-    )
+    reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
+    project_ids = serializers.SerializerMethodField(read_only=True)
+
+    def get_project_ids(self, obj):
+        return [init_projects.project.id for init_projects in obj.projects.all()]
 
     class Meta:
         model = Initiative
@@ -57,9 +59,7 @@ class InitiativeSerializer(BaseSerializer):
         lead = self.context["lead"]
 
         # Create initiative
-        initiative = Initiative.objects.create(
-            **validated_data, workspace_id=workspace_id, lead_id=lead
-        )
+        initiative = Initiative.objects.create(**validated_data, workspace_id=workspace_id, lead_id=lead)
 
         created_by_id = initiative.created_by_id
         updated_by_id = initiative.updated_by_id
@@ -222,30 +222,22 @@ class InitiativeLinkSerializer(BaseSerializer):
             url=validated_data.get("url"),
             initiative_id=validated_data.get("initiative_id"),
         ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return InitiativeLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            InitiativeLink.objects.filter(
-                url=validated_data.get("url"), initiative_id=instance.initiative_id
-            )
+            InitiativeLink.objects.filter(url=validated_data.get("url"), initiative_id=instance.initiative_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
 
 class InitiativeCommentSerializer(BaseSerializer):
-    comment_reactions = InitiativeCommentReactionSerializer(
-        read_only=True, many=True, source="initiative_reactions"
-    )
+    comment_reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
     is_member = serializers.BooleanField(read_only=True)
 
     class Meta:

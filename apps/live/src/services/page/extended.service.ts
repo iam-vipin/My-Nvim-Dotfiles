@@ -16,7 +16,7 @@ export abstract class PageService extends PageCoreService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error;
       });
   }
 }

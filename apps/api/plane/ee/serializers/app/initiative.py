@@ -39,19 +39,35 @@ class InitiativeCommentReactionSerializer(BaseSerializer):
 
 
 class InitiativeSerializer(BaseSerializer):
-    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    epic_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    project_ids = serializers.SerializerMethodField()
+    epic_ids = serializers.SerializerMethodField()
+    labels = serializers.SerializerMethodField()
     reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
     labels = serializers.SerializerMethodField(read_only=True)
-
-    def get_labels(self, obj):
-        return [init_label.label_id for init_label in obj.initiative_label_associations.all()]
 
     class Meta:
         model = Initiative
         fields = "__all__"
         read_only_fields = ["workspace"]
+    
+    def get_project_ids(self, obj):
+        return [project.project_id for project in obj.projects.all()]
+    
+    def get_epic_ids(self, obj):
+        return [epic.epic_id for epic in obj.initiative_epics.all()]
+
+    def get_labels(self, obj):
+        return [init_label.label_id for init_label in obj.initiative_label_associations.all()]
+
+
+class InitiativeWriteSerializer(InitiativeSerializer):
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    epic_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
+
+    class Meta(InitiativeSerializer.Meta):
+        pass
 
     def create(self, validated_data):
         projects = validated_data.pop("project_ids", None)

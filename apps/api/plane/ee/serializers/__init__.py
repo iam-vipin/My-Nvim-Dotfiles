@@ -51,6 +51,7 @@ from .app.initiative import (
     InitiativeActivitySerializer,
     InitiativeEpicSerializer,
     InitiativeLabelSerializer,
+    InitiativeWriteSerializer,
 )
 
 from .app.teamspace import (

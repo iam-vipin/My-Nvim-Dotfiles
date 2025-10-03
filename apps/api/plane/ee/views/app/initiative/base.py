@@ -29,6 +29,7 @@ from plane.ee.models import (
 from plane.ee.serializers import (
     InitiativeSerializer,
     InitiativeProjectSerializer,
+    InitiativeWriteSerializer
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
@@ -63,7 +64,11 @@ class InitiativeEndpoint(BaseAPIView):
                     queryset=InitiativeProject.objects.filter(
                         project__archived_at__isnull=True, project__deleted_at__isnull=True
                     ).select_related("project"),
-                )
+                ),
+                Prefetch(
+                    "initiative_epics",
+                    queryset=InitiativeEpic.objects.all().select_related("epic")
+                ),
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
@@ -135,7 +140,7 @@ class InitiativeEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        serializer = InitiativeSerializer(
+        serializer = InitiativeWriteSerializer(
             data=request.data,
             context={
                 "lead": request.data.get("lead", request.user.id),
@@ -180,7 +185,7 @@ class InitiativeEndpoint(BaseAPIView):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
-        serializer = InitiativeSerializer(initiative, data=request.data, partial=True)
+        serializer = InitiativeWriteSerializer(initiative, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -278,7 +283,7 @@ class InitiativeProjectEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = InitiativeSerializer(
+        serializer = InitiativeWriteSerializer(
             data=request.data,
             context={
                 "lead": request.data.get("lead", request.user_id),

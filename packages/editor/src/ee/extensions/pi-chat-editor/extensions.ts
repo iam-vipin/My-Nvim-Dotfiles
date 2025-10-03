@@ -89,7 +89,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       onUpdate(this) {
         setEditorCommand?.({
           getHTML: () => getTrimmedHTML(this.editor?.getHTML()),
-          clear: () => this.editor?.commands.clearContent(),
+          clear: () => this.editor?.commands.clearContent(false),
         });
       },
     }),

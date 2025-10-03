@@ -6,10 +6,14 @@ import { v4 as uuidv4 } from "uuid";
 import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
 import { MentionsDropdownSection } from "./mentions-dropdown-section";
-import type { PiChatEditorMentionItem, PiChatMentionSearchCallbackResponse } from "./types";
+import {
+  EPiChatEditorAttributeNames,
+  type PiChatEditorMentionAttributes,
+  type PiChatMentionSearchCallbackResponse,
+} from "./types";
 
 export type PiChatEditorMentionsDropdownProps = {
-  command: (item: PiChatEditorMentionItem) => void;
+  command: (item: Partial<PiChatEditorMentionAttributes>) => void;
   query: string;
   editor: Editor;
   searchCallback: (query: string) => Promise<PiChatMentionSearchCallbackResponse>;
@@ -29,18 +33,24 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
 
   const selectItem = useCallback(() => {
     try {
-      const item = sections?.[selectedIndex.section]?.[selectedIndex.item];
+      const sectionKeyAtCurrentIndex = sectionKeys[selectedIndex.section];
+      const item = sections?.[sectionKeyAtCurrentIndex]?.[selectedIndex.item];
       const transactionId = uuidv4();
       if (item) {
         command({
-          ...item,
-          id: transactionId,
+          [EPiChatEditorAttributeNames.ID]: transactionId,
+          [EPiChatEditorAttributeNames.LABEL]:
+            sectionKeyAtCurrentIndex === "issue" ? `${item.subTitle ?? ""}` : (item.title ?? ""),
+          [EPiChatEditorAttributeNames.ENTITY_IDENTIFIER]: item.id,
+          [EPiChatEditorAttributeNames.ENTITY_NAME]: item.title ?? "",
+          [EPiChatEditorAttributeNames.TARGET]: `${sectionKeyAtCurrentIndex}s`,
+          [EPiChatEditorAttributeNames.REDIRECT_URI]: "",
         });
       }
     } catch (error) {
       console.error("Error selecting mention item:", error);
     }
-  }, [command, sections, selectedIndex]);
+  }, [command, sectionKeys, sections, selectedIndex]);
 
   const upHandler = useCallback(() => {
     if (isEmpty) return;
@@ -86,18 +96,16 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
 
   const tabHandler = useCallback(() => {
     const nextSectionKey: string | undefined = sectionKeys[selectedIndex.section + 1];
-    if (nextSectionKey) {
-      setSelectedIndex({
-        section: selectedIndex.section + 1,
-        item: 0,
-      });
-    }
+    setSelectedIndex({
+      section: nextSectionKey !== undefined ? selectedIndex.section + 1 : 0,
+      item: 0,
+    });
   }, [sectionKeys, selectedIndex]);
 
   // keydown events handler
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return;
+      if (![...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key)) return;
       event.preventDefault();
 
       if (event.key === "ArrowUp") {
@@ -160,7 +168,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
     <div className="z-10 max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2">
       {isLoading ? (
         <div className="text-center text-sm text-custom-text-400">Loading...</div>
-      ) : (
+      ) : sectionKeys.length > 0 ? (
         sectionKeys.map((type, index) => (
           <MentionsDropdownSection
             key={index}
@@ -171,6 +179,8 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
             isSectionSelected={selectedIndex.section === index}
           />
         ))
+      ) : (
+        <div className="text-center text-sm text-custom-text-400">No results</div>
       )}
     </div>
   );

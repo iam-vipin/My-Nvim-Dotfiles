@@ -11,6 +11,7 @@ import { IWorkspace, TUserApplication } from "@plane/types";
 import { Button, cn, CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user";
 import { ApplicationService, OAuthService, TConsentParams } from "@/plane-web/services/marketplace";
 import ConnectSvg from "@/public/marketplace/connect.svg";
 import { AuthService } from "@/services/auth.service";
@@ -35,6 +36,12 @@ export const AppConsent = observer(
   ({ application, consentParams, workspaceSlug, worskapcePermissions = {} }: TAppConsentProps) => {
     const { t } = useTranslation();
     const router = useRouter();
+    const { userSettings } = useUser();
+
+    // if workspaceSlug is not available in URL, pick last visited workspace's slug from settings
+    if (!workspaceSlug) {
+      workspaceSlug = userSettings?.data?.workspace?.last_workspace_slug ?? "";
+    }
 
     const { workspaces } = useWorkspace();
     const workspacesList = Object.values(workspaces ?? {});

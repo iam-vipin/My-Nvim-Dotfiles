@@ -418,7 +418,9 @@
       "project_update_success": "Projekty inicjatywy zaktualizowane pomyślnie.",
       "project_update_error": "Nie udało się zaktualizować projektów inicjatywy. Spróbuj ponownie!",
       "epic_update_success": "Epik{count, plural, one { dodany do Inicjatywy pomyślnie.} other {i dodane do Inicjatywy pomyślnie.}}",
-      "epic_update_error": "Dodanie Epika do Inicjatywy nie powiodło się. Spróbuj ponownie później."
+      "epic_update_error": "Dodanie Epika do Inicjatywy nie powiodło się. Spróbuj ponownie później.",
+      "state_update_success": "Stan inicjatywy został pomyślnie zaktualizowany.",
+      "state_update_error": "Nie udało się zaktualizować stanu inicjatywy. Spróbuj ponownie!"
     },
     "empty_state": {
       "general": {

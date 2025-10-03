@@ -13,7 +13,7 @@ export type TInitiativeStoredFilters = {
 
 // initiative rich filters
 
-export type TInitiativeFilterKeys = "lead" | "start_date" | "end_date";
+export type TInitiativeFilterKeys = "lead" | "start_date" | "end_date" | "state";
 
 export type TExternalInitiativeFilterOperator =
   | typeof CORE_OPERATORS.EXACT

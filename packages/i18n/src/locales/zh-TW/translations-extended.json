@@ -418,7 +418,9 @@
       "project_update_success": "倡議專案已成功更新。",
       "project_update_error": "更新倡議專案失敗。請再試一次！",
       "epic_update_success": "史詩{count, plural, one {已成功添加到倡議。} other {已成功添加到倡議。}}",
-      "epic_update_error": "史詩添加到倡議失敗。請稍後再試。"
+      "epic_update_error": "史詩添加到倡議失敗。請稍後再試。",
+      "state_update_success": "倡議狀態已成功更新。",
+      "state_update_error": "更新倡議狀態失敗。請再試一次！"
     },
     "empty_state": {
       "general": {

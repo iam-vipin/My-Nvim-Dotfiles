@@ -1,22 +1,15 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
 import { FilterInstance } from "@plane/shared-state";
-import { COLLECTION_OPERATOR, IUserLite } from "@plane/types";
-import { Avatar, Loader } from "@plane/ui";
-import {
-  createFilterConfig,
-  getStartDateFilterConfig,
-  getTargetDateFilterConfig,
-  createOperatorConfigEntry,
-  getMemberMultiSelectConfig,
-} from "@plane/utils";
+import { IUserLite } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { FiltersRow } from "@/components/rich-filters/filters-row";
 import { useMember } from "@/hooks/store/use-member";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/plane-web/types/initiative";
+import { useInitiativesFilterConfigs } from "./use-initiatives-filter-configs";
 import { InitiativesFilterAdapter } from "./initiatives-filter-adapter";
 
 const createFilterInstance = (
@@ -63,53 +56,18 @@ const InitiativesFilterRowContent = observer(
       return workspaceMemberIds.map((memberId) => getUserDetails(memberId)).filter(Boolean) as IUserLite[];
     }, [getUserDetails, workspaceMemberIds]);
 
-    const leadFilterConfig = useMemo(
-      () =>
-        createFilterConfig<TInitiativeFilterKeys, string>({
-          id: "lead",
-          label: "Lead",
-          icon: Users,
-          isEnabled: true,
-          supportedOperatorConfigsMap: new Map([
-            createOperatorConfigEntry(
-              COLLECTION_OPERATOR.IN,
-              {
-                isEnabled: true,
-                members: workspaceMembers,
-                getOptionIcon: (member: IUserLite) => (
-                  <Avatar src={member.avatar_url} name={member.display_name} size="sm" />
-                ),
-                ...operatorConfigs,
-              },
-              (updatedParams) => getMemberMultiSelectConfig(updatedParams)
-            ),
-          ]),
-          ...operatorConfigs,
-        }),
-      [workspaceMembers, operatorConfigs]
-    );
+    const { leadFilterConfig, startDateFilterConfig, endDateFilterConfig, statesFilterConfig } =
+      useInitiativesFilterConfigs({
+        workspaceMembers,
+        operatorConfigs,
+      });
 
-    const startDateFilterConfig = useMemo(
-      () =>
-        getStartDateFilterConfig<TInitiativeFilterKeys>("start_date")({
-          isEnabled: true,
-          filterIcon: CalendarClock,
-          ...operatorConfigs,
-        }),
-      [operatorConfigs]
-    );
-
-    const endDateFilterConfig = useMemo(
-      () =>
-        getTargetDateFilterConfig<TInitiativeFilterKeys>("end_date")({
-          isEnabled: true,
-          filterIcon: CalendarCheck2,
-          ...operatorConfigs,
-        }),
-      [operatorConfigs]
-    );
-
-    filterInstance.configManager.registerAll([leadFilterConfig, startDateFilterConfig, endDateFilterConfig]);
+    filterInstance.configManager.registerAll([
+      leadFilterConfig,
+      startDateFilterConfig,
+      endDateFilterConfig,
+      statesFilterConfig,
+    ]);
 
     if (!workspaceMembers) {
       return <Loader.Item height="24px" width="100%" />;

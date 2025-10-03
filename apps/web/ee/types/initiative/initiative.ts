@@ -4,6 +4,7 @@ import {
   TIssueActivityUserDetail,
   TIssueComment,
   TLogoProps,
+  TInitiativeStates,
 } from "@plane/types";
 
 export type TInitiative = {
@@ -19,7 +20,7 @@ export type TInitiative = {
   description_binary: string | null;
   start_date: string | null;
   end_date: string | null;
-  status: "PLANNED";
+  state: TInitiativeStates;
   created_by: string;
   updated_by: string | null;
   workspace: string;

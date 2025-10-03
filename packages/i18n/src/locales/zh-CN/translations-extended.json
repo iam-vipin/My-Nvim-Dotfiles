@@ -417,7 +417,9 @@
       "project_update_success": "计划项目更新成功。",
       "project_update_error": "更新计划项目失败。请重试！",
       "epic_update_success": "史诗{count, plural, one {已成功添加到计划。} other {已成功添加到计划。}}",
-      "epic_update_error": "将史诗添加到计划失败。请稍后重试。"
+      "epic_update_error": "将史诗添加到计划失败。请稍后重试。",
+      "state_update_success": "倡议状态已成功更新。",
+      "state_update_error": "更新倡议状态失败。请重试！"
     },
     "empty_state": {
       "general": {

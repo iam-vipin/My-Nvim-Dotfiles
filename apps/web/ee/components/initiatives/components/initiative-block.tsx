@@ -13,15 +13,14 @@ import { ListItem } from "@/components/core/list";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { useInitiativeUpdates } from "../details/sidebar/use-updates";
+import { InitiativesBlockProperties } from "./initiatives-block-properties";
 import { InitiativeQuickActions } from "./quick-actions";
-import { ReadOnlyBlockProperties } from "./read-only-properties";
 
 type Props = {
   initiativeId: string;
@@ -33,8 +32,6 @@ export const InitiativeBlock = observer((props: Props) => {
   const parentRef = useRef(null);
   const { workspaceSlug } = useParams();
 
-  // hooks
-  const router = useAppRouter();
   const {
     initiative: { getInitiativeById, getInitiativeStatsById },
   } = useInitiatives();
@@ -76,16 +73,11 @@ export const InitiativeBlock = observer((props: Props) => {
             analytics={initiativeStats}
             showTabs
           />
-          <ControlLink
-            className="relative flex w-full items-center gap-3 overflow-hidden"
-            href={`/${workspaceSlug}/initiatives/${initiative.id}`}
-            target="_self"
-            onClick={() => {
-              router.push(`/${workspaceSlug}/initiatives/${initiative.id}`);
-            }}
-          >
-            <ReadOnlyBlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} />
-          </ControlLink>
+          <InitiativesBlockProperties
+            initiative={initiative}
+            isSidebarCollapsed={isSidebarCollapsed}
+            workspaceSlug={workspaceSlug.toString()}
+          />
           <div
             className={cn("hidden", {
               "md:flex": isSidebarCollapsed,

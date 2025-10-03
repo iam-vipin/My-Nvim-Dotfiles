@@ -10,19 +10,25 @@ import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane Web
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components
 import { PropertyBlockWrapper } from "./property-block-wrapper";
+import { InitiativesStatesDropdown } from "./states/dropdown";
 
 type Props = {
   initiative: TInitiative;
   isSidebarCollapsed: boolean | undefined;
+  workspaceSlug: string;
 };
 
-export const ReadOnlyBlockProperties = observer((props: Props) => {
-  const { initiative, isSidebarCollapsed } = props;
+export const InitiativesBlockProperties = observer((props: Props) => {
+  const { initiative, isSidebarCollapsed, workspaceSlug } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const {
+    initiative: { updateInitiative },
+  } = useInitiatives();
 
   // derived values
   const lead = getUserDetails(initiative.lead ?? "");
@@ -38,6 +44,18 @@ export const ReadOnlyBlockProperties = observer((props: Props) => {
         <PropertyBlockWrapper>
           <CalendarDays className="h-3 w-3 flex-shrink-0" />
           <MergedDateDisplay startDate={initiative.start_date} endDate={initiative.end_date} className="flex-grow" />
+        </PropertyBlockWrapper>
+      )}
+
+      {/* state */}
+      {initiative.state && (
+        <PropertyBlockWrapper>
+          <InitiativesStatesDropdown
+            value={initiative.state}
+            placeholder="State"
+            buttonClassName="h-full"
+            onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
+          />
         </PropertyBlockWrapper>
       )}
 

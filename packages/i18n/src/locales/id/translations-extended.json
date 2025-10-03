@@ -418,7 +418,9 @@
       "project_update_success": "Proyek inisiatif berhasil diperbarui.",
       "project_update_error": "Gagal memperbarui proyek inisiatif. Silakan coba lagi!",
       "epic_update_success": "Epik{count, plural, one { berhasil ditambahkan ke Inisiatif.} other { berhasil ditambahkan ke Inisiatif.}}",
-      "epic_update_error": "Penambahan Epik ke Inisiatif gagal. Silakan coba lagi nanti."
+      "epic_update_error": "Penambahan Epik ke Inisiatif gagal. Silakan coba lagi nanti.",
+      "state_update_success": "Status inisiatif berhasil diperbarui.",
+      "state_update_error": "Gagal memperbarui status inisiatif. Silakan coba lagi!"
     },
     "empty_state": {
       "general": {

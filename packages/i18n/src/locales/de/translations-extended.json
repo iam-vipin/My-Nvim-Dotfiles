@@ -418,7 +418,9 @@
       "project_update_success": "Initiativenprojekte erfolgreich aktualisiert.",
       "project_update_error": "Fehler beim Aktualisieren der Initiativenprojekte. Bitte versuchen Sie es erneut!",
       "epic_update_success": "Epic{count, plural, one { erfolgreich zur Initiative hinzugefügt.} other {s erfolgreich zur Initiative hinzugefügt.}}",
-      "epic_update_error": "Epic-Hinzufügung zur Initiative fehlgeschlagen. Bitte versuchen Sie es später erneut."
+      "epic_update_error": "Epic-Hinzufügung zur Initiative fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+      "state_update_success": "Initiativenstatus wurde erfolgreich aktualisiert.",
+      "state_update_error": "Aktualisierung des Initiativenstatus fehlgeschlagen. Bitte versuchen Sie es erneut!"
     },
     "empty_state": {
       "general": {

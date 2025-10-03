@@ -418,7 +418,9 @@
       "project_update_success": "Proiectele inițiativei actualizate cu succes.",
       "project_update_error": "Eșec la actualizarea proiectelor inițiativei. Te rugăm să încerci din nou!",
       "epic_update_success": "Epic{count, plural, one { adăugat la Inițiativă cu succes.} other {e adăugate la Inițiativă cu succes.}}",
-      "epic_update_error": "Adăugarea Epicului la Inițiativă a eșuat. Te rugăm să încerci din nou mai târziu."
+      "epic_update_error": "Adăugarea Epicului la Inițiativă a eșuat. Te rugăm să încerci din nou mai târziu.",
+      "state_update_success": "Starea inițiativei a fost actualizată cu succes.",
+      "state_update_error": "Actualizarea stării inițiativei a eșuat. Vă rugăm să încercați din nou!"
     },
     "empty_state": {
       "general": {

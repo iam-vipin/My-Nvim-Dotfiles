@@ -417,7 +417,9 @@
       "project_update_success": "イニシアチブのプロジェクトが正常に更新されました。",
       "project_update_error": "イニシアチブのプロジェクトの更新に失敗しました。もう一度お試しください！",
       "epic_update_success": "エピック{count, plural, one {がイニシアチブに正常に追加されました。} other {がイニシアチブに正常に追加されました。}}",
-      "epic_update_error": "イニシアチブへのエピックの追加に失敗しました。後でもう一度お試しください。"
+      "epic_update_error": "イニシアチブへのエピックの追加に失敗しました。後でもう一度お試しください。",
+      "state_update_success": "イニシアチブの状態が正常に更新されました。",
+      "state_update_error": "イニシアチブの状態を更新できませんでした。もう一度お試しください！"
     },
     "empty_state": {
       "general": {

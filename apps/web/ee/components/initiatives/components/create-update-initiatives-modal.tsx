@@ -7,6 +7,7 @@ import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@p
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // Plane web
+import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
 // local
@@ -26,6 +27,7 @@ const defaultValues: Partial<TInitiative> = {
   lead: null,
   project_ids: [],
   epic_ids: [],
+  state: DEFAULT_INITIATIVE_STATE,
 };
 
 export const CreateUpdateInitiativeModal = observer((props: Props) => {
@@ -34,7 +36,7 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<TInitiative> | undefined>(undefined);
+  const [formData, setFormData] = useState<Partial<TInitiative> | undefined>();
   // store hooks
   const {
     initiative: { createInitiative, updateInitiative, getInitiativeById },

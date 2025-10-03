@@ -418,7 +418,9 @@
       "project_update_success": "Projekty iniciativy byly úspěšně aktualizovány.",
       "project_update_error": "Nepodařilo se aktualizovat projekty iniciativy. Zkuste to prosím znovu!",
       "epic_update_success": "Epic{count, plural, one { byl úspěšně přidán do iniciativy.} other {y byly úspěšně přidány do iniciativy.}}",
-      "epic_update_error": "Přidání epiku do iniciativy se nezdařilo. Zkuste to prosím znovu později."
+      "epic_update_error": "Přidání epiku do iniciativy se nezdařilo. Zkuste to prosím znovu později.",
+      "state_update_success": "Stav iniciativy byl úspěšně aktualizován.",
+      "state_update_error": "Nepodařilo se aktualizovat stav iniciativy. Zkuste to prosím znovu!"
     },
     "empty_state": {
       "general": {

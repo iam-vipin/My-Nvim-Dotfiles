@@ -11,7 +11,6 @@ import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } fr
 import { Logo } from "@/components/common/logo";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
@@ -22,7 +21,7 @@ import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-sea
 // plane web components
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components
-import { EpicsDropdown } from "../../dropdowns";
+import { InitiativesStatesDropdown } from "./states/dropdown";
 
 type Props = {
   initiativeDetail?: TInitiative;
@@ -184,33 +183,15 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         />
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="h-7">
-            <ProjectDropdown
-              buttonVariant={"border-with-text"}
-              onChange={(val) => {
-                handleFormDataChange("project_ids", val);
-              }}
-              value={formData.project_ids || []}
-              multiple
-              showTooltip
-              tabIndex={2}
-            />
-          </div>
-          <div className="h-7">
-            <EpicsDropdown
-              buttonVariant={"border-with-text"}
-              onChange={(val) => {
-                handleFormDataChange("epic_ids", val);
-              }}
-              value={formData.epic_ids || []}
-              multiple
-              showTooltip
-              tabIndex={2}
-              searchParams={{
-                initiative_id: initiativeDetail?.id,
-              }}
-            />
-          </div>
+          {formData?.state && (
+            <div className="h-7">
+              <InitiativesStatesDropdown
+                value={formData?.state}
+                onChange={(val) => handleFormDataChange("state", val)}
+                placeholder={t("state")}
+              />
+            </div>
+          )}
 
           <DateRangeDropdown
             buttonVariant="border-with-text"

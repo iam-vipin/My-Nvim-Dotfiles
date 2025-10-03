@@ -417,7 +417,9 @@
       "project_update_success": "Proyectos de la iniciativa actualizados exitosamente.",
       "project_update_error": "Error al actualizar los proyectos de la iniciativa. ¡Por favor intente nuevamente!",
       "epic_update_success": "Epic{count, plural, one { agregado a la Iniciativa exitosamente.} other {s agregados a la Iniciativa exitosamente.}}",
-      "epic_update_error": "Error al agregar Epic a la Iniciativa. Por favor intente más tarde."
+      "epic_update_error": "Error al agregar Epic a la Iniciativa. Por favor intente más tarde.",
+      "state_update_success": "El estado de la iniciativa se actualizó correctamente.",
+      "state_update_error": "No se pudo actualizar el estado de la iniciativa. ¡Por favor, inténtelo de nuevo!"
     },
     "empty_state": {
       "general": {

@@ -426,7 +426,9 @@
       "project_update_success": "Projekty iniciatívy boli úspešne aktualizované.",
       "project_update_error": "Nepodarilo sa aktualizovať projekty iniciatívy. Skúste to znova!",
       "epic_update_success": "Epik{count, plural, one { bol úspešne pridaný do Iniciatívy.} other {y boli úspešne pridané do Iniciatívy.}}",
-      "epic_update_error": "Pridanie Epiku do Iniciatívy zlyhalo. Skúste to neskôr znova."
+      "epic_update_error": "Pridanie Epiku do Iniciatívy zlyhalo. Skúste to neskôr znova.",
+      "state_update_success": "Stav iniciatívy bol úspešne aktualizovaný.",
+      "state_update_error": "Nepodarilo sa aktualizovať stav iniciatívy. Skúste to prosím znova!"
     },
     "empty_state": {
       "general": {

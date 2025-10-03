@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import { EUserWorkspaceRoles, TInitiativeStates } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
@@ -94,6 +94,26 @@ export const InitiativeDetailRoot = observer((props: Props) => {
     }
   };
 
+  const handleInitiativeStateUpdate = (state: TInitiativeStates) => {
+    try {
+      if (!initiativeId) return;
+      updateInitiative(workspaceSlug, initiativeId, { state }).then(() => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+      });
+      setToast({
+        title: t("toast.success"),
+        type: TOAST_TYPE.SUCCESS,
+        message: t("initiatives.toast.state_update_success"),
+      });
+    } catch {
+      setToast({
+        title: t("toast.success"),
+        type: TOAST_TYPE.ERROR,
+        message: t("initiatives.toast.state_update_error"),
+      });
+    }
+  };
+
   const toggleEpicModal = (value?: boolean) => setIsEpicModalOpen(value || !isEpicModalOpen);
   const toggleProjectsModal = (value?: boolean) => setIsProjectsOpen(value || !isProjectsOpen);
 
@@ -115,6 +135,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
         disabled={!isEditable}
         toggleEpicModal={toggleEpicModal}
         toggleProjectModal={toggleProjectsModal}
+        handleInitiativeStateUpdate={handleInitiativeStateUpdate}
       />
       <ProjectMultiSelectModal
         isOpen={isProjectsOpen}

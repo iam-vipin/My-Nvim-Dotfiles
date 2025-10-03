@@ -4,8 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2 } from "lucide-react";
 // plane imports
+import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, InitiativeStateIcon } from "@plane/propel/icons";
+import { TInitiativeStates } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -17,16 +19,20 @@ import { useMember } from "@/hooks/store/use-member";
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
+import { InitiativesStatesDropdown } from "../../components/states/dropdown";
+
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
   toggleEpicModal: (value?: boolean) => void;
   toggleProjectModal: (value?: boolean) => void;
+  handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal } = props;
+  const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal, handleInitiativeStateUpdate } =
+    props;
 
   const {
     initiative: {
@@ -62,6 +68,19 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   return (
     <SidebarContentWrapper title="Properties">
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
+        {/* States Drop down */}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <InitiativeStateIcon className="h-4 w-4 flex-shrink-0" state="DRAFT" size={EIconSize.XL} />
+            <span>State</span>
+          </div>
+          <InitiativesStatesDropdown
+            value={initiative.state}
+            onChange={(val) => handleInitiativeStateUpdate(val)}
+            disabled={disabled}
+            buttonClassName="h-full"
+          />
+        </div>
         {/* Projects Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -73,6 +92,19 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             onClick={() => toggleProjectModal(true)}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
+          </button>
+        </div>
+        {/* Epics dropdown */}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <EpicIcon className="h-4 w-4 text-custom-text-300" />
+            <span>{t("common.epic")}</span>
+          </div>
+          <button
+            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
+            onClick={() => toggleEpicModal(true)}
+          >
+            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
           </button>
         </div>
         {/* Lead Drop down*/}
@@ -91,19 +123,6 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
             showUserDetails
           />
-        </div>
-        {/* Epics dropdown */}
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <EpicIcon className="h-4 w-4 text-custom-text-300" />
-            <span>{t("common.epic")}</span>
-          </div>
-          <button
-            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
-            onClick={() => toggleEpicModal(true)}
-          >
-            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
-          </button>
         </div>
         {/* Dates Drop down*/}
         <div className="flex h-8 items-center gap-2">

@@ -37,17 +37,11 @@ export const InitiativesRoot = observer(() => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   if (initiative.initiativesLoader) return <ListLayoutLoader />;
 
   if (!groupedInitiativeIds) return <></>;
 
-  const groupIds = Object.keys(groupedInitiativeIds).sort((a, b) => {
-    if (a === "none") return -1;
-    return 1;
-  });
-
-  const groupList = getGroupList(groupIds, groupBy, getUserDetails);
+  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
 
   // Check if the object is empty or contains only empty arrays
 
@@ -88,7 +82,7 @@ export const InitiativesRoot = observer(() => {
     <div className={`relative size-full bg-custom-background-90`}>
       <div className="relative size-full flex flex-col">
         {groupList && (
-          <div className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md">
+          <div className="size-full vertical-scrollbar scrollbar-lg overflow-auto relative vertical-scrollbar-margin-top-md">
             {groupList.map((group) => (
               <InitiativeGroup
                 key={group.id}

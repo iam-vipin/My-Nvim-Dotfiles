@@ -418,7 +418,9 @@
       "project_update_success": "이니셔티브 프로젝트가 성공적으로 업데이트되었습니다.",
       "project_update_error": "이니셔티브 프로젝트 업데이트에 실패했습니다. 다시 시도해 주세요!",
       "epic_update_success": "에픽{count, plural, one {이 이니셔티브에 성공적으로 추가되었습니다.} other {들이 이니셔티브에 성공적으로 추가되었습니다.}}",
-      "epic_update_error": "이니셔티브에 에픽 추가에 실패했습니다. 나중에 다시 시도해 주세요."
+      "epic_update_error": "이니셔티브에 에픽 추가에 실패했습니다. 나중에 다시 시도해 주세요.",
+      "state_update_success": "이니셔티브 상태가 성공적으로 업데이트되었습니다.",
+      "state_update_error": "이니셔티브 상태를 업데이트하지 못했습니다. 다시 시도해 주세요!"
     },
     "empty_state": {
       "general": {

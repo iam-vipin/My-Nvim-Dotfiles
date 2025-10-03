@@ -458,7 +458,9 @@
       "project_update_success": "Initiative projects updated successfully.",
       "project_update_error": "Failed to update initiative projects. Please try again!",
       "epic_update_success": "Epic{count, plural, one { added to Initiative successfully.} other {s added to Initiative successfully.}}",
-      "epic_update_error": "Epic addition to Initiative failed. Please try again later."
+      "epic_update_error": "Epic addition to Initiative failed. Please try again later.",
+      "state_update_success": "Initiative state updated successfully.",
+      "state_update_error": "Failed to update initiative state. Please try again!"
     },
     "empty_state": {
       "general": {

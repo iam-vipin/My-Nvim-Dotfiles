@@ -417,7 +417,9 @@
       "project_update_success": "Projets de l'initiative mis à jour avec succès.",
       "project_update_error": "Échec de la mise à jour des projets de l'initiative. Veuillez réessayer !",
       "epic_update_success": "Epic{count, plural, one { ajouté à l'initiative avec succès.} other {s ajoutés à l'initiative avec succès.}}",
-      "epic_update_error": "L'ajout d'Epic à l'initiative a échoué. Veuillez réessayer plus tard."
+      "epic_update_error": "L'ajout d'Epic à l'initiative a échoué. Veuillez réessayer plus tard.",
+      "state_update_success": "L'état de l'initiative a été mis à jour avec succès.",
+      "state_update_error": "Échec de la mise à jour de l'état de l'initiative. Veuillez réessayer !"
     },
     "empty_state": {
       "general": {

@@ -1,6 +1,8 @@
 import { ReactElement } from "react";
 // plane
-import { ISearchIssueResponse, IUserLite, TInitiativeGroupByOptions } from "@plane/types";
+import { EIconSize, INITIATIVE_STATES } from "@plane/constants";
+import { InitiativeStateIcon } from "@plane/propel/icons";
+import { ISearchIssueResponse, IUserLite, TInitiativeGroupByOptions, TInitiativeStates } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
@@ -21,8 +23,23 @@ export const getGroupList = (
 ) => {
   const groupList: TInitiativeGroup[] = [];
 
+  let sortedGroupIds = groupIds;
+
+  switch (groupBy) {
+    case "state":
+      sortedGroupIds = sortedGroupIds.sort(
+        (a, b) =>
+          INITIATIVE_STATES[a as TInitiativeStates].sortOrder - INITIATIVE_STATES[b as TInitiativeStates].sortOrder
+      );
+    default:
+      sortedGroupIds = sortedGroupIds.sort((a) => {
+        if (a === "none") return -1;
+        return 1;
+      });
+  }
+
   if (!groupBy) {
-    for (const groupId of groupIds) {
+    for (const groupId of sortedGroupIds) {
       groupList.push({
         id: groupId,
         name: groupId,
@@ -31,7 +48,7 @@ export const getGroupList = (
   }
 
   if (groupBy === "created_by" || groupBy === "lead") {
-    for (const groupId of groupIds) {
+    for (const groupId of sortedGroupIds) {
       if (groupId === "None") {
         groupList.push({
           id: groupId,
@@ -49,6 +66,16 @@ export const getGroupList = (
         id: groupId,
         name: member.display_name,
         icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+      });
+    }
+  }
+
+  if (groupBy === "state") {
+    for (const groupId of sortedGroupIds) {
+      groupList.push({
+        id: groupId,
+        name: INITIATIVE_STATES[groupId as TInitiativeStates].title,
+        icon: <InitiativeStateIcon state={groupId as TInitiativeStates} size={EIconSize.LG} />,
       });
     }
   }

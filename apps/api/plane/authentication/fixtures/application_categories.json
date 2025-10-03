@@ -142,5 +142,37 @@
         "in_use": "logo"
       }
     }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "6f778616-3839-4910-8626-aa6948556826",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Integrations",
+      "description": "Integration Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "6f778616-3839-4910-8626-aa6948556826",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Importers",
+      "description": "Importer Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
   }
 ]

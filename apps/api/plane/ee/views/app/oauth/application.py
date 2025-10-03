@@ -111,6 +111,9 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "video_url",
             "is_mentionable",
             "website",
+            "supported_plans",
+            "supported_environments",
+            "links",
         }
 
         # Filter the request data to only include allowed fields

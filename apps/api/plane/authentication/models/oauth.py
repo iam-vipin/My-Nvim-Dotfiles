@@ -30,6 +30,25 @@ from plane.utils.html_processor import strip_tags
 
 # oauth models
 class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
+    class Status(models.TextChoices):
+        """
+        The status of the application.
+        draft – Saved but not yet published by the publisher.
+        pending_review – Submitted and waiting for admin/moderator approval.
+        approved – Reviewed and accepted, but not necessarily public yet.
+        published – Live on the marketplace and discoverable by users.
+        hidden – Temporarily removed from public view (but not deleted).
+        suspended – Blocked due to violation, security issue, or admin action.
+        archived – Permanently de-listed (kept for history, not editable).
+        """
+        DRAFT = "draft", "Draft"
+        PENDING_REVIEW = "pending_review", "Pending Review"
+        APPROVED = "approved", "Approved"
+        PUBLISHED = "published", "Published"
+        HIDDEN = "hidden", "Hidden"
+        SUSPENDED = "suspended", "Suspended"
+        ARCHIVED = "archived", "Archived"
+
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
@@ -77,6 +96,11 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     website = models.URLField(max_length=800, null=True, blank=True)
 
     is_mentionable = models.BooleanField(default=False)
+    supported_plans = models.JSONField(default=list, blank=True)
+    supported_environments = models.JSONField(default=list, blank=True)
+    links = models.JSONField(default=list, blank=True)
+    status = models.CharField(max_length=255, default=Status.DRAFT.value)
+    priority = models.IntegerField(default=0)
 
     objects = ApplicationManager()
 

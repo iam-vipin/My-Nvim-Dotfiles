@@ -114,6 +114,17 @@ class InitiativeLabel(BaseModel):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_id = InitiativeLabel.objects.filter(
+                workspace=self.workspace
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+
+        super(InitiativeLabel, self).save(*args, **kwargs)
+
 
 class InitiativeLabelAssociation(BaseModel):
     workspace = models.ForeignKey(

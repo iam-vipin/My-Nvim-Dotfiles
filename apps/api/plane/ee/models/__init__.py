@@ -50,6 +50,7 @@ from .initiative import (
     InitiativeReaction,
     InitiativeUserProperty,
     InitiativeEpic,
+    InitiativeLabelAssociation,
 )
 from .teamspace import (
     Teamspace,

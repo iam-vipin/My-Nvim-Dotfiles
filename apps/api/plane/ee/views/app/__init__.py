@@ -21,7 +21,6 @@ from plane.ee.views.app.project import ProjectFeatureEndpoint
 from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
-    InitiativeLabelEndpoint,
     InitiativeUpdateViewSet,
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,

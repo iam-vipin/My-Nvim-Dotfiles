@@ -5,7 +5,6 @@ from django.urls import path
 from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
-    InitiativeLabelEndpoint,
     InitiativeAnalyticsEndpoint,
     InitiativeLinkViewSet,
     InitiativeCommentViewSet,
@@ -21,6 +20,7 @@ from plane.ee.views.app.initiative import (
     InitiativeUpdatesReactionViewSet,
     InitiativeEpicIssueViewSet,
     InitiativeUserPropertiesEndpoint,
+    InitiativeLabelsEndpoint,
 )
 
 urlpatterns = [
@@ -43,16 +43,6 @@ urlpatterns = [
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/projects/<uuid:project_id>/",
         InitiativeProjectEndpoint.as_view(),
         name="initiative-projects",
-    ),
-    path(
-        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/labels/",
-        InitiativeLabelEndpoint.as_view(),
-        name="initiative-labels",
-    ),
-    path(
-        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/labels/<uuid:pk>/",
-        InitiativeLabelEndpoint.as_view(),
-        name="initiative-labels",
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/analytics/",
@@ -187,4 +177,14 @@ urlpatterns = [
         name="initiative-user-properties",
     ),
     # End Initiative User Properties
+    path(
+        "workspaces/<str:slug>/initiatives/labels/",
+        InitiativeLabelsEndpoint.as_view(),
+        name="initiative-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/labels/<uuid:initiative_label_id>/",
+        InitiativeLabelsEndpoint.as_view(),
+        name="initiative-labels",
+    ),
 ]

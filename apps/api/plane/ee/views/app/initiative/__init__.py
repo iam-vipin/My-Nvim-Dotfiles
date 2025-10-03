@@ -1,7 +1,6 @@
 from .base import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
-    InitiativeLabelEndpoint,
     InitiativeAnalyticsEndpoint,
     WorkspaceInitiativeAnalytics,
     InitiativeEpicAnalytics,
@@ -21,3 +20,4 @@ from .update import (
 )
 
 from .user_properties import InitiativeUserPropertiesEndpoint
+from .label import InitiativeLabelsEndpoint

@@ -50,6 +50,7 @@ from .app.initiative import (
     InitiativeReactionSerializer,
     InitiativeActivitySerializer,
     InitiativeEpicSerializer,
+    InitiativeLabelSerializer,
 )
 
 from .app.teamspace import (

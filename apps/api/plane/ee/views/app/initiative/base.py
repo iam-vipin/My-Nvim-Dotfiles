@@ -20,13 +20,16 @@ from plane.db.models import Workspace, Issue, Project
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
-    InitiativeLabel,
     InitiativeReaction,
     InitiativeEpic,
     ProjectAttribute,
     EntityUpdates,
+    InitiativeLabelAssociation,
 )
-from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer
+from plane.ee.serializers import (
+    InitiativeSerializer,
+    InitiativeProjectSerializer,
+)
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -47,6 +50,14 @@ class InitiativeEndpoint(BaseAPIView):
         return (
             Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .prefetch_related(
+                Prefetch(
+                    "initiative_reactions",
+                    queryset=InitiativeReaction.objects.select_related("initiative", "actor"),
+                ),
+                Prefetch(
+                    "initiative_label_associations",
+                    queryset=InitiativeLabelAssociation.objects.filter(deleted_at__isnull=True),
+                ),
                 Prefetch(
                     "projects",
                     queryset=InitiativeProject.objects.filter(
@@ -102,17 +113,7 @@ class InitiativeEndpoint(BaseAPIView):
     def get(self, request, slug, pk=None):
         # Get initiative by pk
         if pk:
-            initiative = (
-                self.get_queryset()
-                .filter(pk=pk)
-                .prefetch_related(
-                    Prefetch(
-                        "initiative_reactions",
-                        queryset=InitiativeReaction.objects.select_related("initiative", "actor"),
-                    )
-                )
-                .first()
-            )
+            initiative = self.get_queryset().filter(pk=pk).first()
             serializer = InitiativeSerializer(initiative)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -166,32 +167,11 @@ class InitiativeEndpoint(BaseAPIView):
     def patch(self, request, slug, pk):
         initiative = (
             Initiative.objects.filter(pk=pk)
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        InitiativeProject.objects.filter(
-                            initiative_id=OuterRef("pk"),
-                            workspace__slug=slug,
-                            project__archived_at__isnull=True,
-                        )
-                        .values("initiative_id")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
-                ),
-                epic_ids=Coalesce(
-                    Subquery(
-                        InitiativeEpic.objects.filter(initiative_id=OuterRef("pk"), workspace__slug=slug)
-                        .filter(epic__project__deleted_at__isnull=True)
-                        .filter(epic__project__archived_at__isnull=True)
-                        .filter(epic__project__project_projectfeature__is_epic_enabled=True)
-                        .values("initiative_id")
-                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
-                        .values("epic_ids")
-                    ),
-                    [],
-                ),
+            .prefetch_related(
+                Prefetch(
+                    "initiative_label_associations",
+                    queryset=InitiativeLabelAssociation.objects.filter(deleted_at__isnull=True),
+                )
             )
             .first()
         )
@@ -314,47 +294,6 @@ class InitiativeProjectEndpoint(BaseAPIView):
             initiative_id=initiative_id, project_id=project_id, workspace__slug=slug
         )
         initiative_project.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class InitiativeLabelEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceUserPermission]
-    model = InitiativeLabel
-    serializer_class = InitiativeSerializer
-
-    def get(self, request, slug, initiative_id, pk=None):
-        # Get all labels in initiative
-        if pk:
-            initiative_label = InitiativeLabel.objects.get(pk=pk, initiative_id=initiative_id, workspace__slug=slug)
-            serializer = InitiativeSerializer(initiative_label)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # Get all labels in initiative
-        initiative_labels = InitiativeLabel.objects.filter(initiative_id=initiative_id, workspace__slug=slug)
-        serializer = InitiativeSerializer(initiative_labels, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, slug, initiative_id):
-        label_ids = request.data.get("label_ids", [])
-
-        if not label_ids:
-            return Response({"error": "Label id's are required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Create InitiativeLabel objects
-        initiatives = InitiativeLabel.objects.bulk_create(
-            [InitiativeLabel(initiative_id=initiative_id, label_id=label_id) for label_id in label_ids],
-            ignore_conflicts=True,
-            batch_size=1000,
-        )
-        # Serialize and return
-        serializer = InitiativeSerializer(initiatives, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def delete(self, request, slug, initiative_id, label_id):
-        initiative_label = InitiativeLabel.objects.get(
-            initiative_id=initiative_id, label_id=label_id, workspace__slug=slug
-        )
-        initiative_label.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

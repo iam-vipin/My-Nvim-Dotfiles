@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 # Module imports
 from plane.db.models import FileAsset
 from plane.ee.serializers import BaseSerializer
+
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
@@ -16,6 +17,7 @@ from plane.ee.models import (
     InitiativeCommentReaction,
     InitiativeEpic,
     InitiativeUserProperty,
+    InitiativeLabelAssociation,
 )
 
 # Third party imports
@@ -41,10 +43,10 @@ class InitiativeSerializer(BaseSerializer):
     epic_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
-    project_ids = serializers.SerializerMethodField(read_only=True)
+    labels = serializers.SerializerMethodField(read_only=True)
 
-    def get_project_ids(self, obj):
-        return [init_projects.project.id for init_projects in obj.projects.all()]
+    def get_labels(self, obj):
+        return [init_label.label_id for init_label in obj.initiative_label_associations.all()]
 
     class Meta:
         model = Initiative
@@ -79,21 +81,6 @@ class InitiativeSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if labels is not None and len(labels):
-            InitiativeLabel.objects.bulk_create(
-                [
-                    InitiativeLabel(
-                        label=label,
-                        initiative=initiative,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-
         if epics is not None and len(epics):
             InitiativeEpic.objects.bulk_create(
                 [
@@ -109,12 +96,27 @@ class InitiativeSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        if labels is not None and len(labels):
+            InitiativeLabelAssociation.objects.bulk_create(
+                [
+                    InitiativeLabelAssociation(
+                        workspace_id=workspace_id,
+                        initiative=initiative,
+                        label_id=label_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for label_id in labels
+                ],
+                batch_size=10,
+            )
+
         return initiative
 
     def update(self, instance, validated_data):
         projects = validated_data.pop("project_ids", None)
-        labels = validated_data.pop("label_ids", None)
         epics = validated_data.pop("epic_ids", None)
+        labels = validated_data.pop("label_ids", None)
 
         # Related models
         workspace_id = instance.workspace_id
@@ -137,22 +139,6 @@ class InitiativeSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if labels is not None:
-            InitiativeLabel.objects.filter(initiative=instance).delete()
-            InitiativeLabel.objects.bulk_create(
-                [
-                    InitiativeLabel(
-                        label=label,
-                        initiative=instance,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
-
         if epics is not None:
             InitiativeEpic.objects.filter(initiative=instance).delete()
             InitiativeEpic.objects.bulk_create(
@@ -169,6 +155,22 @@ class InitiativeSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        if labels is not None:
+            InitiativeLabelAssociation.objects.filter(initiative=instance).delete()
+            InitiativeLabelAssociation.objects.bulk_create(
+                [
+                    InitiativeLabelAssociation(
+                        label_id=label,
+                        workspace_id=workspace_id,
+                        initiative=instance,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for label in labels
+                ],
+                batch_size=10,
+            )
+
         # Time updation occurs even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
@@ -179,13 +181,6 @@ class InitiativeProjectSerializer(BaseSerializer):
         model = InitiativeProject
         fields = "__all__"
         read_only_fields = ["initiative", "project"]
-
-
-class InitiativeLabelSerializer(BaseSerializer):
-    class Meta:
-        model = InitiativeLabel
-        fields = "__all__"
-        read_only_fields = ["initiative", "label"]
 
 
 class InitiativeLinkSerializer(BaseSerializer):
@@ -306,3 +301,34 @@ class InitiativeUserPropertySerializer(BaseSerializer):
         model = InitiativeUserProperty
         fields = "__all__"
         read_only_fields = ["workspace", "user"]
+
+
+class InitiativeLabelSerializer(BaseSerializer):
+    class Meta:
+        model = InitiativeLabel
+        fields = ["id", "name", "description", "color", "sort_order", "workspace"]
+        read_only_fields = [
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+    def validate_name(self, name):
+        initiative_label_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        initiative_label = InitiativeLabel.objects.filter(name=name, workspace_id=workspace_id, deleted_at__isnull=True)
+
+        if initiative_label_id:
+            initiative_label = initiative_label.exclude(id=initiative_label_id)
+
+        if initiative_label.exists():
+            raise serializers.ValidationError(detail="INITIATIVE_LABEL_NAME_ALREADY_EXISTS")
+
+        return name
+
+    def create(self, validated_data):
+        validated_data["workspace_id"] = self.context["workspace_id"]
+        return super().create(validated_data)

@@ -4,6 +4,7 @@ import { ContentController } from "./content.controller";
 import { ConvertDocumentController } from "./convert-document.controller";
 import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
+import { IframelyController } from "./iframely.controller";
 import { LiveDocumentController } from "./live-document.controller";
 
 export const CONTROLLERS = [
@@ -15,6 +16,7 @@ export const CONTROLLERS = [
   ConvertDocumentController,
   // Content service
   ContentController,
+  IframelyController,
   // websocket
   CollaborationController,
   BroadcastController,

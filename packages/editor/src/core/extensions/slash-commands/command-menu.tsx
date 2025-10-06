@@ -11,10 +11,11 @@ export type SlashCommandsMenuProps = {
   editor: Editor;
   items: TSlashCommandSection[];
   command: (item: ISlashCommandItem) => void;
+  query?: string;
 };
 
 export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
-  const { items: sections, command } = props;
+  const { items: sections, command, query } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({
     section: 0,
@@ -103,6 +104,7 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
+
       if (newIndex) {
         setSelectedIndex(newIndex);
       }
@@ -140,6 +142,7 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
                   })
                 }
                 sectionIndex={sectionIndex}
+                query={query}
               />
             ))}
           </div>

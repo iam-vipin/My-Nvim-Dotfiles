@@ -6,12 +6,7 @@ import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, ExternalEmbedNo
 // plane types
 import { IframelyResponse } from "@plane/types";
 // plane components
-import { EmbedLoading } from "@plane/ui/src/editor/embed-loading";
-import { ErrorState } from "@plane/ui/src/editor/error-state";
-import { HTMLContent } from "@plane/ui/src/editor/html-content";
-import { InViewportRenderer } from "@plane/ui/src/editor/is-in-viewport";
-import { RichCard } from "@plane/ui/src/editor/rich-card";
-import { TwitterEmbed } from "@plane/ui/src/editor/twitter-embed";
+import { EmbedLoading, ErrorState, HTMLContent, InViewportRenderer, RichCard, TwitterEmbed } from "@plane/ui";
 
 // Main wrapper component that uses lazy loading through InViewportRenderer
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(

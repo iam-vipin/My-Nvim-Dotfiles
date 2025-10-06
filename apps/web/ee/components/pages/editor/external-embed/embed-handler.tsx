@@ -13,13 +13,15 @@ import {
   TExternalEmbedBlockAttributes,
 } from "@plane/editor";
 import type { IframelyResponse } from "@plane/types";
-import CrossOriginLoader from "@plane/ui/src/editor/cross-origin-loader";
-import { EmbedLoading } from "@plane/ui/src/editor/embed-loading";
-import { ErrorState } from "@plane/ui/src/editor/error-state";
-import { HTMLContent } from "@plane/ui/src/editor/html-content";
-import { InViewportRenderer } from "@plane/ui/src/editor/is-in-viewport";
-import { RichCard } from "@plane/ui/src/editor/rich-card";
-import { TwitterEmbed } from "@plane/ui/src/editor/twitter-embed";
+import {
+  CrossOriginLoader,
+  EmbedLoading,
+  ErrorState,
+  HTMLContent,
+  InViewportRenderer,
+  RichCard,
+  TwitterEmbed,
+} from "@plane/ui";
 // local hooks
 import { useUser } from "@/hooks/store/user";
 // plane web services

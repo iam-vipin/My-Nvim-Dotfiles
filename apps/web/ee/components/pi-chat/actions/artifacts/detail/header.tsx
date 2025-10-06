@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { Header as HeaderUI, Row } from "@plane/ui";
-import { CustomSelect } from "@plane/ui/src";
+import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";

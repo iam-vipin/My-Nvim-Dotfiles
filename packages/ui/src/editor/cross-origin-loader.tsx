@@ -10,7 +10,7 @@ type CrossOriginLoaderProps = {
   style?: React.CSSProperties;
 };
 
-const CrossOriginLoader = ({
+export const CrossOriginLoader = ({
   src,
   className = "",
   params = {},
@@ -117,4 +117,3 @@ const CrossOriginLoader = ({
 
   return <div ref={containerRef} className={`w-full h-full ${hasError ? "hidden" : ""} ${className}`} style={style} />;
 };
-export default CrossOriginLoader;

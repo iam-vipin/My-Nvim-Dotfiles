@@ -139,12 +139,14 @@ class NotificationQuery:
 
         # Apply snoozed filter
         now = timezone.now()
+        snoozed = False if snoozed is None else snoozed
         if snoozed:
-            q_filters &= Q(snoozed_till__lt=now) | Q(snoozed_till__isnull=False)
+            q_filters &= Q(snoozed_till__isnull=False)
         else:
-            q_filters &= Q(snoozed_till__gte=now) | Q(snoozed_till__isnull=True)
+            q_filters &= Q(snoozed_till__lt=now) | Q(snoozed_till__isnull=True)
 
         # Apply archived filter
+        archived = False if archived is None else archived
         if archived:
             q_filters &= Q(archived_at__isnull=False)
         else:

@@ -2094,7 +2094,6 @@ export default {
       },
     },
   },
-
   notification: {
     label: "Inbox",
     page_label: "{workspace} - Inbox",

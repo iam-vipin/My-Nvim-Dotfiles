@@ -46,12 +46,10 @@ const PiChatEditor = (props: PiChatEditorProps) => {
     content = "<p></p>",
     forwardedRef,
     handleSubmit,
-    editorClass = "",
   } = props;
   const editor = useEditor({
     editable,
     extensions: PiChatEditorExtensions({
-      editorClass,
       handleSubmit,
       searchCallback,
       setEditorCommand,

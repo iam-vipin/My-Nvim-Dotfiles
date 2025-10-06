@@ -17,7 +17,7 @@ export interface StorePayloadWithContext extends storePayload {
   context: HocusPocusServerContext;
 }
 
-export type TDocumentTypes = "project_page";
+export type TDocumentTypes = "project_page" | "sync_agent" | "server_agent" | "workspace_page" | "teamspace_page";
 
 // Additional Hocuspocus types that are not exported from the main package
 export type HocusPocusServerContext = {
@@ -26,4 +26,7 @@ export type HocusPocusServerContext = {
   documentType: TDocumentTypes;
   workspaceSlug: string | null;
   userId: string;
+  agentId?: string;
+  parentId: string | null;
+  teamspaceId: string | null;
 };

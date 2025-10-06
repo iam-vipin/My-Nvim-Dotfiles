@@ -10,7 +10,7 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { Checkbox, Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -280,7 +280,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                   }
                                 >
                                   <div className="flex items-center gap-2 truncate">
-                                    <input type="checkbox" checked={selected} readOnly />
+                                    <Checkbox checked={selected} readOnly />
                                     <span
                                       className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                       style={{

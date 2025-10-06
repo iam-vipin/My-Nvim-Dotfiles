@@ -111,6 +111,12 @@ export const EmbedLinkView = (props: EmbedLinkViewProps) => {
           e.stopPropagation();
         }
       }}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
     >
       <div className="px-4 pt-2 text-xs font-medium text-custom-text-300">Paste as</div>
       <div className="p-2 space-y-0">

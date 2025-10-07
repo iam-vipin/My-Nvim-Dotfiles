@@ -1,13 +1,15 @@
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
-import { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
-import { MathematicsExtensionOptions } from "../extensions/mathematics/types";
-import { TCommentConfig } from "./comments";
+import type { DrawioExtensionOptions } from "../extensions/drawio/types";
+import type { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
+import type { MathematicsExtensionOptions } from "../extensions/mathematics/types";
+import type { TCommentConfig } from "./comments";
 import type { TEmbedConfig } from "./issue-embed";
 
 export type IEditorExtensionOptions = {
   [ADDITIONAL_EXTENSIONS.MATHEMATICS]?: Pick<MathematicsExtensionOptions, "onClick">;
   [ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED]?: Pick<ExternalEmbedExtensionOptions, "onClick">;
+  [ADDITIONAL_EXTENSIONS.DRAWIO]?: Pick<DrawioExtensionOptions, "onClick">;
 };
 
 export type IEditorPropsExtended = {

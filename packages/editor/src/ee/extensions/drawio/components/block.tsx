@@ -110,11 +110,17 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
 
       if (!editor.isEditable || extension.options.isFlagged || userEditingThisDiagram) return;
 
+      // If onClick is provided from extension options, only call that and return early
+      if (extension.options.onClick) {
+        extension.options.onClick();
+        return;
+      }
+
       setEditingState(true);
       setIsModalOpen(true);
       setIsLoading(true);
     },
-    [editor.isEditable, extension.options.isFlagged, setEditingState, userEditingThisDiagram]
+    [editor.isEditable, extension.options, setEditingState, userEditingThisDiagram]
   );
 
   const getClickHandler = useCallback(() => {

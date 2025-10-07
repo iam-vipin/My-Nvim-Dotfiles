@@ -252,12 +252,16 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // Draw.io extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("drawio"),
-    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) =>
-      DrawioExtension({
+    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) => {
+      const { extensionOptions } = extendedEditorProps ?? {};
+      const { onClick } = extensionOptions?.[ADDITIONAL_EXTENSIONS.DRAWIO] ?? {};
+      return DrawioExtension({
         isFlagged: flaggedExtensions.includes("drawio"),
         fileHandler,
+        onClick,
         logoSpinner: extendedEditorProps?.logoSpinner,
-      }),
+      });
+    },
   },
 ];
 

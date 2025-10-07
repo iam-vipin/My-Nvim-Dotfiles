@@ -3,8 +3,9 @@
 import { observer } from "mobx-react";
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TUserApplication } from "@plane/types";
-import { Button, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 import { useApplications } from "@/plane-web/hooks/store";
 
 type Props = {

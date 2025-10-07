@@ -4,7 +4,7 @@ import { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // helpers
 import { GOD_MODE_URL } from "@/helpers/common.helper";
 // images

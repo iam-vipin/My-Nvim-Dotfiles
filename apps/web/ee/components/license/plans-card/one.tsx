@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 import { ExternalLink } from "lucide-react";
+import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components

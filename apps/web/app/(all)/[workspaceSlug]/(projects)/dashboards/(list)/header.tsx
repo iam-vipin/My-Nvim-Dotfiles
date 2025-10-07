@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { LayoutGrid } from "lucide-react";
 // plane ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components

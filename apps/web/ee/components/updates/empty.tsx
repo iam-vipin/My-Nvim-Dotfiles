@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import ImagelLight from "@/public/empty-state/empty-updates-light.png";
 
 type TProps = {

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Globe2 } from "lucide-react";
 // ui
-import { Button, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";

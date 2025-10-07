@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Button } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components

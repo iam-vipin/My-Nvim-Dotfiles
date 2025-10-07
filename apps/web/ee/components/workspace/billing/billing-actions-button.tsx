@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { Button, CustomMenu } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomMenu } from "@plane/ui";
 // ce imports
 import { TBillingActionsButtonProps } from "@/ce/components/workspace/billing/billing-actions-button";
 // plane web imports

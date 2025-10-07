@@ -3,7 +3,7 @@
 import React, { FC } from "react";
 //
 import { Briefcase } from "lucide-react";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { ProjectList } from "./project-list";

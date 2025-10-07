@@ -8,8 +8,8 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { PartialDeep, EUserProjectRoles, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
-import { Button } from "@plane/ui";
 import { cn, getDate, renderFormattedPayloadDate, TWorkItemSanitizationResult } from "@plane/utils";
 // hooks
 import { DateDropdown } from "@/components/dropdowns/date";

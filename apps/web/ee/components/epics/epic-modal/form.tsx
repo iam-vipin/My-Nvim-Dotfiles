@@ -7,8 +7,9 @@ import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
+import { Button } from "@plane/propel/button";
 import { EIssueServiceType, EWorkItemTypeEntity, type ISearchIssueResponse, type TIssue } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, getChangedIssuefields, getTabIndex } from "@plane/utils";
 // components
 import {

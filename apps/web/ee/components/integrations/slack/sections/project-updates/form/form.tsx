@@ -2,8 +2,9 @@ import { FC, useState, useEffect } from "react";
 import useSWR from "swr";
 import { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import type { TWorkspaceEntityConnection } from "@plane/types";
-import { ModalCore, Loader, Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { ModalCore, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { SlackProjectChannelForm } from "./channel-map";
 

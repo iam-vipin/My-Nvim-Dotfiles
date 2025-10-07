@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
 import { PLANE_INTELLIGENCE_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

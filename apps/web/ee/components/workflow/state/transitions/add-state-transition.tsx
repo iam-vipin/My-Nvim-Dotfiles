@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, setToast, Spinner, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, Spinner, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";

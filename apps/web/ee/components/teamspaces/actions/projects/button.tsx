@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // components
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

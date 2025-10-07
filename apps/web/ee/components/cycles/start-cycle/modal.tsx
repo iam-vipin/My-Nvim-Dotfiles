@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalWidth, ModalCore } from "@plane/ui";
 
 interface Props {
   handleStartCycle: () => void;

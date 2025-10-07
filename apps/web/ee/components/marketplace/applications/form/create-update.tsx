@@ -7,8 +7,9 @@ import { useForm } from "react-hook-form";
 import { Book, Camera } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EFileAssetType, TUserApplication } from "@plane/types";
-import { Button, Loader, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
 import { SettingsHeading } from "@/components/settings/heading";

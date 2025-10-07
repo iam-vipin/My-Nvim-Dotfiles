@@ -6,9 +6,10 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Briefcase } from "lucide-react";
 // types
+import { Button } from "@plane/propel/button";
 import { IProject } from "@plane/types";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web components

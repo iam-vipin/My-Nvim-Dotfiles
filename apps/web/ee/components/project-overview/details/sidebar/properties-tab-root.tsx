@@ -8,9 +8,9 @@ import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucid
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { Button } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";

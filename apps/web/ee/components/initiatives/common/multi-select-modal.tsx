@@ -5,8 +5,9 @@ import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { InitiativeIcon } from "@plane/propel/icons";
-import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";

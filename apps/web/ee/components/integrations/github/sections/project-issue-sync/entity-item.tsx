@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IProject, TGithubEntityConnection } from "@plane/types";
-import { Button, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks

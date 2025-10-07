@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueType } from "@plane/types";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { IssueTypeIconPicker } from "../common/icon-picker";

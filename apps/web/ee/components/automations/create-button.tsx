@@ -1,7 +1,7 @@
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, TButtonVariant } from "@plane/ui";
+import { Button, TButtonVariant } from "@plane/propel/button";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports

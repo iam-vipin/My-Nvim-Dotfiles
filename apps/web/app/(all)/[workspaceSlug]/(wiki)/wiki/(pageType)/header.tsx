@@ -6,8 +6,9 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText, ListFilter } from "lucide-react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TPage, TPageNavigationTabs } from "@plane/types";
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header, setToast, TOAST_TYPE } from "@plane/ui";
 import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

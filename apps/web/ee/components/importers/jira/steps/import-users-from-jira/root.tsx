@@ -7,7 +7,8 @@ import useSWR from "swr";
 // plane packages imports
 import { pullUsers } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Loader } from "@plane/ui";
 // plane web components
 import { ImportUsersFromJiraUploader } from "@/plane-web/components/importers/jira";
 import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-web/components/importers/ui";

@@ -3,7 +3,8 @@
 import { FC, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Button, Input } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useSelfHostedSubscription } from "@/plane-web/hooks/store";

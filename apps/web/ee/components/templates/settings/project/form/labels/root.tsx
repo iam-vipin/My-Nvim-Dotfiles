@@ -4,8 +4,8 @@ import { useFormContext } from "react-hook-form";
 import { Pencil, PlusIcon, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IIssueLabel, TProjectTemplateForm } from "@plane/types";
-import { Button } from "@plane/ui";
 import { cn, mockCreateOrUpdateLabel } from "@plane/utils";
 // components
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "@/components/labels/create-update-label-inline";

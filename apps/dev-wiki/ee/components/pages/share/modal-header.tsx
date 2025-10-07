@@ -1,7 +1,7 @@
 "use client";
 
 import { Link2 } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type TModalHeaderProps = {
   pageTitle: string;

@@ -8,7 +8,7 @@ import useSWR from "swr";
 // ui
 import { PriorityConfig, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // asana types
 // plane web components
 import { ConfigureAsanaSelectPriority, MapPrioritiesSelection } from "@/plane-web/components/importers/asana";

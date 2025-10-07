@@ -11,8 +11,9 @@ import {
   WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button, TButtonSizes } from "@plane/propel/button";
 import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import { CustomMenu, Button, TButtonSizes } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import {
   getCreateUpdateTemplateSettingsPath,
   getTemplateI18nLabel,

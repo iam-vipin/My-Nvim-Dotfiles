@@ -2,7 +2,8 @@
 
 // ui
 import Link from "next/link";
-import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { API_BASE_URL } from "@/helpers/common.helper";

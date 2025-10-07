@@ -2,7 +2,8 @@
 
 import { FC, FormEvent, useEffect, useState } from "react";
 import { Timer } from "lucide-react";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, TextArea } from "@plane/ui";
 // plane web helpers
 import { convertHoursMinutesToMinutes } from "@plane/utils";
 // plane web types

@@ -6,7 +6,7 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { TClickUpPriority, TClickUpPriorityConfig } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web components
 import { MapPrioritiesSelection } from "@/plane-web/components/importers/clickup";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

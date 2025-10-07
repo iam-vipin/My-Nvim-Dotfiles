@@ -10,7 +10,8 @@ import useSWR from "swr";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";

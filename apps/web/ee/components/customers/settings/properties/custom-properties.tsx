@@ -7,9 +7,10 @@ import { ChevronRight, Plus } from "lucide-react";
 import { CUSTOMER_PROPERTY_TRACKER_ELEMENTS, CUSTOMER_PROPERTY_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
+import { Button } from "@plane/propel/button";
 import { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
 // plane ui
-import { Button, Collapsible } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components

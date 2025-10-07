@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { FieldPath, FieldValues, PathValue, useFormContext } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import {
   EWorkItemTypeEntity,
   IIssueLabel,
@@ -13,7 +14,6 @@ import {
   TIssuePropertyValues,
   TWorkItemBlueprintFormData,
 } from "@plane/types";
-import { Button } from "@plane/ui";
 import {
   mockCreateWorkItemBlueprint,
   TProjectBlueprintDetails,

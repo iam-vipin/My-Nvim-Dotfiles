@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { CircleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

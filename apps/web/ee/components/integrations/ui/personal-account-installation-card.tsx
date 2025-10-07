@@ -4,7 +4,8 @@ import { ChevronDown, Unplug, ChevronRight } from "lucide-react";
 // ui
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomMenu, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomMenu, Loader } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

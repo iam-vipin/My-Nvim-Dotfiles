@@ -5,10 +5,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

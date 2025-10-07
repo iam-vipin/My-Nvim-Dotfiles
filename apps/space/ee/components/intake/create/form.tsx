@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { type EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IProject } from "@plane/types";
 // plane ui
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { ProjectLogo } from "@/components/common/project-logo";

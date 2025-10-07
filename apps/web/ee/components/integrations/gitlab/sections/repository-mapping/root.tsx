@@ -6,8 +6,9 @@ import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { E_STATE_MAP_KEYS, TStateMap } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web components
 import {
   EntityConnectionItem,

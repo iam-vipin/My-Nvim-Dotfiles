@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import {
   EViewAccess,
@@ -16,7 +17,7 @@ import {
   EIssuesStoreType,
   IIssueFilters,
 } from "@plane/types";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

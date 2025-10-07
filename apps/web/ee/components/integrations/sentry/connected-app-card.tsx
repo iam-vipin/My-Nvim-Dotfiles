@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { ChevronDown, Unplug } from "lucide-react";
 import { TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TWorkspaceConnection } from "@plane/types";
-import { Button, CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { cn, renderFormattedDate } from "@plane/utils";
 

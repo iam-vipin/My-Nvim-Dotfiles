@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web types
 import { TDefaultPaginatedInfo } from "@/plane-web/types";
 

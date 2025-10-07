@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

@@ -3,12 +3,12 @@ import Link from "next/link";
 // icons
 import { UserCircle2 } from "lucide-react";
 // plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { CycleGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // types
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import { getButtonStyling } from "@plane/ui";
 // helpers
 import { findHowManyDaysLeft, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
 // hooks

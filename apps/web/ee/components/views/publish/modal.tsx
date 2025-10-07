@@ -8,8 +8,9 @@ import useSWR from "swr";
 import { ExternalLink, Globe2 } from "lucide-react";
 // plane imports
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { IProjectView, TPublishViewSettings } from "@plane/types";
-import { Button, EModalWidth, Loader, ModalCore, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { EModalWidth, Loader, ModalCore, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useProjectView } from "@/hooks/store/use-project-view";

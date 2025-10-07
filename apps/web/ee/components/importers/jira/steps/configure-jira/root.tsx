@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web components
 import { ConfigureJiraSelectResource, ConfigureJiraSelectProject } from "@/plane-web/components/importers/jira";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

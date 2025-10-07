@@ -6,8 +6,9 @@ import useSWR from "swr";
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { FlatfileConfig } from "@plane/etl/flatfile";
+import { Button } from "@plane/propel/button";
 import { TImportJob } from "@plane/types";
-import { Button, setToast, TOAST_TYPE, Loader } from "@plane/ui";
+import { setToast, TOAST_TYPE, Loader } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import DynamicFlatfileProvider from "@/plane-web/components/importers/flatfile/steps/configure-flatfile/provider";

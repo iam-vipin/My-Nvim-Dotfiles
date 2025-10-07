@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
+import { getButtonStyling } from "@plane/propel/button";
 import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";

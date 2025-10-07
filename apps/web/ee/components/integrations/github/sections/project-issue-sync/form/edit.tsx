@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { E_ISSUE_STATE_MAP_KEYS, TGithubEntityConnection, TIssueStateMap } from "@plane/types";
-import { Button, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SelectProject, SelectGithubRepository } from "@/plane-web/components/integrations/github/common";

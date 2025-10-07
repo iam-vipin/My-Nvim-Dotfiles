@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Search, SquarePen, X } from "lucide-react";
 // helpers
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {

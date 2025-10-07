@@ -1,6 +1,6 @@
 import { Crown } from "lucide-react";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const IssueEmbedUpgradeCard: React.FC<any> = (props) => {

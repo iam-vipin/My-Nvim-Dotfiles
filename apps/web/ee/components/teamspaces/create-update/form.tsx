@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { EFileAssetType, EUserWorkspaceRoles, TTeamspace } from "@plane/types";
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 
 import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components

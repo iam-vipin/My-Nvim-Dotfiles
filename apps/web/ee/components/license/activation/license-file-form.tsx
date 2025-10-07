@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, FileText, X } from "lucide-react";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useSelfHostedSubscription } from "@/plane-web/hooks/store";

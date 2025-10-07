@@ -5,8 +5,9 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EAutomationScope, TAutomation } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
+import { EModalPosition, EModalWidth, Input, ModalCore, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks

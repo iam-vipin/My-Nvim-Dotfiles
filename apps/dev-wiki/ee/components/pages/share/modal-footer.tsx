@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type TModalFooterProps = {
   hasUnsavedChanges: boolean;

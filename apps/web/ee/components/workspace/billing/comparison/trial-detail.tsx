@@ -2,9 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { LoaderIcon } from "lucide-react";
 import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { Button } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

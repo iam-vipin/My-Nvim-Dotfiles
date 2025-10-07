@@ -3,8 +3,8 @@ import React, { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { LayersIcon } from "lucide-react";
+import { getButtonStyling } from "@plane/propel/button";
 import { EIssueServiceType } from "@plane/types";
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { RelationActionButton, RelationsCollapsibleContent } from "@/components/issues/issue-detail-widgets/relations";

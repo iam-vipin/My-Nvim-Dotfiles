@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import SuccessDark from "@/public/instance/intake-sent-dark.png";
 import SuccessLight from "@/public/instance/intake-sent-light.png";

@@ -8,9 +8,10 @@ import useSWR from "swr";
 
 import { TClickUpStatus, TClickUpStateConfig } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/clickup";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

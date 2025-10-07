@@ -4,7 +4,8 @@ import Image, { StaticImageData } from "next/image";
 // ui
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Loader } from "@plane/ui";
 
 type TInstallationCardProps = {
   providerName: string;

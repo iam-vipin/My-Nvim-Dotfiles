@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 // plane types
+import { Button } from "@plane/propel/button";
 import type { TIssueLinkEditableFields } from "@plane/types";
 // plane ui
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Input, ModalCore } from "@plane/ui";
 // types
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TLinkOperations } from "./root";

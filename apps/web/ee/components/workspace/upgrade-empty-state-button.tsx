@@ -4,8 +4,8 @@ import { Crown } from "lucide-react";
 // plane imports
 import { EProductSubscriptionTier, FEATURE_TO_BASE_PLAN_MAP, TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum, TProductSubscriptionType } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

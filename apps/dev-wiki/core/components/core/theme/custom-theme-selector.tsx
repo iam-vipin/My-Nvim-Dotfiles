@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IUserTheme } from "@plane/types";
 // ui
-import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
+import { InputColorPicker, setPromiseToast } from "@plane/ui";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

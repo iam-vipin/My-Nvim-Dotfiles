@@ -9,8 +9,9 @@ import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { AsanaConfig, AsanaSection } from "@plane/etl/asana";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TImportJob } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-web/components/importers/ui";

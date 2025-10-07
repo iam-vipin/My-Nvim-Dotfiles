@@ -7,9 +7,10 @@ import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TPage } from "@plane/types";
 // ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
 import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";

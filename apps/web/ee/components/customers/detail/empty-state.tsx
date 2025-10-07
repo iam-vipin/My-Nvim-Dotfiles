@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks

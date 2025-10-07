@@ -3,8 +3,9 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TGitlabEntityConnection, TStateMap } from "@plane/types";
-import { Button, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks

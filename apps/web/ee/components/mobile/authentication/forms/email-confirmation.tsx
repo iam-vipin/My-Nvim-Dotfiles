@@ -9,8 +9,9 @@ import {
   TMobileAuthModes,
   TMobileAuthErrorInfo,
 } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { IEmailCheckData } from "@plane/types";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 import { checkEmailValidity, cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";

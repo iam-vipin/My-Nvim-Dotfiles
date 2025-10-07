@@ -7,8 +7,8 @@ import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { JiraConfig } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TImportJob } from "@plane/types";
-import { Button } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

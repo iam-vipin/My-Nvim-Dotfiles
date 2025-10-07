@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useTranslation } from "@plane/i18n";
+import { getButtonStyling } from "@plane/propel/button";
 import { LayersIcon } from "@plane/propel/icons";
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 

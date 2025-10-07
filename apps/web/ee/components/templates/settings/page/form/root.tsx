@@ -7,8 +7,8 @@ import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TPageTemplateForm, PartialDeep } from "@plane/types";
-import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";

@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IIssueType } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 

@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Button } from "@plane/propel/button";
 import { TUserApplication } from "@plane/types";
-import { Button, Tooltip, TOAST_TYPE, setToast, ModalCore } from "@plane/ui";
+import { Tooltip, TOAST_TYPE, setToast, ModalCore } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks

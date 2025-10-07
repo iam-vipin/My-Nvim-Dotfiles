@@ -1,5 +1,5 @@
 import { Crown } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 export const IssueEmbedUpgradeCard = () => (
   <div

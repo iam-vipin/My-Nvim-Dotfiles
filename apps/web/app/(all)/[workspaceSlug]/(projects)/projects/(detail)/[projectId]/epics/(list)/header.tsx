@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { HeaderFilters } from "@/components/issues/filters";

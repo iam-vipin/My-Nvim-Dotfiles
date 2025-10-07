@@ -8,8 +8,9 @@ import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { TClickUpConfig } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TImportJob } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";

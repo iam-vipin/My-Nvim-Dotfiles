@@ -1,5 +1,5 @@
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { TimeLineTypeContext, ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

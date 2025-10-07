@@ -7,9 +7,10 @@ import useSWR from "swr";
 import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { ExProject } from "@plane/sdk";
 import { IProject } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web components

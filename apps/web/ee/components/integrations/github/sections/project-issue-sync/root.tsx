@@ -7,8 +7,8 @@ import { Plus } from "lucide-react";
 import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { E_ISSUE_STATE_MAP_KEYS, TGithubEntityConnection, TIssueStateMap } from "@plane/types";
-import { Button } from "@plane/ui";
 // plane web components
 import {
   ProjectIssueSyncEntityItem,

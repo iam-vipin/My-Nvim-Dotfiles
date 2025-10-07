@@ -4,10 +4,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
 import { TreeMapIcon } from "@plane/propel/icons";
 import { TreeMapItem } from "@plane/types";
-import { Avatar, Button, Loader, Logo } from "@plane/ui";
+import { Avatar, Loader, Logo } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";

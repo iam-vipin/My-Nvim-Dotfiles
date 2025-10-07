@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // components
 import { JoinProjectModal } from "@/components/project/join-project-modal";

@@ -7,6 +7,7 @@ import { Layers, Lock } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TeamsIcon } from "@plane/propel/icons";
 // types
 import {
@@ -19,7 +20,7 @@ import {
   ICustomSearchSelectOption,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

@@ -2,7 +2,7 @@
 
 import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // silo types

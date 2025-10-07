@@ -6,8 +6,9 @@ import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { EFileAssetType } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

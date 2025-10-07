@@ -8,8 +8,9 @@ import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
 import { BULK_OPERATION_ERROR_DETAILS, E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import type { TBulkIssueProperties } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { CycleDropdown } from "@/components/dropdowns/cycle";

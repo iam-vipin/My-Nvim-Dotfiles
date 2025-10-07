@@ -4,8 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button } from "@plane/ui";
 // plane web imports
 import { AddSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats/add-seats/modal";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

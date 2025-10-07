@@ -2,9 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { projectTemplateService } from "@plane/services";
 import { EUserPermissions, IWorkspace } from "@plane/types";
-import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

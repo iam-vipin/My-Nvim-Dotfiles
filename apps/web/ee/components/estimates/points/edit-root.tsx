@@ -2,8 +2,9 @@ import { Dispatch, FC, Fragment, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft, Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
-import { Button, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
+import { Sortable, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { EstimatePointCreate } from "@/components/estimates/points/create";
 import { EstimatePointItemPreview } from "@/components/estimates/points/preview";

@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { PlusIcon, BriefcaseIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EpicIcon } from "@plane/propel/icons";
-import { Button, CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
+import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks

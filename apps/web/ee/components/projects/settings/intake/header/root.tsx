@@ -7,8 +7,9 @@ import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Header, Popover, Loader } from "@plane/ui";
+import { Breadcrumbs, Header, Popover, Loader } from "@plane/ui";
 // components
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks

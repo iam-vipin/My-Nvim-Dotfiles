@@ -6,9 +6,10 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // import { FiltersDropdown } from "@/components/issues";

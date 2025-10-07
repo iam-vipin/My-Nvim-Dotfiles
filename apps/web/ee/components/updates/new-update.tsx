@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EUpdateStatus, TUpdate } from "@plane/types";
-import { Button, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 import { StatusDropdown } from "./status-dropdown";
 
 type TProps = {

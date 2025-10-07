@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Info } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Button, BetaBadge } from "@plane/ui";
+import { BetaBadge } from "@plane/ui";
 // plane web components
 import { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks

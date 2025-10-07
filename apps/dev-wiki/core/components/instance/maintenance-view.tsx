@@ -3,7 +3,7 @@
 import { FC } from "react";
 import Image from "next/image";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // components

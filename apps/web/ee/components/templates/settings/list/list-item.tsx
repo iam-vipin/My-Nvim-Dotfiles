@@ -4,8 +4,8 @@ import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TBaseTemplateWithData } from "@plane/types";
-import { Button } from "@plane/ui";
 // plane web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { IBaseTemplateStore } from "@/plane-web/store/templates";

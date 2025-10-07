@@ -3,9 +3,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { Button, getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
+import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web components
 import { PlanCard } from "@/plane-web/components/license";

@@ -3,8 +3,8 @@ import { useFormContext } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
-import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

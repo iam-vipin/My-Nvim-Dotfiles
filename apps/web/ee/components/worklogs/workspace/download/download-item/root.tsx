@@ -3,7 +3,7 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

@@ -9,6 +9,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   PartialDeep,
   TWorkItemTemplateForm,
@@ -17,7 +18,6 @@ import {
   EUserWorkspaceRoles,
   EUserProjectRoles,
 } from "@plane/types";
-import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
 // plane web imports
 import { useProject } from "@/hooks/store/use-project";

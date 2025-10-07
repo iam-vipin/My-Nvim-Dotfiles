@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Breadcrumbs, Button } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks

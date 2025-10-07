@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+import { Button } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";

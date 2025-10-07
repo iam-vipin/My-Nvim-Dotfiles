@@ -6,8 +6,9 @@ import { useForm, FormProvider } from "react-hook-form";
 // plane imports
 import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // types
 import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants

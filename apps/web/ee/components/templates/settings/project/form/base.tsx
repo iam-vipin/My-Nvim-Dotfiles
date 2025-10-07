@@ -12,6 +12,7 @@ import {
 } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   EIssuePropertyType,
   IIssueProperty,
@@ -20,7 +21,6 @@ import {
   TProjectTemplateForm,
   TProjectTemplateFormData,
 } from "@plane/types";
-import { Button } from "@plane/ui";
 import {
   cn,
   generateAdditionalProjectTemplateFormData,

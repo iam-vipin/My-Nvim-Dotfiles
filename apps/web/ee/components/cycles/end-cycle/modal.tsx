@@ -1,9 +1,10 @@
 "use client";
 
 import { FC, useMemo, useState } from "react";
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType } from "@plane/types";
 // plane imports
-import { Button, EModalPosition, EModalWidth, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks

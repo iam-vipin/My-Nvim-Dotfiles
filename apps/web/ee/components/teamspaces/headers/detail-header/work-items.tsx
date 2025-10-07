@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType } from "@plane/types";
-import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web imports

@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
+import { Button } from "@plane/propel/button";
 import { TProjectLink, TProjectLinkEditableFields } from "@plane/types";
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Input, ModalCore } from "@plane/ui";
 import { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;

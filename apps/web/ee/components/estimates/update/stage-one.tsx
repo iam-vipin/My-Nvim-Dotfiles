@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TEstimateUpdateStageKeys } from "@plane/types";
-import { Button } from "@plane/ui";
 // plane web constants
 import { ESTIMATE_OPTIONS_STAGE_ONE } from "@/plane-web/constants/estimates";
 

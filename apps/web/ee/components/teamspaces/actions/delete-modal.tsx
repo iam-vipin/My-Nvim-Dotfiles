@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { Button, EModalWidth, EModalPosition, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalWidth, EModalPosition, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";

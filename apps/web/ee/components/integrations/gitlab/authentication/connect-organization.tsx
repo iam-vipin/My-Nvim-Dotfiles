@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, EModalWidth, Loader, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalWidth, Loader, ModalCore } from "@plane/ui";
 // plane web hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";

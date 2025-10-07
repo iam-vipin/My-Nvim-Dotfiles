@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web components
 import { MapPrioritiesSelection } from "@/plane-web/components/importers/jira-server";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

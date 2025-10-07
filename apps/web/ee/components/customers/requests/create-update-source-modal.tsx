@@ -4,7 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, ModalCore } from "@plane/ui";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 import { useCustomers } from "@/plane-web/hooks/store";

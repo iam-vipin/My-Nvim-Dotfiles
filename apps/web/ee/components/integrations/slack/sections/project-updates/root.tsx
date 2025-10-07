@@ -7,8 +7,9 @@ import { Plus, AlertTriangle, RefreshCw, Hash } from "lucide-react";
 import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { E_SLACK_ENTITY_TYPE, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TWorkspaceEntityConnection } from "@plane/types";
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // plane web components
 //  plane web hooks
 // plane web types

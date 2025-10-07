@@ -3,6 +3,7 @@ import { capitalize } from "lodash-es";
 import { observer } from "mobx-react";
 import { ChevronLeft, MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import {
   IEstimateFormData,
   TEstimatePointsObject,
@@ -10,7 +11,7 @@ import {
   TEstimateTypeError,
   TEstimateUpdateStageKeys,
 } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useEstimate } from "@/hooks/store/estimates";
 // plane web components

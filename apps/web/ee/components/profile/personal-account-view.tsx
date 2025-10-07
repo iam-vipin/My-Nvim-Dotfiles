@@ -1,7 +1,7 @@
 // plane imports
 import { TPersonalAccountProvider, TUserConnection, USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { GithubIcon, SlackIcon } from "@plane/propel/icons";
-import { Button } from "@plane/ui";
 import { CONFIG_VIEWS } from "./config-views";
 import { ConnectionLoader } from "./loader";
 

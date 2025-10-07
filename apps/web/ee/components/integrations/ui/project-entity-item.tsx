@@ -1,8 +1,9 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { IProject } from "@plane/types";
-import { Button, Logo } from "@plane/ui";
+import { Logo } from "@plane/ui";
 
 type TProjectEntityItem = {
   project: IProject;

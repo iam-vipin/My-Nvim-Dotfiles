@@ -7,8 +7,8 @@ import { useTheme } from "next-themes";
 // helpers
 import { Crown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

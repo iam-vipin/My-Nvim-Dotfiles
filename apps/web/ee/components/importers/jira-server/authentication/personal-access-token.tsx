@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { stripTrailingSlash } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web components
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web hooks

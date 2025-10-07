@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EProductSubscriptionTier, LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum, IPaymentProduct } from "@plane/types";
-import { Button, getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
+import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

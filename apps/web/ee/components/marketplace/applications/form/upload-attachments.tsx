@@ -7,8 +7,9 @@ import { ImageUp, Plus, Loader as Spinner, Upload, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EFileAssetType } from "@plane/types";
-import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

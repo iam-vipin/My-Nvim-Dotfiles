@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
@@ -14,7 +15,7 @@ import {
   TIssuePropertyPayload,
   TOperationMode,
 } from "@plane/types";
-import { Button, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

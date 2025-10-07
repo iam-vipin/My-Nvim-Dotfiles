@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web hooks

@@ -14,9 +14,10 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // constants

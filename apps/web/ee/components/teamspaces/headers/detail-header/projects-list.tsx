@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane constants
 // components
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // hooks
 // plane web imports
 import { UpdateTeamspaceProjectsButton } from "@/plane-web/components/teamspaces/actions/projects/button";

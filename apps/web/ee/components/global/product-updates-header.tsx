@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, RefreshCw } from "lucide-react";
+import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

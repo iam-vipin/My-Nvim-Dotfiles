@@ -9,7 +9,8 @@ import { useTheme } from "next-themes";
 import { CircleAlert } from "lucide-react";
 // hooks
 import { EUserPermissionsLevel } from "@plane/constants";
-import { AlertModalCore, Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { AlertModalCore } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants

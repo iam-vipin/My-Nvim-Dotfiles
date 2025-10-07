@@ -2,7 +2,8 @@ import { find } from "linkifyjs";
 import { type CSSProperties, useState, useRef, useEffect } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
-import { Input, Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";

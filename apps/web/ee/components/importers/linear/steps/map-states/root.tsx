@@ -8,9 +8,9 @@ import useSWR from "swr";
 
 import { IStateConfig, LinearState } from "@plane/etl/linear";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/linear";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

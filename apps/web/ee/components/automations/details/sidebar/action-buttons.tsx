@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, cn } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { cn } from "@plane/ui";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 

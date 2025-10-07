@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web components

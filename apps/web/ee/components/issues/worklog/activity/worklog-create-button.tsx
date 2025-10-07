@@ -3,7 +3,8 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-import { Button, Popover } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Popover } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

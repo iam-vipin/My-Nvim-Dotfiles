@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks

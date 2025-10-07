@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, Button, setPromiseToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { AlertModalCore, setPromiseToast } from "@plane/ui";
 // plane web hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaces } from "@/plane-web/hooks/store";

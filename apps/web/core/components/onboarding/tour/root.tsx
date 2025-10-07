@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 // plane imports
-import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
 import { Avatar } from "@plane/ui";

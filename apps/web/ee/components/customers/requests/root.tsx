@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // plane web imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store/user";
 import {
   CustomerRequestEmptyState,

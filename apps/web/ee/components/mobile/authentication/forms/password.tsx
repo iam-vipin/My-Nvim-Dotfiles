@@ -10,8 +10,9 @@ import {
   API_BASE_URL,
   E_PASSWORD_STRENGTH,
 } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TMobileCSRFToken } from "@plane/types";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // services
 import mobileAuthService from "@/plane-web/services/mobile.service";

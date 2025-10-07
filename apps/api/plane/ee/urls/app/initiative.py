@@ -21,6 +21,7 @@ from plane.ee.views.app.initiative import (
     InitiativeEpicIssueViewSet,
     InitiativeUserPropertiesEndpoint,
     InitiativeLabelsEndpoint,
+    InitiativeProgressEndpoint,
 )
 
 urlpatterns = [
@@ -187,4 +188,9 @@ urlpatterns = [
         InitiativeLabelsEndpoint.as_view(),
         name="initiative-labels",
     ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/progress/",
+        InitiativeProgressEndpoint.as_view(),
+        name="initiative-progress"
+    )
 ]

@@ -4,6 +4,7 @@ from .base import (
     InitiativeAnalyticsEndpoint,
     WorkspaceInitiativeAnalytics,
     InitiativeEpicAnalytics,
+    InitiativeProgressEndpoint,
 )
 
 from .link import InitiativeLinkViewSet

@@ -1,6 +1,8 @@
 # Python imports
 import json
 from collections import defaultdict
+from datetime import date, timedelta
+
 
 # Module imports
 from django.db.models import OuterRef, Subquery, Q, Count, Prefetch, Func, F
@@ -26,17 +28,13 @@ from plane.ee.models import (
     EntityUpdates,
     InitiativeLabelAssociation,
 )
-from plane.ee.serializers import (
-    InitiativeSerializer,
-    InitiativeProjectSerializer,
-    InitiativeWriteSerializer
-)
+from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer, InitiativeWriteSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
-from plane.db.models import State
+from plane.db.models import State, IssueAssignee, IssueActivity
 from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
 
 
@@ -65,10 +63,7 @@ class InitiativeEndpoint(BaseAPIView):
                         project__archived_at__isnull=True, project__deleted_at__isnull=True
                     ).select_related("project"),
                 ),
-                Prefetch(
-                    "initiative_epics",
-                    queryset=InitiativeEpic.objects.all().select_related("epic")
-                ),
+                Prefetch("initiative_epics", queryset=InitiativeEpic.objects.all().select_related("epic")),
             )
             .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
@@ -582,3 +577,84 @@ class InitiativeEpicAnalytics(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class InitiativeProgressEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, initiative_id):
+        initiative = Initiative.objects.prefetch_related(
+            "projects",
+            "initiative_epics",
+        ).get(pk=initiative_id)
+
+        project_ids = [init_project.project_id for init_project in initiative.projects.all()]
+
+        epic_ids = [init_epics.epic_id for init_epics in initiative.initiative_epics.all()]
+
+        issues = (
+            Issue.objects.prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.select_related("assignee").filter(deleted_at__isnull=True),
+                ),
+                Prefetch(
+                    "issue_activity",
+                    queryset=IssueActivity.objects.filter(
+                        verb="updated",
+                        field="state",
+                    ).order_by("-created_at"),
+                    to_attr="state_activities",
+                ),
+            )
+            .select_related("state")
+            .filter((Q(project_id__in=project_ids) | Q(id__in=epic_ids)), workspace__slug=slug)
+        )
+
+        unassigned_workitems = []
+        past_due_date = []
+        no_due_date = []
+        completed_work_items = []
+        last_week_completed_work_items = []
+        resources_used = set()
+
+        today = date.today()
+        last_monday = today - timedelta(days=today.weekday(), weeks=1)
+        last_friday = last_monday + timedelta(days=5)
+
+        for issue in issues:
+            if not issue.issue_assignee.all():
+                unassigned_workitems.append(issue)
+
+            if issue.target_date is not None and issue.target_date < today:
+                past_due_date.append(issue)
+
+            if not issue.target_date:
+                no_due_date.append(issue)
+
+            if issue.state.group == State.COMPLETED:
+                completed_work_items.append(issue)
+
+                latest_state_activity = issue.state_activities[0] if issue.state_activities else None
+
+                if (
+                    latest_state_activity
+                    and (latest_state_activity.created_at).date() >= last_monday
+                    and (latest_state_activity.created_at).date() <= last_friday
+                ):
+                    last_week_completed_work_items.append(issue)
+
+            if issue.issue_assignee.all():
+                resources_used.update(issue_assignee.assignee.username for issue_assignee in issue.issue_assignee.all())
+
+        response = {
+            "unassigned_workitem": len(unassigned_workitems),
+            "total_workitem": len(issues),
+            "completed_workitem": len(completed_work_items),
+            "workitem_with_no_due_date": len(no_due_date),
+            "work_item_with_past_due_date": len(past_due_date),
+            "resources_used": len(resources_used),
+            "last_week_completed_workitem": len(last_week_completed_work_items),
+        }
+
+        return Response(response, status=status.HTTP_200_OK)

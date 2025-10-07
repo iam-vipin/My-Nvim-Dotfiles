@@ -49,6 +49,8 @@ const PiChatEditor = (props: PiChatEditorProps) => {
   } = props;
   const editor = useEditor({
     editable,
+    immediatelyRender: false,
+    shouldRerenderOnTransaction: false,
     extensions: PiChatEditorExtensions({
       handleSubmit,
       searchCallback,

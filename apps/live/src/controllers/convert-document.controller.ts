@@ -1,11 +1,11 @@
 import type { Request, Response } from "express";
 // plane imports
 import { Controller, Post } from "@plane/decorators";
+// utils
+import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 import { logger } from "@plane/logger";
 // types
 import type { TConvertDocumentRequestBody } from "@/types";
-// utils
-import { convertHTMLDocumentToAllFormats } from "@/utils";
 
 @Controller("/convert-document")
 export class ConvertDocumentController {

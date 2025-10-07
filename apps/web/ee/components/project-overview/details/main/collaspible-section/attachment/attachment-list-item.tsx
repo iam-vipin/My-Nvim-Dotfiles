@@ -78,9 +78,7 @@ export const ProjectAttachmentsListItem: FC<Props> = observer((props) => {
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
                   captureClick({
                     elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.ATTACHMENT_ITEM_CONTEXT_MENU,

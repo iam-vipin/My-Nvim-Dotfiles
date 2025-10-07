@@ -302,9 +302,7 @@ export const TemplateQuickActions = observer(
             return (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn(

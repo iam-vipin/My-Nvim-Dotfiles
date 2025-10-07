@@ -105,9 +105,7 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
                   <div className="flex-shrink-0">
                     <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
                       <CustomMenu.MenuItem
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                        onClick={() => {
                           captureClick({
                             elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_REMOVE_MEMBER_BUTTON,
                           });

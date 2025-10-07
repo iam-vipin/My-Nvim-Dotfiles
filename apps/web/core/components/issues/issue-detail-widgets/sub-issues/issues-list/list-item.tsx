@@ -189,9 +189,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
               <CustomMenu placement="bottom-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
@@ -204,9 +202,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                  onClick={() => {
                     subIssueOperations.copyLink(workItemLink);
                   }}
                 >
@@ -218,9 +214,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={async () => {
                       if (issue.project_id)
                         await subIssueOperations
                           .removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id)
@@ -240,9 +234,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}

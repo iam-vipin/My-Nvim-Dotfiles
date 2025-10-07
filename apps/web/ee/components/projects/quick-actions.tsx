@@ -120,9 +120,7 @@ export const QuickActions: React.FC<Props> = (props) => {
         {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
           >

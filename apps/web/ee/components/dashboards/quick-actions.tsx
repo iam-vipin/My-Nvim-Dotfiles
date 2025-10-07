@@ -106,9 +106,7 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action?.();
               }}
               className={cn("flex items-center gap-2", item.className)}

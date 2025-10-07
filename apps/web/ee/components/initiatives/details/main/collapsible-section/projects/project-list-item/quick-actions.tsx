@@ -75,9 +75,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
           >

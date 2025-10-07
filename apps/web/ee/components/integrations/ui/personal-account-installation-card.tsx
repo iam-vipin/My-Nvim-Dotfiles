@@ -56,9 +56,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
           >
             <CustomMenu.MenuItem
               key={t("common.disconnect")}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 handleConnectDisconnect();
               }}
               className={cn("flex items-center gap-2")}

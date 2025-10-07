@@ -47,9 +47,7 @@ export const ConnectedAppCard = observer((props: TConnectedAppCardProps) => {
         >
           <CustomMenu.MenuItem
             key={t("common.disconnect")}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               handleDisconnectApp();
             }}
             className={cn("flex items-center gap-2")}

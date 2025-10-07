@@ -102,9 +102,7 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
                 <span>
                   <CustomMenu.MenuItem
                     key={item.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_MENU });
                       item.action();
                     }}

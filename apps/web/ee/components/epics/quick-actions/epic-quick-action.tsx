@@ -230,9 +230,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({
                         elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
                         context: {
@@ -273,9 +271,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
                   context: {

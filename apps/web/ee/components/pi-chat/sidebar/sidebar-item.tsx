@@ -147,9 +147,7 @@ export const SidebarItem = observer((props: TProps) => {
               return (
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                   className={cn(

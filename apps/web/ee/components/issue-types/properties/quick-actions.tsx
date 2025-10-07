@@ -69,9 +69,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
             className={cn("flex items-center gap-2")}

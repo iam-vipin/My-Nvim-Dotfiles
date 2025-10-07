@@ -125,9 +125,7 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS,
                 });

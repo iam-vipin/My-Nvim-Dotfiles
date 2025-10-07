@@ -175,9 +175,7 @@ export const Details: React.FC<Props> = observer((props) => {
               {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                 >

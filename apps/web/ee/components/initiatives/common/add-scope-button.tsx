@@ -114,9 +114,7 @@ export const AddScopeButton = observer((props: Props) => {
         {optionItems.map((item, index) => (
           <CustomMenu.MenuItem
             key={index}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.onClick();
             }}
           >

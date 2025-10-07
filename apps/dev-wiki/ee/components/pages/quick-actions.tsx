@@ -94,9 +94,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action();
               }}
               className="flex items-center gap-2"

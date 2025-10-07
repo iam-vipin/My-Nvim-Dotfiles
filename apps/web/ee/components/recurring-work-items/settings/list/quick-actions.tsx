@@ -115,9 +115,7 @@ export const RecurringWorkItemQuickActions = observer((props: TRecurringWorkItem
             return (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn(

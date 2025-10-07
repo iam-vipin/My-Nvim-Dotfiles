@@ -99,9 +99,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
         {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
           >

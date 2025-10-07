@@ -143,6 +143,11 @@ export const transformGitHubComment = async (
 
   if (comment.user && comment.user.type === "User") {
     creator = userMap[comment.user.login];
+    const isUserProjectMember = planeUsers.some((user) => user.id === creator);
+    // if the user is not a project member, set the creator to undefined and the comment will be created by the Bot
+    if (!isUserProjectMember) {
+      creator = undefined;
+    }
   }
 
   let comment_html = `<p>${comment.body || ""}</p>`;

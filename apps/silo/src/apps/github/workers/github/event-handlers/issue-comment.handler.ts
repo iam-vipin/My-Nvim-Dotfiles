@@ -96,7 +96,7 @@ export const syncCommentWithPlane = async (
     return;
   }
 
-  const planeClient = await getPlaneAPIClient(userCredentials, ghIntegrationKey);
+  let planeClient: PlaneClient = await getPlaneAPIClient(wsAdminCredentials, ghIntegrationKey);
 
   const ghService = getGithubService(
     workspaceConnection as TGithubWorkspaceConnection,
@@ -158,6 +158,16 @@ export const syncCommentWithPlane = async (
     planeUsers,
     comment ? true : false
   );
+
+  // if the user is a project member, set the planeClient to the userCredentials for comment to be created by the user token
+  if (data.comment.user && data.comment.user.type === "User") {
+    const githubComment = data.comment as unknown as WebhookGitHubComment;
+    const isUserProjectMember = planeUsers.some((user) => user.id === userMap[githubComment?.user?.login ?? ""]);
+    // if the user is a project member, set the planeClient to the userCredentials
+    if (isUserProjectMember) {
+      planeClient = await getPlaneAPIClient(userCredentials, ghIntegrationKey);
+    }
+  }
 
   if (comment) {
     await planeClient.issueComment.update(

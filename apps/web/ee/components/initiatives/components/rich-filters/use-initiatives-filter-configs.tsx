@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
+import { INITIATIVE_STATES } from "@plane/constants";
+import { InitiativeStateIcon } from "@plane/propel/icons";
 import { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import {
@@ -9,8 +11,6 @@ import {
   getInitiativeStatesFilterConfig,
 } from "@plane/utils";
 import { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
-import { INITIATIVE_STATES } from "@plane/constants";
-import { InitiativeStateIcon } from "@plane/propel/icons";
 
 interface UseInitiativesFilterConfigsProps {
   workspaceMembers: IUserLite[];

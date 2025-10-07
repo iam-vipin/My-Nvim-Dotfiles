@@ -9,8 +9,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/plane-web/types/initiative";
-import { useInitiativesFilterConfigs } from "./use-initiatives-filter-configs";
 import { InitiativesFilterAdapter } from "./initiatives-filter-adapter";
+import { useInitiativesFilterConfigs } from "./use-initiatives-filter-configs";
 
 const createFilterInstance = (
   filters: TExternalInitiativeFilterExpression,

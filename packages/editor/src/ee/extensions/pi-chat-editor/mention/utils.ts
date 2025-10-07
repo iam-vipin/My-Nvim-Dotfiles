@@ -33,15 +33,21 @@ export const renderPiChatEditorMentionsDropdown =
         );
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
-        document.body.appendChild(element);
+        element.style.zIndex = "100";
         updateFloatingUIFloaterPosition(props.editor, element);
       },
-      onUpdate(props) {
-        component?.updateProps(props);
-        if (!props.clientRect) return;
-        if (component?.element) {
-          updateFloatingUIFloaterPosition(props.editor, component?.element as HTMLElement);
+
+      onUpdate: (props) => {
+        if (!component || !component.element) return;
+
+        component.updateProps(props);
+
+        if (!props.clientRect) {
+          return;
         }
+
+        const element = component.element as HTMLElement;
+        updateFloatingUIFloaterPosition(props.editor, element);
       },
 
       onKeyDown(props) {

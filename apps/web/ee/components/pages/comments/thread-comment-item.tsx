@@ -175,7 +175,7 @@ export const PageThreadCommentItem = observer(
         </div>
         {/* Reply Box */}
         {showReplyBox && page.canCurrentUserCommentOnPage && (
-          <div className="overflow-hidden animate-expand-reply space-y-3">
+          <div className="animate-expand-reply space-y-3">
             <PageCommentForm
               workspaceSlug={workspaceSlug?.toString() || ""}
               workspaceId={workspaceId}

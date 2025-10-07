@@ -8,6 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 // hooks
+import { formatURLForDisplay } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
@@ -16,7 +17,6 @@ import { TitleInput } from "@/plane-web/components/common/input/title-input";
 import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
-import { formatURLForDisplay } from "@plane/utils";
 // services
 import { FileService } from "@/services/file.service";
 import { CustomerLogoInput } from "./logo-input";

@@ -56,9 +56,7 @@ def get_workspace(slug):
 
 
 @sync_to_async
-def create_asset(
-    attributes, asset, size, workspace_id, user, entity_type, entity_identifier
-) -> FileAssetType:
+def create_asset(attributes, asset, size, workspace_id, user, entity_type, entity_identifier) -> FileAssetType:
     asset_fields = {
         "attributes": attributes,
         "asset": asset,
@@ -68,9 +66,7 @@ def create_asset(
         "created_by": user,
     }
 
-    return FileAsset.objects.create(
-        **asset_fields, **get_entity_id_field(entity_type, entity_identifier)
-    )
+    return FileAsset.objects.create(**asset_fields, **get_entity_id_field(entity_type, entity_identifier))
 
 
 @sync_to_async
@@ -145,9 +141,7 @@ def delete_asset_entity(entity_type, asset):
 @strawberry.type
 class WorkspaceAssetMutation:
     # asset entity create
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def create_workspace_asset(
         self,
         info: Info,
@@ -234,9 +228,7 @@ class WorkspaceAssetMutation:
         )
 
     # asset entity update
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def update_workspace_asset(
         self,
         info: Info,
@@ -244,9 +236,7 @@ class WorkspaceAssetMutation:
         asset_id: strawberry.ID,
         attributes: Optional[JSON] = None,
     ) -> bool:
-        asset = await sync_to_async(FileAsset.objects.get)(
-            workspace__slug=slug, id=asset_id
-        )
+        asset = await sync_to_async(FileAsset.objects.get)(workspace__slug=slug, id=asset_id)
         asset.is_uploaded = True
 
         # update the attributes
@@ -268,15 +258,9 @@ class WorkspaceAssetMutation:
         return True
 
     # asset entity delete
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def delete_workspace_asset(
-        self, info: Info, slug: str, asset_id: strawberry.ID
-    ) -> bool:
-        asset = await sync_to_async(FileAsset.objects.get)(
-            workspace__slug=slug, id=asset_id
-        )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def delete_workspace_asset(self, info: Info, slug: str, asset_id: strawberry.ID) -> bool:
+        asset = await sync_to_async(FileAsset.objects.get)(workspace__slug=slug, id=asset_id)
 
         asset.is_deleted = True
         asset.deleted_at = timezone.now()

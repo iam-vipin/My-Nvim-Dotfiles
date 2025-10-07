@@ -21,9 +21,7 @@ from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.asset import FileAssetType
 
 
-def epic_attachment_base_query(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
-):
+def epic_attachment_base_query(workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str):
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
         workspace_slug=workspace_slug,
@@ -40,9 +38,7 @@ def epic_attachment_base_query(
 
 
 @sync_to_async
-def get_epic_attachments(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
-):
+def get_epic_attachments(workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str):
     base_query = epic_attachment_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
@@ -57,9 +53,7 @@ def get_epic_attachments(
 
 
 @sync_to_async
-def get_epic_attachment(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, attachment_id: str
-):
+def get_epic_attachment(workspace_id: str, project_id: str, epic_id: str, user_id: str, attachment_id: str):
     base_query = epic_attachment_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
@@ -79,12 +73,8 @@ def get_epic_attachment(
 
 @strawberry.type
 class EpicAttachmentQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
-    async def epic_attachments(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> list[FileAssetType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def epic_attachments(self, info: Info, slug: str, project: str, epic: str) -> list[FileAssetType]:
         user = info.context.user
         user_id = str(user.id)
 
@@ -108,12 +98,8 @@ class EpicAttachmentQuery:
 
         return issue_attachments
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
-    async def epic_attachment(
-        self, info: Info, slug: str, project: str, epic: str, attachment: str
-    ) -> FileAssetType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def epic_attachment(self, info: Info, slug: str, project: str, epic: str, attachment: str) -> FileAssetType:
         user = info.context.user
         user_id = str(user.id)
 

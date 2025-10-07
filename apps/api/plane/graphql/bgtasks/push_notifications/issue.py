@@ -40,9 +40,7 @@ def construct_issue_notification_details(notification: dict) -> dict:
 
         # notification issue and issue activity details
         notification_issue = notification.get("data", {}).get("issue", {})
-        notification_issue_activity = notification.get("data", {}).get(
-            "issue_activity", {}
-        )
+        notification_issue_activity = notification.get("data", {}).get("issue_activity", {})
 
         # sender actor details
         actor_details = notification.get("triggered_by_details", {})
@@ -50,11 +48,7 @@ def construct_issue_notification_details(notification: dict) -> dict:
         actor_display_name = actor_details.get("display_name", "")
         actor_first_name = actor_details.get("first_name", "")
         actor_last_name = actor_details.get("last_name", "")
-        actor_name = (
-            actor_display_name
-            if actor_display_name
-            else f"{actor_first_name} {actor_last_name}"
-        )
+        actor_name = actor_display_name if actor_display_name else f"{actor_first_name} {actor_last_name}"
 
         # receiver actor details
         receiver_id = notification.get("receiver", None)
@@ -66,9 +60,7 @@ def construct_issue_notification_details(notification: dict) -> dict:
                 receiver_first_name = receiver_details.first_name or ""
                 receiver_last_name = receiver_details.last_name or ""
                 receiver_name = (
-                    receiver_display_name
-                    if receiver_display_name
-                    else f"{receiver_first_name} {receiver_last_name}"
+                    receiver_display_name if receiver_display_name else f"{receiver_first_name} {receiver_last_name}"
                 )
 
         # workspace details
@@ -123,9 +115,7 @@ def construct_issue_notification_details(notification: dict) -> dict:
                 "old_identifier": notification_issue_activity.get("old_identifier", ""),
                 "issue_comment": notification_issue_activity.get("issue_comment", ""),
                 "new_identifier": notification_issue_activity.get("new_identifier", ""),
-                "old_identifier_type": notification_issue_activity.get(
-                    "old_identifier_type", ""
-                ),
+                "old_identifier_type": notification_issue_activity.get("old_identifier_type", ""),
             },
         }
 
@@ -189,13 +179,9 @@ def issue_push_notifications(notification):
         # issue activity details
         issue_activity_id = notification_issue_activity.get("id", "")
         issue_activity_field = notification_issue_activity.get("field", None)
-        issue_activity_new_value = notification_issue_activity.get(
-            "new_identifier", None
-        )
+        issue_activity_new_value = notification_issue_activity.get("new_identifier", None)
         issue_comment_id = (
-            issue_activity_new_value
-            if issue_activity_field == "comment" and issue_activity_new_value
-            else ""
+            issue_activity_new_value if issue_activity_field == "comment" and issue_activity_new_value else ""
         )
 
         is_epic = False
@@ -219,9 +205,7 @@ def issue_push_notifications(notification):
         )
 
         notification_type = (
-            IssuePushNotificationTypes.EPIC_UPDATED.value
-            if is_epic
-            else IssuePushNotificationTypes.ISSUE_UPDATED.value
+            IssuePushNotificationTypes.EPIC_UPDATED.value if is_epic else IssuePushNotificationTypes.ISSUE_UPDATED.value
         )
         title = f"{project_identifier}-{issue_sequence_id} - {issue_name}"
         data = {
@@ -291,9 +275,7 @@ def issue_push_notifications(notification):
                 notification_count=unread_notification_count,
             )
 
-        print(
-            "=== sending issue properties push notification to mobile is successful ==="
-        )
+        print("=== sending issue properties push notification to mobile is successful ===")
 
         return
     except Exception as e:

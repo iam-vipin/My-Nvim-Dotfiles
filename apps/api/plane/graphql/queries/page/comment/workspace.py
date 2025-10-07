@@ -29,9 +29,7 @@ from plane.graphql.utils.paginator import paginate
 
 @strawberry.type
 class WorkspacePageCommentsQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_page_comments(
         self,
         info: Info,
@@ -51,9 +49,7 @@ class WorkspacePageCommentsQuery:
 
         return paginate(results_object=page_comments, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_page_comments_with_ids(
         self,
         info: Info,
@@ -73,9 +69,7 @@ class WorkspacePageCommentsQuery:
 
         return page_comments
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_page_comment_replies(
         self,
         info: Info,
@@ -96,12 +90,8 @@ class WorkspacePageCommentsQuery:
 
         return paginate(results_object=page_comments, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def workspace_page_comment(
-        self, info: Info, slug: str, page: str, comment: str
-    ) -> PageCommentType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def workspace_page_comment(self, info: Info, slug: str, page: str, comment: str) -> PageCommentType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -114,9 +104,7 @@ class WorkspacePageCommentsQuery:
 
         return page_comment
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_page_comment_reactions(
         self,
         info: Info,
@@ -141,7 +129,4 @@ class WorkspacePageCommentsQuery:
         for reaction in page_comment_reactions:
             grouped[reaction.reaction].append(str(reaction.created_by_id))
 
-        return [
-            PageCommentReactionCountType(reaction=k, user_ids=v)
-            for k, v in grouped.items()
-        ]
+        return [PageCommentReactionCountType(reaction=k, user_ids=v) for k, v in grouped.items()]

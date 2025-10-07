@@ -36,17 +36,15 @@ def _validate_project_access_via_teamspaces(
 
     if teamspace_feature_flagged:
         # Get all team ids where the user is a member
-        teamspace_ids = TeamspaceMember.objects.filter(
-            member_id=user_id, workspace__slug=workspace_slug
-        ).values_list("team_space_id", flat=True)
+        teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=workspace_slug).values_list(
+            "team_space_id", flat=True
+        )
 
         # Get all the projects in the respective teamspaces
-        teamspace_project_ids = TeamspaceProject.objects.filter(
-            team_space_id__in=teamspace_ids
-        ).values_list("project_id", flat=True)
-        teamspace_project_ids = [
-            str(project_id) for project_id in list(teamspace_project_ids)
-        ]
+        teamspace_project_ids = TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids).values_list(
+            "project_id", flat=True
+        )
+        teamspace_project_ids = [str(project_id) for project_id in list(teamspace_project_ids)]
 
         if project_id is not None and str(project_id) in teamspace_project_ids:
             return True

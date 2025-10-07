@@ -17,17 +17,13 @@ from plane.graphql.types.issues.comment_reaction import CommentReactionType
 
 
 @sync_to_async
-def get_epic_comment_reactions(
-    workspace_slug: str, project_id: str, comment_id: str, user_id: str
-):
+def get_epic_comment_reactions(workspace_slug: str, project_id: str, comment_id: str, user_id: str):
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
         workspace_slug=workspace_slug,
     )
     comment_reactions = (
-        CommentReaction.objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id, comment_id=comment_id
-        )
+        CommentReaction.objects.filter(workspace__slug=workspace_slug, project_id=project_id, comment_id=comment_id)
         .filter(project_teamspace_filter.query)
         .order_by("-created_at")
         .distinct()
@@ -38,9 +34,7 @@ def get_epic_comment_reactions(
 
 @strawberry.type
 class EpicCommentReactionQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def epic_comment_reactions(
         self, info: Info, slug: str, project: str, epic: str, comment: str
     ) -> list[CommentReactionType]:

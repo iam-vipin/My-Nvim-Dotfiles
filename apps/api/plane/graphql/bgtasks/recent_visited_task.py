@@ -54,9 +54,7 @@ def recent_visited_task(entity_name, entity_identifier, user_id, slug, project_i
                 .values_list("id", flat=True)[20:]
             )
 
-            UserRecentVisit.objects.filter(id__in=recent_page_visited_ids).delete(
-                soft=False
-            )
+            UserRecentVisit.objects.filter(id__in=recent_page_visited_ids).delete(soft=False)
 
             recent_activity = UserRecentVisit.objects.create(
                 entity_name=entity_name,

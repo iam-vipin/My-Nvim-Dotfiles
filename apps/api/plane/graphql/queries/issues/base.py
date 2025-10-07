@@ -13,14 +13,8 @@ from plane.graphql.types.issues.base import IssueStatsType
 
 @strawberry.type
 class IssueStatsQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def issue_stats(
-        self, info: Info, slug: str, project: str, issue: str
-    ) -> IssueStatsType:
-        stats = await get_issue_stats_count_async(
-            workspace_slug=slug, project_id=project, issue=issue
-        )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def issue_stats(self, info: Info, slug: str, project: str, issue: str) -> IssueStatsType:
+        stats = await get_issue_stats_count_async(workspace_slug=slug, project_id=project, issue=issue)
 
         return stats

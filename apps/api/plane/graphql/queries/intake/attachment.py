@@ -97,9 +97,7 @@ def get_intake_work_item_attachment(
 
 @strawberry.type
 class IntakeWorkItemAttachmentQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_work_item_attachments(
         self, info: Info, slug: str, project: str, intake_work_item: str
     ) -> list[FileAssetType]:
@@ -115,9 +113,7 @@ class IntakeWorkItemAttachmentQuery:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item
@@ -138,9 +134,7 @@ class IntakeWorkItemAttachmentQuery:
 
         return issue_attachments
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_work_item_attachment(
         self,
         info: Info,
@@ -161,9 +155,7 @@ class IntakeWorkItemAttachmentQuery:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item

@@ -22,9 +22,7 @@ from plane.graphql.utils.roles import Roles
 
 @strawberry.type
 class UserProjectRolesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def user_project_roles(
         self,
         info: Info,
@@ -60,16 +58,14 @@ class UserProjectRolesQuery:
             user_project_roles.teamspace_role = None
 
         # teamspace role validation
-        teamspace_feature_flagged = await is_teamspace_feature_flagged_async(
-            slug, user_id
-        )
+        teamspace_feature_flagged = await is_teamspace_feature_flagged_async(slug, user_id)
         if teamspace_feature_flagged:
             teamspace_enabled = await is_teamspace_enabled_async(slug)
             if teamspace_enabled:
                 teamspace_ids = await sync_to_async(list)(
-                    TeamspaceProject.objects.filter(
-                        workspace__slug=slug, project_id=project
-                    ).values_list("team_space_id", flat=True)
+                    TeamspaceProject.objects.filter(workspace__slug=slug, project_id=project).values_list(
+                        "team_space_id", flat=True
+                    )
                 )
                 teamspace_ids = [str(teamspace_id) for teamspace_id in teamspace_ids]
 

@@ -21,12 +21,8 @@ from plane.graphql.types.epics.activity import EpicPropertyActivityType
 
 @strawberry.type
 class EpicActivityQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_activities(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> list[EpicPropertyActivityType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_activities(self, info: Info, slug: str, project: str, epic: str) -> list[EpicPropertyActivityType]:
         user = info.context.user
         user_id = str(user.id)
 

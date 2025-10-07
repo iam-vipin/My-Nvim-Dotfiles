@@ -123,19 +123,14 @@ class PageCommentWithReactionsListType(PageCommentType):
         comment_id = self.id
 
         comment_reactions = await sync_to_async(list)(
-            PageCommentReaction.objects.filter(comment_id=comment_id)
-            .values("reaction", "created_by_id")
-            .distinct()
+            PageCommentReaction.objects.filter(comment_id=comment_id).values("reaction", "created_by_id").distinct()
         )
 
         grouped = defaultdict(list)
         for reaction in comment_reactions:
             grouped[reaction["reaction"]].append(str(reaction["created_by_id"]))
 
-        return [
-            PageCommentReactionCountType(reaction=k, user_ids=v)
-            for k, v in grouped.items()
-        ]
+        return [PageCommentReactionCountType(reaction=k, user_ids=v) for k, v in grouped.items()]
 
 
 @strawberry_django.type(PageComment)

@@ -23,17 +23,13 @@ from plane.graphql.types.issues.comment_reaction import CommentReactionType
 
 
 @sync_to_async
-def get_intake_work_item_comment_reactions(
-    workspace_slug: str, project_id: str, comment_id: str, user_id: str
-):
+def get_intake_work_item_comment_reactions(workspace_slug: str, project_id: str, comment_id: str, user_id: str):
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
         workspace_slug=workspace_slug,
     )
     comment_reactions = (
-        CommentReaction.objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id, comment_id=comment_id
-        )
+        CommentReaction.objects.filter(workspace__slug=workspace_slug, project_id=project_id, comment_id=comment_id)
         .filter(project_teamspace_filter.query)
         .order_by("-created_at")
         .distinct()
@@ -44,9 +40,7 @@ def get_intake_work_item_comment_reactions(
 
 @strawberry.type
 class IntakeWorkItemCommentReactionQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_work_item_comment_reactions(
         self, info: Info, slug: str, project: str, intake_work_item: str, comment: str
     ) -> list[CommentReactionType]:
@@ -61,9 +55,7 @@ class IntakeWorkItemCommentReactionQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item

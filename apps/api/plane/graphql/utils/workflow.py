@@ -20,9 +20,7 @@ class WorkflowStateManager:
     def is_project_feature_enabled(self) -> bool:
         """Check if the project feature is enabled."""
 
-        return ProjectFeature.objects.filter(
-            project_id=self.project_id, is_workflow_enabled=True
-        ).exists()
+        return ProjectFeature.objects.filter(project_id=self.project_id, is_workflow_enabled=True).exists()
 
     def _get_allowed_transitions(self, current_state_id: str) -> list[int]:
         """Get all allowed transition state IDs for a workflow."""
@@ -33,9 +31,7 @@ class WorkflowStateManager:
             ).values_list("transition_state_id", flat=True)
         )
 
-    def _get_allowed_approvers(
-        self, current_state_id: str, transition_state_id: str
-    ) -> list[int]:
+    def _get_allowed_approvers(self, current_state_id: str, transition_state_id: str) -> list[int]:
         """Get all allowed approvers for the transition state of a workflow."""
 
         return list(
@@ -46,9 +42,7 @@ class WorkflowStateManager:
             ).values_list("approver_id", flat=True)
         )
 
-    def _validate_state_transition(
-        self, current_state_id: str, new_state_id: str
-    ) -> bool:
+    def _validate_state_transition(self, current_state_id: str, new_state_id: str) -> bool:
         """
         Validate if a state transition is allowed for the given issue and user.
 
@@ -77,9 +71,7 @@ class WorkflowStateManager:
             return True
 
         # Get allowed transitions
-        allowed_states = self._get_allowed_transitions(
-            current_state_id=current_state_id
-        )
+        allowed_states = self._get_allowed_transitions(current_state_id=current_state_id)
 
         # If no transitions are defined, allow all transitions
         if not allowed_states or len(allowed_states) == 0:

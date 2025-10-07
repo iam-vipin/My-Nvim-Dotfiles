@@ -29,9 +29,7 @@ from plane.graphql.utils.work_item_filters import work_item_filters
 # workspace issues information query
 @strawberry.type
 class WorkspaceIssuesInformationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspaceIssuesInformation(
         self,
         info: Info,
@@ -51,9 +49,7 @@ class WorkspaceIssuesInformationQuery:
         )
 
         issue_information = IssuesInformationType(
-            all=IssuesInformationObjectType(
-                totalIssues=issue_count, groupInfo=issue_group_info
-            ),
+            all=IssuesInformationObjectType(totalIssues=issue_count, groupInfo=issue_group_info),
             active=None,
             backlog=None,
         )
@@ -64,9 +60,7 @@ class WorkspaceIssuesInformationQuery:
 # workspace issues query
 @strawberry.type
 class WorkspaceIssuesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspaceIssues(
         self,
         info: Info,

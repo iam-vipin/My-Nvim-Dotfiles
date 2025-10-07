@@ -39,9 +39,7 @@ def get_project(project_id):
 
 @strawberry.type
 class CycleQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def cycles(
         self,
         info: Info,
@@ -102,8 +100,7 @@ class CycleQuery:
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=current_time_in_utc)
-                        & Q(end_date__gte=current_time_in_utc),
+                        Q(start_date__lte=current_time_in_utc) & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
@@ -120,12 +117,8 @@ class CycleQuery:
 
         return cycles
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def cycle(
-        self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
-    ) -> CycleType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def cycle(self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID) -> CycleType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -165,8 +158,7 @@ class CycleQuery:
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=current_time_in_utc)
-                        & Q(end_date__gte=current_time_in_utc),
+                        Q(start_date__lte=current_time_in_utc) & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
@@ -199,9 +191,7 @@ class CycleQuery:
 # cycle issue user properties
 @strawberry.type
 class CycleIssueUserPropertyQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def cycleIssueUserProperties(
         self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
     ) -> CycleUserPropertyType:
@@ -214,9 +204,7 @@ class CycleIssueUserPropertyQuery:
             )
             return cycle_properties
 
-        cycle_issue_property = await sync_to_async(
-            lambda: get_cycle_issue_user_property()
-        )()
+        cycle_issue_property = await sync_to_async(lambda: get_cycle_issue_user_property())()
 
         return cycle_issue_property
 
@@ -224,9 +212,7 @@ class CycleIssueUserPropertyQuery:
 # cycle issues information query
 @strawberry.type
 class CycleIssuesInformationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def cycleIssuesInformation(
         self,
         info: Info,
@@ -281,15 +267,9 @@ class CycleIssuesInformationQuery:
         )
 
         issue_information = IssuesInformationType(
-            all=IssuesInformationObjectType(
-                totalIssues=all_issue_count, groupInfo=all_issue_group_info
-            ),
-            active=IssuesInformationObjectType(
-                totalIssues=active_issue_count, groupInfo=active_issue_group_info
-            ),
-            backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
-            ),
+            all=IssuesInformationObjectType(totalIssues=all_issue_count, groupInfo=all_issue_group_info),
+            active=IssuesInformationObjectType(totalIssues=active_issue_count, groupInfo=active_issue_group_info),
+            backlog=IssuesInformationObjectType(totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info),
         )
 
         return issue_information
@@ -298,9 +278,7 @@ class CycleIssuesInformationQuery:
 # cycle issues
 @strawberry.type
 class CycleIssueQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def cycleIssues(
         self,
         info: Info,

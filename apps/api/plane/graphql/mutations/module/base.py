@@ -15,12 +15,8 @@ from plane.graphql.types.module import ModuleUserPropertyType
 
 @strawberry.type
 class ModuleFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoriteModule(
-        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def favoriteModule(self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=module,
             entity_type="module",
@@ -29,12 +25,8 @@ class ModuleFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoriteModule(
-        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unFavoriteModule(self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID) -> bool:
         module_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=module,
             entity_type="module",
@@ -49,9 +41,7 @@ class ModuleFavoriteMutation:
 
 @strawberry.type
 class ModuleIssueUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def updateModuleUserProperties(
         self,
         info: Info,

@@ -23,9 +23,7 @@ def get_work_item_relation_type(relation_type):
     return RELATION_TYPE_MAP.get(relation_type, relation_type)
 
 
-def is_timeline_dependency_feature_flagged(
-    user_id: str, workspace_slug: str, raise_exception: bool = True
-):
+def is_timeline_dependency_feature_flagged(user_id: str, workspace_slug: str, raise_exception: bool = True):
     try:
         is_feature_flagged = _validate_feature_flag(
             user_id=user_id,
@@ -36,9 +34,7 @@ def is_timeline_dependency_feature_flagged(
 
         if not is_feature_flagged:
             if raise_exception:
-                message = (
-                    "Timeline dependency feature flag is not enabled for the workspace"
-                )
+                message = "Timeline dependency feature flag is not enabled for the workspace"
                 error_extensions = {
                     "code": "TIMELINE_DEPENDENCY_FEATURE_FLAG_NOT_ENABLED",
                     "statusCode": 400,
@@ -55,9 +51,5 @@ def is_timeline_dependency_feature_flagged(
 
 
 @sync_to_async
-def is_timeline_dependency_feature_flagged_async(
-    user_id: str, workspace_slug: str, raise_exception: bool = True
-):
-    return is_timeline_dependency_feature_flagged(
-        user_id, workspace_slug, raise_exception
-    )
+def is_timeline_dependency_feature_flagged_async(user_id: str, workspace_slug: str, raise_exception: bool = True):
+    return is_timeline_dependency_feature_flagged(user_id, workspace_slug, raise_exception)

@@ -41,9 +41,7 @@ def get_project_member(
     Get the project member for the given project id and user id
     """
     try:
-        return ProjectMember.objects.get(
-            workspace__slug=workspace_slug, project_id=project_id, member_id=user_id
-        )
+        return ProjectMember.objects.get(workspace__slug=workspace_slug, project_id=project_id, member_id=user_id)
     except ProjectMember.DoesNotExist:
         if raise_exception:
             message = "Project member not found"

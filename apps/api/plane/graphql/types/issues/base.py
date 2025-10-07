@@ -154,9 +154,7 @@ class IssuesType:
 
     @strawberry.field
     async def cycle(self, info: Info) -> strawberry.ID:
-        cycle_issue = await sync_to_async(
-            CycleIssue.objects.filter(issue_id=self.id).first
-        )()
+        cycle_issue = await sync_to_async(CycleIssue.objects.filter(issue_id=self.id).first)()
         if cycle_issue:
             return str(cycle_issue.cycle_id)
         return None
@@ -165,11 +163,7 @@ class IssuesType:
     async def modules(self, info: Info) -> list[strawberry.ID]:
         # Fetch related module IDs in a synchronous context
         module_issues = await sync_to_async(
-            lambda: list(
-                ModuleIssue.objects.filter(issue_id=self.id).values_list(
-                    "module_id", flat=True
-                )
-            )
+            lambda: list(ModuleIssue.objects.filter(issue_id=self.id).values_list("module_id", flat=True))
         )()
 
         # Return the module IDs as strings
@@ -239,17 +233,13 @@ class IssuesType:
         workspace_slug = await sync_to_async(lambda: self.workspace.slug)()
         project_id = str(self.project_id)
 
-        parent_issue_project_id = await sync_to_async(
-            lambda: self.parent.project_id if self.parent else None
-        )()
+        parent_issue_project_id = await sync_to_async(lambda: self.parent.project_id if self.parent else None)()
         issue_project_id = await sync_to_async(lambda: self.project_id)()
 
         if parent_issue_project_id == issue_project_id:
             # check if the parent issue issue_type is not epic
             parent_issue_is_epic = await sync_to_async(
-                lambda: self.parent.type.is_epic
-                if self.parent and self.parent.type
-                else None
+                lambda: self.parent.type.is_epic if self.parent and self.parent.type else None
             )()
 
             if parent_issue_is_epic:
@@ -306,9 +296,7 @@ class IssuesType:
             return False
 
         parent_issue_is_epic = await sync_to_async(
-            lambda: self.parent.type.is_epic
-            if self.parent and self.parent.type
-            else False
+            lambda: self.parent.type.is_epic if self.parent and self.parent.type else False
         )()
 
         return parent_issue_is_epic
@@ -316,9 +304,7 @@ class IssuesType:
     # analytics if the self work item is epic
     @strawberry.field
     async def analytics(self) -> EpicAnalyticsType:
-        sub_work_items = await sync_to_async(
-            lambda: get_all_related_work_items(work_item_id=self.id)
-        )()
+        sub_work_items = await sync_to_async(lambda: get_all_related_work_items(work_item_id=self.id))()
 
         sub_work_items_count = len(sub_work_items)
 

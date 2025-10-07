@@ -35,16 +35,12 @@ def get_version_check(platform: str, is_internal: Optional[bool] = False):
 class VersionCheckQuery:
     @strawberry.field
     @public_query()
-    async def version_check(
-        self, info: Info, platform: str, is_internal: Optional[bool] = False
-    ) -> VersionCheckType:
+    async def version_check(self, info: Info, platform: str, is_internal: Optional[bool] = False) -> VersionCheckType:
         version_details = await get_version_check(platform, is_internal)
         return VersionCheckType(
             version=version_details["version"],
             min_supported_version=version_details["min_supported_version"],
             url=version_details["url"],
             force_update=version_details["force_update"],
-            min_supported_backend_version=version_details[
-                "min_backend_supported_version"
-            ],
+            min_supported_backend_version=version_details["min_backend_supported_version"],
         )

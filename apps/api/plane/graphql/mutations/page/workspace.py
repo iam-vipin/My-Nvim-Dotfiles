@@ -22,9 +22,7 @@ from plane.graphql.helpers import get_workspace
 @sync_to_async
 def get_workspace_member(slug: str, user_id: str):
     try:
-        return WorkspaceMember.objects.get(
-            workspace__slug=slug, member_id=user_id, is_active=True
-        )
+        return WorkspaceMember.objects.get(workspace__slug=slug, member_id=user_id, is_active=True)
     except WorkspaceMember.DoesNotExist:
         return None
 
@@ -32,9 +30,7 @@ def get_workspace_member(slug: str, user_id: str):
 @sync_to_async
 def get_project_member(slug: str, project: str, user_id: str):
     try:
-        return ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project, member_id=user_id, is_active=True
-        )
+        return ProjectMember.objects.get(workspace__slug=slug, project_id=project, member_id=user_id, is_active=True)
     except ProjectMember.DoesNotExist:
         return None
 
@@ -42,11 +38,7 @@ def get_project_member(slug: str, project: str, user_id: str):
 @strawberry.type
 class WorkspacePageMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])])]
     )
     async def create_workspace_page(
         self,
@@ -76,11 +68,7 @@ class WorkspacePageMutation:
         return page
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])])]
     )
     async def updateWorkspacePage(
         self,

@@ -17,9 +17,7 @@ from plane.graphql.types.project import ProjectFeatureType
 # workspace issues information query
 @strawberry.type
 class ProjectFeatureQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def project_features(
         self,
         info: Info,

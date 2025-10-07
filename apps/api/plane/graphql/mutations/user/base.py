@@ -17,9 +17,7 @@ from plane.graphql.types.user import UserType
 
 @strawberry.type
 class UserMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def update_user(
         self,
         info: Info,

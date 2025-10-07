@@ -27,9 +27,7 @@ from plane.graphql.utils.roles import Roles
 
 @strawberry.type
 class IntakeSearchQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
 
     # getting issue relation issues
     async def intake_search(
@@ -48,14 +46,10 @@ class IntakeSearchQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         current_user_role = None
         project_member = await get_project_member(

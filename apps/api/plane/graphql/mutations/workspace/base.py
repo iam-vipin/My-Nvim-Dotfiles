@@ -82,9 +82,7 @@ def get_workspace_by_slug(workspace_slug: str) -> Workspace:
 
 # workspace create
 @sync_to_async
-def create_workspace(
-    user_id: str, workspace_input: WorkspaceCreateInputType
-) -> Workspace:
+def create_workspace(user_id: str, workspace_input: WorkspaceCreateInputType) -> Workspace:
     try:
         workspace_payload = {
             "name": workspace_input.name,
@@ -101,9 +99,7 @@ def create_workspace(
 
 # workspace update
 @sync_to_async
-def update_workspace(
-    workspace: Workspace, workspace_input: WorkspaceUpdateInputType
-) -> Workspace:
+def update_workspace(workspace: Workspace, workspace_input: WorkspaceUpdateInputType) -> Workspace:
     try:
         for key, value in asdict(workspace_input).items():
             setattr(workspace, key, value)
@@ -117,9 +113,7 @@ def update_workspace(
 
 # create workspace member
 @sync_to_async
-def create_workspace_member(
-    user_id: str, workspace_id: str, role: int, company_role: str = ""
-) -> WorkspaceMember:
+def create_workspace_member(user_id: str, workspace_id: str, role: int, company_role: str = "") -> WorkspaceMember:
     try:
         return WorkspaceMember.objects.create(
             member_id=user_id,
@@ -135,12 +129,8 @@ def create_workspace_member(
 
 @strawberry.type
 class WorkspaceMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[(IsAuthenticated())])]
-    )
-    async def workspace_slug_check(
-        self, info: Info, workspace_slug_input: WorkspaceSlugVerificationInputType
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[(IsAuthenticated())])])
+    async def workspace_slug_check(self, info: Info, workspace_slug_input: WorkspaceSlugVerificationInputType) -> bool:
         await validate_workspace_creation_enabled()
 
         workspace_slug = workspace_slug_input.slug
@@ -148,12 +138,8 @@ class WorkspaceMutation:
 
         return workspace_exists
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[(IsAuthenticated())])]
-    )
-    async def create_workspace(
-        self, info: Info, workspace_input: WorkspaceCreateInputType
-    ) -> WorkspaceType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[(IsAuthenticated())])])
+    async def create_workspace(self, info: Info, workspace_input: WorkspaceCreateInputType) -> WorkspaceType:
         user = info.context.user
         user_id = user.id
 
@@ -195,14 +181,10 @@ class WorkspaceMutation:
             }
             raise GraphQLError(message, extensions=error_extensions)
 
-        workspace = await create_workspace(
-            user_id=user_id, workspace_input=workspace_input
-        )
+        workspace = await create_workspace(user_id=user_id, workspace_input=workspace_input)
         workspace_id = str(workspace.id)
 
-        await create_workspace_member(
-            user_id=user_id, workspace_id=workspace.id, role=20
-        )
+        await create_workspace_member(user_id=user_id, workspace_id=workspace.id, role=20)
 
         # workspace seed data
         workspace_seed.delay(workspace_id)
@@ -212,18 +194,10 @@ class WorkspaceMutation:
 
         return workspace
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(permissions=[WorkspacePermission(roles=[Roles.ADMIN])])
-        ]
-    )
-    async def update_workspace(
-        self, info: Info, slug: str, workspace_input: WorkspaceUpdateInputType
-    ) -> WorkspaceType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspacePermission(roles=[Roles.ADMIN])])])
+    async def update_workspace(self, info: Info, slug: str, workspace_input: WorkspaceUpdateInputType) -> WorkspaceType:
         workspace = await get_workspace_by_slug(workspace_slug=slug)
 
-        workspace = await update_workspace(
-            workspace=workspace, workspace_input=workspace_input
-        )
+        workspace = await update_workspace(workspace=workspace, workspace_input=workspace_input)
 
         return workspace

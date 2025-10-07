@@ -63,9 +63,7 @@ def get_epic_comment_reactions_by_reaction(
 
 
 @sync_to_async
-def get_epic_comment_reaction(
-    workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str
-):
+def get_epic_comment_reaction(workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str):
     try:
         project_teamspace_filter = project_member_filter_via_teamspaces(
             user_id=user_id,
@@ -99,9 +97,7 @@ def validate_comment_reaction(reaction: str):
 
 @strawberry.type
 class EpicCommentReactionMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def add_epic_comment_reaction(
         self,
         info: Info,
@@ -168,9 +164,7 @@ class EpicCommentReactionMutation:
         user_ids = [str(reaction.created_by_id) for reaction in comment_reactions]
         return CommentReactionType(reaction=reaction, user_ids=user_ids)
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def remove_epic_comment_reaction(
         self,
         info: Info,

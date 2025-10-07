@@ -22,13 +22,9 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.permissions.project import ProjectMemberPermission
 
 
-def raise_error_exception(
-    message: str, error_extensions: dict, e: Optional[Exception] = None
-):
+def raise_error_exception(message: str, error_extensions: dict, e: Optional[Exception] = None):
     message = e.message if hasattr(e, "message") else message
-    error_extensions = (
-        e.error_extensions if hasattr(e, "error_extensions") else error_extensions
-    )
+    error_extensions = e.error_extensions if hasattr(e, "error_extensions") else error_extensions
     raise GraphQLError(message, extensions=error_extensions)
 
 
@@ -199,9 +195,7 @@ def update_cycle_issue(
         )
 
         current_cycle_issue = (
-            current_cycle_issues[0]
-            if current_cycle_issues and len(current_cycle_issues) > 0
-            else None
+            current_cycle_issues[0] if current_cycle_issues and len(current_cycle_issues) > 0 else None
         )
 
         # update the cycle issue
@@ -292,9 +286,7 @@ def delete_cycle_issue(
 
 @strawberry.type
 class IssueCycleMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def issue_cycle(
         self,
         info: Info,

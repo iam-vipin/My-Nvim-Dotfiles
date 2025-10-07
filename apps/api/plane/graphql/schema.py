@@ -397,6 +397,4 @@ class Mutation(
     pass
 
 
-schema = strawberry.Schema(
-    query=Query, mutation=Mutation, extensions=[DjangoOptimizerExtension]
-)
+schema = strawberry.Schema(query=Query, mutation=Mutation, extensions=[DjangoOptimizerExtension])

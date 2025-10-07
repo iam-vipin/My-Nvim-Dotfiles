@@ -25,9 +25,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 @strawberry.type
 class ModuleIssueMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_module_issues(
         self,
         info: Info,
@@ -75,9 +73,7 @@ class ModuleIssueMutation:
 
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def delete_module_issue(
         self,
         info: Info,
@@ -109,12 +105,8 @@ class ModuleIssueMutation:
 
 @strawberry.type
 class ModuleFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoriteModule(
-        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def favoriteModule(self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=module,
             entity_type="module",
@@ -123,12 +115,8 @@ class ModuleFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoriteModule(
-        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unFavoriteModule(self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID) -> bool:
         module_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=module,
             entity_type="module",
@@ -143,9 +131,7 @@ class ModuleFavoriteMutation:
 
 @strawberry.type
 class ModuleIssueUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def updateModuleUserProperties(
         self,
         info: Info,

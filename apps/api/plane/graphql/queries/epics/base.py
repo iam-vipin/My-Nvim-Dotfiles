@@ -27,9 +27,7 @@ from plane.graphql.utils.work_item_filters import work_item_filters
 
 @strawberry.type
 class EpicCountQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def epic_count(self, info: Info, slug: str, project: str) -> EpicCountType:
         user = info.context.user
         user_id = str(user.id)
@@ -40,9 +38,7 @@ class EpicCountQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        epics = await get_project_epics(
-            workspace_slug=slug, project_id=project, user_id=user_id
-        )
+        epics = await get_project_epics(workspace_slug=slug, project_id=project, user_id=user_id)
 
         total_epics = len(epics)
 
@@ -51,12 +47,8 @@ class EpicCountQuery:
 
 @strawberry.type
 class EpicStatsQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_stats(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> EpicStatsType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_stats(self, info: Info, slug: str, project: str, epic: str) -> EpicStatsType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -66,17 +58,13 @@ class EpicStatsQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        stats = await get_epic_stats_count_async(
-            workspace_slug=slug, project_id=project, epic=epic
-        )
+        stats = await get_epic_stats_count_async(workspace_slug=slug, project_id=project, epic=epic)
         return stats
 
 
 @strawberry.type
 class EpicQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def epics(
         self,
         info: Info,
@@ -107,9 +95,7 @@ class EpicQuery:
 
         return paginate(results_object=epics, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def epic(self, info: Info, slug: str, project: str, epic: str) -> EpicType:
         user = info.context.user
         user_id = str(user.id)

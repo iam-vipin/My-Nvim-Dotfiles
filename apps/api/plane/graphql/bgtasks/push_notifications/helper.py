@@ -52,28 +52,18 @@ def notification_count(
 
         # filter by workspace
         if workspace_slug:
-            workspace_id = (
-                Workspace.objects.filter(slug=workspace_slug)
-                .values_list("id", flat=True)
-                .first()
-            )
+            workspace_id = Workspace.objects.filter(slug=workspace_slug).values_list("id", flat=True).first()
             if workspace_id:
-                notification_query = notification_query.filter(
-                    workspace_id=workspace_id
-                )
+                notification_query = notification_query.filter(workspace_id=workspace_id)
             else:
                 return 0
 
         # filter by mentioned
         if combined:
             if mentioned:
-                notification_query = notification_query.filter(
-                    sender__icontains="mentioned"
-                )
+                notification_query = notification_query.filter(sender__icontains="mentioned")
             else:
-                notification_query = notification_query.exclude(
-                    sender__icontains="mentioned"
-                )
+                notification_query = notification_query.exclude(sender__icontains="mentioned")
 
         total_notification_count = notification_query.count()
 

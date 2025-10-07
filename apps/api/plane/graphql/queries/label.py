@@ -16,9 +16,7 @@ from plane.graphql.types.label import LabelType
 
 @strawberry.type
 class WorkspaceLabelQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_labels(self, info: Info, slug: str) -> list[LabelType]:
         user = info.context.user
         user_id = str(user.id)
@@ -28,21 +26,15 @@ class WorkspaceLabelQuery:
             workspace_slug=slug,
         )
         labels = await sync_to_async(list)(
-            Label.objects.filter(workspace__slug=slug)
-            .filter(project_teamspace_filter.query)
-            .distinct()
+            Label.objects.filter(workspace__slug=slug).filter(project_teamspace_filter.query).distinct()
         )
         return labels
 
 
 @strawberry.type
 class LabelQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def labels(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> list[LabelType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def labels(self, info: Info, slug: str, project: strawberry.ID) -> list[LabelType]:
         user = info.context.user
         user_id = str(user.id)
 

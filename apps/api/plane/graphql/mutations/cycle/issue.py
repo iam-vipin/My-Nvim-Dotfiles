@@ -23,9 +23,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 @strawberry.type
 class CycleIssueMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_cycle_issue(
         self,
         info: Info,
@@ -35,21 +33,15 @@ class CycleIssueMutation:
         issues: JSON,
     ) -> bool:
         # Fetch the cycle object asynchronously
-        cycle = await sync_to_async(Cycle.objects.get)(
-            workspace__slug=slug, project_id=project, pk=cycle
-        )
+        cycle = await sync_to_async(Cycle.objects.get)(workspace__slug=slug, project_id=project, pk=cycle)
 
         # Fetch existing CycleIssues for the given issues asynchronously
         existing_cycle_issues = await sync_to_async(
-            lambda: list(
-                CycleIssue.objects.filter(~Q(cycle_id=cycle), issue_id__in=issues).all()
-            )
+            lambda: list(CycleIssue.objects.filter(~Q(cycle_id=cycle), issue_id__in=issues).all())
         )()
 
         # Extract issue_ids from the existing CycleIssue objects
-        existing_issue_ids = set(
-            map(lambda ci: str(ci.issue_id), existing_cycle_issues)
-        )
+        existing_issue_ids = set(map(lambda ci: str(ci.issue_id), existing_cycle_issues))
 
         # Convert issues to a set of strings
         new_issue_ids = set(map(str, issues))
@@ -59,9 +51,7 @@ class CycleIssueMutation:
 
         # Update existing CycleIssues to the new cycle asynchronously
         await sync_to_async(
-            lambda: CycleIssue.objects.filter(
-                ~Q(cycle=cycle), issue_id__in=existing_issue_ids
-            ).update(cycle=cycle)
+            lambda: CycleIssue.objects.filter(~Q(cycle=cycle), issue_id__in=existing_issue_ids).update(cycle=cycle)
         )()
 
         # Create new CycleIssues for new issues
@@ -76,9 +66,7 @@ class CycleIssueMutation:
             )
             for issue_id in new_issue_ids
         ]
-        created_records = await sync_to_async(CycleIssue.objects.bulk_create)(
-            new_cycle_issues, batch_size=10
-        )
+        created_records = await sync_to_async(CycleIssue.objects.bulk_create)(new_cycle_issues, batch_size=10)
 
         update_cycle_issue_activity = [
             {
@@ -99,9 +87,7 @@ class CycleIssueMutation:
             current_instance=json.dumps(
                 {
                     "updated_cycle_issues": update_cycle_issue_activity,
-                    "created_cycle_issues": serializers.serialize(
-                        "json", created_records
-                    ),
+                    "created_cycle_issues": serializers.serialize("json", created_records),
                 }
             ),
             epoch=int(timezone.now().timestamp()),
@@ -111,9 +97,7 @@ class CycleIssueMutation:
 
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def delete_cycle_issue(
         self,
         info: Info,

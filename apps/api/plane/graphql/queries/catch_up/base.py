@@ -13,9 +13,7 @@ from plane.graphql.types.catch_up import CatchUpType
 
 @strawberry.type
 class CatchUpQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def catch_ups(self, info: Info, slug: str) -> list[CatchUpType]:
         user = info.context.user
         user_id = str(user.id)

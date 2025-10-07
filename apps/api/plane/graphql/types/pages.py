@@ -20,9 +20,9 @@ from plane.graphql.utils.timezone import user_timezone_converter
 
 @sync_to_async
 def shared_page_access(user_id: str, workspace_slug: str, page_id: str, owner_id: str):
-    shared_pages_data = PageUser.objects.filter(
-        workspace__slug=workspace_slug, page_id=page_id
-    ).values("user_id", "access")
+    shared_pages_data = PageUser.objects.filter(workspace__slug=workspace_slug, page_id=page_id).values(
+        "user_id", "access"
+    )
     shared_pages_data = list(shared_pages_data)
 
     page_access = 0

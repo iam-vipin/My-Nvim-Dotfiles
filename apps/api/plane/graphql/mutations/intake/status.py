@@ -85,9 +85,7 @@ def handle_intake_work_item_status_snooze(
 
 
 @sync_to_async
-def handle_intake_work_item_status_accept(
-    workspace_slug: str, project_id: str, intake_work_item: IntakeIssue
-):
+def handle_intake_work_item_status_accept(workspace_slug: str, project_id: str, intake_work_item: IntakeIssue):
     intake_work_item.status = IntakeWorkItemStatusType.ACCEPTED.value
     intake_work_item.snoozed_till = None
     intake_work_item.duplicate_to = None
@@ -101,9 +99,7 @@ def handle_intake_work_item_status_accept(
     )
 
     if work_item.state.is_triage:
-        state = State.objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id, default=True
-        ).first()
+        state = State.objects.filter(workspace__slug=workspace_slug, project_id=project_id, default=True).first()
 
         if state is not None:
             work_item.state = state
@@ -113,9 +109,7 @@ def handle_intake_work_item_status_accept(
 
 
 @sync_to_async
-def handle_intake_work_item_status_decline(
-    workspace_slug: str, project_id: str, intake_work_item: IntakeIssue
-):
+def handle_intake_work_item_status_decline(workspace_slug: str, project_id: str, intake_work_item: IntakeIssue):
     intake_work_item.status = IntakeWorkItemStatusType.REJECTED.value
     intake_work_item.snoozed_till = None
     intake_work_item.duplicate_to = None
@@ -184,9 +178,7 @@ def handle_intake_work_item_status_duplicate(
 
 @strawberry.type
 class IntakeWorkItemStatusMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
     async def update_intake_work_item_status(
         self,
         info: Info,
@@ -201,15 +193,11 @@ class IntakeWorkItemStatusMutation:
             workspace_slug = workspace.slug
 
             # get the project
-            project_details = await get_project(
-                workspace_slug=workspace_slug, project_id=project
-            )
+            project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
             project_id = str(project_details.id)
 
             # check if the intake is enabled for the project
-            await is_project_intakes_enabled_async(
-                workspace_slug=workspace_slug, project_id=project_id
-            )
+            await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
             intake_work_item_input_status = intake_work_item_status_input.status
 
@@ -275,17 +263,12 @@ class IntakeWorkItemStatusMutation:
                 )
 
             # duplicate the intake work item
-            if (
-                intake_work_item_input_status
-                == IntakeWorkItemStatusType.DUPLICATE.value
-            ):
-                intake_work_item_details = (
-                    await handle_intake_work_item_status_duplicate(
-                        workspace_slug=workspace_slug,
-                        project_id=project_id,
-                        intake_work_item=intake_work_item_details,
-                        intake_work_item_status_input=intake_work_item_status_input,
-                    )
+            if intake_work_item_input_status == IntakeWorkItemStatusType.DUPLICATE.value:
+                intake_work_item_details = await handle_intake_work_item_status_duplicate(
+                    workspace_slug=workspace_slug,
+                    project_id=project_id,
+                    intake_work_item=intake_work_item_details,
+                    intake_work_item_status_input=intake_work_item_status_input,
                 )
 
             # create a activity for status change

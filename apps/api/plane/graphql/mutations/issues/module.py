@@ -20,9 +20,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 @strawberry.type
 class IssueModuleMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def issue_modules(
         self,
         info: Info,
@@ -35,17 +33,11 @@ class IssueModuleMutation:
         project_details = await sync_to_async(Project.objects.get)(pk=project)
 
         existing_issue_modules = await sync_to_async(
-            lambda: list(
-                ModuleIssue.objects.filter(issue_id=issue).values_list(
-                    "module_id", flat=True
-                )
-            )
+            lambda: list(ModuleIssue.objects.filter(issue_id=issue).values_list("module_id", flat=True))
         )()
 
         # Filter out existing issues
-        existing_module_ids = set(
-            str(module_id) for module_id in existing_issue_modules
-        )
+        existing_module_ids = set(str(module_id) for module_id in existing_issue_modules)
         new_module_ids = set(modules) - set(existing_module_ids)
         removed_module_ids = set(existing_module_ids) - set(modules)
 
@@ -69,9 +61,7 @@ class IssueModuleMutation:
                         actor_id=str(user.id),
                         issue_id=str(issue),
                         project_id=str(project_details.id),
-                        current_instance=json.dumps(
-                            {"module_name": str(module.module.name)}
-                        ),
+                        current_instance=json.dumps({"module_name": str(module.module.name)}),
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=info.context.request.META.get("HTTP_ORIGIN"),

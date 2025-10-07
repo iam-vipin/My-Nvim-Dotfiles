@@ -22,9 +22,7 @@ from plane.graphql.types.issues.comment import IssueCommentActivityType
 @strawberry.type
 class IssueCommentMutation:
     # Deprecated: adding issue comment in favor of add_issue_comment_v2
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def addIssueComment(
         self,
         info: Info,
@@ -33,9 +31,7 @@ class IssueCommentMutation:
         issue: strawberry.ID,
         comment_html: str,
     ) -> bool:
-        workspace_details = await sync_to_async(
-            Workspace.objects.filter(slug=slug).first
-        )()
+        workspace_details = await sync_to_async(Workspace.objects.filter(slug=slug).first)()
         if not workspace_details:
             return False
 
@@ -72,9 +68,7 @@ class IssueCommentMutation:
         return True
 
     # adding issue comment version 2
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_issue_comment_v2(
         self,
         info: Info,
@@ -83,9 +77,7 @@ class IssueCommentMutation:
         issue: strawberry.ID,
         comment_html: str,
     ) -> IssueCommentActivityType:
-        workspace_details = await sync_to_async(
-            Workspace.objects.filter(slug=slug).first
-        )()
+        workspace_details = await sync_to_async(Workspace.objects.filter(slug=slug).first)()
         if not workspace_details:
             return False
 

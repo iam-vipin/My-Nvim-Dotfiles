@@ -36,12 +36,8 @@ def get_sticky(slug: str, user_id: str, id: str) -> Optional[Sticky]:
 @strawberry.type
 class WorkspaceStickiesQuery:
     # Return a list of stickies
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
-    async def stickies(
-        self, info: Info, slug: str, cursor: Optional[str] = None
-    ) -> PaginatorResponse[StickiesType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
+    async def stickies(self, info: Info, slug: str, cursor: Optional[str] = None) -> PaginatorResponse[StickiesType]:
         user = info.context.user
 
         stickies = await sync_to_async(list)(
@@ -54,12 +50,8 @@ class WorkspaceStickiesQuery:
         return paginate(results_object=stickies, cursor=cursor)
 
     # Return a single sticky
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
-    async def sticky(
-        self, info: Info, slug: str, sticky: strawberry.ID
-    ) -> StickiesType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
+    async def sticky(self, info: Info, slug: str, sticky: strawberry.ID) -> StickiesType:
         user = info.context.user
         user_id = user.id
 

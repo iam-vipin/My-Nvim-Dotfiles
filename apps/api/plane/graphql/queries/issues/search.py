@@ -35,9 +35,7 @@ def get_issue_details(issue_id):
 @strawberry.type
 class IssuesSearchQuery:
     # getting issues which are not related
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
 
     # getting issue relation issues
     async def issuesSearch(
@@ -83,9 +81,7 @@ class IssuesSearchQuery:
         )
 
         if is_intake_related:
-            issue_queryset = issue_queryset.exclude(
-                issue_intake__status=IntakeWorkItemStatusType.DUPLICATE.value
-            )
+            issue_queryset = issue_queryset.exclude(issue_intake__status=IntakeWorkItemStatusType.DUPLICATE.value)
 
         # epic filters
         is_epics_required = False
@@ -103,9 +99,7 @@ class IssuesSearchQuery:
                     is_epics_required = True
 
         if is_epics_required is False:
-            issue_queryset = issue_queryset.filter(
-                Q(type__is_epic=False) | Q(type__isnull=True)
-            )
+            issue_queryset = issue_queryset.filter(Q(type__is_epic=False) | Q(type__isnull=True))
 
         # workspace issues
         if project:
@@ -167,8 +161,6 @@ class IssuesSearchQuery:
             issue["is_epic"] = issue["type__is_epic"] and epic_project_enabled or False
             del issue["type__is_epic"]
 
-        listed_issues: list[IssueLiteType] = [
-            IssueLiteType(**issue) for issue in issues
-        ]
+        listed_issues: list[IssueLiteType] = [IssueLiteType(**issue) for issue in issues]
 
         return paginate(results_object=listed_issues, cursor=cursor)

@@ -83,12 +83,8 @@ def get_issue(issue_id):
 
 @sync_to_async
 def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
-    workflow_manager = WorkflowStateManager(
-        user_id=user_id, slug=slug, project_id=project_id
-    )
-    is_issue_creation_allowed = workflow_manager._validate_issue_creation(
-        state_id=state_id
-    )
+    workflow_manager = WorkflowStateManager(user_id=user_id, slug=slug, project_id=project_id)
+    is_issue_creation_allowed = workflow_manager._validate_issue_creation(state_id=state_id)
 
     if is_issue_creation_allowed is False:
         message = "You cannot create an issue in this state"
@@ -99,12 +95,8 @@ def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
 
 
 @sync_to_async
-def validate_workflow_state_issue_update(
-    user_id, slug, project_id, current_state_id, new_state_id
-):
-    workflow_state_manager = WorkflowStateManager(
-        user_id=user_id, slug=slug, project_id=project_id
-    )
+def validate_workflow_state_issue_update(user_id, slug, project_id, current_state_id, new_state_id):
+    workflow_state_manager = WorkflowStateManager(user_id=user_id, slug=slug, project_id=project_id)
     can_state_update = workflow_state_manager._validate_state_transition(
         current_state_id=current_state_id, new_state_id=new_state_id
     )
@@ -119,9 +111,7 @@ def validate_workflow_state_issue_update(
 
 @strawberry.type
 class IssueMutationV2:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_issue_v2(
         self, info: Info, slug: str, project: str, issue_input: IssueCreateInputType
     ) -> IssuesType:
@@ -288,9 +278,7 @@ class IssueMutationV2:
                 current_instance=json.dumps(
                     {
                         "updated_cycle_issues": [],
-                        "created_cycle_issues": serializers.serialize(
-                            "json", [created_cycle]
-                        ),
+                        "created_cycle_issues": serializers.serialize("json", [created_cycle]),
                     }
                 ),
                 epoch=int(timezone.now().timestamp()),
@@ -337,9 +325,7 @@ class IssueMutationV2:
 
         return issue
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def update_issue_v2(
         self,
         info: Info,
@@ -385,9 +371,7 @@ class IssueMutationV2:
         if "descriptionHtml" in provided_fields:
             issue.description_html = provided_fields["descriptionHtml"]
             activity_payload["description_html"] = provided_fields["descriptionHtml"]
-            current_activity_payload["description_html"] = current_issue_activity[
-                "description_html"
-            ]
+            current_activity_payload["description_html"] = current_issue_activity["description_html"]
 
         if "priority" in provided_fields:
             issue.priority = provided_fields["priority"]
@@ -397,34 +381,22 @@ class IssueMutationV2:
         if "startDate" in provided_fields:
             if issue_input.start_date is not None:
                 issue.start_date = issue_input.start_date
-                activity_payload["start_date"] = issue_input.start_date.strftime(
-                    "%Y-%m-%d"
-                )
-                current_activity_payload["start_date"] = current_issue_activity[
-                    "start_date"
-                ]
+                activity_payload["start_date"] = issue_input.start_date.strftime("%Y-%m-%d")
+                current_activity_payload["start_date"] = current_issue_activity["start_date"]
             else:
                 issue.start_date = None
                 activity_payload["start_date"] = None
-                current_activity_payload["start_date"] = current_issue_activity[
-                    "start_date"
-                ]
+                current_activity_payload["start_date"] = current_issue_activity["start_date"]
 
         if "targetDate" in provided_fields:
             if issue_input.target_date is not None:
                 issue.target_date = issue_input.target_date
-                activity_payload["target_date"] = issue_input.target_date.strftime(
-                    "%Y-%m-%d"
-                )
-                current_activity_payload["target_date"] = current_issue_activity[
-                    "target_date"
-                ]
+                activity_payload["target_date"] = issue_input.target_date.strftime("%Y-%m-%d")
+                current_activity_payload["target_date"] = current_issue_activity["target_date"]
             else:
                 issue.target_date = None
                 activity_payload["target_date"] = None
-                current_activity_payload["target_date"] = current_issue_activity[
-                    "target_date"
-                ]
+                current_activity_payload["target_date"] = current_issue_activity["target_date"]
 
         if "state" in provided_fields:
             issue.state_id = provided_fields["state"]
@@ -439,9 +411,7 @@ class IssueMutationV2:
         if "estimate_point" in provided_fields:
             issue.estimate_point_id = provided_fields["estimate_point"]
             activity_payload["estimate_point"] = provided_fields["estimate_point"]
-            current_activity_payload["estimate_point"] = current_issue_activity[
-                "estimate_point"
-            ]
+            current_activity_payload["estimate_point"] = current_issue_activity["estimate_point"]
 
         # validate the workflow if the project has workflows enabled
         state_id = provided_fields["state"] if "state" in provided_fields else None
@@ -465,18 +435,12 @@ class IssueMutationV2:
         await sync_to_async(issue.save)()
 
         # creating or updating the assignees
-        assignees = (
-            provided_fields["assignees"] if "assignees" in provided_fields else None
-        )
+        assignees = provided_fields["assignees"] if "assignees" in provided_fields else None
         if assignees is not None:
-            current_activity_payload["assignee_ids"] = current_issue_activity[
-                "assignee_ids"
-            ]
+            current_activity_payload["assignee_ids"] = current_issue_activity["assignee_ids"]
             activity_payload["assignee_ids"] = assignees
 
-            await sync_to_async(
-                IssueAssignee.objects.filter(issue_id=issue_id).delete
-            )()
+            await sync_to_async(IssueAssignee.objects.filter(issue_id=issue_id).delete)()
             if len(assignees) > 0:
                 await sync_to_async(IssueAssignee.objects.bulk_create)(
                     [

@@ -43,9 +43,7 @@ def get_workspace(slug):
 
 
 @sync_to_async
-def create_file_asset(
-    workspace, project_id, issue_id, attributes, asset_key, size, user_id
-) -> FileAssetType:
+def create_file_asset(workspace, project_id, issue_id, attributes, asset_key, size, user_id) -> FileAssetType:
     return FileAsset.objects.create(
         workspace=workspace,
         project_id=project_id,
@@ -60,13 +58,7 @@ def create_file_asset(
 
 @strawberry.type
 class IssueAttachmentMutation:
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def create_issue_attachment(
         self,
         info: Info,
@@ -130,9 +122,7 @@ class IssueAttachmentMutation:
             asset_url=attachment.asset_url,
         )
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def update_issue_attachment(
         self,
         info: Info,
@@ -178,15 +168,11 @@ class IssueAttachmentMutation:
             issue_attachment.attributes = issue_attachment.attributes
 
         # save the file asset
-        await sync_to_async(issue_attachment.save)(
-            update_fields=["is_uploaded", "created_by", "attributes"]
-        )
+        await sync_to_async(issue_attachment.save)(update_fields=["is_uploaded", "created_by", "attributes"])
 
         return issue_attachment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def delete_issue_attachment(
         self,
         info: Info,
@@ -212,9 +198,7 @@ class IssueAttachmentMutation:
         issue_attachment.deleted_at = timezone.now()
 
         # save the file asset
-        await sync_to_async(issue_attachment.save)(
-            update_fields=["is_deleted", "deleted_at"]
-        )
+        await sync_to_async(issue_attachment.save)(update_fields=["is_deleted", "deleted_at"])
 
         issue_activity.delay(
             type="attachment.activity.deleted",

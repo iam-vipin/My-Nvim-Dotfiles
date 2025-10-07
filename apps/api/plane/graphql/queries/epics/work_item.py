@@ -27,9 +27,7 @@ from plane.graphql.utils.paginator import paginate
 
 @strawberry.type
 class EpicWorkItemsQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def epic_work_items(
         self,
         info: Info,
@@ -57,9 +55,7 @@ class EpicWorkItemsQuery:
         project_id = str(project.id)
 
         # get the epic work items
-        await get_epic(
-            workspace_slug=workspace_slug, project_id=project_id, epic_id=epic
-        )
+        await get_epic(workspace_slug=workspace_slug, project_id=project_id, epic_id=epic)
 
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
             user_id=user_id,

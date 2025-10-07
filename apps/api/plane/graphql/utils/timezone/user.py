@@ -32,9 +32,7 @@ async def user_timezone_converter(user, input_date=None):
     if isinstance(input_date, datetime):
         converted_date = input_date.astimezone(tz)
     elif isinstance(input_date, date):
-        converted_date = datetime.combine(input_date, datetime.min.time()).astimezone(
-            tz
-        )
+        converted_date = datetime.combine(input_date, datetime.min.time()).astimezone(tz)
     else:
         return input_date
 

@@ -50,9 +50,7 @@ def validate_nested_pages_feature_flag(user_id: str, workspace_slug: str) -> boo
 # remove user favorite
 @sync_to_async
 def remove_user_favorite(slug, page_id, project=None) -> None:
-    query = UserFavorite.objects.filter(
-        workspace__slug=slug, entity_identifier=page_id, entity_type="page"
-    )
+    query = UserFavorite.objects.filter(workspace__slug=slug, entity_identifier=page_id, entity_type="page")
     if project:
         query = query.filter(project=project)
     query.delete()
@@ -61,9 +59,7 @@ def remove_user_favorite(slug, page_id, project=None) -> None:
 # remove recent visit
 @sync_to_async
 def remove_recent_visit(slug, page_id, project=None) -> None:
-    query = UserRecentVisit.objects.filter(
-        workspace__slug=slug, entity_identifier=page_id, entity_name="page"
-    )
+    query = UserRecentVisit.objects.filter(workspace__slug=slug, entity_identifier=page_id, entity_name="page")
     if project:
         query = query.filter(project=project)
     query.delete()
@@ -72,16 +68,12 @@ def remove_recent_visit(slug, page_id, project=None) -> None:
 # delete the deploy board
 @sync_to_async
 def delete_deploy_board(slug, page_id) -> None:
-    DeployBoard.objects.filter(
-        workspace__slug=slug, entity_identifier=page_id, entity_name="page"
-    ).delete()
+    DeployBoard.objects.filter(workspace__slug=slug, entity_identifier=page_id, entity_name="page").delete()
 
 
 # nested page broadcast update
 def nested_page_broadcast_update(action, project, page_id, slug=None) -> None:
-    nested_page_update.delay(
-        slug=slug, project_id=project, page_id=page_id, action=action
-    )
+    nested_page_update.delay(slug=slug, project_id=project, page_id=page_id, action=action)
 
 
 @sync_to_async
@@ -121,9 +113,7 @@ def get_page(page_id) -> Page:
 
 @strawberry.type
 class WorkspaceNestedChildArchivePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspace_nested_child_archive_pages(
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -165,9 +155,7 @@ class WorkspaceNestedChildArchivePageMutation:
 
 @strawberry.type
 class WorkspaceNestedChildRestorePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspace_nested_child_restore_pages(
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -209,19 +197,13 @@ class WorkspaceNestedChildRestorePageMutation:
 
 @strawberry.type
 class WorkspaceNestedChildDeletePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
-    async def workspace_nested_child_delete_pages(
-        self, info: Info, slug: str, pages: List[strawberry.ID]
-    ) -> bool:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
+    async def workspace_nested_child_delete_pages(self, info: Info, slug: str, pages: List[strawberry.ID]) -> bool:
         try:
             user = info.context.user
             user_id = str(user.id)
 
-            await validate_nested_pages_feature_flag(
-                user_id=user_id, workspace_slug=slug
-            )
+            await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
 
             deleted_pages = await pages_with_ids(
                 user=user,
@@ -256,9 +238,7 @@ class WorkspaceNestedChildDeletePageMutation:
                 await remove_user_favorite(slug=slug, project=None, page_id=page_id)
                 await remove_recent_visit(slug=slug, project=None, page_id=page_id)
                 await delete_deploy_board(slug=slug, page_id=page_id)
-                nested_page_broadcast_update(
-                    slug=slug, project=None, page_id=page_id, action=PageAction.DELETED
-                )
+                nested_page_broadcast_update(slug=slug, project=None, page_id=page_id, action=PageAction.DELETED)
 
             await sync_to_async(lambda: [page.save() for page in pages])()
 
@@ -269,9 +249,7 @@ class WorkspaceNestedChildDeletePageMutation:
 
 @strawberry.type
 class NestedChildArchivePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def nested_child_archive_pages(
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -313,9 +291,7 @@ class NestedChildArchivePageMutation:
 
 @strawberry.type
 class NestedChildRestorePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def nested_child_restore_pages(
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -357,9 +333,7 @@ class NestedChildRestorePageMutation:
 
 @strawberry.type
 class NestedChildDeletePageMutation:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def nested_child_delete_pages(
         self, info: Info, slug: str, project: strawberry.ID, pages: List[strawberry.ID]
     ) -> bool:
@@ -367,9 +341,7 @@ class NestedChildDeletePageMutation:
             user = info.context.user
             user_id = str(user.id)
 
-            await validate_nested_pages_feature_flag(
-                user_id=user_id, workspace_slug=slug
-            )
+            await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
 
             deleted_pages = await pages_with_ids(
                 user=user,

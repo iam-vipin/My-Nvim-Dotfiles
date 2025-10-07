@@ -32,9 +32,7 @@ from plane.graphql.utils.work_item_filters import work_item_filters
 
 @strawberry.type
 class ModuleQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def modules(
         self,
         info: Info,
@@ -66,18 +64,12 @@ class ModuleQuery:
         if ids:
             module_query = module_query.filter(id__in=ids)
 
-        modules = await sync_to_async(list)(
-            module_query.annotate(is_favorite=Exists(subquery))
-        )
+        modules = await sync_to_async(list)(module_query.annotate(is_favorite=Exists(subquery)))
 
         return paginate(results_object=modules, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def module(
-        self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
-    ) -> ModuleType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def module(self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID) -> ModuleType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -123,9 +115,7 @@ class ModuleQuery:
 # module issue user properties
 @strawberry.type
 class ModuleIssueUserPropertyQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def moduleIssueUserProperties(
         self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> ModuleUserPropertyType:
@@ -141,9 +131,7 @@ class ModuleIssueUserPropertyQuery:
             )
             return module_properties
 
-        module_issue_property = await sync_to_async(
-            lambda: get_module_issue_user_property()
-        )()
+        module_issue_property = await sync_to_async(lambda: get_module_issue_user_property())()
 
         return module_issue_property
 
@@ -151,9 +139,7 @@ class ModuleIssueUserPropertyQuery:
 # module issues information query
 @strawberry.type
 class ModuleIssuesInformationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def moduleIssuesInformation(
         self,
         info: Info,
@@ -208,15 +194,9 @@ class ModuleIssuesInformationQuery:
         )
 
         issue_information = IssuesInformationType(
-            all=IssuesInformationObjectType(
-                totalIssues=all_issue_count, groupInfo=all_issue_group_info
-            ),
-            active=IssuesInformationObjectType(
-                totalIssues=active_issue_count, groupInfo=active_issue_group_info
-            ),
-            backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
-            ),
+            all=IssuesInformationObjectType(totalIssues=all_issue_count, groupInfo=all_issue_group_info),
+            active=IssuesInformationObjectType(totalIssues=active_issue_count, groupInfo=active_issue_group_info),
+            backlog=IssuesInformationObjectType(totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info),
         )
 
         return issue_information
@@ -225,9 +205,7 @@ class ModuleIssuesInformationQuery:
 # module issues
 @strawberry.type
 class ModuleIssueQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def moduleIssues(
         self,
         info: Info,

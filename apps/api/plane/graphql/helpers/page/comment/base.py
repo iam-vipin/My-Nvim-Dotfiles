@@ -73,9 +73,7 @@ def page_comment_base_query(
     else:
         if parent_id:
             # check if parent id is a valid comment id
-            page_parent_comment = PageComment.objects.filter(
-                page_id=page_id, id=parent_id
-            ).first()
+            page_parent_comment = PageComment.objects.filter(page_id=page_id, id=parent_id).first()
             if not page_parent_comment:
                 message = "Parent comment not found"
                 error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
@@ -258,9 +256,7 @@ def get_page_comment(
     except Exception as e:
         message = e.message if hasattr(e, "message") else "Error getting page comment"
         error_extensions = (
-            {"code": "SOMETHING_WENT_WRONG", "statusCode": 400}
-            if not hasattr(e, "extensions")
-            else e.extensions
+            {"code": "SOMETHING_WENT_WRONG", "statusCode": 400} if not hasattr(e, "extensions") else e.extensions
         )
         raise GraphQLError(message, extensions=error_extensions)
 
@@ -393,11 +389,7 @@ def create_page_comment(
                     parent_id=parent_id,
                     comment_id=page_comment.id,
                 )
-                page_comment = (
-                    page_comments[0]
-                    if page_comments and len(page_comments) > 0
-                    else None
-                )
+                page_comment = page_comments[0] if page_comments and len(page_comments) > 0 else None
             else:
                 # Get page comment
                 page_comments = get_page_comments(
@@ -407,11 +399,7 @@ def create_page_comment(
                     project_id=project_id,
                     comment_id=page_comment.id,
                 )
-                page_comment = (
-                    page_comments[0]
-                    if page_comments and len(page_comments) > 0
-                    else None
-                )
+                page_comment = page_comments[0] if page_comments and len(page_comments) > 0 else None
 
         return page_comment
     except Exception:
@@ -468,9 +456,7 @@ def partial_update_page_comment(
             comment_id=comment_id,
             update_type=update_type,
         )
-        page_comment = (
-            page_comments[0] if page_comments and len(page_comments) > 0 else None
-        )
+        page_comment = page_comments[0] if page_comments and len(page_comments) > 0 else None
 
         if not page_comment:
             message = "Page comment not found"
@@ -530,9 +516,7 @@ def partial_update_page_comment(
     except Exception as e:
         message = e.message if hasattr(e, "message") else "Error updating page comment"
         error_extensions = (
-            {"code": "SOMETHING_WENT_WRONG", "statusCode": 400}
-            if not hasattr(e, "extensions")
-            else e.extensions
+            {"code": "SOMETHING_WENT_WRONG", "statusCode": 400} if not hasattr(e, "extensions") else e.extensions
         )
         raise GraphQLError(message, extensions=error_extensions)
 

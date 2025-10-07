@@ -53,33 +53,21 @@ class UserRecentVisitType:
     async def entity_data(self) -> Optional[UserRecentVisitEntityData]:
         # where entity_identifier is project_id and entity_name is project
         if self.entity_identifier and self.entity_name == "project":
-            project = await sync_to_async(
-                Project.objects.filter(id=self.entity_identifier).first
-            )()
+            project = await sync_to_async(Project.objects.filter(id=self.entity_identifier).first)()
             if project:
-                return UserRecentVisitEntityData(
-                    id=project.id, name=project.name, logo_props=project.logo_props
-                )
+                return UserRecentVisitEntityData(id=project.id, name=project.name, logo_props=project.logo_props)
             return None
         # where entity_identifier is cycle_id and entity_name is cycle
         elif self.entity_identifier and self.entity_name == "cycle":
-            cycle = await sync_to_async(
-                Cycle.objects.filter(id=self.entity_identifier).first
-            )()
+            cycle = await sync_to_async(Cycle.objects.filter(id=self.entity_identifier).first)()
             if cycle:
-                return UserRecentVisitEntityData(
-                    id=cycle.id, name=cycle.name, logo_props=cycle.logo_props
-                )
+                return UserRecentVisitEntityData(id=cycle.id, name=cycle.name, logo_props=cycle.logo_props)
             return None
         # where entity_identifier is module id and entity_name is module
         elif self.entity_identifier and self.entity_name == "module":
-            module = await sync_to_async(
-                Module.objects.filter(id=self.entity_identifier).first
-            )()
+            module = await sync_to_async(Module.objects.filter(id=self.entity_identifier).first)()
             if module:
-                return UserRecentVisitEntityData(
-                    id=module.id, name=module.name, logo_props=module.logo_props
-                )
+                return UserRecentVisitEntityData(id=module.id, name=module.name, logo_props=module.logo_props)
             return None
         # where entity_identifier is issue id and entity_name is issue
         elif self.entity_identifier and self.entity_name == "issue":
@@ -87,15 +75,11 @@ class UserRecentVisitType:
             issue = await sync_to_async(issue_base_query.first)()
             if issue:
                 epic_issue = await sync_to_async(
-                    issue_base_query.filter(
-                        project__project_projectfeature__is_epic_enabled=True
-                    )
+                    issue_base_query.filter(project__project_projectfeature__is_epic_enabled=True)
                     .filter(Q(type__isnull=False) & Q(type__is_epic=True))
                     .first
                 )()
-                workitem_identifier = (
-                    f"{self.project_details.identifier}-{issue.sequence_id}"
-                )
+                workitem_identifier = f"{self.project_details.identifier}-{issue.sequence_id}"
                 return UserRecentVisitEntityData(
                     id=issue.id,
                     name=issue.name,
@@ -106,9 +90,7 @@ class UserRecentVisitType:
             return None
         # where entity_identifier is issue_view id and entity_name is issue_view
         elif self.entity_identifier and self.entity_name == "view":
-            issue_view = await sync_to_async(
-                IssueView.objects.filter(id=self.entity_identifier).first
-            )()
+            issue_view = await sync_to_async(IssueView.objects.filter(id=self.entity_identifier).first)()
             if issue_view:
                 return UserRecentVisitEntityData(
                     id=issue_view.id,
@@ -118,13 +100,9 @@ class UserRecentVisitType:
             return None
         # where entity_identifier is page id and entity_name is page
         elif self.entity_identifier and self.entity_name == "page":
-            page = await sync_to_async(
-                Page.objects.filter(id=self.entity_identifier).first
-            )()
+            page = await sync_to_async(Page.objects.filter(id=self.entity_identifier).first)()
             if page:
-                return UserRecentVisitEntityData(
-                    id=page.id, name=page.name, logo_props=page.logo_props
-                )
+                return UserRecentVisitEntityData(id=page.id, name=page.name, logo_props=page.logo_props)
             return None
         # where entity_identifier and entity_name is None
         return None

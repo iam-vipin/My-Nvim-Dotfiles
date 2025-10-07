@@ -29,13 +29,7 @@ class PageInput:
 
 @strawberry.type
 class PageMutation:
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def createPage(
         self,
         info: Info,
@@ -75,13 +69,7 @@ class PageMutation:
 
         return page_details
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def batchCreatePages(
         self,
         info: Info,
@@ -127,9 +115,7 @@ class PageMutation:
         await sync_to_async(ProjectPage.objects.bulk_create)(project_pages_to_create)
         return None
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def updatePage(
         self,
         info: Info,

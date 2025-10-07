@@ -104,9 +104,7 @@ def validate_comment_reaction(reaction: str):
 
 @strawberry.type
 class IntakeWorkItemCommentReactionMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def add_intake_work_item_comment_reaction(
         self,
         info: Info,
@@ -128,9 +126,7 @@ class IntakeWorkItemCommentReactionMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item
@@ -189,9 +185,7 @@ class IntakeWorkItemCommentReactionMutation:
         user_ids = [str(reaction.created_by_id) for reaction in comment_reactions]
         return CommentReactionType(reaction=reaction, user_ids=user_ids)
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def remove_intake_work_item_comment_reaction(
         self,
         info: Info,
@@ -212,9 +206,7 @@ class IntakeWorkItemCommentReactionMutation:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item

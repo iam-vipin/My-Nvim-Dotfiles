@@ -18,9 +18,7 @@ def construct_comment_content_with_mentions(html_content: str) -> dict:
     soup = BeautifulSoup(html_content, "html.parser")
     user_mentions = {}
 
-    for mention_tag in soup.find_all(
-        "mention-component", attrs={"entity_name": "user_mention"}
-    ):
+    for mention_tag in soup.find_all("mention-component", attrs={"entity_name": "user_mention"}):
         entity_identifier = mention_tag.get("entity_identifier", "")
         user = User.objects.filter(id=entity_identifier).first()
         user_mentions[entity_identifier] = user if user else None
@@ -145,11 +143,7 @@ class IssueNotificationBuilder:
 
     # Relationship handlers
     def _handle_relates_to_change(self) -> str:
-        action = (
-            "marked that this work item relates to"
-            if self.new_value
-            else "removed the relation from"
-        )
+        action = "marked that this work item relates to" if self.new_value else "removed the relation from"
         return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
 
     def _handle_duplicate_change(self) -> str:
@@ -162,18 +156,12 @@ class IssueNotificationBuilder:
 
     def _handle_blocked_by_change(self) -> str:
         action = (
-            "marked this work item is being blocked by"
-            if self.new_value
-            else "removed this work item being blocked by"
+            "marked this work item is being blocked by" if self.new_value else "removed this work item being blocked by"
         )
         return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
 
     def _handle_blocking_change(self) -> str:
-        action = (
-            "marked this work item is blocking work item"
-            if self.new_value
-            else "removed the blocking work item"
-        )
+        action = "marked this work item is blocking work item" if self.new_value else "removed the blocking work item"
         return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
 
     def _handle_start_before_change(self) -> str:
@@ -209,22 +197,12 @@ class IssueNotificationBuilder:
         return f"{action} {f'{self.new_value}' if self.new_value else self.old_value}"
 
     def _handle_comment_change(self) -> str:
-        comment_content = (
-            None
-            if self.new_value == "None" and self.old_value == "None"
-            else self.new_value
-        )
-        constructed_comment = (
-            construct_comment_content_with_mentions(comment_content)
-            if comment_content
-            else None
-        )
+        comment_content = None if self.new_value == "None" and self.old_value == "None" else self.new_value
+        constructed_comment = construct_comment_content_with_mentions(comment_content) if comment_content else None
 
         is_receiver_mentioned = False
         if constructed_comment and constructed_comment["mention_objects"] is not None:
-            is_receiver_mentioned = (
-                self.receiver["id"] in constructed_comment["mention_objects"]
-            )
+            is_receiver_mentioned = self.receiver["id"] in constructed_comment["mention_objects"]
 
         action = ""
         if self.new_value == "None" and self.old_value == "None":
@@ -240,11 +218,7 @@ class IssueNotificationBuilder:
             else:
                 action = "commented"
 
-        content = (
-            constructed_comment["content"]
-            if constructed_comment and constructed_comment["content"]
-            else ""
-        )
+        content = constructed_comment["content"] if constructed_comment and constructed_comment["content"] else ""
         return f"{action} '{content}'"
 
     def build_notification(self) -> str:

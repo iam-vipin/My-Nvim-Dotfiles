@@ -3,7 +3,7 @@
 # Import all utilities from base modules
 from .filter_backend import ComplexFilterBackend
 from .converters import LegacyToRichFiltersConverter
-from .filterset import IssueFilterSet
+from .filterset import BaseFilterSet, IssueFilterSet
 
 # Import extended utilities that override base ones
 from .extended.converters import (
@@ -18,6 +18,7 @@ from .extended.filterset import (
 __all__ = [
     "ComplexFilterBackend",
     "LegacyToRichFiltersConverter",
+    "BaseFilterSet",
     "IssueFilterSet",
     "InitiativeFilterSet",
 ]

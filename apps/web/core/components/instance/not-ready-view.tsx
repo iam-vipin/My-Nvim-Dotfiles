@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { GOD_MODE_URL } from "@plane/constants";
 import { PlaneLockup } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
+import { PlaneLockup } from "@plane/propel/icons";
 // helpers
 // images
 // assets

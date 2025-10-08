@@ -200,7 +200,7 @@ export class ServerAgentManager {
         if (!context.documentType) {
           return;
         }
-
+        logger.info(`SERVER AGENT: Fetching page information ${context.documentType}`);
         const service = getPageService(context.documentType, context);
         subPagesFromBackend = await service.fetchSubPageDetails(pageId);
 

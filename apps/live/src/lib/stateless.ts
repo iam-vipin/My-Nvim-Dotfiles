@@ -1,6 +1,7 @@
 import { onStatelessPayload } from "@hocuspocus/server";
 import { TDocumentEventsServer, EventToPayloadMap, createRealtimeEvent } from "@plane/editor";
 import { DocumentCollaborativeEvents } from "@plane/editor/lib";
+import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
 
 /**
@@ -9,6 +10,7 @@ import { serverAgentManager } from "@/agents/server-agent";
  */
 export const onStateless = async ({ payload, document, connection }: onStatelessPayload) => {
   const payloadStr = payload as string;
+  logger.info("ON_STATELESS: payload", { payloadStr });
 
   // Function to safely parse JSON without throwing exceptions
   const safeJsonParse = (str: string) => {
@@ -53,6 +55,8 @@ export const onStateless = async ({ payload, document, connection }: onStateless
   // If not a document event, try to parse as JSON
   const parseResult = safeJsonParse(payloadStr);
 
+  logger.info("ON_STATELESS: parseResult", { parseResult });
+
   if (parseResult.success && parseResult.data && typeof parseResult.data === "object") {
     const parsedPayload = parseResult.data as {
       workspaceSlug?: string;
@@ -60,8 +64,14 @@ export const onStateless = async ({ payload, document, connection }: onStateless
       action?: string;
     };
 
+    logger.info("ON_STATELESS: parsedPayload", { parsedPayload });
+
     // Handle synced action
     if (parsedPayload.action === "synced" && parsedPayload.workspaceSlug) {
+      logger.info("ON_STATELESS: notifySyncTrigger", {
+        documentName: document.name,
+        connectionContext: connection.context,
+      });
       serverAgentManager.notifySyncTrigger(document.name, connection.context);
       return;
     }

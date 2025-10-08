@@ -18,6 +18,8 @@ import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+// hooks
+import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
 import { EExternalEmbedAttributeNames, IEditorProps } from "@/types";
 
@@ -25,6 +27,14 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+};
+
+export type MenuItem = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONContent | null | undefined => {
@@ -51,7 +61,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor } = props;
+  const { editor, flaggedExtensions, disabledExtensions } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -59,8 +69,13 @@ export const BlockMenu = (props: Props) => {
     getBoundingClientRect: () => new DOMRect(),
   });
   // const { t } = useTranslation();
-  const isEmbedFlagged =
-    props.flaggedExtensions?.includes("external-embed") || props.disabledExtensions?.includes("external-embed");
+
+  const { menuItems: additionalMenuItems } = useBlockMenu({
+    editor,
+    flaggedExtensions: flaggedExtensions,
+    disabledExtensions: disabledExtensions,
+    onMenuClose: () => setIsOpen(false),
+  });
 
   // Set up Floating UI with virtual reference element
   const { refs, floatingStyles, context } = useFloating({
@@ -118,51 +133,6 @@ export const BlockMenu = (props: Props) => {
     [refs, openBlockMenu, closeBlockMenu]
   );
 
-  const editorState = useEditorState({
-    editor,
-    selector: ({ editor }) => {
-      const selection = editor.state.selection;
-      const content = selection.content().content;
-      const firstChild = content.firstChild;
-      let linkUrl: string | null = null;
-      const foundLinkMarks: string[] = [];
-
-      const isEmbedActive = editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
-      const isRichCard = firstChild?.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD];
-      const isNotEmbeddable = firstChild?.attrs[EExternalEmbedAttributeNames.HAS_EMBED_FAILED];
-
-      if (firstChild) {
-        for (let i = 0; i < firstChild.childCount; i++) {
-          const node = firstChild.child(i);
-          const linkMarks = node.marks?.filter(
-            (mark) => mark.type.name === CORE_EXTENSIONS.CUSTOM_LINK && mark.attrs?.href
-          );
-
-          if (linkMarks && linkMarks.length > 0) {
-            linkMarks.forEach((mark) => {
-              foundLinkMarks.push(mark.attrs.href);
-            });
-          }
-        }
-        if (firstChild.attrs.src) {
-          foundLinkMarks.push(firstChild.attrs.src);
-        }
-      }
-
-      if (foundLinkMarks.length === 1) {
-        linkUrl = foundLinkMarks[0];
-      }
-
-      return {
-        isEmbedActive,
-        isLinkEmbeddable: isEmbedActive || !!linkUrl,
-        linkUrl,
-        isRichCard,
-        isNotEmbeddable,
-      };
-    },
-  });
-
   // Set up event listeners
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -205,102 +175,7 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
-    {
-      icon: Link,
-      key: "link",
-      label: "Convert to Link",
-      // label: "externalEmbedComponent.block_menu.convert_to_link",
-      isDisabled: !editorState.isEmbedActive || !editorState.linkUrl || isEmbedFlagged,
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const { state } = editor;
-        const { selection } = state;
-        const node = selection.content().content.firstChild;
-        if (node?.type.name === ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED) {
-          const LinkValue = node.attrs.src;
-          editor
-            .chain()
-            .insertContentAt(selection, {
-              type: "text",
-              marks: [
-                {
-                  type: "link",
-                  attrs: {
-                    href: LinkValue,
-                    target: "_blank",
-                    rel: "noopener noreferrer",
-                  },
-                },
-              ],
-              text: LinkValue,
-            })
-            .run();
-        }
-        setIsOpen(false);
-      },
-    },
-    {
-      icon: Code,
-      key: "embed",
-      label: "Convert to Embed",
-      // label: "externalEmbedComponent.block_menu.convert_to_embed",
-      isDisabled:
-        editorState.isNotEmbeddable ||
-        !editorState.isLinkEmbeddable ||
-        (editorState.isEmbedActive && !editorState.isRichCard) ||
-        isEmbedFlagged,
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const { state } = editor;
-        const { selection } = state;
-        const LinkValue = editorState.linkUrl;
-        if (LinkValue) {
-          editor
-            .chain()
-            .insertExternalEmbed({
-              [EExternalEmbedAttributeNames.IS_RICH_CARD]: false,
-              [EExternalEmbedAttributeNames.SOURCE]: LinkValue,
-              pos: selection,
-            })
-            .run();
-        }
-        setIsOpen(false);
-      },
-    },
-    {
-      icon: Bookmark,
-      key: "richcard",
-      label: "Convert to Rich Card",
-      // label: "externalEmbedComponent.block_menu.convert_to_richcard",
-      isDisabled: !editorState.isLinkEmbeddable || !editorState.linkUrl || editorState.isRichCard || isEmbedFlagged,
-      onClick: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const { state } = editor;
-        const { selection } = state;
-        const LinkValue = editorState.linkUrl;
-        if (LinkValue) {
-          editor
-            .chain()
-            .insertExternalEmbed({
-              [EExternalEmbedAttributeNames.IS_RICH_CARD]: true,
-              [EExternalEmbedAttributeNames.SOURCE]: LinkValue,
-              pos: selection,
-            })
-            .run();
-        }
-        setIsOpen(false);
-      },
-    },
+  const CORE_MENU_ITEMS: MenuItem[] = [
     {
       icon: Trash2,
       key: "delete",
@@ -370,6 +245,8 @@ export const BlockMenu = (props: Props) => {
       },
     },
   ];
+
+  const MENU_ITEMS = [...additionalMenuItems, ...CORE_MENU_ITEMS];
 
   if (!isOpen) {
     return null;

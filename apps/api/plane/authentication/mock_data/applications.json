@@ -1,0 +1,388 @@
+[
+  {
+      "id": "dd597a8d-9382-42a7-9e1d-6d4c70779f8b",
+      "is_owned": false,
+      "is_installed": true,
+      "installation_id": "c464bec5-5694-4dd5-9c0a-bc6e30bd7421",
+      "logo_url": "/api/assets/v2/static/59d955d1-a503-4688-a551-6bd249ee611c/",
+      "attachments_urls": [
+          "/api/assets/v2/static/73d4b52b-37dc-44e1-80c7-cb8b3a4584dc/",
+          "/api/assets/v2/static/b435a78a-158b-4996-b80f-d2fa8f780237/",
+          "/api/assets/v2/static/4f5515e1-9952-40c6-a054-a730f1bebbe5/",
+          "/api/assets/v2/static/813721dc-f053-4e9b-82fe-acd9d127a884/",
+          "/api/assets/v2/static/9a1cc979-750b-4d2f-b34d-778b3c8fc3e4/"
+      ],
+      "attachments": [
+          "73d4b52b-37dc-44e1-80c7-cb8b3a4584dc",
+          "b435a78a-158b-4996-b80f-d2fa8f780237",
+          "4f5515e1-9952-40c6-a054-a730f1bebbe5",
+          "813721dc-f053-4e9b-82fe-acd9d127a884",
+          "9a1cc979-750b-4d2f-b34d-778b3c8fc3e4"
+      ],
+      "categories": [],
+      "deleted_at": null,
+      "client_id": "6KxEoOcPJYs3VH0LNvM7pxafP5HGjddIr7ejZQLc",
+      "redirect_uris": "https://silo.plane.so/api/github/plane-oauth/callback",
+      "post_logout_redirect_uris": "",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "client_secret": "pbkdf2_sha256$600000$SoIrWfbzRKGI9wZNi7wq78$cPaiVN/raH2xvp3hIUyHeX6M9+UrW9nYRxoKdxUMNDg=",
+      "hash_client_secret": true,
+      "name": "GitHub",
+      "skip_authorization": true,
+      "created": "2025-05-02T14:27:36.941716Z",
+      "updated": "2025-09-30T13:20:08.202318Z",
+      "algorithm": "",
+      "allowed_origins": "",
+      "slug": "github",
+      "short_description": "GitHub integration with Plane allows seamless synchronization between your GitHub repositories and Plane projects.",
+      "description_html": "<div><h2 class=\"editor-heading-block\">Overview</h2><p class=\"editor-paragraph-block\">GitHub integration with Plane allows seamless synchronization between your GitHub repositories and Plane projects.</p><p class=\"editor-paragraph-block\">By linking the two, your issues and pull requests stay updated across both platforms, enhancing collaboration and streamlining your workflow.</p><p class=\"editor-paragraph-block\">Whether you're managing code, tasks, or both, this integration ensures your team stays in sync without the hassle of switching between platforms.</p><h2 class=\"editor-heading-block\">Features:</h2><h4 class=\"editor-heading-block\">PR Automation:</h4><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Link a GitHub PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Work Item Status gets synced based on the PR automation setup on Plane.</p></li></ol><h4 class=\"editor-heading-block\">Issue Sync:</h4><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Add repository mapping on Plane to map a GitHub repo with a Plane project.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Issues and their comments get synced bi-directionally between both.</p></li></ol><h2 class=\"editor-heading-block\">Setup GitHub integration</h2><p class=\"editor-paragraph-block\">To get started, you'll need to connect your GitHub account, organization, and repositories with Plane. Follow the steps below to complete the setup:</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github#connect-github-organization\">Connect your GitHub organization</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github#connect-personal-github-account\">Connect your personal GitHub account</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github#add-repository-mappings\">Add repository mappings</a></p></li></ol><p class=\"editor-paragraph-block\"></p><p class=\"editor-paragraph-block\">For more detailed instructions, refer to: <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github\">https://docs.plane.so/integrations/github</a></p></div>",
+      "description_stripped": "OverviewGitHub integration with Plane allows seamless synchronization between your GitHub repositories and Plane projects.By linking the two, your issues and pull requests stay updated across both platforms, enhancing collaboration and streamlining your workflow.Whether you're managing code, tasks, or both, this integration ensures your team stays in sync without the hassle of switching between platforms.Features:PR Automation:Link a GitHub PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.Work Item Status gets synced based on the PR automation setup on Plane.Issue Sync:Add repository mapping on Plane to map a GitHub repo with a Plane project.Issues and their comments get synced bi-directionally between both.Setup GitHub integrationTo get started, you'll need to connect your GitHub account, organization, and repositories with Plane. Follow the steps below to complete the setup:Connect your GitHub organizationConnect your personal GitHub accountAdd repository mappingsFor more detailed instructions, refer to: https://docs.plane.so/integrations/github",
+      "published_at": "2025-05-23T09:19:01.083614Z",
+      "publish_requested_at": null,
+      "company_name": "Plane",
+      "webhook_url": null,
+      "privacy_policy_url": "",
+      "terms_of_service_url": "",
+      "contact_email": "support@plane.so",
+      "support_url": "https://docs.plane.so/integrations/github",
+      "setup_url": "https://app.plane.so/workspace-selector/apps/github",
+      "video_url": null,
+      "configuration_url": null,
+      "is_internal": false,
+      "website": null,
+      "is_mentionable": false,
+      "created_by": null,
+      "updated_by": "5012c2db-c504-4c2b-a2e5-4cc112e85fd5",
+      "user": "e3bec055-f9ba-4543-9282-0a31a3b9b4aa",
+      "logo_asset": "59d955d1-a503-4688-a551-6bd249ee611c",
+      "published_by": null,
+      "links": [
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com"
+        },
+        {
+          "name": "Linkedin",
+          "url": "https://linkedin.com"
+        }
+      ],
+      "supported_plans": [
+        "FREE",
+        "PRO",
+        "BUSINESS"
+      ],
+      "supported_environments": [
+        "CLOUD",
+        "SELF_HOSTED"
+      ],
+      "status": "published",
+      "priority": 1
+  },
+  {
+      "id": "62d28614-5745-4abf-919f-6d9144574615",
+      "is_owned": false,
+      "is_installed": false,
+      "installation_id": null,
+      "logo_url": "/api/assets/v2/static/6d2efb22-c8c1-4d0a-afff-de4947a00045/",
+      "attachments_urls": [
+          "/api/assets/v2/static/fee34d63-ca97-47aa-a7eb-931ddbfc7f87/",
+          "/api/assets/v2/static/9404593d-48df-41ce-81ce-ccc98f11a444/",
+          "/api/assets/v2/static/a81f2db9-19e2-489d-aa49-4d096b3b9c50/"
+      ],
+      "attachments": [
+          "fee34d63-ca97-47aa-a7eb-931ddbfc7f87",
+          "9404593d-48df-41ce-81ce-ccc98f11a444",
+          "a81f2db9-19e2-489d-aa49-4d096b3b9c50"
+      ],
+      "categories": [],
+      "deleted_at": null,
+      "client_id": "De0LU2g1OOVrRalug7kjWv2pPAAov39zNHNFs1eI",
+      "redirect_uris": "https://silo.plane.so/api/gitlab/plane-oauth/callback",
+      "post_logout_redirect_uris": "",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "client_secret": "pbkdf2_sha256$600000$y2d11KAgNczOkX46VMImDD$Zmp3O3h4zHDLdYusgGA4xwUldLzFy48ro70XLciUrcA=",
+      "hash_client_secret": true,
+      "name": "GitLab",
+      "skip_authorization": true,
+      "created": "2025-05-02T14:27:37.163883Z",
+      "updated": "2025-05-28T12:51:22.746164Z",
+      "algorithm": "",
+      "allowed_origins": "",
+      "slug": "gitlab",
+      "short_description": "Integrating GitLab with Plane allows you to sync your development workflow seamlessly by linking GitLab merge requests with Plane work items.",
+      "description_html": "<div><h2 class=\"editor-heading-block\">Overview</h2><p class=\"editor-paragraph-block\"><span>Integrating GitLab with Plane allows you to sync your development workflow seamlessly by linking GitLab merge requests with Plane work items.</span></p><p class=\"editor-paragraph-block\"><span>This connection enables automated updates and enhances collaboration between developers and project managers.</span></p><h2 class=\"editor-heading-block\">Features:</h2><h4 class=\"editor-heading-block\">PR Automation:</h4><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Link a GitLab PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Work Item Status gets synced based on the PR automation setup on Plane.</p></li></ol><h2 class=\"editor-heading-block\"><strong>Set up GitLab integration</strong></h2><p class=\"editor-paragraph-block\">To get started, you'll need to connect your GitLab account, organization, and repositories with Plane. Follow the steps below to complete the setup:</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/gitlab#connect-gitlab-organization\">Connect your GitLab organization</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/gitlab#connect-gitlab-project\">Connect GitLab project</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/gitlab#connect-plane-project\">Connect Plane project</a></p></li></ol><p class=\"editor-paragraph-block\"></p><p class=\"editor-paragraph-block\">For more detailed instructions, refer to: <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/gitlab\">https://docs.plane.so/integrations/gitlab</a></p></div>",
+      "description_stripped": "OverviewIntegrating GitLab with Plane allows you to sync your development workflow seamlessly by linking GitLab merge requests with Plane work items.This connection enables automated updates and enhances collaboration between developers and project managers.Features:PR Automation:Link a GitLab PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.Work Item Status gets synced based on the PR automation setup on Plane.Set up GitLab integrationTo get started, you'll need to connect your GitLab account, organization, and repositories with Plane. Follow the steps below to complete the setup:Connect your GitLab organizationConnect GitLab projectConnect Plane projectFor more detailed instructions, refer to: https://docs.plane.so/integrations/gitlab",
+      "published_at": "2025-05-23T09:19:09.855006Z",
+      "publish_requested_at": null,
+      "company_name": "Plane",
+      "webhook_url": null,
+      "privacy_policy_url": null,
+      "terms_of_service_url": null,
+      "contact_email": "support@plane.so",
+      "support_url": "https://docs.plane.so/integrations/gitlab",
+      "setup_url": "https://app.plane.so/workspace-selector/apps/gitlab",
+      "video_url": null,
+      "configuration_url": null,
+      "is_internal": false,
+      "website": null,
+      "is_mentionable": false,
+      "created_by": null,
+      "updated_by": "e0b63bf8-475e-4428-9634-6d489fcd8b8c",
+      "user": "e3bec055-f9ba-4543-9282-0a31a3b9b4aa",
+      "logo_asset": "6d2efb22-c8c1-4d0a-afff-de4947a00045",
+      "published_by": null,
+      "links": [
+        {
+          "name": "GitHub",
+          "url": "https://github.com"
+        },
+        {
+          "name": "GitLab",
+          "url": "https://gitlab.com"
+        }
+      ],
+      "supported_plans": [
+        "PRO",
+        "BUSINESS"
+      ],
+      "supported_environments": [
+        "CLOUD",
+        "SELF_HOSTED"
+      ],
+      "status": "published",
+      "priority": 1
+  },
+  {
+      "id": "5906d45e-39b9-4211-9a9c-01c41dcad37e",
+      "is_owned": false,
+      "is_installed": false,
+      "installation_id": null,
+      "logo_url": "/api/assets/v2/static/74d0ff74-23f7-4e80-90b0-5628e99549d2/",
+      "attachments_urls": [
+          "/api/assets/v2/static/3534b0a5-0175-4138-968b-7f268a69f07c/",
+          "/api/assets/v2/static/1adf3182-3f10-4678-b2ea-e585a7cda230/",
+          "/api/assets/v2/static/2f01b695-a060-4c60-aae3-8b54cbab7ee0/",
+          "/api/assets/v2/static/0ab14a64-dab4-4f24-853e-f2a75e6c8538/"
+      ],
+      "attachments": [
+          "3534b0a5-0175-4138-968b-7f268a69f07c",
+          "1adf3182-3f10-4678-b2ea-e585a7cda230",
+          "2f01b695-a060-4c60-aae3-8b54cbab7ee0",
+          "0ab14a64-dab4-4f24-853e-f2a75e6c8538"
+      ],
+      "categories": [],
+      "deleted_at": null,
+      "client_id": "9QGgol6Fd5v7Denz2AXQRleT7RXejPFu8gIAqHJC",
+      "redirect_uris": "https://silo.plane.so/api/slack/plane-oauth/callback",
+      "post_logout_redirect_uris": "",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "client_secret": "pbkdf2_sha256$600000$mJ6abLEXnqbh3l9L9rBWPP$Cm1Y4/nOxzehYvj3GVO43/w5g6RqMM+AGWxcVsWI0ww=",
+      "hash_client_secret": true,
+      "name": "Slack",
+      "skip_authorization": true,
+      "created": "2025-05-02T14:27:37.374846Z",
+      "updated": "2025-05-28T12:59:01.916916Z",
+      "algorithm": "",
+      "allowed_origins": "",
+      "slug": "slack",
+      "short_description": "Integrating Slack with Plane allows your team to streamline communication and stay updated on your projects, directly from within Slack.",
+      "description_html": "<div><h2 class=\"editor-heading-block\">Overview</h2><p class=\"editor-paragraph-block\">Integrating Slack with Plane allows your team to streamline communication and stay updated on your projects, directly from within Slack.</p><p class=\"editor-paragraph-block\">Whether you're syncing threads, receiving updates, or collaborating in real-time, this integration brings the power of Slack and Plane together for a more connected workflow.</p><h2 class=\"editor-heading-block\">Features:</h2><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Create Plane Issue using Slack Command.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Plain links posted in Slack get unfurled.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Create a new Plane Work Item from a Slack message using shortcuts.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Link an existing Plane Work Item to a Slack thread to receive updates.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Work Item updates are synced to your Slack thread.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Slack messages to configured channel for every Work Item created on a project.</p></li></ol><h2 class=\"editor-heading-block\">Setup Slack Integration</h2><p class=\"editor-paragraph-block\">Follow the steps below to complete the setup:</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/slack#connect-slack-workspace\">Connect your Slack Workspace</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/slack#connect-personal-slack-account\">Connect your personal Slack account</a></p></li></ol><p class=\"editor-paragraph-block\"></p><p class=\"editor-paragraph-block\">For more detailed instructions, refer to: <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/slack\">https://docs.plane.so/integrations/slack</a></p></div>",
+      "description_stripped": "OverviewIntegrating Slack with Plane allows your team to streamline communication and stay updated on your projects, directly from within Slack.Whether you're syncing threads, receiving updates, or collaborating in real-time, this integration brings the power of Slack and Plane together for a more connected workflow.Features:Create Plane Issue using Slack Command.Plain links posted in Slack get unfurled.Create a new Plane Work Item from a Slack message using shortcuts.Link an existing Plane Work Item to a Slack thread to receive updates.Work Item updates are synced to your Slack thread.Slack messages to configured channel for every Work Item created on a project.Setup Slack IntegrationFollow the steps below to complete the setup:Connect your Slack WorkspaceConnect your personal Slack accountFor more detailed instructions, refer to: https://docs.plane.so/integrations/slack",
+      "published_at": "2025-05-23T09:19:17.082243Z",
+      "publish_requested_at": null,
+      "company_name": "Plane",
+      "webhook_url": "",
+      "privacy_policy_url": "",
+      "terms_of_service_url": "",
+      "contact_email": "support@plane.so",
+      "support_url": "https://docs.plane.so/integrations/slack",
+      "setup_url": "https://app.plane.so/workspace-selector/apps/slack",
+      "video_url": "",
+      "configuration_url": null,
+      "is_internal": false,
+      "website": null,
+      "is_mentionable": false,
+      "created_by": null,
+      "updated_by": "e0b63bf8-475e-4428-9634-6d489fcd8b8c",
+      "user": "e3bec055-f9ba-4543-9282-0a31a3b9b4aa",
+      "logo_asset": "74d0ff74-23f7-4e80-90b0-5628e99549d2",
+      "published_by": null,
+      "links": [
+        {
+          "name": "Slack",
+          "url": "https://slack.com"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com"
+        }
+      ],
+      "supported_plans": [
+        "FREE",
+        "PRO",
+        "BUSINESS"
+      ],
+      "supported_environments": [
+        "CLOUD"
+      ],
+      "status": "published",
+      "priority": 1
+  },
+  {
+      "id": "5588a471-22ac-4b15-8ef2-ef1527ee88b8",
+      "is_owned": true,
+      "is_installed": true,
+      "installation_id": "a0842cf3-f531-4ee1-b8cc-98703d7ab906",
+      "logo_url": "/api/assets/v2/static/d7d86709-09e4-4837-b73c-056a3261b401/",
+      "attachments_urls": [],
+      "attachments": [],
+      "categories": [],
+      "deleted_at": null,
+      "client_id": "cL89tKa1ZwXLyw3twEGgjeH2ZNM3MxvqUJAlrtuk",
+      "redirect_uris": "https://oauth.raycast.com/redirect",
+      "post_logout_redirect_uris": "",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "client_secret": "pbkdf2_sha256$600000$poWsRhYHdKAXd6Kz8ln7wv$RngtnQiEOWC7cZbPCGzs6+Yg97pV5xuBtbnmDKBKE18=",
+      "hash_client_secret": true,
+      "name": "Raycast Test",
+      "skip_authorization": false,
+      "created": "2025-07-30T11:54:59.179563Z",
+      "updated": "2025-09-16T11:38:26.477893Z",
+      "algorithm": "",
+      "allowed_origins": "",
+      "slug": "raycast-test",
+      "short_description": "Raycast Test",
+      "description_html": "<h2 class=\"editor-heading-block\">Raycast Test</h2>",
+      "description_stripped": "Raycast Test",
+      "published_at": null,
+      "publish_requested_at": null,
+      "company_name": "Saurabh",
+      "webhook_url": "",
+      "privacy_policy_url": "",
+      "terms_of_service_url": "",
+      "contact_email": "",
+      "support_url": "",
+      "setup_url": "https://www.raycast.com/makeplane/plane",
+      "video_url": "",
+      "configuration_url": "",
+      "is_internal": false,
+      "website": "",
+      "is_mentionable": false,
+      "created_by": "69171417-dd93-45db-930a-3c9208e5ad8e",
+      "updated_by": "69171417-dd93-45db-930a-3c9208e5ad8e",
+      "user": "69171417-dd93-45db-930a-3c9208e5ad8e",
+      "logo_asset": "d7d86709-09e4-4837-b73c-056a3261b401",
+      "published_by": null,
+      "links": [
+        {
+          "name": "Raycast",
+          "url": "https://raycast.com"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com"
+        }
+      ],
+      "supported_plans": [
+        "FREE",
+        "PRO",
+        "BUSINESS"
+      ],
+      "supported_environments": [
+        "CLOUD"
+      ],
+      "status": "published",
+      "priority": 1
+  },
+  {
+      "id": "6dde8b3c-02de-4a10-a56a-74daed39c1d8",
+      "is_owned": false,
+      "is_installed": false,
+      "installation_id": null,
+      "logo_url": "/api/assets/v2/static/24a1c8fe-c0c9-4793-b66e-2f2adfb657e1/",
+      "attachments_urls": [
+          "/api/assets/v2/static/d07cec58-2052-4671-81b5-c40d136b08f8/",
+          "/api/assets/v2/static/24aa759e-87c2-4fd4-9b5b-7d119dac4849/",
+          "/api/assets/v2/static/757ae607-f785-4f2c-bda6-58e042403ee2/",
+          "/api/assets/v2/static/c61ed1d4-9a31-4b9b-893c-1087156a1b74/",
+          "/api/assets/v2/static/9c0393a6-1d1e-4cf7-a67e-769bddf83344/",
+          "/api/assets/v2/static/45355edd-00fe-4537-97ee-1b81af4b894b/",
+          "/api/assets/v2/static/b7f1f8d7-cceb-492f-88ef-d4dd5891ed1f/",
+          "/api/assets/v2/static/c3710fd2-1e6a-498c-8286-2d0fc6426a97/",
+          "/api/assets/v2/static/9158e02b-86e6-42e0-9957-44ec6cdcbc85/"
+      ],
+      "attachments": [
+          "d07cec58-2052-4671-81b5-c40d136b08f8",
+          "24aa759e-87c2-4fd4-9b5b-7d119dac4849",
+          "757ae607-f785-4f2c-bda6-58e042403ee2",
+          "c61ed1d4-9a31-4b9b-893c-1087156a1b74",
+          "9c0393a6-1d1e-4cf7-a67e-769bddf83344",
+          "45355edd-00fe-4537-97ee-1b81af4b894b",
+          "b7f1f8d7-cceb-492f-88ef-d4dd5891ed1f",
+          "c3710fd2-1e6a-498c-8286-2d0fc6426a97",
+          "9158e02b-86e6-42e0-9957-44ec6cdcbc85"
+      ],
+      "categories": [],
+      "deleted_at": null,
+      "client_id": "0PfqpsJKZF1UoYZzr8ev2vKCk7hcVv58IeESjWd2",
+      "redirect_uris": "https://silo.plane.so/api/oauth/github-enterprise/plane-oauth/callback",
+      "post_logout_redirect_uris": "",
+      "client_type": "confidential",
+      "authorization_grant_type": "authorization-code",
+      "client_secret": "pbkdf2_sha256$600000$4SnBUdtOoqJYSbwFNW1SOV$D02Um/1wEL07HUOZ58JI3boDhvA+isWfqo5GFsWareg=",
+      "hash_client_secret": true,
+      "name": "GitHub Enterprise Server",
+      "skip_authorization": true,
+      "created": "2025-07-01T10:50:44.908572Z",
+      "updated": "2025-09-01T08:49:49.383353Z",
+      "algorithm": "",
+      "allowed_origins": "",
+      "slug": "github-enterprise",
+      "short_description": "GitHub Enterprise integration with Plane allows seamless synchronization between your GitHub Enterprise Server repositories and Plane projects.",
+      "description_html": "<div><h2 class=\"editor-heading-block\">Overview</h2><p class=\"editor-paragraph-block\">GitHub Enterprise integration with Plane allows seamless synchronization between your GitHub repositories and Plane projects.</p><p class=\"editor-paragraph-block\">By linking the two, your issues and pull requests stay updated across both platforms, enhancing collaboration and streamlining your workflow.</p><p class=\"editor-paragraph-block\">Whether you're managing code, tasks, or both, this integration ensures your team stays in sync without the hassle of switching between platforms.</p><h2 class=\"editor-heading-block\">Features:</h2><h4 class=\"editor-heading-block\">PR Automation:</h4><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Link a GitHub PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Work Item Status gets synced based on the PR automation setup on Plane.</p></li></ol><h4 class=\"editor-heading-block\">Issue Sync:</h4><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Add repository mapping on Plane to map a GitHub repo with a Plane project.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Issues and their comments get synced bi-directionally between both.</p></li></ol><h2 class=\"editor-heading-block\">Setup GitHub integration</h2><p class=\"editor-paragraph-block\">To get started, you'll need to connect your GitHub account, organization, and repositories with Plane. Follow the steps below to complete the setup:</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://developers.plane.so/self-hosting/govern/integrations/github?edition=github-cloud#create-github-app\">Create Plane App in your GitHub Enterprise Server</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github?edition=github-enterprise#connect-github-organization\">Connect your GitHub organization</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github#connect-personal-github-account\">Connect your personal GitHub account</a></p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github#add-repository-mappings\">Add repository mappings</a></p></li></ol><p class=\"editor-paragraph-block\"></p><p class=\"editor-paragraph-block\">For more detailed instructions, refer to: <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/integrations/github\">https://docs.plane.so/integrations/github</a></p><p class=\"editor-paragraph-block\"></p><p class=\"editor-paragraph-block\">This integration is meant for GitHub Enterprise.</p><p class=\"editor-paragraph-block\">If you’re using GitHub Cloud, please use the following link instead:</p><p class=\"editor-paragraph-block\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://plane.so/marketplace/integrations/github\">https://plane.so/marketplace/integrations/github</a></p></div>",
+      "description_stripped": "OverviewGitHub Enterprise integration with Plane allows seamless synchronization between your GitHub repositories and Plane projects.By linking the two, your issues and pull requests stay updated across both platforms, enhancing collaboration and streamlining your workflow.Whether you're managing code, tasks, or both, this integration ensures your team stays in sync without the hassle of switching between platforms.Features:PR Automation:Link a GitHub PR to a Plane Work Item and vice versa when a Work Item ID is mentioned on the PR.Work Item Status gets synced based on the PR automation setup on Plane.Issue Sync:Add repository mapping on Plane to map a GitHub repo with a Plane project.Issues and their comments get synced bi-directionally between both.Setup GitHub integrationTo get started, you'll need to connect your GitHub account, organization, and repositories with Plane. Follow the steps below to complete the setup:Create Plane App in your GitHub Enterprise ServerConnect your GitHub organizationConnect your personal GitHub accountAdd repository mappingsFor more detailed instructions, refer to: https://docs.plane.so/integrations/githubThis integration is meant for GitHub Enterprise.If you’re using GitHub Cloud, please use the following link instead:https://plane.so/marketplace/integrations/github",
+      "published_at": "2025-08-28T10:28:08.924641Z",
+      "publish_requested_at": null,
+      "company_name": "Plane",
+      "webhook_url": null,
+      "privacy_policy_url": null,
+      "terms_of_service_url": null,
+      "contact_email": null,
+      "support_url": "https://docs.plane.so/integrations/github",
+      "setup_url": "https://app.plane.so/workspace-selector/apps/github-enterprise",
+      "video_url": null,
+      "configuration_url": null,
+      "is_internal": false,
+      "website": null,
+      "is_mentionable": false,
+      "created_by": null,
+      "updated_by": "e0b63bf8-475e-4428-9634-6d489fcd8b8c",
+      "user": "e3bec055-f9ba-4543-9282-0a31a3b9b4aa",
+      "logo_asset": "24a1c8fe-c0c9-4793-b66e-2f2adfb657e1",
+      "published_by": null,
+      "links": [
+        {
+          "name": "GitHub Enterprise",
+          "url": "https://github.com"
+        },
+        {
+          "name": "Twitter",
+          "url": "https://twitter.com"
+        }
+      ],
+      "supported_plans": [
+        "PRO",
+        "BUSINESS"
+      ],
+      "supported_environments": [
+        "CLOUD",
+        "SELF_HOSTED"
+      ],
+      "status": "published",
+      "priority": 1
+  }
+]

@@ -27,6 +27,7 @@ export type TInitiative = {
   lead: string | null;
   project_ids: string[] | null;
   epic_ids: string[] | null;
+  label_ids: string[] | null;
   logo_props: TLogoProps | undefined;
 };
 
@@ -57,7 +58,7 @@ export type TInitiativeLink = {
   deleted_at: string | null;
   title: string | null;
   url: string;
-  metadata: any;
+  metadata: Record<string, unknown>;
   created_by: string;
   updated_by: string | null;
   initiative: string;
@@ -134,7 +135,7 @@ export type TInitiativeActivity = {
   updated_at: string;
   created_by: string | undefined;
   updated_by: string | undefined;
-  attachments: any[];
+  attachments: Record<string, unknown>[];
 
   verb: string;
   field: string | undefined;
@@ -199,4 +200,11 @@ export type TInitiativeStats = {
   on_track_updates: number;
   at_risk_updates: number;
   off_track_updates: number;
+};
+
+export type TInitiativeLabel = {
+  id: string;
+  name: string;
+  color: string;
+  sort_order: number;
 };

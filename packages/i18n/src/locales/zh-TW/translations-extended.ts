@@ -426,6 +426,7 @@ export default {
       epic_update_error: "史詩添加到倡議失敗。請稍後再試。",
       state_update_success: "倡議狀態已成功更新。",
       state_update_error: "更新倡議狀態失敗。請再試一次！",
+      label_update_error: "無法更新倡議標籤。請再試一次！",
     },
     empty_state: {
       general: {
@@ -464,6 +465,21 @@ export default {
         primary_button: {
           text: "添加範圍",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "標籤",
+        description: "使用標籤來組織和規劃您的計畫。",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "刪除標籤",
+        content: "您確定要刪除 {labelName} 嗎？這將從所有計畫中移除該標籤，並從所有以該標籤進行篩選的檢視中移除。",
+      },
+      toast: {
+        delete_error: "無法刪除計畫標籤。請重試。",
       },
     },
   },

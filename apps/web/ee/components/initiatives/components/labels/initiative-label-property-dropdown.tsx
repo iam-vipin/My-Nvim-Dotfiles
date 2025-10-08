@@ -1,30 +1,34 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-// types
-import { EUserProjectRoles, IIssueLabel } from "@plane/types";
-// components
+import { EUserWorkspaceRoles } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
-// hooks
-import { useLabel } from "@/hooks/store/use-label";
+
+// local imports
 import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { TInitiativeLabel } from "@/plane-web/types";
+import { getInitiativeLabelsArray } from "./initiative-label-utils";
 
-export interface ILabelDropdownProps {
-  projectId: string | null;
+export interface IInitiativeLabelPropertyDropdownProps {
+  workspaceSlug: string | null;
   value: string[];
   onChange: (data: string[]) => void;
   onClose?: () => void;
   disabled?: boolean;
-  defaultOptions?: any;
+  defaultOptions?: TInitiativeLabel[];
   hideDropdownArrow?: boolean;
   className?: string;
   buttonClassName?: string;
@@ -37,9 +41,9 @@ export interface ILabelDropdownProps {
   label: React.ReactNode;
 }
 
-export const LabelDropdown = (props: ILabelDropdownProps) => {
+export const InitiativeLabelPropertyDropdown = (props: IInitiativeLabelPropertyDropdownProps) => {
   const {
-    projectId,
+    workspaceSlug,
     value,
     onChange,
     onClose,
@@ -60,7 +64,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
 
   //router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const currentWorkspaceSlug = workspaceSlug || routerWorkspaceSlug?.toString();
 
   //states
   const [isOpen, setIsOpen] = useState(false);
@@ -77,20 +81,22 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   //hooks
-  const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
+  const {
+    initiative: { fetchInitiativeLabels, getInitiativesLabels, createInitiativeLabel },
+  } = useInitiatives();
   const { isMobile } = usePlatformOS();
-  const storeLabels = getProjectLabels(projectId);
+  const storeLabels = getInitiativesLabels(currentWorkspaceSlug);
   const { allowPermissions } = useUserPermissions();
 
   const canCreateLabel =
-    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+    currentWorkspaceSlug &&
+    allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, currentWorkspaceSlug);
 
-  let projectLabels: IIssueLabel[] = defaultOptions;
-  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+  const initiativeLabels = getInitiativeLabelsArray(storeLabels, defaultOptions);
 
   const options = useMemo(
     () =>
-      projectLabels.map((label) => ({
+      initiativeLabels.map((label) => ({
         value: label?.id,
         query: label?.name,
         content: (
@@ -105,7 +111,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
           </div>
         ),
       })),
-    [projectLabels]
+    [initiativeLabels]
   );
 
   const filteredOptions = useMemo(
@@ -127,9 +133,9 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   });
 
   const onOpen = useCallback(() => {
-    if (!storeLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
-  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels]);
+    if (!storeLabels && currentWorkspaceSlug)
+      fetchInitiativeLabels(currentWorkspaceSlug).then(() => setIsLoading(false));
+  }, [storeLabels, currentWorkspaceSlug, fetchInitiativeLabels]);
 
   const toggleDropdown = useCallback(() => {
     if (!isOpen) onOpen();
@@ -145,9 +151,9 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   };
 
   const handleAddLabel = async (labelName: string) => {
-    if (!projectId) return;
+    if (!currentWorkspaceSlug) return;
     setSubmitting(true);
-    const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
+    const label = await createInitiativeLabel(currentWorkspaceSlug, { name: labelName, color: getRandomLabelColor() });
     onChange([...value, label.id]);
     setQuery("");
     setSubmitting(false);
@@ -241,7 +247,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
-                  displayValue={(assigned: any) => assigned?.name || ""}
+                  displayValue={(assigned: TInitiativeLabel) => assigned?.name || ""}
                   onKeyDown={searchInputKeyDown}
                 />
               </div>
@@ -287,7 +293,6 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                     }}
                     className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
-                    {/* TODO: translate here */}
                     {query.length ? (
                       <>
                         + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels

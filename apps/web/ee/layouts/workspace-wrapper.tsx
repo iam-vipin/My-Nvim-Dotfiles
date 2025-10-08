@@ -186,6 +186,17 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetching all initiative labels
+  useSWR(
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? ["initiativeLabels", workspaceSlug, isInitiativesFeatureEnabled]
+      : null,
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? () => initiative.fetchInitiativeLabels(workspaceSlug.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   // fetching template categories
   useSWR(
     workspaceSlug && isTemplatePublishEnabled ? ["templateCategories", workspaceSlug, isTemplatePublishEnabled] : null,

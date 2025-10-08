@@ -480,6 +480,7 @@ export default {
       epic_update_error: "Epic addition to Initiative failed. Please try again later.",
       state_update_success: "Initiative state updated successfully.",
       state_update_error: "Failed to update initiative state. Please try again!",
+      label_update_error: "Failed to update initiative labels. Please try again!",
     },
     empty_state: {
       general: {
@@ -518,6 +519,22 @@ export default {
         primary_button: {
           text: "Add scope",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Labels",
+        description: "Structure and organise your initiatives with labels.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Delete label",
+        content:
+          "Are you sure you want to delete {labelName}? This will remove the label from all the initiatives and from any views where the label is being filtered upon.",
+      },
+      toast: {
+        delete_error: "Initiative label could not be deleted. Please try again.",
       },
     },
   },

@@ -439,6 +439,7 @@ export default {
       epic_update_error: "Přidání epiku do iniciativy se nezdařilo. Zkuste to prosím znovu později.",
       state_update_success: "Stav iniciativy byl úspěšně aktualizován.",
       state_update_error: "Nepodařilo se aktualizovat stav iniciativy. Zkuste to prosím znovu!",
+      label_update_error: "Nepodařilo se aktualizovat štítky iniciativy. Zkuste to prosím znovu!",
     },
     empty_state: {
       general: {
@@ -478,6 +479,22 @@ export default {
         primary_button: {
           text: "Přidat rozsah",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Štítky",
+        description: "Strukturalizujte a organizujte své iniciativy pomocí štítků.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Smazat štítek",
+        content:
+          "Opravdu chcete odstranit {labelName}? Tímto odstraníte štítek ze všech iniciativ a ze všech zobrazení, kde je štítek filtrován.",
+      },
+      toast: {
+        delete_error: "Štítek iniciativy nelze odstranit. Zkuste to prosím znovu.",
       },
     },
   },

@@ -41,22 +41,21 @@ class InitiativeCommentReactionSerializer(BaseSerializer):
 class InitiativeSerializer(BaseSerializer):
     project_ids = serializers.SerializerMethodField()
     epic_ids = serializers.SerializerMethodField()
-    labels = serializers.SerializerMethodField()
     reactions = InitiativeCommentReactionSerializer(read_only=True, many=True, source="initiative_reactions")
-    labels = serializers.SerializerMethodField(read_only=True)
+    label_ids = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Initiative
         fields = "__all__"
         read_only_fields = ["workspace"]
-    
+
     def get_project_ids(self, obj):
         return [project.project_id for project in obj.projects.all()]
-    
+
     def get_epic_ids(self, obj):
         return [epic.epic_id for epic in obj.initiative_epics.all()]
 
-    def get_labels(self, obj):
+    def get_label_ids(self, obj):
         return [init_label.label_id for init_label in obj.initiative_label_associations.all()]
 
 

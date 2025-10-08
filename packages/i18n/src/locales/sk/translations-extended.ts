@@ -450,6 +450,7 @@ export default {
       epic_update_error: "Pridanie Epiku do Iniciatívy zlyhalo. Skúste to neskôr znova.",
       state_update_success: "Stav iniciatívy bol úspešne aktualizovaný.",
       state_update_error: "Nepodarilo sa aktualizovať stav iniciatívy. Skúste to prosím znova!",
+      label_update_error: "Nepodarilo sa aktualizovať štítky iniciatívy. Skúste to prosím znova!",
     },
     empty_state: {
       general: {
@@ -489,6 +490,22 @@ export default {
         primary_button: {
           text: "Pridať rozsah",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Štítky",
+        description: "Štruktúrujte a organizujte svoje iniciatívy pomocou štítkov.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Odstrániť štítok",
+        content:
+          "Naozaj chcete odstrániť {labelName}? Týmto sa odstráni štítok zo všetkých iniciatív a zo všetkých pohľadov, kde je štítok filtrovaný.",
+      },
+      toast: {
+        delete_error: "Štítok iniciatívy sa nepodarilo odstrániť. Skúste to znova.",
       },
     },
   },

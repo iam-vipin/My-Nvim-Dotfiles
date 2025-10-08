@@ -427,6 +427,7 @@ export default {
       epic_update_error: "将史诗添加到计划失败。请稍后重试。",
       state_update_success: "倡议状态已成功更新。",
       state_update_error: "更新倡议状态失败。请重试！",
+      label_update_error: "无法更新倡议标签。请再试一次！",
     },
     empty_state: {
       general: {
@@ -465,6 +466,21 @@ export default {
         primary_button: {
           text: "添加范围",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "标签",
+        description: "使用标签来组织和规划您的计划。",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "删除标签",
+        content: "您确定要删除 {labelName} 吗？这将从所有计划中移除该标签，并从所有正在以此标签进行筛选的视图中移除。",
+      },
+      toast: {
+        delete_error: "无法删除计划标签。请重试。",
       },
     },
   },

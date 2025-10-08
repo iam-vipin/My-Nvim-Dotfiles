@@ -441,6 +441,7 @@ export default {
       epic_update_error: "Dodanie Epika do Inicjatywy nie powiodło się. Spróbuj ponownie później.",
       state_update_success: "Stan inicjatywy został pomyślnie zaktualizowany.",
       state_update_error: "Nie udało się zaktualizować stanu inicjatywy. Spróbuj ponownie!",
+      label_update_error: "Nie udało się zaktualizować etykiet inicjatywy. Proszę spróbować ponownie!",
     },
     empty_state: {
       general: {
@@ -479,6 +480,22 @@ export default {
         primary_button: {
           text: "Dodaj zakres",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etykiety",
+        description: "Strukturyzuj i organizuj swoje inicjatywy za pomocą etykiet.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Usuń etykietę",
+        content:
+          "Czy na pewno chcesz usunąć {labelName}? Spowoduje to usunięcie etykiety ze wszystkich inicjatyw i ze wszystkich widoków, w których etykieta jest filtrowana.",
+      },
+      toast: {
+        delete_error: "Nie można usunąć etykiety inicjatywy. Spróbuj ponownie.",
       },
     },
   },

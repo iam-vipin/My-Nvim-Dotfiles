@@ -22,6 +22,7 @@ type Props = {
   toggleEpicModal: (value?: boolean) => void;
   toggleProjectModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
+  handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
@@ -32,6 +33,7 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
     toggleEpicModal,
     toggleProjectModal,
     handleInitiativeStateUpdate,
+    handleInitiativeLabelUpdate,
   } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();
@@ -48,6 +50,7 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
           toggleEpicModal={toggleEpicModal}
           toggleProjectModal={toggleProjectModal}
           handleInitiativeStateUpdate={handleInitiativeStateUpdate}
+          handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
         />
       ),
     },

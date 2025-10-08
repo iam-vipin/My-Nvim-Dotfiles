@@ -454,6 +454,7 @@ export default {
       epic_update_error: "Epikin İnisiyatife eklenmesi başarısız oldu. Lütfen daha sonra tekrar deneyin.",
       state_update_success: "Girişim durumu başarıyla güncellendi.",
       state_update_error: "Girişim durumu güncellenemedi. Lütfen tekrar deneyin!",
+      label_update_error: "Girişim etiketlerini güncelleme başarısız oldu. Lütfen tekrar deneyin!",
     },
     empty_state: {
       general: {
@@ -493,6 +494,22 @@ export default {
         primary_button: {
           text: "Kapsam ekle",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etiketler",
+        description: "Girişimlerinizi etiketlerle yapılandırın ve düzenleyin.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Etiketi sil",
+        content:
+          "{labelName} etiketini silmek istediğinizden emin misiniz? Bu, etiketi tüm girişimlerden ve etikete göre filtrelenen tüm görünümlerden kaldıracaktır.",
+      },
+      toast: {
+        delete_error: "Girişim etiketi silinemedi. Lütfen tekrar deneyin.",
       },
     },
   },

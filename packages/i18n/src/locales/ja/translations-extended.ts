@@ -436,6 +436,7 @@ export default {
       epic_update_error: "イニシアチブへのエピックの追加に失敗しました。後でもう一度お試しください。",
       state_update_success: "イニシアチブの状態が正常に更新されました。",
       state_update_error: "イニシアチブの状態を更新できませんでした。もう一度お試しください！",
+      label_update_error: "イニシアティブのラベルの更新に失敗しました。もう一度お試しください！",
     },
     empty_state: {
       general: {
@@ -475,6 +476,22 @@ export default {
         primary_button: {
           text: "スコープを追加",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "ラベル",
+        description: "ラベルであなたの取り組みを整理・構造化しましょう。",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "ラベルを削除",
+        content:
+          "{labelName} を削除してもよろしいですか？これにより、すべてのイニシアチブおよびラベルがフィルタリングされているビューからラベルが削除されます。",
+      },
+      toast: {
+        delete_error: "イニシアチブのラベルを削除できませんでした。もう一度お試しください。",
       },
     },
   },

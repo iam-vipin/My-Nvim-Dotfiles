@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2 } from "lucide-react";
+import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -17,9 +17,10 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { InitiativeLabelDropdown } from "@/plane-web/components/initiatives/components/labels/initiative-label-dropdown";
+import { InitiativeStateDropdown } from "@/plane-web/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
-import { InitiativesStatesDropdown } from "../../components/states/dropdown";
 
 type Props = {
   workspaceSlug: string;
@@ -28,11 +29,19 @@ type Props = {
   toggleEpicModal: (value?: boolean) => void;
   toggleProjectModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
+  handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal, handleInitiativeStateUpdate } =
-    props;
+  const {
+    workspaceSlug,
+    initiativeId,
+    disabled,
+    toggleEpicModal,
+    toggleProjectModal,
+    handleInitiativeStateUpdate,
+    handleInitiativeLabelUpdate,
+  } = props;
 
   const {
     initiative: {
@@ -42,6 +51,9 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
     },
   } = useInitiatives();
   const { getUserDetails } = useMember();
+  const {
+    initiative: { getInitiativesLabels },
+  } = useInitiatives();
 
   const { t } = useTranslation();
 
@@ -49,7 +61,13 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const initiativeEpicIds = getInitiativeEpicsById(initiativeId) ?? [];
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
   const initiativeProjectIds = initiative?.project_ids || [];
+  const initiativeLabelIds = initiative?.label_ids || [];
+
   const createdByDetails = initiative ? getUserDetails(initiative?.created_by) : undefined;
+
+  // Get initiative labels for initiatives
+  const allInitiativeLabels = getInitiativesLabels(workspaceSlug);
+
   if (!initiative) return <></>;
 
   const handleDates = (payload: Partial<TInitiative>) =>
@@ -74,7 +92,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             <InitiativeStateIcon className="h-4 w-4 flex-shrink-0" state="DRAFT" size={EIconSize.XL} />
             <span>State</span>
           </div>
-          <InitiativesStatesDropdown
+          <InitiativeStateDropdown
             value={initiative.state}
             onChange={(val) => handleInitiativeStateUpdate(val)}
             disabled={disabled}
@@ -169,7 +187,6 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             minDate={getDate(initiative.start_date)}
           />
         </div>
-
         {createdByDetails && (
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -182,6 +199,19 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             </div>
           </div>
         )}
+        {/* Labels Drop down*/}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <Tags className="h-4 w-4 text-custom-text-300" />
+            <span>Labels</span>
+          </div>
+          <InitiativeLabelDropdown
+            value={initiativeLabelIds || []}
+            labels={allInitiativeLabels}
+            onChange={(val: string[]) => handleInitiativeLabelUpdate(val)}
+            placeholder={t("label")}
+          />
+        </div>
       </div>
     </SidebarContentWrapper>
   );

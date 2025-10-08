@@ -1,20 +1,25 @@
 import { clone, orderBy, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TEpicStats, TLoader, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
 import { convertToISODateString } from "@plane/utils";
+
 // plane-web imports
+import { InitiativeLabelsService } from "@/plane-web/services/initiative-labels.service";
 import { InitiativeService } from "@/plane-web/services/initiative.service";
 import {
   TExternalInitiativeFilterExpression,
   TInitiative,
   TInitiativeAnalytics,
+  TInitiativeLabel,
   TInitiativeReaction,
   TInitiativeStats,
 } from "@/plane-web/types/initiative";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+
 // local imports
 import { RootStore } from "../root.store";
 import { IUpdateStore, UpdateStore } from "../updates/base.store";
@@ -32,15 +37,20 @@ type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   initiativeIds: string[] | undefined;
+
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
+  initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>>;
+  initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
+
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
   initiativeAttachments: IInitiativeAttachmentStore;
   initiativeAnalyticsLoader: Record<string, TLoader>;
-  initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
   initiativesLoader: boolean;
   updatesStore: IUpdateStore;
   isInitiativeModalOpen: string | null;
+
+  initiativeLabelsService: InitiativeLabelsService;
 
   openCollapsibleSection: InitiativeCollapsible[];
   lastCollapsibleAction: InitiativeCollapsible | null;
@@ -54,6 +64,7 @@ export interface IInitiativeStore {
   isInitiativesFeatureEnabled: boolean;
 
   getInitiativeById: (initiativeId: string) => TInitiative | undefined;
+  getInitiativesLabels: (workspaceSlug: string) => Map<string, TInitiativeLabel> | undefined;
   getInitiativeStatsById: (initiativeId: string) => TInitiativeStats | undefined;
   getInitiativeAnalyticsById: (initiativeId: string) => TInitiativeAnalytics | undefined;
 
@@ -68,6 +79,22 @@ export interface IInitiativeStore {
   updateInitiative: (workspaceSlug: string, initiativeId: string, payload: Partial<TInitiative>) => Promise<void>;
   deleteInitiative: (workspaceSlug: string, initiativeId: string) => Promise<void>;
   initInitiatives: (workspaceSlug: string) => Promise<void>;
+
+  // labels
+  fetchInitiativeLabels: (workspaceSlug: string) => Promise<TInitiativeLabel[] | undefined>;
+  createInitiativeLabel: (workspaceSlug: string, data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel>;
+  updateInitiativeLabel: (
+    workspaceSlug: string,
+    labelId: string,
+    data: Partial<TInitiativeLabel>
+  ) => Promise<TInitiativeLabel | undefined>;
+  updateInitiativeLabelPosition: (
+    workspaceSlug: string,
+    draggingLabelId: string,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => Promise<TInitiativeLabel | undefined>;
+  deleteInitiativeLabel: (workspaceSlug: string, labelId: string) => Promise<void>;
 
   addInitiativeReaction: (
     workspaceSlug: string,
@@ -91,6 +118,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined = undefined;
   initiativeAnalyticsLoader: Record<string, TLoader> = {};
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics> = {};
+  initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>> = new Map();
 
   initiativesLoader: boolean = false;
   isInitiativeModalOpen: string | null = null;
@@ -102,6 +130,8 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeAttachments: IInitiativeAttachmentStore;
 
   initiativeService: InitiativeService;
+  initiativeLabelsService: InitiativeLabelsService;
+
   rootStore: RootStore;
   initiativeFilterStore: IInitiativeFilterStore;
   updatesStore: IUpdateStore;
@@ -115,24 +145,34 @@ export class InitiativeStore implements IInitiativeStore {
       initiativesStatsMap: observable,
       initiativeAnalyticsLoader: observable,
       initiativeAnalyticsMap: observable,
+      initiativeLabelsMap: observable,
       isInitiativeModalOpen: observable,
 
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
       initiativesLoader: observable,
+
       // actions
       fetchInitiatives: action,
       fetchInitiativesStats: action,
       fetchInitiativeAnalytics: action,
-      createInitiative: action,
       fetchInitiativeDetails: action,
+
+      createInitiative: action,
       updateInitiative: action,
       deleteInitiative: action,
+
       addInitiativeReaction: action,
       deleteInitiativeReaction: action,
+
+      fetchInitiativeLabels: action,
+      createInitiativeLabel: action,
+      updateInitiativeLabel: action,
+      deleteInitiativeLabel: action,
+
       setOpenCollapsibleSection: action,
-      setLastCollapsibleAction: action,
       toggleOpenCollapsibleSection: action,
+      setLastCollapsibleAction: action,
       toggleInitiativeModal: action,
     });
 
@@ -145,7 +185,7 @@ export class InitiativeStore implements IInitiativeStore {
 
     // services
     this.initiativeService = new InitiativeService();
-
+    this.initiativeLabelsService = new InitiativeLabelsService();
     this.epics = new InitiativeEpicStore(this, this.initiativeService);
     this.scope = new InitiativeScopeStore();
   }
@@ -173,6 +213,7 @@ export class InitiativeStore implements IInitiativeStore {
 
   initInitiatives = async (workspaceSlug: string) => {
     await this.initiativeFilterStore.initInitiativeFilters(workspaceSlug);
+    await this.fetchInitiativeLabels(workspaceSlug);
     const filters = this.initiativeFilterStore.getInitiativeFilters(workspaceSlug);
     await this.fetchInitiatives(workspaceSlug, filters);
   };
@@ -195,6 +236,8 @@ export class InitiativeStore implements IInitiativeStore {
   getInitiativeStatsById = computedFn((initiativeId: string) => this.initiativesStatsMap?.[initiativeId]);
 
   getInitiativeAnalyticsById = computedFn((initiativeId: string) => this.initiativeAnalyticsMap[initiativeId]);
+
+  getInitiativesLabels = computedFn((workspaceSlug: string) => this.initiativeLabelsMap.get(workspaceSlug));
 
   setOpenCollapsibleSection = (section: InitiativeCollapsible[]) => {
     this.openCollapsibleSection = section;
@@ -466,6 +509,145 @@ export class InitiativeStore implements IInitiativeStore {
   };
 
   toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
+
+  // ---------------------------------------- Label Methods -----------------------------------------
+
+  fetchInitiativeLabels = async (workspaceSlug: string) => {
+    const response = await this.initiativeLabelsService.getInitiativeLabels(workspaceSlug);
+
+    runInAction(() => {
+      this.initiativeLabelsMap.set(workspaceSlug, new Map(response.map((label) => [label.id, label])));
+    });
+    return response;
+  };
+
+  /**
+   * Creates a new initiative label and add it to the store
+   * @param workspaceSlug
+   * @param data
+   * @returns Promise<TInitiativeLabel>
+   */
+  createInitiativeLabel = async (workspaceSlug: string, data: Partial<TInitiativeLabel>) =>
+    await this.initiativeLabelsService.createInitiativeLabel(workspaceSlug, data).then((response) => {
+      runInAction(() => {
+        if (!this.initiativeLabelsMap.get(workspaceSlug)) {
+          this.initiativeLabelsMap.set(workspaceSlug, new Map());
+        }
+        this.initiativeLabelsMap.get(workspaceSlug)?.set(response.id, response);
+      });
+      return response;
+    });
+
+  /**
+   * Updates an initiative label and update it in the store
+   * @param workspaceSlug
+   * @param labelId
+   * @param data
+   * @returns Promise<TInitiativeLabel>
+   */
+  updateInitiativeLabel = async (workspaceSlug: string, labelId: string, data: Partial<TInitiativeLabel>) => {
+    if (!this.initiativeLabelsMap.get(workspaceSlug)) return;
+
+    const currInitiativelabels = this.initiativeLabelsMap.get(workspaceSlug);
+    const currInitiativeSelectedLabel = currInitiativelabels?.get(labelId);
+
+    if (!currInitiativeSelectedLabel) return;
+
+    try {
+      runInAction(() => {
+        currInitiativelabels?.set(labelId, { ...currInitiativeSelectedLabel, ...data });
+      });
+      const response = await this.initiativeLabelsService.updateInitiativeLabel(workspaceSlug, labelId, data);
+      return response;
+    } catch (error) {
+      console.log("Failed to update initiative label from store");
+      runInAction(() => {
+        currInitiativelabels?.set(labelId, currInitiativeSelectedLabel);
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * Delete the initiative label and remove it from the labelMap object
+   * @param workspaceSlug
+   * @param labelId
+   */
+  deleteInitiativeLabel = async (workspaceSlug: string, labelId: string) => {
+    const currInitiativelabels = this.initiativeLabelsMap.get(workspaceSlug);
+    const currInitiativeSelectedLabel = currInitiativelabels?.get(labelId);
+    if (!currInitiativeSelectedLabel) return;
+    await this.initiativeLabelsService.deleteInitiativeLabel(workspaceSlug, labelId).then(() => {
+      runInAction(() => {
+        currInitiativelabels?.delete(labelId);
+      });
+    });
+  };
+
+  /**
+   * Updates the sort order of an initiative label
+   * @param workspaceSlug
+   * @param draggingLabelId
+   * @param droppedParentId
+   * @param droppedLabelId
+   * @param dropAtEndOfList
+   */
+  updateInitiativeLabelPosition = async (
+    workspaceSlug: string,
+    draggingLabelId: string,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => {
+    const currInitiativelabels = this.initiativeLabelsMap.get(workspaceSlug);
+    const draggingLabel = currInitiativelabels?.get(draggingLabelId);
+
+    if (!draggingLabel || !currInitiativelabels) return;
+
+    const labelsArray = Array.from(currInitiativelabels.values()).sort((a, b) => a.sort_order - b.sort_order);
+    const filteredLabels = labelsArray.filter((label) => label.id !== draggingLabelId);
+
+    let targetIndex: number;
+
+    if (dropAtEndOfList) {
+      targetIndex = filteredLabels.length - 1;
+    } else if (droppedLabelId) {
+      const droppedLabelIndex = filteredLabels.findIndex((label) => (label as TInitiativeLabel).id === droppedLabelId);
+      targetIndex = droppedLabelIndex;
+    } else {
+      return;
+    }
+
+    let sortOrder: number = 65535;
+
+    if (filteredLabels.length > 0) {
+      let prevSortOrder: number | undefined, nextSortOrder: number | undefined;
+
+      if (dropAtEndOfList) {
+        prevSortOrder = filteredLabels[filteredLabels.length - 1].sort_order;
+        nextSortOrder = undefined;
+      } else {
+        // Normal case: look at adjacent items
+        if (typeof filteredLabels[targetIndex - 1] !== "undefined") {
+          prevSortOrder = filteredLabels[targetIndex - 1].sort_order;
+        }
+        if (typeof filteredLabels[targetIndex] !== "undefined") {
+          nextSortOrder = filteredLabels[targetIndex].sort_order;
+        }
+      }
+
+      // Calculate sort order based on adjacent labels
+      if (prevSortOrder && nextSortOrder) {
+        sortOrder = (prevSortOrder + nextSortOrder) / 2;
+      } else if (nextSortOrder) {
+        sortOrder = nextSortOrder / 2;
+      } else if (prevSortOrder) {
+        sortOrder = prevSortOrder + 10000;
+      }
+    }
+
+    // Update only the dragged label with the new sort order
+    return this.updateInitiativeLabel(workspaceSlug, draggingLabelId, { sort_order: sortOrder });
+  };
 }
 
 const sortInitiativesWithOrderBy = (

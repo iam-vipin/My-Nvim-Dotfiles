@@ -439,6 +439,7 @@ export default {
       epic_update_error: "L'ajout d'Epic à l'initiative a échoué. Veuillez réessayer plus tard.",
       state_update_success: "L'état de l'initiative a été mis à jour avec succès.",
       state_update_error: "Échec de la mise à jour de l'état de l'initiative. Veuillez réessayer !",
+      label_update_error: "Échec de la mise à jour des étiquettes de l'initiative. Veuillez réessayer !",
     },
     empty_state: {
       general: {
@@ -478,6 +479,22 @@ export default {
         primary_button: {
           text: "Ajouter un périmètre",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Étiquettes",
+        description: "Structurez et organisez vos initiatives avec des étiquettes.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Supprimer l'étiquette",
+        content:
+          "Êtes-vous sûr de vouloir supprimer {labelName} ? Cela supprimera l'étiquette de toutes les initiatives et de toutes les vues où elle est filtrée.",
+      },
+      toast: {
+        delete_error: "L'étiquette de l'initiative n'a pas pu être supprimée. Veuillez réessayer.",
       },
     },
   },

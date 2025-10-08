@@ -438,6 +438,7 @@ export default {
       epic_update_error: "Aggiunta dell'epic all'iniziativa fallita. Si prega di riprovare più tardi.",
       state_update_success: "Stato dell'iniziativa aggiornato con successo.",
       state_update_error: "Aggiornamento dello stato dell'iniziativa non riuscito. Per favore riprova!",
+      label_update_error: "Impossibile aggiornare le etichette dell'iniziativa. Riprova!",
     },
     empty_state: {
       general: {
@@ -476,6 +477,22 @@ export default {
         primary_button: {
           text: "Aggiungi ambito",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etichette",
+        description: "Struttura e organizza le tue iniziative con le etichette.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Elimina etichetta",
+        content:
+          "Sei sicuro di voler eliminare {labelName}? Questo rimuoverà l'etichetta da tutte le iniziative e da tutte le visualizzazioni in cui l'etichetta è filtrata.",
+      },
+      toast: {
+        delete_error: "L'etichetta dell'iniziativa non può essere eliminata. Riprova.",
       },
     },
   },

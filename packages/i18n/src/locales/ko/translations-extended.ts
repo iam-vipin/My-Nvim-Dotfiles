@@ -436,6 +436,7 @@ export default {
       epic_update_error: "이니셔티브에 에픽 추가에 실패했습니다. 나중에 다시 시도해 주세요.",
       state_update_success: "이니셔티브 상태가 성공적으로 업데이트되었습니다.",
       state_update_error: "이니셔티브 상태를 업데이트하지 못했습니다. 다시 시도해 주세요!",
+      label_update_error: "이니셔티브 레이블 업데이트에 실패했습니다. 다시 시도해주세요!",
     },
     empty_state: {
       general: {
@@ -474,6 +475,22 @@ export default {
         primary_button: {
           text: "범위 추가",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "레이블",
+        description: "레이블로 이니셔티브를 구조화하고 정리하세요.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "레이블 삭제",
+        content:
+          "{labelName}을(를) 삭제하시겠습니까? 이렇게 하면 모든 이니셔티브와 해당 레이블이 필터링된 모든 뷰에서 레이블이 제거됩니다.",
+      },
+      toast: {
+        delete_error: "이니셔티브 레이블을 삭제할 수 없습니다. 다시 시도하세요.",
       },
     },
   },

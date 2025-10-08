@@ -12,7 +12,7 @@ import { TInitiativeStates } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // types
-export type TInitiativeStatesDropdownProps = {
+export type TInitiativeStateDropdownProps = {
   value: TInitiativeStates;
   onChange?: (value: TInitiativeStates) => void;
   disabled?: boolean;
@@ -31,7 +31,7 @@ export type TInitiativeStatesDropdownProps = {
   readonly?: boolean;
 };
 
-export const InitiativesStatesDropdown: FC<TInitiativeStatesDropdownProps> = observer((props) => {
+export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observer((props) => {
   const {
     value,
     onChange,
@@ -69,7 +69,7 @@ export const InitiativesStatesDropdown: FC<TInitiativeStatesDropdownProps> = obs
       <Combobox value={value} onValueChange={handleValueChange} disabled={disabled || readonly}>
         <Combobox.Button
           className={cn(
-            "flex h-full w-full items-center justify-between gap-1 rounded-md border border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
+            "flex h-full w-full items-center justify-between gap-1 rounded border border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
             buttonClassName
           )}
           disabled={disabled || readonly}

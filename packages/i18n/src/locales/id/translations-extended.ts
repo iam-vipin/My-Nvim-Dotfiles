@@ -440,6 +440,7 @@ export default {
       epic_update_error: "Penambahan Epik ke Inisiatif gagal. Silakan coba lagi nanti.",
       state_update_success: "Status inisiatif berhasil diperbarui.",
       state_update_error: "Gagal memperbarui status inisiatif. Silakan coba lagi!",
+      label_update_error: "Gagal memperbarui label inisiatif. Silakan coba lagi!",
     },
     empty_state: {
       general: {
@@ -479,6 +480,22 @@ export default {
         primary_button: {
           text: "Tambah ruang lingkup",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Label",
+        description: "Strukturkan dan atur inisiatif Anda dengan label.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Hapus label",
+        content:
+          "Apakah Anda yakin ingin menghapus {labelName}? Ini akan menghapus label dari semua inisiatif dan dari semua tampilan yang sedang memfilter label tersebut.",
+      },
+      toast: {
+        delete_error: "Label inisiatif tidak dapat dihapus. Silakan coba lagi.",
       },
     },
   },

@@ -443,6 +443,7 @@ export default {
       epic_update_error: "Adăugarea Epicului la Inițiativă a eșuat. Te rugăm să încerci din nou mai târziu.",
       state_update_success: "Starea inițiativei a fost actualizată cu succes.",
       state_update_error: "Actualizarea stării inițiativei a eșuat. Vă rugăm să încercați din nou!",
+      label_update_error: "Nu s-a reușit actualizarea etichetelor inițiativei. Vă rugăm să încercați din nou!",
     },
     empty_state: {
       general: {
@@ -481,6 +482,22 @@ export default {
         primary_button: {
           text: "Adaugă domeniu",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etichete",
+        description: "Structurați și organizați inițiativele dvs. cu etichete.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Șterge eticheta",
+        content:
+          "Sigur doriți să ștergeți {labelName}? Aceasta va elimina eticheta din toate inițiativele și din orice vizualizare în care eticheta este filtrată.",
+      },
+      toast: {
+        delete_error: "Eticheta inițiativei nu a putut fi ștearsă. Vă rugăm să încercați din nou.",
       },
     },
   },

@@ -10,7 +10,7 @@ import useKeypress from "@/hooks/use-keypress";
 // Plane web
 import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import { TInitiative } from "@/plane-web/types";
 // local
 import { CreateUpdateInitiativeForm } from "./form";
 
@@ -28,6 +28,7 @@ const defaultValues: Partial<TInitiative> = {
   lead: null,
   project_ids: [],
   epic_ids: [],
+  label_ids: [],
   state: DEFAULT_INITIATIVE_STATE,
 };
 
@@ -62,7 +63,7 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
 
   // handlers
   const handleFormDataChange = <T extends keyof TInitiative>(key: T, value: TInitiative[T] | undefined) =>
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => (prev ? { ...prev, [key]: value } : undefined));
 
   const handleModalClearAndClose = () => {
     setFormData(undefined);

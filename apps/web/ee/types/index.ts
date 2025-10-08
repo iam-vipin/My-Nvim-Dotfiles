@@ -6,5 +6,6 @@ export * from "./cycles";
 export * from "./pi-chat.d";
 export * from "./gantt-chart";
 export * from "./teamspace";
+export * from "./initiative";
 // importers
 export * from "./importers";

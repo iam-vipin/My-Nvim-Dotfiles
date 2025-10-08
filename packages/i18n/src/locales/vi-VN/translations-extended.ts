@@ -428,6 +428,7 @@ export default {
       epic_update_error: "Thêm Epic vào Sáng kiến thất bại. Vui lòng thử lại sau.",
       state_update_success: "Trạng thái sáng kiến đã được cập nhật thành công.",
       state_update_error: "Cập nhật trạng thái sáng kiến không thành công. Vui lòng thử lại!",
+      label_update_error: "Không thể cập nhật nhãn sáng kiến. Vui lòng thử lại!",
     },
     empty_state: {
       general: {
@@ -466,6 +467,22 @@ export default {
         primary_button: {
           text: "Thêm phạm vi",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Nhãn",
+        description: "Cấu trúc và tổ chức các sáng kiến của bạn với nhãn.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Xóa nhãn",
+        content:
+          "Bạn có chắc chắn muốn xóa {labelName}? Việc này sẽ xóa nhãn khỏi tất cả các sáng kiến và bất kỳ chế độ xem nào đang lọc theo nhãn này.",
+      },
+      toast: {
+        delete_error: "Không thể xóa nhãn sáng kiến. Vui lòng thử lại.",
       },
     },
   },

@@ -13,8 +13,9 @@ import { useMember } from "@/hooks/store/use-member";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components
+import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
 import { PropertyBlockWrapper } from "./property-block-wrapper";
-import { InitiativesStatesDropdown } from "./states/dropdown";
+import { InitiativeStateDropdown } from "./states/initiative-state-dropdown";
 
 type Props = {
   initiative: TInitiative;
@@ -27,13 +28,18 @@ export const InitiativesBlockProperties = observer((props: Props) => {
   // store hooks
   const { getUserDetails } = useMember();
   const {
-    initiative: { updateInitiative },
+    initiative: { updateInitiative, getInitiativesLabels },
   } = useInitiatives();
 
   // derived values
   const lead = getUserDetails(initiative.lead ?? "");
   const startDate = getDate(initiative.start_date);
   const endDate = getDate(initiative.end_date);
+  const initiativeLabels = getInitiativesLabels(workspaceSlug);
+
+  const handleLabelChange = (labelIds: string[]) => {
+    updateInitiative?.(workspaceSlug, initiative.id, { label_ids: labelIds });
+  };
 
   return (
     <div
@@ -46,11 +52,10 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <MergedDateDisplay startDate={initiative.start_date} endDate={initiative.end_date} className="flex-grow" />
         </PropertyBlockWrapper>
       )}
-
       {/* state */}
       {initiative.state && (
         <PropertyBlockWrapper>
-          <InitiativesStatesDropdown
+          <InitiativeStateDropdown
             value={initiative.state}
             placeholder="State"
             buttonClassName="h-full"
@@ -58,7 +63,6 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           />
         </PropertyBlockWrapper>
       )}
-
       {/*  lead */}
       {lead && (
         <PropertyBlockWrapper>
@@ -72,7 +76,6 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <div>{lead.first_name}</div>
         </PropertyBlockWrapper>
       )}
-
       {/* projects */}
       {initiative.project_ids && initiative.project_ids.length > 0 && (
         <PropertyBlockWrapper>
@@ -80,7 +83,6 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <span className="flex-grow truncate max-w-40">{initiative.project_ids.length}</span>
         </PropertyBlockWrapper>
       )}
-
       {/* epics */}
       {initiative.epic_ids && initiative.epic_ids.length > 0 && (
         <PropertyBlockWrapper>
@@ -88,6 +90,15 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <span className="flex-grow truncate max-w-40">{initiative.epic_ids.length}</span>
         </PropertyBlockWrapper>
       )}
+      {/* labels */}
+      <PropertyBlockWrapper>
+        <InitiativeLabelDropdown
+          value={initiative.label_ids || []}
+          labels={initiativeLabels}
+          onChange={handleLabelChange}
+          placeholder=""
+        />
+      </PropertyBlockWrapper>
     </div>
   );
 });

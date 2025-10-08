@@ -444,6 +444,7 @@ export default {
       epic_update_error: "Epic-Hinzufügung zur Initiative fehlgeschlagen. Bitte versuchen Sie es später erneut.",
       state_update_success: "Initiativenstatus wurde erfolgreich aktualisiert.",
       state_update_error: "Aktualisierung des Initiativenstatus fehlgeschlagen. Bitte versuchen Sie es erneut!",
+      label_update_error: "Fehler beim Aktualisieren der Initiativenbezeichner. Bitte versuchen Sie es erneut!",
     },
     empty_state: {
       general: {
@@ -483,6 +484,22 @@ export default {
         primary_button: {
           text: "Umfang hinzufügen",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etiketten",
+        description: "Strukturieren und organisieren Sie Ihre Initiativen mit Labels.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Label löschen",
+        content:
+          "Möchten Sie {labelName} wirklich löschen? Dadurch wird das Label aus allen Initiativen und aus allen Ansichten entfernt, in denen das Label gefiltert wird.",
+      },
+      toast: {
+        delete_error: "Das Initiativen-Label konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
       },
     },
   },

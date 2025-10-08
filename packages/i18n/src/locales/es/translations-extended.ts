@@ -441,6 +441,7 @@ export default {
       epic_update_error: "Error al agregar Epic a la Iniciativa. Por favor intente más tarde.",
       state_update_success: "El estado de la iniciativa se actualizó correctamente.",
       state_update_error: "No se pudo actualizar el estado de la iniciativa. ¡Por favor, inténtelo de nuevo!",
+      label_update_error: "Error al actualizar las etiquetas de la iniciativa. ¡Por favor, inténtalo de nuevo!",
     },
     empty_state: {
       general: {
@@ -480,6 +481,22 @@ export default {
         primary_button: {
           text: "Agregar alcance",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Etiquetas",
+        description: "Estructura y organiza tus iniciativas con etiquetas.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Eliminar etiqueta",
+        content:
+          "¿Estás seguro de que deseas eliminar {labelName}? Esto eliminará la etiqueta de todas las iniciativas y de cualquier vista donde se esté filtrando la etiqueta.",
+      },
+      toast: {
+        delete_error: "No se pudo eliminar la etiqueta de la iniciativa. Por favor, inténtalo de nuevo.",
       },
     },
   },

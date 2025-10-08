@@ -441,6 +441,7 @@ export default {
       epic_update_error: "Adição de épico à Iniciativa falhou. Por favor, tente novamente mais tarde.",
       state_update_success: "O estado da iniciativa foi atualizado com sucesso.",
       state_update_error: "Falha ao atualizar o estado da iniciativa. Por favor, tente novamente!",
+      label_update_error: "Falha ao atualizar os rótulos da iniciativa. Por favor, tente novamente!",
     },
     empty_state: {
       general: {
@@ -480,6 +481,22 @@ export default {
         primary_button: {
           text: "Adicionar escopo",
         },
+      },
+    },
+    initiative_settings: {
+      labels: {
+        heading: "Rótulos",
+        description: "Estruture e organize suas iniciativas com rótulos.",
+      },
+    },
+    initiative_labels: {
+      delete_modal: {
+        title: "Excluir rótulo",
+        content:
+          "Tem certeza de que deseja excluir {labelName}? Isso removerá o rótulo de todas as iniciativas e de quaisquer visualizações onde o rótulo está sendo filtrado.",
+      },
+      toast: {
+        delete_error: "Não foi possível excluir o rótulo da iniciativa. Tente novamente.",
       },
     },
   },

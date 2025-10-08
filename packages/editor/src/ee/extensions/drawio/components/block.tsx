@@ -17,6 +17,8 @@ import { DrawioDialogWrapper } from "./wrapper";
 export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
   // props
   const { node, updateAttributes, editor, selected, extension } = props;
+  const { getDiagramSrc, getFileContent, isFlagged, onClick, logoSpinner } = extension.options;
+
   // state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +59,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
 
     const getSvgSource = async () => {
       try {
-        const url = await extension?.options.getDiagramSrc?.(imageSrc);
+        const url = await getDiagramSrc?.(imageSrc);
         setResolvedImageSrc(url);
         setDiagramError(false);
       } catch (_error) {
@@ -66,11 +68,10 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
     };
 
     getSvgSource();
-  }, [imageSrc, extension?.options, imageKey, clearLiveImageData, setDiagramError]);
+  }, [imageSrc, getDiagramSrc, imageKey, clearLiveImageData, setDiagramError]);
 
   // Load XML content for editing
   const loadXmlContent = useCallback(async (): Promise<string> => {
-    const getFileContent = extension?.options.getFileContent;
     if (!xmlSrc || !getFileContent) return "";
 
     try {
@@ -79,7 +80,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
       console.error("Error loading XML content:", error);
       return "";
     }
-  }, [xmlSrc, extension?.options]);
+  }, [xmlSrc, getFileContent]);
 
   const handleCloseModal = useCallback(() => {
     setEditingState(false);
@@ -108,11 +109,11 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
       evt.preventDefault();
       evt.stopPropagation();
 
-      if (!editor.isEditable || extension.options.isFlagged || userEditingThisDiagram) return;
+      if (!editor.isEditable || isFlagged || userEditingThisDiagram) return;
 
       // If onClick is provided from extension options, only call that and return early
-      if (extension.options.onClick) {
-        extension.options.onClick();
+      if (onClick) {
+        onClick();
         return;
       }
 
@@ -120,14 +121,14 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
       setIsModalOpen(true);
       setIsLoading(true);
     },
-    [editor.isEditable, extension.options, setEditingState, userEditingThisDiagram]
+    [editor.isEditable, isFlagged, onClick, setEditingState, userEditingThisDiagram]
   );
 
   const getClickHandler = useCallback(() => {
     if (userEditingThisDiagram) return handleBlockedClick;
-    if (extension.options.isFlagged) return undefined;
+    if (isFlagged) return undefined;
     return handleClick;
-  }, [userEditingThisDiagram, handleBlockedClick, extension.options.isFlagged, handleClick]);
+  }, [userEditingThisDiagram, handleBlockedClick, isFlagged, handleClick]);
 
   // If failed to load, show error state
   if (failedToLoadDiagram && isUploaded) {
@@ -167,7 +168,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
         {isUploaded && (liveImageData || resolvedImageSrc) ? (
           <img
             key={imageKey}
-            src={liveImageData || `${resolvedImageSrc}?t=${imageKey}`}
+            src={liveImageData || `${resolvedImageSrc}`}
             alt="Drawio diagram"
             title="Diagram"
             className={cn(
@@ -190,7 +191,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
             isEditable={editor.isEditable}
             handleDrawioButtonClick={handleClick}
             mode={mode}
-            isFlagged={extension.options.isFlagged}
+            isFlagged={isFlagged}
           />
         )}
       </div>
@@ -203,7 +204,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
             onMessage={handleMessage}
             isVisible={!isLoading}
           />
-          {isLoading && <DrawioIframeLoading LoadingComponent={extension.options.logoSpinner} />}
+          {isLoading && <DrawioIframeLoading LoadingComponent={logoSpinner} />}
         </div>
       </DrawioDialogWrapper>
     </>

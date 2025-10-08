@@ -20,9 +20,9 @@ from plane.graphql.utils.timezone import user_timezone_converter
 
 @sync_to_async
 def shared_page_access(user_id: str, workspace_slug: str, page_id: str, owner_id: str):
-    shared_pages_data = PageUser.objects.filter(
-        workspace__slug=workspace_slug, page_id=page_id
-    ).values("user_id", "access")
+    shared_pages_data = PageUser.objects.filter(workspace__slug=workspace_slug, page_id=page_id).values(
+        "user_id", "access"
+    )
     shared_pages_data = list(shared_pages_data)
 
     page_access = 0
@@ -64,6 +64,11 @@ class PageType:
     is_description_empty: bool
     is_shared: bool
     is_shared_access: int
+    sort_order: float = strawberry.field(default=65535.0)
+    moved_to_page: Optional[str]
+    moved_to_project: Optional[str]
+    external_id: Optional[str]
+    external_source: Optional[str]
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
 
@@ -82,6 +87,14 @@ class PageType:
     @strawberry.field
     def parent(self) -> int:
         return self.parent_id
+
+    @strawberry.field
+    def moved_to_page(self) -> Optional[str]:
+        return self.moved_to_page_id if self.moved_to_page_id else None
+
+    @strawberry.field
+    def moved_to_project(self) -> Optional[str]:
+        return self.moved_to_project_id if self.moved_to_project_id else None
 
     @strawberry.field
     async def projects(self) -> list[strawberry.ID]:

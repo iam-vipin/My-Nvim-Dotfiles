@@ -43,12 +43,8 @@ def get_sticky(slug: str, user_id: str, id: str) -> Optional[Sticky]:
 
 @strawberry.type
 class WorkspaceStickiesMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
-    async def create_sticky(
-        self, info: Info, slug: str, sticky_data: StickyCreateUpdateInputType
-    ) -> StickiesType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
+    async def create_sticky(self, info: Info, slug: str, sticky_data: StickyCreateUpdateInputType) -> StickiesType:
         user = info.context.user
         user_id = user.id
 
@@ -61,9 +57,7 @@ class WorkspaceStickiesMutation:
 
         return sticky
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def update_sticky(
         self,
         info: Info,
@@ -82,12 +76,8 @@ class WorkspaceStickiesMutation:
 
         return sticky_instance
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
-    async def delete_stickies(
-        self, info: Info, slug: str, stickies: List[strawberry.ID]
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
+    async def delete_stickies(self, info: Info, slug: str, stickies: List[strawberry.ID]) -> bool:
         user = info.context.user
 
         for sticky in stickies:

@@ -30,9 +30,7 @@ from plane.graphql.types.intake.comment import (
 
 @strawberry.type
 class IntakeWorkItemCommentMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_intake_work_item_comment(
         self,
         info: Info,
@@ -53,9 +51,7 @@ class IntakeWorkItemCommentMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item

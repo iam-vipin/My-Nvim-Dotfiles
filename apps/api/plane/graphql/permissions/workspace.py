@@ -51,9 +51,7 @@ class WorkspaceBasePermission(IsAuthenticated):
             return False
 
         return await sync_to_async(
-            WorkspaceMember.objects.filter(
-                workspace__slug=kwargs.get("slug"), member=self.user, is_active=True
-            ).exists,
+            WorkspaceMember.objects.filter(workspace__slug=kwargs.get("slug"), member=self.user, is_active=True).exists,
             thread_sensitive=True,
         )()
 

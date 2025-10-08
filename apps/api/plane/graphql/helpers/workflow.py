@@ -25,9 +25,7 @@ def is_project_workflow_enabled(workspace_slug: str, project_id: str):
     Check if the workflow is enabled for the project
     """
 
-    project_feature = ProjectFeature.objects.filter(
-        workspace__slug=workspace_slug, project_id=project_id
-    ).first()
+    project_feature = ProjectFeature.objects.filter(workspace__slug=workspace_slug, project_id=project_id).first()
 
     if not project_feature:
         return False
@@ -36,18 +34,12 @@ def is_project_workflow_enabled(workspace_slug: str, project_id: str):
 
 
 @sync_to_async
-def is_workflow_create_allowed(
-    workspace_slug: str, project_id: str, user_id: str, state_id: str
-):
+def is_workflow_create_allowed(workspace_slug: str, project_id: str, user_id: str, state_id: str):
     """
     Check if the workflow epic create is allowed for the project
     """
-    workflow_manager = WorkflowStateManager(
-        slug=workspace_slug, project_id=project_id, user_id=user_id
-    )
-    is_issue_creation_allowed = workflow_manager._validate_issue_creation(
-        state_id=state_id
-    )
+    workflow_manager = WorkflowStateManager(slug=workspace_slug, project_id=project_id, user_id=user_id)
+    is_issue_creation_allowed = workflow_manager._validate_issue_creation(state_id=state_id)
 
     if is_issue_creation_allowed is False:
         message = "You cannot create an epic in this state"
@@ -68,9 +60,7 @@ def is_workflow_update_allowed(
     """
     Check if the workflow epic update is allowed for the project
     """
-    workflow_state_manager = WorkflowStateManager(
-        slug=workspace_slug, project_id=project_id, user_id=user_id
-    )
+    workflow_state_manager = WorkflowStateManager(slug=workspace_slug, project_id=project_id, user_id=user_id)
     can_state_update = workflow_state_manager._validate_state_transition(
         current_state_id=current_state_id, new_state_id=new_state_id
     )

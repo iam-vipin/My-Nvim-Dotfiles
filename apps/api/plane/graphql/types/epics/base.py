@@ -143,9 +143,7 @@ class EpicType:
 
     @strawberry.field
     async def analytics(self) -> EpicAnalyticsType:
-        sub_work_items = await sync_to_async(
-            lambda: get_all_related_work_items(work_item_id=self.id)
-        )()
+        sub_work_items = await sync_to_async(lambda: get_all_related_work_items(work_item_id=self.id))()
 
         sub_work_items_count = len(sub_work_items)
 

@@ -75,39 +75,25 @@ class UserFavoriteType:
     async def entity_data(self) -> Optional[UserFavoriteEntityData]:
         # where entity_identifier is project_id and entity_type is project
         if self.entity_identifier and self.entity_type == "project":
-            project = await sync_to_async(
-                Project.objects.filter(id=self.entity_identifier).first
-            )()
+            project = await sync_to_async(Project.objects.filter(id=self.entity_identifier).first)()
             if project:
-                return UserFavoriteEntityData(
-                    id=project.id, name=project.name, logo_props=project.logo_props
-                )
+                return UserFavoriteEntityData(id=project.id, name=project.name, logo_props=project.logo_props)
             return None
         # where entity_identifier is cycle_id and entity_type is cycle
         elif self.entity_identifier and self.entity_type == "cycle":
-            cycle = await sync_to_async(
-                Cycle.objects.filter(id=self.entity_identifier).first
-            )()
+            cycle = await sync_to_async(Cycle.objects.filter(id=self.entity_identifier).first)()
             if cycle:
-                return UserFavoriteEntityData(
-                    id=cycle.id, name=cycle.name, logo_props=cycle.logo_props
-                )
+                return UserFavoriteEntityData(id=cycle.id, name=cycle.name, logo_props=cycle.logo_props)
             return None
         # where entity_identifier is module id and entity_type is module
         elif self.entity_identifier and self.entity_type == "module":
-            module = await sync_to_async(
-                Module.objects.filter(id=self.entity_identifier).first
-            )()
+            module = await sync_to_async(Module.objects.filter(id=self.entity_identifier).first)()
             if module:
-                return UserFavoriteEntityData(
-                    id=module.id, name=module.name, logo_props=module.logo_props
-                )
+                return UserFavoriteEntityData(id=module.id, name=module.name, logo_props=module.logo_props)
             return None
         # where entity_identifier is issue id and entity_type is issue
         elif self.entity_identifier and self.entity_type == "issue":
-            issue = await sync_to_async(
-                Issue.objects.filter(id=self.entity_identifier).first
-            )()
+            issue = await sync_to_async(Issue.objects.filter(id=self.entity_identifier).first)()
             if issue:
                 workitem_identifier = f"{self.project.identifier}-{issue.sequence_id}"
                 return UserFavoriteEntityData(
@@ -119,9 +105,7 @@ class UserFavoriteType:
             return None
         # where entity_identifier is issue_view id and entity_type is issue_view
         elif self.entity_identifier and self.entity_type == "view":
-            issue_view = await sync_to_async(
-                IssueView.objects.filter(id=self.entity_identifier).first
-            )()
+            issue_view = await sync_to_async(IssueView.objects.filter(id=self.entity_identifier).first)()
             if issue_view:
                 return UserFavoriteEntityData(
                     id=issue_view.id,
@@ -131,13 +115,9 @@ class UserFavoriteType:
             return None
         # where entity_identifier is page id and entity_type is page
         elif self.entity_identifier and self.entity_type == "page":
-            page = await sync_to_async(
-                Page.objects.filter(id=self.entity_identifier).first
-            )()
+            page = await sync_to_async(Page.objects.filter(id=self.entity_identifier).first)()
             if page:
-                return UserFavoriteEntityData(
-                    id=page.id, name=page.name, logo_props=page.logo_props
-                )
+                return UserFavoriteEntityData(id=page.id, name=page.name, logo_props=page.logo_props)
             return None
         # where entity_identifier and entity_type is None
         return None

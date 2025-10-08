@@ -15,12 +15,8 @@ from plane.graphql.types.epics.user_property import EpicUserPropertyType
 
 @strawberry.type
 class EpicUserPropertyQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
-    async def epic_user_property(
-        self, info: Info, slug: str, project: str
-    ) -> EpicUserPropertyType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def epic_user_property(self, info: Info, slug: str, project: str) -> EpicUserPropertyType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -30,8 +26,8 @@ class EpicUserPropertyQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        epic_user_property, _ = await sync_to_async(
-            EpicUserProperties.objects.get_or_create
-        )(workspace__slug=slug, project_id=project, user_id=user_id)
+        epic_user_property, _ = await sync_to_async(EpicUserProperties.objects.get_or_create)(
+            workspace__slug=slug, project_id=project, user_id=user_id
+        )
 
         return epic_user_property

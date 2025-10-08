@@ -24,9 +24,7 @@ from plane.graphql.types.page import (
 
 @strawberry.type
 class WorkspacePageCommentsMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_add_page_comment(
         self, info: Info, slug: str, page: str, input: PageCommentInput
     ) -> PageCommentListType:
@@ -44,9 +42,7 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_add_page_comment_reply(
         self,
         info: Info,
@@ -70,9 +66,7 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_update_page_comment(
         self,
         info: Info,
@@ -97,12 +91,8 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def workspace_resolve_page_comment(
-        self, info: Info, slug: str, page: str, comment: str
-    ) -> PageCommentType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def workspace_resolve_page_comment(self, info: Info, slug: str, page: str, comment: str) -> PageCommentType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -116,9 +106,7 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_un_resolve_page_comment(
         self, info: Info, slug: str, page: str, comment: str
     ) -> PageCommentType:
@@ -135,12 +123,8 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def workspace_delete_page_comment(
-        self, info: Info, slug: str, page: str, comment: str
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def workspace_delete_page_comment(self, info: Info, slug: str, page: str, comment: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
 
@@ -154,12 +138,8 @@ class WorkspacePageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def workspace_restore_page_comment(
-        self, info: Info, slug: str, page: str, comment: str
-    ) -> PageCommentType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def workspace_restore_page_comment(self, info: Info, slug: str, page: str, comment: str) -> PageCommentType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -176,9 +156,7 @@ class WorkspacePageCommentsMutation:
 
 @strawberry.type
 class WorkspacePageCommentReactionsMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_add_page_comment_reaction(
         self,
         info: Info,
@@ -200,9 +178,7 @@ class WorkspacePageCommentReactionsMutation:
 
         return page_comment_reaction
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_remove_page_comment_reaction(
         self,
         info: Info,

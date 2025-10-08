@@ -30,9 +30,7 @@ def page_comment_reaction_base_query(
 ) -> QuerySet:
     is_page_comment_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
 
-    base_query = PageCommentReaction.objects.filter(
-        workspace__slug=workspace_slug, comment_id=comment_id
-    )
+    base_query = PageCommentReaction.objects.filter(workspace__slug=workspace_slug, comment_id=comment_id)
 
     if reaction:
         base_query = base_query.filter(reaction=reaction)
@@ -161,18 +159,14 @@ def add_page_comment_reaction(
             validated_project_id = project.id
             comment_reaction_data["project_id"] = validated_project_id
 
-        comment_reaction_data = {
-            k: v for k, v in comment_reaction_data.items() if v is not None
-        }
+        comment_reaction_data = {k: v for k, v in comment_reaction_data.items() if v is not None}
 
         comment_reaction = PageCommentReaction.objects.create(**comment_reaction_data)
         if comment_reaction:
             return True
         return False
     except Exception as e:
-        message = (
-            e.message if hasattr(e, "message") else "Error adding page comment reaction"
-        )
+        message = e.message if hasattr(e, "message") else "Error adding page comment reaction"
         error_extensions = (
             e.error_extensions
             if hasattr(e, "error_extensions")
@@ -231,11 +225,7 @@ def remove_page_comment_reaction(
         return True
 
     except Exception as e:
-        message = (
-            e.message
-            if hasattr(e, "message")
-            else "Error removing page comment reaction"
-        )
+        message = e.message if hasattr(e, "message") else "Error removing page comment reaction"
         error_extensions = (
             e.error_extensions
             if hasattr(e, "error_extensions")

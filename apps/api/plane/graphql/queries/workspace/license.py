@@ -21,16 +21,12 @@ from plane.utils.exception_logger import log_exception
 
 @strawberry.type
 class WorkspaceLicenseQuery:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspaceLicense(self, info: Info, slug: str) -> WorkspaceLicenseType:
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
                 # Resync the workspace license
-                response = await sync_to_async(resync_workspace_license)(
-                    workspace_slug=slug
-                )
+                response = await sync_to_async(resync_workspace_license)(workspace_slug=slug)
                 return WorkspaceLicenseType(**response)
 
             else:

@@ -17,11 +17,7 @@ from plane.graphql.types.workspace import WorkspaceInviteType
 @sync_to_async
 def get_invites_by_user_email(email: str) -> list[WorkspaceInviteType]:
     try:
-        return list(
-            WorkspaceMemberInvite.objects.filter(email=email).select_related(
-                "workspace"
-            )
-        )
+        return list(WorkspaceMemberInvite.objects.filter(email=email).select_related("workspace"))
     except Exception:
         message = "Workspace invites not found"
         error_extensions = {"code": "WORKSPACE_INVITES_NOT_FOUND", "statusCode": 404}
@@ -32,9 +28,7 @@ def get_invites_by_user_email(email: str) -> list[WorkspaceInviteType]:
 @sync_to_async
 def get_user_workspace_invite(invitation_id: str, email: str) -> WorkspaceInviteType:
     try:
-        workspace_invite = WorkspaceMemberInvite.objects.get(
-            id=invitation_id, email=email
-        )
+        workspace_invite = WorkspaceMemberInvite.objects.get(id=invitation_id, email=email)
         return workspace_invite
     except WorkspaceMemberInvite.DoesNotExist:
         message = "Workspace invitation not found"
@@ -55,13 +49,9 @@ class WorkspaceInviteQuery:
 
     # Workspace invite
     @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
-    async def user_workspace_invite(
-        self, info: Info, invitation_id: str
-    ) -> WorkspaceInviteType:
+    async def user_workspace_invite(self, info: Info, invitation_id: str) -> WorkspaceInviteType:
         user = info.context.user
         user_email = user.email
 
-        workspace_invite = await get_user_workspace_invite(
-            invitation_id=invitation_id, email=user_email
-        )
+        workspace_invite = await get_user_workspace_invite(invitation_id=invitation_id, email=user_email)
         return workspace_invite

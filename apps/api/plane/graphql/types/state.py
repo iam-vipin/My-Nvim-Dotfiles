@@ -14,9 +14,9 @@ from plane.db.models import State
 
 @sync_to_async
 def get_group_states(project_id: str, state_group: str) -> list[State]:
-    states = State.objects.filter(
-        project_id=project_id, group=state_group, deleted_at__isnull=True
-    ).order_by("sequence")
+    states = State.objects.filter(project_id=project_id, group=state_group, deleted_at__isnull=True).order_by(
+        "sequence"
+    )
 
     return list(states)
 
@@ -49,9 +49,7 @@ class StateType:
             project_id = self.project_id
             state_group = self.group
 
-            group_states = await get_group_states(
-                project_id=project_id, state_group=state_group
-            )
+            group_states = await get_group_states(project_id=project_id, state_group=state_group)
 
             current_state_index = group_states.index(self) + 1
             group_states_count = len(group_states)

@@ -26,9 +26,7 @@ from plane.graphql.types.intake.comment import IntakeWorkItemCommentActivityType
 
 @strawberry.type
 class IntakeWorkItemCommentQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def intake_work_item_comments(
         self, info: Info, slug: str, project: str, intake_work_item: str
     ) -> list[IntakeWorkItemCommentActivityType]:
@@ -43,9 +41,7 @@ class IntakeWorkItemCommentQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # get the intake work item

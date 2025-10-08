@@ -22,9 +22,7 @@ from plane.graphql.helpers import get_workspace
 @sync_to_async
 def get_workspace_member(slug: str, user_id: str):
     try:
-        return WorkspaceMember.objects.get(
-            workspace__slug=slug, member_id=user_id, is_active=True
-        )
+        return WorkspaceMember.objects.get(workspace__slug=slug, member_id=user_id, is_active=True)
     except WorkspaceMember.DoesNotExist:
         return None
 
@@ -32,21 +30,24 @@ def get_workspace_member(slug: str, user_id: str):
 @sync_to_async
 def get_project_member(slug: str, project: str, user_id: str):
     try:
-        return ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project, member_id=user_id, is_active=True
-        )
+        return ProjectMember.objects.get(workspace__slug=slug, project_id=project, member_id=user_id, is_active=True)
     except ProjectMember.DoesNotExist:
         return None
+
+
+@sync_to_async
+def get_last_page_in_workspace(workspace_slug: str):
+    return (
+        Page.objects.filter(workspace__slug=workspace_slug, is_global=True, parent__isnull=True)
+        .order_by("-sort_order")
+        .first()
+    )
 
 
 @strawberry.type
 class WorkspacePageMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])])]
     )
     async def create_workspace_page(
         self,
@@ -63,6 +64,13 @@ class WorkspacePageMutation:
         if description_binary is not None:
             description_binary = base64.b64decode(description_binary)
 
+        sort_order = Page.DEFAULT_SORT_ORDER
+
+        # get the last page in the workspace
+        last_page = await get_last_page_in_workspace(workspace_slug=slug)
+        if last_page:
+            sort_order = last_page.sort_order + sort_order
+
         page = await sync_to_async(Page.objects.create)(
             workspace=workspace,
             name=name,
@@ -71,16 +79,14 @@ class WorkspacePageMutation:
             logo_props=logo_props,
             access=access,
             owned_by=info.context.user,
+            sort_order=sort_order,
+            is_global=True,
         )
 
         return page
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])])]
     )
     async def updateWorkspacePage(
         self,

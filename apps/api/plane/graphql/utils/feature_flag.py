@@ -12,13 +12,8 @@ from plane.utils.exception_logger import log_exception
 
 
 @sync_to_async
-def validate_feature_flag(
-    slug: str, user_id: str, feature_key: str, default_value: bool = False
-):
-    if (
-        settings.FEATURE_FLAG_SERVER_BASE_URL
-        and settings.FEATURE_FLAG_SERVER_AUTH_TOKEN
-    ):
+def validate_feature_flag(slug: str, user_id: str, feature_key: str, default_value: bool = False):
+    if settings.FEATURE_FLAG_SERVER_BASE_URL and settings.FEATURE_FLAG_SERVER_AUTH_TOKEN:
         try:
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
             json = {"workspace_slug": slug, "user_id": user_id, "flag_key": feature_key}
@@ -41,13 +36,8 @@ def validate_feature_flag(
     return default_value
 
 
-def _validate_feature_flag(
-    workspace_slug: str, user_id: str, feature_key: str, default_value: bool = False
-):
-    if (
-        settings.FEATURE_FLAG_SERVER_BASE_URL
-        and settings.FEATURE_FLAG_SERVER_AUTH_TOKEN
-    ):
+def _validate_feature_flag(workspace_slug: str, user_id: str, feature_key: str, default_value: bool = False):
+    if settings.FEATURE_FLAG_SERVER_BASE_URL and settings.FEATURE_FLAG_SERVER_AUTH_TOKEN:
         try:
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
             json = {

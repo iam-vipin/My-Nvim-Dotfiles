@@ -89,17 +89,13 @@ def create_asset(
     if entity_type != ProjectAssetEnumType.PROJECT_COVER.value:
         asset_fields["project_id"] = project_id
 
-    return FileAsset.objects.create(
-        **asset_fields, **get_entity_id_field(entity_type, entity_identifier)
-    )
+    return FileAsset.objects.create(**asset_fields, **get_entity_id_field(entity_type, entity_identifier))
 
 
 @strawberry.type
 class ProjectAssetMutation:
     # asset entity create
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def create_project_asset(
         self,
         info: Info,
@@ -188,9 +184,7 @@ class ProjectAssetMutation:
         )
 
     # asset entity update
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def update_project_asset(
         self,
         info: Info,
@@ -218,15 +212,11 @@ class ProjectAssetMutation:
         return True
 
     # asset entity delete
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def delete_project_asset(
         self, info: Info, slug: str, project: strawberry.ID, asset_id: strawberry.ID
     ) -> bool:
-        asset = await sync_to_async(FileAsset.objects.get)(
-            workspace__slug=slug, project_id=project, id=asset_id
-        )
+        asset = await sync_to_async(FileAsset.objects.get)(workspace__slug=slug, project_id=project, id=asset_id)
 
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -237,9 +227,7 @@ class ProjectAssetMutation:
         return True
 
     # asset entity update
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def update_project_asset_entity(
         self,
         info: Info,

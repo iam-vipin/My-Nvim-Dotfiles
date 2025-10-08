@@ -38,11 +38,7 @@ from plane.graphql.utils.roles import Roles
 @strawberry.type
 class ProjectMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[WorkspacePermission([Roles.ADMIN, Roles.MEMBER])])]
     )
     async def createProject(
         self,
@@ -82,24 +78,16 @@ class ProjectMutation:
             raise GraphQLError(message, extensions=error_extensions)
 
         # add the user as a admin of the project
-        _ = await sync_to_async(ProjectMember.objects.create)(
-            project=project, member=info.context.user, role=20
-        )
+        _ = await sync_to_async(ProjectMember.objects.create)(project=project, member=info.context.user, role=20)
         # creating the issue property for the user
-        _ = await sync_to_async(IssueUserProperty.objects.create)(
-            project_id=project.id, user_id=info.context.user.id
-        )
+        _ = await sync_to_async(IssueUserProperty.objects.create)(project_id=project.id, user_id=info.context.user.id)
 
         # if lead was passed we can add the user as a lead
         if project_lead:
             # add the user as a admin of the project
-            _ = await sync_to_async(ProjectMember.objects.create)(
-                project=project, member_id=project_lead, role=20
-            )
+            _ = await sync_to_async(ProjectMember.objects.create)(project=project, member_id=project_lead, role=20)
             # creating the issue property for the user
-            _ = await sync_to_async(IssueUserProperty.objects.create)(
-                project_id=project.id, user_id=project_lead
-            )
+            _ = await sync_to_async(IssueUserProperty.objects.create)(project_id=project.id, user_id=project_lead)
 
         # Default states
         states = [
@@ -154,15 +142,11 @@ class ProjectMutation:
         )
 
         # Project feature
-        _ = await sync_to_async(ProjectFeature.objects.create)(
-            workspace_id=workspace.id, project_id=project.id
-        )
+        _ = await sync_to_async(ProjectFeature.objects.create)(workspace_id=workspace.id, project_id=project.id)
 
         return project
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def updateProject(
         self,
         id: strawberry.ID,
@@ -202,9 +186,7 @@ class ProjectMutation:
         await sync_to_async(project.save)()
         return project
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectAdminPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectAdminPermission()])])
     async def deleteProject(self, id: strawberry.ID) -> bool:
         project = await sync_to_async(Project.objects.get)(id=id)
         await sync_to_async(project.delete)()
@@ -213,12 +195,8 @@ class ProjectMutation:
 
 @strawberry.type
 class ProjectInviteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
-    async def inviteProjectMembers(
-        self, info: Info, slug: str, project: strawberry.ID, emails: JSON
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
+    async def inviteProjectMembers(self, info: Info, slug: str, project: strawberry.ID, emails: JSON) -> bool:
         project = await sync_to_async(Project.objects.get)(id=project)
 
         # create a bulk create to send the project member invitation
@@ -232,9 +210,7 @@ class ProjectInviteMutation:
 
 @strawberry.type
 class JoinProjectMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def joinProject(self, info: Info, slug: str, project: strawberry.ID) -> bool:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         project = await sync_to_async(Project.objects.get)(id=project)
@@ -279,12 +255,8 @@ class JoinProjectMutation:
 
 @strawberry.type
 class ProjectFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoriteProject(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def favoriteProject(self, info: Info, slug: str, project: strawberry.ID) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=project,
             entity_type="project",
@@ -293,12 +265,8 @@ class ProjectFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoriteProject(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unFavoriteProject(self, info: Info, slug: str, project: strawberry.ID) -> bool:
         project_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=project,
             entity_type="project",

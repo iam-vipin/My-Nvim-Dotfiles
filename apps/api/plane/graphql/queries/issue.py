@@ -45,9 +45,7 @@ from plane.graphql.utils.work_item_filters import work_item_filters
 # issues information query
 @strawberry.type
 class IssuesInformationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issuesInformation(
         self,
         info: Info,
@@ -98,15 +96,9 @@ class IssuesInformationQuery:
         )
 
         issue_information = IssuesInformationType(
-            all=IssuesInformationObjectType(
-                totalIssues=all_issue_count, groupInfo=all_issue_group_info
-            ),
-            active=IssuesInformationObjectType(
-                totalIssues=active_issue_count, groupInfo=active_issue_group_info
-            ),
-            backlog=IssuesInformationObjectType(
-                totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info
-            ),
+            all=IssuesInformationObjectType(totalIssues=all_issue_count, groupInfo=all_issue_group_info),
+            active=IssuesInformationObjectType(totalIssues=active_issue_count, groupInfo=active_issue_group_info),
+            backlog=IssuesInformationObjectType(totalIssues=backlog_issue_count, groupInfo=backlog_issue_group_info),
         )
 
         # Background task to update recent visited project
@@ -125,9 +117,7 @@ class IssuesInformationQuery:
 # issues query
 @strawberry.type
 class IssueQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issues(
         self,
         info: Info,
@@ -165,12 +155,8 @@ class IssueQuery:
 
         return paginate(results_object=issues, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def issue(
-        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
-    ) -> IssuesType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def issue(self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID) -> IssuesType:
         try:
             user = info.context.user
             user_id = str(user.id)
@@ -214,9 +200,7 @@ class IssueQuery:
 
 @strawberry.type
 class RecentIssuesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def recent_issues(self, info: Info, slug: str) -> list[IssuesType]:
         user = info.context.user
         user_id = str(user.id)
@@ -238,9 +222,9 @@ class RecentIssuesQuery:
 
         # Fetch the actual issues using the filtered issue IDs
         issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(workspace__slug=slug, pk__in=issue_ids).filter(
-                project_teamspace_filter.query
-            )[:5]
+            Issue.issue_objects.filter(workspace__slug=slug, pk__in=issue_ids).filter(project_teamspace_filter.query)[
+                :5
+            ]
         )
 
         return issues
@@ -248,12 +232,8 @@ class RecentIssuesQuery:
 
 @strawberry.type
 class IssueUserPropertyQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def issue_user_properties(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> IssueUserPropertyType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def issue_user_properties(self, info: Info, slug: str, project: strawberry.ID) -> IssueUserPropertyType:
         user = info.context.user
 
         def get_issue_user_property():
@@ -269,9 +249,7 @@ class IssueUserPropertyQuery:
 
 @strawberry.type
 class IssuePropertiesActivityQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issue_property_activities(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssuePropertyActivityType]:
@@ -283,9 +261,7 @@ class IssuePropertiesActivityQuery:
             workspace_slug=slug,
         )
         issue_activities = await sync_to_async(list)(
-            IssueActivity.objects.filter(
-                issue_id=issue, project_id=project, workspace__slug=slug
-            )
+            IssueActivity.objects.filter(issue_id=issue, project_id=project, workspace__slug=slug)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                 workspace__slug=slug,
@@ -301,9 +277,7 @@ class IssuePropertiesActivityQuery:
 
 @strawberry.type
 class IssueCommentActivityQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issue_comment_activities(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueCommentActivityType]:
@@ -315,9 +289,7 @@ class IssueCommentActivityQuery:
             workspace_slug=slug,
         )
         issue_comments = await sync_to_async(list)(
-            IssueComment.objects.filter(
-                issue_id=issue, project_id=project, workspace__slug=slug
-            )
+            IssueComment.objects.filter(issue_id=issue, project_id=project, workspace__slug=slug)
             .filter(project_teamspace_filter.query)
             .distinct()
             .order_by("created_at")
@@ -336,9 +308,7 @@ class IssueCommentActivityQuery:
 # User profile issues
 @strawberry.type
 class WorkspaceIssuesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_issues(
         self,
         info: Info,
@@ -370,12 +340,8 @@ class WorkspaceIssuesQuery:
 
 @strawberry.type
 class IssueTypesTypeQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def issueTypes(self, info: Info, slug: str) -> list[IssueTypesType]:
-        issue_types = await sync_to_async(list)(
-            IssueType.objects.filter(workspace__slug=slug).distinct()
-        )
+        issue_types = await sync_to_async(list)(IssueType.objects.filter(workspace__slug=slug).distinct())
 
         return issue_types

@@ -16,9 +16,7 @@ from plane.db.models import Workspace, UserFavorite
 
 @strawberry.type
 class UserFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def createUserFavorite(
         self,
         info: Info,
@@ -37,12 +35,8 @@ class UserFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def deleteUserFavorite(
-        self, info: Info, slug: str, favorite: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def deleteUserFavorite(self, info: Info, slug: str, favorite: strawberry.ID) -> bool:
         user_favorite = await sync_to_async(UserFavorite.objects.get)(
             pk=favorite, user=info.context.user, workspace__slug=slug
         )

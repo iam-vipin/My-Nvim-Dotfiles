@@ -64,9 +64,7 @@ def construct_catch_up_activity(
     notification_updated_at = notification_activity.get("updated_at", None)
     notification_data = notification_activity.get("data", None)
 
-    workitem_activity = (
-        notification_data.get("issue_activity", None) if notification_data else None
-    )
+    workitem_activity = notification_data.get("issue_activity", None) if notification_data else None
     if workitem_activity is not None:
         activity_id = workitem_activity.get("id", None)
         activity_updated_at = notification_updated_at or None
@@ -85,9 +83,7 @@ def work_item_subquery(entity_identifier: OuterRef, field: str) -> QuerySet:
     return Issue.all_objects.filter(id=entity_identifier).values(field)[:1]
 
 
-def notification_subquery(
-    entity_identifier: OuterRef, order_by: str = "updated_at"
-) -> QuerySet:
+def notification_subquery(entity_identifier: OuterRef, order_by: str = "updated_at") -> QuerySet:
     return (
         Notification.objects.filter(entity_identifier=entity_identifier)
         .filter(read_at__isnull=True)
@@ -97,13 +93,9 @@ def notification_subquery(
     )
 
 
-def get_catch_ups(
-    workspace_slug: str, user_id: str, entity_identifier: Optional[str] = None
-) -> list[CatchUpType]:
+def get_catch_ups(workspace_slug: str, user_id: str, entity_identifier: Optional[str] = None) -> list[CatchUpType]:
     # Teamspace Filter
-    project_teamspace_filter = project_member_filter_via_teamspaces(
-        user_id=user_id, workspace_slug=workspace_slug
-    )
+    project_teamspace_filter = project_member_filter_via_teamspaces(user_id=user_id, workspace_slug=workspace_slug)
 
     notifications = (
         Notification.objects.filter(project_teamspace_filter.query)
@@ -214,9 +206,7 @@ def get_catch_ups(
                 )
 
     catch_ups.sort(
-        key=lambda x: datetime.fromisoformat(x.last_unread.created_at).timestamp()
-        if x.last_unread.created_at
-        else 0,
+        key=lambda x: datetime.fromisoformat(x.last_unread.created_at).timestamp() if x.last_unread.created_at else 0,
         reverse=True,
     )
 

@@ -10,48 +10,30 @@ pattern = re.compile(r"\d+_(weeks|months)$")
 
 
 # Get the 2_weeks, 3_months
-def string_date_filter(
-    intake_work_item_filter, duration, subsequent, term, date_filter, offset
-):
+def string_date_filter(intake_work_item_filter, duration, subsequent, term, date_filter, offset):
     now = timezone.now().date()
     if term == "months":
         if subsequent == "after":
             if offset == "fromnow":
-                intake_work_item_filter[f"{date_filter}__gte"] = now + relativedelta(
-                    months=duration
-                )
+                intake_work_item_filter[f"{date_filter}__gte"] = now + relativedelta(months=duration)
             else:
-                intake_work_item_filter[f"{date_filter}__gte"] = now - relativedelta(
-                    months=duration
-                )
+                intake_work_item_filter[f"{date_filter}__gte"] = now - relativedelta(months=duration)
         else:
             if offset == "fromnow":
-                intake_work_item_filter[f"{date_filter}__lte"] = now + relativedelta(
-                    months=duration
-                )
+                intake_work_item_filter[f"{date_filter}__lte"] = now + relativedelta(months=duration)
             else:
-                intake_work_item_filter[f"{date_filter}__lte"] = now - relativedelta(
-                    months=duration
-                )
+                intake_work_item_filter[f"{date_filter}__lte"] = now - relativedelta(months=duration)
     if term == "weeks":
         if subsequent == "after":
             if offset == "fromnow":
-                intake_work_item_filter[f"{date_filter}__gte"] = now + relativedelta(
-                    weeks=duration
-                )
+                intake_work_item_filter[f"{date_filter}__gte"] = now + relativedelta(weeks=duration)
             else:
-                intake_work_item_filter[f"{date_filter}__gte"] = now - relativedelta(
-                    weeks=duration
-                )
+                intake_work_item_filter[f"{date_filter}__gte"] = now - relativedelta(weeks=duration)
         else:
             if offset == "fromnow":
-                intake_work_item_filter[f"{date_filter}__lte"] = now + relativedelta(
-                    weeks=duration
-                )
+                intake_work_item_filter[f"{date_filter}__lte"] = now + relativedelta(weeks=duration)
             else:
-                intake_work_item_filter[f"{date_filter}__lte"] = now - relativedelta(
-                    weeks=duration
-                )
+                intake_work_item_filter[f"{date_filter}__lte"] = now - relativedelta(weeks=duration)
 
 
 def date_filter(intake_work_item_filter, date_term, queries):

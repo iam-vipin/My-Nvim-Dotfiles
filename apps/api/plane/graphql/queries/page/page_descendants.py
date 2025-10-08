@@ -51,9 +51,7 @@ def pages_with_ids(user, slug, page_ids, project=None, filters=None) -> list[Pag
             related_field="projects__id",
             query=page_base_query,
         )
-        page_query = page_query.filter(projects__id=project).filter(
-            project_teamspace_filter.query
-        )
+        page_query = page_query.filter(projects__id=project).filter(project_teamspace_filter.query)
 
     if filters:
         page_query = page_query.filter(**filters)
@@ -66,9 +64,7 @@ def pages_with_ids(user, slug, page_ids, project=None, filters=None) -> list[Pag
 # workspace parent pages
 @strawberry.type
 class WorkspaceNestedParentPagesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspace_nested_parent_pages(
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -79,9 +75,7 @@ class WorkspaceNestedParentPagesQuery:
         if not parent_page_ids:
             return []
 
-        pages = await pages_with_ids(
-            user=user, slug=slug, project=None, page_ids=parent_page_ids
-        )
+        pages = await pages_with_ids(user=user, slug=slug, project=None, page_ids=parent_page_ids)
 
         return pages
 
@@ -89,9 +83,7 @@ class WorkspaceNestedParentPagesQuery:
 # workspace children pages
 @strawberry.type
 class WorkspaceNestedChildPagesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def workspace_nested_child_pages(
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -104,9 +96,7 @@ class WorkspaceNestedChildPagesQuery:
 
         child_page_ids.append(str(page))
 
-        pages = await pages_with_ids(
-            user=user, slug=slug, project=None, page_ids=child_page_ids
-        )
+        pages = await pages_with_ids(user=user, slug=slug, project=None, page_ids=child_page_ids)
 
         return pages
 
@@ -114,9 +104,7 @@ class WorkspaceNestedChildPagesQuery:
 # parent pages
 @strawberry.type
 class NestedParentPagesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def nested_parent_pages(
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -127,9 +115,7 @@ class NestedParentPagesQuery:
         if not parent_page_ids:
             return []
 
-        pages = await pages_with_ids(
-            user=user, slug=slug, project=project, page_ids=parent_page_ids
-        )
+        pages = await pages_with_ids(user=user, slug=slug, project=project, page_ids=parent_page_ids)
 
         return pages
 
@@ -137,9 +123,7 @@ class NestedParentPagesQuery:
 # children pages
 @strawberry.type
 class NestedChildPagesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def nested_child_pages(
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
@@ -152,8 +136,6 @@ class NestedChildPagesQuery:
 
         child_page_ids.append(str(page))
 
-        pages = await pages_with_ids(
-            user=user, slug=slug, project=project, page_ids=child_page_ids
-        )
+        pages = await pages_with_ids(user=user, slug=slug, project=project, page_ids=child_page_ids)
 
         return pages

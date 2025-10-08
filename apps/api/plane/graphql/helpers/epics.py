@@ -57,9 +57,7 @@ def epic_base_query(
 
     # project filters
     if project_id:
-        epic_base_query = epic_base_query.filter(project_id=project_id).filter(
-            project__archived_at__isnull=True
-        )
+        epic_base_query = epic_base_query.filter(project_id=project_id).filter(project__archived_at__isnull=True)
 
     # project member filters
     if user_id:
@@ -67,17 +65,13 @@ def epic_base_query(
             user_id=user_id,
             workspace_slug=workspace_slug,
         )
-        epic_base_query = epic_base_query.filter(
-            project_teamspace_filter.query
-        ).distinct()
+        epic_base_query = epic_base_query.filter(project_teamspace_filter.query).distinct()
 
     return epic_base_query
 
 
 @sync_to_async
-def is_epic_feature_flagged(
-    user_id: str, workspace_slug: str, raise_exception: bool = True
-):
+def is_epic_feature_flagged(user_id: str, workspace_slug: str, raise_exception: bool = True):
     try:
         is_feature_flagged = _validate_feature_flag(
             user_id=user_id,
@@ -105,16 +99,12 @@ def is_epic_feature_flagged(
 
 
 @sync_to_async
-def is_project_epics_enabled(
-    workspace_slug: str, project_id: str, raise_exception: bool = True
-):
+def is_project_epics_enabled(workspace_slug: str, project_id: str, raise_exception: bool = True):
     """
     Check if the epic feature flag is enabled for the workspace and project
     """
     try:
-        project_feature = ProjectFeature.objects.filter(
-            workspace__slug=workspace_slug, project_id=project_id
-        ).first()
+        project_feature = ProjectFeature.objects.filter(workspace__slug=workspace_slug, project_id=project_id).first()
 
         if not project_feature.is_epic_enabled:
             if raise_exception:
@@ -168,9 +158,7 @@ def get_project_epics(
     Get all epics for the given project
     """
 
-    base_query = epic_base_query(
-        workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
-    )
+    base_query = epic_base_query(workspace_slug=workspace_slug, project_id=project_id, user_id=user_id)
 
     epics = (
         base_query.select_related("workspace", "project", "state")
@@ -198,9 +186,7 @@ def get_epic(workspace_slug: str, project_id: str, epic_id: str):
         raise GraphQLError(message, extensions=error_extensions)
 
 
-def get_epic_stats_count(
-    workspace_slug: str, project_id: str, epic: str
-) -> EpicStatsType:
+def get_epic_stats_count(workspace_slug: str, project_id: str, epic: str) -> EpicStatsType:
     sub_work_items_count = Issue.objects.filter(
         workspace__slug=workspace_slug,
         project_id=project_id,
@@ -210,9 +196,7 @@ def get_epic_stats_count(
         entity_type=FileAssetEntityType.ISSUE_ATTACHMENT.value,
         issue_id=epic,
     ).count()
-    relations_count = IssueRelation.objects.filter(
-        Q(issue_id=epic) | Q(related_issue_id=epic)
-    ).count()
+    relations_count = IssueRelation.objects.filter(Q(issue_id=epic) | Q(related_issue_id=epic)).count()
     links_count = IssueLink.objects.filter(issue_id=epic).count()
 
     return EpicStatsType(
@@ -224,9 +208,5 @@ def get_epic_stats_count(
 
 
 @sync_to_async
-def get_epic_stats_count_async(
-    workspace_slug: str, project_id: str, epic: str
-) -> EpicStatsType:
-    return get_epic_stats_count(
-        workspace_slug=workspace_slug, project_id=project_id, epic=epic
-    )
+def get_epic_stats_count_async(workspace_slug: str, project_id: str, epic: str) -> EpicStatsType:
+    return get_epic_stats_count(workspace_slug=workspace_slug, project_id=project_id, epic=epic)

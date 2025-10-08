@@ -18,9 +18,7 @@ from plane.graphql.permissions.workspace import IsAuthenticated
 @sync_to_async
 def get_workspace(user):
     try:
-        return Workspace.objects.filter(
-            workspace_member__member=user, workspace_member__is_active=True
-        ).first()
+        return Workspace.objects.filter(workspace_member__member=user, workspace_member__is_active=True).first()
     except Exception:
         return None
 
@@ -28,9 +26,7 @@ def get_workspace(user):
 @strawberry.type
 class userInformationQuery:
     @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
-    async def userInformation(
-        self, info: Info, device_id: Optional[str] = None
-    ) -> UserInformationType:
+    async def userInformation(self, info: Info, device_id: Optional[str] = None) -> UserInformationType:
         user = info.context.user
 
         profile = await sync_to_async(Profile.objects.get)(user=user)
@@ -54,9 +50,7 @@ class userInformationQuery:
         device_information = None
         if device_id is not None:
             try:
-                device_information = await sync_to_async(Device.objects.get)(
-                    user=user, device_id=device_id
-                )
+                device_information = await sync_to_async(Device.objects.get)(user=user, device_id=device_id)
             except Exception:
                 device_information = None
 

@@ -20,9 +20,7 @@ from plane.graphql.utils.paginator import paginate
 
 @strawberry.type
 class SubIssuesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def sub_issues(
         self,
         info: Info,

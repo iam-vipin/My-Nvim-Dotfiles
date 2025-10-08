@@ -46,12 +46,8 @@ from plane.graphql.utils.workflow import WorkflowStateManager
 
 @sync_to_async
 def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
-    workflow_manager = WorkflowStateManager(
-        user_id=user_id, slug=slug, project_id=project_id
-    )
-    is_issue_creation_allowed = workflow_manager._validate_issue_creation(
-        state_id=state_id
-    )
+    workflow_manager = WorkflowStateManager(user_id=user_id, slug=slug, project_id=project_id)
+    is_issue_creation_allowed = workflow_manager._validate_issue_creation(state_id=state_id)
 
     if is_issue_creation_allowed is False:
         message = "You cannot create an issue in this state"
@@ -62,12 +58,8 @@ def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
 
 
 @sync_to_async
-def validate_workflow_state_issue_update(
-    user_id, slug, project_id, current_state_id, new_state_id
-):
-    workflow_state_manager = WorkflowStateManager(
-        user_id=user_id, slug=slug, project_id=project_id
-    )
+def validate_workflow_state_issue_update(user_id, slug, project_id, current_state_id, new_state_id):
+    workflow_state_manager = WorkflowStateManager(user_id=user_id, slug=slug, project_id=project_id)
     can_state_update = workflow_state_manager._validate_state_transition(
         current_state_id=current_state_id, new_state_id=new_state_id
     )
@@ -82,9 +74,7 @@ def validate_workflow_state_issue_update(
 
 @strawberry.type
 class IssueMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def createIssue(
         self,
         info: Info,
@@ -144,9 +134,7 @@ class IssueMutation:
             project_id=project,
             priority=priority,
             state_id=state,
-            description_html=descriptionHtml
-            if descriptionHtml is not None
-            else "<p></p>",
+            description_html=descriptionHtml if descriptionHtml is not None else "<p></p>",
             parent_id=parent,
             estimate_point_id=estimatePoint,
             start_date=startDate,
@@ -246,9 +234,7 @@ class IssueMutation:
                 current_instance=json.dumps(
                     {
                         "updated_cycle_issues": [],
-                        "created_cycle_issues": serializers.serialize(
-                            "json", [created_cycle]
-                        ),
+                        "created_cycle_issues": serializers.serialize("json", [created_cycle]),
                     }
                 ),
                 epoch=int(timezone.now().timestamp()),
@@ -295,9 +281,7 @@ class IssueMutation:
 
         return issue
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def updateIssue(
         self,
         info: Info,
@@ -432,15 +416,9 @@ class IssueMutation:
 
         return issue
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
-    async def deleteIssue(
-        self, info: Info, slug: str, project: str, issue: str
-    ) -> bool:
-        issue = await sync_to_async(Issue.issue_objects.get)(
-            id=issue, project_id=project, workspace__slug=slug
-        )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
+    async def deleteIssue(self, info: Info, slug: str, project: str, issue: str) -> bool:
+        issue = await sync_to_async(Issue.issue_objects.get)(id=issue, project_id=project, workspace__slug=slug)
 
         if issue.created_by_id != info.context.user.id:
             raise Exception("You are not authorized to delete this issue")
@@ -466,9 +444,7 @@ class IssueMutation:
 
 @strawberry.type
 class IssueUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def update_user_properties(
         self,
         info: Info,
@@ -491,23 +467,15 @@ class IssueUserPropertyMutation:
 
 @strawberry.type
 class IssueSubscriptionMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def subscribeIssue(
-        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def subscribeIssue(self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID) -> bool:
         issue = await sync_to_async(IssueSubscriber.objects.create)(
             issue_id=issue, project_id=project, subscriber=info.context.user
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unSubscribeIssue(
-        self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unSubscribeIssue(self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID) -> bool:
         issue_subscriber = await sync_to_async(IssueSubscriber.objects.get)(
             issue_id=issue,
             subscriber=info.context.user,

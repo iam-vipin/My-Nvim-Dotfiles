@@ -71,10 +71,7 @@ async def issue_information_query_execute(
         workspace_slug=slug,
     )
     issue_query = (
-        issue_query.filter(project_teamspace_filter.query)
-        .distinct()
-        .filter(**filters)
-        .order_by(orderBy, "-created_at")
+        issue_query.filter(project_teamspace_filter.query).distinct().filter(**filters).order_by(orderBy, "-created_at")
     )
 
     # Get the count and group by information

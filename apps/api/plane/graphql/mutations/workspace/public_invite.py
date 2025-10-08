@@ -13,9 +13,9 @@ from plane.db.models import WorkspaceMemberInvite
 @sync_to_async
 def get_invitation(invitation_id: str, email: str) -> WorkspaceMemberInvite:
     try:
-        workspace_invitation = WorkspaceMemberInvite.objects.filter(
-            id=invitation_id, email=email
-        ).select_related("workspace")
+        workspace_invitation = WorkspaceMemberInvite.objects.filter(id=invitation_id, email=email).select_related(
+            "workspace"
+        )
 
         return workspace_invitation.first()
     except Exception:
@@ -65,18 +65,12 @@ def update_workspace_invitations(
 @strawberry.type
 class PublicWorkspaceInviteMutation:
     @strawberry.mutation()
-    async def accept_public_workspace_invite(
-        self, info: Info, invitation_id: str, email: str
-    ) -> bool:
+    async def accept_public_workspace_invite(self, info: Info, invitation_id: str, email: str) -> bool:
         # Get the workspace invitations
-        workspace_invitation = await get_invitation(
-            invitation_id=invitation_id, email=email
-        )
+        workspace_invitation = await get_invitation(invitation_id=invitation_id, email=email)
 
         # Validate the invitation acceptance
-        is_workspace_invitation_valid = await validate_invitation_acceptance(
-            workspace_invitation=workspace_invitation
-        )
+        is_workspace_invitation_valid = await validate_invitation_acceptance(workspace_invitation=workspace_invitation)
         if not is_workspace_invitation_valid:
             return False
 

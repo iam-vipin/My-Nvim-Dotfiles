@@ -15,12 +15,8 @@ from plane.graphql.types.cycle import CycleUserPropertyType
 
 @strawberry.type
 class CycleFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoriteCycle(
-        self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def favoriteCycle(self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=cycle,
             entity_type="cycle",
@@ -29,12 +25,8 @@ class CycleFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoriteCycle(
-        self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unFavoriteCycle(self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID) -> bool:
         cycle_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=cycle,
             entity_type="cycle",
@@ -49,9 +41,7 @@ class CycleFavoriteMutation:
 
 @strawberry.type
 class CycleIssueUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def updateCycleUserProperties(
         self,
         info: Info,

@@ -17,9 +17,7 @@ from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.link import EpicLinkType
 
 
-def epic_link_base_query(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
-):
+def epic_link_base_query(workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str):
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
         workspace_slug=workspace_slug,
@@ -34,9 +32,7 @@ def epic_link_base_query(
 
 
 @sync_to_async
-def get_epic_links(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
-):
+def get_epic_links(workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str):
     base_query = epic_link_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
@@ -51,9 +47,7 @@ def get_epic_links(
 
 
 @sync_to_async
-def get_epic_link(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, link_id: str
-):
+def get_epic_link(workspace_id: str, project_id: str, epic_id: str, user_id: str, link_id: str):
     base_query = epic_link_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
@@ -73,12 +67,8 @@ def get_epic_link(
 
 @strawberry.type
 class EpicLinkQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_links(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> list[EpicLinkType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_links(self, info: Info, slug: str, project: str, epic: str) -> list[EpicLinkType]:
         user = info.context.user
         user_id = str(user.id)
 
@@ -102,12 +92,8 @@ class EpicLinkQuery:
 
         return epic_links
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_link(
-        self, info: Info, slug: str, project: str, epic: str, link: str
-    ) -> EpicLinkType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_link(self, info: Info, slug: str, project: str, epic: str, link: str) -> EpicLinkType:
         user = info.context.user
         user_id = str(user.id)
 

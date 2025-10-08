@@ -30,13 +30,7 @@ from plane.graphql.types.issues.relation import WorkItemRelationTypes
 @strawberry.type
 class IssueRelationMutation:
     # adding issue relation
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def addIssueRelation(
         self,
         info: Info,
@@ -46,9 +40,7 @@ class IssueRelationMutation:
         relation_type: str,
         related_issue_ids: list[strawberry.ID],
     ) -> bool:
-        workspace_details = await sync_to_async(
-            Workspace.objects.filter(slug=slug).first
-        )()
+        workspace_details = await sync_to_async(Workspace.objects.filter(slug=slug).first)()
         if not workspace_details:
             return False
 
@@ -95,17 +87,13 @@ class IssueRelationMutation:
         ]
 
         await sync_to_async(
-            lambda: IssueRelation.objects.bulk_create(
-                issue_relations, batch_size=10, ignore_conflicts=True
-            )
+            lambda: IssueRelation.objects.bulk_create(issue_relations, batch_size=10, ignore_conflicts=True)
         )()
 
         # Track the issue relation activity
         issue_activity.delay(
             type="issue_relation.activity.created",
-            requested_data=json.dumps(
-                {"issues": related_issue_ids, "relation_type": relation_type}
-            ),
+            requested_data=json.dumps({"issues": related_issue_ids, "relation_type": relation_type}),
             actor_id=str(info.context.user.id),
             issue_id=str(issue),
             project_id=str(project),
@@ -118,13 +106,7 @@ class IssueRelationMutation:
         return True
 
     # removing issue relation
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def removeIssueRelation(
         self,
         info: Info,
@@ -178,16 +160,12 @@ class IssueRelationMutation:
         await sync_to_async(lambda: issue_relation.delete())()
 
         # current issue relation
-        current_issue_relation_instance = (
-            await convert_issue_relation_properties_to_activity_dict(issue_relation)
-        )
+        current_issue_relation_instance = await convert_issue_relation_properties_to_activity_dict(issue_relation)
 
         # Track the issue relation activity
         issue_activity.delay(
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps(
-                {"related_issue": related_issue, "relation_type": relation_type}
-            ),
+            requested_data=json.dumps({"related_issue": related_issue, "relation_type": relation_type}),
             actor_id=str(info.context.user.id),
             issue_id=str(issue),
             project_id=str(project),

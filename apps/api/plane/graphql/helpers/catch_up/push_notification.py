@@ -32,9 +32,7 @@ def convert_catch_up_type_enum_to_str(
 
 
 # Push Notification Catch Up
-def push_notification_catch_up(
-    workspace_slug: str, user_id: str, entity_identifier: str
-) -> Optional[str]:
+def push_notification_catch_up(workspace_slug: str, user_id: str, entity_identifier: str) -> Optional[str]:
     catch_ups = get_catch_ups(workspace_slug, user_id, entity_identifier)
     catch_up = catch_ups[0] if catch_ups and len(catch_ups) > 0 else None
 

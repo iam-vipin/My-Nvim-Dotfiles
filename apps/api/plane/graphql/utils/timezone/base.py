@@ -76,9 +76,7 @@ def get_timezone_list():
             ("Montevideo", "America/Montevideo"),
             ("Falkland Islands", "Atlantic/Stanley"),
         ],
-        "-0200": [
-            ("South Georgia and the South Sandwich Islands", "Atlantic/South_Georgia")
-        ],
+        "-0200": [("South Georgia and the South Sandwich Islands", "Atlantic/South_Georgia")],
         "-0100": [
             ("Azores", "Atlantic/Azores"),
             ("Cape Verde Islands", "Atlantic/Cape_Verde"),
@@ -212,10 +210,7 @@ def get_timezone_list():
                 total_seconds = int(current_utc_offset.total_seconds())
                 hours_offset = total_seconds // 3600
                 minutes_offset = abs(total_seconds % 3600) // 60
-                gmt_offset = (
-                    f"GMT{'+' if hours_offset >= 0 else '-'}"
-                    f"{abs(hours_offset):02}:{minutes_offset:02}"
-                )
+                gmt_offset = f"GMT{'+' if hours_offset >= 0 else '-'}{abs(hours_offset):02}:{minutes_offset:02}"
 
                 timezone_value = {
                     "offset": int(current_offset),
@@ -239,10 +234,7 @@ def get_timezone_list():
     timezone_options_list = [
         {
             "value": timezone["value"],
-            "query": (
-                f"{timezone['value']} {timezone['label']}, "
-                f"{timezone['gmt_offset']}, {timezone['utc_offset']}"
-            ),
+            "query": (f"{timezone['value']} {timezone['label']}, {timezone['gmt_offset']}, {timezone['utc_offset']}"),
             "label": timezone.get("label"),
         }
         for timezone in group_timezones(timezone_list)

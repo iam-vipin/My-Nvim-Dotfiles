@@ -22,13 +22,7 @@ from plane.graphql.helpers import is_project_epics_enabled, is_epic_feature_flag
 
 @strawberry.type
 class EpicUserPropertyMutation:
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def update_epic_user_properties(
         self,
         info: Info,

@@ -35,13 +35,7 @@ from plane.graphql.utils.roles import Roles
 @strawberry.type
 class EpicRelationMutation:
     # adding issue relation
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def add_epic_work_item_relation(
         self,
         info: Info,
@@ -70,9 +64,7 @@ class EpicRelationMutation:
         project_id = str(project.id)
 
         # get the epic work items
-        epic_details = await get_epic(
-            workspace_slug=workspace_slug, project_id=project_id, epic_id=epic
-        )
+        epic_details = await get_epic(workspace_slug=workspace_slug, project_id=project_id, epic_id=epic)
         epic_id = str(epic_details.id)
 
         if relation_type in [
@@ -118,17 +110,13 @@ class EpicRelationMutation:
         ]
 
         await sync_to_async(
-            lambda: IssueRelation.objects.bulk_create(
-                issue_relations, batch_size=10, ignore_conflicts=True
-            )
+            lambda: IssueRelation.objects.bulk_create(issue_relations, batch_size=10, ignore_conflicts=True)
         )()
 
         # Track the issue relation activity
         issue_activity.delay(
             type="issue_relation.activity.created",
-            requested_data=json.dumps(
-                {"issues": related_work_item_ids, "relation_type": relation_type}
-            ),
+            requested_data=json.dumps({"issues": related_work_item_ids, "relation_type": relation_type}),
             actor_id=user_id,
             issue_id=epic_id,
             project_id=project_id,
@@ -141,13 +129,7 @@ class EpicRelationMutation:
         return True
 
     # removing issue relation
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def removeIssueRelation(
         self,
         info: Info,
@@ -210,16 +192,12 @@ class EpicRelationMutation:
         await sync_to_async(lambda: work_item_relation.delete())()
 
         # current issue relation
-        current_issue_relation_instance = (
-            await convert_issue_relation_properties_to_activity_dict(work_item_relation)
-        )
+        current_issue_relation_instance = await convert_issue_relation_properties_to_activity_dict(work_item_relation)
 
         # Track the issue relation activity
         issue_activity.delay(
             type="issue_relation.activity.deleted",
-            requested_data=json.dumps(
-                {"related_issue": related_issue, "relation_type": relation_type}
-            ),
+            requested_data=json.dumps({"related_issue": related_issue, "relation_type": relation_type}),
             actor_id=str(info.context.user.id),
             issue_id=str(issue),
             project_id=str(project),

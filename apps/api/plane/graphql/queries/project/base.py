@@ -27,18 +27,12 @@ from plane.graphql.utils.paginator import paginate
 
 @strawberry.type
 class ProjectQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def all_projects(
-        self, info: Info, slug: str, type: Optional[str] = "all"
-    ) -> list[ProjectType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def all_projects(self, info: Info, slug: str, type: Optional[str] = "all") -> list[ProjectType]:
         user = info.context.user
         user_id = str(user.id)
 
-        project_query = Project.objects.filter(
-            workspace__slug=slug, archived_at__isnull=True
-        )
+        project_query = Project.objects.filter(workspace__slug=slug, archived_at__isnull=True)
 
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
             user_id=user_id,
@@ -56,9 +50,7 @@ class ProjectQuery:
         projects = await sync_to_async(list)(project_query.distinct())
         return projects
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def projects(
         self,
         info: Info,
@@ -70,9 +62,7 @@ class ProjectQuery:
         user = info.context.user
         user_id = str(user.id)
 
-        project_query = Project.objects.filter(
-            workspace__slug=slug, archived_at__isnull=True
-        )
+        project_query = Project.objects.filter(workspace__slug=slug, archived_at__isnull=True)
 
         if len(projects) > 0:
             # Filter included and excluded projects
@@ -146,9 +136,7 @@ class ProjectQuery:
             project_list = await sync_to_async(list)(project_query)
 
         if type == "created":
-            project_list = await sync_to_async(list)(
-                project_query.filter(created_by_id=user_id)
-            )
+            project_list = await sync_to_async(list)(project_query.filter(created_by_id=user_id))
         elif type == "joined":
             project_teamspace_filter = await project_member_filter_via_teamspaces_async(
                 user_id=user_id,
@@ -161,21 +149,15 @@ class ProjectQuery:
                 },
             )
             project_list = await sync_to_async(list)(
-                project_query.filter(
-                    Q(is_member=True) | Q(project_teamspace_filter.query)
-                ).distinct()
+                project_query.filter(Q(is_member=True) | Q(project_teamspace_filter.query)).distinct()
             )
             for project in project_list:
                 project.is_member = True
 
         return paginate(results_object=project_list, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def project(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> Optional[ProjectType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def project(self, info: Info, slug: str, project: strawberry.ID) -> Optional[ProjectType]:
         user = info.context.user
         user_id = str(user.id)
 
@@ -232,12 +214,8 @@ class ProjectQuery:
 
 @strawberry.type
 class ProjectMembersQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def projectMembers(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> list[ProjectMemberType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def projectMembers(self, info: Info, slug: str, project: strawberry.ID) -> list[ProjectMemberType]:
         project_members = await sync_to_async(list)(
             ProjectMember.objects.filter(
                 workspace__slug=slug,

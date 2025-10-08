@@ -20,9 +20,7 @@ from plane.graphql.utils.work_item_filters import work_item_filters
 
 @strawberry.type
 class YourWorkQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def yourWork(self, info: Info, slug: str) -> WorkspaceYourWorkType:
         user = info.context.user
         user_id = str(user.id)
@@ -47,9 +45,7 @@ class YourWorkQuery:
         )
 
         # issues
-        issue_teamspace_filter = await project_member_filter_via_teamspaces_async(
-            user_id=user_id, workspace_slug=slug
-        )
+        issue_teamspace_filter = await project_member_filter_via_teamspaces_async(user_id=user_id, workspace_slug=slug)
         filters = {"assignees": [user_id]}
         filters = work_item_filters(filters)
         issues = await sync_to_async(list)(
@@ -85,9 +81,7 @@ class YourWorkQuery:
             .values_list("id", flat=True)
         )
 
-        your_work = WorkspaceYourWorkType(
-            projects=len(projects), issues=len(issues), pages=len(pages)
-        )
+        your_work = WorkspaceYourWorkType(projects=len(projects), issues=len(issues), pages=len(pages))
 
         return your_work
 
@@ -111,15 +105,9 @@ class WorkspaceQuery:
 
 @strawberry.type
 class WorkspaceMembersQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def workspaceMembers(
-        self, info: Info, slug: str
-    ) -> list[WorkspaceMemberType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def workspaceMembers(self, info: Info, slug: str) -> list[WorkspaceMemberType]:
         workspace_members = await sync_to_async(list)(
-            WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True, member__is_bot=False
-            )
+            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True, member__is_bot=False)
         )
         return workspace_members

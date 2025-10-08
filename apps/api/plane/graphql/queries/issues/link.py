@@ -15,18 +15,14 @@ from plane.graphql.types.issues.link import IssueLinkType
 @sync_to_async
 def get_issue_links(slug: str, project: strawberry.ID, issue: strawberry.ID):
     return list(
-        IssueLink.objects.filter(
-            workspace__slug=slug, project_id=project, issue_id=issue
-        ).order_by("-created_at")
+        IssueLink.objects.filter(workspace__slug=slug, project_id=project, issue_id=issue).order_by("-created_at")
     )
 
 
 @strawberry.type
 class IssueLinkQuery:
     # getting issue relation issues
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issueLink(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueLinkType]:

@@ -24,9 +24,7 @@ def is_teamspace_feature_flagged(workspace_slug: str, user_id: str) -> bool:
 
 
 def is_teamspace_enabled(workspace_slug: str) -> bool:
-    return WorkspaceFeature.objects.filter(
-        workspace__slug=workspace_slug, is_teams_enabled=True
-    ).exists()
+    return WorkspaceFeature.objects.filter(workspace__slug=workspace_slug, is_teams_enabled=True).exists()
 
 
 def project_member_filter_via_teamspaces(
@@ -37,9 +35,7 @@ def project_member_filter_via_teamspaces(
     filters: Optional[dict] = None,
     is_many_to_many: Optional[bool] = False,
 ) -> TeamspaceHelperType:
-    teamspace_feature_flagged = is_teamspace_feature_flagged(
-        workspace_slug=workspace_slug, user_id=user_id
-    )
+    teamspace_feature_flagged = is_teamspace_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
 
     teamspace_enabled = is_teamspace_enabled(workspace_slug)
 
@@ -57,9 +53,9 @@ def project_member_filter_via_teamspaces(
 
     if teamspace_feature_flagged and teamspace_enabled:
         # Get all team ids where the user is a member
-        teamspace_ids = TeamspaceMember.objects.filter(
-            member_id=user_id, workspace__slug=workspace_slug
-        ).values_list("team_space_id", flat=True)
+        teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=workspace_slug).values_list(
+            "team_space_id", flat=True
+        )
 
         # Get all the projects in the respective teamspaces
         teamspace_project = TeamspaceProject.objects.filter(
@@ -67,14 +63,10 @@ def project_member_filter_via_teamspaces(
             project__archived_at__isnull=True,
         ).values_list("team_space_id", "project_id")
         teamspace_project_details = [
-            TeamspaceHelperObjectType(
-                id=str(team_space_id), project_ids=[str(project_id)]
-            )
+            TeamspaceHelperObjectType(id=str(team_space_id), project_ids=[str(project_id)])
             for team_space_id, project_id in list(teamspace_project)
         ]
-        teamspace_project_ids = [
-            str(project_id) for _, project_id in list(teamspace_project)
-        ]
+        teamspace_project_ids = [str(project_id) for _, project_id in list(teamspace_project)]
 
         if len(teamspace_project_ids) > 0:
             if is_many_to_many:

@@ -35,9 +35,7 @@ async def get_configuration_value(keys):
             for item in instance_configuration:
                 if key.get("key") == item.get("key"):
                     if item.get("is_encrypted", False):
-                        environment_list.append(
-                            await sync_to_async(decrypt_data(item.get("value")))
-                        )
+                        environment_list.append(await sync_to_async(decrypt_data(item.get("value"))))
                     else:
                         environment_list.append(item.get("value"))
                     break
@@ -58,9 +56,7 @@ def unsplash_request(url, headers):
 
 @strawberry.type
 class UnsplashImagesQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def unsplash_images(
         self,
         slug: str,

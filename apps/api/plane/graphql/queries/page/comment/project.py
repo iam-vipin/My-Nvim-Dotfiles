@@ -29,9 +29,7 @@ from plane.graphql.utils.paginator import paginate
 
 @strawberry.type
 class ProjectPageCommentsQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def page_comments(
         self,
         info: Info,
@@ -53,9 +51,7 @@ class ProjectPageCommentsQuery:
 
         return paginate(results_object=page_comments, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def page_comments_with_ids(
         self,
         info: Info,
@@ -77,9 +73,7 @@ class ProjectPageCommentsQuery:
 
         return page_comments
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def page_comment_replies(
         self,
         info: Info,
@@ -102,12 +96,8 @@ class ProjectPageCommentsQuery:
 
         return paginate(results_object=page_comments, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def page_comment(
-        self, info: Info, slug: str, project: str, page: str, comment: str
-    ) -> PageCommentType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def page_comment(self, info: Info, slug: str, project: str, page: str, comment: str) -> PageCommentType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -121,9 +111,7 @@ class ProjectPageCommentsQuery:
 
         return page_comment
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def project_page_comment_reactions(
         self,
         info: Info,
@@ -150,7 +138,4 @@ class ProjectPageCommentsQuery:
         for reaction in page_comment_reactions:
             grouped[reaction.reaction].append(str(reaction.created_by_id))
 
-        return [
-            PageCommentReactionCountType(reaction=k, user_ids=v)
-            for k, v in grouped.items()
-        ]
+        return [PageCommentReactionCountType(reaction=k, user_ids=v) for k, v in grouped.items()]

@@ -43,15 +43,13 @@ def work_item_base_query(
 
     # workspace filters
     if workspace_slug:
-        work_item_base_query = work_item_base_query.filter(
-            workspace__slug=workspace_slug
-        )
+        work_item_base_query = work_item_base_query.filter(workspace__slug=workspace_slug)
 
     # project filters
     if project_id:
-        work_item_base_query = work_item_base_query.filter(
-            project_id=project_id
-        ).filter(project__archived_at__isnull=True)
+        work_item_base_query = work_item_base_query.filter(project_id=project_id).filter(
+            project__archived_at__isnull=True
+        )
 
     # project member filters
     if user_id:
@@ -59,9 +57,7 @@ def work_item_base_query(
             user_id=user_id,
             workspace_slug=workspace_slug,
         )
-        work_item_base_query = work_item_base_query.filter(
-            project_teamspace_filter.query
-        ).distinct()
+        work_item_base_query = work_item_base_query.filter(project_teamspace_filter.query).distinct()
 
     return work_item_base_query
 
@@ -76,9 +72,7 @@ def get_work_item(
     """
     Get the work item for the given project and work item id
     """
-    base_query = work_item_base_query(
-        workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
-    )
+    base_query = work_item_base_query(workspace_slug=workspace_slug, project_id=project_id, user_id=user_id)
 
     try:
         return base_query.get(id=work_item_id)

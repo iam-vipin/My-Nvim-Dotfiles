@@ -24,9 +24,7 @@ from plane.graphql.types.page import (
 
 @strawberry.type
 class ProjectPageCommentsMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_page_comment(
         self, info: Info, slug: str, project: str, page: str, input: PageCommentInput
     ) -> PageCommentListType:
@@ -45,9 +43,7 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_page_comment_reply(
         self,
         info: Info,
@@ -73,9 +69,7 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def update_page_comment(
         self,
         info: Info,
@@ -102,9 +96,7 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def resolve_page_comment(
         self, info: Info, slug: str, project: str, page: str, comment: str
     ) -> PageCommentType:
@@ -122,9 +114,7 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def un_resolve_page_comment(
         self, info: Info, slug: str, project: str, page: str, comment: str
     ) -> PageCommentType:
@@ -142,12 +132,8 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def delete_page_comment(
-        self, info: Info, slug: str, project: str, page: str, comment: str
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def delete_page_comment(self, info: Info, slug: str, project: str, page: str, comment: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
 
@@ -162,9 +148,7 @@ class ProjectPageCommentsMutation:
 
         return page_comment
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def restore_page_comment(
         self, info: Info, slug: str, project: str, page: str, comment: str
     ) -> PageCommentType:
@@ -185,9 +169,7 @@ class ProjectPageCommentsMutation:
 
 @strawberry.type
 class ProjectPageCommentReactionsMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_page_comment_reaction(
         self,
         info: Info,
@@ -211,9 +193,7 @@ class ProjectPageCommentReactionsMutation:
 
         return page_comment_reaction
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def remove_page_comment_reaction(
         self,
         info: Info,

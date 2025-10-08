@@ -96,7 +96,7 @@
     "node-html-parser": "^6.1.13",
     "tsdown": "catalog:",
     "turndown": "^7.2.0",
-    "uuid": "^10.0.0",
+    "uuid": "catalog:",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -104,8 +104,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/marked": "^6.0.0",
-    "@types/node": "18.16.1",
-    "@types/uuid": "^9.0.8",
+    "@types/node": "catalog:",
     "@types/turndown": "^5.0.5"
   }
 }

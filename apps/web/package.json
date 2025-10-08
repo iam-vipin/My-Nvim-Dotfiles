@@ -87,7 +87,7 @@
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/lodash-es": "catalog:",
-    "@types/node": "18.16.1",
+    "@types/node": "catalog:",
     "@types/papaparse": "^5.3.14",
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.6",

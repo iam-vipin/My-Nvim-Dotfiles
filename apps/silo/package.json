@@ -7,7 +7,6 @@
   "type": "module",
   "scripts": {
     "build": "tsdown",
-    "prebuild": "jest",
     "dev": "nodemon --config \"./nodemon.json\"/",
     "start": "node dist/start.cjs",
     "test": "jest",

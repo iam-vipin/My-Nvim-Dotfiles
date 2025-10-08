@@ -442,7 +442,7 @@ jobs:
         branch_build_push_proxy,
         branch_build_push_monitor,
         branch_build_push_email,
-        branch_build_push_silo
+        branch_build_push_silo,
       ]
     steps:
       - name: Checkout Files

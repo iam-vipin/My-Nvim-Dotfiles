@@ -51,6 +51,7 @@ jobs:
       dh_img_silo: ${{ steps.set_env_variables.outputs.DH_IMG_SILO }}
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
+      dh_img_pi: ${{ steps.set_env_variables.outputs.dh_img_pi }}
       harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
@@ -78,6 +79,7 @@ jobs:
           echo "DH_IMG_SILO=silo-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_BACKEND=backend-cloud" >> $GITHUB_OUTPUT
           echo "DH_IMG_EMAIL=email-cloud" >> $GITHUB_OUTPUT
+          echo "dh_img_pi=plane-pi-cloud" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -336,6 +338,28 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
+  branch_build_push_plane_pi:
+    name: Build-Push Plane PI Docker Image
+    runs-on: ubuntu-22.04
+    needs: [branch_build_setup]
+    steps:
+      - name: Plane PI Build and Push
+        uses: makeplane/actions/build-push@v1.0.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_pi }}
+          build-context: ./apps/pi
+          dockerfile-path: ./apps/pi/Dockerfile.api
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
@@ -350,6 +374,7 @@ jobs:
         branch_build_push_silo,
         branch_build_push_api,
         branch_build_push_email,
+        branch_build_push_plane_pi,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}

@@ -1,4 +1,4 @@
-import { type Editor, type Range, Extension } from "@tiptap/core";
+import { type Editor, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
@@ -27,7 +27,7 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {

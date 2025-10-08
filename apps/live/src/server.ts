@@ -16,6 +16,7 @@ import { env } from "@/env";
 import { HocusPocusServerManager } from "@/hocuspocus";
 // redis
 import { redisManager } from "@/redis";
+import { serverAgentManager } from "./agents/server-agent";
 
 export class Server {
   private app: Express;
@@ -35,15 +36,16 @@ export class Server {
   public async initialize(): Promise<void> {
     try {
       await redisManager.initialize();
-      logger.info("Redis setup completed");
+      logger.info("SERVER: Redis setup completed");
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
-      logger.info("HocusPocus setup completed");
-
+      logger.info("SERVER: HocusPocus setup completed");
       this.setupRoutes(this.hocuspocusServer);
       this.setupNotFoundHandler();
+      serverAgentManager.initialize(this.hocuspocusServer);
+      logger.info("SERVER: ServerAgentManager setup completed");
     } catch (error) {
-      logger.error("Failed to initialize live server dependencies:", error);
+      logger.error("SERVER: Failed to initialize live server dependencies:", error);
       throw error;
     }
   }

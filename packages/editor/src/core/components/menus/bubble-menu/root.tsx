@@ -24,12 +24,15 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import type { TEditorCommands } from "@/types";
+import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
+import { BubbleMenuCommentSelector } from "./comment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
+type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children"> & {
+  editor: Editor;
+};
 
 export type EditorStateType = {
   code: boolean;
@@ -60,11 +63,14 @@ export type EditorStateType = {
 
 type Props = {
   editor: Editor;
+  extendedEditorProps?: IEditorPropsExtended;
+  flaggedExtensions?: TExtensions[];
 };
 
 export const EditorBubbleMenu: FC<Props> = (props) => {
-  const { editor } = props;
+  const { editor, extendedEditorProps, flaggedExtensions } = props;
   // states
+  const [isCommentSelectorOpen, setIsCommentSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
   // refs
   const menuRef = useRef<HTMLDivElement>(null);
@@ -184,6 +190,18 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
           {!editorState.code && (
             <div className="px-2">
               <BubbleMenuLinkSelector editor={editor} />
+            </div>
+          )}
+          {!flaggedExtensions?.includes("comments") && extendedEditorProps?.commentConfig?.canComment && (
+            <div className="px-2">
+              <BubbleMenuCommentSelector
+                editor={editor}
+                isOpen={isCommentSelectorOpen}
+                onStartNewComment={extendedEditorProps.commentConfig?.onStartNewComment}
+                setIsOpen={() => {
+                  setIsCommentSelectorOpen((prev) => !prev);
+                }}
+              />
             </div>
           )}
           {!editorState.code && (

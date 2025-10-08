@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ConnectedAppCard } from "@/plane-web/components/integrations/slack";

@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TTeamspace } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getRandomEmoji } from "@plane/utils";
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports

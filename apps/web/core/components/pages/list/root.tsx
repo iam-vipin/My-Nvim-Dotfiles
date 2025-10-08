@@ -12,8 +12,8 @@ import {
   PROJECT_PAGE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, type TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";

@@ -2,7 +2,8 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { Checkbox, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Checkbox } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { TPersonalAccountConnectProps } from "../personal-account-view";

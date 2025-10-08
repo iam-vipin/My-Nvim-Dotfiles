@@ -6,7 +6,8 @@ import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CircularProgressIndicator, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { CircularProgressIndicator } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
@@ -345,7 +346,6 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
           )}
         </div>
       )}
-
       {/* stepper button */}
       <div className="flex-shrink-0 flex justify-end items-center gap-2 mt-8">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

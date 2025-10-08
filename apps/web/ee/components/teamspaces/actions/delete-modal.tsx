@@ -6,7 +6,8 @@ import { AlertTriangle } from "lucide-react";
 // ui
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { EModalWidth, EModalPosition, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EModalWidth, EModalPosition, Input, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";

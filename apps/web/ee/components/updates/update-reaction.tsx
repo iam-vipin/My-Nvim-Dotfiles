@@ -4,9 +4,9 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUpdateEntityType, IUser, TUpdateOperations } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // components
 import { ReactionSelector } from "@/components/issues/issue-detail/reactions";

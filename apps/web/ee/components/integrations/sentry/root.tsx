@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web components
 import { ConnectedAppCard } from "@/plane-web/components/integrations/sentry";
 import { InstallationCard } from "@/plane-web/components/integrations/ui";

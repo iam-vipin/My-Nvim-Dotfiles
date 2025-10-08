@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EWorkItemTypeEntity, PartialDeep, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   TWorkItemSanitizationResult,
   processWorkItemCustomProperties,

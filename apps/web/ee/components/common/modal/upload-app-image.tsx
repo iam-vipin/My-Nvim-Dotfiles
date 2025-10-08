@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// plane imports
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// plane imports
 import { EFileAssetType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

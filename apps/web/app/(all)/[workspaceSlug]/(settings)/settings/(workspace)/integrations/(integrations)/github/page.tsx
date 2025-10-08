@@ -8,8 +8,9 @@ import { Cloud } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { GithubHeader, IntegrationRoot, UserAuthentication } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";

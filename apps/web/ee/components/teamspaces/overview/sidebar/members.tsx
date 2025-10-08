@@ -5,7 +5,8 @@ import { Trash2 } from "lucide-react";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { LeadIcon } from "@plane/propel/icons";
-import { Avatar, CustomMenu, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Avatar, CustomMenu } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks

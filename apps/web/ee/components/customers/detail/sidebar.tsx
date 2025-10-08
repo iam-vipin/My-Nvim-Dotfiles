@@ -2,8 +2,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { ScrollArea } from "@plane/propel/scrollarea";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TCustomer } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";

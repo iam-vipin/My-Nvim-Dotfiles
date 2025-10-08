@@ -5,8 +5,9 @@ import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
-import { setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { IssueTypeListItem } from "@/plane-web/components/issue-types/issue-type-list-item";

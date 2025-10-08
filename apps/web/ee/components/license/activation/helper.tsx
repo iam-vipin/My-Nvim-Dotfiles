@@ -3,9 +3,9 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
-// plane imports
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// plane imports
 import { copyTextToClipboard } from "@plane/utils";
 // store hooks
 import { useInstance } from "@/hooks/store/use-instance";

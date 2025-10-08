@@ -1,8 +1,9 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { useTranslation } from "@plane/i18n";
-// Plane components
 import { Button } from "@plane/propel/button";
-import { ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// Plane components
+import { ModalCore } from "@plane/ui";
 // hooks
 // Assets
 import { StateMappingFormProps, SentryStateMappingFormData } from "./types";

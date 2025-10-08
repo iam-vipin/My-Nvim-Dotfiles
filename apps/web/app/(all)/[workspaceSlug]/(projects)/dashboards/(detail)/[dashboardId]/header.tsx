@@ -4,16 +4,9 @@ import { useParams } from "next/navigation";
 import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
-import {
-  BreadcrumbNavigationSearchDropdown,
-  Breadcrumbs,
-  Button,
-  getButtonStyling,
-  Header,
-  setToast,
-  TOAST_TYPE,
-} from "@plane/ui";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, getButtonStyling, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";

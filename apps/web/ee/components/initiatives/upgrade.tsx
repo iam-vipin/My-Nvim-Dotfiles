@@ -7,9 +7,8 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { setPromiseToast } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

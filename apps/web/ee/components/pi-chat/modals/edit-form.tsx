@@ -3,9 +3,10 @@
 import { FormEvent, useState } from "react";
 // types
 import { ETabIndices } from "@plane/constants";
-// ui
 import { Button } from "@plane/propel/button";
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// ui
+import { Input } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

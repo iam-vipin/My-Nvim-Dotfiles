@@ -5,7 +5,8 @@ import { PlusIcon, BriefcaseIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EpicIcon } from "@plane/propel/icons";
-import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks

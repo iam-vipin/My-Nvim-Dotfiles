@@ -1,4 +1,5 @@
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import {
   EGanttBlockType,
   EIssuesStoreType,
@@ -7,7 +8,6 @@ import {
   TIssue,
   TProject,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";

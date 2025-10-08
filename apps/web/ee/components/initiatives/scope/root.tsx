@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles, EIssueLayoutTypes } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks

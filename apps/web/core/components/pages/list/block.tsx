@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import { ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
 import { RestrictedPageIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TPageNavigationTabs } from "@plane/types";
-import { Logo, setToast, TOAST_TYPE } from "@plane/ui";
+import { Logo } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";

@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

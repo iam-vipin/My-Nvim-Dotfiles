@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks

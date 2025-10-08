@@ -8,19 +8,9 @@ import { Earth, FileText, Lock, Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess, TIssuePage, TIssueServiceType } from "@plane/types";
-import {
-  setToast,
-  TOAST_TYPE,
-  ToggleSwitch,
-  Button,
-  Logo,
-  ModalCore,
-  EModalWidth,
-  EModalPosition,
-  Loader,
-  Checkbox,
-} from "@plane/ui";
+import { ToggleSwitch, Button, Logo, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
 // types
 // components
 import { getPageName, getTabIndex } from "@plane/utils";

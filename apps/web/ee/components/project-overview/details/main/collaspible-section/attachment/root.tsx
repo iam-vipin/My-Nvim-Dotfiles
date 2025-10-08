@@ -3,8 +3,7 @@ import { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web hooks
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";

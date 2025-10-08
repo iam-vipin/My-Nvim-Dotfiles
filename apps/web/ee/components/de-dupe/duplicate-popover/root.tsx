@@ -7,8 +7,8 @@ import { Popover } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { TDeDupeIssue } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";

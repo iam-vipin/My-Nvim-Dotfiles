@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// helpers
 import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// helpers
 import {
   EActionNodeHandlerName,
   EAutomationNodeType,
@@ -12,7 +13,6 @@ import {
   TChangePropertyActionConfig,
   TChangePropertyActionFormConfig,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";

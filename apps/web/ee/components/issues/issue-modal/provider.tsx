@@ -4,6 +4,7 @@ import { mutate } from "swr";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import {
   EWorkItemConversionType,
   EWorkItemTypeEntity,
@@ -12,7 +13,6 @@ import {
   TIssuePropertyValueErrors,
   TIssuePropertyValues,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
   extractAndSanitizeWorkItemTemplateFormData,

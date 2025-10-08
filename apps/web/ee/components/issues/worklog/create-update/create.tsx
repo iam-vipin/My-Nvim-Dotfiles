@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 // plane web types

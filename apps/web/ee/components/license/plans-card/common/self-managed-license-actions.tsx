@@ -4,9 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleAlert, CircleCheck, RefreshCw } from "lucide-react";
-// plane imports
 import { Button } from "@plane/propel/button";
-import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// plane imports
+import { AlertModalCore } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
 import { useSelfHostedSubscription } from "@/plane-web/hooks/store/use-self-hosted-subscription";

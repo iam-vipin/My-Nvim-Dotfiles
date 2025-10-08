@@ -4,7 +4,8 @@ import { AlertTriangle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { useIssueTypes } from "@/plane-web/hooks/store";

@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
 import { IssuesModalProps } from "@/components/issues/issue-modal/modal";

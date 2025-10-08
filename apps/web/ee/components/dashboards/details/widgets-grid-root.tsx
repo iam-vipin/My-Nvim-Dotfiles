@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { type Layout, Layouts, Responsive, WidthProvider } from "react-grid-layout";
 // plane imports
 import { EWidgetGridBreakpoints, WIDGET_GRID_BREAKPOINTS } from "@plane/constants";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // local imports

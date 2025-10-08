@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // editor
 import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 import { EFileAssetType, type JSONContent, type TPageComment } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, isCommentEmpty, trimEmptyParagraphsFromJson, trimEmptyParagraphsFromHTML } from "@plane/utils";
 // editor
 import { LiteTextEditor } from "@/components/editor/lite-text";

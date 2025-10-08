@@ -4,8 +4,8 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks

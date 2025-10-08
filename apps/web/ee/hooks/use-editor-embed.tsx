@@ -4,9 +4,8 @@ import { useParams } from "next/navigation";
 import { DEFAULT_PAGE_SORT_ORDER, PAGE_SORT_ORDER_INCREMENT, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 import { PriorityIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-// plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components

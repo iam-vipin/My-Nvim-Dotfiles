@@ -5,8 +5,8 @@ import { FilePlus2 } from "lucide-react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess, TPage } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";

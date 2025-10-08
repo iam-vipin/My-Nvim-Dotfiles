@@ -3,8 +3,9 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IFormattedInstanceConfiguration, TInstanceSAMLAuthenticationConfigurationKeys } from "@plane/types";
-import { TOAST_TYPE, TextArea, setToast } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";

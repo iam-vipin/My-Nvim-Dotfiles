@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useCallback, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // helpers
 import { useAttachmentOperations } from "./helper";

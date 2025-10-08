@@ -4,6 +4,7 @@ import useSWR from "swr";
 // plane imports
 import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import {
   ETemplateType,
   PartialDeep,
@@ -11,7 +12,6 @@ import {
   TWorkItemTemplateFormData,
   TIssuePropertyValues,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,

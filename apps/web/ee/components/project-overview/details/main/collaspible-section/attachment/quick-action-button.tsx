@@ -6,7 +6,7 @@ import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
 // plane ui
 import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";

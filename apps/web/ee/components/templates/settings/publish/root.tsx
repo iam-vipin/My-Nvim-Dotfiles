@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   ensureUrlHasProtocol,
   getAssetIdFromUrl,

@@ -5,8 +5,9 @@ import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } 
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { ArchiveIcon } from "@plane/propel/icons";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import { CustomMenu, FavoriteStar, setPromiseToast, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { CustomMenu, FavoriteStar, TContextMenuItem } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

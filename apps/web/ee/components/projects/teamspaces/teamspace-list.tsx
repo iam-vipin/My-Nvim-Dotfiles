@@ -7,8 +7,8 @@ import { Search } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TProjectTeamspaceList } from "@/ce/components/projects/teamspaces/teamspace-list";

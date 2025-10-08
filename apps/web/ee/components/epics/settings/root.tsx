@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks

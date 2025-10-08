@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 // plane ui
 import { PROJECT_OVERVIEW_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 // hooks
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";

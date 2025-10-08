@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Loader } from "lucide-react";
 import { LICENSE_TRACKER_ELEMENTS, LICENSE_TRACKER_EVENTS } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

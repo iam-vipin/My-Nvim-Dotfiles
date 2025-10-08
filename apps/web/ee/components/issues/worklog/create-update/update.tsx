@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // helpers
 import { convertMinutesToHoursAndMinutes } from "@plane/utils";
 // plane web hooks

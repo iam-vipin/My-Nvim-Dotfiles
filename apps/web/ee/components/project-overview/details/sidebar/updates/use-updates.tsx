@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import useSWR from "swr";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
 import { TProjectUpdate } from "@/plane-web/types";
 

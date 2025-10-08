@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import {
   EIssueServiceType,
   EWorkItemConversionType,
@@ -11,7 +12,6 @@ import {
   TIssuePropertyValueErrors,
   TIssuePropertyValues,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
 import {

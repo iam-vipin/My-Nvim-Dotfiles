@@ -3,8 +3,9 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EEstimateSystem, TEstimatePointsObject } from "@plane/types";
-import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // ce imports
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";

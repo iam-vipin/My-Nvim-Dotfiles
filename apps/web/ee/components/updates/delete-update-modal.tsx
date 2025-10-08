@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;

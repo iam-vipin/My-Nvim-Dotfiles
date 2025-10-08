@@ -7,8 +7,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";

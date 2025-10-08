@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { projectTemplateService } from "@plane/services";
 import { EUserPermissions, IWorkspace } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

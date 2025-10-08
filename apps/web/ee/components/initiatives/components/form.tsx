@@ -5,8 +5,9 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Input, setToast, TOAST_TYPE, EmojiIconPickerTypes } from "@plane/ui";
+import { Input, EmojiIconPickerTypes } from "@plane/ui";
 import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

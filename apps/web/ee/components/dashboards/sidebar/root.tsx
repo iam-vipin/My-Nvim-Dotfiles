@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { FormProvider, useForm } from "react-hook-form";
 
+import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ALL_WIDGETS_Y_AXIS_METRICS_LIST, WIDGET_X_AXIS_PROPERTIES_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TDashboardWidget } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 // plane web hooks

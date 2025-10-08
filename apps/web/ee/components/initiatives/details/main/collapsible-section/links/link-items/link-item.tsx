@@ -4,9 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { calculateTimeAgoShort, copyTextToClipboard } from "@plane/utils";
 // hooks

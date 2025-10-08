@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import {
   TIssue,
   IBlockUpdateData,
@@ -10,7 +11,6 @@ import {
   EIssueLayoutTypes,
   IBlockUpdateDependencyData,
 } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";

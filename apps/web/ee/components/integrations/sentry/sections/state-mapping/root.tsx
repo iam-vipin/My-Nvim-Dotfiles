@@ -7,7 +7,8 @@ import { Plus, AlertTriangle, RefreshCw } from "lucide-react";
 import { TSentryConfig, TSentryStateMapping } from "@plane/etl/sentry";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Loader } from "@plane/ui";
 // plane web components
 import { useProject } from "@/hooks/store/use-project";
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";

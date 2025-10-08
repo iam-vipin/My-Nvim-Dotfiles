@@ -8,8 +8,8 @@ import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
 import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

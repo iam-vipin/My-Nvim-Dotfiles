@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { Info, Minus } from "lucide-react";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { Avatar, FavoriteStar, setToast, TOAST_TYPE } from "@plane/ui";
+import { Avatar, FavoriteStar } from "@plane/ui";
 // plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks

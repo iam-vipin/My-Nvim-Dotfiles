@@ -1,7 +1,8 @@
 import { FC, useState } from "react";
 import { useParams } from "next/navigation";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // ui
-import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web services

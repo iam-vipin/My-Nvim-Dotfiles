@@ -15,8 +15,9 @@ import {
   WORKITEM_TEMPLATE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
-import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { AlertModalCore, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import {
   cn,
   getCreateUpdateTemplateSettingsPath,

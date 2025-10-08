@@ -5,8 +5,8 @@ import useSWR from "swr";
 import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { extractAssetsFromHTMLContent } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { ETemplateType, PartialDeep, TPageTemplateForm } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,

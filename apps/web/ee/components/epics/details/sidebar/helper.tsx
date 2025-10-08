@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType, EIssueServiceType, TCommentsOperations } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";

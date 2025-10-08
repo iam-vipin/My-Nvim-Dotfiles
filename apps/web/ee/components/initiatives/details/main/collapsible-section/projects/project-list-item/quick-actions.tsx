@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

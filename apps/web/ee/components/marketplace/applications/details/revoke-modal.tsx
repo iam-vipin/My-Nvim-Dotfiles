@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 // ui
 import { TUserApplication } from "@plane/types";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";

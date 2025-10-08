@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssueServiceType, EIssuesStoreType, ISearchIssueResponse, TIssue } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";

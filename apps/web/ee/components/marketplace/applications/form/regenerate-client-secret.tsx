@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Copy } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TUserApplication } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks

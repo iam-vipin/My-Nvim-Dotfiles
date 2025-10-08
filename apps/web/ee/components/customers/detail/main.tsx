@@ -5,8 +5,9 @@ import { ExternalLink } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType, TCustomerPayload } from "@plane/types";
-import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
+import { Tabs } from "@plane/ui";
 // hooks
 import { formatURLForDisplay } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

@@ -3,8 +3,9 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 // plane imports
 import { CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TCustomer } from "@plane/types";
-import { Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -56,7 +57,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           />
         </div>
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.website_url.name")}</span>
@@ -77,7 +77,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           />
         </div>
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.size.name")}</span>
@@ -100,7 +99,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           />
         </div>
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.domain.name")}</span>
@@ -116,7 +114,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           />
         </div>
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.contract_status.name")}</span>
@@ -132,7 +129,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           disabled={isDisabled}
         />
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.stage.name")}</span>
@@ -148,7 +144,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           disabled={isDisabled}
         />
       </div>
-
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
           <span className="text-sm text-custom-text-200">{t("customers.properties.default.revenue.name")}</span>
@@ -169,7 +164,6 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           disabled={isDisabled}
         />
       </div>
-
       {createdByDetails && (
         <div className="flex h-8 gap-2 items-center">
           <div className="w-2/5 flex-shrink-0">

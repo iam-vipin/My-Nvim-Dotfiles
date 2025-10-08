@@ -14,8 +14,9 @@ import {
   SUBSCRIPTION_WEBPAGE_URLS,
   SUBSCRIPTION_WITH_TRIAL,
 } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum, IPaymentProduct } from "@plane/types";
-import { EModalWidth, ModalCore, TOAST_TYPE, setToast, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { EModalWidth, ModalCore, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";

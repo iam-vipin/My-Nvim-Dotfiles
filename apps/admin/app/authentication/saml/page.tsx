@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 // ui
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";

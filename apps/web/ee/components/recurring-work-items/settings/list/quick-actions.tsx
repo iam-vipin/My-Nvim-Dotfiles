@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { AlertModalCore, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn, getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";

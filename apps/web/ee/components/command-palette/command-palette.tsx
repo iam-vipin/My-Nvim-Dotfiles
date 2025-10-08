@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

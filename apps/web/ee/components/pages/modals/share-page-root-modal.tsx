@@ -3,10 +3,9 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // constants
 import { EPageSharedUserAccess, EUserWorkspaceRoles } from "@plane/types";
-// plane imports
-import { setToast, TOAST_TYPE, dismissToast } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 // hooks

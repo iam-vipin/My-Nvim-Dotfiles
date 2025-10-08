@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
@@ -121,7 +121,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
       if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
         page.setVersionToBeRestored(version, descriptionHTML);
         page.setRestorationStatus(true);
-        setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
         if (page.id) {
           await handlers.restoreVersion(page.id, version);
         }

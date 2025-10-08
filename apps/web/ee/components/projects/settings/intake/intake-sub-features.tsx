@@ -5,10 +5,12 @@ import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserProjectRoles, TInboxForm } from "@plane/types";
-import { Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
+// ce imports
 import { TProperties } from "@/ce/constants/project";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";

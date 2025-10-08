@@ -4,8 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common/logo";

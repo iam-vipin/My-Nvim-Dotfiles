@@ -4,18 +4,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import {
-  Avatar,
-  Button,
-  CustomSearchSelect,
-  EModalPosition,
-  EModalWidth,
-  ModalCore,
-  setToast,
-  TOAST_TYPE,
-} from "@plane/ui";
+import { Avatar, Button, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks

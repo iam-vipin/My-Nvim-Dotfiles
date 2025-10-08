@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { E_BULK_OPERATION_ERROR_CODES, BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // hooks
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 

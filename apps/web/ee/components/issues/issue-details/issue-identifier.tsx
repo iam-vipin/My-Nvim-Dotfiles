@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemTypeEntity, IIssueType } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce components
 import {

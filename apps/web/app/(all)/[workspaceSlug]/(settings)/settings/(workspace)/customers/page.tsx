@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";

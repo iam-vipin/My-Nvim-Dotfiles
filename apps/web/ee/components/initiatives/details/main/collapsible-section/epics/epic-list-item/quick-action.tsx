@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
-import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

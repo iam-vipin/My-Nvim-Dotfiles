@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { Lock, LockIcon, LockOpen } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { TContextMenuItem } from "@plane/ui";
 import {
   TLayoutSelectionProps,
   TMenuItemsFactoryProps,

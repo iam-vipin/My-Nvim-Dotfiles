@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";

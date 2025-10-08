@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
-import { cn, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { cn, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";

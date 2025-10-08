@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications/sidebar/notification-card/options";
 // helpers

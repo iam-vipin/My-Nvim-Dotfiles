@@ -5,8 +5,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { CUSTOMER_TRACKER_EVENTS, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TCustomer, TCustomerPayload } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn, getTabIndex } from "@plane/utils";
 // store

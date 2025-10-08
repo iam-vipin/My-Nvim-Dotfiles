@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@plane/utils";
 // plane web imports

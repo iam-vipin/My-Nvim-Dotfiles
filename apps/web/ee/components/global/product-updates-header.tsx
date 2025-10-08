@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

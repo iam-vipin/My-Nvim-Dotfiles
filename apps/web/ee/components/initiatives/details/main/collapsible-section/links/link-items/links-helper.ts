@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 // Plane
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeLink } from "@/plane-web/types/initiative";

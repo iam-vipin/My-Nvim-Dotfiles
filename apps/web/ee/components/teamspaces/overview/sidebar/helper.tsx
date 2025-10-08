@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS, TEAMSPACE_UPDATES_TRACKER_EVENTS } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";

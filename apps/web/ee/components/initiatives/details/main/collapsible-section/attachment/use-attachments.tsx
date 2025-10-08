@@ -1,7 +1,6 @@
 "use client";
 import { useMemo } from "react";
-// plane ui
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 // hooks
 import { useInitiativeAttachments } from "@/plane-web/hooks/store";
 // types

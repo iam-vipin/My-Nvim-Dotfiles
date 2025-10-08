@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, Pencil, Trash2 } from "lucide-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { JSONContent } from "@plane/types";
-import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast, Tooltip } from "@plane/ui";
+import { AlertModalCore, CustomMenu, TContextMenuItem, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

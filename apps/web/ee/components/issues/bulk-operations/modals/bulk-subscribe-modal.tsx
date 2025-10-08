@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { E_BULK_OPERATION_ERROR_CODES, BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
-import { TOAST_TYPE, setToast, AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
+import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 

@@ -105,7 +105,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
   // keydown events handler
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      if (![...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key)) return;
+      if (![...DROPDOWN_NAVIGATION_KEYS, "Tab"].includes(event.key)) return false;
       event.preventDefault();
 
       if (event.key === "ArrowUp") {
@@ -128,7 +128,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
         return true;
       }
 
-      return false;
+      return true;
     },
   }));
 

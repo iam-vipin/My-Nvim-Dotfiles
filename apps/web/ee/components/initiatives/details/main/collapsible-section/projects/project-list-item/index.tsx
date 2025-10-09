@@ -37,7 +37,10 @@ export const ProjectItem = observer((props: Props) => {
   const projectDetails = getProjectById(projectId);
   const projectAnalyticsCount = getProjectAnalyticsCountById(projectId);
 
-  const progress = getProgress(projectAnalyticsCount?.completed_issues, projectAnalyticsCount?.total_issues);
+  const completedIssuesCount = projectAnalyticsCount?.completed_issues ?? 0;
+  const totalIssuesCount = projectAnalyticsCount?.total_issues ?? 0;
+  const showProgress = totalIssuesCount > 0;
+  const progress = showProgress ? getProgress(completedIssuesCount, totalIssuesCount) : 0;
 
   if (!projectDetails || !currentWorkspace) return;
 
@@ -58,12 +61,12 @@ export const ProjectItem = observer((props: Props) => {
         </div>
       }
       appendTitleElement={
-        <>
+        showProgress ? (
           <div className="flex items-center gap-1">
             <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
             <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
           </div>
-        </>
+        ) : undefined
       }
       quickActionElement={
         <div className="block md:hidden">

@@ -61,10 +61,10 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
 
-  const progress = getProgress(
-    (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0),
-    initiativeEpicStats?.total_issues ?? 0
-  );
+  const completedIssuesCount = (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0);
+  const totalIssuesCount = initiativeEpicStats?.total_issues ?? 0;
+  const showProgress = totalIssuesCount > 0;
+  const progress = showProgress ? getProgress(completedIssuesCount, totalIssuesCount) : 0;
 
   if (!issue || !issue.project_id) return <></>;
 
@@ -102,12 +102,12 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
         </div>
       }
       appendTitleElement={
-        <>
+        showProgress ? (
           <div className="flex items-center gap-1">
             <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
             <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
           </div>
-        </>
+        ) : undefined
       }
       quickActionElement={
         <div className="block md:hidden">

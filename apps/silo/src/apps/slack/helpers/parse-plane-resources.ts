@@ -11,6 +11,7 @@ export enum EPlaneURLSegments {
   PROJECTS = "projects",
   ISSUES = "issues",
   PAGES = "pages",
+  WIKI = "wiki",
   BROWSE = "browse",
 }
 
@@ -42,12 +43,12 @@ export function extractPlaneResource(url: string): PlaneResource | null {
         type: "issue",
         issueKey: issueIdentifer,
       };
-    } else if (segments.includes("pages")) {
-      // Format can be one of these: https://sites.plane.so/pages/<pageId>/
-      // https://app.plane.so/plane/pages/<pageId>/
-      // https://app.plane.so/plane/projects/<projectId>/pages/<pageId>/
+    } else if (segments.includes(EPlaneURLSegments.PAGES) || segments.includes(EPlaneURLSegments.WIKI)) {
+      // Format can be one of these: https://sites.plane.so/pages/<pageId>/ or https://sites.plane.so/wiki/<pageId>/
+      // https://app.plane.so/plane/pages/<pageId>/ or https://app.plane.so/plane/wiki/<pageId>/
+      // https://app.plane.so/plane/projects/<projectId>/pages/<pageId>/ or https://app.plane.so/plane/projects/<projectId>/wiki/<pageId>/
 
-      if (segments[0] === EPlaneURLSegments.PAGES) {
+      if (segments[0] === EPlaneURLSegments.PAGES || segments[0] === EPlaneURLSegments.WIKI) {
         // published page
         return {
           pageId: segments[1],
@@ -72,7 +73,7 @@ export function extractPlaneResource(url: string): PlaneResource | null {
           type: "page",
           subType: PageSubType.PROJECT,
         };
-      } else if (segments[1] === EPlaneURLSegments.PAGES) {
+      } else if (segments[1] === EPlaneURLSegments.PAGES || segments[1] === EPlaneURLSegments.WIKI) {
         // workspace level page
         const pageId = segments[2];
         const workspaceSlug = segments[0];

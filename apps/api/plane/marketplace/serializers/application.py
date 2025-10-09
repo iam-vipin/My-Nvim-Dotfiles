@@ -28,6 +28,10 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
             "configuration_url",
             "video_url",
             "attachments",
+            "supported_environments",
+            "supported_plans",
+            "links",
+            "website",
         ]
 
     def get_attachments(self, obj):
@@ -45,9 +49,14 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
 
 
 class ApplicationCategorySerializer(serializers.ModelSerializer):
+    applications_count = serializers.SerializerMethodField()
     class Meta:
         model = ApplicationCategory
-        fields = ["id", "name", "description", "logo_props", "is_active"]
+        fields = ["id", "name", "description", "logo_props", "is_active", "applications_count"]
+
+    def get_applications_count(self, obj):
+        # send only count of applications that are published
+        return obj.applications.filter(published_at__isnull=False).count()
 
 
 class ApplicationTemplateMetaSerializer(serializers.ModelSerializer):

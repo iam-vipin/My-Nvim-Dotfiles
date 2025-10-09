@@ -214,7 +214,7 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
                 </Button>
                 <Link
                   href="/authentication"
-                  className={cn(getButtonStyling("link-neutral", "md"), "font-medium")}
+                  className={cn(getButtonStyling("neutral-primary", "md"), "font-medium")}
                   onClick={handleGoBack}
                 >
                   Go back

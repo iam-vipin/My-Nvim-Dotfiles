@@ -63,6 +63,7 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
 
       if (event.key === "Enter") {
         event.preventDefault();
+        event.stopPropagation();
         selectItem(selectedIndex);
         return true;
       }

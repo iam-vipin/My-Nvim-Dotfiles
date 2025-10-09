@@ -1,8 +1,8 @@
 // constants
 import { AxiosRequestConfig } from "axios";
 import { PI_BASE_URL } from "@plane/constants";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 // services
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/utils";
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
 import {
@@ -321,7 +321,7 @@ export class PiChatService extends APIService {
     chatId: string,
     uploadProgressHandler: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TPiAttachment | void> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
 
     const response = await this.post(`/api/v1/attachments/upload-attachment/`, {
       filename: fileMetaData.name,

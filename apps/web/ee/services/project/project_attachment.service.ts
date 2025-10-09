@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from "axios";
 // plane types
 // helpers
 import { API_BASE_URL } from "@plane/constants";
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/utils";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 // services
 import { TProjectAttachment, TProjectAttachmentUploadResponse } from "@/plane-web/types";
 import { APIService } from "@/services/api.service";
@@ -35,7 +35,7 @@ export class ProjectAttachmentService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TProjectAttachment> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/`, fileMetaData)
       .then(async (response) => {
         const signedURLResponse: TProjectAttachmentUploadResponse = response?.data;

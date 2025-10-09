@@ -1,8 +1,10 @@
 import { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
+import { getAssetIdFromUrl } from "@plane/utils";
+// helpers
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -320,7 +322,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/reupload/${assetId}/`, {
       type: fileMetaData.type,
       size: fileMetaData.size,
@@ -348,7 +350,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
 
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/reupload/${assetId}/`, {
       type: fileMetaData.type,

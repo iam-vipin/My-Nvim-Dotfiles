@@ -1,5 +1,5 @@
 // types
-import { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
+import { TFileSignedURLResponse } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 
@@ -27,17 +27,6 @@ export const getFileURL = (path: string): string | undefined => {
   if (isValidURL) return path;
   return `${API_BASE_URL}${path}`;
 };
-
-/**
- * @description returns the necessary file meta data to upload a file
- * @param {File} file
- * @returns {TFileMetaDataLite} payload with file info
- */
-export const getFileMetaDataForUpload = (file: File): TFileMetaDataLite => ({
-  name: file.name,
-  size: file.size,
-  type: file.type,
-});
 
 /**
  * @description this function returns the assetId from the asset source

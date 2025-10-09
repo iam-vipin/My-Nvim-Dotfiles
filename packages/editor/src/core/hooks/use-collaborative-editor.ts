@@ -60,8 +60,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     () =>
       new HocuspocusProvider({
         name: id,
-        parameters: realtimeConfig.queryParams,
-        token: JSON.stringify(user), // Using user id as token for server auth
+        // using user id as a token to verify the user on the server
+        token: JSON.stringify(user),
         url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
@@ -82,17 +82,19 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         },
         onSynced: () => {
           serverHandler?.onServerSynced?.();
+          const workspaceSlug = new URLSearchParams(realtimeConfig.url).get("workspaceSlug");
+          const projectId = new URLSearchParams(realtimeConfig.url).get("projectId");
           provider.sendStateless(
             JSON.stringify({
               action: "synced",
-              workspaceSlug: realtimeConfig.queryParams.workspaceSlug,
-              projectId: realtimeConfig.queryParams.projectId,
+              workspaceSlug: workspaceSlug,
+              projectId: projectId,
             })
           );
           setHasServerSynced(true);
         },
       }),
-    [id, realtimeConfig, serverHandler, user]
+    [id, realtimeConfig.url, serverHandler, user]
   );
 
   // Initialize local persistence using IndexedDB

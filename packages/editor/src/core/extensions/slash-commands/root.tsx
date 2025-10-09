@@ -50,20 +50,32 @@ const Command = Extension.create<SlashCommandOptions>({
         editor: this.editor,
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+          let cleanup: () => void = () => {};
+          let editorRef: Editor | null = null;
+
+          const handleClose = (editor?: Editor) => {
+            component?.destroy();
+            component = null;
+            (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+            cleanup();
+          };
 
           return {
             onStart: (props) => {
-              // Track active dropdown
+              editorRef = props.editor;
+              // React renderer component, which wraps the actual dropdown component
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
-                props,
+                props: {
+                  ...props,
+                  onClose: () => handleClose(props.editor),
+                } satisfies SlashCommandsMenuProps,
                 editor: props.editor,
+                className: "fixed z-[100]",
               });
               if (!props.clientRect) return;
               props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
-              element.style.position = "absolute";
-              element.style.zIndex = "100";
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onUpdate: (props) => {
@@ -71,24 +83,22 @@ const Command = Extension.create<SlashCommandOptions>({
               component.updateProps(props);
               if (!props.clientRect) return;
               const element = component.element as HTMLElement;
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup();
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
-            onKeyDown: (props) => {
-              if (props.event.key === "Escape") {
-                component?.destroy();
-                component = null;
+            onKeyDown: ({ event }) => {
+              if (event.key === "Escape") {
+                handleClose(this.editor);
                 return true;
               }
 
-              return component?.ref?.onKeyDown(props) ?? false;
+              return component?.ref?.onKeyDown({ event }) ?? false;
             },
 
             onExit: ({ editor }) => {
-              // Remove from active dropdowns
-              editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
-              component?.destroy();
-              component = null;
+              component?.element.remove();
+              handleClose(editor);
             },
           };
         },

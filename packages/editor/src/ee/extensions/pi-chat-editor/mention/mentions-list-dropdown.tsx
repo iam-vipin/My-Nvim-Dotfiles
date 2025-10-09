@@ -1,7 +1,10 @@
-import type { Editor } from "@tiptap/core";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { FloatingOverlay } from "@floating-ui/react";
+import type { SuggestionProps } from "@tiptap/suggestion";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { v4 as uuidv4 } from "uuid";
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
@@ -12,15 +15,16 @@ import {
   type PiChatMentionSearchCallbackResponse,
 } from "./types";
 
-export type PiChatEditorMentionsDropdownProps = {
-  command: (item: Partial<PiChatEditorMentionAttributes>) => void;
-  query: string;
-  editor: Editor;
+export type PiChatEditorMentionsDropdownProps = SuggestionProps<
+  PiChatMentionSearchCallbackResponse,
+  Partial<PiChatEditorMentionAttributes>
+> & {
   searchCallback: (query: string) => Promise<PiChatMentionSearchCallbackResponse>;
+  onClose: () => void;
 };
 
 export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMentionsDropdownProps, ref) => {
-  const { command, query, searchCallback } = props;
+  const { command, query, searchCallback, onClose } = props;
   // states
   const [sections, setSections] = useState<PiChatMentionSearchCallbackResponse>({});
   const [selectedIndex, setSelectedIndex] = useState({
@@ -28,6 +32,8 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
     item: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
+  // refs
+  const dropdownContainer = useRef<HTMLDivElement>(null);
   const isEmpty = useMemo(() => Object.keys(sections).length === 0, [sections]);
   const sectionKeys = useMemo(() => Object.keys(sections), [sections]);
 
@@ -164,24 +170,41 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
     fetchSuggestions();
   }, [query, searchCallback]);
 
+  useOutsideClickDetector(dropdownContainer, onClose);
+
   return (
-    <div className="z-10 max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2">
-      {isLoading ? (
-        <div className="text-center text-sm text-custom-text-400">Loading...</div>
-      ) : sectionKeys.length > 0 ? (
-        sectionKeys.map((type, index) => (
-          <MentionsDropdownSection
-            key={index}
-            type={type}
-            items={sections[type]}
-            onClick={selectItem}
-            selectedItemIndex={selectedIndex.item}
-            isSectionSelected={selectedIndex.section === index}
-          />
-        ))
-      ) : (
-        <div className="text-center text-sm text-custom-text-400">No results</div>
-      )}
-    </div>
+    <>
+      {/* Backdrop */}
+      <FloatingOverlay
+        style={{
+          zIndex: 99,
+        }}
+        lockScroll
+      />
+      <div
+        ref={dropdownContainer}
+        className="relative max-h-[90vh] w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        style={{
+          zIndex: 100,
+        }}
+      >
+        {isLoading ? (
+          <div className="text-center text-sm text-custom-text-400">Loading...</div>
+        ) : sectionKeys.length > 0 ? (
+          sectionKeys.map((type, index) => (
+            <MentionsDropdownSection
+              key={index}
+              type={type}
+              items={sections[type]}
+              onClick={selectItem}
+              selectedItemIndex={selectedIndex.item}
+              isSectionSelected={selectedIndex.section === index}
+            />
+          ))
+        ) : (
+          <div className="text-center text-sm text-custom-text-400">No results</div>
+        )}
+      </div>
+    </>
   );
 });

@@ -10,7 +10,11 @@ import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } 
 // helpers
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
-import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
+import {
+  IssueEmbedSuggestions,
+  WorkItemSuggestionsDropdownRenderer,
+  PageEmbedExtension,
+} from "@/plane-editor/extensions";
 // types
 import { TExtensions } from "@/types";
 // local imports
@@ -188,7 +192,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
 
       return IssueEmbedSuggestions.configure({
         suggestion: {
-          render: () => IssueListRenderer(searchCallback),
+          render: WorkItemSuggestionsDropdownRenderer(searchCallback),
         },
       });
     },

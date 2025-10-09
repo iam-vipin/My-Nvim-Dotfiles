@@ -13,10 +13,16 @@ type TArgs = {
 
 export const renderPiChatEditorMentionsDropdown =
   (args: TArgs): SuggestionOptions["render"] =>
-  // @ts-expect-error - Tiptap types are incorrect
   () => {
     const { searchCallback } = args;
     let component: ReactRenderer<CommandListInstance, PiChatEditorMentionsDropdownProps> | null = null;
+    let cleanup: () => void = () => {};
+
+    const handleClose = () => {
+      component?.destroy();
+      component = null;
+      cleanup();
+    };
 
     return {
       onStart: (props) => {
@@ -27,46 +33,41 @@ export const renderPiChatEditorMentionsDropdown =
             props: {
               ...props,
               searchCallback,
-            },
+              onClose: handleClose,
+            } satisfies PiChatEditorMentionsDropdownProps,
             editor: props.editor,
+            className: "fixed z-[100]",
           }
         );
         const element = component.element as HTMLElement;
-        element.style.position = "absolute";
-        element.style.zIndex = "100";
-        updateFloatingUIFloaterPosition(props.editor, element);
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
       },
 
       onUpdate: (props) => {
         if (!component || !component.element) return;
-
         component.updateProps(props);
-
-        if (!props.clientRect) {
-          return;
-        }
-
+        if (!props.clientRect) return;
         const element = component.element as HTMLElement;
-        updateFloatingUIFloaterPosition(props.editor, element);
+        cleanup();
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
       },
 
-      onKeyDown(props) {
-        if (props.event.key === "Escape") {
-          component?.destroy();
+      onKeyDown({ event }) {
+        if (event.key === "Escape") {
+          handleClose();
           return true;
         }
 
         const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
-
-        if (navigationKeys.includes(props.event.key)) {
-          props.event?.stopPropagation();
-          return component?.ref?.onKeyDown(props);
+        if (navigationKeys.includes(event.key)) {
+          event?.stopPropagation();
         }
-        return component?.ref?.onKeyDown(props);
+
+        return component?.ref?.onKeyDown({ event }) ?? false;
       },
       onExit: () => {
         component?.element.remove();
-        component?.destroy();
+        handleClose();
       },
     };
   };

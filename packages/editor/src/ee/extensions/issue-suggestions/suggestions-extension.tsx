@@ -1,6 +1,6 @@
-import { Extension, Range } from "@tiptap/core";
+import { Extension, type Range } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import Suggestion from "@tiptap/suggestion";
 
 export const IssueEmbedSuggestions = Extension.create({

@@ -16,17 +16,15 @@ export const MentionsDropdownSection: React.FC<Props> = (props) => {
   const { type, items, onClick, selectedItemIndex, isSectionSelected } = props;
 
   return (
-    <Disclosure as="div" className="flex flex-col py-2">
-      <div className="flex">
-        <div
-          className={cn(
-            "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
-          )}
-        >
-          <>
-            <span className="text-xs font-medium capitalize text-custom-text-300 my-1">{type}</span>
-          </>
-        </div>
+    <Disclosure as="div" className="flex flex-col">
+      <div
+        className={cn(
+          "shrink-0 group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+        )}
+      >
+        <>
+          <span className="text-xs font-medium capitalize text-custom-text-300 my-1">{type}</span>
+        </>
       </div>
       <Transition
         show

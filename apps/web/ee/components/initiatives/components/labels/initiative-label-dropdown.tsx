@@ -15,7 +15,6 @@ import { cn } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { TInitiativeLabel } from "@/plane-web/types/initiative";
 
-
 export type TInitiativeLabelDropdownProps = {
   value: string[];
   onChange?: (value: string[]) => void;
@@ -49,7 +48,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
     readonly = false,
     labels = new Map(),
     onAddLabel,
-    workspaceSlug
+    workspaceSlug,
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -79,9 +78,10 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
 
   const canCreateLabel = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
-  const filteredOptions = query === "" ? labelOptions : labelOptions?.filter((option) =>
-    option.query.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredOptions =
+    query === ""
+      ? labelOptions
+      : labelOptions?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const selectedLabels = labelOptions.filter((option) => value.includes(option.value));
 
@@ -146,10 +146,10 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
           searchQuery={query}
           onSearchQueryChange={setQuery}
           onSearchQueryKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (filteredOptions.length === 0 && e.key === "Enter" && query.length && !submitting) {
-                handleCreateLabel(e);
-              }
-            }}
+            if (filteredOptions.length === 0 && e.key === "Enter" && query.length && !submitting) {
+              handleCreateLabel(e);
+            }
+          }}
         >
           <div className="vertical-scrollbar scrollbar-sm max-h-48 space-y-1 overflow-y-scroll">
             {submitting ? (
@@ -161,7 +161,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 data-[selected]:bg-custom-background-80 text-custom-text-200"
+                  className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 text-custom-text-200"
                 >
                   <span className="flex-grow truncate">{option.content}</span>
                   {value.includes(option.value) && <Check className="h-3.5 w-3.5 flex-shrink-0" />}

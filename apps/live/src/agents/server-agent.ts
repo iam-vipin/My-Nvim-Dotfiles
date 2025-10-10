@@ -87,7 +87,7 @@ export class ServerAgentManager {
     // Set up periodic cleanup of unused connections
     this.startConnectionCleanup();
 
-    logger.info("ServerAgentManager initialized");
+    logger.info("SERVER_AGENT: initialized");
     return this;
   }
 
@@ -135,7 +135,7 @@ export class ServerAgentManager {
       return connectionData;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error(`Failed to create connection for document ${documentId}: ${errorMessage}`);
+      logger.error(`SERVER_AGENT: Failed to create connection for document ${documentId}: ${errorMessage}`);
       throw new ServerAgentManagerError(`Failed to create connection: ${errorMessage}`);
     }
   }
@@ -165,16 +165,20 @@ export class ServerAgentManager {
       await connectionData.connection.transact(transactionFn);
 
       return true;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error(`Transaction error for document ${documentId}: ${errorMessage}`, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error(`SERVER_AGENT: Transaction error for document ${documentId}`, {
         documentId,
-        error: error instanceof Error ? error.stack : errorMessage,
+        message: error?.message,
+        status: error?.status,
+        statusCode: error?.statusCode,
+        code: error?.code,
+        response: error?.response?.data,
         context,
       });
 
       // Notify about transaction failure if needed
-      this.notifyTransactionFailure(documentId, errorMessage, res);
+      this.notifyTransactionFailure(documentId, error?.message || "Unknown error", res);
 
       return false;
     }
@@ -200,7 +204,7 @@ export class ServerAgentManager {
         if (!context.documentType) {
           return;
         }
-        logger.info(`SERVER AGENT: Fetching page information ${context.documentType}`);
+        logger.info(`SERVER_AGENT: Fetching page information ${context.documentType}`);
         const service = getPageService(context.documentType, context);
         subPagesFromBackend = await service.fetchSubPageDetails(pageId);
 
@@ -233,9 +237,9 @@ export class ServerAgentManager {
     if (!document) return;
 
     try {
-      logger.info(`notified transaction success for ${documentId}:`);
+      logger.info(`SERVER_AGENT: notified transaction success for ${documentId}:`);
     } catch (error) {
-      logger.error(`Error notifying transaction success for ${documentId}:`, error);
+      logger.error(`SERVER_AGENT: Error notifying transaction success for ${documentId}:`, error);
     }
   }
 
@@ -262,7 +266,7 @@ export class ServerAgentManager {
       //   })
       // );
     } catch (error) {
-      logger.error(`Error notifying transaction failure for ${documentId}:`, error);
+      logger.error(`SERVER_AGENT: Error notifying transaction failure for ${documentId}:`, error);
     }
   }
 
@@ -280,12 +284,19 @@ export class ServerAgentManager {
 
     try {
       connectionData.connection.disconnect();
-      this.connections.delete(documentId);
-      logger.info(`Released connection for document: ${documentId}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error(`Error releasing connection for document ${documentId}: ${errorMessage}`, error);
-      // We still want to remove it from our map even if disconnect fails
+      logger.info(`SERVER_AGENT: Released connection for document ${documentId}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error(`SERVER_AGENT: Error releasing connection for document ${documentId}`, {
+        documentId,
+        message: error?.message,
+        status: error?.status,
+        statusCode: error?.statusCode,
+        code: error?.code,
+        response: error?.response?.data,
+      });
+    } finally {
+      // We still want to remove it from our map
       this.connections.delete(documentId);
     }
   }
@@ -324,7 +335,7 @@ export class ServerAgentManager {
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupUnusedConnections().catch((error) => {
-        logger.error("Error during connection cleanup:", error);
+        logger.error("SERVER_AGENT: Error during connection cleanup:", error);
       });
     }, CLEANUP_INTERVAL);
   }
@@ -345,12 +356,12 @@ export class ServerAgentManager {
 
     // Release connections outside the loop to avoid modifying the map during iteration
     for (const documentId of documentsToCleanup) {
-      logger.info(`Cleaning up connection for document with no clients: ${documentId}`);
+      logger.info(`SERVER_AGENT: Cleaning up connection for document with no clients: ${documentId}`);
       await this.releaseConnection(documentId);
     }
 
     if (documentsToCleanup.length > 0) {
-      logger.info(`Cleaned up ${documentsToCleanup.length} connections with no clients`);
+      logger.info(`SERVER_AGENT: Cleaned up ${documentsToCleanup.length} connections with no clients`);
     }
   }
 
@@ -365,7 +376,7 @@ export class ServerAgentManager {
     }
 
     if (!this.hasClientConnections(documentId)) {
-      logger.info(`No clients left for document ${documentId}, releasing agent connection`);
+      logger.info(`SERVER_AGENT: No clients left for document ${documentId}, releasing agent connection`);
       await this.releaseConnection(documentId);
       return true;
     }
@@ -390,7 +401,7 @@ export class ServerAgentManager {
           try {
             await serverAgentManager.checkAndReleaseIfNoClients(documentName);
           } catch (error) {
-            logger.error(`Error checking client connections for ${documentName}:`, error);
+            logger.error(`SERVER_AGENT: Error checking client connections for ${documentName}:`, error);
           }
         }, 100); // Small delay to ensure connection state is updated
       },
@@ -431,7 +442,7 @@ export class ServerAgentManager {
       await this.releaseConnection(documentId);
     }
 
-    logger.info("ServerAgentManager shut down successfully");
+    logger.info("SERVER_AGENT: ServerAgentManager shut down successfully");
   }
 }
 

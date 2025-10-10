@@ -43,17 +43,17 @@ export class DocumentController {
           path: err.path.join("."),
           message: err.message,
         }));
-        logger.error("Error in /convert-document endpoint: Validation error", {
+        logger.error("DOCUMENT_CONTROLLER: Validation error", {
           validationErrors,
         });
-        return res.status(500).json({
-          message: `Internal server error.`,
+        return res.status(400).json({
+          message: `Validation error`,
           context: {
             validationErrors,
           },
         });
       } else {
-        logger.error("Error in /convert-document endpoint:", error);
+        logger.error("DOCUMENT_CONTROLLER: Internal server error", error);
         return res.status(500).json({
           message: `Internal server error.`,
         });

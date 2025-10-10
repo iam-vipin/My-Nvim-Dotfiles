@@ -59,7 +59,7 @@ export class TitleUpdateManager {
         this.lastTitle = null;
       }
     } catch (error) {
-      console.error(`Error updating title for ${this.documentName}:`, error);
+      logger.error(`TITLE_UPDATE_MANAGER: Error updating title for ${this.documentName}:`, error);
     }
   }
 

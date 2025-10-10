@@ -91,10 +91,10 @@ export class Server {
   public listen() {
     this.httpServer = this.app
       .listen(this.app.get("port"), () => {
-        logger.info(`Plane Live server has started at port ${this.app.get("port")}`);
+        logger.info(`SERVER: Express server has started at port ${this.app.get("port")}`);
       })
       .on("error", (err) => {
-        logger.error("Failed to start server:", err);
+        logger.error("SERVER: Failed to start server:", err);
         throw err;
       });
   }
@@ -102,11 +102,11 @@ export class Server {
   public async destroy() {
     if (this.hocuspocusServer) {
       this.hocuspocusServer.closeConnections();
-      logger.info("HocusPocus connections closed gracefully.");
+      logger.info("SERVER: HocusPocus connections closed gracefully.");
     }
 
     await redisManager.disconnect();
-    logger.info("Redis connection closed gracefully.");
+    logger.info("SERVER: Redis connection closed gracefully.");
 
     if (this.httpServer) {
       await new Promise<void>((resolve, reject) => {
@@ -114,7 +114,7 @@ export class Server {
           if (err) {
             reject(err);
           } else {
-            logger.info("Express server closed gracefully.");
+            logger.info("SERVER: Express server closed gracefully.");
             resolve();
           }
         });

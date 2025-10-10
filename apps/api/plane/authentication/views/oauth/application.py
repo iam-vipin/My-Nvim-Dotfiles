@@ -33,15 +33,14 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
         )
 
         # Always filter those workspaces where user is a member
-        if request.auth.grant_type == "authorization_code":
+        workspace_applications = workspace_applications.filter(
+            workspace__workspace_member__member=request.auth.user,
+        )
+        token = AccessToken.objects.get(token=request.auth.token)
+        if token.workspace:
             workspace_applications = workspace_applications.filter(
-                workspace__workspace_member__member=request.auth.user,
+                workspace=token.workspace,
             )
-            token = AccessToken.objects.get(token=request.auth.token)
-            if token.workspace:
-                workspace_applications = workspace_applications.filter(
-                    workspace=token.workspace,
-                )
 
         workspace_applications_serializer = WorkspaceAppInstallationSerializer(
             workspace_applications, many=True

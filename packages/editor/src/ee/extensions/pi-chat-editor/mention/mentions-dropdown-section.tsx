@@ -23,7 +23,9 @@ export const MentionsDropdownSection: React.FC<Props> = (props) => {
         )}
       >
         <>
-          <span className="text-xs font-medium capitalize text-custom-text-300 my-1">{type}</span>
+          <span className="text-xs font-medium capitalize text-custom-text-300 my-1">
+            {type === "issue" ? "Work item" : type}
+          </span>
         </>
       </div>
       <Transition

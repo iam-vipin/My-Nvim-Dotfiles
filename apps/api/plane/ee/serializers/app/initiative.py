@@ -46,7 +46,7 @@ class InitiativeSerializer(BaseSerializer):
 
     class Meta:
         model = Initiative
-        fields = "__all__"
+        exclude = ["labels"]
         read_only_fields = ["workspace"]
 
     def get_project_ids(self, obj):
@@ -171,20 +171,29 @@ class InitiativeWriteSerializer(InitiativeSerializer):
             )
 
         if labels is not None:
-            InitiativeLabelAssociation.objects.filter(initiative=instance).delete()
-            InitiativeLabelAssociation.objects.bulk_create(
-                [
-                    InitiativeLabelAssociation(
-                        label_id=label,
-                        workspace_id=workspace_id,
-                        initiative=instance,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
-            )
+            # Deleting the other labels that are not in the payload
+            InitiativeLabelAssociation.objects.filter(initiative=instance).exclude(label_id__in=labels).delete()
+
+            existing_labels = InitiativeLabelAssociation.objects.filter(
+                initiative_id=instance.id, label_id__in=labels
+            ).values_list("label_id", flat=True)
+
+            new_labels = set(labels) - set(existing_labels)
+
+            if new_labels:
+                InitiativeLabelAssociation.objects.bulk_create(
+                    [
+                        InitiativeLabelAssociation(
+                            label_id=label,
+                            workspace_id=workspace_id,
+                            initiative=instance,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for label in new_labels
+                    ],
+                    batch_size=10,
+                )
 
         # Time updation occurs even when other related models are updated
         instance.updated_at = timezone.now()

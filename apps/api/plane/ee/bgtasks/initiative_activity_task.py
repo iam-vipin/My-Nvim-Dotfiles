@@ -9,13 +9,14 @@ from celery import shared_task
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import Label, Project, Workspace
+from plane.db.models import Project, Workspace
 from plane.ee.models import (
     Initiative,
     InitiativeActivity,
     InitiativeReaction,
     InitiativeComment,
     InitiativeCommentReaction,
+    InitiativeLabel,
 )
 from plane.db.models import Issue
 
@@ -59,14 +60,8 @@ def track_description(
     initiative_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get(
-        "description_html"
-    ):
-        last_activity = (
-            InitiativeActivity.objects.filter(initiative_id=initiative_id)
-            .order_by("-created_at")
-            .first()
-        )
+    if current_instance.get("description_html") != requested_data.get("description_html"):
+        last_activity = InitiativeActivity.objects.filter(initiative_id=initiative_id).order_by("-created_at").first()
         if (
             last_activity is not None
             and last_activity.field == "description"
@@ -134,16 +129,8 @@ def track_end_date(
                 initiative_id=initiative_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=(
-                    current_instance.get("end_date")
-                    if current_instance.get("end_date") is not None
-                    else ""
-                ),
-                new_value=(
-                    requested_data.get("end_date")
-                    if requested_data.get("end_date") is not None
-                    else ""
-                ),
+                old_value=(current_instance.get("end_date") if current_instance.get("end_date") is not None else ""),
+                new_value=(requested_data.get("end_date") if requested_data.get("end_date") is not None else ""),
                 field="end_date",
                 workspace_id=workspace_id,
                 comment="updated the end date to",
@@ -169,15 +156,9 @@ def track_start_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("start_date")
-                    if current_instance.get("start_date") is not None
-                    else ""
+                    current_instance.get("start_date") if current_instance.get("start_date") is not None else ""
                 ),
-                new_value=(
-                    requested_data.get("start_date")
-                    if requested_data.get("start_date") is not None
-                    else ""
-                ),
+                new_value=(requested_data.get("start_date") if requested_data.get("start_date") is not None else ""),
                 field="start_date",
                 workspace_id=workspace_id,
                 comment="updated the start date to ",
@@ -204,7 +185,7 @@ def track_labels(
 
     # Set of newly added labels
     for added_label in added_labels:
-        label = Label.objects.get(pk=added_label)
+        label = InitiativeLabel.objects.get(pk=added_label)
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
@@ -223,7 +204,7 @@ def track_labels(
 
     # Set of dropped labels
     for dropped_label in dropped_labels:
-        label = Label.objects.get(pk=dropped_label)
+        label = InitiativeLabel.objects.get(pk=dropped_label)
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
@@ -252,23 +233,17 @@ def track_projects(
     epoch,
 ):
     requested_projects = (
-        set([str(asg) for asg in requested_data.get("project_ids", [])])
-        if requested_data is not None
-        else set()
+        set([str(asg) for asg in requested_data.get("project_ids", [])]) if requested_data is not None else set()
     )
     current_projects = (
-        set([str(asg) for asg in current_instance.get("project_ids", [])])
-        if current_instance is not None
-        else set()
+        set([str(asg) for asg in current_instance.get("project_ids", [])]) if current_instance is not None else set()
     )
 
     added_projects = requested_projects - current_projects
     dropped_projects = current_projects - requested_projects
 
     added_projects = Project.objects.filter(pk__in=added_projects).values("id", "name")
-    dropped_projects = Project.objects.filter(pk__in=dropped_projects).values(
-        "id", "name"
-    )
+    dropped_projects = Project.objects.filter(pk__in=dropped_projects).values("id", "name")
 
     for added_project in added_projects:
         initiative_activities.append(
@@ -313,14 +288,10 @@ def track_epics(
     epoch,
 ):
     requested_epics = (
-        set([str(asg) for asg in requested_data.get("epic_ids", [])])
-        if requested_data is not None
-        else set()
+        set([str(asg) for asg in requested_data.get("epic_ids", [])]) if requested_data is not None else set()
     )
     current_epics = (
-        set([str(asg) for asg in current_instance.get("epic_ids", [])])
-        if current_instance is not None
-        else set()
+        set([str(asg) for asg in current_instance.get("epic_ids", [])]) if current_instance is not None else set()
     )
 
     added_epics = requested_epics - current_epics
@@ -436,9 +407,7 @@ def update_initiative_activity(
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for key in requested_data:
         func = INITIATIVE_ACTIVITY_MAPPER.get(key)
@@ -486,9 +455,7 @@ def create_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     initiative_activities.append(
         InitiativeActivity(
@@ -516,9 +483,7 @@ def update_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         initiative_activities.append(
@@ -571,9 +536,7 @@ def create_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     initiative_activities.append(
         InitiativeActivity(
@@ -600,9 +563,7 @@ def update_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("url") != requested_data.get("url"):
         initiative_activities.append(
@@ -631,9 +592,7 @@ def delete_link_activity(
     initiative_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     initiative_activities.append(
         InitiativeActivity(
@@ -660,9 +619,7 @@ def create_attachment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     initiative_activities.append(
         InitiativeActivity(
@@ -748,9 +705,7 @@ def delete_initiative_reaction_activity(
     initiative_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         initiative_activities.append(
             InitiativeActivity(
@@ -790,14 +745,8 @@ def create_comment_reaction_activity(
             .first()
         )
 
-        comment = InitiativeComment.objects.get(
-            pk=comment_id, initiative_id=initiative_id
-        )
-        if (
-            comment is not None
-            and comment_reaction_id is not None
-            and comment_id is not None
-        ):
+        comment = InitiativeComment.objects.get(pk=comment_id, initiative_id=initiative_id)
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
             initiative_activities.append(
                 InitiativeActivity(
                     initiative_id=comment.initiative_id,
@@ -824,15 +773,11 @@ def delete_comment_reaction_activity(
     initiative_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance and current_instance.get("reaction") is not None:
         initiative_id = (
-            InitiativeComment.objects.filter(
-                pk=current_instance.get("comment_id"), initiative_id=initiative_id
-            )
+            InitiativeComment.objects.filter(pk=current_instance.get("comment_id"), initiative_id=initiative_id)
             .values_list("initiative_id", flat=True)
             .first()
         )

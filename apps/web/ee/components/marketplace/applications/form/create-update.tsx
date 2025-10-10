@@ -343,7 +343,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             description={t("workspace_settings.settings.applications.setup_url.description")}
             placeholder={t("workspace_settings.settings.applications.setup_url.placeholder")}
             register={register}
-            validation={{ required: t("workspace_settings.settings.applications.setup_url_error") }}
             onChange={(value) => handleTextChange("setup_url", value)}
             error={errors.setup_url}
           />

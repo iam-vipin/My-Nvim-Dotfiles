@@ -22,6 +22,7 @@ const oauthService = new OAuthService();
 
 export enum ESupportedFeatures {
   APPS = "apps",
+  IMPORTERS = "importers",
   PROJECT_TEMPLATES = "project-templates",
   EXTERNAL_APPS = "external-apps",
 }
@@ -30,6 +31,8 @@ const getFeatureName = (feature: ESupportedFeatures) => {
   switch (feature) {
     case ESupportedFeatures.APPS:
       return "Apps";
+    case ESupportedFeatures.IMPORTERS:
+      return "Importers";
     case ESupportedFeatures.PROJECT_TEMPLATES:
       return "Project templates";
     case ESupportedFeatures.EXTERNAL_APPS:
@@ -116,6 +119,9 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
       switch (feature) {
         case ESupportedFeatures.APPS:
           router.push(`/${selectedWorkspaceSlug}/settings/integrations/${identifier}`);
+          break;
+        case ESupportedFeatures.IMPORTERS:
+          router.push(`/${selectedWorkspaceSlug}/settings/imports/${identifier}`);
           break;
         case ESupportedFeatures.PROJECT_TEMPLATES:
           await projectTemplateService.copy(selectedWorkspaceSlug, identifier);

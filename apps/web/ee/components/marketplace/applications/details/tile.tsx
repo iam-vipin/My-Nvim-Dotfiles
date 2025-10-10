@@ -13,6 +13,7 @@ import { EProductSubscriptionEnum, EUserWorkspaceRoles, TUserApplication } from 
 import { cn, Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
+import { IMPORTERS_LIST } from "@/plane-web/components/importers";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
@@ -53,6 +54,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
     workspaceSlug?.toString() || "",
     E_FEATURE_FLAGS[`${convertAppSlugToIntegrationKey(app.slug)}_INTEGRATION` as keyof typeof E_FEATURE_FLAGS]
   );
+  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
 
   const handleConfigure = () => {
     if (isAppDefault) {
@@ -93,8 +95,13 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
     }
   };
 
-  // for default apps, if the feature flag is not enabled, don't show the tile
-  if (isAppDefault && !isFeatureFlagEnabled) {
+  // for default apps, if the feature flag is not enabled, don't show the tile, or
+  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not default
+  if (
+    (isAppDefault && !isFeatureFlagEnabled) ||
+    importersSlug.includes(app.slug) ||
+    (!app.setup_url && !isAppDefault)
+  ) {
     return null;
   }
 

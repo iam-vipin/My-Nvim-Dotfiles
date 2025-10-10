@@ -11,6 +11,7 @@ import { generateTitleProsemirrorJson } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
 import { extractTextFromHTML } from "./title-update/title-utils";
+import { logger } from "@plane/logger";
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -43,7 +44,7 @@ export class TitleSyncExtension implements Extension {
         document.merge(titleField);
       }
     } catch (error) {
-      console.error("Error in onLoadDocument: ", error);
+      logger.error("TITLE_SYNC_EXTENSION: Error in onLoadDocument: ", error);
     }
   }
   /**

@@ -55,8 +55,6 @@ export const onStateless = async ({ payload, document, connection }: onStateless
   // If not a document event, try to parse as JSON
   const parseResult = safeJsonParse(payloadStr);
 
-  logger.info("ON_STATELESS: parseResult", { parseResult });
-
   if (parseResult.success && parseResult.data && typeof parseResult.data === "object") {
     const parsedPayload = parseResult.data as {
       workspaceSlug?: string;
@@ -64,14 +62,8 @@ export const onStateless = async ({ payload, document, connection }: onStateless
       action?: string;
     };
 
-    logger.info("ON_STATELESS: parsedPayload", { parsedPayload });
-
     // Handle synced action
     if (parsedPayload.action === "synced" && parsedPayload.workspaceSlug) {
-      logger.info("ON_STATELESS: notifySyncTrigger", {
-        documentName: document.name,
-        connectionContext: connection.context,
-      });
       serverAgentManager.notifySyncTrigger(document.name, connection.context);
       return;
     }

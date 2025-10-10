@@ -1,3 +1,5 @@
+import { logger } from "@plane/logger";
+
 /**
  * DebounceState - Tracks the state of a debounced function
  */
@@ -120,7 +122,7 @@ export class DebounceManager {
 
     // Execute the function asynchronously
     this.performFunction(func).catch((error) => {
-      console.error(`${this.logPrefix}: Error in execution:`, error);
+      logger.error(`${this.logPrefix}: Error in execution:`, error);
     });
   }
 
@@ -170,7 +172,7 @@ export class DebounceManager {
       if (error instanceof Error && error.name === "AbortError") {
         // Nothing to do here, the new operation will be triggered by the timer expiration
       } else {
-        console.error(`${this.logPrefix}: Error during operation:`, error);
+        logger.error(`${this.logPrefix}: Error during operation:`, error);
 
         // On error (not abort), make sure we have a timer running to retry
         if (!this.state.timerId && this.state.lastArgs) {

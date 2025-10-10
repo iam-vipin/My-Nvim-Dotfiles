@@ -76,7 +76,7 @@ export class BroadcastController {
         this.handleSubPage(payload, connectionContext);
       }
     } catch (error) {
-      logger.error("Error in broadcast handler:", error);
+      logger.error("BROADCAST_CONTROLLER: Error in broadcast handler:", error);
       if (!res.headersSent) {
         res.status(500).json({ error: "Internal server error" });
       }
@@ -105,7 +105,7 @@ export class BroadcastController {
       try {
         broadcastMessageToPage(serverAgentManager, pageId, metadata);
       } catch (error) {
-        logger.error(`Error broadcasting to page ${pageId}:`, error);
+        logger.error(`BROADCAST_CONTROLLER: Error broadcasting to page ${pageId}:`, error);
       }
     });
   }
@@ -164,7 +164,7 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        logger.error(error, "Error handling duplicated action:");
+        logger.error("BROADCAST_CONTROLLER: Error handling duplicated action:", error);
       });
   }
 
@@ -203,7 +203,7 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        logger.error(error, "Error handling deleted action:");
+        logger.error("BROADCAST_CONTROLLER: Error handling deleted action:", error);
       });
   }
 
@@ -230,7 +230,7 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((err) => {
-        console.error("Error removing from old parent:", err);
+        logger.error("BROADCAST_CONTROLLER: Error removing from old parent:", err);
       });
   }
 
@@ -258,7 +258,7 @@ export class BroadcastController {
         }
       )
       .catch((err) => {
-        console.error("Error adding to new parent:", err);
+        logger.error("BROADCAST_CONTROLLER: Error adding to new parent:", err);
       });
   }
 }

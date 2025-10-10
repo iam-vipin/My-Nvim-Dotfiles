@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
+import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
@@ -58,7 +59,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   } = useMember();
   const { uploadEditorAsset } = useEditorAsset();
   const {
-    initiative: { getInitiativesLabels },
+    initiative: { getInitiativesLabels, createInitiativeLabel },
   } = useInitiatives();
   const allLabels = getInitiativesLabels(workspaceSlug?.toString());
 
@@ -82,6 +83,11 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const handleNameChange = (value: string) => {
     handleFormDataChange("name", value);
     validateForm({ ...formData, name: value });
+  };
+
+  const createLabel = async (labelName: string) => {
+    const createdLabel = await createInitiativeLabel(workspaceSlug.toString(), { name: labelName, color: getRandomLabelColor() });
+    return createdLabel;
   };
 
   if (!workspaceSlug || !currentWorkspace || !formData) return null;
@@ -242,6 +248,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             labels={allLabels}
             onChange={(val: string[]) => handleFormDataChange("label_ids", val)}
             placeholder={t("label")}
+            onAddLabel={createLabel}
           />
         </div>
       </div>

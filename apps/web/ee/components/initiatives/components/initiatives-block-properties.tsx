@@ -2,6 +2,7 @@
 import { observer } from "mobx-react";
 import { Briefcase, CalendarDays } from "lucide-react";
 // plane imports
+import { getRandomLabelColor } from "@plane/constants";
 import { EpicIcon } from "@plane/propel/icons";
 import { Avatar } from "@plane/ui";
 import { getDate, getFileURL } from "@plane/utils";
@@ -28,7 +29,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
   // store hooks
   const { getUserDetails } = useMember();
   const {
-    initiative: { updateInitiative, getInitiativesLabels },
+    initiative: { updateInitiative, getInitiativesLabels, createInitiativeLabel },
   } = useInitiatives();
 
   // derived values
@@ -39,6 +40,11 @@ export const InitiativesBlockProperties = observer((props: Props) => {
 
   const handleLabelChange = (labelIds: string[]) => {
     updateInitiative?.(workspaceSlug, initiative.id, { label_ids: labelIds });
+  };
+
+  const createLabel = async (labelName: string) => {
+    const createdLabel = await createInitiativeLabel(workspaceSlug, { name: labelName, color: getRandomLabelColor() });
+    return createdLabel;
   };
 
   return (
@@ -96,6 +102,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           value={initiative.label_ids || []}
           labels={initiativeLabels}
           onChange={handleLabelChange}
+          onAddLabel={createLabel}
           placeholder=""
         />
       </PropertyBlockWrapper>

@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
 // plane imports
-import { EIconSize } from "@plane/constants";
+import { EIconSize, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EpicIcon, InitiativeStateIcon } from "@plane/propel/icons";
 import { TInitiativeStates } from "@plane/types";
@@ -52,7 +52,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   } = useInitiatives();
   const { getUserDetails } = useMember();
   const {
-    initiative: { getInitiativesLabels },
+    initiative: { getInitiativesLabels, createInitiativeLabel },
   } = useInitiatives();
 
   const { t } = useTranslation();
@@ -82,6 +82,11 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
     updateInitiative(workspaceSlug.toString(), initiative.id, {
       lead: id,
     });
+
+  const createLabel = async (labelName: string) => {
+    const createdLabel = await createInitiativeLabel(workspaceSlug, { name: labelName, color: getRandomLabelColor() });
+    return createdLabel;
+  };
 
   return (
     <SidebarContentWrapper title="Properties">
@@ -210,6 +215,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             labels={allInitiativeLabels}
             onChange={(val: string[]) => handleInitiativeLabelUpdate(val)}
             placeholder={t("label")}
+            onAddLabel={createLabel}
           />
         </div>
       </div>

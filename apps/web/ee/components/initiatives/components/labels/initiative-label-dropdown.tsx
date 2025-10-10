@@ -2,15 +2,19 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Tag } from "lucide-react";
+import { Check, Loader, Plus, Tag } from "lucide-react";
 
 // plane imports
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // types
+import { useUserPermissions } from "@/hooks/store/user";
 import { TInitiativeLabel } from "@/plane-web/types/initiative";
+
 
 export type TInitiativeLabelDropdownProps = {
   value: string[];
@@ -30,6 +34,8 @@ export type TInitiativeLabelDropdownProps = {
   placeholder?: string;
   readonly?: boolean;
   labels?: Map<string, TInitiativeLabel>;
+  onAddLabel?: (labelName: string) => Promise<TInitiativeLabel>;
+  workspaceSlug?: string;
 };
 
 export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observer((props) => {
@@ -42,12 +48,17 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
     placeholder = "Select label",
     readonly = false,
     labels = new Map(),
+    onAddLabel,
+    workspaceSlug
   } = props;
   // plane hooks
   const { t } = useTranslation();
+  const { allowPermissions } = useUserPermissions();
 
   // states
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   // derived values
   const labelOptions = Array.from(labels.values()).map((label) => ({
@@ -66,10 +77,38 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
     ),
   }));
 
+  const canCreateLabel = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+
+  const filteredOptions = query === "" ? labelOptions : labelOptions?.filter((option) =>
+    option.query.toLowerCase().includes(query.toLowerCase())
+  );
+
   const selectedLabels = labelOptions.filter((option) => value.includes(option.value));
 
   const handleValueChange = (newValue: string | string[]) => {
     onChange?.(newValue as string[]);
+  };
+
+  const handleAddLabel = async (labelName: string) => {
+    if (!labelName.length || !onAddLabel) return;
+    setSubmitting(true);
+    try {
+      const newLabel = await onAddLabel(labelName);
+      onChange?.([...value, newLabel.id]);
+      setQuery("");
+    } catch (error) {
+      console.error("Error creating label:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCreateLabel = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (query.length) {
+      handleAddLabel(query);
+    }
   };
 
   return (
@@ -99,24 +138,55 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
         </Combobox.Button>
         <Combobox.Options
           showSearch
-          searchPlaceholder={t("search")}
-          emptyMessage={t("no_matching_results")}
+          searchPlaceholder={t("common.search.label")}
+          emptyMessage=""
           maxHeight="md"
           className="w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
-          inputClassName="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-          optionsContainerClassName="mt-2 space-y-1"
           positionerClassName="z-50"
+          searchQuery={query}
+          onSearchQueryChange={setQuery}
+          onSearchQueryKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (filteredOptions.length === 0 && e.key === "Enter" && query.length && !submitting) {
+                handleCreateLabel(e);
+              }
+            }}
         >
-          {labelOptions.map((option) => (
-            <Combobox.Option
-              key={option.value}
-              value={option.value}
-              className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 data-[selected]:text-custom-text-100 text-custom-text-200"
-            >
-              <span className="flex-grow truncate">{option.content}</span>
-              {value.includes(option.value) && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-            </Combobox.Option>
-          ))}
+          <div className="vertical-scrollbar scrollbar-sm max-h-48 space-y-1 overflow-y-scroll">
+            {submitting ? (
+              <div className="flex items-center justify-center py-2">
+                <Loader className="h-3.5 w-3.5 animate-spin" />
+              </div>
+            ) : filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 data-[selected]:bg-custom-background-80 text-custom-text-200"
+                >
+                  <span className="flex-grow truncate">{option.content}</span>
+                  {value.includes(option.value) && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                </Combobox.Option>
+              ))
+            ) : canCreateLabel && query ? (
+              <button
+                onClick={handleCreateLabel}
+                className={`text-left text-custom-text-200 flex items-center gap-2 px-1 py-1.5 rounded hover:bg-custom-background-80 w-full whitespace-nowrap overflow-auto ${
+                  query.length ? "cursor-pointer" : "cursor-default"
+                }`}
+              >
+                <Plus className="h-3.5 w-3.5 flex-shrink-0" />
+                {query.length ? (
+                  <>
+                    Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                  </>
+                ) : (
+                  "Create new label"
+                )}
+              </button>
+            ) : (
+              <p className="text-left text-custom-text-200 px-1 py-1.5">{t("common.search.no_matching_results")}</p>
+            )}
+          </div>
         </Combobox.Options>
       </Combobox>
     </div>

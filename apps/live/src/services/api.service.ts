@@ -21,7 +21,7 @@ export abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
-        logger.error("Request failed with error: ", { error });
+        logger.error("AXIOS_ERROR:", error);
         return Promise.reject(error);
       }
     );

@@ -33,6 +33,7 @@ const OAuthPage = observer(() => {
     nonce,
     state,
     claims,
+    disable_dropdown,
   } = Object.fromEntries(searchParams.entries());
 
   const { data, isLoading } = useSWR(client_id ? APPLICATION_BY_CLIENT_ID(client_id) : null, async () => {
@@ -81,6 +82,7 @@ const OAuthPage = observer(() => {
                 <AppConsent
                   application={application}
                   workspaceSlug={workspace_slug}
+                  disableDropdown={workspace_slug ? Boolean(disable_dropdown?.toLowerCase() === "true") : false}
                   consentParams={{
                     client_id,
                     redirect_uri,
@@ -92,7 +94,7 @@ const OAuthPage = observer(() => {
                     state,
                     claims,
                   }}
-                  worskapcePermissions={applicationPermissions}
+                  workspacePermissions={applicationPermissions}
                 />
               </div>
             </div>

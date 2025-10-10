@@ -164,7 +164,7 @@ export const DndWrapper: FC<Props> = observer((props) => {
         {children(isUploading, open)}
       </div>
       <div className="text-xs text-custom-text-350 pt-2 text-center bg-custom-background-100">
-        Pi can make mistakes, please double-check responses.
+        Plane AI can make mistakes, please double-check responses.
       </div>
     </>
   );

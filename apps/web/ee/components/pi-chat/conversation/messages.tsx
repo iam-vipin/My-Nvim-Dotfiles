@@ -73,8 +73,9 @@ export const Messages = observer((props: TProps) => {
   }, []);
 
   useEffect(() => {
+    if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
     handleRegenerateIfTokenExists();
-  }, []);
+  }, [activeChat?.dialogue]);
 
   useEffect(() => {
     //Always scroll to the latest message

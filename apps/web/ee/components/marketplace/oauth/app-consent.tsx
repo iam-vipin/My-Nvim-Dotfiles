@@ -27,7 +27,8 @@ type TAppConsentProps = {
   application: Partial<TUserApplication>;
   consentParams: TConsentParams;
   workspaceSlug: string;
-  worskapcePermissions: Record<string, "allowed" | "not_allowed">;
+  workspacePermissions: Record<string, "allowed" | "not_allowed">;
+  disableDropdown: boolean;
 };
 
 const oauthService = new OAuthService();
@@ -35,7 +36,7 @@ const applicationService = new ApplicationService();
 const authService = new AuthService();
 
 export const AppConsent = observer(
-  ({ application, consentParams, workspaceSlug, worskapcePermissions = {} }: TAppConsentProps) => {
+  ({ application, consentParams, workspaceSlug, workspacePermissions = {}, disableDropdown }: TAppConsentProps) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { userSettings } = useUser();
@@ -53,7 +54,7 @@ export const AppConsent = observer(
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 
-    const hasPermissions = worskapcePermissions?.[selectedWorkspace?.id?.toString() ?? ""] === "allowed";
+    const hasPermissions = workspacePermissions?.[selectedWorkspace?.id?.toString() ?? ""] === "allowed";
     const handleWorkspaceChange = (workspace: IWorkspace) => {
       setSelectedWorkspace(workspace);
     };
@@ -149,6 +150,7 @@ export const AppConsent = observer(
             }
             customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-custom-background-100 text-custom-text-200 text-sm w-40"
             closeOnSelect
+            disabled={disableDropdown}
           >
             {workspacesList.map((workspace, index) => (
               <CustomMenu.MenuItem

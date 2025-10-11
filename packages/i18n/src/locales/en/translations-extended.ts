@@ -535,6 +535,7 @@ export default {
       },
       toast: {
         delete_error: "Initiative label could not be deleted. Please try again.",
+        label_already_exists: "Label already exists",
       },
     },
   },

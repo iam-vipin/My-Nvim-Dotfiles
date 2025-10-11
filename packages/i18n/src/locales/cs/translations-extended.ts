@@ -495,6 +495,7 @@ export default {
       },
       toast: {
         delete_error: "Štítek iniciativy nelze odstranit. Zkuste to prosím znovu.",
+        label_already_exists: "Štítek již existuje",
       },
     },
   },

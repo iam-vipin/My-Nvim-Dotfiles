@@ -495,6 +495,7 @@ export default {
       },
       toast: {
         delete_error: "L'étiquette de l'initiative n'a pas pu être supprimée. Veuillez réessayer.",
+        label_already_exists: "L'étiquette existe déjà",
       },
     },
   },

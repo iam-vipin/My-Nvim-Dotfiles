@@ -480,6 +480,7 @@ export default {
       },
       toast: {
         delete_error: "無法刪除計畫標籤。請重試。",
+        label_already_exists: "標籤已存在",
       },
     },
   },

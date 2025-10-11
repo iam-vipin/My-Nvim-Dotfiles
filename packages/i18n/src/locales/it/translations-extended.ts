@@ -493,6 +493,7 @@ export default {
       },
       toast: {
         delete_error: "L'etichetta dell'iniziativa non può essere eliminata. Riprova.",
+        label_already_exists: "L'etichetta esiste già",
       },
     },
   },

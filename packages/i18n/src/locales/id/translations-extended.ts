@@ -496,6 +496,7 @@ export default {
       },
       toast: {
         delete_error: "Label inisiatif tidak dapat dihapus. Silakan coba lagi.",
+        label_already_exists: "Label sudah ada",
       },
     },
   },

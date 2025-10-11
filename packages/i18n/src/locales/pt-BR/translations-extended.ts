@@ -497,6 +497,7 @@ export default {
       },
       toast: {
         delete_error: "Não foi possível excluir o rótulo da iniciativa. Tente novamente.",
+        label_already_exists: "O rótulo já existe",
       },
     },
   },

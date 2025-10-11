@@ -500,6 +500,7 @@ export default {
       },
       toast: {
         delete_error: "Das Initiativen-Label konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+        label_already_exists: "Label existiert bereits",
       },
     },
   },

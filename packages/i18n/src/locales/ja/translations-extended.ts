@@ -492,6 +492,7 @@ export default {
       },
       toast: {
         delete_error: "イニシアチブのラベルを削除できませんでした。もう一度お試しください。",
+        label_already_exists: "ラベルは既に存在します",
       },
     },
   },

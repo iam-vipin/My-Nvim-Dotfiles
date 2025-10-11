@@ -498,6 +498,7 @@ export default {
       },
       toast: {
         delete_error: "Eticheta inițiativei nu a putut fi ștearsă. Vă rugăm să încercați din nou.",
+        label_already_exists: "Eticheta există deja",
       },
     },
   },

@@ -483,6 +483,7 @@ export default {
       },
       toast: {
         delete_error: "Không thể xóa nhãn sáng kiến. Vui lòng thử lại.",
+        label_already_exists: "Nhãn đã tồn tại",
       },
     },
   },

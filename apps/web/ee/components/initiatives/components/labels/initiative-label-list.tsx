@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Loader } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import SettingsHeading from "@/components/settings/heading";
@@ -47,10 +48,44 @@ export const InitiativeLabelList: React.FC = observer(() => {
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
+
+  const handleError = (error: unknown) => {
+    const errorObj = error as { name?: string[] };
+    switch (errorObj.name?.[0]) {
+      case "INITIATIVE_LABEL_NAME_ALREADY_EXISTS":
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("initiatives.initiative_labels.toast.label_already_exists"),
+        });
+        break;
+      default:
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("common.something_went_wrong"),
+        });
+        break;
+    }
+  };
+
   const labelOperationsCallbacks: TInitiativeLabelOperationsCallbacks = {
-    createLabel: (data: Partial<TInitiativeLabel>) => createInitiativeLabel(workspaceSlug?.toString(), data),
-    updateLabel: (labelId: string, data: Partial<TInitiativeLabel>) =>
-      updateInitiativeLabel(workspaceSlug?.toString(), labelId, data),
+    createLabel: async (data: Partial<TInitiativeLabel>) => {
+      try {
+        return await createInitiativeLabel(workspaceSlug?.toString(), data);
+      } catch (error: unknown) {
+        handleError(error);
+        throw error;
+      }
+    },
+    updateLabel: async (labelId: string, data: Partial<TInitiativeLabel>) => {
+      try {
+        return await updateInitiativeLabel(workspaceSlug?.toString(), labelId, data);
+      } catch (error: unknown) {
+        handleError(error);
+        throw error;
+      }
+    },
   };
 
   const newLabel = () => {

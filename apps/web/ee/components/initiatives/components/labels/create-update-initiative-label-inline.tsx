@@ -9,13 +9,13 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 
 // local imports
 import { TInitiativeLabel } from "@/plane-web/types";
 
 export type TInitiativeLabelOperationsCallbacks = {
-  createLabel: (data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel>;
+  createLabel: (data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel | undefined>;
   updateLabel: (labelId: string, data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel | undefined>;
 };
 
@@ -66,12 +66,7 @@ export const CreateUpdateInitiativeLabelInline = observer(
             handleClose();
             reset(defaultValues);
           })
-          .catch((error) => {
-            setToast({
-              title: "Error!",
-              type: TOAST_TYPE.ERROR,
-              message: error?.detail ?? error.error ?? t("common.something_went_wrong"),
-            });
+          .catch(() => {
             reset(formData);
           });
       };
@@ -85,12 +80,7 @@ export const CreateUpdateInitiativeLabelInline = observer(
             reset(defaultValues);
             handleClose();
           })
-          .catch((error) => {
-            setToast({
-              title: "Oops!",
-              type: TOAST_TYPE.ERROR,
-              message: error?.error ?? t("project_settings.labels.toast.error"),
-            });
+          .catch(() => {
             reset(formData);
           });
       };

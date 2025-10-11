@@ -491,6 +491,7 @@ export default {
       },
       toast: {
         delete_error: "이니셔티브 레이블을 삭제할 수 없습니다. 다시 시도하세요.",
+        label_already_exists: "레이블이 이미 존재합니다",
       },
     },
   },

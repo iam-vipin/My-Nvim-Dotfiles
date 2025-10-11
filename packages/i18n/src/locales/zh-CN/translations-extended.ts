@@ -481,6 +481,7 @@ export default {
       },
       toast: {
         delete_error: "无法删除计划标签。请重试。",
+        label_already_exists: "标签已存在",
       },
     },
   },

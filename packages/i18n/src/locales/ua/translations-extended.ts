@@ -494,6 +494,7 @@ export default {
       },
       toast: {
         delete_error: "Не вдалося видалити мітку ініціативи. Спробуйте ще раз.",
+        label_already_exists: "Мітка вже існує",
       },
     },
   },

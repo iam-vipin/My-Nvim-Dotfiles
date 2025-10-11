@@ -506,6 +506,7 @@ export default {
       },
       toast: {
         delete_error: "Štítok iniciatívy sa nepodarilo odstrániť. Skúste to znova.",
+        label_already_exists: "Štítok už existuje",
       },
     },
   },

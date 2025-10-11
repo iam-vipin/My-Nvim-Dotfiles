@@ -510,6 +510,7 @@ export default {
       },
       toast: {
         delete_error: "Girişim etiketi silinemedi. Lütfen tekrar deneyin.",
+        label_already_exists: "Etiket zaten var",
       },
     },
   },

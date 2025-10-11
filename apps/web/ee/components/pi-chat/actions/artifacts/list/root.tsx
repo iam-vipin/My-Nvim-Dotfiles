@@ -6,7 +6,12 @@ export const PiChatArtifactsListRoot = (props: { artifacts: TArtifact[] }) => {
   return (
     <div className="flex flex-col gap-4">
       {artifacts.map((artifact) => (
-        <PreviewCard key={artifact.artifact_id} artifact={artifact.artifact_id} />
+        <PreviewCard
+          key={artifact.artifact_id}
+          artifactId={artifact.artifact_id}
+          type={artifact.artifact_type}
+          action={artifact.action}
+        />
       ))}
     </div>
   );

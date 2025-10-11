@@ -1,4 +1,4 @@
-import { TLogoProps, TFileSignedURLResponse } from "@plane/types";
+import { TIssue, TLogoProps, TProject, TFileSignedURLResponse } from "@plane/types";
 
 export enum EFeedback {
   POSITIVE = "positive",
@@ -80,13 +80,17 @@ export type TActions = {
   }[];
 };
 
+export type TUpdatedArtifact = Partial<TIssue> | Partial<TProject> | TArtifact | undefined;
+
 export type TArtifact = {
   artifact_id: string;
+  is_editable: boolean;
   is_executed: boolean;
   success: boolean;
   artifact_type: string;
   entity_id?: string;
   entity_url?: string;
+  entity_name?: string;
   issue_identifier?: string;
   project_identifier?: string;
   tool_name: string;
@@ -152,12 +156,19 @@ export type TAction = {
   workspace_id: string;
   chat_id: string;
   message_id: string;
+  artifact_data: {
+    artifact_id: string;
+    is_edited: boolean;
+    action_data?: TUpdatedArtifact;
+  }[];
 };
 
 export type TExecuteActionResponse = {
   status: string;
   message: string;
-  actions: Array<TArtifact & { entity?: { entity_id: string; entity_url: string; issue_identifier: string } }>;
+  actions: Array<
+    TArtifact & { entity?: { entity_id: string; entity_url: string; issue_identifier: string; entity_name: string } }
+  >;
   action_summary?: {
     completed: number;
     duration_seconds: number;
@@ -203,6 +214,23 @@ export interface IFormattedValue {
 }
 
 export type TPiLoaders = "recording" | "transcribing" | "submitting" | "";
+
+export type TFollowUp = {
+  query: string;
+  workspace_id: string;
+  chat_id: string;
+  artifact_id: string;
+  current_artifact_data: TUpdatedArtifact;
+  user_message_id: string;
+  entity_type: string;
+  project_id: string;
+};
+
+export type TFollowUpResponse = {
+  success: boolean;
+  artifact_data: TUpdatedArtifact;
+};
+
 export type TPiAttachment = {
   attachment_url: string;
   file_size: number;
@@ -222,3 +250,6 @@ export type TPiAttachmentMap = {
 export type TPiAttachmentIdMap = {
   [chatId: string]: string[];
 };
+
+// constants
+export const EDITABLE_ARTIFACT_TYPES = ["workitem"];

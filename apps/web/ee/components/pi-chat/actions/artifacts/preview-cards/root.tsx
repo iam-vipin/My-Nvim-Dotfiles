@@ -1,6 +1,4 @@
 import { observer } from "mobx-react";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TArtifact } from "@/plane-web/types";
 import { CyclePreviewCard } from "../preview-cards/cycle";
 import { ModulePreviewCard } from "../preview-cards/module";
 import { PagePreviewCard } from "../preview-cards/page";
@@ -11,42 +9,28 @@ import { AddRemovePreviewCard } from "./add-remove";
 import { DeleteArchivePreviewCard } from "./delete-archieve";
 import { TemplatePreviewCard } from "./template";
 
-const PreviewCardRenderer = (props: { data: TArtifact }) => {
-  const { data } = props;
-  if (["create", "update"].includes(data.action)) {
-    switch (data.artifact_type) {
-      case "workitem":
-        return <WorkItemPreviewCard data={data} />;
-      case "page":
-        return <PagePreviewCard data={data} />;
-      case "cycle":
-        return <CyclePreviewCard data={data} />;
-      case "module":
-        return <ModulePreviewCard data={data} />;
-      case "view":
-        return <ViewPreviewCard data={data} />;
-      case "project":
-        return <ProjectPreviewCard data={data} />;
-      default:
-        return <TemplatePreviewCard data={data} />;
-    }
-  } else if (["add", "remove"].includes(data.action)) {
-    return <AddRemovePreviewCard data={data} />;
-  } else if (["delete", "archive"].includes(data.action)) {
-    return <DeleteArchivePreviewCard data={data} />;
-  } else {
-    return <TemplatePreviewCard data={data} />;
+// --- Main PreviewCard Component ---
+export const PreviewCard = observer((props: { artifactId: string; type: string; action: string }) => {
+  const { artifactId, type, action } = props;
+
+  // Special cases
+  if (["add", "remove"].includes(action)) return <AddRemovePreviewCard artifactId={artifactId} />;
+  if (["delete", "archive"].includes(action)) return <DeleteArchivePreviewCard artifactId={artifactId} />;
+
+  switch (type) {
+    case "workitem":
+      return <WorkItemPreviewCard artifactId={artifactId} />;
+    case "page":
+      return <PagePreviewCard artifactId={artifactId} />;
+    case "cycle":
+      return <CyclePreviewCard artifactId={artifactId} />;
+    case "module":
+      return <ModulePreviewCard artifactId={artifactId} />;
+    case "view":
+      return <ViewPreviewCard artifactId={artifactId} />;
+    case "project":
+      return <ProjectPreviewCard artifactId={artifactId} />;
+    default:
+      return <TemplatePreviewCard artifactId={artifactId} />;
   }
-};
-
-export const PreviewCard = observer((props: { artifact: string }) => {
-  const { artifact } = props;
-  const {
-    artifactsStore: { getArtifact },
-  } = usePiChat();
-  // derived
-  const artifactsData = getArtifact(artifact);
-  if (!artifactsData) return null;
-
-  return <PreviewCardRenderer data={artifactsData} />;
 });

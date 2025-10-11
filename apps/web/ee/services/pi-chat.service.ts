@@ -17,6 +17,8 @@ import {
   TExecuteActionResponse,
   TDialogue,
   TArtifact,
+  TFollowUpResponse,
+  TUpdatedArtifact,
   TPiAttachmentUploadResponse,
   TPiAttachment,
 } from "../types";
@@ -296,6 +298,33 @@ export class PiChatService extends APIService {
   async listArtifacts(chatId: string): Promise<TArtifact[]> {
     return this.get(`/api/v1/artifacts/chat/${chatId}/`)
       .then((response) => response.data.artifacts)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // follow up
+  async followUp(
+    query: string,
+    workspace_id: string,
+    chat_id: string,
+    artifact_id: string,
+    current_artifact_data: TUpdatedArtifact,
+    user_message_id: string,
+    entity_type: string,
+    project_id: string
+  ): Promise<TFollowUpResponse> {
+    return this.post(`/api/v1/artifacts/${artifact_id}/followup/`, {
+      query,
+      workspace_id,
+      chat_id,
+      artifact_id,
+      current_artifact_data,
+      user_message_id,
+      entity_type,
+      project_id,
+    })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

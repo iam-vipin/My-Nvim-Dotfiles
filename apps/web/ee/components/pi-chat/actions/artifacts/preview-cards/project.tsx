@@ -1,16 +1,20 @@
+import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 import { Logo } from "@/components/common/logo";
 import { TArtifact } from "@/plane-web/types";
+import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
-  data: TArtifact;
+  artifactId: string;
 };
 
-export const ProjectPreviewCard = (props: TProps) => {
-  const { data } = props;
-  const properties = { ...data.parameters?.properties };
+export const ProjectPreviewCard = observer((props: TProps) => {
+  const { artifactId } = props;
+  const data = useTemplateData(artifactId);
+  const properties = { ...data?.parameters?.properties };
+  if (!data) return <></>;
   return (
     <WithPreviewHOC artifactId={data.artifact_id}>
       <div className="flex flex-col items-start">
@@ -43,4 +47,4 @@ export const ProjectPreviewCard = (props: TProps) => {
       </div>
     </WithPreviewHOC>
   );
-};
+});

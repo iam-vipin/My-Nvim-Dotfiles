@@ -1,15 +1,18 @@
+import { observer } from "mobx-react";
 import { Layers } from "lucide-react";
-import { TArtifact } from "@/plane-web/types";
+import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
-  data: TArtifact;
+  artifactId: string;
 };
 
-export const ViewPreviewCard = (props: TProps) => {
-  const { data } = props;
-  const properties = { ...data.parameters?.properties, project: data.parameters?.project };
+export const ViewPreviewCard = observer((props: TProps) => {
+  const { artifactId } = props;
+  const data = useTemplateData(artifactId);
+  const properties = { ...data?.parameters?.properties, project: data?.parameters?.project };
+  if (!data) return <></>;
   return (
     <WithPreviewHOC artifactId={data.artifact_id}>
       <div className="flex gap-2 items-start">
@@ -21,4 +24,4 @@ export const ViewPreviewCard = (props: TProps) => {
       </div>
     </WithPreviewHOC>
   );
-};
+});

@@ -3,45 +3,46 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web imports
 import { computedFn } from "mobx-utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import { TArtifact } from "@/plane-web/types";
+import { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 
-export type TVersionHistory = {
-  latest: string;
-  history: string[];
+type TArtifactVersionHistory = {
+  original: TArtifact;
+  updated: TUpdatedArtifact;
 };
 
 export interface IArtifactsStore {
-  dataMap: Record<string, TArtifact>; // version_id -> artifact data
-  chatArtifactsMap: Record<string, string[]>; // chat_id -> artifacts
-  versionHistory: Record<string, TVersionHistory>; // artifact_id -> version history
+  chatArtifactsMap: Map<string, string[]>; // chat_id -> artifacts
+  versionHistory: Map<string, TArtifactVersionHistory>; // artifact_id -> version history
   getGroupedArtifacts: (artifactIds: string[]) => {
     successful: TArtifact[];
     failed: TArtifact[];
   };
   getArtifact: (artifactId: string) => TArtifact | undefined;
   getArtifactsByChatId: (chatId: string) => (TArtifact | undefined)[];
-  getArtifactByVersion: (versionId: string) => TArtifact | undefined;
+  getArtifactByVersion: (
+    artifactId: string,
+    versionId: "original" | "updated"
+  ) => TArtifact | TUpdatedArtifact | undefined;
   fetchArtifactsByChatId: (chatId: string) => void;
+  updateArtifact: (artifactId: string, versionId: "original" | "updated", data: TUpdatedArtifact) => void;
 }
 
 export class ArtifactsStore implements IArtifactsStore {
-  dataMap: Record<string, TArtifact> = {};
-  versionHistory: Record<string, TVersionHistory> = {};
-  chatArtifactsMap: Record<string, string[]> = {};
+  versionHistory: Map<string, TArtifactVersionHistory> = new Map();
+  chatArtifactsMap: Map<string, string[]> = new Map();
   //services
   piChatService;
 
   constructor() {
     makeObservable(this, {
       //observables
-      dataMap: observable,
       versionHistory: observable,
       chatArtifactsMap: observable,
       // computed
       // actions
       fetchArtifactsByChatId: action,
       initArtifacts: action,
-      updateArtifacts: action,
+      updateArtifact: action,
     });
 
     //services
@@ -70,43 +71,54 @@ export class ArtifactsStore implements IArtifactsStore {
   });
 
   getArtifactsByChatId = computedFn(
-    (chatId: string) => this.chatArtifactsMap[chatId]?.map((artifactId) => this.getArtifact(artifactId)) || []
+    (chatId: string) => this.chatArtifactsMap.get(chatId)?.map((artifactId) => this.getArtifact(artifactId)) || []
   );
 
-  getArtifact = computedFn((artifactId: string) => {
-    const latestVersion = this.versionHistory[artifactId]?.latest || "";
-    if (!latestVersion) return undefined;
-    return this.dataMap[latestVersion];
-  });
+  getArtifact = computedFn((artifactId: string) => this.versionHistory.get(artifactId)?.original);
 
-  getArtifactByVersion = computedFn((versionId: string) => {
-    if (!versionId) return undefined;
-    return this.dataMap[versionId];
-  });
+  getArtifactByVersion = computedFn(
+    (artifactId: string, versionId: "original" | "updated") => this.versionHistory.get(artifactId)?.[versionId]
+  );
 
-  initArtifacts = async (artifactId: string, data: TArtifact) => {
-    const versionId = data.artifact_id; // TODO: Change to version_id later
-    this.versionHistory[artifactId] = {
-      latest: versionId,
-      history: [versionId],
-    };
-    this.dataMap[versionId] = data;
+  initArtifacts = async (chatId: string, artifactId: string, data: TArtifact) => {
+    this.versionHistory.set(artifactId, {
+      original: data,
+      updated: undefined,
+    });
+    this.chatArtifactsMap.set(chatId, [...(this.chatArtifactsMap.get(chatId) || []), artifactId]);
   };
 
-  updateArtifacts = async (versionId: string, data: Partial<TArtifact>) => {
+  updateArtifact = (artifactId: string, versionId: "original" | "updated", data: Partial<TUpdatedArtifact>) => {
     runInAction(() => {
-      this.dataMap[versionId] = {
-        ...this.dataMap[versionId],
-        ...data,
+      const existingHistory = this.versionHistory.get(artifactId);
+
+      // If artifactId not found, initialize with partial structure
+      if (!existingHistory) {
+        this.versionHistory.set(artifactId, {
+          original: versionId === "original" ? (data as TArtifact) : ({} as TArtifact),
+          updated: versionId === "updated" ? (data as TUpdatedArtifact) : ({} as TUpdatedArtifact),
+        });
+        return;
+      }
+
+      // Merge the existing version
+      const updatedHistory = {
+        ...existingHistory,
+        [versionId]: {
+          ...existingHistory[versionId],
+          ...data,
+        },
       };
+
+      // Update the map
+      this.versionHistory.set(artifactId, updatedHistory);
     });
   };
 
   fetchArtifactsByChatId = async (chatId: string) => {
     const response = await this.piChatService.listArtifacts(chatId);
     response.forEach((artifact) => {
-      this.initArtifacts(artifact.artifact_id, artifact);
+      this.initArtifacts(chatId, artifact.artifact_id, artifact);
     });
-    this.chatArtifactsMap[chatId] = response.map((artifact) => artifact.artifact_id);
   };
 }

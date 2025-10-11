@@ -69,7 +69,7 @@ const PropertyWrapper = (props: {
   const { children, title, Icon = Briefcase, showContainer } = props;
   if (!showContainer) return <>{children({ className: "" })}</>;
   return (
-    <div className="flex gap-2 bg-custom-background-80 rounded-md border border-custom-border-200 py-1 px-2">
+    <div className="flex gap-2 border-[0.5px] border-custom-border-200 rounded-md py-1 px-2">
       <div className="flex gap-1 items-center text-custom-text-300">
         <Icon className="size-3" strokeWidth={2} />
         <span className="text-sm">{title}</span>

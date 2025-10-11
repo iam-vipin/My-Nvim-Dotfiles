@@ -30,9 +30,9 @@ export const Header = observer((props: { artifact: TArtifact }) => {
             value={artifact}
             label={
               <Tooltip position="bottom" className="ml-4 max-w-[200px] font-medium text-custom-text-300">
-                <div className="flex gap-2 items-center text-sm font-medium">
+                <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
                   {getIcon(artifact.artifact_type)}
-                  <div>{artifact.parameters?.name || "Unknown"}</div>
+                  <div className="truncate">{artifact.parameters?.name || "Unknown"}</div>
                 </div>
               </Tooltip>
             }
@@ -56,9 +56,9 @@ export const Header = observer((props: { artifact: TArtifact }) => {
                       value={artifactData}
                       className="text-sm text-custom-text-200 font-medium"
                     >
-                      <div className="flex gap-2 items-center text-sm font-medium">
+                      <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
                         {getIcon(artifactData?.artifact_type || "")}
-                        <div>{artifactData?.parameters?.name || "Unknown"}</div>
+                        <div className="truncate">{artifactData?.parameters?.name || "Unknown"}</div>
                       </div>
                     </CustomSelect.Option>
                   ))}

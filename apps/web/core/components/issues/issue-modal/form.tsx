@@ -68,10 +68,9 @@ export interface IssueFormProps {
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
-  storeType: EIssuesStoreType;
+  convertToWorkItem?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
-  convertToWorkItem?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -97,10 +96,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     handleDuplicateIssueModal,
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
-    storeType,
+    convertToWorkItem = false,
     showActionButtons = true,
     dataResetProperties = [],
-    convertToWorkItem = false,
   } = props;
 
   // states
@@ -509,7 +507,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 />
               </div>
               {showActionButtons && (
-                <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
+                <div
+                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  tabIndex={getIndex("create_more")}
+                >
                   {!data?.id && (
                     <div
                       className="inline-flex items-center gap-1.5 cursor-pointer"

@@ -88,11 +88,7 @@ export const SummaryBlock = observer((props: TProps) => {
                       key={artifact.artifact_id}
                       url={artifact.entity_url}
                       type={artifact.artifact_type}
-                      name={
-                        artifact.parameters?.name ||
-                        (artifact.artifact_type === "project" && artifact.parameters?.project?.name) ||
-                        "Unknown"
-                      }
+                      name={artifact.entity_name || "Unknown"}
                       data={artifact}
                     />
                   ))}
@@ -112,7 +108,7 @@ export const SummaryBlock = observer((props: TProps) => {
                     <div className="flex items-center gap-2" key={artifact.artifact_id}>
                       <div>{getIcon(artifact.artifact_type, "", "text")}</div>
                       <div className="text-sm font-medium line-clamp-2 text-start text-custom-text-300">
-                        {artifact.parameters?.name || "Unknown"}
+                        {artifact.entity_name || "Unknown"}
                       </div>
                     </div>
                   ))}

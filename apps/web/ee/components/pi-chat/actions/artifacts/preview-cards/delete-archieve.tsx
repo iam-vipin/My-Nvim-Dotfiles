@@ -1,13 +1,16 @@
+import { observer } from "mobx-react";
 import { Hash } from "lucide-react";
-import { TArtifact } from "@/plane-web/types";
+import { useTemplateData } from "../useArtifactData";
 import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
-  data: TArtifact;
+  artifactId: string;
 };
 
-export const DeleteArchivePreviewCard = (props: TProps) => {
-  const { data } = props;
+export const DeleteArchivePreviewCard = observer((props: TProps) => {
+  const { artifactId } = props;
+  const data = useTemplateData(artifactId);
+  if (!data) return <></>;
   return (
     <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false}>
       <div className="flex gap-2 items-start justify-between">
@@ -24,4 +27,4 @@ export const DeleteArchivePreviewCard = (props: TProps) => {
       </div>
     </WithPreviewHOC>
   );
-};
+});

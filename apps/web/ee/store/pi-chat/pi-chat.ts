@@ -1,4 +1,4 @@
-import { update, set } from "lodash-es";
+import { update, set, isEmpty } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
@@ -22,6 +22,7 @@ import {
   TUserThreads,
   EExecutionStatus,
   TArtifact,
+  TUpdatedArtifact,
 } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
@@ -93,6 +94,16 @@ export interface IPiChatStore {
     successful: TArtifact[];
     failed: TArtifact[];
   };
+  followUp: (
+    artifactId: string,
+    query: string,
+    messageId: string,
+    projectId: string,
+    workspace_id: string,
+    chat_id: string,
+    entity_type: string,
+    artifactData: TUpdatedArtifact
+  ) => Promise<void>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -159,6 +170,7 @@ export class PiChatStore implements IPiChatStore {
       togglePiChatDrawer: action,
       togglePiArtifactsDrawer: action,
       executeAction: action,
+      followUp: action,
     });
 
     //services
@@ -384,7 +396,7 @@ export class PiChatStore implements IPiChatStore {
     eventSource.addEventListener("actions", (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       try {
-        this.artifactsStore.initArtifacts(data.artifact_id, data);
+        this.artifactsStore.initArtifacts(chatId, data.artifact_id, { ...data, is_editable: true });
         newDialogue.execution_status = EExecutionStatus.PENDING;
         newDialogue.actions = [...(newDialogue.actions || []), data];
         this.updateDialogue(chatId, token, newDialogue);
@@ -442,7 +454,6 @@ export class PiChatStore implements IPiChatStore {
       answer: "",
       reasoning: "",
       isPiThinking: true,
-      // execution_status: "pending",
       actions: [],
       attachment_ids: attachmentIds,
     };
@@ -451,6 +462,13 @@ export class PiChatStore implements IPiChatStore {
     runInAction(() => {
       this.isPiTypingMap[chatId] = true;
       update(this.chatMap, chatId, (chat) => {
+        if (!chat) {
+          chat = {
+            chat_id: chatId,
+            dialogue: [],
+            dialogueMap: {},
+          };
+        }
         chat.dialogue = [...dialogueHistory, "latest"];
         chat.dialogueMap["latest"] = newDialogue;
         return chat; // same reference, mutated
@@ -807,36 +825,93 @@ export class PiChatStore implements IPiChatStore {
     chatId: string,
     actionId: string
   ): Promise<TExecuteActionResponse | undefined> => {
-    const newDialogue = {
+    const dialogue = {
       ...this.chatMap[chatId].dialogueMap[actionId],
     };
     try {
-      newDialogue.execution_status = EExecutionStatus.EXECUTING;
-      this.updateDialogue(chatId, actionId, newDialogue);
+      dialogue.execution_status = EExecutionStatus.EXECUTING;
+      this.updateDialogue(chatId, actionId, dialogue);
+      // process artifact edits
+      const artifactData: {
+        artifact_id: string;
+        is_edited: boolean;
+        action_data?: TUpdatedArtifact;
+      }[] = [];
+      dialogue.actions?.forEach((action) => {
+        const updatedArtifact = this.artifactsStore.getArtifactByVersion(action.artifact_id, "updated");
+        if (isEmpty(updatedArtifact)) {
+          artifactData.push({
+            artifact_id: action.artifact_id,
+            is_edited: false,
+          });
+        } else {
+          artifactData.push({
+            artifact_id: action.artifact_id,
+            is_edited: true,
+            action_data: updatedArtifact,
+          });
+        }
+      });
       const response = await this.piChatService.executeAction({
         workspace_id: workspaceId,
         chat_id: chatId,
         message_id: actionId,
+        artifact_data: artifactData,
       });
-      newDialogue.execution_status = EExecutionStatus.COMPLETED;
-      newDialogue.action_summary = response.action_summary;
-      newDialogue.actions = response.actions;
-
+      // update artifacts
       response.actions?.forEach((action) => {
-        this.artifactsStore.updateArtifacts(action.artifact_id, {
+        this.artifactsStore.updateArtifact(action.artifact_id, "original", {
           entity_id: action.entity?.entity_id,
           entity_url: action.entity?.entity_url,
+          entity_name: action.entity?.entity_name,
           issue_identifier: action.entity?.issue_identifier,
+          is_executed: true,
+          success: action.success,
         });
       });
-
-      this.updateDialogue(chatId, actionId, newDialogue);
+      // update dialogue
+      dialogue.execution_status = EExecutionStatus.COMPLETED;
+      dialogue.action_summary = response.action_summary;
+      dialogue.actions = response.actions;
+      this.updateDialogue(chatId, actionId, dialogue);
 
       return response;
     } catch (error) {
       console.error(error);
-      newDialogue.execution_status = EExecutionStatus.COMPLETED;
-      this.updateDialogue(chatId, actionId, newDialogue);
+      dialogue.execution_status = EExecutionStatus.COMPLETED;
+      this.updateDialogue(chatId, actionId, dialogue);
+      throw error;
+    }
+  };
+
+  followUp = async (
+    artifactId: string,
+    query: string,
+    messageId: string,
+    projectId: string,
+    workspace_id: string,
+    chat_id: string,
+    entity_type: string,
+    artifactData: TUpdatedArtifact
+  ) => {
+    try {
+      const response = await this.piChatService.followUp(
+        query,
+        workspace_id,
+        chat_id,
+        artifactId,
+        artifactData,
+        messageId,
+        entity_type,
+        projectId
+      );
+      if (response.success) {
+        this.artifactsStore.updateArtifact(artifactId, "updated", response.artifact_data);
+      } else {
+        throw new Error("Failed to follow up");
+      }
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   };

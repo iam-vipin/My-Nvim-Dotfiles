@@ -13,13 +13,14 @@ import { PiChatEditorEnterKeyExtension } from "./enter-key";
 import { PiChatEditorMentionExtension } from "./mention/extension";
 
 type Props = {
+  placeholder?: string;
   handleSubmit?: () => void;
   searchCallback?: (query: string) => Promise<any>;
   setEditorCommand?: (command: any) => void;
 };
 
 export const PiChatEditorExtensions = (props: Props): Extensions => {
-  const { handleSubmit, searchCallback, setEditorCommand } = props;
+  const { handleSubmit, searchCallback, setEditorCommand, placeholder } = props;
 
   return [
     StarterKit.configure({
@@ -81,7 +82,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
         if (!editor.isEditable) return "";
 
         const text = editor.getText();
-        return text.trim().length > 0 ? "" : "How can I help you today?";
+        return text.trim().length > 0 ? "" : placeholder || "How can I help you today?";
       },
     }),
     Extension.create({

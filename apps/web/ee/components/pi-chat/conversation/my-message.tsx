@@ -28,7 +28,7 @@ export const MyMessage = observer((props: TProps) => {
           )}
         >
           {/* Message */}
-          <PiChatEditorWithRef editable={false} content={message} editorClass="!break-words" />
+          <PiChatEditorWithRef editable={false} content={message} />
         </div>
       )}
       {/* Loading */}

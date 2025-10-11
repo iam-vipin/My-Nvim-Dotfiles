@@ -1,15 +1,18 @@
+import { observer } from "mobx-react";
 import { Hash } from "lucide-react";
-import { TArtifact } from "@/plane-web/types";
+import { useTemplateData } from "../useArtifactData";
 import { WithPreviewHOC } from "./with-preview-hoc";
 
 type TProps = {
-  data: TArtifact;
+  artifactId: string;
 };
 
-export const AddRemovePreviewCard = (props: TProps) => {
-  const { data } = props;
-  const artifactSubType = data.parameters.artifact_sub_type;
-  const properties = artifactSubType && data.parameters?.properties[artifactSubType];
+export const AddRemovePreviewCard = observer((props: TProps) => {
+  const { artifactId } = props;
+  const data = useTemplateData(artifactId);
+  const artifactSubType = data?.parameters?.artifact_sub_type;
+  const properties = artifactSubType && data?.parameters?.properties[artifactSubType];
+  if (!data) return <></>;
 
   return (
     <WithPreviewHOC artifactId={data.artifact_id} shouldToggleSidebar={false}>
@@ -42,4 +45,4 @@ export const AddRemovePreviewCard = (props: TProps) => {
       </div>
     </WithPreviewHOC>
   );
-};
+});

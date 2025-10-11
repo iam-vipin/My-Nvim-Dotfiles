@@ -34,7 +34,7 @@ type PiChatEditorProps = {
   handleSubmit?: (e?: any) => void;
   editable?: boolean;
   content?: string;
-  editorClass?: string;
+  placeholder?: string;
 };
 
 const PiChatEditor = (props: PiChatEditorProps) => {
@@ -46,12 +46,14 @@ const PiChatEditor = (props: PiChatEditorProps) => {
     content = "<p></p>",
     forwardedRef,
     handleSubmit,
+    placeholder,
   } = props;
   const editor = useEditor({
     editable,
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
     extensions: PiChatEditorExtensions({
+      placeholder,
       handleSubmit,
       searchCallback,
       setEditorCommand,

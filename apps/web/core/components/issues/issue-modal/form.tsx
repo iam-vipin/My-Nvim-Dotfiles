@@ -42,8 +42,9 @@ import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties"
 // plane web imports
 import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
 import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
-import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
+import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal/issue-type-select";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
+import { WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal/template-select";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
@@ -67,8 +68,10 @@ export interface IssueFormProps {
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
+  storeType: EIssuesStoreType;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+  convertToWorkItem?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -94,8 +97,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     handleDuplicateIssueModal,
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
+    storeType,
     showActionButtons = true,
     dataResetProperties = [],
+    convertToWorkItem = false,
   } = props;
 
   // states
@@ -500,6 +505,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
+                  convertToWorkItem={convertToWorkItem}
                 />
               </div>
               {showActionButtons && (

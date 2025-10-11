@@ -6,6 +6,7 @@
       "created_at": "2025-05-15T10:22:30.575Z",
       "updated_at": "2025-05-15T10:22:30.575Z",
       "name": "Engineering",
+      "slug": "engineering",
       "description": "Engineering Productivity",
       "logo_props": {
         "logo": {
@@ -22,6 +23,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Agents",
+      "slug": "agents",
       "description": "AI Agents and Automation",
       "logo_props": {
         "logo": {
@@ -38,6 +40,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Customer Experience",
+      "slug": "customer-experience",
       "description": "Customer Support and Experience",
       "logo_props": {
         "logo": {
@@ -54,6 +57,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Communication & Collaboration",
+      "slug": "communication-and-collaboration",
       "description": "Team Communication, Collaboration, and Documentation Tools",
       "logo_props": {
         "logo": {
@@ -70,6 +74,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Development & DevOps",
+      "slug": "development-and-devops",
       "description": "Development Tools, DevOps Platforms, and Testing & QA Tools",
       "logo_props": {
         "logo": {
@@ -86,6 +91,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Design & Creative",
+      "slug": "design-and-creative",
       "description": "Design and Creative Tools",
       "logo_props": {
         "logo": {
@@ -102,6 +108,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Analytics & Reporting",
+      "slug": "analytics-and-reporting",
       "description": "Data Analytics, Reporting, and Time Tracking Tools",
       "logo_props": {
         "logo": {
@@ -118,6 +125,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Security & Compliance",
+      "slug": "security-and-compliance",
       "description": "Security and Compliance Tools",
       "logo_props": {
         "logo": {
@@ -134,6 +142,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Marketing & Sales",
+      "slug": "marketing-and-sales",
       "description": "Marketing and Sales Tools",
       "logo_props": {
         "logo": {
@@ -150,6 +159,7 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Integrations",
+      "slug": "integrations",
       "description": "Integration Tools",
       "logo_props": {
         "logo": {
@@ -166,7 +176,25 @@
       "created_at": "2024-01-09T10:22:30.575Z",
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Importers",
+      "slug": "importers",
       "description": "Importer Tools",
+      "logo_props": {
+        "logo": {
+          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        },
+        "in_use": "logo"
+      }
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "562d381b-7323-4307-a67a-a6776016567c",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Automations",
+      "slug": "automations",
+      "description": "Automation Tools",
       "logo_props": {
         "logo": {
           "url": "https://media.docs.plane.so/logo/favicon-512x512.png"

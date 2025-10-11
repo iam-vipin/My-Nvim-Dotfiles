@@ -456,6 +456,7 @@ class ApplicationAttachment(BaseModel):
 
 class ApplicationCategory(BaseModel):
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=48, db_index=True, unique=True)
     description = models.TextField(null=True, blank=True)
     logo_props = models.JSONField(default=dict)
     is_active = models.BooleanField(default=True)

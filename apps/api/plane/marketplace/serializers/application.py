@@ -52,7 +52,7 @@ class ApplicationCategorySerializer(serializers.ModelSerializer):
     applications_count = serializers.SerializerMethodField()
     class Meta:
         model = ApplicationCategory
-        fields = ["id", "name", "description", "logo_props", "is_active", "applications_count"]
+        fields = ["id", "name", "slug", "description", "logo_props", "is_active", "applications_count"]
 
     def get_applications_count(self, obj):
         # send only count of applications that are published

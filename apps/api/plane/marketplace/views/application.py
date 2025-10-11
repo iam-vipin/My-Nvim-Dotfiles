@@ -37,9 +37,16 @@ class PublishedApplicationEndpoint(BaseAPIView):
             return Response(serialised_application.data, status=status.HTTP_200_OK)
 
         applications: QuerySet[Application] = self.get_queryset()
-        serialised_applications = PublishedApplicationSerializer(
-            applications, many=True
-        )
+        serialised_applications = PublishedApplicationSerializer(applications, many=True)
+        # base query set
+        application_query_set: QuerySet[Application] = self.get_queryset()
+
+        # getting all applications by category from query params
+        category = request.query_params.get("category", None)
+        if category:
+            application_query_set = application_query_set.filter(categories__slug=category)
+
+        serialised_applications = PublishedApplicationSerializer(application_query_set, many=True)
         return Response(serialised_applications.data, status=status.HTTP_200_OK)
 
 

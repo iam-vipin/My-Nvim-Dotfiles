@@ -344,7 +344,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
 
         page = Page.objects.create(
             workspace_id=workspace.id,
-            is_global=False,
+            is_global=page_seed.get("type") == "WORKSPACE",
             access=page_seed.get("access", Page.PUBLIC_ACCESS),
             name=page_seed.get("name"),
             description=page_seed.get("description", {}),

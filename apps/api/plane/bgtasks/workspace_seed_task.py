@@ -292,6 +292,7 @@ def create_project_issues(
             epoch=time.time(),
         )
 
+        # Create issue labels
         for label_id in labels:
             IssueLabel.objects.create(
                 issue=issue,
@@ -301,22 +302,26 @@ def create_project_issues(
                 created_by_id=workspace.created_by_id,
             )
 
-        CycleIssue.objects.create(
-            issue=issue,
-            cycle_id=cycles_map[cycle_id],
-            project_id=project_map[project_id],
-            workspace_id=workspace.id,
-            created_by_id=workspace.created_by_id,
-        )
-
-        for module_id in module_ids:
-            ModuleIssue.objects.create(
+        # Create cycle issues
+        if cycle_id:
+            CycleIssue.objects.create(
                 issue=issue,
-                module_id=module_map[module_id],
+                cycle_id=cycles_map[cycle_id],
                 project_id=project_map[project_id],
                 workspace_id=workspace.id,
                 created_by_id=workspace.created_by_id,
             )
+
+        # Create module issues
+        if module_ids:
+            for module_id in module_ids:
+                ModuleIssue.objects.create(
+                    issue=issue,
+                    module_id=module_map[module_id],
+                    project_id=project_map[project_id],
+                    workspace_id=workspace.id,
+                    created_by_id=workspace.created_by_id,
+                )
 
         logger.info(f"Task: workspace_seed_task -> Issue {issue_id} created")
     return
@@ -365,7 +370,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
     return
 
 
-def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
     # Create cycles
     cycle_seeds = read_seed_file("cycles.json")
     if not cycle_seeds:
@@ -383,8 +388,8 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> No
             end_date = start_date + timedelta(days=14)
 
         if type == "UPCOMING":
-            # Get the last cyle
-            last_cycle = Cycle.objects.filter(project_id=project_id).order_by("-end_date").first()
+            # Get the last cycle
+            last_cycle = Cycle.objects.filter(project_id=project_map[project_id]).order_by("-end_date").first()
             if last_cycle:
                 start_date = last_cycle.end_date + timedelta(days=1)
                 end_date = start_date + timedelta(days=14)
@@ -452,19 +457,15 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
     if not view_seeds:
         return
 
-    view_map: Dict[int, uuid.UUID] = {}
-
     for view_seed in view_seeds:
-        view_id = view_seed.pop("id")
         project_id = view_seed.pop("project_id")
-        view = IssueView.objects.create(
+        IssueView.objects.create(
             **view_seed,
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=workspace.created_by_id,
             owned_by_id=workspace.created_by_id,
         )
-    return view_map
 
 
 @shared_task

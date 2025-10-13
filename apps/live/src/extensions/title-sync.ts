@@ -2,9 +2,8 @@
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
-import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
-import { logger } from "@plane/logger";
 // editor extensions
+import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
 // helpers
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";

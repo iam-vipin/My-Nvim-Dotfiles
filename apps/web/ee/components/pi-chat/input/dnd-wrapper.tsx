@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 // plane web hooks
 import { cn } from "@plane/utils";

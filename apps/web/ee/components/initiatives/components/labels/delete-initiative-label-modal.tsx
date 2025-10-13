@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

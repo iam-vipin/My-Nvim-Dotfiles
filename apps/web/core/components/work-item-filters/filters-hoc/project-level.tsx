@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EViewAccess, IProjectView, TWorkItemFilterExpression } from "@plane/types";
+// components
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks

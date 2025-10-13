@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { getButtonStyling } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-// plane imports
 import { IFilterInstance } from "@plane/shared-state";
 import { LOGICAL_OPERATOR, TExternalFilter, TFilterProperty } from "@plane/types";
 import { CustomSearchSelect, TButtonVariant } from "@plane/ui";

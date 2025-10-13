@@ -1,5 +1,7 @@
 // services
+import { logger } from "@plane/logger";
 import { env } from "@/env";
+import { AppError } from "@/lib/errors";
 import { APIService } from "./api.service";
 
 // Base params interface for content operations
@@ -47,7 +49,11 @@ export class ContentService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data || error;
+        const appError = new AppError(error, {
+          context: { operation: "getFileContent", assetUrl: url },
+        });
+        logger.error("Failed to fetch file content", appError);
+        throw appError;
       });
   }
 }

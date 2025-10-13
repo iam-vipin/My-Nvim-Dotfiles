@@ -1,4 +1,5 @@
 import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext } from "@/types";
 import { DebounceManager } from "./debounce";
@@ -59,7 +60,10 @@ export class TitleUpdateManager {
         this.lastTitle = null;
       }
     } catch (error) {
-      logger.error(`TITLE_UPDATE_MANAGER: Error updating title for ${this.documentName}:`, error);
+      const appError = new AppError(error, {
+        context: { operation: "updateTitle", documentName: this.documentName },
+      });
+      logger.error("Error updating title", appError);
     }
   }
 

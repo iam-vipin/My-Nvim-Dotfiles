@@ -2,16 +2,18 @@
 import type { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
-// editor extensions
 import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
+import { logger } from "@plane/logger";
+// editor extensions
 // helpers
+import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
 import { generateTitleProsemirrorJson } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
 import { extractTextFromHTML } from "./title-update/title-utils";
-import { logger } from "@plane/logger";
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -44,7 +46,10 @@ export class TitleSyncExtension implements Extension {
         document.merge(titleField);
       }
     } catch (error) {
-      logger.error("TITLE_SYNC_EXTENSION: Error in onLoadDocument: ", error);
+      const appError = new AppError(error, {
+        context: { operation: "onLoadDocument", documentName },
+      });
+      logger.error("Error loading document title", appError);
     }
   }
   /**

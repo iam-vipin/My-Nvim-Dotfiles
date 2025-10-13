@@ -10,6 +10,7 @@ import {
 } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
+import { AppError } from "@/lib/errors";
 import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
 
@@ -76,7 +77,10 @@ export class BroadcastController {
         this.handleSubPage(payload, connectionContext);
       }
     } catch (error) {
-      logger.error("BROADCAST_CONTROLLER: Error in broadcast handler:", error);
+      const appError = new AppError(error, {
+        context: { operation: "broadcastHandleBroadcast" },
+      });
+      logger.error("Error in broadcast handler", appError);
       if (!res.headersSent) {
         res.status(500).json({ error: "Internal server error" });
       }
@@ -105,7 +109,10 @@ export class BroadcastController {
       try {
         broadcastMessageToPage(serverAgentManager, pageId, metadata);
       } catch (error) {
-        logger.error(`BROADCAST_CONTROLLER: Error broadcasting to page ${pageId}:`, error);
+        const appError = new AppError(error, {
+          context: { operation: "broadcastToAffectedPages", pageId },
+        });
+        logger.error("Error broadcasting to page", appError);
       }
     });
   }
@@ -164,7 +171,10 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        logger.error("BROADCAST_CONTROLLER: Error handling duplicated action:", error);
+        const appError = new AppError(error, {
+          context: { operation: "broadcastHandleDuplicated", parentPageId: parent_id, pageId: page_id },
+        });
+        logger.error("Error handling duplicated action", appError);
       });
   }
 
@@ -203,7 +213,10 @@ export class BroadcastController {
         { workspaceSlug: context.workspaceSlug || "" }
       )
       .catch((error) => {
-        logger.error("BROADCAST_CONTROLLER: Error handling deleted action:", error);
+        const appError = new AppError(error, {
+          context: { operation: "broadcastHandleDeleted", parentId: parent_id, pageId: page_id },
+        });
+        logger.error("Error handling deleted action", appError);
       });
   }
 
@@ -229,8 +242,11 @@ export class BroadcastController {
         },
         { workspaceSlug: context.workspaceSlug || "" }
       )
-      .catch((err) => {
-        logger.error("BROADCAST_CONTROLLER: Error removing from old parent:", err);
+      .catch((error) => {
+        const appError = new AppError(error, {
+          context: { operation: "broadcastRemovePageEmbedFromParent", parentPageId: parentId, pageId },
+        });
+        logger.error("Error removing from old parent", appError);
       });
   }
 
@@ -257,8 +273,11 @@ export class BroadcastController {
           workspaceSlug: context.workspaceSlug || "",
         }
       )
-      .catch((err) => {
-        logger.error("BROADCAST_CONTROLLER: Error adding to new parent:", err);
+      .catch((error) => {
+        const appError = new AppError(error, {
+          context: { operation: "broadcastAddPageEmbedToParent", parentPageId: parentId, pageId },
+        });
+        logger.error("Error adding to new parent", appError);
       });
   }
 }

@@ -1,9 +1,9 @@
 import { Hocuspocus } from "@hocuspocus/server";
 import { BroadcastedEvent } from "@plane/editor";
 import { logger } from "@plane/logger";
-
 import { type ServerAgentManager } from "@/agents/server-agent";
 import { Redis } from "@/extensions/redis";
+import { AppError } from "@/lib/errors";
 
 export const broadcastMessageToPage = (
   instance: Hocuspocus | ServerAgentManager,
@@ -14,7 +14,10 @@ export const broadcastMessageToPage = (
     "hocuspocusServer" in instance ? (instance as ServerAgentManager).hocuspocusServer : instance;
 
   if (!hocuspocusServer || !hocuspocusServer.documents) {
-    logger.error("BROADCAST_MESSAGE_TO_PAGE: HocusPocus server not available or initialized");
+    const appError = new AppError("HocusPocus server not available or initialized", {
+      context: { operation: "broadcastMessageToPage", documentName },
+    });
+    logger.error("Error while broadcasting message:", appError);
     return false;
   }
   const redisExtension = hocuspocusServer.configuration.extensions.find((ext) => ext instanceof Redis);

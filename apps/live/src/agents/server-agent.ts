@@ -5,6 +5,7 @@ import type { Doc } from "yjs";
 import { logger } from "@plane/logger";
 import { type TPage } from "@plane/types";
 import { DocumentProcessor } from "@/lib/document-processor/document-processor";
+import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
 import { HocusPocusServerContext } from "@/types";
 
@@ -39,12 +40,6 @@ interface ManagerStats {
 /**
  * Error thrown when the ServerAgentManager is not properly initialized
  */
-class ServerAgentManagerError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ServerAgentManagerError";
-  }
-}
 
 /**
  * Manages server-side connections (agents) to the Hocuspocus server
@@ -96,11 +91,11 @@ export class ServerAgentManager {
    * @param {string} documentId - The document ID to connect to
    * @param {HocusPocusServerContext} context - Additional context for the connection
    * @returns {Promise<ConnectionData>} - The connection data object
-   * @throws {ServerAgentManagerError} If the manager is not initialized
+   * @throws {AppError} If the manager is not initialized
    */
   public async getConnection(documentId: string, context: Partial<HocusPocusServerContext>): Promise<ConnectionData> {
     if (!this.hocuspocusServer) {
-      throw new ServerAgentManagerError("ServerAgentManager not initialized with a Hocuspocus server");
+      throw new AppError("ServerAgentManager not initialized with a Hocuspocus server");
     }
 
     // Check if we already have a connection for this document
@@ -134,9 +129,14 @@ export class ServerAgentManager {
 
       return connectionData;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error(`SERVER_AGENT: Failed to create connection for document ${documentId}: ${errorMessage}`);
-      throw new ServerAgentManagerError(`Failed to create connection: ${errorMessage}`);
+      const appError = new AppError(error, {
+        context: {
+          operation: "getConnection",
+          documentId,
+        },
+      });
+      logger.error("Failed to create connection", appError);
+      throw appError;
     }
   }
 
@@ -146,7 +146,7 @@ export class ServerAgentManager {
    * @param {(doc: Doc) => void | Promise<void>} transactionFn - The transaction function
    * @param {HocusPocusServerContext} context - Additional context for the connection
    * @returns {Promise<void>} - Promise that resolves when the transaction is complete
-   * @throws {ServerAgentManagerError} If the transaction fails
+   * @throws {AppError} If the transaction fails
    */
   public async executeTransaction(
     documentId: string,
@@ -165,20 +165,18 @@ export class ServerAgentManager {
       await connectionData.connection.transact(transactionFn);
 
       return true;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      logger.error(`SERVER_AGENT: Transaction error for document ${documentId}`, {
-        documentId,
-        message: error?.message,
-        status: error?.status,
-        statusCode: error?.statusCode,
-        code: error?.code,
-        response: error?.response?.data,
-        context,
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: {
+          operation: "executeTransaction",
+          documentId,
+          documentType: context.documentType,
+        },
       });
+      logger.error("Transaction failed", appError);
 
       // Notify about transaction failure if needed
-      this.notifyTransactionFailure(documentId, error?.message || "Unknown error", res);
+      this.notifyTransactionFailure(documentId, appError.message, res);
 
       return false;
     }
@@ -237,9 +235,10 @@ export class ServerAgentManager {
     if (!document) return;
 
     try {
-      logger.info(`SERVER_AGENT: notified transaction success for ${documentId}:`);
+      logger.info(`Notified transaction success for ${documentId}:`);
     } catch (error) {
-      logger.error(`SERVER_AGENT: Error notifying transaction success for ${documentId}:`, error);
+      const appError = new AppError(error, { context: { pageId: documentId } });
+      logger.error(`Error notifying transaction success for ${documentId}:`, appError);
     }
   }
 
@@ -266,7 +265,8 @@ export class ServerAgentManager {
       //   })
       // );
     } catch (error) {
-      logger.error(`SERVER_AGENT: Error notifying transaction failure for ${documentId}:`, error);
+      const appError = new AppError(error, { context: { pageId: documentId } });
+      logger.error(`Error notifying transaction failure for ${documentId}:`, appError);
     }
   }
 
@@ -284,19 +284,17 @@ export class ServerAgentManager {
 
     try {
       connectionData.connection.disconnect();
-      logger.info(`SERVER_AGENT: Released connection for document ${documentId}`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      logger.error(`SERVER_AGENT: Error releasing connection for document ${documentId}`, {
-        documentId,
-        message: error?.message,
-        status: error?.status,
-        statusCode: error?.statusCode,
-        code: error?.code,
-        response: error?.response?.data,
+      this.connections.delete(documentId);
+      logger.info(`Released connection for document: ${documentId}`);
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: {
+          operation: "releaseConnection",
+          documentId,
+        },
       });
-    } finally {
-      // We still want to remove it from our map
+      logger.error("Error releasing connection", appError);
+      // We still want to remove it from our map even if disconnect fails
       this.connections.delete(documentId);
     }
   }
@@ -335,7 +333,12 @@ export class ServerAgentManager {
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupUnusedConnections().catch((error) => {
-        logger.error("SERVER_AGENT: Error during connection cleanup:", error);
+        const appError = new AppError(error, {
+          context: {
+            operation: "cleanupUnusedConnections",
+          },
+        });
+        logger.error("Error during connection cleanup", appError);
       });
     }, CLEANUP_INTERVAL);
   }
@@ -390,7 +393,7 @@ export class ServerAgentManager {
    */
   public setupHocusPocusHooks(): ServerAgentManager {
     if (!this.hocuspocusServer) {
-      throw new ServerAgentManagerError("ServerAgentManager not initialized with a Hocuspocus server");
+      throw new AppError("ServerAgentManager not initialized with a Hocuspocus server");
     }
 
     // Add a hook to the onDisconnect event
@@ -401,7 +404,13 @@ export class ServerAgentManager {
           try {
             await serverAgentManager.checkAndReleaseIfNoClients(documentName);
           } catch (error) {
-            logger.error(`SERVER_AGENT: Error checking client connections for ${documentName}:`, error);
+            const appError = new AppError(error, {
+              context: {
+                operation: "onDisconnect",
+                documentName,
+              },
+            });
+            logger.error("Error checking client connections ", appError);
           }
         }, 100); // Small delay to ensure connection state is updated
       },

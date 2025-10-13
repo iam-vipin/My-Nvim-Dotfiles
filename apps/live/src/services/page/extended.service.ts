@@ -1,3 +1,5 @@
+import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 import { PageCoreService } from "./core.service";
 
 /**
@@ -16,7 +18,11 @@ export abstract class PageService extends PageCoreService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        const appError = new AppError(error, {
+          context: { operation: "fetchSubPageDetails", pageId },
+        });
+        logger.error("Failed to fetch sub-page details", appError);
+        throw appError;
       });
   }
 }

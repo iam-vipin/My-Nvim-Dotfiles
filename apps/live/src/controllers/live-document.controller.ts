@@ -10,6 +10,7 @@ import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
 import { env } from "@/env";
+import { AppError } from "@/lib/errors";
 import { HocusPocusServerContext } from "@/types";
 
 // Types
@@ -94,8 +95,14 @@ export class LiveDocumentController {
         // Return the converted document
         res.status(200).json(documentLoaded);
       } catch (error) {
+        const appError = new AppError(error, {
+          context: {
+            pageId: documentId,
+          },
+        });
+
         // Error during server agent connection or conversion
-        logger.error(`Error processing document ${documentId}:`, error);
+        logger.error(`Error processing document ${documentId}:`, appError);
 
         res.status(400).json({
           loaded: false,
@@ -118,7 +125,8 @@ export class LiveDocumentController {
           },
         });
       } else {
-        logger.error("Error in /live-document endpoint:", error);
+        const appError = new AppError(error);
+        logger.error("Error in /live-document endpoint:", appError);
         // Handle other errors
         return res.status(500).json({
           message: `Internal server error.`,

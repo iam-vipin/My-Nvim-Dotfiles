@@ -1,8 +1,10 @@
 // services
+import { logger } from "@plane/logger";
 import { IframelyResponse } from "@plane/types";
 // types
 // helpers
 import { env } from "@/env";
+import { AppError } from "@/lib/errors";
 import { APIService } from "./api.service";
 
 const IFRAMELY_URL = env.IFRAMELY_URL ?? "";
@@ -17,7 +19,11 @@ export class IframelyService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        const appError = new AppError(error, {
+          context: { operation: "getIframe", url },
+        });
+        logger.error("Failed to fetch iframe data", appError);
+        throw appError;
       });
   }
 }

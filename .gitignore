@@ -87,6 +87,7 @@ tmp/
 
 ## packages
 dist
+.flatfile
 .temp/
 deploy/selfhost/plane-app/
 
@@ -100,5 +101,12 @@ dev-editor
 *.rdb.gz
 
 storybook-static
+# Monitor
+monitor/prime.key
+monitor/prime.key.pub
+monitor.db
 
-CLAUDE.md
+.cursorrules
+.cursor
+claude.md
+agents.md

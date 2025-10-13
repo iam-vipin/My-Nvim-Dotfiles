@@ -45,9 +45,10 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
         originalArtifact?.is_editable &&
         EDITABLE_ARTIFACT_TYPES.includes(originalArtifact.artifact_type) && (
           <div
-            className={cn("absolute right-3 top-3 text-custom-text-350 flex items-center gap-1", {
-              "opacity-0 group-hover:opacity-100 transition-all duration-300": isEmpty(updatedArtifact),
-            })}
+            className={cn(
+              "absolute right-3 top-3 text-custom-text-350 flex items-center gap-1 bg-custom-background-100 ",
+              "opacity-0 group-hover:opacity-100 transition-all duration-300"
+            )}
           >
             <Pencil className="size-3" />
             <div className="text-xs">{!isEmpty(updatedArtifact) ? "Edited" : "Edit"}</div>

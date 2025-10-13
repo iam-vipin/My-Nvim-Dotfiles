@@ -54,7 +54,7 @@ export const FocusFilter = observer((props: TProps) => {
       value={focus}
       label={
         <Tooltip
-          tooltipContent="Turn this on if you want Pi to use your work data from Plane."
+          tooltipContent="Turn this on if you want AI to use your work data from Plane."
           position="top"
           className="ml-4 max-w-[200px] font-medium text-custom-text-300"
           disabled={focus.isInWorkspaceContext}
@@ -98,7 +98,7 @@ export const FocusFilter = observer((props: TProps) => {
     >
       <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px] max-h-full">
         <div>
-          <span className="text-custom-text-350 font-medium">Ask Pi to use data from:</span>
+          <span className="text-custom-text-350 font-medium">Ask AI to use data from:</span>
           <CustomSelect.Option
             value={`workspace_id%${workspace?.id}`}
             className="text-sm text-custom-text-200 font-medium flex justify-start"
@@ -136,7 +136,7 @@ export const FocusFilter = observer((props: TProps) => {
         </div>
         <div className="pt-2 flex justify-between gap-2">
           <div className="text-wrap font-medium text-custom-text-350">
-            Turn this off if you don’t want Pi to use your work from Plane.{" "}
+            Turn this off if you don’t want AI to use your work from Plane.{" "}
           </div>
           <ToggleSwitch
             value={focus.isInWorkspaceContext ?? false}

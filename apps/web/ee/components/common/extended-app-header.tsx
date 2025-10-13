@@ -34,7 +34,7 @@ export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
         <div className="w-full flex-1">{header}</div>
         {shouldRenderPiChat && (
           <div className="pl-2">
-            <Tooltip tooltipContent="Ask Pi" position="bottom">
+            <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
                   "transition-colors p-2 rounded bg-custom-sidebar-background-80  hover:bg-custom-primary-100/10 hover:text-custom-primary-200  text-custom-text-350 grid place-items-center w-full",

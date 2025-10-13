@@ -25,9 +25,9 @@ export const WorkItemPreviewCard = observer((props: TProps) => {
     <WithPreviewHOC artifactId={artifactId}>
       <div className="flex flex-col gap-2 items-start">
         {/* header */}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center overflow-hidden w-full">
           {/* issue type icon */}
-          <LayersIcon className="size-4 rounded" />
+          <LayersIcon className="size-4 rounded flex-shrink-0" />
           {/* title */}
           <div className="truncate text-sm font-medium text-start">{data.name}</div>
         </div>

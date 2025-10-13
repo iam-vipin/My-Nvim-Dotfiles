@@ -21,7 +21,7 @@ export const HomePageHeader = observer(() => {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center gap-2">
-            <div className="text-base font-semibold text-custom-text-350">Ask Pi</div>
+            <div className="text-base font-semibold text-custom-text-350">Ask AI</div>
             <BetaBadge />
           </div>
           <Tooltip tooltipContent="Maximize" position="top">

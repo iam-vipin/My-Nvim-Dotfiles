@@ -63,12 +63,12 @@ const MENU_ITEMS: {
 const LOADING_TEXTS: {
   [key in AI_EDITOR_TASKS]: string;
 } = {
-  [AI_EDITOR_TASKS.PARAPHRASE]: "Pi is paraphrasing",
-  [AI_EDITOR_TASKS.SIMPLIFY]: "Pi is simplifying",
-  [AI_EDITOR_TASKS.ELABORATE]: "Pi is elaborating",
-  [AI_EDITOR_TASKS.SUMMARIZE]: "Pi is summarizing",
-  [AI_EDITOR_TASKS.GET_TITLE]: "Pi is getting title",
-  [AI_EDITOR_TASKS.TONE]: "Pi is adjusting tone",
+  [AI_EDITOR_TASKS.PARAPHRASE]: "AI is paraphrasing",
+  [AI_EDITOR_TASKS.SIMPLIFY]: "AI is simplifying",
+  [AI_EDITOR_TASKS.ELABORATE]: "AI is elaborating",
+  [AI_EDITOR_TASKS.SUMMARIZE]: "AI is summarizing",
+  [AI_EDITOR_TASKS.GET_TITLE]: "AI is getting title",
+  [AI_EDITOR_TASKS.TONE]: "AI is adjusting tone",
 };
 
 const TONES_LIST = [
@@ -277,7 +277,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
             </div>
           ) : (
             <p className="text-sm text-custom-text-200">
-              {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
+              {activeTask ? LOADING_TEXTS[activeTask] : "AI is writing"}...
             </p>
           )}
         </div>

@@ -31,7 +31,7 @@ export const EmptyPiChat = observer(() => {
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>
       <div className="flex justify-between h-8">
         <div className="flex gap-1">
-          <Image width={16} height={16} src={PiChatLogo} alt="Pi" className="my-auto" />
+          <Image width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto" />
           <span className="font-medium text-sm my-auto "> Plane AI</span>
           <BetaBadge />
         </div>

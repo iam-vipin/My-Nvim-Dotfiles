@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import { getButtonStyling } from "@plane/propel/button";
-import { TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceEnterpriseAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks

@@ -2,7 +2,7 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { InstanceFeatureFlagService } from "@plane/services";
-import { TInstanceFeatureFlagsResponse } from "@plane/types";
+import type { TInstanceFeatureFlagsResponse } from "@plane/types";
 
 const instanceFeatureFlagService = new InstanceFeatureFlagService();
 

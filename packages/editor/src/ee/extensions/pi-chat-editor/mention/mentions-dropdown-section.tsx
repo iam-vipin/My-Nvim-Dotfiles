@@ -9,7 +9,7 @@ type Props = {
   items: PiChatEditorMentionItem[];
   selectedItemIndex: number;
   isSectionSelected: boolean;
-  onClick: () => void;
+  onClick: (item: number) => void;
 };
 
 export const MentionsDropdownSection: React.FC<Props> = (props) => {
@@ -42,7 +42,7 @@ export const MentionsDropdownSection: React.FC<Props> = (props) => {
             <div
               key={`${type}-${index}`}
               id={`${type}-${index}`}
-              onClick={onClick}
+              onClick={() => onClick(index)}
               className={cn(
                 "gap-1 rounded p-1 my-1 cursor-pointer hover:bg-custom-sidebar-background-80/50 text-xs font-medium text-custom-text-200 space-x-1 flex",
                 {

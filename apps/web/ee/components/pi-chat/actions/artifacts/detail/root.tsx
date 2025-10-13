@@ -93,7 +93,6 @@ export const PiChatArtifactsRoot = observer(() => {
             />
             <div
               className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
-                "opacity-0": artifactsData.is_executed && artifactsData.success,
                 hidden: artifactsData.is_editable,
               })}
             />

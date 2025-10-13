@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { TIssue } from "@plane/types";
 import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
@@ -16,14 +16,21 @@ interface TWorkItemDetailProps {
 }
 
 export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
+  // props
   const { data, setIsSaving, handleSuccess, handleError, updateArtifact } = props;
+  // state
+  const [shouldUpdateDescription, setShouldUpdateDescription] = useState(true);
+  const [description, setDescription] = useState<string | undefined>(undefined);
+  // hooks
   const updatedData = useWorkItemData(data.artifact_id);
   const issueTitleRef = useRef<HTMLInputElement>(null);
+  // derived values
   const projectId = data.parameters?.project?.id;
 
   const handleOnChange = async (formData: Partial<TIssue> | null) => {
     if (!formData) return;
     setIsSaving(true);
+    setShouldUpdateDescription(false);
     await updateArtifact(formData)
       .then(() => {
         handleSuccess();
@@ -35,7 +42,7 @@ export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
   };
   const commonIssueModalProps = {
     issueTitleRef: issueTitleRef,
-    data: updatedData,
+    data: { ...updatedData, description_html: description },
     onChange: handleOnChange,
     onAssetUpload: () => {},
     onClose: () => {},
@@ -57,6 +64,15 @@ export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
     showActionButtons: false,
     dataResetProperties: [data.artifact_id, updatedData],
   };
+
+  useEffect(() => {
+    if (shouldUpdateDescription) {
+      setDescription(updatedData.description_html);
+    } else {
+      setShouldUpdateDescription(true);
+    }
+  }, [updatedData]);
+
   return (
     projectId && (
       <IssueModalProvider>

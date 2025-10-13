@@ -37,26 +37,29 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
   const isEmpty = useMemo(() => Object.keys(sections).length === 0, [sections]);
   const sectionKeys = useMemo(() => Object.keys(sections), [sections]);
 
-  const selectItem = useCallback(() => {
-    try {
-      const sectionKeyAtCurrentIndex = sectionKeys[selectedIndex.section];
-      const item = sections?.[sectionKeyAtCurrentIndex]?.[selectedIndex.item];
-      const transactionId = uuidv4();
-      if (item) {
-        command({
-          [EPiChatEditorAttributeNames.ID]: transactionId,
-          [EPiChatEditorAttributeNames.LABEL]:
-            sectionKeyAtCurrentIndex === "issue" ? `${item.subTitle ?? ""}` : (item.title ?? ""),
-          [EPiChatEditorAttributeNames.ENTITY_IDENTIFIER]: item.id,
-          [EPiChatEditorAttributeNames.ENTITY_NAME]: item.title ?? "",
-          [EPiChatEditorAttributeNames.TARGET]: `${sectionKeyAtCurrentIndex}s`,
-          [EPiChatEditorAttributeNames.REDIRECT_URI]: "",
-        });
+  const selectItem = useCallback(
+    (section: number, index: number) => {
+      try {
+        const sectionKeyAtCurrentIndex = sectionKeys[section];
+        const item = sections?.[sectionKeyAtCurrentIndex]?.[index];
+        const transactionId = uuidv4();
+        if (item) {
+          command({
+            [EPiChatEditorAttributeNames.ID]: transactionId,
+            [EPiChatEditorAttributeNames.LABEL]:
+              sectionKeyAtCurrentIndex === "issue" ? `${item.subTitle ?? ""}` : (item.title ?? ""),
+            [EPiChatEditorAttributeNames.ENTITY_IDENTIFIER]: item.id,
+            [EPiChatEditorAttributeNames.ENTITY_NAME]: item.title ?? "",
+            [EPiChatEditorAttributeNames.TARGET]: `${sectionKeyAtCurrentIndex}s`,
+            [EPiChatEditorAttributeNames.REDIRECT_URI]: "",
+          });
+        }
+      } catch (error) {
+        console.error("Error selecting mention item:", error);
       }
-    } catch (error) {
-      console.error("Error selecting mention item:", error);
-    }
-  }, [command, sectionKeys, sections, selectedIndex]);
+    },
+    [command, sectionKeys, sections, selectedIndex]
+  );
 
   const upHandler = useCallback(() => {
     if (isEmpty) return;
@@ -85,13 +88,11 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
     const sectionKey: string | undefined = sectionKeys[section];
     const isLastItem = item === sections[sectionKey]?.length - 1;
     if (isLastItem) {
-      const nextSectionKey: string | undefined = sectionKeys[section + 1];
-      if (nextSectionKey) {
-        setSelectedIndex({
-          section: section + 1,
-          item: 0,
-        });
-      }
+      const nextSection = (selectedIndex.section + 1) % sectionKeys.length;
+      setSelectedIndex({
+        section: nextSection,
+        item: 0,
+      });
     } else {
       setSelectedIndex({
         section: section,
@@ -125,7 +126,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
       }
 
       if (event.key === "Enter") {
-        selectItem();
+        selectItem(selectedIndex.section, selectedIndex.item);
         return true;
       }
 
@@ -196,7 +197,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
               key={index}
               type={type}
               items={sections[type]}
-              onClick={selectItem}
+              onClick={(item: number) => selectItem(index, item)}
               selectedItemIndex={selectedIndex.item}
               isSectionSelected={selectedIndex.section === index}
             />

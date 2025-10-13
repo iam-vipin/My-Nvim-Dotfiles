@@ -3,9 +3,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 // plane imports
-import { PiChatLogo, UserActivityIcon } from "@plane/propel/icons";
+import { DraftIcon, HomeIcon, InboxIcon, PiChatLogo, YourWorkIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
@@ -25,7 +25,7 @@ export const SidebarUserMenu = observer(() => {
       labelTranslationKey: "sidebar.home",
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Home,
+      Icon: HomeIcon,
     },
     {
       key: "dashboards",
@@ -39,21 +39,21 @@ export const SidebarUserMenu = observer(() => {
       labelTranslationKey: "sidebar.your_work",
       href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: UserActivityIcon,
+      Icon: YourWorkIcon,
     },
     {
       key: "notifications",
       labelTranslationKey: "sidebar.inbox",
       href: `/${workspaceSlug.toString()}/notifications/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Inbox,
+      Icon: InboxIcon,
     },
     {
       key: "drafts",
       labelTranslationKey: "sidebar.drafts",
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: PenSquare,
+      Icon: DraftIcon,
     },
     {
       key: "pi-chat",

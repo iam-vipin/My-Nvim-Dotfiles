@@ -459,6 +459,7 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
 
     for view_seed in view_seeds:
         project_id = view_seed.pop("project_id")
+        view_seed.pop("id")
         IssueView.objects.create(
             **view_seed,
             project_id=project_map[project_id],

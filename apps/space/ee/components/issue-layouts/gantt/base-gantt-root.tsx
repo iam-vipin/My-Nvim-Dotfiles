@@ -11,9 +11,10 @@ import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { getIssueBlocksStructure } from "@/plane-web/helpers/gantt.helper";
 // plane web hooks
 import { useView, useViewIssues } from "@/plane-web/hooks/store";
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local components
-import { ChartDataType, GanttChartRoot, IssueGanttSidebar } from "../../gantt-chart";
+import type { ChartDataType } from "../../gantt-chart";
+import { GanttChartRoot, IssueGanttSidebar } from "../../gantt-chart";
 import { getMonthChartItemPositionWidthInMonth } from "../../gantt-chart/views";
 import { IssueGanttBlock } from "./blocks";
 

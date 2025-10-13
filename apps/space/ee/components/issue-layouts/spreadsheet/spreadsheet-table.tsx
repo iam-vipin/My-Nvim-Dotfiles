@@ -1,7 +1,8 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // components
 import { getDisplayPropertiesCount } from "@/components/issues/issue-layouts/utils";
 //hooks

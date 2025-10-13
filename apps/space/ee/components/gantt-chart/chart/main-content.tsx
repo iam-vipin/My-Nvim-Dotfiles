@@ -5,17 +5,15 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // components
+import type { ChartDataType, IGanttBlock, TGanttViews } from "../";
 import {
   BiWeekChartView,
-  ChartDataType,
   DayChartView,
   GanttChartBlocksList,
   GanttChartSidebar,
   HourChartView,
-  IGanttBlock,
   MonthChartView,
   QuarterChartView,
-  TGanttViews,
   WeekChartView,
   YearChartView,
 } from "../";

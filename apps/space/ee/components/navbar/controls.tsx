@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, FC } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // components
 import { NavbarTheme } from "@/components/issues/navbar/theme";
@@ -10,7 +11,7 @@ import useIsInIframe from "@/hooks/use-is-in-iframe";
 // plane-web
 import { useViewIssuesFilter } from "@/plane-web/hooks/store/use-view-issues-filter";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
 import { ViewIssueFilters } from "../issue-layouts/filters/root";
 
 export type NavbarControlsProps = {

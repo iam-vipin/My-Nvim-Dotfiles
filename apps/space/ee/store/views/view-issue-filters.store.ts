@@ -2,11 +2,11 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane types
-import { IIssueFilterOptions, IssuePaginationOptions, TIssueParams } from "@plane/types";
+import type { IIssueFilterOptions, IssuePaginationOptions, TIssueParams } from "@plane/types";
 // store
 // types
 import { getPaginationParams } from "@/store/helpers/filter.helpers";
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 
 export interface IViewIssueFilterStore {
   // observables

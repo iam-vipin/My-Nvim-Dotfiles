@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { DocumentEditorWithRef, type EditorRefApi } from "@plane/editor";
+import { DocumentEditorWithRef } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { ERowVariant, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";

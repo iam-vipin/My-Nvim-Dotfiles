@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
 import { Logo } from "@plane/ui";
-import { IPage } from "@/plane-web/store/pages";
+import type { IPage } from "@/plane-web/store/pages";
 
 type Props = {
   pageDetails: IPage;

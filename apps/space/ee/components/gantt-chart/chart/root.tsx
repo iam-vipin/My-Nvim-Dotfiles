@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -6,7 +7,7 @@ import { cn } from "@/helpers/common.helper";
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
 import { useGanttChart } from "../hooks/use-gantt-chart";
-import { ChartDataType, IGanttBlock, TGanttViews } from "../types";
+import type { ChartDataType, IGanttBlock, TGanttViews } from "../types";
 import { generateMonthChart, getNumberOfDaysBetweenTwoDatesInMonth } from "../views";
 import { GanttChartHeader } from "./header";
 import { GanttChartMainContent } from "./main-content";

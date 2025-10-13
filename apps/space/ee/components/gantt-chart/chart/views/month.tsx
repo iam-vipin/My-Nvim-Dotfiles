@@ -1,11 +1,11 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 //
 import { useGanttChart } from "../..";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
-import { IMonthBlock } from "../../views";
+import type { IMonthBlock } from "../../views";
 
 export const MonthChartView: FC<any> = observer(() => {
   // chart hook

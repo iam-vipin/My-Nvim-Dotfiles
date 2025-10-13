@@ -1,7 +1,7 @@
 "use client";
 
 //ui
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 import { SPREADSHEET_PROPERTY_DETAILS } from "..";
 //hooks
 //types

@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 // hooks
 // constants
 import { HEADER_HEIGHT } from "../constants";
 // types
-import { ChartDataType, IGanttBlock } from "../types";
+import type { ChartDataType, IGanttBlock } from "../types";
 // components
 import { GanttChartBlock } from "./block";
 

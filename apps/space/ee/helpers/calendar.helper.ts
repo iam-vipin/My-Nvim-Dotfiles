@@ -1,4 +1,5 @@
-import { EStartOfTheWeek, ICalendarDate, ICalendarPayload } from "@plane/types";
+import type { ICalendarDate, ICalendarPayload } from "@plane/types";
+import { EStartOfTheWeek } from "@plane/types";
 import { getWeekNumberOfDate, renderFormattedPayloadDate } from "@plane/utils";
 
 export const formatDate = (date: Date, format: string): string => {

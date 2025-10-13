@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 type Props = {
   issue: IIssue;

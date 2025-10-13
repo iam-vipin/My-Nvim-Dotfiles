@@ -2,11 +2,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { SitesPagePublishService } from "@plane/services";
-import { IStateLite, TLogoProps, TPublicPageResponse } from "@plane/types";
+import type { IStateLite, TLogoProps, TPublicPageResponse } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 export type TIssueEmbed = IIssue & {
   state_detail?: IStateLite;

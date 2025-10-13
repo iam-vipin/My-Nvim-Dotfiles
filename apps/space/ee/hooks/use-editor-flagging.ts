@@ -1,7 +1,7 @@
 // plane imports
 import { useEffect } from "react";
 import type { TExtensions } from "@plane/editor";
-import { TEditorFlaggingHookReturnType } from "ce/hooks/use-editor-flagging";
+import type { TEditorFlaggingHookReturnType } from "ce/hooks/use-editor-flagging";
 import { useFeatureFlags } from "./store";
 
 /**

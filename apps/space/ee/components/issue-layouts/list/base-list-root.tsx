@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
-import { TGroupedIssues } from "@plane/types";
+import type { TGroupedIssues } from "@plane/types";
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 import { List } from "@/components/issues/issue-layouts/list/default";

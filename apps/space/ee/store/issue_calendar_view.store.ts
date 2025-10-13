@@ -1,7 +1,7 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { ICalendarPayload, ICalendarWeek } from "@plane/types";
+import type { ICalendarPayload, ICalendarWeek } from "@plane/types";
 import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
 
 export interface ICalendarStore {

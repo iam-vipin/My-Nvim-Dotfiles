@@ -1,4 +1,4 @@
-import { IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import type { IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 
 export enum EIssueLayoutTypes {
   LIST = "list",

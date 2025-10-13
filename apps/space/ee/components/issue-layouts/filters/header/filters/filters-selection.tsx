@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // types
-import { IIssueFilterOptions } from "@plane/types";
+import type { IIssueFilterOptions } from "@plane/types";
 //
 import {
   FilterAssignees,

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 // components
 import { IssueBlockCycle } from "@/components/issues/issue-layouts/properties/cycle";
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 type Props = {
   issue: IIssue;

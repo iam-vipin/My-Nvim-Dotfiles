@@ -1,5 +1,5 @@
-import { IIssue } from "@/types/issue";
-import { IGanttBlock } from "../types";
+import type { IIssue } from "@/types/issue";
+import type { IGanttBlock } from "../types";
 import { getDate } from "./date-time.helper";
 
 export const getIssueBlocksStructure = (block: IIssue): IGanttBlock => ({

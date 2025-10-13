@@ -5,7 +5,7 @@ import { ContrastIcon } from "lucide-react";
 // plane imports
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
 import { CycleGroupIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import {
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -14,11 +14,11 @@ import {
 } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // stores
-import { ICycleStore } from "@/store/cycle.store";
-import { IIssueLabelStore } from "@/store/label.store";
-import { IIssueMemberStore } from "@/store/members.store";
-import { IIssueModuleStore } from "@/store/module.store";
-import { IStateStore } from "@/store/state.store";
+import type { ICycleStore } from "@/store/cycle.store";
+import type { IIssueLabelStore } from "@/store/label.store";
+import type { IIssueMemberStore } from "@/store/members.store";
+import type { IIssueModuleStore } from "@/store/module.store";
+import type { IStateStore } from "@/store/state.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";

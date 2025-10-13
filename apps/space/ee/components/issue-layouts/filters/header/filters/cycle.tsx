@@ -5,7 +5,7 @@ import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { CycleGroupIcon } from "@plane/propel/icons";
-import { TCycleGroups } from "@plane/types";
+import type { TCycleGroups } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { FilterHeader } from "@/components/issues/filters/helpers/filter-header";

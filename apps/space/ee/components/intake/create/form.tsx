@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // plane types
 import { Controller, useFormContext } from "react-hook-form";
-import { type EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // plane ui
 import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
@@ -15,7 +15,7 @@ import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // local types
-import { TFormData } from "./create-issue-modal";
+import type { TFormData } from "./create-issue-modal";
 
 type TProps = {
   project: Partial<IProject>;

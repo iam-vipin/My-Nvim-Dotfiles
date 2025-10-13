@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
@@ -10,9 +10,10 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/propel/icons";
-import { IIssueDisplayProperties } from "@plane/types";
-import { IIssue } from "@/types/issue";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import type { IIssueDisplayProperties } from "@plane/types";
+import type { IIssue } from "@/types/issue";
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,

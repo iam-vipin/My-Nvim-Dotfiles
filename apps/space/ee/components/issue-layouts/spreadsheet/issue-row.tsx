@@ -1,11 +1,12 @@
 "use client";
 
-import { MutableRefObject, useRef } from "react";
+import type { MutableRefObject } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
 // components

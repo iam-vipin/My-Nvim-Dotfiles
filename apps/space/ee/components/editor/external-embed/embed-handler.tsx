@@ -2,9 +2,10 @@ import React, { memo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane editor
-import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, ExternalEmbedNodeViewProps } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps } from "@plane/editor";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@plane/editor";
 // plane types
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 // plane components
 import { EmbedLoading, ErrorState, HTMLContent, InViewportRenderer, RichCard, TwitterEmbed } from "@plane/ui";
 

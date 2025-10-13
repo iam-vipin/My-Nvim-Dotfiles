@@ -1,7 +1,7 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 // services
 import { SitesFeatureFlagService } from "@plane/services";
 // init services

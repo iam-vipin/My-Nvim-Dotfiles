@@ -2,11 +2,11 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { SitesViewPublishService } from "@plane/services";
-import { IIssueFilterOptions, IPublishedProjectView } from "@plane/types";
+import type { IIssueFilterOptions, IPublishedProjectView } from "@plane/types";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { EIssueLayoutTypes } from "../../constants/issue";
 import {
-  EIssueLayoutTypes,
   FILTERS_TO_PROPERTIES_MAP,
   ISSUE_FILTERS_BY_LAYOUT,
   ISSUE_MULTIPLE_DATA,

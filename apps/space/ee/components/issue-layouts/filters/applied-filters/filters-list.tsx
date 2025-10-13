@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
-import { IIssueFilterOptions } from "@plane/types";
+import type { IIssueFilterOptions } from "@plane/types";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // components

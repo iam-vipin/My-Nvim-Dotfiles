@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
-import { TGroupedIssues, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
+import type { TGroupedIssues, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
 // helpers
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 //
 import { CalendarDayTile } from "./day-tile";
 

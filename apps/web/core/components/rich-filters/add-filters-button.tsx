@@ -1,7 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-// plane imports
 import { getButtonStyling } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { IFilterInstance } from "@plane/shared-state";

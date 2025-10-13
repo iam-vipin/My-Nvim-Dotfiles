@@ -62,8 +62,10 @@ export default {
   language_setting: "Choose the language used in the user interface.",
   settings_moved_to_preferences: "Timezone & Language settings have been moved to preferences.",
   go_to_preferences: "Go to preferences",
+  select_the_cursor_motion_style_that_feels_right_for_you: "Select the cursor motion style that feels right for you.",
   theme: "Theme",
-  system_preference: "System preference",
+  smooth_cursor: "Smooth Cursor",
+  system_preference: "System Preference",
   light: "Light",
   dark: "Dark",
   light_contrast: "Light high contrast",
@@ -523,6 +525,8 @@ export default {
     work_item: "Work item",
     work_items: "Work items",
     sub_work_item: "Sub-work item",
+    views: "Views",
+    pages: "Pages",
     add: "Add",
     warning: "Warning",
     updating: "Updating",
@@ -646,6 +650,12 @@ export default {
       placeholder: "Type to search",
       no_matches_found: "No matches found",
       no_matching_results: "No matching results",
+      min_chars: "Type at least {count} characters to search",
+      error: "Error fetching search results",
+      no_results: {
+        title: "No matching results",
+        description: "Remove the search criteria to see all results",
+      },
     },
     actions: {
       edit: "Edit",
@@ -684,6 +694,7 @@ export default {
     or: "or",
     next: "Next",
     back: "Back",
+    retry: "Retry",
     cancelling: "Cancelling",
     configuring: "Configuring",
     clear: "Clear",
@@ -1927,6 +1938,69 @@ export default {
       },
     },
   },
+  project_views: {
+    empty_state: {
+      general: {
+        title: "Save filtered views for your project. Create as many as you need",
+        description:
+          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
+        primary_button: {
+          text: "Create your first view",
+          comic: {
+            title: "Views work atop Work item properties.",
+            description: "You can create a view from here with as many properties as filters as you see fit.",
+          },
+        },
+      },
+      no_archived_issues: {
+        title: "No archived work items yet",
+        description:
+          "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
+        primary_button: {
+          text: "Set automation",
+        },
+      },
+      issues_empty_filter: {
+        title: "No work items found matching the filters applied",
+        secondary_button: {
+          text: "Clear all filters",
+        },
+      },
+      public: {
+        title: "No public pages yet",
+        description: "See pages shared with everyone in your project right here.",
+        primary_button: {
+          text: "Create your first page",
+        },
+      },
+      archived: {
+        title: "No archived pages yet",
+        description: "Archive pages not on your radar. Access them here when needed.",
+      },
+      shared: {
+        title: "No shared pages yet",
+        description: "Pages that others have shared with you will appear here.",
+      },
+    },
+  },
+  issue_relation: {
+    empty_state: {
+      search: {
+        title: "No matching work items found",
+      },
+      no_issues: {
+        title: "No work items found",
+      },
+    },
+  },
+  issue_comment: {
+    empty_state: {
+      general: {
+        title: "No comments yet",
+        description: "Comments can be used as a discussion and follow-up space for the work items",
+      },
+    },
+  },
   project_issues: {
     empty_state: {
       no_issues: {
@@ -2013,26 +2087,6 @@ export default {
       },
     },
   },
-  project_views: {
-    empty_state: {
-      general: {
-        title: "Save filtered views for your project. Create as many as you need",
-        description:
-          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
-        primary_button: {
-          text: "Create your first view",
-          comic: {
-            title: "Views work atop Work item properties.",
-            description: "You can create a view from here with as many properties as filters as you see fit.",
-          },
-        },
-      },
-      filter: {
-        title: "No matching views",
-        description: "No views match the search criteria. \n Create a new view instead.",
-      },
-    },
-  },
   project_page: {
     empty_state: {
       general: {
@@ -2068,24 +2122,6 @@ export default {
     empty_state: {
       search: {
         title: "No results found",
-      },
-    },
-  },
-  issue_relation: {
-    empty_state: {
-      search: {
-        title: "No matching work items found",
-      },
-      no_issues: {
-        title: "No work items found",
-      },
-    },
-  },
-  issue_comment: {
-    empty_state: {
-      general: {
-        title: "No comments yet",
-        description: "Comments can be used as a discussion and follow-up space for the work items",
       },
     },
   },
@@ -2301,7 +2337,7 @@ export default {
     },
     admin: {
       title: "Admin",
-      description: "All permissions set to true within the workspace.",
+      description: "All permissions set to true within the workspace.",
     },
   },
   user_roles: {
@@ -2451,6 +2487,43 @@ export default {
           title: "Missing images",
           description: "Add images to see them here.",
         },
+      },
+      comments: {
+        label: "Comments",
+        empty_state: {
+          title: "No comments",
+          description: "Add comments to see them here.",
+        },
+      },
+    },
+    toasts: {
+      errors: {
+        wrong_name: "The sticky name cannot be longer than 100 characters.",
+        already_exists: "There already exists a sticky with no description",
+      },
+      created: {
+        title: "Sticky created",
+        message: "The sticky has been successfully created",
+      },
+      not_created: {
+        title: "Sticky not created",
+        message: "The sticky could not be created",
+      },
+      updated: {
+        title: "Sticky updated",
+        message: "The sticky has been successfully updated",
+      },
+      not_updated: {
+        title: "Sticky not updated",
+        message: "The sticky could not be updated",
+      },
+      removed: {
+        title: "Sticky removed",
+        message: "The sticky has been successfully removed",
+      },
+      not_removed: {
+        title: "Sticky not removed",
+        message: "The sticky could not be removed",
       },
     },
     open_button: "Open navigation pane",

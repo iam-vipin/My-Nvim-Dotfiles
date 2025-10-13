@@ -2,7 +2,7 @@
 
 import { isNil } from "lodash-es";
 import { ContrastIcon } from "lucide-react";
-// types
+// plane imports
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
 import { CycleGroupIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type {
@@ -12,10 +12,7 @@ import type {
   IIssueDisplayProperties,
   TGroupedIssues,
 } from "@plane/types";
-// ui
 import { Avatar } from "@plane/ui";
-// components
-// constants
 // stores
 import type { ICycleStore } from "@/store/cycle.store";
 import type { IIssueLabelStore } from "@/store/label.store";

@@ -516,8 +516,8 @@ export class InitiativeStore implements IInitiativeStore {
     const response = await this.initiativeLabelsService.getInitiativeLabels(workspaceSlug);
 
     runInAction(() => {
-       const sortetLabels = (response || []).sort((a, b) => a.sort_order - b.sort_order);
-       this.initiativeLabelsMap.set(workspaceSlug, new Map(sortetLabels.map((label) => [label.id, label])));
+      const sortetLabels = (response || []).sort((a, b) => a.sort_order - b.sort_order);
+      this.initiativeLabelsMap.set(workspaceSlug, new Map(sortetLabels.map((label) => [label.id, label])));
     });
     return response;
   };

@@ -75,8 +75,8 @@ export const InputBox = observer((props: TProps) => {
   const editorRef = useRef<EditorRefApi>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
-    revalidateOnFocus: true,
-    revalidateIfStale: true,
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
     errorRetryCount: 0,
   });
 

@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { PageService } from "./extended.service";
 
-export class AgentPageService extends PageService {
+export class ServerAgentPageService extends PageService {
   protected basePath: string;
 
   constructor() {

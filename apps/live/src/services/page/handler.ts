@@ -1,11 +1,20 @@
 import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 // services
-import { AgentPageService } from "./agent.service";
 import { ProjectPageService } from "./project-page.service";
+import { ServerAgentPageService } from "./server-agent.service";
+import { SyncAgentPageService } from "./sync-agent.service";
 import { TeamspacePageService } from "./teamspace-page.service";
 import { WorkspacePageService } from "./workspace-page.service";
 
 export const getPageService = (documentType: TDocumentTypes, context: HocusPocusServerContext) => {
+  if (documentType === "sync_agent") {
+    return new SyncAgentPageService();
+  }
+
+  if (documentType === "server_agent") {
+    return new ServerAgentPageService();
+  }
+
   if (documentType === "project_page") {
     return new ProjectPageService({
       workspaceSlug: context.workspaceSlug,
@@ -27,10 +36,6 @@ export const getPageService = (documentType: TDocumentTypes, context: HocusPocus
       workspaceSlug: context.workspaceSlug,
       cookie: context.cookie,
     });
-  }
-
-  if (documentType === "server_agent" || documentType === "sync_agent") {
-    return new AgentPageService();
   }
 
   throw new Error(`Invalid document type ${documentType} provided.`);

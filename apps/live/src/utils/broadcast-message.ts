@@ -5,11 +5,11 @@ import { type ServerAgentManager } from "@/agents/server-agent";
 import { Redis } from "@/extensions/redis";
 import { AppError } from "@/lib/errors";
 
-export const broadcastMessageToPage = (
+export const broadcastMessageToPage = async (
   instance: Hocuspocus | ServerAgentManager,
   documentName: string,
   eventData: BroadcastedEvent
-): boolean => {
+): Promise<boolean> => {
   const hocuspocusServer =
     "hocuspocusServer" in instance ? (instance as ServerAgentManager).hocuspocusServer : instance;
 
@@ -20,11 +20,22 @@ export const broadcastMessageToPage = (
     logger.error("Error while broadcasting message:", appError);
     return false;
   }
-  const redisExtension = hocuspocusServer.configuration.extensions.find((ext) => ext instanceof Redis);
 
-  if (redisExtension) {
-    redisExtension.broadcastToDocument(documentName, eventData);
-    return true;
+  const redisExtension = hocuspocusServer.configuration.extensions.find((ext) => ext instanceof Redis) as
+    | Redis
+    | undefined;
+
+  if (!redisExtension) {
+    logger.error("BROADCAST_MESSAGE_TO_PAGE: Redis extension not found");
+    return false;
   }
-  return false;
+
+  try {
+    // Simple and safe - let the Redis extension handle all the logic
+    await redisExtension.broadcastToDocument(documentName, eventData);
+    return true;
+  } catch (error) {
+    logger.error(`BROADCAST_MESSAGE_TO_PAGE: Error broadcasting to ${documentName}:`, error);
+    return false;
+  }
 };

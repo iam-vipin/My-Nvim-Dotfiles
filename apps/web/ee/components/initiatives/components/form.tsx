@@ -86,7 +86,10 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   };
 
   const createLabel = async (labelName: string) => {
-    const createdLabel = await createInitiativeLabel(workspaceSlug.toString(), { name: labelName, color: getRandomLabelColor() });
+    const createdLabel = await createInitiativeLabel(workspaceSlug.toString(), {
+      name: labelName,
+      color: getRandomLabelColor(),
+    });
     return createdLabel;
   };
 

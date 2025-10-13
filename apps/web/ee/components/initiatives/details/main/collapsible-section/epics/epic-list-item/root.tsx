@@ -61,7 +61,8 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
 
-  const completedIssuesCount = (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0);
+  const completedIssuesCount =
+    (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0);
   const totalIssuesCount = initiativeEpicStats?.total_issues ?? 0;
   const showProgress = totalIssuesCount > 0;
   const progress = showProgress ? getProgress(completedIssuesCount, totalIssuesCount) : 0;

@@ -3,7 +3,7 @@
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight,  Loader } from "lucide-react";
+import { ChevronRight, Loader } from "lucide-react";
 // plane imports
 import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";

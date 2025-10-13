@@ -47,8 +47,12 @@ export async function pullIssues(client: JiraService, projectKey: string, from?:
 
   let nextPageToken = undefined;
   do {
-    const response = await client.getProjectIssues(projectKey, nextPageToken, from ? formatDateStringForHHMM(from) : "");
-    issues.push(...response.issues as IJiraIssue[]);
+    const response = await client.getProjectIssues(
+      projectKey,
+      nextPageToken,
+      from ? formatDateStringForHHMM(from) : ""
+    );
+    issues.push(...(response.issues as IJiraIssue[]));
     nextPageToken = response.nextPageToken;
   } while (nextPageToken);
 
@@ -60,7 +64,6 @@ export async function pullComments(issues: IJiraIssue[], client: JiraService): P
 }
 
 export async function pullSprints(client: JiraService, projectId: string): Promise<JiraSprint[]> {
-
   const jiraSprints: JiraSprint[] = [];
   try {
     const boards = await client.getProjectBoards(projectId);
@@ -97,7 +100,7 @@ export async function pullComponents(client: JiraService, projectKey: string): P
       const issues: IJiraIssue[] = [];
       do {
         const response = await client.getProjectComponentIssues(component.id!, nextPageToken);
-        issues.push(...response.issues as IJiraIssue[]);
+        issues.push(...(response.issues as IJiraIssue[]));
         nextPageToken = response.nextPageToken;
       } while (nextPageToken);
 

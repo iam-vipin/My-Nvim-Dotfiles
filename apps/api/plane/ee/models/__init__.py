@@ -122,3 +122,7 @@ from .automation import (
     AutomationActivity,
     ProcessedAutomationEvent,
 )
+
+from .cycle import AutomatedCycle, AutomatedCycleLog
+
+from .milestones import Milestone, MilestoneIssue

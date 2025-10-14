@@ -95,6 +95,8 @@ class ProjectFeature(ProjectBaseModel):
     is_project_updates_enabled = models.BooleanField(default=False)
     is_epic_enabled = models.BooleanField(default=False)
     is_workflow_enabled = models.BooleanField(default=False)
+    is_milestone_enabled = models.BooleanField(default=False)
+    is_automated_cycle_enabled = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Project Feature"

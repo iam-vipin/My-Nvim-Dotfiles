@@ -87,6 +87,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
         // @ts-expect-error - fix this
         await fetchPageDetails(embedPageId, {
           shouldFetchSubPages: false,
+          trackVisit: false,
         });
       }
     };

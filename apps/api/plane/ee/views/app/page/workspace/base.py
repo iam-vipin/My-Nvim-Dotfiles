@@ -257,6 +257,7 @@ class WorkspacePageViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
+        track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         if not page:
             return Response(
@@ -280,12 +281,13 @@ class WorkspacePageViewSet(BaseViewSet):
                 {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
-            recent_visited_task.delay(
-                slug=slug,
-                entity_name="workspace_page",
-                entity_identifier=page_id,
-                user_id=request.user.id,
-            )
+            if track_visit:
+                recent_visited_task.delay(
+                    slug=slug,
+                    entity_name="workspace_page",
+                    entity_identifier=page_id,
+                    user_id=request.user.id,
+                )
             return Response(
                 WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK
             )

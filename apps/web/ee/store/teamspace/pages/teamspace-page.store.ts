@@ -79,7 +79,13 @@ export interface ITeamspacePageStore {
     teamspaceId: string;
     shouldSync?: boolean;
   }) => Promise<void>;
-  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePage | undefined>;
+  getOrFetchPageInstance: ({
+    pageId,
+    trackVisit,
+  }: {
+    pageId: string;
+    trackVisit?: boolean;
+  }) => Promise<TTeamspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
   // page sharing actions
@@ -699,7 +705,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       });
 
       const promises: Promise<TPage | TPage[]>[] = [
-        this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId, trackVisit && true),
+        this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId, trackVisit),
       ];
 
       if (shouldFetchSubPages) {
@@ -889,14 +895,14 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
+  getOrFetchPageInstance = async ({ pageId, trackVisit }: { pageId: string; trackVisit?: boolean }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
     } else {
       const { workspaceSlug, teamspaceId } = this.rootStore.router;
       if (!workspaceSlug || !teamspaceId) return;
-      const page = await this.fetchPageDetails(teamspaceId, pageId);
+      const page = await this.fetchPageDetails(teamspaceId, pageId, { trackVisit });
       if (page) {
         return new TeamspacePage(this.rootStore, page);
       }

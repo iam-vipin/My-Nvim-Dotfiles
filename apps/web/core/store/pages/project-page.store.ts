@@ -96,9 +96,11 @@ export interface IProjectPageStore {
   getOrFetchPageInstance: ({
     pageId,
     projectId,
+    trackVisit,
   }: {
     pageId: string;
     projectId?: string;
+    trackVisit?: boolean;
   }) => Promise<TProjectPage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
@@ -703,7 +705,7 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       const promises: Promise<TPage | TPage[]>[] = [
-        this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true),
+        this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit),
       ];
 
       if (shouldFetchSubPages) {
@@ -944,7 +946,15 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId, projectId }: { pageId: string; projectId?: string }) => {
+  getOrFetchPageInstance = async ({
+    pageId,
+    projectId,
+    trackVisit,
+  }: {
+    pageId: string;
+    projectId?: string;
+    trackVisit?: boolean;
+  }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
@@ -956,7 +966,7 @@ export class ProjectPageStore implements IProjectPageStore {
       // Additional type safety check
       if (!actualProjectId || !workspaceSlug) return;
 
-      const page = await this.fetchPageDetails(actualProjectId, pageId);
+      const page = await this.fetchPageDetails(actualProjectId, pageId, { trackVisit });
       if (page) {
         return new ProjectPage(this.store, page);
       }
@@ -1057,7 +1067,7 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId || !pageId) return;
 
       const sharedUsers = await this.shareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
-      const finalUsers = sharedUsers.map((user) => ({
+      const finalUsers = sharedUsers.map((user: TPageSharedUser) => ({
         user_id: user.user_id,
         access: user.access,
       }));

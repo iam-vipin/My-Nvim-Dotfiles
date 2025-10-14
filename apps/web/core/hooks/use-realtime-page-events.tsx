@@ -265,7 +265,7 @@ export const useRealtimePageEvents = ({
         dismissToast("duplicating-page");
 
         // create a new page instace of the duplicatedPage in the store
-        await getOrFetchPageInstance({ pageId: duplicatedPage });
+        await getOrFetchPageInstance({ pageId: duplicatedPage, trackVisit: false });
 
         if (page.id === pageIds[0] && data.user_id === currentUser?.id) {
           setToast({

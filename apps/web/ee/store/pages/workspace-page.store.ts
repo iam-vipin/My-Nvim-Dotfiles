@@ -64,7 +64,13 @@ export interface IWorkspacePageStore {
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
-  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
+  getOrFetchPageInstance: ({
+    pageId,
+    trackVisit,
+  }: {
+    pageId: string;
+    trackVisit?: boolean;
+  }) => Promise<TWorkspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
   // page sharing actions
@@ -802,12 +808,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
+  getOrFetchPageInstance = async ({ pageId, trackVisit }: { pageId: string; trackVisit?: boolean }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
     } else {
-      const page = await this.fetchPageDetails(pageId);
+      const page = await this.fetchPageDetails(pageId, { trackVisit });
       if (page) {
         return new WorkspacePage(this.store, page);
       }

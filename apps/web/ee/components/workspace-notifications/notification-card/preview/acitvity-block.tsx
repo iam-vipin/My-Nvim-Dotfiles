@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 // plane imports
-import { ArchiveIcon, ContrastIcon, CustomersIcon, DiceIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
+import { ArchiveIcon, CycleIcon, CustomersIcon, ModuleIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -48,8 +48,8 @@ export const activityIconMap: Record<string, ReactElement> = {
   parent: <LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />,
   start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
   target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-  cycles: <ContrastIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  modules: <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   labels: <Tag size={14} className="text-custom-text-200" aria-hidden="true" />,
   link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,

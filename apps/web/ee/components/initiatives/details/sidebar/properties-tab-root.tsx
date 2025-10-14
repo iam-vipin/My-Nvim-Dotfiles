@@ -2,11 +2,11 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
+import { Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
 // plane imports
 import { EIconSize, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon, InitiativeStateIcon } from "@plane/propel/icons";
+import { EpicIcon, InitiativeStateIcon, ProjectIcon } from "@plane/propel/icons";
 import { TInitiativeStates } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
@@ -107,7 +107,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {/* Projects Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Briefcase className="h-4 w-4 flex-shrink-0" />
+            <ProjectIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("projects")}</span>
           </div>
           <button

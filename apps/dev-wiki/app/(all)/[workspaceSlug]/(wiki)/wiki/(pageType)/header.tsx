@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { FileText } from "lucide-react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, setToast, TOAST_TYPE } from "@plane/ui";
@@ -79,7 +79,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/pages`}
                   label="Pages"
-                  icon={<FileText className="size-4 text-custom-text-300" />}
+                  icon={<PageIcon className="size-4 text-custom-text-300" />}
                 />
               }
             />

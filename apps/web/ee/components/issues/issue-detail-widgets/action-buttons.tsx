@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { FileText } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import type { TWorkItemAdditionalWidgetActionButtonsProps } from "@/ce/components/issues/issue-detail-widgets/action-buttons";
 import { IssueDetailWidgetButton } from "@/components/issues/issue-detail-widgets/widget-button";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -21,7 +21,7 @@ export const WorkItemAdditionalWidgetActionButtons: FC<TWorkItemAdditionalWidget
             customButton={
               <IssueDetailWidgetButton
                 title={t("issue.pages.link_pages")}
-                icon={<FileText className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
                 disabled={disabled}
               />
             }

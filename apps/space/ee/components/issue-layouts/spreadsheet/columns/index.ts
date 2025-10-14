@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import { CycleIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties } from "@plane/types";
 import type { IIssue } from "@/types/issue";
 import {
@@ -85,7 +85,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   cycle: {
     title: "Cycle",
-    icon: ContrastIcon,
+    icon: CycleIcon,
     Column: SpreadsheetCycleColumn,
   },
   priority: {

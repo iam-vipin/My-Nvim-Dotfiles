@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { AlignLeft, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
-import { EpicIcon, InitiativeIcon } from "@plane/propel/icons";
+import { AlignLeft, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
+import { EpicIcon, InitiativeIcon, ProjectIcon } from "@plane/propel/icons";
 import { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
 import { TInitiativeActivity } from "@/plane-web/types/initiative";
@@ -101,7 +101,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   projects_updated: (activity: TInitiativeActivity) => ({
-    icon: <Briefcase className={commonIconClassName} />,
+    icon: <ProjectIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value ? (

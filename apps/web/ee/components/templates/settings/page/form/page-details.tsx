@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
-import { FileText } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { PageIcon } from "@plane/propel/icons";
 import { TPageTemplateForm } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
@@ -53,7 +53,7 @@ export const PageTemplatePageDetails: React.FC<Props> = observer((props) => {
                   {value?.in_use ? (
                     <Logo logo={value} size={36} type="lucide" />
                   ) : (
-                    <FileText className="size-9 text-custom-text-300" />
+                    <PageIcon className="size-9 text-custom-text-300" />
                   )}
                 </span>
               }

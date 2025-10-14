@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { FileText } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { ArchiveIcon, PageIcon } from "@plane/propel/icons";
 import { Loader, Logo } from "@plane/ui";
 // plane web imports
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
@@ -78,7 +77,7 @@ export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
         };
       }
       return {
-        logo: <FileText size={16} type="lucide" />,
+        logo: <PageIcon height={16} width={16} type="lucide" />,
         text: getPageName(name),
       };
     };
@@ -94,7 +93,7 @@ export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
     if (displayState.logo) {
       return displayState.logo;
     }
-    return <FileText size={16} type="lucide" />;
+    return <PageIcon height={16} width={16} type="lucide" />;
   };
 
   if (page?.name === null) {

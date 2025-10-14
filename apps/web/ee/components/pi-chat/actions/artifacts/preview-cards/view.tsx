@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Layers } from "lucide-react";
+import { ViewsIcon } from "@plane/propel/icons";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";
@@ -16,7 +16,7 @@ export const ViewPreviewCard = observer((props: TProps) => {
   return (
     <WithPreviewHOC artifactId={data.artifact_id}>
       <div className="flex gap-2 items-start">
-        <Layers className="size-4 text-custom-text-100 my-0.5" />
+        <ViewsIcon className="size-4 text-custom-text-100 my-0.5" />
         <div className="flex flex-col">
           <div className="truncate text-sm font-medium text-start capitalize">{data.parameters?.name || "Unknown"}</div>
           {properties && <Properties {...properties} />}

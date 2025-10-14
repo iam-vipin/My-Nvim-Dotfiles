@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink, RssIcon } from "lucide-react";
+import { Circle, ExternalLink } from "lucide-react";
 // plane imports
 import {
   EProjectFeatureKey,

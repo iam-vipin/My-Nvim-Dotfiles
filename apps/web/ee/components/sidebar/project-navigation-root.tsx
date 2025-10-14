@@ -3,8 +3,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { RssIcon } from "lucide-react";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
@@ -40,7 +39,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       name: "Overview",
       key: "overview",
       href: `/${workspaceSlug}/projects/${projectId}/overview/`,
-      icon: RssIcon,
+      icon: OverviewIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       shouldRender: !!isProjectOverviewEnabled,
       sortOrder: -2,

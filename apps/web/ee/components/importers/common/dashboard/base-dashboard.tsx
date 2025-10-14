@@ -3,11 +3,12 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase, CircleX, Info, Loader, RefreshCcw } from "lucide-react";
+import { CircleX, Info, Loader, RefreshCcw } from "lucide-react";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TImportJob, TLogoProps } from "@plane/types";
 import { ModalCore } from "@plane/ui";
@@ -347,7 +348,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
                                   return planeProject?.logo_props ? (
                                     <Logo logo={planeProject.logo_props} size={16} />
                                   ) : (
-                                    <Briefcase className="w-4 h-4" />
+                                    <ProjectIcon className="w-4 h-4" />
                                   );
                                 })()}
                                 title={getPlaneProject(job)?.name || "--"}
@@ -412,7 +413,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
             <div className="grid h-full place-items-center p-5">
               <div className="flex flex-col items-center gap-4">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                  <Briefcase className="h-10 w-10 text-custom-text-200" />
+                  <ProjectIcon className="h-10 w-10 text-custom-text-200" />
                 </div>
                 <div className="flex flex-col items-center gap-1.5 text-center">
                   <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>

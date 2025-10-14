@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter, useParams, usePathname } from "next/navigation";
-import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+import { BriefcaseIcon, Loader as Spinner } from "lucide-react";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -29,11 +29,11 @@ const SystemPrompts = (props: TSystemPrompt) => {
   const getIcon = (type: string) => {
     switch (type) {
       case "pages":
-        return FileText;
+        return PageIcon;
       case "cycles":
-        return ContrastIcon;
+        return CycleIcon;
       case "modules":
-        return DiceIcon;
+        return ModuleIcon;
       case "projects":
         return BriefcaseIcon;
       case "issues":

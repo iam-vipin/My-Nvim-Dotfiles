@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
-import { AlignLeft, Briefcase } from "lucide-react";
+import { AlignLeft } from "lucide-react";
 // plane imports
-import { LayersIcon } from "@plane/propel/icons";
+import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuePropertyType,
@@ -182,7 +182,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getTeamspaceProjectFilterConfig<TWorkItemFilterProperty>("team_project_id")({
         isEnabled: isFilterEnabled("team_project_id") && teamspaceProjects !== undefined,
-        filterIcon: Briefcase,
+        filterIcon: ProjectIcon,
         projects: teamspaceProjects,
         getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
         ...operatorConfigs,

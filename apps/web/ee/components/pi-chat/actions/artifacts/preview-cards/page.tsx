@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
@@ -20,7 +20,7 @@ export const PagePreviewCard = observer((props: TProps) => {
         {data.parameters?.logo_props?.in_use ? (
           <Logo logo={data.parameters?.logo_props} size={16} type="lucide" />
         ) : (
-          <FileText className="size-4 text-custom-text-100" />
+          <PageIcon className="size-4 text-custom-text-100" />
         )}
         <div className="flex flex-col w-full overflow-hidden items-start">
           <div className="text-sm text-custom-text-100 font-medium truncate text-start capitalize">

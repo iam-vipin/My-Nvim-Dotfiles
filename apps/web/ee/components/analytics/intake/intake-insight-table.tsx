@@ -3,9 +3,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { IntakeInsightColumns } from "@plane/types";
 // components
 import { exportCSV } from "@/components/analytics/export";
@@ -61,7 +61,7 @@ const IntakeInsightTable = observer(() => {
             {row.original.project_id ? (
               row.original.project__logo_props && <Logo logo={row.original.project__logo_props} size={18} />
             ) : (
-              <Briefcase className="h-4 w-4" />
+              <ProjectIcon className="h-4 w-4" />
             )}
             {row.original.project__name}
           </div>

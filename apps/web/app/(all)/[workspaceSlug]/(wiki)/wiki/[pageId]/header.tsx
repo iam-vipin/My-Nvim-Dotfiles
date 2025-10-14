@@ -4,7 +4,8 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
-import { FileText, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { TPage } from "@plane/types";
 // ui
@@ -70,7 +71,7 @@ export const PageDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/pages`}
                 label="Pages"
-                icon={<FileText className="size-4 text-custom-text-300" />}
+                icon={<PageIcon className="size-4 text-custom-text-300" />}
               />
             </div>
 

@@ -3,9 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LayoutGrid } from "lucide-react";
 // plane imports
-import { DraftIcon, HomeIcon, InboxIcon, PiChatLogo, YourWorkIcon } from "@plane/propel/icons";
+import { DraftIcon, HomeIcon, InboxIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
@@ -32,7 +31,7 @@ export const SidebarUserMenu = observer(() => {
       labelTranslationKey: "workspace_dashboards",
       href: `/${workspaceSlug.toString()}/dashboards/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: LayoutGrid,
+      Icon: DashboardIcon,
     },
     {
       key: "your-work",

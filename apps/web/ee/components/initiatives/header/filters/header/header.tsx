@@ -3,11 +3,11 @@ import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { LayersIcon, PanelRight, Rss } from "lucide-react";
+import { PanelRight } from "lucide-react";
 import { EInitiativeNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { InitiativeIcon } from "@plane/propel/icons";
+import { InitiativeIcon, WorkItemsIcon, OverviewIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption } from "@plane/types";
 import {
   BreadcrumbNavigationDropdown,
@@ -53,13 +53,13 @@ export const InitiativesDetailsHeader = observer((props: TProps) => {
       {
         key: EInitiativeNavigationItem.OVERVIEW,
         title: EInitiativeNavigationItem.OVERVIEW,
-        icon: Rss,
+        icon: OverviewIcon,
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`),
       },
       {
         key: EInitiativeNavigationItem.SCOPE,
         title: EInitiativeNavigationItem.SCOPE,
-        icon: LayersIcon,
+        icon: WorkItemsIcon,
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`),
       },
     ],

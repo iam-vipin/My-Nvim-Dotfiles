@@ -1,8 +1,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { CircleX, Files, FileText, Link2 } from "lucide-react";
+import { CircleX, Files, Link2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
 import { TContextMenuItem, CustomMenu, Logo } from "@plane/ui";
@@ -109,7 +110,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
               {page.logo_props && page.logo_props?.in_use ? (
                 <Logo logo={page.logo_props} size={16} type="lucide" />
               ) : (
-                <FileText className="size-4 text-custom-text-300" />
+                <PageIcon className="size-4 text-custom-text-300" />
               )}
             </div>
             <div className="text-base font-medium text-custom-text-200 line-clamp-2 overflow-hidden break-words min-w-0 flex-1">

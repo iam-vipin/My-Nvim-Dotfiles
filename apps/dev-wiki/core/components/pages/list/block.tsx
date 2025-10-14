@@ -3,9 +3,9 @@
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, FileText, Loader } from "lucide-react";
+import { ChevronRight, Loader } from "lucide-react";
 // plane imports
-import { RestrictedPageIcon } from "@plane/propel/icons";
+import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { TPageNavigationTabs } from "@plane/types";
 import { Logo, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -133,7 +133,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
                 logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-custom-text-300" />
                 )
               ) : (
                 <RestrictedPageIcon className="size-4 text-custom-text-300 mb-1" />

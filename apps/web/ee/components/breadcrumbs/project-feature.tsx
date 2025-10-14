@@ -2,9 +2,8 @@
 
 import { observer } from "mobx-react";
 // ui
-import { RssIcon } from "lucide-react";
 import { EProjectFeatureKey } from "@plane/constants";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ProjectFeatureBreadcrumb as CEProjectFeatureBreadcrumb } from "@/ce/components/breadcrumbs/project-feature";
@@ -39,7 +38,7 @@ export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcru
       name: "Overview",
       key: EProjectFeatureKey.OVERVIEW,
       href: `/${workspaceSlug}/projects/${projectId}/overview/`,
-      icon: RssIcon,
+      icon: OverviewIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       shouldRender: !!isProjectOverviewEnabled,
       sortOrder: -2,

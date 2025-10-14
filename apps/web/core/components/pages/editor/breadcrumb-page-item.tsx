@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -68,7 +68,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
                 {logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-custom-text-300" />
                 )}
               </>
             )
@@ -86,7 +86,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
                 {logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-custom-text-300" />
                 )}
               </>
             )}

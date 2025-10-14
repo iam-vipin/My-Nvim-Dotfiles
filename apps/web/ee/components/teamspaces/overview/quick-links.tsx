@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Briefcase, ChevronRightIcon, FileText, Layers } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 // ui
-import { LayersIcon, ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon, WorkItemsIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 
 type TTeamQuickLink = {
   key: string;
@@ -23,31 +23,31 @@ export const TeamsOverviewQuickLinks = observer(() => {
     {
       key: "projects",
       name: "Projects",
-      icon: <Briefcase className="size-4 text-custom-text-300" />,
+      icon: <ProjectIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
     },
     {
       key: "issues",
       name: "Work items",
-      icon: <LayersIcon className="size-4 text-custom-text-300" />,
+      icon: <WorkItemsIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/issues`,
     },
     {
       key: "cycles",
       name: "Cycles",
-      icon: <ContrastIcon className="size-4 text-custom-text-300" />,
+      icon: <CycleIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/cycles`,
     },
     {
       key: "views",
       name: "Views",
-      icon: <Layers className="size-4 text-custom-text-300" />,
+      icon: <ViewsIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/views`,
     },
     {
       key: "pages",
       name: "Pages",
-      icon: <FileText className="size-4 text-custom-text-300" />,
+      icon: <PageIcon className="size-4 text-custom-text-300" />,
       href: `/${workspaceSlug}/teamspaces/${teamspaceId}/pages`,
     },
   ];

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
 import { TArtifact } from "@/plane-web/types";
 import { useTemplateData } from "../useArtifactData";
@@ -27,7 +27,7 @@ export const ProjectPreviewCard = observer((props: TProps) => {
                 <Logo logo={data.parameters?.logo_props} size={16} />
               ) : (
                 <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                  <Briefcase className="h-4 w-4" />
+                  <ProjectIcon className="h-4 w-4" />
                 </span>
               )}
             </span>

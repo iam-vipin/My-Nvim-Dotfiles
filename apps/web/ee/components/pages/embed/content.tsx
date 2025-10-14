@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
 import type { TPageEmbedConfig } from "@plane/editor";
-import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
@@ -134,7 +133,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     } else if (logo_props?.in_use) {
       logo = <Logo logo={logo_props} size={16} type="lucide" />;
     } else if (!isDescriptionEmpty) {
-      logo = <FileText size={16} type="lucide" />;
+      logo = <PageIcon height={16} width={16} type="lucide" />;
     } else {
       logo = <EmptyPageIcon className="size-4" />;
     }

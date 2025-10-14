@@ -4,10 +4,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { Earth, FileText, Lock, Search, X } from "lucide-react";
+import { Earth, Lock, Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess, TIssuePage, TIssueServiceType } from "@plane/types";
 import { ToggleSwitch, Button, Logo, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
@@ -172,7 +173,7 @@ const PagesMultiSelectModal = observer(
                     {page?.logo_props && page.logo_props?.in_use ? (
                       <Logo logo={page.logo_props} size={16} type="lucide" />
                     ) : (
-                      <FileText className="size-4 text-custom-text-300" />
+                      <PageIcon className="size-4 text-custom-text-300" />
                     )}
                   </div>
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
@@ -216,7 +217,7 @@ const PagesMultiSelectModal = observer(
                         {page.logo_props && page.logo_props?.in_use ? (
                           <Logo logo={page.logo_props} size={16} type="lucide" />
                         ) : (
-                          <FileText className="size-4 text-custom-text-300" />
+                          <PageIcon className="size-4 text-custom-text-300" />
                         )}
                       </div>
                       <span className="truncate text-sm">{getPageName(page.name)}</span>

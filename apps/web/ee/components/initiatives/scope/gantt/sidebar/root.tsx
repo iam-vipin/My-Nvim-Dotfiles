@@ -1,9 +1,8 @@
 import { RefObject, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane
-import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { EGanttBlockType } from "@plane/types";
 // hooks
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
@@ -50,11 +49,11 @@ export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
     },
     [EGanttBlockType.PROJECT]: {
       title: t("common.projects"),
-      icon: <Briefcase className="size-4" />,
+      icon: <ProjectIcon className="size-4" />,
     },
     [EGanttBlockType.WORK_ITEM]: {
       title: t("common.issues"),
-      icon: <Briefcase className="size-4" />,
+      icon: <ProjectIcon className="size-4" />,
     },
   };
 

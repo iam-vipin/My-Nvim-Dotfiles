@@ -5,9 +5,9 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
+import { ArchiveIcon, ChevronRight, Loader } from "lucide-react";
 // plane imports
-import { EmptyPageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
@@ -122,7 +122,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
           return <Logo logo={logo_props} size={14} type="lucide" />;
         }
         if (!isDescriptionEmpty) {
-          return <FileText className="size-3.5" />;
+          return <PageIcon className="size-3.5" />;
         }
         return <EmptyPageIcon className="size-3.5" />;
       })(),

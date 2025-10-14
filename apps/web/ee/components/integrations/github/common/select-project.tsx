@@ -2,9 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
 // components
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
@@ -55,7 +55,7 @@ export const SelectProject: FC<TSelectProject> = observer((props) => {
             {option && option?.logo_props ? (
               <Logo logo={option?.logo_props} size={14} />
             ) : (
-              <Briefcase className="w-4 h-4" />
+              <ProjectIcon className="w-4 h-4" />
             )}
           </div>
         )}

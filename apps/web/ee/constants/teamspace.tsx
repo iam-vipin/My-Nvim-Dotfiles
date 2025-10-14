@@ -1,4 +1,4 @@
-import { AlignLeft, Briefcase, FileText, Layers, Type, User2, Users } from "lucide-react";
+import { AlignLeft, Type, User2, Users } from "lucide-react";
 // plane imports
 import {
   ERelationType,
@@ -8,7 +8,7 @@ import {
   ETeamspaceScope,
   EProgressXAxisKeys,
 } from "@plane/constants";
-import { TeamsIcon } from "@plane/propel/icons";
+import { PageIcon, ProjectIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 import { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
 // helpers
 import { getPageName } from "@plane/utils";
@@ -96,7 +96,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     ),
   }),
   projects_updated: (activity: TTeamspaceActivity) => ({
-    icon: <Briefcase className={commonIconClassName} />,
+    icon: <ProjectIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value ? (
@@ -132,7 +132,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     ),
   }),
   view_created: (activity: TTeamspaceActivity) => ({
-    icon: <Layers className={commonIconClassName} />,
+    icon: <ViewsIcon className={commonIconClassName} />,
     message: (
       <>
         created the view <span className={commonTextClassName}>{activity.new_value}</span> in this teamspace.
@@ -140,7 +140,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     ),
   }),
   view_deleted: (activity: TTeamspaceActivity) => ({
-    icon: <Layers className={commonIconClassName} />,
+    icon: <ViewsIcon className={commonIconClassName} />,
     message: (
       <>
         removed the view <span className={commonTextClassName}>{activity.old_value}</span> from this teamspace.
@@ -148,7 +148,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     ),
   }),
   page_created: (activity: TTeamspaceActivity) => ({
-    icon: <FileText className={commonIconClassName} />,
+    icon: <PageIcon className={commonIconClassName} />,
     message: (
       <>
         created the page <span className={commonTextClassName}>{getPageName(activity.new_value)}</span> in this
@@ -157,7 +157,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     ),
   }),
   page_deleted: (activity: TTeamspaceActivity) => ({
-    icon: <FileText className={commonIconClassName} />,
+    icon: <PageIcon className={commonIconClassName} />,
     message: (
       <>
         removed the page <span className={commonTextClassName}>{getPageName(activity.old_value)}</span> from this

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon } from "@plane/propel/icons";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";
@@ -16,7 +16,7 @@ export const CyclePreviewCard = observer((props: TProps) => {
   return (
     <WithPreviewHOC artifactId={data.artifact_id}>
       <div className="flex gap-2 items-start">
-        <ContrastIcon className="size-4 text-custom-text-100 my-0.5" />
+        <CycleIcon className="size-4 text-custom-text-100 my-0.5" />
         <div className="flex flex-col">
           <div className="truncate text-sm font-medium text-start capitalize">{data.parameters?.name || "Unknown"}</div>
           {properties && <Properties {...properties} />}

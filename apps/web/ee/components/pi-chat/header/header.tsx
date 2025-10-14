@@ -3,10 +3,10 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Home, PanelLeft, SquarePen } from "lucide-react";
+import { PanelLeft, SquarePen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { PiIcon } from "@plane/propel/icons";
+import { HomeIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { BetaBadge, Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -46,7 +46,7 @@ export const Header = observer((props: THeaderProps) => {
                   <BreadcrumbLink
                     href={"/"}
                     label={t("home.title")}
-                    icon={<Home className="h-4 w-4 text-custom-text-300" />}
+                    icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
                   />
                 }
               />

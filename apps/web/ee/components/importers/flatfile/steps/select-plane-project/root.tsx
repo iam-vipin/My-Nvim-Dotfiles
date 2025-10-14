@@ -4,9 +4,9 @@ import { FC, useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
 import { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -97,7 +97,7 @@ export const SelectPlaneProject: FC = observer(() => {
                 {option && option?.logo_props ? (
                   <Logo logo={option?.logo_props} size={14} />
                 ) : (
-                  <Briefcase className="w-4 h-4" />
+                  <ProjectIcon className="w-4 h-4" />
                 )}
               </div>
             )}

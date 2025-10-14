@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { Collapsible } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -82,7 +81,7 @@ export const InitiativeScopeListView = observer((props: Props) => {
               count={projectIds.length}
               label={t("common.projects")}
               handleAdd={handleAddProject}
-              icon={<Briefcase className="size-4" />}
+              icon={<ProjectIcon className="size-4" />}
             />
           }
           buttonClassName="w-full"

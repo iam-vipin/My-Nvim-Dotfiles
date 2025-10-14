@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
-import { Briefcase, Loader, RefreshCcw, ExternalLink } from "lucide-react";
+import { Loader, RefreshCcw, ExternalLink } from "lucide-react";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
@@ -169,7 +170,7 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
           <div className="grid h-full place-items-center p-5">
             <div className="flex flex-col items-center gap-4">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                <Briefcase className="h-10 w-10 text-custom-text-200" />
+                <ProjectIcon className="h-10 w-10 text-custom-text-200" />
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
                 <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>

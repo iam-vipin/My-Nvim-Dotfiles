@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Home } from "lucide-react";
+import { HomeIcon } from "@plane/propel/icons";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
@@ -20,7 +20,7 @@ export const PagesAppDashboardHeader = () => {
         <div>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={<BreadcrumbLink label="Home" icon={<Home className="h-4 w-4 text-custom-text-300" />} />}
+              component={<BreadcrumbLink label="Home" icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>

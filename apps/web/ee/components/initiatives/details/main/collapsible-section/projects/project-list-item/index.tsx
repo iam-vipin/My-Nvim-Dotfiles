@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
 import { getProgress } from "@plane/utils";
 // hooks
@@ -55,7 +55,7 @@ export const ProjectItem = observer((props: Props) => {
             {projectDetails.logo_props ? (
               <Logo logo={projectDetails.logo_props} size={14} />
             ) : (
-              <Briefcase className="size-[14px] text-custom-text-300" />
+              <ProjectIcon className="size-[14px] text-custom-text-300" />
             )}
           </div>
         </div>

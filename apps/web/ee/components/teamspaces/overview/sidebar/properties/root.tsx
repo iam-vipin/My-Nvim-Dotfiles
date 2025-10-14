@@ -2,9 +2,9 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Briefcase, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
+import { Loader as Spinner, Users } from "lucide-react";
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { ContrastIcon, LayersIcon } from "@plane/propel/icons";
+import { CycleIcon, WorkItemsIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -137,21 +137,21 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
       {
         key: "projects",
         label: "Projects",
-        icon: Briefcase,
+        icon: ProjectIcon,
         value: teamspaceEntities?.linked_entities.projects,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
       },
       {
         key: "issues",
         label: "Work items",
-        icon: LayersIcon,
+        icon: WorkItemsIcon,
         value: teamspaceEntities?.linked_entities.issues,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/issues`,
       },
       {
         key: "cycles",
         label: "Cycles",
-        icon: ContrastIcon,
+        icon: CycleIcon,
         value: teamspaceEntities?.linked_entities.cycles,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/cycles`,
       },
@@ -164,14 +164,14 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
       {
         key: "views",
         label: "Views",
-        icon: Layers,
+        icon: ViewsIcon,
         value: teamspaceEntities?.team_entities.views,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/views`,
       },
       {
         key: "pages",
         label: "Pages",
-        icon: FileText,
+        icon: PageIcon,
         value: teamspaceEntities?.team_entities.pages,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/pages`,
       },

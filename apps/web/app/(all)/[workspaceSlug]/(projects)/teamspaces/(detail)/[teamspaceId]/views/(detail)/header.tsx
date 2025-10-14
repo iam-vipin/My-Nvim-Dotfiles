@@ -3,12 +3,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TeamsIcon } from "@plane/propel/icons";
+import { TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // types
 import {
   EIssuesStoreType,
@@ -70,7 +70,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
       return {
         value: _view.id,
         query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -158,7 +158,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
-                  icon={<Layers className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
@@ -173,7 +173,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                   title={view?.name}
                   icon={
                     <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={view?.logo_props} LabelIcon={Layers} size={16} />
+                      <SwitcherIcon logo_props={view?.logo_props} LabelIcon={ViewsIcon} size={16} />
                     </Breadcrumbs.Icon>
                   }
                   isLast

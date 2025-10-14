@@ -1,9 +1,9 @@
 "use client";
 import { observer } from "mobx-react";
-import { Briefcase, CalendarDays } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
-import { EpicIcon } from "@plane/propel/icons";
+import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { Avatar } from "@plane/ui";
 import { getDate, getFileURL } from "@plane/utils";
 // core components
@@ -75,7 +75,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
       {/* projects */}
       {initiative.project_ids && initiative.project_ids.length > 0 && (
         <PropertyBlockWrapper>
-          <Briefcase className="h-4 w-4" />
+          <ProjectIcon className="h-4 w-4" />
           <span className="flex-grow truncate max-w-40">{initiative.project_ids.length}</span>
         </PropertyBlockWrapper>
       )}

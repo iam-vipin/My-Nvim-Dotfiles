@@ -2,8 +2,8 @@
 import React, { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { LayersIcon } from "lucide-react";
 import { getButtonStyling } from "@plane/propel/button";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -37,7 +37,7 @@ export const EpicRelationsOverviewRoot: FC<Props> = observer((props) => {
           <SectionEmptyState
             heading="No relations yet"
             subHeading="Start adding relations to manage and track the progress of the epic."
-            icon={<LayersIcon className="size-4" />}
+            icon={<WorkItemsIcon className="size-4" />}
             actionElement={
               <RelationActionButton
                 issueId={epicId}

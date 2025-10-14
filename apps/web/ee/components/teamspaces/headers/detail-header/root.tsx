@@ -3,10 +3,18 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Rss, FileText, Layers, Loader as Spinner, Briefcase } from "lucide-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
-import { TeamsIcon, LayersIcon, ContrastIcon } from "@plane/propel/icons";
+import {
+  CycleIcon,
+  WorkItemsIcon,
+  PageIcon,
+  ProjectIcon,
+  TeamsIcon,
+  ViewsIcon,
+  OverviewIcon,
+} from "@plane/propel/icons";
 import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
 import {
   Breadcrumbs,
@@ -85,37 +93,37 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
       {
         key: ETeamspaceNavigationItem.OVERVIEW,
         title: "Overview",
-        icon: Rss,
+        icon: OverviewIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`),
       },
       {
         key: ETeamspaceNavigationItem.PROJECTS,
         title: "Projects",
-        icon: Briefcase,
+        icon: ProjectIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`),
       },
       {
         key: ETeamspaceNavigationItem.ISSUES,
         title: "Work items",
-        icon: LayersIcon,
+        icon: WorkItemsIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/issues`),
       },
       {
         key: ETeamspaceNavigationItem.CYCLES,
         title: "Cycles",
-        icon: ContrastIcon,
+        icon: CycleIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/cycles`),
       },
       {
         key: ETeamspaceNavigationItem.VIEWS,
         title: "Views",
-        icon: Layers,
+        icon: ViewsIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/views`),
       },
       {
         key: ETeamspaceNavigationItem.PAGES,
         title: "Pages",
-        icon: FileText,
+        icon: PageIcon,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages`),
       },
     ],

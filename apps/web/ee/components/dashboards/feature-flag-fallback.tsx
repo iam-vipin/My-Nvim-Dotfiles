@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Briefcase, PieChart, ChartNoAxesCombined, MonitorSmartphone, Download } from "lucide-react";
+import { PieChart, ChartNoAxesCombined, MonitorSmartphone, Download } from "lucide-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/propel/icons";
+import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -19,7 +19,7 @@ import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button
 const CARDS_LIST = [
   {
     key: "card_1",
-    icon: Briefcase,
+    icon: ProjectIcon,
   },
   {
     key: "card_2",

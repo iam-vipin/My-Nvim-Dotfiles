@@ -1,7 +1,7 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
-import { FileText, Paperclip, PenTool, Presentation } from "lucide-react";
+import { Paperclip, PenTool, Presentation } from "lucide-react";
 // plane imports
-import { LayersIcon } from "@plane/propel/icons";
+import { LayersIcon, PageIcon } from "@plane/propel/icons";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // ce imports
 import { TDocumentEditorAdditionalExtensionsProps, TDocumentEditorAdditionalExtensionsRegistry } from "@/ce/extensions";
@@ -68,7 +68,7 @@ const slashCommandRegistry: {
         title: "Page",
         description: "Embed a page from the project.",
         searchTerms: ["page", "link", "embed", "sub-page"],
-        icon: <FileText className="size-3.5" />,
+        icon: <PageIcon className="size-3.5" />,
         command: async ({ editor, range }) => {
           const currentPos = editor.state.selection.from;
           let pageEmbedNodesBeforeCurrentPos = 0;

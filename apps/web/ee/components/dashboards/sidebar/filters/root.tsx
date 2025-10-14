@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AtSign, CircleUserRound, Files, Layers, SignalHigh, Tag, Users } from "lucide-react";
+import { AtSign, CircleUserRound, Files, SignalHigh, Tag, Users } from "lucide-react";
 
 /**
  * plane imports
  */
 
-import { CycleGroupIcon, DiceIcon, DoubleCircleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, DiceIcon, DoubleCircleIcon, PriorityIcon, StateGroupIcon, ViewsIcon } from "@plane/propel/icons";
 import { FilterInstance } from "@plane/shared-state";
 import {
   ICycle,
@@ -266,7 +266,7 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
     () =>
       getWorkItemTypeFilterConfig("type_id")({
         isEnabled: true,
-        filterIcon: Layers,
+        filterIcon: ViewsIcon,
         workItemTypes: joinedProjectData.workItemTypes,
         getOptionIcon: (workItemType: TIssueType) => (
           <IssueTypeLogo icon_props={workItemType.logo_props?.icon} size="xs" isDefault={workItemType.is_default} />

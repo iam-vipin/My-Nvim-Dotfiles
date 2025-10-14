@@ -1,23 +1,23 @@
 import Link from "next/link";
-import { ArrowUpRight, Briefcase, FileText, Layers } from "lucide-react";
-import { DiceIcon, LayersIcon, ContrastIcon } from "@plane/propel/icons";
+import { ArrowUpRight } from "lucide-react";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { TArtifact } from "@/plane-web/types";
 
 export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon") => {
   switch (type) {
     case "project":
-      return <Briefcase width={16} height={16} />;
+      return <ProjectIcon width={16} height={16} />;
     case "workitem":
       return <LayersIcon width={16} height={16} />;
     case "page":
-      return <FileText width={16} height={16} />;
+      return <PageIcon width={16} height={16} />;
     case "cycle":
-      return <ContrastIcon width={16} height={16} />;
+      return <CycleIcon width={16} height={16} />;
     case "module":
-      return <DiceIcon width={16} height={16} />;
+      return <ModuleIcon width={16} height={16} />;
     case "view":
-      return <Layers width={16} height={16} />;
+      return <ViewsIcon width={16} height={16} />;
     default:
       return defaultRender === "icon" ? (
         <div

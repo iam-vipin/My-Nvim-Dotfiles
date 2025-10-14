@@ -2,12 +2,13 @@
 
 import { FormEvent, useState } from "react";
 // types
-import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
+import { Globe2, Lock, LucideIcon } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import { TPage } from "@plane/types";
 // ui
 import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
@@ -78,7 +79,7 @@ export const PageForm: React.FC<Props> = (props) => {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <FileText className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-custom-text-300" />
                   )}
                 </>
               </span>

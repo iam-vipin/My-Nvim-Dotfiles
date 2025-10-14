@@ -3,10 +3,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon, ProjectIcon } from "@plane/propel/icons";
 import { ModuleInsightColumns } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
@@ -89,7 +88,7 @@ const ModulesInsightTable = observer(() => {
               {row.original.project__logo_props ? (
                 <Logo logo={row.original.project__logo_props} size={18} />
               ) : (
-                <Briefcase className="h-4 w-4" />
+                <ProjectIcon className="h-4 w-4" />
               )}
               {row.original.project__name}
             </div>

@@ -1,9 +1,10 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
-import { FolderOpen, FileText, Users } from "lucide-react";
+import { FolderOpen, Users } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import { TProject } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useTeamspaces, useFlag } from "@/plane-web/hooks/store";
@@ -49,7 +50,7 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
             key: EDocImporterDestinationType.WIKI,
             label: "Wiki",
             value: EDocImporterDestinationType.WIKI,
-            data: { type: EDocImporterDestinationType.WIKI, icon: <FileText className="w-4 h-4" />, label: "Wiki" },
+            data: { type: EDocImporterDestinationType.WIKI, icon: <PageIcon className="w-4 h-4" />, label: "Wiki" },
           },
         ]
       : []),

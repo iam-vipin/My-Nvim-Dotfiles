@@ -1,5 +1,5 @@
-import { Briefcase, Calendar, Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
-import { ProjectStatesIcon } from "@plane/propel/icons";
+import { Calendar, Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
+import { ProjectIcon, ProjectStatesIcon } from "@plane/propel/icons";
 import { cn } from "@plane/propel/utils";
 import { TIssuePriorities, TLogoProps, TStateGroups } from "@plane/types";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -66,7 +66,7 @@ const PropertyWrapper = (props: {
   Icon?: React.ElementType;
   showContainer: boolean;
 }) => {
-  const { children, title, Icon = Briefcase, showContainer } = props;
+  const { children, title, Icon = ProjectIcon, showContainer } = props;
   if (!showContainer) return <>{children({ className: "" })}</>;
   return (
     <div className="flex gap-2 border-[0.5px] border-custom-border-200 rounded-md py-1 px-2">
@@ -110,7 +110,7 @@ export const Properties = (props: TProps) => {
       )}
     >
       {project && (
-        <PropertyWrapper title="Project" Icon={Briefcase} showContainer={showContainer}>
+        <PropertyWrapper title="Project" Icon={ProjectIcon} showContainer={showContainer}>
           {({ className }) => <DisplayProject project={project} className={className} />}
         </PropertyWrapper>
       )}

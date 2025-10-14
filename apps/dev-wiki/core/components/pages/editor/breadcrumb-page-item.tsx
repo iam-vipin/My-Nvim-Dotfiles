@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // types
 // ui
 import { EmojiIconPicker, EmojiIconPickerTypes, Tooltip } from "@plane/ui";
@@ -74,7 +74,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
                 {logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-custom-text-300" />
                 )}
               </>
             )
@@ -99,7 +99,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
                       {logo_props?.in_use ? (
                         <Logo logo={logo_props} size={16} type="lucide" />
                       ) : (
-                        <FileText className="size-4 text-custom-text-300" />
+                        <PageIcon className="size-4 text-custom-text-300" />
                       )}
                     </>
                   }

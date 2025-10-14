@@ -1,6 +1,5 @@
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
-import { FileText } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons";
 import { IFormattedValue, IItem } from "@/plane-web/types/pi-chat";
 import { IssueIdentifier } from "../issues/issue-details/issue-identifier";
 
@@ -32,11 +31,11 @@ export const getIcon = (type: string, item: Partial<IItem>) => {
         />
       );
     case "cycle":
-      return <ContrastIcon className="w-4 h-4" />;
+      return <CycleIcon className="w-4 h-4" />;
     case "module":
-      return <DiceIcon className="w-4 h-4" />;
+      return <ModuleIcon className="w-4 h-4" />;
     case "page":
-      return <FileText className="w-4 h-4" />;
+      return <PageIcon className="w-4 h-4" />;
     default:
       return <LayersIcon className="w-4 h-4" />;
   }

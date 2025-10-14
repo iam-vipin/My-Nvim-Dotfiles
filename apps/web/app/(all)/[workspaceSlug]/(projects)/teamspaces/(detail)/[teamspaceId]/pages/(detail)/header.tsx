@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { FileText, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 // plane imports
-import { TeamsIcon } from "@plane/propel/icons";
+import { PageIcon, TeamsIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, CustomMenu } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -72,7 +72,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
         query: _page.name,
         content: (
           <div className="flex gap-2 items-center justify-between">
-            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
             <PageAccessIcon {..._page} />
           </div>
         ),
@@ -116,7 +116,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/pages`}
                   label="Pages"
-                  icon={<FileText className="h-4 w-4 text-custom-text-300" />}
+                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
@@ -183,7 +183,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                   title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
-                      <FileText className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <PageIcon className="size-4 flex-shrink-0 text-custom-text-300" />
                     </Breadcrumbs.Icon>
                   }
                   isLast

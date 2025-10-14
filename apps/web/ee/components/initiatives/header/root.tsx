@@ -3,11 +3,10 @@ import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Rss } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { InitiativeIcon, ScopeIcon } from "@plane/propel/icons";
+import { InitiativeIcon, ScopeIcon, OverviewIcon } from "@plane/propel/icons";
 import { ICustomSearchSelectOption, EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
 import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -77,7 +76,7 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
         key: EInitiativeNavigationItem.OVERVIEW,
         title: t("initiatives.overview"),
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/`),
-        icon: Rss,
+        icon: OverviewIcon,
       },
       {
         key: EInitiativeNavigationItem.SCOPE,

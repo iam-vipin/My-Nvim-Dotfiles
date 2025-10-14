@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { IFavorite, TLogoProps } from "@plane/types";
 // components
@@ -9,7 +9,7 @@ import { Logo } from "@/components/common";
 import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants";
 
 export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined) => {
-  const Icon = FAVORITE_ITEM_ICONS[type] || FileText;
+  const Icon = FAVORITE_ITEM_ICONS[type] || PageIcon;
 
   return (
     <>

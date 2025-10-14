@@ -7,9 +7,10 @@ import { ChevronRight, Loader } from "lucide-react";
 // plane imports
 import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { TPageNavigationTabs } from "@plane/types";
-import { Logo, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
+import { Logo } from "@/components/common";
 // components
 import { BlockItemAction } from "@/components/pages/list";
 // helpers

@@ -6,7 +6,7 @@ import { Button } from "@plane/propel/button";
 // plane types
 import { TPageVersion } from "@plane/types";
 // plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { TVersionEditorProps } from "@/components/pages";

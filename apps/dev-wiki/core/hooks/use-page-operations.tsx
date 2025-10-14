@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { useLocalStorage } from "@plane/hooks";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";

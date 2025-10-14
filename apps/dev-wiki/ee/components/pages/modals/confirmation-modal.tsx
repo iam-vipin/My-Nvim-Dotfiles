@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // types
-import { TPageInstance } from "@/store/pages/base-page";
+import { type TPageInstance } from "@/store/pages/base-page";
 
 type TConfirmationModalProps = {
   page: TPageInstance;

@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
 // types
 import { EFileAssetType, type JSONContent, type TPageComment } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, isCommentEmpty, trimEmptyParagraphsFromJson, trimEmptyParagraphsFromHTML } from "@plane/utils";
 // editor
 import { LiteTextEditor } from "@/components/editor/lite-text";

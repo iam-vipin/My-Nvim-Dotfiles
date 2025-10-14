@@ -8,7 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { IUserTheme } from "@plane/types";
 // ui
-import { InputColorPicker, setPromiseToast } from "@plane/ui";
+import { InputColorPicker } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

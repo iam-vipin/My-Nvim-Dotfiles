@@ -9,10 +9,11 @@ import { usePopper } from "react-popper";
 import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
+import { Avatar, Loader } from "@plane/ui";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-import { Avatar, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { orderWorkspacesList } from "@plane/utils";
 // helpers
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";

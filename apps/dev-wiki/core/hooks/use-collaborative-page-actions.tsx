@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
 import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
 // plane ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 

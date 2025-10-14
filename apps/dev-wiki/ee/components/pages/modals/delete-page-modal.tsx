@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
-import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks

@@ -4,7 +4,8 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
-import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -13,7 +14,7 @@ import { useMember } from "@/hooks/store";
 // plane web components
 import { WorkspacePageQuickActions } from "@/plane-web/components/pages";
 // plane web hooks
-import { TPageInstance } from "@/store/pages/base-page";
+import { type TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   workspaceSlug: string;

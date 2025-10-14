@@ -8,7 +8,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

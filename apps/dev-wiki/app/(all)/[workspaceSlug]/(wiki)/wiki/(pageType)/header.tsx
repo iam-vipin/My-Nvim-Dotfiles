@@ -7,9 +7,10 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 // ui
-import { Breadcrumbs, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // import { FiltersDropdown } from "@/components/issues";
@@ -83,9 +84,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
                 />
               }
             />
-            <Breadcrumbs.Item
-              component={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />}
-            />
+            <Breadcrumbs.Item component={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />} />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>

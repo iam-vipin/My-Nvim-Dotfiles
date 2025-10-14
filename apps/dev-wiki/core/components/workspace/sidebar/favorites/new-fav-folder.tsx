@@ -7,7 +7,8 @@ import { useTranslation } from "@plane/i18n";
 // plane helpers
 // plane ui
 import { FavoriteFolderIcon } from "@plane/propel/icons";
-import { Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 

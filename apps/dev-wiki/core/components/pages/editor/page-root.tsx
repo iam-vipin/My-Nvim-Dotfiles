@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";

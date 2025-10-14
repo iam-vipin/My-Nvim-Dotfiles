@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
-import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { PageActions, TPageActions } from "@/components/pages";
 // helpers
@@ -17,6 +17,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+import { TContextMenuItem, ToggleSwitch } from "@plane/ui";
 
 type Props = {
   page: TPageInstance;
@@ -30,7 +31,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store values
-  const { name, isContentEditable, editorRef } = page;
+  const { name, isContentEditable } = page;
+  const editorRef = (page as any).editorRef;
   // page filters
   const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params

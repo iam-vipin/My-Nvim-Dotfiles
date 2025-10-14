@@ -9,7 +9,7 @@ import { ArchiveIcon, ChevronRight, Loader } from "lucide-react";
 // plane imports
 import { EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

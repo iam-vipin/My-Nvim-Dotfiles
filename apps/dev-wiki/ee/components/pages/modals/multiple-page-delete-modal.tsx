@@ -8,7 +8,9 @@ import { PAGE_DELETED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // ui
 import { EmptyPageIcon } from "@plane/propel/icons";
-import { AlertModalCore, Logo, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Logo } from "@/components/common";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks

@@ -6,7 +6,7 @@ import useSWR from "swr";
 // constants
 import { EPageSharedUserAccess, EUserWorkspaceRoles } from "@plane/types";
 // plane imports
-import { setToast, TOAST_TYPE, dismissToast } from "@plane/ui";
+import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // helpers
 import { getPageName } from "@plane/utils";
 // hooks

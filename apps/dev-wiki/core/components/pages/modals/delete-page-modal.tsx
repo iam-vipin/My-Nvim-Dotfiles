@@ -4,14 +4,15 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // ui
-import { EditorRefApi } from "@plane/editor";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { type EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // constants
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+import { AlertModalCore } from "@plane/ui";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;

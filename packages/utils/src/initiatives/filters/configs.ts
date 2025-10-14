@@ -8,9 +8,9 @@ import {
   TCreateFilterConfigParams,
   IFilterIconConfig,
   TCreateDateFilterParams,
+  getMemberMultiSelectConfig,
+  getSupportedDateOperators,
 } from "../../rich-filters";
-import { getMemberMultiSelectConfig } from "../../work-item-filters";
-import { getSupportedDateOperators } from "../../work-item-filters/configs/filters/shared";
 
 // ------------ Initiative filter types ------------
 
@@ -42,7 +42,7 @@ export const getInitiativeLeadFilterConfig =
       isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams)
+          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });

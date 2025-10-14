@@ -4,8 +4,8 @@ import { useTranslation } from "@plane/i18n";
 import { TAutomationConditionFilterExpression } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
-import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
-import { FilterItem } from "@/components/rich-filters/filter-item";
+import { AddFilterButton } from "@/components/rich-filters/add-filters/button";
+import { FilterItem } from "@/components/rich-filters/filter-item/root";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
 import { AutomationConditionFilterHOC } from "./filter-provider";

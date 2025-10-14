@@ -11,6 +11,8 @@ import {
   TIssueFiltersToDisplayByPageType,
 } from "./filter";
 
+export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name"] as const;
+
 export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   team_issues: {
     filters: [
@@ -22,6 +24,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByP
       "start_date",
       "target_date",
       "team_project_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
@@ -85,7 +88,16 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByP
   },
   // TODO: Check if this is even required now? Because we can uses project issues properties for this case.
   team_project_work_items: {
-    filters: ["priority", "state_group", "assignee_id", "mention_id", "created_by_id", "start_date", "target_date"],
+    filters: [
+      "priority",
+      "state_group",
+      "assignee_id",
+      "mention_id",
+      "created_by_id",
+      "start_date",
+      "target_date",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+    ],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -157,6 +169,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByP
       "label_id",
       "start_date",
       "target_date",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {

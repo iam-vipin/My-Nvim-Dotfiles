@@ -15,6 +15,7 @@ import {
 
 import {
   ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
   ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   EActivityFilterTypeEE,
   shouldRenderActivity,
@@ -117,7 +118,7 @@ export type TIssueFiltersToDisplayByPageType = {
 
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
-    filters: ["priority", "state_group", "label_id", "start_date", "target_date"],
+    filters: ["priority", "state_group", "label_id", "start_date", "target_date", ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -158,6 +159,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "start_date",
       "target_date",
       "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
@@ -185,6 +187,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "project_id",
       "start_date",
       "target_date",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       spreadsheet: {
@@ -225,6 +228,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "start_date",
       "target_date",
       "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {

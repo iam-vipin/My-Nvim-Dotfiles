@@ -4,6 +4,7 @@ import { CompleteOrEmpty } from "./utils";
 import {
   IExtendedIssueDisplayProperties,
   TExtendedIssueOrderByOptions,
+  TExtendedWorkItemFilterProperty,
   WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
 } from "./view-props-extended";
 
@@ -106,14 +107,16 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "cycle_id",
   "module_id",
   "project_id",
+  "created_at",
+  "updated_at",
   ...WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
 ] as const;
-export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
+export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TExtendedWorkItemFilterProperty;
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
 export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string;
+  [K in TWorkItemFilterConditionKey]: string | boolean | number;
 }>;
 
 export type TWorkItemFilterAndGroup = {

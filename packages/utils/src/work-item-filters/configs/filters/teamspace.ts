@@ -1,8 +1,13 @@
 // plane imports
 import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import { createFilterConfig, TCreateFilterConfig, createOperatorConfigEntry } from "../../../rich-filters";
-import { getProjectMultiSelectConfig, TCreateProjectFilterParams } from "./shared";
+import {
+  createFilterConfig,
+  TCreateFilterConfig,
+  createOperatorConfigEntry,
+  TCreateProjectFilterParams,
+  getProjectMultiSelectConfig,
+} from "../../../rich-filters";
 
 /**
  * Teamspace Project filter specific params
@@ -21,8 +26,8 @@ export const getTeamspaceProjectFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Teamspace Projects",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getProjectMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

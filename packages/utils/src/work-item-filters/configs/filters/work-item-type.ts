@@ -56,8 +56,8 @@ export const getWorkItemTypeFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Type",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getWorkItemTypeMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

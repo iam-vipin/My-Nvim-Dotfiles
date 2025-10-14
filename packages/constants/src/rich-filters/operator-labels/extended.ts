@@ -3,12 +3,14 @@ import {
   TExtendedSupportedOperators,
   TSupportedOperators,
   TSupportedDateFilterOperators,
+  EXTENDED_EQUALITY_OPERATOR,
 } from "@plane/types";
 
 /**
  * Extended operator labels
  */
 export const EXTENDED_OPERATOR_LABELS_MAP: Record<TExtendedSupportedOperators, string> = {
+  [EXTENDED_EQUALITY_OPERATOR.CONTAINS]: "contains",
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN]: "less than",
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO]: "less than or equal",
   [EXTENDED_COMPARISON_OPERATOR.GREATER_THAN]: "greater than",
@@ -19,6 +21,7 @@ export const EXTENDED_OPERATOR_LABELS_MAP: Record<TExtendedSupportedOperators, s
  * Extended date-specific operator labels
  */
 export const EXTENDED_DATE_OPERATOR_LABELS_MAP: Record<TExtendedSupportedOperators, string> = {
+  ...EXTENDED_OPERATOR_LABELS_MAP,
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN]: "before",
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO]: "before or on",
   [EXTENDED_COMPARISON_OPERATOR.GREATER_THAN]: "after",
@@ -32,6 +35,7 @@ export const NEGATED_OPERATOR_LABELS_MAP: Record<`-${TSupportedOperators}`, stri
   "-exact": "is not",
   "-in": "is not any of",
   "-range": "not between",
+  "-icontains": "not contains",
   "-lt": "not less than",
   "-lte": "not less than or equal",
   "-gt": "not greater than",

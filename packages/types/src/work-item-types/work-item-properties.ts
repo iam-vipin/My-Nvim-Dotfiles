@@ -69,3 +69,6 @@ export type TIssuePropertyPayload = Partial<TIssueProperty<EIssuePropertyType>> 
 export type TIssuePropertyResponse = TIssueProperty<EIssuePropertyType> & {
   options: TIssuePropertyOption[];
 };
+
+// Custom property filter key
+export type TCustomPropertyFilterKey = `customproperty_${string}`;

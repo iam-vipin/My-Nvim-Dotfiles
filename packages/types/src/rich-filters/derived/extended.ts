@@ -5,6 +5,7 @@ import {
   TDateRangeFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
   TNumberFilterFieldConfig,
+  TNumberRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TTextFilterFieldConfig,
 } from "../field-types";
@@ -118,6 +119,23 @@ export type TExtendedAllAvailableNumberFilterOperatorsForDisplay<V extends TFilt
   | TExtendedSupportedNumberFilterOperators<V>
   | `-${TExtendedSupportedNumberFilterOperators<V>}`;
 
+// -------- NUMBER RANGE FILTER OPERATORS --------
+
+/**
+ * Union type representing all operators that support number range filter types.
+ */
+export type TExtendedSupportedNumberRangeFilterOperators<V extends TFilterValue = TFilterValue> = {
+  [K in keyof TOperatorSpecificConfigs<V>]: TFilterOperatorHelper<
+    TOperatorSpecificConfigs<V>,
+    K,
+    TNumberRangeFilterFieldConfig<V>
+  >;
+}[keyof TOperatorSpecificConfigs<V>];
+
+export type TExtendedAllAvailableNumberRangeFilterOperatorsForDisplay<V extends TFilterValue = TFilterValue> =
+  | TExtendedSupportedNumberRangeFilterOperators<V>
+  | `-${TExtendedSupportedNumberRangeFilterOperators<V>}`;
+
 // -------- TEXT FILTER OPERATORS --------
 
 /**
@@ -154,6 +172,15 @@ export type TSupportedNumberFilterOperators<V extends TFilterValue = TFilterValu
 
 export type TAllAvailableNumberFilterOperatorsForDisplay<V extends TFilterValue = TFilterValue> =
   TExtendedAllAvailableNumberFilterOperatorsForDisplay<V>;
+
+/**
+ * All supported number range filter operators (ee only).
+ */
+export type TSupportedNumberRangeFilterOperators<V extends TFilterValue = TFilterValue> =
+  TExtendedSupportedNumberRangeFilterOperators<V>;
+
+export type TAllAvailableNumberRangeFilterOperatorsForDisplay<V extends TFilterValue = TFilterValue> =
+  TExtendedAllAvailableNumberRangeFilterOperatorsForDisplay<V>;
 
 /**
  * All supported text filter operators (ee only).

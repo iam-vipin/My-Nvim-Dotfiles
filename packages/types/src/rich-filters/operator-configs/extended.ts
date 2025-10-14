@@ -4,8 +4,9 @@ import {
   TTextFilterFieldConfig,
   TNumberFilterFieldConfig,
   TBooleanFilterFieldConfig,
+  TNumberRangeFilterFieldConfig,
 } from "../field-types";
-import { EXTENDED_COMPARISON_OPERATOR } from "../operators";
+import { EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "../operators";
 
 // ----------------------------- EXACT Operator -----------------------------
 export type TExtendedExactOperatorConfigs<V extends TFilterValue> =
@@ -17,7 +18,10 @@ export type TExtendedExactOperatorConfigs<V extends TFilterValue> =
 export type TExtendedInOperatorConfigs<_V extends TFilterValue> = never;
 
 // ----------------------------- RANGE Operator -----------------------------
-export type TExtendedRangeOperatorConfigs<_V extends TFilterValue> = never;
+export type TExtendedRangeOperatorConfigs<V extends TFilterValue> = TNumberRangeFilterFieldConfig<V>;
+
+// ----------------------------- CONTAINS Operator -----------------------------
+export type TExtendedContainsOperatorConfigs<V extends TFilterValue> = TTextFilterFieldConfig<V>;
 
 // ----------------------------- LT Operator -----------------------------
 export type TLtOperatorConfigs<V extends TFilterValue> = TDateFilterFieldConfig<V> | TNumberFilterFieldConfig<V>;
@@ -33,6 +37,7 @@ export type TGteOperatorConfigs<V extends TFilterValue> = TDateFilterFieldConfig
 
 // ----------------------------- Extended Operator Specific Configs -----------------------------
 export type TExtendedOperatorSpecificConfigs<V extends TFilterValue> = {
+  [EXTENDED_EQUALITY_OPERATOR.CONTAINS]: TExtendedContainsOperatorConfigs<V>;
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN]: TLtOperatorConfigs<V>;
   [EXTENDED_COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO]: TLteOperatorConfigs<V>;
   [EXTENDED_COMPARISON_OPERATOR.GREATER_THAN]: TGtOperatorConfigs<V>;

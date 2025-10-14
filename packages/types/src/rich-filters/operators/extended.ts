@@ -9,7 +9,9 @@ export const EXTENDED_LOGICAL_OPERATOR = {
 /**
  * Extended equality operators
  */
-export const EXTENDED_EQUALITY_OPERATOR = {} as const;
+export const EXTENDED_EQUALITY_OPERATOR = {
+  CONTAINS: "icontains",
+} as const;
 
 /**
  * Extended collection operators
@@ -25,6 +27,11 @@ export const EXTENDED_COMPARISON_OPERATOR = {
   GREATER_THAN: "gt",
   GREATER_THAN_OR_EQUAL_TO: "gte",
 } as const;
+
+/**
+ * Extended operators that support multiple values
+ */
+export const EXTENDED_MULTI_VALUE_OPERATORS = [] as const;
 
 /**
  * All extended operators

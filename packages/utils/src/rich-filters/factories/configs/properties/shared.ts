@@ -3,21 +3,54 @@ import {
   COMPARISON_OPERATOR,
   EQUALITY_OPERATOR,
   IProject,
+  IUserLite,
   TOperatorConfigMap,
   TSupportedOperators,
 } from "@plane/types";
 // local imports
+import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
 import {
   createOperatorConfigEntry,
-  getDatePickerConfig,
-  getDateRangePickerConfig,
-  getMultiSelectConfig,
   IFilterIconConfig,
   TCreateDateFilterParams,
   TCreateFilterConfigParams,
-} from "../../../rich-filters";
+  TFilterIconType,
+} from "../shared";
 
-// ------------ Date filter ------------
+// ------------ Base User Filter Types ------------
+
+/**
+ * User filter specific params
+ */
+export type TCreateUserFilterParams = TCreateFilterConfigParams &
+  IFilterIconConfig<IUserLite> & {
+    members: IUserLite[];
+  };
+
+/**
+ * Helper to get the member multi select config
+ * @param params - The filter params
+ * @returns The member multi select config
+ */
+export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams, singleValueOperator: TSupportedOperators) =>
+  getMultiSelectConfig<IUserLite, string, IUserLite>(
+    {
+      items: params.members,
+      getId: (member) => member.id,
+      getLabel: (member) => member.display_name,
+      getValue: (member) => member.id,
+      getIconData: (member) => member,
+    },
+    {
+      singleValueOperator,
+      ...params,
+    },
+    {
+      ...params,
+    }
+  );
+
+// ------------ Date Operators ------------
 
 export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
   new Map([
@@ -74,3 +107,11 @@ export const getProjectMultiSelectConfig = (
       ...params,
     }
   );
+
+/**
+ * Custom property filter specific params
+ */
+export type TCustomPropertyFilterParams<T extends TFilterIconType> = TCreateFilterConfigParams &
+  IFilterIconConfig<T> & {
+    propertyDisplayName: string;
+  };

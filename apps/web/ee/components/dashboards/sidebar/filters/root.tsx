@@ -41,7 +41,7 @@ import {
  * local imports
  */
 
-import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
+import { AddFilterButton } from "@/components/rich-filters/add-filters/button";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";

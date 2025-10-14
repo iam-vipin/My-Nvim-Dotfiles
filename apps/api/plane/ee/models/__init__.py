@@ -123,6 +123,6 @@ from .automation import (
     ProcessedAutomationEvent,
 )
 
-from .cycle import AutomatedCycle, AutomatedCycleLog
+from .cycle import AutomatedCycleLog, CycleSettings
 
 from .milestones import Milestone, MilestoneIssue

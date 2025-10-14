@@ -1,15 +1,14 @@
 # Django imports
-from django.conf import settings
 from django.db import models
 
 # Module imports
 from plane.db.models import ProjectBaseModel
 
 
-class AutomatedCycle(ProjectBaseModel):
-    title = models.CharField(max_length=255, verbose_name="Automated Cycle Title")
+class CycleSettings(ProjectBaseModel):
 
-    # Cycle configuration
+    # Fields for automated cycle configuration
+    title = models.CharField(max_length=255, verbose_name="Automated Cycle Title")
     cycle_duration = models.PositiveIntegerField(
         verbose_name="Cycle Duration (days)", help_text="Duration of each cycle in days"
     )
@@ -18,27 +17,15 @@ class AutomatedCycle(ProjectBaseModel):
         default=0,
         help_text="Gap between cycles in days",
     )
-
-    # Automation configuration
     start_date = models.DateTimeField(verbose_name="First Cycle Start Date")
     number_of_cycles = models.PositiveIntegerField(
         verbose_name="Number of Future Cycles",
         help_text="How many cycles to create automatically",
     )
-
-    # Behavior
     is_auto_rollover_enabled = models.BooleanField(
         default=False,
         verbose_name="Auto Rollover Issues",
         help_text="Automatically move uncompleted issues to next cycle",
-    )
-    is_active = models.BooleanField(default=True, verbose_name="Is Active")
-
-    # Tracking
-    owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="owned_automated_cycles",
     )
 
     class Meta:
@@ -47,12 +34,12 @@ class AutomatedCycle(ProjectBaseModel):
             models.UniqueConstraint(
                 fields=["project", "workspace"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="automated_cycle_unique_project_workspace_when_deleted_at_null",
+                name="cycle_settings_unique_project_workspace_when_deleted_at_null",
             ),
         ]
-        verbose_name = "Automated Cycle"
-        verbose_name_plural = "Automated Cycles"
-        db_table = "automated_cycles"
+        verbose_name = "Cycle Settings"
+        verbose_name_plural = "Cycle Settings"
+        db_table = "cycle_settings"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -61,7 +48,7 @@ class AutomatedCycle(ProjectBaseModel):
 
 class AutomatedCycleLog(ProjectBaseModel):
     automated_cycle = models.ForeignKey(
-        "ee.AutomatedCycle",
+        "ee.CycleSettings",
         on_delete=models.CASCADE,
         related_name="creation_logs",
     )

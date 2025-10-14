@@ -68,6 +68,8 @@ type Props = {
   customRealtimeEventHandlers?: TCustomEventHandlers;
   // Extended editor extensions configuration
   extendedEditorProps: TExtendedEditorExtensionsConfig;
+  isFetchingFallbackBinary?: boolean;
+  hasServerConnectionFailed?: boolean;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -86,6 +88,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     workspaceSlug,
     customRealtimeEventHandlers,
     extendedEditorProps,
+    isFetchingFallbackBinary,
+    hasServerConnectionFailed,
   } = props;
 
   // states
@@ -305,6 +309,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             aiHandler={{
               menu: getAIMenu,
             }}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+            hasServerConnectionFailed={hasServerConnectionFailed}
           />
         </div>
       </div>

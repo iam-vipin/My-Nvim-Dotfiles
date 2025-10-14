@@ -48,38 +48,39 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     extendedDocumentEditorProps,
     titleRef,
     updatePageProperties,
+    isFetchingFallbackBinary,
+    hasServerConnectionFailed,
   } = props;
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
-    useCollaborativeEditor({
-      disabledExtensions,
-      editable,
-      editorClassName,
-      editorProps,
-      extendedEditorProps,
-      extensions,
-      fileHandler,
-      flaggedExtensions,
-      forwardedRef,
-      handleEditorReady,
-      id,
-      dragDropEnabled,
-      isTouchDevice,
-      mentionHandler,
-      onAssetChange,
-      onChange,
-      onEditorFocus,
-      onTransaction,
-      placeholder,
-      realtimeConfig,
-      serverHandler,
-      tabIndex,
-      user,
-      extendedDocumentEditorProps,
-      titleRef,
-      updatePageProperties,
-    });
+  const { editor, titleEditor, isEditorContentReady, isContentInIndexedDb } = useCollaborativeEditor({
+    disabledExtensions,
+    editable,
+    editorClassName,
+    editorProps,
+    extendedEditorProps,
+    extensions,
+    fileHandler,
+    flaggedExtensions,
+    forwardedRef,
+    handleEditorReady,
+    id,
+    dragDropEnabled,
+    isTouchDevice,
+    mentionHandler,
+    onAssetChange,
+    onChange,
+    onEditorFocus,
+    onTransaction,
+    placeholder,
+    realtimeConfig,
+    serverHandler,
+    tabIndex,
+    user,
+    extendedDocumentEditorProps,
+    titleRef,
+    updatePageProperties,
+  });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -89,9 +90,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
   if (!editor || !titleEditor) return null;
 
-  if (!isIndexedDbSynced) {
-    return null;
-  }
+  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !isContentInIndexedDb && hasServerConnectionFailed;
+  const isLoading = !isEditorContentReady || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
   return (
     <>
@@ -114,9 +114,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
         extendedEditorProps={extendedEditorProps}
         id={id}
-        isLoading={
-          (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
-        }
+        isLoading={isLoading}
         isTouchDevice={!!isTouchDevice}
         tabIndex={tabIndex}
       />

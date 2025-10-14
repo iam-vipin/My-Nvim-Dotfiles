@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 // plane editor
 import { getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 import type { EditorRefApi } from "@plane/editor";
@@ -17,12 +17,16 @@ type TArgs = {
 export const usePageFallback = (args: TArgs) => {
   const { editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription } = args;
 
+  const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
+
   const handleUpdateDescription = useCallback(async () => {
     if (!hasConnectionFailed) return;
     const editor = editorRef.current;
     if (!editor) return;
 
     try {
+      setIsFetchingFallbackBinary(true);
+
       const latestEncodedDescription = await fetchPageDescription();
       let latestDecodedDescription: Uint8Array;
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
@@ -42,7 +46,9 @@ export const usePageFallback = (args: TArgs) => {
         description: json,
       });
     } catch (error) {
-      console.error("Error in updating description using fallback logic:", error);
+      console.error(" Error in updating description using fallback logic:", error);
+    } finally {
+      setIsFetchingFallbackBinary(false);
     }
   }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription]);
 
@@ -53,4 +59,6 @@ export const usePageFallback = (args: TArgs) => {
   }, [handleUpdateDescription, hasConnectionFailed]);
 
   useAutoSave(handleUpdateDescription);
+
+  return { isFetchingFallbackBinary };
 };

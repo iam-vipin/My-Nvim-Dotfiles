@@ -180,6 +180,7 @@ const PageDetailsPage = observer(() => {
             storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug.toString()}
+            isPageDetailsLoading={isPageDetailsLoading}
           />
           {/* <IssuePeekOverview /> */}
           {/* <EpicPeekOverview /> */}

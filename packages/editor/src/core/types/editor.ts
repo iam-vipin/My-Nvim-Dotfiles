@@ -209,6 +209,8 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   pageRestorationInProgress?: boolean;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  isFetchingFallbackBinary?: boolean;
+  hasServerConnectionFailed?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

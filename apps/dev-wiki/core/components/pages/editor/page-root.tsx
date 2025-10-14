@@ -70,7 +70,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
     editor: { setEditorRef },
   } = page;
   // page fallback
-  usePageFallback({
+  const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
     hasConnectionFailed,
@@ -178,6 +178,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
           extendedEditorProps={extendedEditorProps}
+          isFetchingFallbackBinary={isFetchingFallbackBinary}
+          hasServerConnectionFailed={hasConnectionFailed}
         />
       </div>
       <PageNavigationPaneRoot

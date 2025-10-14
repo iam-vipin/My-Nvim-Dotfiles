@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 // types
 import { DrawioIframeRef } from "../components/iframe";
-import { EDrawioAttributeNames, TDrawioExtension } from "../types";
+import { TDrawioBlockAttributes, TDrawioExtension } from "../types";
 // utils
 import { DRAWIO_EMPTY_CONTENT_LENGTH } from "../utils/constants";
 import { validateDrawioMessage, createSecureMessageSender } from "../utils/message-validation";
@@ -18,7 +18,7 @@ type UseDrawioMessageHandlerProps = {
   updateLiveImageData: (data: string) => void;
   updateImageKey: () => void;
   broadcastDiagramUpdate: (imageData?: string, imageSrc?: string) => void;
-  updateAttributes: (attributes: Partial<{ [key in EDrawioAttributeNames]: string | null }>) => void;
+  updateAttributes: (attributes: Partial<TDrawioBlockAttributes>) => void;
   extension: TDrawioExtension;
 };
 

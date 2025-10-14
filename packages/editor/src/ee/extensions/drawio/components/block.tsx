@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useDrawioAwareness } from "../hooks/use-awareness";
@@ -22,7 +23,10 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
   // state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGettingImageSrc, setIsGettingImageSrc] = useState(false);
   const [resolvedImageSrc, setResolvedImageSrc] = useState<string | undefined>(undefined);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
 
   // refs
   const iframeRef = useRef<DrawioIframeRef>(null);
@@ -49,11 +53,22 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
   // Check if diagram is uploaded (has imageSrc attribute)
   const isUploaded = !!imageSrc;
 
-  // Resolve the SVG source URL for display
+  // Computed loading states
+  const showImageLoader = !(resolvedImageSrc || liveImageData) || !initialLoadComplete || hasErroredOnFirstLoad;
+
+  // Local-first approach: Only resolve backend URL if we don't have local data
   useEffect(() => {
+    // If we have live image data from iframe or awareness, don't fetch from backend
+    if (liveImageData) {
+      setResolvedImageSrc(undefined);
+      setDiagramError(false);
+      return;
+    }
+
+    // Only fetch from backend if we have no local data and have an imageSrc
     if (!imageSrc) {
       setResolvedImageSrc(undefined);
-      clearLiveImageData(); // Clear live data when no image source
+      clearLiveImageData();
       return;
     }
 
@@ -62,13 +77,15 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
         const url = await getDiagramSrc?.(imageSrc);
         setResolvedImageSrc(url);
         setDiagramError(false);
+        setIsGettingImageSrc(false);
       } catch (_error) {
         setDiagramError(true);
+        setIsGettingImageSrc(false);
       }
     };
-
+    setIsGettingImageSrc(true);
     getSvgSource();
-  }, [imageSrc, getDiagramSrc, imageKey, clearLiveImageData, setDiagramError]);
+  }, [imageSrc, getDiagramSrc, imageKey, clearLiveImageData, setDiagramError, liveImageData]);
 
   // Load XML content for editing
   const loadXmlContent = useCallback(async (): Promise<string> => {
@@ -87,6 +104,11 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
     setIsModalOpen(false);
     setIsLoading(false);
   }, [setEditingState]);
+
+  const handleImageLoad = useCallback(() => {
+    setInitialLoadComplete(true);
+    setHasErroredOnFirstLoad(false);
+  }, []);
 
   // Message handler hook
   const { handleMessage } = useDrawioMessageHandler({
@@ -140,7 +162,6 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
       </div>
     );
   }
-
   return (
     <>
       <div className="relative">
@@ -164,28 +185,35 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
             }}
           />
         )}
-
-        {isUploaded && (liveImageData || resolvedImageSrc) ? (
-          <img
-            key={imageKey}
-            src={liveImageData || `${resolvedImageSrc}`}
-            alt="Drawio diagram"
-            title="Diagram"
-            className={cn(
-              "rounded-md shadow-sm border border-custom-border-200 max-w-full h-auto transition-all duration-200",
-              {
-                "opacity-50": userEditingThisDiagram,
-                "cursor-not-allowed": editor.isEditable && userEditingThisDiagram,
-                "cursor-pointer": editor.isEditable && !userEditingThisDiagram,
-                "cursor-default": !editor.isEditable,
-              }
+        {(isUploaded || liveImageData) && (liveImageData || resolvedImageSrc) ? (
+          <>
+            {showImageLoader && (
+              <div className="p-0.5">
+                <Loader>
+                  <Loader.Item width="100%" height="40px" />
+                </Loader>
+              </div>
             )}
-            onClick={getClickHandler()}
-            onError={() => {
-              setDiagramError(true);
-            }}
-          />
-        ) : (
+            <img
+              key={imageKey}
+              src={liveImageData || `${resolvedImageSrc}`}
+              alt="Drawio diagram"
+              title="Diagram"
+              onLoad={handleImageLoad}
+              className={cn(
+                "rounded-md shadow-sm border border-custom-border-200 max-w-full h-auto transition-all duration-200",
+                {
+                  hidden: showImageLoader, // Hide until loaded
+                  "opacity-50": userEditingThisDiagram,
+                  "cursor-not-allowed": editor.isEditable && userEditingThisDiagram,
+                  "cursor-pointer": editor.isEditable && !userEditingThisDiagram,
+                  "cursor-default": !editor.isEditable,
+                }
+              )}
+              onClick={getClickHandler()}
+            />
+          </>
+        ) : !isGettingImageSrc && !liveImageData && !imageSrc ? (
           <DrawioInputBlock
             selected={selected}
             isEditable={editor.isEditable}
@@ -193,7 +221,7 @@ export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {
             mode={mode}
             isFlagged={isFlagged}
           />
-        )}
+        ) : null}
       </div>
 
       <DrawioDialogWrapper isOpen={isModalOpen} onClose={handleCloseModal}>

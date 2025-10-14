@@ -192,6 +192,7 @@ export const BlockMenu = (props: Props) => {
       isDisabled:
         editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
+        editor.isActive(ADDITIONAL_EXTENSIONS.DRAWIO) ||
         editor.isActive(ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT),
       onClick: (e) => {
         e.preventDefault();

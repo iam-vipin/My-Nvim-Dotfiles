@@ -1,0 +1,223 @@
+import { useCallback, useMemo } from "react";
+import { AlignLeft, Briefcase } from "lucide-react";
+// plane imports
+import { LayersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import {
+  EIssuePropertyType,
+  EWorkItemTypeEntity,
+  IIssueProperty,
+  IIssueType,
+  IProject,
+  TWorkItemFilterProperty,
+} from "@plane/types";
+import { Logo } from "@plane/ui";
+import {
+  getTeamspaceProjectFilterConfig,
+  getTextPropertyFilterConfig,
+  getWorkItemTypeFilterConfig,
+  isLoaderReady,
+} from "@plane/utils";
+// ce imports
+import {
+  TUseWorkItemFiltersConfigProps as TCoreUseWorkItemFiltersConfigProps,
+  TWorkItemFiltersEntityProps as TCoreWorkItemFiltersEntityProps,
+  TWorkItemFiltersConfig,
+  useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig,
+} from "@/ce/hooks/work-item-filters/use-work-item-filters-config";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+// plane web imports
+import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
+import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
+import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";
+
+export type TWorkItemFiltersEntityProps = TCoreWorkItemFiltersEntityProps & {
+  workItemTypeIds?: string[];
+  teamspaceProjectIds?: string[];
+  customPropertyIds?: string[];
+};
+
+export type TUseWorkItemFiltersConfigProps = TCoreUseWorkItemFiltersConfigProps & TWorkItemFiltersEntityProps;
+
+export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
+  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds } = props;
+  // store hooks
+  const {
+    getIssuePropertyById,
+    getIssueTypeById,
+    getProjectWorkItemPropertiesLoader,
+    isEpicEnabledForProject,
+    isWorkItemTypeEnabledForProject,
+    loader: workItemTypesLoader,
+  } = useIssueTypes();
+  const { getProjectById } = useProject();
+  // derived values
+  const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
+  const { isFilterEnabled, members, areAllConfigsInitialized: areAllCoreConfigsInitialized } = workItemFiltersConfig;
+  const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
+  const workItemTypes: IIssueType[] | undefined = workItemTypeIds
+    ? (workItemTypeIds
+        .map((workItemTypeId) => getIssueTypeById(workItemTypeId))
+        .filter((workItemType) => workItemType) as IIssueType[])
+    : undefined;
+  const customProperties = customPropertyIds
+    ? (customPropertyIds
+        .map((customPropertyId) => getIssuePropertyById(customPropertyId))
+        .filter((property) => property) as IIssueProperty<EIssuePropertyType>[])
+    : [];
+  const teamspaceProjects = useMemo(
+    () =>
+      teamspaceProjectIds
+        ? (teamspaceProjectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
+        : [],
+    [teamspaceProjectIds, getProjectById]
+  );
+  const isWorkItemTypesEnabled = isFilterEnabled("type_id") && workItemTypes !== undefined;
+  const isWorkItemTypeFeatureEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
+  const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
+  const workItemTypePropertiesLoader = projectId
+    ? getProjectWorkItemPropertiesLoader(projectId, EWorkItemTypeEntity.WORK_ITEM)
+    : undefined;
+  const epicPropertiesLoader = projectId
+    ? getProjectWorkItemPropertiesLoader(projectId, EWorkItemTypeEntity.EPIC)
+    : undefined;
+
+  // Check if all configuration loaders are ready
+  const areAllConfigsInitialized = useMemo(() => {
+    // Core configurations must be initialized first
+    if (!areAllCoreConfigsInitialized) {
+      return false;
+    }
+
+    // Check work item type feature dependencies
+    const isWorkItemTypeConfigReady = isWorkItemTypeFeatureEnabled
+      ? isLoaderReady(workItemTypesLoader) && isLoaderReady(workItemTypePropertiesLoader)
+      : true; // Not enabled, so considered ready
+
+    // Check epic feature dependencies
+    const isEpicConfigReady = isEpicFeatureEnabled ? isLoaderReady(epicPropertiesLoader) : true; // Not enabled, so considered ready
+
+    return isWorkItemTypeConfigReady && isEpicConfigReady;
+  }, [
+    areAllCoreConfigsInitialized,
+    isWorkItemTypeFeatureEnabled,
+    workItemTypesLoader,
+    workItemTypePropertiesLoader,
+    isEpicFeatureEnabled,
+    epicPropertiesLoader,
+  ]);
+
+  // work item type filter config
+  const workItemTypeFilterConfig = useMemo(
+    () =>
+      getWorkItemTypeFilterConfig<TWorkItemFilterProperty>("type_id")({
+        isEnabled: isWorkItemTypesEnabled,
+        filterIcon: LayersIcon,
+        getOptionIcon: (issueType) => (
+          <IssueTypeLogo icon_props={issueType?.logo_props?.icon} isDefault={issueType?.is_default} size="xs" />
+        ),
+        workItemTypes: workItemTypes ?? [],
+        ...operatorConfigs,
+      }),
+    [isWorkItemTypesEnabled, operatorConfigs, workItemTypes]
+  );
+
+  // get property tooltip content
+  const getPropertyTooltipContent = useCallback(
+    (property: IIssueProperty<EIssuePropertyType>) => {
+      const workItemType = property.issue_type ? getIssueTypeById(property.issue_type) : undefined;
+      if (!workItemType) return undefined;
+      return (
+        <div className="flex items-center gap-1">
+          <span>This property belongs to</span>
+          <IssueTypeLogo
+            icon_props={workItemType.logo_props?.icon}
+            isDefault={workItemType.is_default}
+            isEpic={workItemType.is_epic}
+            size="xs"
+          />
+          <span className="font-medium">{workItemType.name}</span>
+          <span>work item type</span>
+        </div>
+      );
+    },
+    [getIssueTypeById]
+  );
+
+  // get additional right content
+  const getAdditionalRightContent = useCallback(
+    (property: IIssueProperty<EIssuePropertyType>) => {
+      const workItemType = property.issue_type ? getIssueTypeById(property.issue_type) : undefined;
+      if (!workItemType) return undefined;
+      return (
+        <Tooltip position="right" tooltipContent={workItemType.name} disabled={!workItemType.name}>
+          <div>
+            <IssueTypeLogo
+              icon_props={workItemType.logo_props?.icon}
+              isDefault={workItemType.is_default}
+              isEpic={workItemType.is_epic}
+              size="xs"
+            />
+          </div>
+        </Tooltip>
+      );
+    },
+    [getIssueTypeById]
+  );
+
+  // custom property filter configs
+  const customPropertyConfigs = useCustomPropertyFiltersConfig({
+    customProperties,
+    getAdditionalRightContent,
+    getPropertyTooltipContent,
+    isFilterEnabled: (_key) => customPropertyIds !== undefined,
+    operatorConfigs,
+    members: members,
+  });
+
+  // teamspace project filter config
+  const teamspaceProjectFilterConfig = useMemo(
+    () =>
+      getTeamspaceProjectFilterConfig<TWorkItemFilterProperty>("team_project_id")({
+        isEnabled: isFilterEnabled("team_project_id") && teamspaceProjects !== undefined,
+        filterIcon: Briefcase,
+        projects: teamspaceProjects,
+        getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, teamspaceProjects, operatorConfigs]
+  );
+
+  // work item name filter config
+  const workItemNameFilterConfig = useMemo(
+    () =>
+      getTextPropertyFilterConfig<TWorkItemFilterProperty>("name")({
+        isEnabled: isFilterEnabled("name"),
+        filterIcon: AlignLeft,
+        propertyDisplayName: "Name",
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, operatorConfigs]
+  );
+
+  return {
+    ...workItemFiltersConfig,
+    areAllConfigsInitialized,
+    configs: [
+      workItemTypeFilterConfig,
+      teamspaceProjectFilterConfig,
+      ...workItemFiltersConfig.configs,
+      workItemNameFilterConfig,
+      ...customPropertyConfigs.configs,
+    ],
+    configMap: {
+      team_project_id: teamspaceProjectFilterConfig,
+      type_id: workItemTypeFilterConfig,
+      ...workItemFiltersConfig.configMap,
+      name: workItemNameFilterConfig,
+      ...customPropertyConfigs.configMap,
+    },
+  };
+};

@@ -1,5 +1,6 @@
 # Python imports
 import os
+import logging
 from datetime import datetime
 from urllib.parse import urlencode
 
@@ -16,6 +17,8 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+
+logger = logging.getLogger("plane.authentication")
 
 
 class GitHubOAuthProvider(OauthAdapter):
@@ -124,6 +127,12 @@ class GitHubOAuthProvider(OauthAdapter):
             email = next((email["email"] for email in emails_response if email["primary"]), None)
             return email
         except requests.RequestException:
+            logger.warning(
+                "Error getting email from Github", extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
+                }
+            )
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",

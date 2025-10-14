@@ -1,6 +1,6 @@
 # Python imports
 import traceback
-
+import logging
 import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -26,6 +26,8 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
 
+
+logger = logging.getLogger("plane.api")
 
 class TimezoneMixin:
     """
@@ -81,19 +83,39 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                 )
 
             if isinstance(e, ValidationError):
+                logger.warning(
+                    "Validation Error",
+                    extra={
+                        "error_code": "VALIDATION_ERROR",
+                        "error_message": str(e),
+                    }
+                )                
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ObjectDoesNotExist):
+                logger.warning(
+                    "Object Does Not Exist",
+                    extra={
+                        "error_code": "OBJECT_DOES_NOT_EXIST",
+                        "error_message": str(e),
+                    }
+                )
                 return Response(
                     {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
-                log_exception(e)
+                logger.error(
+                    "Key Error",
+                    extra={
+                        "error_code": "KEY_ERROR",
+                        "error_message": str(e),
+                    }
+                )
                 return Response(
                     {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -178,18 +200,39 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                 )
 
             if isinstance(e, ValidationError):
+                logger.warning(
+                    "Validation Error",
+                    extra={
+                        "error_code": "VALIDATION_ERROR",
+                        "error_message": str(e),
+                    }
+                )                
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if isinstance(e, ObjectDoesNotExist):
+                logger.warning(
+                    "Object Does Not Exist",
+                    extra={
+                        "error_code": "OBJECT_DOES_NOT_EXIST",
+                        "error_message": str(e),
+                    }
+                )
                 return Response(
                     {"error": "The required object does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             if isinstance(e, KeyError):
+                logger.error(
+                    "Key Error",
+                    extra={
+                        "error_code": "KEY_ERROR",
+                        "error_message": str(e),
+                    }
+                )
                 return Response(
                     {"error": "The required key does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,

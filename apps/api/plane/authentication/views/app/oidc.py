@@ -1,4 +1,5 @@
 # Python imports
+import logging
 import uuid
 from urllib.parse import urlencode, urljoin
 
@@ -20,6 +21,9 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.utils.host import base_host
+
+
+logger = logging.getLogger("plane.authentication")
 
 
 class OIDCAuthInitiateEndpoint(View):
@@ -59,12 +63,20 @@ class OIDCallbackEndpoint(View):
         host = request.session.get("host")
         try:
             if state != request.session.get("state", ""):
+                logger.warning("State mismatch in OIDC authentication", extra={
+                    "error_code": "OIDC_PROVIDER_ERROR",
+                    "error_message": "OIDC_PROVIDER_ERROR",
+                })
                 raise AuthenticationException(
                     error_code="OIDC_PROVIDER_ERROR",
                     error_message="OIDC_PROVIDER_ERROR",
                 )
 
             if not code:
+                logger.warning("Code not found in OIDC authentication", extra={
+                    "error_code": "OIDC_PROVIDER_ERROR",
+                    "error_message": "OIDC_PROVIDER_ERROR",
+                })
                 raise AuthenticationException(
                     error_code="OIDC_PROVIDER_ERROR",
                     error_message="OIDC_PROVIDER_ERROR",

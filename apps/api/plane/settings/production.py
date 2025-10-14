@@ -103,6 +103,11 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.authentication": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }
 

@@ -2,13 +2,13 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
-import { TWorkspaceConnection } from "@plane/types";
+import type { TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
+import type { TWorkspaceConnection } from "@plane/types";
 // plane web services
 // plane web store
 import { SentryIntegrationService } from "@/plane-web/services/integrations/sentry/sentry.service";
 import { ApplicationService } from "@/plane-web/services/marketplace";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { IntegrationBaseStore } from "../base.store";
 // base integration store
 

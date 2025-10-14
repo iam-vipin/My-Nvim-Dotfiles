@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TRecurringWorkItemActivity } from "@plane/types";
+import type { TRecurringWorkItemActivity } from "@plane/types";
 import { getRecurringWorkItemActivityKey } from "@plane/utils";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";

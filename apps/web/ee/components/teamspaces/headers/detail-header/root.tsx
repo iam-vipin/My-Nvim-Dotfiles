@@ -15,13 +15,14 @@ import {
   ViewsIcon,
   OverviewIcon,
 } from "@plane/propel/icons";
-import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
 import {
   Breadcrumbs,
   BreadcrumbNavigationDropdown,
   BreadcrumbNavigationSearchDropdown,
   Logo,
-  TContextMenuItem,
   Header,
   Loader,
 } from "@plane/ui";

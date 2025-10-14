@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState, FormEvent } from "react";
+import type { FC, FormEvent } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";

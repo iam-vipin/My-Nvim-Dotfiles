@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane constants
-import { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
-import { EIssuesStoreType, IssuePaginationOptions, TIssue, TLoader, TSupportedFilterForUpdate } from "@plane/types";
+import type { IssuePaginationOptions, TIssue, TLoader, TSupportedFilterForUpdate } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { IssueActions } from "@/hooks/use-issues-actions";
+import type { IssueActions } from "@/hooks/use-issues-actions";
 
 export const useTeamIssueActions: () => IssueActions = () => {
   // router

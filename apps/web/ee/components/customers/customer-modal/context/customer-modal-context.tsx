@@ -1,6 +1,6 @@
 import { createContext } from "react";
 // plane imports
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import type { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 
 export type TCreateUpdatePropertyValuesProps = {
   customerId: string;

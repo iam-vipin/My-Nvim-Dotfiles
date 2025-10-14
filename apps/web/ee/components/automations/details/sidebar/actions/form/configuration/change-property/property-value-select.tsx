@@ -3,19 +3,17 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EAutomationChangeType, EAutomationChangePropertyType } from "@plane/types";
+import type { EAutomationChangeType, EAutomationChangePropertyType } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
-import {
-  EConfigurationComponentType,
-  TChangePropertyConfiguration,
-} from "@/plane-web/hooks/automations/use-automation-action-config";
+import type { TChangePropertyConfiguration } from "@/plane-web/hooks/automations/use-automation-action-config";
+import { EConfigurationComponentType } from "@/plane-web/hooks/automations/use-automation-action-config";
 // local imports
-import { TAutomationActionFormData } from "../../root";
+import type { TAutomationActionFormData } from "../../root";
 import { getPropertyChangeDropdownClassNames } from "./common";
 
 type TProps = {

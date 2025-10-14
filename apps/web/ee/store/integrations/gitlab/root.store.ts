@@ -1,17 +1,19 @@
 // stores
 import { makeObservable } from "mobx";
 // plane web store
-import {
+import type {
   IIntegrationBaseStore,
-  IntegrationBaseStore,
   IGitlabAuthStore,
-  GitlabAuthStore,
   IGitlabDataStore,
-  GitlabDataStore,
   IGitlabEntityConnectionStore,
+} from "@/plane-web/store/integrations";
+import {
+  IntegrationBaseStore,
+  GitlabAuthStore,
+  GitlabDataStore,
   GitlabEntityStore,
 } from "@/plane-web/store/integrations";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IGitlabStore extends IIntegrationBaseStore {
   // store instances

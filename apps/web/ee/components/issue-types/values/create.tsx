@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IIssueType, TIssuePropertyValues } from "@plane/types";
+import type { IIssueType, TIssuePropertyValues } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // store hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

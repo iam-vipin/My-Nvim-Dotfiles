@@ -1,4 +1,4 @@
-import { TIssueActivity } from "@plane/types";
+import type { TIssueActivity } from "@plane/types";
 import { getRelationActivityContent as getCERelationActivityContent } from "ce/components/relations";
 
 export const getRelationActivityContent = (activity: TIssueActivity | undefined): string | undefined => {

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { FC, SyntheticEvent } from "react";
+import type { FC, SyntheticEvent } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // Plane
-import { TIssuePriorities } from "@plane/constants";
+import type { TIssuePriorities } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, EIssuesStoreType, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { CustomersIcon } from "@plane/propel/icons";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

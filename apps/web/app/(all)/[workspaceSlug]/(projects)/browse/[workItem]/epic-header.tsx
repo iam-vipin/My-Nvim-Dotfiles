@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

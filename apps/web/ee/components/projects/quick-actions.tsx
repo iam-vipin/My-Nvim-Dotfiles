@@ -6,14 +6,15 @@ import { ArchiveIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 // plane imports
-import { CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { DeleteProjectModal } from "@/components/project/delete-project-modal";
 import { JoinProjectModal } from "@/components/project/join-project-modal";
 import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
 // plane web imports
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   workspaceSlug: string;

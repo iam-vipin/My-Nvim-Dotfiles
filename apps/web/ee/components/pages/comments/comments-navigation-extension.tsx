@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { type INavigationPaneExtensionComponent } from "@/components/pages/navigation-pane/types";
+import type { INavigationPaneExtensionComponent } from "@/components/pages/navigation-pane/types";
 // local components
 import { usePageStore } from "@/plane-web/hooks/store";
 import { PageCommentsSidebarPanel } from "./comments-sidebar-panel";

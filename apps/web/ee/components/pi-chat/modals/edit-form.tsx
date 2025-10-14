@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 // types
 import { ETabIndices } from "@plane/constants";
 import { Button } from "@plane/propel/button";

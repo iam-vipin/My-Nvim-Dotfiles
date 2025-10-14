@@ -9,7 +9,7 @@ import useSWR from "swr";
 import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TUserApplication } from "@plane/types";
+import type { TUserApplication } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";

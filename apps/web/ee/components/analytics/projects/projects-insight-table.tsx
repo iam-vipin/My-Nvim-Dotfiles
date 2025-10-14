@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { ProjectIcon } from "@plane/propel/icons";
-import { ProjectInsightColumns } from "@plane/types";
+import type { ProjectInsightColumns } from "@plane/types";
 import { Logo } from "@plane/ui";
 // components
 import { exportCSV } from "@/components/analytics/export";

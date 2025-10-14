@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { Tags } from "lucide-react";
 
@@ -14,7 +14,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabel } from "@/plane-web/types";
 import { InitiativeLabelPropertyDropdown } from "./initiative-label-property-dropdown";
 
 export interface IInitiativeLabelProperty {

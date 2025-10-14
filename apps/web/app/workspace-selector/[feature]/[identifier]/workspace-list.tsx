@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 // plane imports
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";

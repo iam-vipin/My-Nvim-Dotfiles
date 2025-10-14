@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
-import { EIssuePropertyType, TDateAttributeDisplayOptions, TIssueProperty, TOperationMode } from "@plane/types";
+import type { EIssuePropertyType, TDateAttributeDisplayOptions, TIssueProperty, TOperationMode } from "@plane/types";
 import { getDateAttributeDisplayName } from "@plane/utils";
 // local imports
 import { PropertySettingsConfiguration } from "./common/property-settings-configuration";

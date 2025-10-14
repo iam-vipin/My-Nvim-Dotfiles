@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { FilterInstance, IFilterInstance } from "@plane/shared-state";
+import type { IFilterInstance } from "@plane/shared-state";
+import { FilterInstance } from "@plane/shared-state";
 import type { TAutomationConditionFilterExpression, TAutomationConditionFilterProperty } from "@plane/types";
 // plane web imports
 import { useAutomationConfig } from "@/plane-web/hooks/automations/use-automation-condition-config";

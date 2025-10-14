@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // services
-import { TTeamspace, TTeamspaceEntities, TTeamspaceMember } from "@plane/types";
+import type { TTeamspace, TTeamspaceEntities, TTeamspaceMember } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

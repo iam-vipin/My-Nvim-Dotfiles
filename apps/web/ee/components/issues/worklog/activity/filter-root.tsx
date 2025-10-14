@@ -1,14 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import {
-  TActivityFilters,
-  ACTIVITY_FILTER_TYPE_OPTIONS,
-  TActivityFilterOption,
-  EActivityFilterTypeEE,
-} from "@plane/constants";
+import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
+import { ACTIVITY_FILTER_TYPE_OPTIONS, EActivityFilterTypeEE } from "@plane/constants";
 // ce components
 import type { TActivityFilterRoot } from "@/ce/components/issues/worklog/activity/filter-root";
 // components

@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
 import { ProjectIcon, TeamsIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

@@ -1,7 +1,9 @@
 "use client";
-import { FC, useCallback, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web hooks

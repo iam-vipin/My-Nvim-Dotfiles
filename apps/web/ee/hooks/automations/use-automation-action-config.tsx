@@ -3,7 +3,8 @@ import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import { EAutomationChangePropertyType, EAutomationChangeType, type ICustomSearchSelectOption } from "@plane/types";
+import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks

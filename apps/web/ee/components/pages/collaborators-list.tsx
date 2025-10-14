@@ -7,7 +7,7 @@ import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // helpers
 import { useMember } from "@/hooks/store/use-member";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 interface CollaboratorsListProps {
   page?: TPageInstance;

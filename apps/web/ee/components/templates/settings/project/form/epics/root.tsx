@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectTemplateForm } from "@plane/types";
+import type { TProjectTemplateForm } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports

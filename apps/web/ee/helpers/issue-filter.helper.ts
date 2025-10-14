@@ -1,5 +1,5 @@
 // types
-import { TShouldRenderDisplayProperty } from "@/ce/helpers/issue-filter.helper";
+import type { TShouldRenderDisplayProperty } from "@/ce/helpers/issue-filter.helper";
 // lib
 import { store } from "@/lib/store-context";
 

@@ -1,8 +1,10 @@
 "use client";
 
-import React, { Dispatch, FC, SetStateAction, useCallback, useState, useEffect } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -13,7 +15,7 @@ import { getFileIcon } from "@/components/icons";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-import { TFocus, TPiAttachment } from "@/plane-web/types/pi-chat";
+import type { TFocus, TPiAttachment } from "@/plane-web/types/pi-chat";
 
 type Props = {
   disabled?: boolean;

@@ -4,9 +4,11 @@ import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, STATE_GROUPS } from "@plane/constants";
-import { EWidgetChartModels, TCellItem, TDashboardWidgetDatum, TDonutChartWidgetConfig } from "@plane/types";
+import type { TCellItem, TDashboardWidgetDatum, TDonutChartWidgetConfig } from "@plane/types";
+import { EWidgetChartModels } from "@plane/types";
 // local imports
-import { generateExtendedColors, TWidgetComponentProps } from ".";
+import type { TWidgetComponentProps } from ".";
+import { generateExtendedColors } from ".";
 
 const PieChart = dynamic(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({

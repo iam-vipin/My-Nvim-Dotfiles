@@ -3,13 +3,15 @@ import { computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { EUserWorkspaceRoles, TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // store
-import { TPageInstance, BasePage } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
+import { BasePage } from "@/store/pages/base-page";
 
 const workspacePageService = new WorkspacePageService();
 

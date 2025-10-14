@@ -1,11 +1,11 @@
 // plane imports
 import { EXTENDED_OPERATORS } from "@plane/types";
 // ce imports
-import {
+import type {
   TFiltersOperatorConfigs,
   TUseFiltersOperatorConfigsProps,
-  useFiltersOperatorConfigs as useCoreFiltersOperatorConfigs,
 } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
+import { useFiltersOperatorConfigs as useCoreFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 

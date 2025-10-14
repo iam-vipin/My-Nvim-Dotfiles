@@ -8,7 +8,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 import { ContentWrapper, Loader } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";

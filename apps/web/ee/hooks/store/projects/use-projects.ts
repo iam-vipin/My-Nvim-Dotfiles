@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { IProjectStore } from "@/plane-web/store/projects/projects";
+import type { IProjectStore } from "@/plane-web/store/projects/projects";
 
 export const useProjectAdvanced = (): IProjectStore => {
   const context = useContext(StoreContext);

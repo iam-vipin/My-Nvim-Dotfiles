@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TCycleProgress } from "@plane/types";
+import type { TCycleProgress } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
 
 type Props = {

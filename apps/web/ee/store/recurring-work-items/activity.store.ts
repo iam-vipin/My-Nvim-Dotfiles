@@ -4,7 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { RecurringWorkItemServiceBase } from "@plane/services";
-import { TLoader, TRecurringWorkItemActivity } from "@plane/types";
+import type { TLoader, TRecurringWorkItemActivity } from "@plane/types";
 
 export interface IRecurringWorkItemActivityStore {
   // observables

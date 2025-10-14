@@ -1,13 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
 // plane imports
 import { EIconSize, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EpicIcon, InitiativeStateIcon, ProjectIcon } from "@plane/propel/icons";
-import { TInitiativeStates } from "@plane/types";
+import type { TInitiativeStates } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -20,7 +20,7 @@ import { SidebarContentWrapper } from "@/plane-web/components/common/layout/side
 import { InitiativeLabelDropdown } from "@/plane-web/components/initiatives/components/labels/initiative-label-dropdown";
 import { InitiativeStateDropdown } from "@/plane-web/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 
 type Props = {
   workspaceSlug: string;

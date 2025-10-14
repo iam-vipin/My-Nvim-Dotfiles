@@ -7,7 +7,7 @@ import { Button } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // silo types
-import { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
+import type { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
 
 export const Stepper = <T,>(props: TStepper<T>) => {
   // props

@@ -1,6 +1,6 @@
 import { format, startOfToday } from "date-fns";
 import { DoneState, InProgressState, PlannedState, PendingState } from "@plane/propel/icons";
-import { TCycleEstimateSystemAdvanced } from "@plane/types";
+import type { TCycleEstimateSystemAdvanced } from "@plane/types";
 import { Card, ECardSpacing } from "@plane/ui";
 import { summaryDataFormatter } from "../formatter";
 

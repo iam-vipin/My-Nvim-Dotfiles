@@ -8,7 +8,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web helpers
 import { pagesAppCommandGroups } from "@/plane-web/components/command-palette";
 // plane web types
-import { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/plane-web/types";
 
 type Props = {
   closePalette: () => void;

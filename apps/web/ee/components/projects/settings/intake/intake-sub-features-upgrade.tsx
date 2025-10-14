@@ -8,7 +8,7 @@ import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
 import { ToggleSwitch, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // ce imports
-import { TProperties } from "@/ce/constants/project";
+import type { TProperties } from "@/ce/constants/project";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports

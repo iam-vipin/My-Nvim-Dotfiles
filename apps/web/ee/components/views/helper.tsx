@@ -3,14 +3,11 @@ import { Lock, LockIcon, LockOpen } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { TContextMenuItem } from "@plane/ui";
-import {
-  TLayoutSelectionProps,
-  TMenuItemsFactoryProps,
-  useMenuItemsFactory as useCoreMenuItemsFactory,
-} from "@/ce/components/views/helper";
+import type { TContextMenuItem } from "@plane/ui";
+import type { TLayoutSelectionProps, TMenuItemsFactoryProps } from "@/ce/components/views/helper";
+import { useMenuItemsFactory as useCoreMenuItemsFactory } from "@/ce/components/views/helper";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
-import { TWorkspaceLayoutProps } from "@/components/views/helper";
+import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";

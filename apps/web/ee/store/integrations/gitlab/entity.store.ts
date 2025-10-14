@@ -5,10 +5,10 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { TGitlabEntityConnection } from "@plane/types";
+import type { TGitlabEntityConnection } from "@plane/types";
 import { GitlabEntityService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
-import { IGitlabStore } from "@/plane-web/store/integrations";
+import type { IGitlabStore } from "@/plane-web/store/integrations";
 
 export interface IGitlabEntityConnectionStore {
   // store instances

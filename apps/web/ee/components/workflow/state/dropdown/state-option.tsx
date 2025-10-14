@@ -7,7 +7,8 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // CE
-import { StateOption as CEStateOption, TStateOptionProps } from "@/ce/components/workflow";
+import type { TStateOptionProps } from "@/ce/components/workflow";
+import { StateOption as CEStateOption } from "@/ce/components/workflow";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports

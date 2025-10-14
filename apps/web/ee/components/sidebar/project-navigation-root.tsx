@@ -1,12 +1,14 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
+import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports

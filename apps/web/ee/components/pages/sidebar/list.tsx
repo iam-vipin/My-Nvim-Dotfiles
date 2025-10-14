@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 // local imports
 import { WikiSidebarListSectionRoot } from "./section/section-root";
 

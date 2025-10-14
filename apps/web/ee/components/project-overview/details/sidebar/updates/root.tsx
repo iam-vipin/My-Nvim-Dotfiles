@@ -8,7 +8,7 @@ import { useLocalStorage } from "@plane/hooks";
 // components
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
-import { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/plane-web/types";
 import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";
 import { UpdatesLoader } from "./loader";

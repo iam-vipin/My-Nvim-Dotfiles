@@ -1,11 +1,8 @@
-import { Filter, Repeat, Workflow, Zap, type LucideIcon } from "lucide-react";
+import { Filter, Repeat, Workflow, Zap } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // plane imports
-import {
-  EAutomationNodeType,
-  TAutomationActivity,
-  type TAutomationActivityKeys,
-  type TAutomationNodeActivityKeys,
-} from "@plane/types";
+import { EAutomationNodeType } from "@plane/types";
+import type { TAutomationActivity, TAutomationActivityKeys, TAutomationNodeActivityKeys } from "@plane/types";
 
 type TActivityListItemDetails = {
   descriptionContent?: string;

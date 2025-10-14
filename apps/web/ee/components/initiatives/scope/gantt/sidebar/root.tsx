@@ -1,4 +1,5 @@
-import { RefObject, useEffect, useState } from "react";
+import type { RefObject } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane
 import { useTranslation } from "@plane/i18n";

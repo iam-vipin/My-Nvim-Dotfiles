@@ -10,7 +10,8 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EPageAccess, TIssuePage, TIssueServiceType } from "@plane/types";
+import type { TIssuePage, TIssueServiceType } from "@plane/types";
+import { EPageAccess } from "@plane/types";
 import { ToggleSwitch, Button, Logo, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
 // types
 // components

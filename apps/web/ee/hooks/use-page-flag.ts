@@ -1,5 +1,5 @@
 // ce types
-import { TPageFlagHookArgs, TPageFlagHookReturnType } from "@/ce/hooks/use-page-flag";
+import type { TPageFlagHookArgs, TPageFlagHookReturnType } from "@/ce/hooks/use-page-flag";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store";
 

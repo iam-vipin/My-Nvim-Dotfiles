@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { ChevronRight } from "lucide-react";
 // plane imports
 import { PageIcon, TeamsIcon } from "@plane/propel/icons";
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, CustomMenu } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components

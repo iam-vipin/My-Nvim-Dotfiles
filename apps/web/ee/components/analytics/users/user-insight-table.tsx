@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { UserInsightColumns } from "@plane/types";
+import type { UserInsightColumns } from "@plane/types";
 // components
 import { InsightTable } from "@/components/analytics/insight-table";
 import { UserAvatarName } from "../user-avatar-name";

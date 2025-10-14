@@ -8,15 +8,8 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
-import {
-  EViewAccess,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  TTeamspaceView,
-  EIssueLayoutTypes,
-  EIssuesStoreType,
-  IIssueFilters,
-} from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TTeamspaceView, IIssueFilters } from "@plane/types";
+import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components

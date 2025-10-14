@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactElement, ReactNode } from "react";
+import type { FC, ReactElement, ReactNode } from "react";
 import {
   ArrowRightLeft,
   CalendarDays,
@@ -15,7 +15,7 @@ import {
 // plane imports
 import { ArchiveIcon, CycleIcon, CustomersIcon, ModuleIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IUserLite } from "@plane/types";
+import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import {
   calculateTimeAgo,
@@ -28,7 +28,7 @@ import {
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 
 type TIssueActivityBlock = {
   createdAt: string | undefined;

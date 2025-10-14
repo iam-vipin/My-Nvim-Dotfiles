@@ -1,12 +1,12 @@
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import {
+import type { EIssueCommentAccessSpecifier } from "@plane/constants";
+import type {
   TIssueActivityUserDetail,
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
   JSONContent,
 } from "@plane/types";
-import { TProjectUpdateReaction } from "./update_reaction";
+import type { TProjectUpdateReaction } from "./update_reaction";
 
 export type TProjectUpdatesComment = {
   id: string;

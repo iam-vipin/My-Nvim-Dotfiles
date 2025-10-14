@@ -1,10 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane web constants
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
 // plane web types
-import { EProjectStateGroup, TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import { EProjectStateGroup } from "@/plane-web/types/workspace-project-states";
 // components
 import { CancelledIcon } from "./cancelled";
 import { CompletedIcon } from "./completed";
@@ -13,7 +14,7 @@ import { ExecutionIcon } from "./execution";
 import { MonitoringIcon } from "./monitoring";
 import { PlanningIcon } from "./planning";
 // types
-import { TProjectStateIcon } from "./types";
+import type { TProjectStateIcon } from "./types";
 
 const projectStateIconComponents = {
   [EProjectStateGroup.DRAFT]: DraftIcon,

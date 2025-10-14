@@ -6,7 +6,7 @@ import { Button } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // silo types
-import { TStepper, TStepperNavigation } from "@/plane-web/types/importers";
+import type { TStepper, TStepperNavigation } from "@/plane-web/types/importers";
 import ImporterHeader from "../header";
 
 export const Stepper = <T,>(props: TStepper<T>) => {

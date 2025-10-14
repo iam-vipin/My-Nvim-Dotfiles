@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
 // plane imports
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { TCycleEstimateSystemAdvanced, TCycleProgress, TStateGroups } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TCycleEstimateSystemAdvanced, TCycleProgress, TStateGroups } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports

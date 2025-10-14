@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TProjectUpdateReaction } from "@/plane-web/types";
+import type { TProjectUpdateReaction } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 // types

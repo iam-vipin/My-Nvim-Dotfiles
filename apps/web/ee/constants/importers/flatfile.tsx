@@ -2,7 +2,8 @@ import { Layers3 } from "lucide-react";
 // components
 import { SelectPlaneProject, ConfigureFlatfile } from "@/plane-web/components/importers/flatfile";
 // plane web types
-import { E_IMPORTER_STEPS, TImporterStep } from "@/plane-web/types/importers/flatfile";
+import type { TImporterStep } from "@/plane-web/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
 
 export const IMPORTER_STEPS: TImporterStep[] = [
   {

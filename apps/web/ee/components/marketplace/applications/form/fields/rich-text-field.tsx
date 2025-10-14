@@ -1,8 +1,10 @@
-import { Control, Controller, FieldValues } from "react-hook-form";
-import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import type { Control, FieldValues } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/ui";
 import { RichTextEditor } from "@/components/editor/rich-text";
-import { BaseFieldProps, FieldWrapper } from "./base-field";
+import type { BaseFieldProps } from "./base-field";
+import { FieldWrapper } from "./base-field";
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   control: Control<T>;

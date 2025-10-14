@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { TUserApplication } from "@plane/types";
+import type { TUserApplication } from "@plane/types";
 import { AppTile } from "@/plane-web/components/marketplace";
 
 // list all the applications

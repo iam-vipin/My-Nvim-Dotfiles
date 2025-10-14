@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { AddStateTransition } from "./add-state-transition";

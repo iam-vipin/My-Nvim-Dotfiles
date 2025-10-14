@@ -4,10 +4,11 @@ import { mutate } from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { CustomerPropertyValueService } from "@plane/services";
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import type { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // plane web hooks
-import { CustomerModalContext, TCreateUpdatePropertyValuesProps } from "@/plane-web/components/customers";
+import type { TCreateUpdatePropertyValuesProps } from "@/plane-web/components/customers";
+import { CustomerModalContext } from "@/plane-web/components/customers";
 import { useCustomerProperties } from "@/plane-web/hooks/store";
 
 type TCustomerModalProviderProps = {

@@ -2,7 +2,7 @@ import { isEmpty } from "lodash-es";
 import { Briefcase } from "lucide-react";
 import { PiChatEditorWithRef } from "@plane/editor";
 import { Logo } from "@plane/ui";
-import { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/plane-web/types";
 import { Properties } from "../preview-cards/properties";
 
 type TProps = {

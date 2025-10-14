@@ -1,6 +1,6 @@
-import { Copy } from "lucide-react";
+import type { Copy } from "lucide-react";
 import { WORK_ITEM_TRACKER_ELEMENTS_EXTENDED } from "@plane/constants";
-import { TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
 // lib
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { store } from "@/lib/store-context";

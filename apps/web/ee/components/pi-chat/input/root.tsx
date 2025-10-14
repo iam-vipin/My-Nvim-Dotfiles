@@ -4,7 +4,8 @@ import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 import { ArrowUp, Disc } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { EditorRefApi, PiChatEditorWithRef } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
+import { PiChatEditorWithRef } from "@plane/editor";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -12,7 +13,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import { TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
+import type { TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";

@@ -1,5 +1,5 @@
 import { ArchiveIcon, Globe2, Lock, Share } from "lucide-react";
-import { SectionDetailsMap } from "./types";
+import type { SectionDetailsMap } from "./types";
 
 // Constants for section details
 export const SECTION_DETAILS: SectionDetailsMap = {

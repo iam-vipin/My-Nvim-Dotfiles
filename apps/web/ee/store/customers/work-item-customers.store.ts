@@ -3,10 +3,10 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { CustomerRequestsService, CustomerService } from "@plane/services";
-import { TCustomerRequest, TCustomerRequestAttachment, TCustomerWorkItem, TIssue } from "@plane/types";
+import type { TCustomerRequest, TCustomerRequestAttachment, TCustomerWorkItem, TIssue } from "@plane/types";
 // types
-import { RootStore } from "../root.store";
-import { ICustomersStore } from "./customers.store";
+import type { RootStore } from "../root.store";
+import type { ICustomersStore } from "./customers.store";
 
 export interface IWorkItemCustomersStore {
   workItemRequestIdsMap: Record<string, string[]>;

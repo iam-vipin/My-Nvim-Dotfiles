@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
@@ -8,7 +9,8 @@ import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { E_ISSUE_STATE_MAP_KEYS, TGithubEntityConnection, TIssueStateMap } from "@plane/types";
+import type { TGithubEntityConnection, TIssueStateMap } from "@plane/types";
+import { E_ISSUE_STATE_MAP_KEYS } from "@plane/types";
 // plane web components
 import {
   ProjectIssueSyncEntityItem,
@@ -17,7 +19,7 @@ import {
 //  plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations";
 // local imports
 import { MappingLoader } from "../../../ui";
 

@@ -2,15 +2,15 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import {
-  EIssuesStoreType,
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type {
   IActiveCycle,
   ICycle,
   TCycleEstimateType,
   TCyclePlotType,
   TCycleEstimateSystemAdvanced,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";

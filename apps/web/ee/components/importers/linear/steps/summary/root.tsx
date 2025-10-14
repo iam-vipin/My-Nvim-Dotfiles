@@ -1,15 +1,17 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
-import { LinearConfig } from "@plane/etl/linear";
+import type { TJobStatus } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
+import type { LinearConfig } from "@plane/etl/linear";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

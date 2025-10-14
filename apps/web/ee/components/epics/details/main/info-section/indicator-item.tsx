@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 // constants

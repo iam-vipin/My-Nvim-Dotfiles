@@ -6,13 +6,14 @@ import { Controller, useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
-import { EFileAssetType, type JSONContent, type TPageComment } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import type { JSONContent, TPageComment } from "@plane/types";
 import { cn, isCommentEmpty, trimEmptyParagraphsFromJson, trimEmptyParagraphsFromHTML } from "@plane/utils";
 // editor
 import { LiteTextEditor } from "@/components/editor/lite-text";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // types
-import { type TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type CommentBoxProps = {
   // Required props

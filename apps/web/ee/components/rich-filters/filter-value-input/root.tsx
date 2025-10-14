@@ -1,8 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  FILTER_FIELD_TYPE,
+import type {
   TFilterValue,
   TFilterProperty,
   SingleOrArray,
@@ -12,10 +11,11 @@ import {
   TNumberFilterFieldConfig,
   TNumberRangeFilterFieldConfig,
 } from "@plane/types";
+import { FILTER_FIELD_TYPE } from "@plane/types";
 // ce imports
 import { AdditionalFilterValueInput as AdditionalFilterValueInputCE } from "@/ce/components/rich-filters/filter-value-input/root";
 // local imports
-import { TFilterValueInputProps } from "@/components/rich-filters/shared";
+import type { TFilterValueInputProps } from "@/components/rich-filters/shared";
 import { BooleanFilterValueInput } from "./boolean/root";
 import { NumberRangeFilterValueInput } from "./number/range";
 import { NumberFilterValueInput } from "./number/single";

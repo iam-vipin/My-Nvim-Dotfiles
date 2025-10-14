@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 import { useLocalStorage } from "@plane/hooks";

@@ -1,5 +1,5 @@
-import { EUpdateStatus } from "@plane/types";
-import { TProjectUpdateReaction } from "./update_reaction";
+import type { EUpdateStatus } from "@plane/types";
+import type { TProjectUpdateReaction } from "./update_reaction";
 
 export enum EProjectUpdateStatus {
   OFF_TRACK = "OFF-TRACK",

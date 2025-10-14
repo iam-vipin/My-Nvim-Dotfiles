@@ -1,8 +1,9 @@
-import { Dispatch, RefObject, SetStateAction } from "react";
-import { LucideIcon } from "lucide-react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
+import type { LucideIcon } from "lucide-react";
 // plane imports
-import { ISvgIcons } from "@plane/propel/icons";
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import type { ISvgIcons } from "@plane/propel/icons";
+import type { TPageNavigationTabs } from "@plane/types";
+import { TPage } from "@plane/types";
 
 // Basic section details type
 export type SectionDetails = {

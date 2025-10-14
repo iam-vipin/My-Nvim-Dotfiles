@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // hooks
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
@@ -12,7 +12,7 @@ import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectLinks } from "@/plane-web/hooks/store";
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TProjectLinkDetail = {
   linkId: string;

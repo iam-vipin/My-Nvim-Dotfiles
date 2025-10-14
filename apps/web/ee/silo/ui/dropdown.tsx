@@ -3,7 +3,7 @@
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomSearchSelect } from "@plane/ui";
 // silo types
-import { TDropdown } from "@/plane-web/silo/types/ui";
+import type { TDropdown } from "@/plane-web/silo/types/ui";
 
 export const Dropdown = <T,>(props: TDropdown<T>) => {
   const { dropdownOptions, onChange, value, placeHolder, disabled = false, iconExtractor, queryExtractor } = props;

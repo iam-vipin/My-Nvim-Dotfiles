@@ -1,7 +1,8 @@
-import axios, { AxiosInstance } from "axios";
-import { GitLabAuthorizeState } from "@plane/etl/gitlab";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { GitLabAuthorizeState } from "@plane/etl/gitlab";
 // plane web types
-import { TGitlabWorkspaceConnection, TGitlabAppConfig } from "@plane/types";
+import type { TGitlabWorkspaceConnection, TGitlabAppConfig } from "@plane/types";
 
 export class GitlabAuthService {
   protected baseURL: string;

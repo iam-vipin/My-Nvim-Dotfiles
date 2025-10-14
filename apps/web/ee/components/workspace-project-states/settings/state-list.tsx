@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { ProjectStateListItem } from "@/plane-web/components/workspace-project-states";
 // plane web types
-import { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
 
 type TStateList = {
   workspaceSlug: string;

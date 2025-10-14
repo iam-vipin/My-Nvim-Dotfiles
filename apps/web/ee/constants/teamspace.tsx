@@ -1,21 +1,21 @@
 import { AlignLeft, Type, User2, Users } from "lucide-react";
 // plane imports
-import {
+import type {
   ERelationType,
   EStatisticsLegend,
   ETeamspaceAnalyticsDataKeys,
   ETeamspaceAnalyticsValueKeys,
-  ETeamspaceScope,
   EProgressXAxisKeys,
 } from "@plane/constants";
+import { ETeamspaceScope } from "@plane/constants";
 import { PageIcon, ProjectIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
-import { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
+import type { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
 // helpers
 import { getPageName } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
 // plane web types
-import { TTeamspaceActivityDetailsHelperMap } from "@/plane-web/types";
+import type { TTeamspaceActivityDetailsHelperMap } from "@/plane-web/types";
 
 export const DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA: TCreateUpdateTeamspaceModal = {
   isOpen: false,

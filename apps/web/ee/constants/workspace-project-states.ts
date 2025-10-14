@@ -1,11 +1,11 @@
 // plane web types
-import { TIssuePriorities } from "@plane/constants";
-import {
-  EProjectStateGroup,
+import type { TIssuePriorities } from "@plane/constants";
+import type {
   TProjectState,
   TProjectStateDraggableData,
   TProjectStateGroupKey,
 } from "@/plane-web/types/workspace-project-states";
+import { EProjectStateGroup } from "@/plane-web/types/workspace-project-states";
 
 export const WORKSPACE_PROJECT_STATE_GROUPS: {
   [key in TProjectStateGroupKey]: {

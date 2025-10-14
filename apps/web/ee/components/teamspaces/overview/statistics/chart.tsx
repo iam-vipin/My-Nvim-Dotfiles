@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
 import { TreeMapIcon } from "@plane/propel/icons";
-import { TreeMapItem } from "@plane/types";
+import type { TreeMapItem } from "@plane/types";
 import { Avatar, Loader, Logo } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks

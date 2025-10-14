@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { Relation } from "@/plane-web/types";
+import type { Relation } from "@/plane-web/types";
 import { getSVGPoints } from "./utils";
 
 const strokeWidth = 10;

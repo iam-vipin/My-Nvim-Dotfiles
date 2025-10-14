@@ -2,7 +2,8 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane ui
 import { CHART_WIDGETS_Y_AXIS_METRICS_LIST, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EWidgetChartModels, EWidgetChartTypes, EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
+import type { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // local components
 import { WidgetDateGroupSelect } from "./date-group-select";
 import { WidgetMetricSelect } from "./metric-select";

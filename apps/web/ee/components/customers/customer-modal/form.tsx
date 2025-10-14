@@ -1,4 +1,5 @@
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
@@ -6,7 +7,7 @@ import { CUSTOMER_TRACKER_EVENTS, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TCustomer, TCustomerPayload } from "@plane/types";
+import type { TCustomer, TCustomerPayload } from "@plane/types";
 // helpers
 import { cn, getTabIndex } from "@plane/utils";
 // store

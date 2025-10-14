@@ -1,11 +1,11 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 // store hooks
-import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
+import type { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // layouts
 import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";

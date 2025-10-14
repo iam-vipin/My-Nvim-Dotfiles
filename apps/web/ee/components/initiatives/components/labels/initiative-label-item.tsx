@@ -1,14 +1,14 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TInitiativeLabel } from "@/plane-web/types/initiative";
 // components
-import {
-  CreateUpdateInitiativeLabelInline,
-  TInitiativeLabelOperationsCallbacks,
-} from "./create-update-initiative-label-inline";
-import { IInitiativeCustomMenuItem, InitiativeLabelBlock } from "./initiative-label-block";
+import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
+import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
+import type { IInitiativeCustomMenuItem } from "./initiative-label-block";
+import { InitiativeLabelBlock } from "./initiative-label-block";
 import { InitiativeLabelDndHOC } from "./initiative-label-drag-n-drop-HOC";
 
 type Props = {

@@ -4,7 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { CustomerPropertiesOptionsService, CustomerPropertyService } from "@plane/services";
 // types
-import {
+import type {
   EIssuePropertyType,
   IIssuePropertiesService,
   IIssueProperty,
@@ -17,7 +17,7 @@ import {
 } from "@plane/types";
 // plane-web store
 import { IssueProperty } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ICustomerPropertiesStore {
   loader: boolean;

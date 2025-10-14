@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { format, startOfToday } from "date-fns";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { ICycle, TCycleProgress } from "@plane/types";
+import type { ICycle, TCycleProgress } from "@plane/types";
 import { BetaBadge, ControlLink, Loader } from "@plane/ui";
 import { findHowManyDaysLeft } from "@plane/utils";
 import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-action";

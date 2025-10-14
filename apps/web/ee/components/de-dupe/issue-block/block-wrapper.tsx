@@ -1,6 +1,7 @@
 "use-client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TDeDupeIssue } from "@plane/types";

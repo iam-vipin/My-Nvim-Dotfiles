@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
-import { TInitiativeOrderByOptions } from "@plane/types";
+import type { TInitiativeOrderByOptions } from "@plane/types";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // Plane-web
 import { INITIATIVE_ORDER_BY_OPTIONS } from "@/plane-web/constants/initiative";

@@ -2,10 +2,10 @@ import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // types
-import {
-  EIssuesStoreType,
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilters,
@@ -15,13 +15,15 @@ import {
   TSupportedFilterForUpdate,
   TWorkItemFilterExpression,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // helpers
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { IssueFiltersService } from "@/services/issue_filter.service";
 // store
-import { IBaseIssueFilterStore, IssueFilterHelperStore } from "@/store/issue/helpers/issue-filter-helper.store";
-import { IIssueRootStore } from "@/store/issue/root.store";
+import type { IBaseIssueFilterStore } from "@/store/issue/helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "@/store/issue/helpers/issue-filter-helper.store";
+import type { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface IProjectEpicsFilter extends IBaseIssueFilterStore {
   //helper actions

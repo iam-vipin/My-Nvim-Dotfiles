@@ -1,4 +1,5 @@
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { IssueService as CoreIssueService } from "@/services/issue/issue.service";
 
 export class IssueService extends CoreIssueService {

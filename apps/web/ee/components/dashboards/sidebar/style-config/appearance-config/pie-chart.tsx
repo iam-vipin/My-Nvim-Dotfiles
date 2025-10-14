@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { PIE_CHART_VALUE_TYPE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig, TWidgetPieChartValuesType } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig, TWidgetPieChartValuesType } from "@plane/types";
 import { CustomSelect, ToggleSwitch } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";

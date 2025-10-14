@@ -6,11 +6,12 @@ import { MessageSquareText } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/ui";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // hooks
 import { usePaneTabToggle } from "@/plane-web/hooks/use-pane-tab-toggle";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type TPageCommentControlProps = {
   page: TPageInstance;

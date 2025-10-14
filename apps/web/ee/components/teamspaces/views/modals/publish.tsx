@@ -10,7 +10,7 @@ import { ExternalLink, Globe2 } from "lucide-react";
 import { SPACE_BASE_PATH, SPACE_BASE_URL, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TPublishViewSettings, TTeamspaceView } from "@plane/types";
+import type { TPublishViewSettings, TTeamspaceView } from "@plane/types";
 import { EModalWidth, Loader, ModalCore, ToggleSwitch } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // plane web hooks

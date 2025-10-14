@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
-import { Relation } from "@/plane-web/types";
+import type { Relation } from "@/plane-web/types";
 //
 import { DependencyPathModal } from "./dependency-modal";
 import { TimelineDependencyPathItem } from "./dependency-path-item";

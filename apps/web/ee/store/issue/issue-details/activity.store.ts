@@ -2,16 +2,18 @@ import { orderBy } from "lodash-es";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { E_SORT_ORDER, EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
-import { EIssueServiceType, TIssueActivityComment, TIssueServiceType } from "@plane/types";
+import type { E_SORT_ORDER } from "@plane/constants";
+import { EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
+import type { TIssueActivityComment, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ce store
-import {
+import type {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
   IIssueActivityStore as IIssueActivityStoreCe,
-  IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
+import { IssueActivityStore as IssueActivityStoreCe } from "@/ce/store/issue/issue-details/activity.store";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
 

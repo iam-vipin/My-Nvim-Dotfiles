@@ -3,11 +3,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Controller, FieldPath, useFormContext } from "react-hook-form";
+import type { FieldPath } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { ChevronRight } from "lucide-react";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues/issue-modal";

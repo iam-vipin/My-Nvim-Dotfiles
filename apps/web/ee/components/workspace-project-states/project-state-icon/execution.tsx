@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // types
-import { TSvgIcons } from "./types";
+import type { TSvgIcons } from "./types";
 
 export const ExecutionIcon: FC<TSvgIcons> = (props) => {
   const { width, height, className, color, ...rest } = props;

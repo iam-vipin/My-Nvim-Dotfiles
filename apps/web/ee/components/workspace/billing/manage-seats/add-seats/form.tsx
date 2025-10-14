@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
-import { TProrationPreview } from "@plane/types";
+import type { TProrationPreview } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import {

@@ -1,5 +1,7 @@
-import React, { FC, ReactNode, useCallback, useState } from "react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FC, ReactNode } from "react";
+import React, { useCallback, useState } from "react";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";

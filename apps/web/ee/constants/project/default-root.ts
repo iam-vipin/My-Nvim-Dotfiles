@@ -1,12 +1,8 @@
-import { GalleryVertical, GanttChartSquare, Kanban, List, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { GalleryVertical, GanttChartSquare, Kanban, List } from "lucide-react";
 // plane web types
-import {
-  EProjectLayouts,
-  EProjectScope,
-  TProjectGroupBy,
-  TProjectSortBy,
-  TProjectSortOrder,
-} from "@/plane-web/types/workspace-project-filters";
+import type { TProjectGroupBy, TProjectSortBy, TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
 import { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
 
 // scope constants

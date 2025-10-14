@@ -2,14 +2,8 @@ import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import {
-  EViewAccess,
-  TLoader,
-  TPublishViewDetails,
-  TPublishViewSettings,
-  TTeamspaceView,
-  TViewFilters,
-} from "@plane/types";
+import type { TLoader, TPublishViewDetails, TPublishViewSettings, TTeamspaceView, TViewFilters } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 // plane web helpers
 import {
   getValidatedViewFilters,
@@ -20,7 +14,7 @@ import {
 // plane web services
 import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamspaceViewStore {
   // observables

@@ -13,7 +13,7 @@ import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 // Plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 import { EpicsDropdown } from "../../dropdowns";
 
 type Props = {

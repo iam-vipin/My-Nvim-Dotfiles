@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // types
 import { TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TTeamspaceView } from "@plane/types";
+import type { TTeamspaceView } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // plan web hooks

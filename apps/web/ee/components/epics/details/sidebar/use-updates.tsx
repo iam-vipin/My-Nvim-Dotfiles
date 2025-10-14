@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
-import { EUpdateEntityType, TCommentLoader, TUpdate, TUpdateComment, TUpdateOperations } from "@plane/types";
+import type { TCommentLoader, TUpdate, TUpdateComment, TUpdateOperations } from "@plane/types";
+import { EUpdateEntityType } from "@plane/types";
 import { useUser } from "@/hooks/store/user";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";

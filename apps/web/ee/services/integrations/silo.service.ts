@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 
 export class SiloAppService {
   protected baseURL: string;

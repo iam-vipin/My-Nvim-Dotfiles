@@ -8,13 +8,8 @@ import {
   NUMBER_WIDGET_Y_AXIS_METRICS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EWidgetChartModels,
-  EWidgetChartTypes,
-  EWidgetXAxisProperty,
-  TDashboardWidget,
-  TDashboardWidgetConfig,
-} from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes, EWidgetXAxisProperty } from "@plane/types";
 // local components
 import { WidgetChartTypeIcon } from "../../widgets";
 import { DashboardWidgetChartTypesDropdown } from "../../widgets/dropdown";

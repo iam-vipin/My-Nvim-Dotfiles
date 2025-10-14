@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
  */
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { TChartData, UserInsightColumns } from "@plane/types";
+import type { TChartData, UserInsightColumns } from "@plane/types";
 
 /**
  * Local imports

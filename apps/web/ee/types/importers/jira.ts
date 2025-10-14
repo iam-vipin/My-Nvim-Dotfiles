@@ -1,6 +1,6 @@
-import { JiraPATAuthState } from "@plane/etl/jira";
+import type { JiraPATAuthState } from "@plane/etl/jira";
 // plane web types
-import { TStepperBlock } from "@/plane-web/types/importers";
+import type { TStepperBlock } from "@/plane-web/types/importers";
 
 // authentication PAT form field types
 export type TJiraPATFormFields = Omit<JiraPATAuthState, "workspaceId" | "userId" | "apiToken">;

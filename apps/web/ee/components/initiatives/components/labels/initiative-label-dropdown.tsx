@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Loader, Plus, Tag } from "lucide-react";
 
@@ -13,7 +14,7 @@ import { cn } from "@plane/utils";
 
 // types
 import { useUserPermissions } from "@/hooks/store/user";
-import { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TInitiativeLabel } from "@/plane-web/types/initiative";
 
 export type TInitiativeLabelDropdownProps = {
   value: string[];

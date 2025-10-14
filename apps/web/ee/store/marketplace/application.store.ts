@@ -3,12 +3,12 @@ import { update } from "lodash-es";
 import { action, makeObservable, observable, runInAction, set } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TLoader, TUserApplication, TApplicationCategory } from "@plane/types";
+import type { TLoader, TUserApplication, TApplicationCategory } from "@plane/types";
 // services
 import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
 import { CategoryService } from "@/plane-web/services/marketplace/category.service";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IApplicationStore {
   // observables

@@ -12,7 +12,7 @@ import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 import { useMember } from "@/hooks/store/use-member";
 // plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 // local components
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
 import { PropertyBlockWrapper } from "./property-block-wrapper";

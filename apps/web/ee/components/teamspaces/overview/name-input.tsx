@@ -1,8 +1,9 @@
 "use client";
 
-import { FC, useState, useEffect, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 // ui
 import { TextArea } from "@plane/ui";
 // types

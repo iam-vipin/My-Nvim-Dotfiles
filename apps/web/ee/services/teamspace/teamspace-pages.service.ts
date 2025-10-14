@@ -1,8 +1,8 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane types
-import { TPage, TDocumentPayload } from "@plane/types";
-import { type TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
+import type { TPage, TDocumentPayload } from "@plane/types";
+import type { TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
 // helpers;
 import { APIService } from "@/services/api.service";
 

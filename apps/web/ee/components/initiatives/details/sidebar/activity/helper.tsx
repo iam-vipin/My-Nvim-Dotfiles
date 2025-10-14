@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { AlignLeft, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
 import { EpicIcon, InitiativeIcon, ProjectIcon } from "@plane/propel/icons";
-import { TBaseActivityVerbs } from "@plane/types";
+import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
-import { TInitiativeActivity } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity } from "@/plane-web/types/initiative";
 
 // Get the key for the issue property type based on the property type and relation type
 export const getInitiativeActivityKey = (

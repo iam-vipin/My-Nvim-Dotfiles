@@ -1,5 +1,6 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { ArrowRight } from "lucide-react";
 // plane imports
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";

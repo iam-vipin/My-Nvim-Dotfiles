@@ -2,7 +2,7 @@ import { concat, set, uniq, update } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import {
+import type {
   EIssuePropertyType,
   IIssueProperty,
   IIssueType,
@@ -15,7 +15,7 @@ import {
 } from "@plane/types";
 // plane web store
 import { IssueProperty } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 type TIssueTypeStore = {
   root: RootStore;

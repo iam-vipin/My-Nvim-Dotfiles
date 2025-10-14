@@ -3,7 +3,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EIssueServiceType, EWorkItemTypeEntity, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { DraftIssuePropertyValuesService } from "@/plane-web/services/issue-types/draft-issue-property-values.service";

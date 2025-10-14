@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
@@ -11,7 +12,7 @@ import type { TIssueLinkEditableFields } from "@plane/types";
 import { Input, ModalCore } from "@plane/ui";
 // types
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TLinkOperations } from "./root";
+import type { TLinkOperations } from "./root";
 // Plane-web
 
 export type TIssueLinkCreateFormFieldOptions = TIssueLinkEditableFields & {

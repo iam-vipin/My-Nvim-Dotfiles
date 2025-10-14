@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 // ui
-import { TUserApplication } from "@plane/types";
+import type { TUserApplication } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // helpers
 // hooks

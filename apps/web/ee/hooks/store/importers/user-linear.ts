@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { ILinearStore } from "@/plane-web/store/importers";
+import type { ILinearStore } from "@/plane-web/store/importers";
 
 export const useLinearImporter = (): ILinearStore => {
   const context = useContext(StoreContext);

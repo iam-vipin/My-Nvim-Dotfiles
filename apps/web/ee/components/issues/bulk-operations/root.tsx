@@ -9,7 +9,7 @@ import { Checkbox } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 // plane web hooks

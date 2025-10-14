@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Database } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";

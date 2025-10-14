@@ -1,5 +1,5 @@
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EActionNodeHandlerName } from "@plane/types";
 // local imports

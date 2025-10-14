@@ -6,7 +6,7 @@ import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
 export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

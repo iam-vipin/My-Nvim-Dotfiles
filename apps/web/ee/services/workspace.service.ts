@@ -1,5 +1,5 @@
 // plane imports
-import {
+import type {
   EViewAccess,
   IBlockUpdateDependencyData,
   ISearchIssueResponse,

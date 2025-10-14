@@ -8,7 +8,7 @@ import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 // types
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
-import { TAttachmentUploadStatus } from "@/plane-web/store/projects/project-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/plane-web/store/projects/project-details/attachment.store";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;

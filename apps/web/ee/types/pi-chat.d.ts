@@ -1,4 +1,4 @@
-import { TIssue, TLogoProps, TProject, TFileSignedURLResponse } from "@plane/types";
+import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse } from "@plane/types";
 
 export enum EFeedback {
   POSITIVE = "positive",

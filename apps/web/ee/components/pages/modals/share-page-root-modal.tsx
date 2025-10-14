@@ -5,20 +5,21 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // constants
-import { EPageSharedUserAccess, EUserWorkspaceRoles } from "@plane/types";
+import type { EPageSharedUserAccess } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { getPageName } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // plane web hooks
-import { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";
+import type { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";
 import { useMemberOptions } from "@/plane-web/hooks/pages/use-shared-member-options";
 import { usePageStore } from "@/plane-web/hooks/store";
 // components
 import { SharePageModal } from "../share/share-page-modal";
 // types
-import { TSharePageModalProps } from "../share/types";
+import type { TSharePageModalProps } from "../share/types";
 
 export const SharePageRoolModal: React.FC<TSharePageModalProps> = observer(
   ({ isOpen, onClose, page, storeType, shareForm, isSharedUsersAccordionOpen, onToggleSharedUsersAccordion }) => {

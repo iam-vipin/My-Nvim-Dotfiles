@@ -1,9 +1,10 @@
 "use client";
 
-import { FC } from "react";
-import { EMobileAuthModes, EMobileAuthSteps, TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
+import type { FC } from "react";
+import type { TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
+import { EMobileAuthModes, EMobileAuthSteps } from "@plane/constants";
 import { PlaneLogo } from "@plane/propel/icons";
-import { TMobileWorkspaceInvitation } from "@plane/types";
+import type { TMobileWorkspaceInvitation } from "@plane/types";
 
 const AUTH_SIGNUP_HEADER_CONTENT_OPTIONS = {
   [EMobileAuthSteps.EMAIL]: {

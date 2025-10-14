@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -11,7 +12,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // plane web  types
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira-server";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_JIRA];
 

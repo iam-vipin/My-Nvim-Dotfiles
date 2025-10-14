@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // plane web types
-import { TGithubRepository } from "@plane/types";
+import type { TGithubRepository } from "@plane/types";
 
 export class GithubDataService {
   protected baseURL: string;

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 
 import { cn } from "@plane/utils";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 import { PageCommentDisplay } from "./comment-display";
 import { PageCommentReplyLoadingSkeleton } from "./reply-loading-skeleton";
 

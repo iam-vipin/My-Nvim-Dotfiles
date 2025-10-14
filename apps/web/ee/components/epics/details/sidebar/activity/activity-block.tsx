@@ -2,12 +2,14 @@
 
 import { observer } from "mobx-react";
 import { LayersIcon } from "@plane/propel/icons";
-import { EIssueServiceType, TBaseActivityVerbs } from "@plane/types";
+import type { TBaseActivityVerbs } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { getEpicActivityKey, EPIC_UPDATES_HELPER_MAP, TEpicActivityFields } from "./helper";
+import type { TEpicActivityFields } from "./helper";
+import { getEpicActivityKey, EPIC_UPDATES_HELPER_MAP } from "./helper";
 
 type TEpicActivityItemProps = {
   id: string;

@@ -1,10 +1,6 @@
 import { SeparatorBasedFilterAdapter } from "@plane/shared-state";
-import {
-  EQUALITY_OPERATOR,
-  EXTERNAL_WIDGET_OPERATOR_SEPARATOR,
-  TDashboardWidgetFilterKeys,
-  TExternalDashboardWidgetFilterExpression,
-} from "@plane/types";
+import type { TDashboardWidgetFilterKeys, TExternalDashboardWidgetFilterExpression } from "@plane/types";
+import { EQUALITY_OPERATOR, EXTERNAL_WIDGET_OPERATOR_SEPARATOR } from "@plane/types";
 
 export class DashboardWidgetFilterAdapter extends SeparatorBasedFilterAdapter<
   TDashboardWidgetFilterKeys,

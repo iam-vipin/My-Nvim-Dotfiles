@@ -3,11 +3,10 @@ import { includes, isEmpty, orderBy, reverse, sortBy } from "lodash-es";
 import { storage } from "@/lib/local-storage";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TProject } from "@/plane-web/types/projects";
-import {
-  EProjectScope,
+import type { TProject } from "@/plane-web/types/projects";
+import type {
   TProjectAttributes,
   TProjectsBoardLayoutStructure,
   TProjectGroupBy,
@@ -16,6 +15,7 @@ import {
   TProjectPriority,
   TProjectFilters,
 } from "@/plane-web/types/workspace-project-filters";
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 
 export interface IProjectFilterHelper {
   filterProjectsByScope: (projects: TProject[], scope: EProjectScope) => TProject[];

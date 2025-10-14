@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { stripTrailingSlash } from "@plane/etl/core";
@@ -9,9 +10,10 @@ import { Button } from "@plane/propel/button";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web components
-import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
+import type { TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
+import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
-import { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
+import type { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
 import JiraLogo from "@/public/services/jira.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";

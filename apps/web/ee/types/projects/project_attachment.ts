@@ -1,4 +1,4 @@
-import { TFileSignedURLResponse } from "@plane/types";
+import type { TFileSignedURLResponse } from "@plane/types";
 
 export type TProjectAttachment = {
   id: string;

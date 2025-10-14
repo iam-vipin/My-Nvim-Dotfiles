@@ -1,7 +1,7 @@
 import { isEmpty } from "lodash-es";
-import { TIssue, TIssuePriorities } from "@plane/types";
+import type { TIssue, TIssuePriorities } from "@plane/types";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 
 // --- Hooks per type ---
 export const useWorkItemData = (artifactId: string): Partial<TIssue> => {

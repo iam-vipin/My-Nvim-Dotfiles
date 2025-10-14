@@ -2,7 +2,7 @@ import { orderBy, isNil } from "lodash-es";
 // plane constants
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 // plane types
-import { TTeamspaceView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
+import type { TTeamspaceView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // helpers
 import { getDate, satisfiesDateFilter } from "@plane/utils";
 

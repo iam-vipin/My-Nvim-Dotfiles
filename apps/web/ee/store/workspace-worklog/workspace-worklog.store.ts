@@ -9,10 +9,11 @@ import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/wo
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { IWorklog, Worklog } from "@/plane-web/store/workspace-worklog";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IWorklog } from "@/plane-web/store/workspace-worklog";
+import { Worklog } from "@/plane-web/store/workspace-worklog";
 // plane web types
-import {
+import type {
   TDefaultPaginatedInfo,
   TWorklog,
   TWorklogFilter,

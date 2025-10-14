@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
-import { TProjectTemplateForm } from "@plane/types";
+import type { TProjectTemplateForm } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components

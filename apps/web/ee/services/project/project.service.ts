@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-catch */
 
 // plane imports
-import { TProject, TProjectLink, TStateAnalytics } from "@plane/types";
+import type { TProject, TProjectLink, TStateAnalytics } from "@plane/types";
 // plane web imports
-import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+import type { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
 // services
 import { ProjectService as CeProjectService } from "@/services/project";
 

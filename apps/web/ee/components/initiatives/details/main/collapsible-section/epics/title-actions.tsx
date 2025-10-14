@@ -1,4 +1,5 @@
-import { FC, useCallback } from "react";
+import type { FC } from "react";
+import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
@@ -8,7 +9,7 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE,
 } from "@plane/constants";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";

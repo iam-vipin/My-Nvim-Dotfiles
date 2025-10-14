@@ -1,4 +1,5 @@
-import React, { FC, SyntheticEvent } from "react";
+import type { FC, SyntheticEvent } from "react";
+import React from "react";
 // plane imports
 import { observer } from "mobx-react";
 import { usePlatformOS } from "@plane/hooks";

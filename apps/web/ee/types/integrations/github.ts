@@ -1,6 +1,6 @@
-import { TGithubWorkspaceConnectionData } from "@plane/etl/core";
-import { IState } from "@plane/sdk";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { TGithubWorkspaceConnectionData } from "@plane/etl/core";
+import type { IState } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 // auth types
 export type TGithubWorkspaceConnection = TWorkspaceConnection<object, TGithubWorkspaceConnectionData>;

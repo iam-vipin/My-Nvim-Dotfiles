@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane ui
 import { WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import type { TDashboardWidget } from "@plane/types";
 // local components
 import { WidgetDateGroupSelect } from "./date-group-select";
 import { WidgetPropertySelect } from "./property-select";

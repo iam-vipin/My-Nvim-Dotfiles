@@ -1,10 +1,11 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
-import { TClickUpFolder } from "@plane/etl/clickup";
+import type { TClickUpFolder } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
 import { Loader, MultiSelectDropdown } from "@plane/ui";
 // plane web components

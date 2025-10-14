@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { PersonalAccessTokenAuth } from "@/plane-web/components/importers/jira-server";

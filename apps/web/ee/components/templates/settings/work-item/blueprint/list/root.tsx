@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { FieldPath, FieldValues, PathValue, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues, PathValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import {
+import type {
   EWorkItemTypeEntity,
   IIssueLabel,
   IIssueType,
@@ -14,12 +15,12 @@ import {
   TIssuePropertyValues,
   TWorkItemBlueprintFormData,
 } from "@plane/types";
-import {
-  mockCreateWorkItemBlueprint,
+import type {
   TProjectBlueprintDetails,
   TWorkItemBlueprintFormDataListInvalid,
   TWorkItemSanitizationResult,
 } from "@plane/utils";
+import { mockCreateWorkItemBlueprint } from "@plane/utils";
 // plane web imports
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
 // local imports

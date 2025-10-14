@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import { Pencil, RotateCw, Trash2 } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { ContextMenu, CustomMenu, DragHandle, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // plane web store
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 // local imports
 import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 

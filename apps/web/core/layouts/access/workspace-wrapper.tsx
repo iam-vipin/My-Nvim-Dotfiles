@@ -1,5 +1,6 @@
 import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import type { EUserPermissions } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { useUserPermissions } from "@/hooks/store/user";
 interface IWorkspaceAuthWrapper {

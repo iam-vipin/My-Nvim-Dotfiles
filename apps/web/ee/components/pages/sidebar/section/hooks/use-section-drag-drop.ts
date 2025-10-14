@@ -1,4 +1,5 @@
-import { RefObject, useEffect, useState } from "react";
+import type { RefObject } from "react";
+import { useEffect, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 // plane imports
@@ -9,7 +10,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { DragAndDropHookReturn } from "../types";
+import type { DragAndDropHookReturn } from "../types";
 
 /**
  * Hook for handling section drag and drop functionality

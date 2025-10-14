@@ -13,7 +13,7 @@ import { PublishPageModal } from "@/plane-web/components/pages";
 import { usePublishPage, useWorkspaceSubscription, EPageStoreType } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 interface PagePublishActionsProps {
   page: TPageInstance;

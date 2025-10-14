@@ -4,10 +4,10 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { TGithubRepository } from "@plane/types";
+import type { TGithubRepository } from "@plane/types";
 import { GithubDataService } from "@/plane-web/services/integrations/github";
 // plane web store
-import { IGithubStore } from "@/plane-web/store/integrations";
+import type { IGithubStore } from "@/plane-web/store/integrations";
 
 export interface IGithubDataStore {
   // store instances

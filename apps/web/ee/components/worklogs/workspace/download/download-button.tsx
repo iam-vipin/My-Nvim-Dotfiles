@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } from "@plane/constants";
@@ -9,7 +10,7 @@ import { PopoverMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceWorklogDownloads, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
-import { TWorklogDownload } from "@/plane-web/types";
+import type { TWorklogDownload } from "@/plane-web/types";
 
 type TDownloadFormat = "csv" | "xlsx";
 

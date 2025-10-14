@@ -2,9 +2,7 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import {
-  EWorkItemConversionType,
-  EWorkItemTypeEntity,
+import type {
   IIssuePropertiesService,
   IIssuePropertyOptionsService,
   IIssueType,
@@ -16,6 +14,7 @@ import {
   TLoader,
   TWorkItemTypesPropertiesOptions,
 } from "@plane/types";
+import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
 // local db utils
 import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 // plane web services
@@ -30,7 +29,7 @@ import {
 } from "@/plane-web/services/issue-types";
 // plane web stores
 import { IssueType } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export class IssueTypes implements IIssueTypesStore {
   // observables

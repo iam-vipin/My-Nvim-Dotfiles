@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -9,7 +10,8 @@ import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssueServiceType, EWorkItemTypeEntity, type ISearchIssueResponse, type TIssue } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { cn, getChangedIssuefields, getTabIndex } from "@plane/utils";
 // components
 import {

@@ -1,27 +1,26 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
+import type { TServiceAuthConfiguration } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web store types
 import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
 import { ZipImporterService } from "@/plane-web/services/importers/zip-importer/data.service";
 import { SiloAssetsService } from "@/plane-web/services/importers/zip-importer/silo-assets.service";
-import {
-  IImporterBaseStore,
-  IImporterJobStore,
-  ImporterBaseStore,
-  ImporterJobStore,
-} from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
+import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
+import type {
   TImporterStepKeys,
-  E_IMPORTER_STEPS,
   TImporterStep,
   TImporterDataPayload,
+  TDocImporterJobConfig,
+} from "@/plane-web/types/importers/zip-importer";
+import {
+  E_IMPORTER_STEPS,
   EZipDriverType,
   EDocImporterDestinationType,
-  TDocImporterJobConfig,
 } from "@/plane-web/types/importers/zip-importer";
 
 // constants

@@ -3,11 +3,13 @@ import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { type EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
+import { getEditorContentWithReplacedAssets } from "@plane/editor";
+import type { EditorTitleRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { FileService } from "@plane/services";
-import { EFileAssetType, TPageTemplate } from "@plane/types";
+import type { TPageTemplate } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -16,8 +18,8 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";
 // store
-import { IBaseTemplateInstance } from "@/plane-web/store/templates";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 const fileService = new FileService();
 

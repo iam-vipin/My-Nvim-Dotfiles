@@ -1,10 +1,10 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { TProjectLink, TProjectLinkMap, TProjectLinkIdMap } from "@plane/types";
+import type { TProjectLink, TProjectLinkMap, TProjectLinkIdMap } from "@plane/types";
 // types
 import { ProjectService } from "@/plane-web/services";
-import { IProjectStore } from "../projects";
+import type { IProjectStore } from "../projects";
 
 export interface IProjectLinkStoreActions {
   addLinks: (projectId: string, links: TProjectLink[]) => void;

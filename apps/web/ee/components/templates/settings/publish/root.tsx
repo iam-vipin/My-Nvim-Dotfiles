@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
+import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import {
   ensureUrlHasProtocol,
   getAssetIdFromUrl,
@@ -16,7 +16,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
 // local imports
 import { PublishTemplateFormRoot, PublishTemplateLoader } from "./form";
 

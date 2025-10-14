@@ -4,9 +4,10 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EWorkItemTypeEntity, PartialDeep, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
+import type { PartialDeep, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
+import { EWorkItemTypeEntity } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
 import {
-  TWorkItemSanitizationResult,
   processWorkItemCustomProperties,
   getRecurringWorkItemSettingsPath,
   recurringWorkItemDataToSanitizedFormData,
@@ -25,7 +26,8 @@ import { RecurringWorkItemActivityRoot } from "@/plane-web/components/recurring-
 import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 // local imports
-import { ERecurringWorkItemFormOperation, TRecurringWorkItemFormSubmitData, RecurringWorkItemFormRoot } from "./form";
+import type { TRecurringWorkItemFormSubmitData } from "./form";
+import { ERecurringWorkItemFormOperation, RecurringWorkItemFormRoot } from "./form";
 import { RecurringWorkItemLoader } from "./loader";
 
 type TCreateUpdateRecurringWorkItemProps = {

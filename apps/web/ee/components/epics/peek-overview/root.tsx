@@ -1,11 +1,13 @@
 "use client";
 
-import { FC, useEffect, useState, useMemo, useCallback } from "react";
+import type { FC } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
+import type { TIssue, IWorkItemPeekOverview } from "@plane/types";
+import { EIssueServiceType, EUserProjectRoles } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks

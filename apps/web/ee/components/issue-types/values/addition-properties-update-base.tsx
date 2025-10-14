@@ -4,7 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
-import { EWorkItemTypeEntity, IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
+import type { IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
+import { EWorkItemTypeEntity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web imports
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values";

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { EFileAssetType } from "@plane/types";
+import type { EFileAssetType } from "@plane/types";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // local imports

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane web components
 import { observer } from "mobx-react";
 import { Stepper } from "@/plane-web/components/importers/ui";

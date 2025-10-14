@@ -3,14 +3,8 @@ import { AlignLeft } from "lucide-react";
 // plane imports
 import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuePropertyType,
-  EWorkItemTypeEntity,
-  IIssueProperty,
-  IIssueType,
-  IProject,
-  TWorkItemFilterProperty,
-} from "@plane/types";
+import type { EIssuePropertyType, IIssueProperty, IIssueType, IProject, TWorkItemFilterProperty } from "@plane/types";
+import { EWorkItemTypeEntity } from "@plane/types";
 import { Logo } from "@plane/ui";
 import {
   getTeamspaceProjectFilterConfig,
@@ -19,12 +13,12 @@ import {
   isLoaderReady,
 } from "@plane/utils";
 // ce imports
-import {
+import type {
   TUseWorkItemFiltersConfigProps as TCoreUseWorkItemFiltersConfigProps,
   TWorkItemFiltersEntityProps as TCoreWorkItemFiltersEntityProps,
   TWorkItemFiltersConfig,
-  useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig,
 } from "@/ce/hooks/work-item-filters/use-work-item-filters-config";
+import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/hooks/work-item-filters/use-work-item-filters-config";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports

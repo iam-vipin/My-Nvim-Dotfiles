@@ -1,6 +1,6 @@
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 /**

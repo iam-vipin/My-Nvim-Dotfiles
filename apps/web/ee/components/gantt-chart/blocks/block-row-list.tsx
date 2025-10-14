@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 // components
 import { observer } from "mobx-react";
-import { GanttChartBlocksProps } from "@/ce/components/gantt-chart/blocks/block-row-list";
+import type { GanttChartBlocksProps } from "@/ce/components/gantt-chart/blocks/block-row-list";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
 import { BlockRow } from "@/components/gantt-chart/blocks/block-row";

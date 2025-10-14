@@ -1,4 +1,4 @@
-import {
+import type {
   IPartialProject,
   TProjectAttributes as TProjectAttributesExport,
   TProjectAttributesParams as TProjectAttributesParamsExport,

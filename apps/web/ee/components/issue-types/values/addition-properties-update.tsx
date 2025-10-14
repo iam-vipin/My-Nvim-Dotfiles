@@ -4,15 +4,14 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType, EWorkItemTypeEntity, TIssuePropertyValues } from "@plane/types";
+import type { TIssuePropertyValues } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local imports
-import {
-  IssueAdditionalPropertyValuesUpdateBase,
-  TIssueAdditionalPropertyValuesUpdateProps,
-} from "./addition-properties-update-base";
+import type { TIssueAdditionalPropertyValuesUpdateProps } from "./addition-properties-update-base";
+import { IssueAdditionalPropertyValuesUpdateBase } from "./addition-properties-update-base";
 
 /**
  * Store-connected wrapper for issue additional properties update.

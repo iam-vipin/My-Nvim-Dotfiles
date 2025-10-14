@@ -8,14 +8,9 @@ import { EInitiativeNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { InitiativeIcon, WorkItemsIcon, OverviewIcon } from "@plane/propel/icons";
-import { ICustomSearchSelectOption } from "@plane/types";
-import {
-  BreadcrumbNavigationDropdown,
-  BreadcrumbNavigationSearchDropdown,
-  Breadcrumbs,
-  Header,
-  TContextMenuItem,
-} from "@plane/ui";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

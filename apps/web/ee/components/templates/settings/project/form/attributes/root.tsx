@@ -3,9 +3,10 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
+import type { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { cn, getDate, TProjectSanitizationResult, renderFormattedPayloadDate } from "@plane/utils";
+import type { TProjectSanitizationResult } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

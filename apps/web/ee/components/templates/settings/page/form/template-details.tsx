@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { Controller, FieldPath, FieldValues, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Input, TextArea } from "@plane/ui";

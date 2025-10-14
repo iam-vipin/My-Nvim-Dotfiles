@@ -2,14 +2,17 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { EUserWorkspaceRoles, TPage } from "@plane/types";
+import type { EUserPermissions } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
+import type { TPage } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // plane web services
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
-import { BasePage, TPageInstance } from "@/store/pages/base-page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TPageInstance } from "@/store/pages/base-page";
+import { BasePage } from "@/store/pages/base-page";
 
 const teamspacePageService = new TeamspacePageService();
 

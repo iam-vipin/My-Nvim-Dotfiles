@@ -1,104 +1,104 @@
 // plane web store
-import { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
-import {
-  CustomerProperties,
-  CustomerStore,
-  ICustomerPropertiesStore,
-  ICustomersStore,
-} from "@/plane-web/store/customers";
-import { ICycleStore, CycleStore } from "@/plane-web/store/cycle";
-import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
+import type { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
+import type { ICustomerPropertiesStore, ICustomersStore } from "@/plane-web/store/customers";
+import { CustomerProperties, CustomerStore } from "@/plane-web/store/customers";
+import type { ICycleStore } from "@/plane-web/store/cycle";
+import { CycleStore } from "@/plane-web/store/cycle";
+import type { IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
+import { FeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
-import {
-  IWorkspaceNotificationStore,
-  WorkspaceNotificationStore,
-} from "@/plane-web/store/notifications/notifications.store";
-import { IPublishPageStore, PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
-import { IWorkspacePageStore, WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import {
-  ISelfHostedSubscriptionStore,
-  SelfHostedSubscriptionStore,
-} from "@/plane-web/store/subscription/self-hosted-subscription.store";
-import {
-  IWorkspaceSubscriptionStore,
-  WorkspaceSubscriptionStore,
-} from "@/plane-web/store/subscription/subscription.store";
-import { ITeamspaceRootStore, TeamspaceRootStore } from "@/plane-web/store/teamspace";
+import type { IWorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
+import { WorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
+import type { IPublishPageStore } from "@/plane-web/store/pages/publish-page.store";
+import { PublishPageStore } from "@/plane-web/store/pages/publish-page.store";
+import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
+import { WorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
+import type { ISelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
+import { SelfHostedSubscriptionStore } from "@/plane-web/store/subscription/self-hosted-subscription.store";
+import type { IWorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
+import { WorkspaceSubscriptionStore } from "@/plane-web/store/subscription/subscription.store";
+import type { ITeamspaceRootStore } from "@/plane-web/store/teamspace";
+import { TeamspaceRootStore } from "@/plane-web/store/teamspace";
 import { TimeLineStore } from "@/plane-web/store/timeline";
-import { IWorkspaceFeatureStore, WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
-import {
-  IProjectFilterStore,
-  ProjectFilterStore,
-  IWorkspaceProjectStatesStore,
-  WorkspaceProjectStatesStore,
-} from "@/plane-web/store/workspace-project-states";
-import {
-  IWorkspaceWorklogStore,
-  WorkspaceWorklogStore,
-  IWorkspaceWorklogDownloadStore,
-  WorkspaceWorklogDownloadStore,
-} from "@/plane-web/store/workspace-worklog";
+import type { IWorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
+import { WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
+import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
+import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
+import type { IWorkspaceWorklogStore, IWorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
+import { WorkspaceWorklogStore, WorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
 // store
 import { CoreRootStore } from "@/store/root.store";
 import { EZipDriverType } from "../types/importers/zip-importer";
 // automations
-import { AutomationsRootStore, IAutomationsRootStore } from "./automations/root.store";
+import type { IAutomationsRootStore } from "./automations/root.store";
+import { AutomationsRootStore } from "./automations/root.store";
 // dashboards
-import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
+import type { IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
+import { BaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
-import { IGlobalViewStore, GlobalViewStore } from "./global-view.store";
-import {
+import type { IGlobalViewStore } from "./global-view.store";
+import { GlobalViewStore } from "./global-view.store";
+import type {
   IJiraStore,
-  JiraStore,
   IJiraServerStore,
-  JiraServerStore,
   ILinearStore,
   IFlatfileStore,
-  LinearStore,
   IAsanaStore,
-  AsanaStore,
-  FlatfileStore,
   IZipImporterStore,
-  ZipImporterStore,
 } from "./importers";
+import { JiraStore, JiraServerStore, LinearStore, AsanaStore, FlatfileStore, ZipImporterStore } from "./importers";
 // initiative
-import { ClickUpStore, IClickUpStore } from "./importers/clickup/root.store";
-import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
-import { IInitiativeStore, InitiativeStore } from "./initiatives/initiatives.store";
+import type { IClickUpStore } from "./importers/clickup/root.store";
+import { ClickUpStore } from "./importers/clickup/root.store";
+import type { IInitiativeFilterStore } from "./initiatives/initiatives-filter.store";
+import { InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
+import type { IInitiativeStore } from "./initiatives/initiatives.store";
+import { InitiativeStore } from "./initiatives/initiatives.store";
 // integrations
-import {
+import type {
   ISlackStore,
-  SlackStore,
   IGithubStore,
-  GithubStore,
   IGitlabStore,
-  GitlabStore,
   IConnectionStore,
-  ConnectionStore,
   ISentryStore,
-  SentryStore,
-  GithubEnterpriseStore,
   IGithubEnterpriseStore,
   IGitlabEnterpriseStore,
+} from "./integrations";
+import {
+  SlackStore,
+  GithubStore,
+  GitlabStore,
+  ConnectionStore,
+  SentryStore,
+  GithubEnterpriseStore,
   GitlabEnterpriseStore,
 } from "./integrations";
 
-import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
-import { EpicBaseStore, IEpicBaseStore } from "./issue/epic/base.store";
+import type { IEpicAnalyticStore } from "./issue/epic/analytic.store";
+import { EpicAnalytics } from "./issue/epic/analytic.store";
+import type { IEpicBaseStore } from "./issue/epic/base.store";
+import { EpicBaseStore } from "./issue/epic/base.store";
 // marketplace
-import { IApplicationStore, ApplicationStore } from "./marketplace/application.store";
+import type { IApplicationStore } from "./marketplace/application.store";
+import { ApplicationStore } from "./marketplace/application.store";
 // Plane AI
-import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
+import type { IPiChatStore } from "./pi-chat/pi-chat";
+import { PiChatStore } from "./pi-chat/pi-chat";
 // timeline
-import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
+import type { IProjectInboxStore } from "./project-inbox.store";
+import { ProjectInboxStore } from "./project-inbox.store";
 // project view
-import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
-import { IProjectStore, ProjectStore } from "./projects/projects";
+import type { IProjectViewStore } from "./project-view.store";
+import { ProjectViewStore } from "./project-view.store";
+import type { IProjectStore } from "./projects/projects";
+import { ProjectStore } from "./projects/projects";
 // templates
-import { IRecurringWorkItemsRootStore, RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
-import { ITemplatesRootStore, TemplatesRootStore } from "./templates/store/root.store";
+import type { IRecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
+import { RecurringWorkItemsRootStore } from "./recurring-work-items/root.store";
+import type { ITemplatesRootStore } from "./templates/store/root.store";
+import { TemplatesRootStore } from "./templates/store/root.store";
 // timeline
-import { ITimelineStore } from "./timeline";
+import type { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;

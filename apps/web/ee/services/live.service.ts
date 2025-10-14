@@ -1,5 +1,5 @@
 import { LIVE_URL } from "@plane/constants";
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export class LiveService extends APIService {

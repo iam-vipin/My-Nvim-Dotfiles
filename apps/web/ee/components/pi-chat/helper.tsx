@@ -1,6 +1,6 @@
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons";
-import { IFormattedValue, IItem } from "@/plane-web/types/pi-chat";
+import type { IFormattedValue, IItem } from "@/plane-web/types/pi-chat";
 import { IssueIdentifier } from "../issues/issue-details/issue-identifier";
 
 export const parseDataStream = (dataStream: string) =>

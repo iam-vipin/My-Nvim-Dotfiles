@@ -1,28 +1,21 @@
 import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
-import { AsanaConfig } from "@plane/etl/asana";
+import type { AsanaConfig } from "@plane/etl/asana";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web constants
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
 // plane web store types
-import {
+import type {
   IImporterBaseStore,
-  ImporterBaseStore,
   IImporterJobStore,
-  ImporterJobStore,
   IAsanaAuthStore,
-  AsanaAuthStore,
   IAsanaDataStore,
-  AsanaDataStore,
 } from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import { ImporterBaseStore, ImporterJobStore, AsanaAuthStore, AsanaDataStore } from "@/plane-web/store/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
-  TImporterDataPayload,
-  TImporterStepKeys,
-  E_IMPORTER_STEPS,
-  TImporterStep,
-} from "@/plane-web/types/importers/asana";
+import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/plane-web/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

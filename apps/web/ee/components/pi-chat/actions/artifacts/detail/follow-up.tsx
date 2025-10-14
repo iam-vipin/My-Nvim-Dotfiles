@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUp } from "lucide-react";
-import { EditorRefApi, PiChatEditorWithRef } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
+import { PiChatEditorWithRef } from "@plane/editor";
 import { FilledCheck, FilledCross } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
 import { isCommentEmpty } from "@plane/utils";

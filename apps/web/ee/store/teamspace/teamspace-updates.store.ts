@@ -3,7 +3,7 @@ import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
-import {
+import type {
   TIssueCommentReaction,
   TIssueCommentReactionIdMap,
   TIssueCommentReactionMap,
@@ -15,7 +15,7 @@ import {
 // plane web imports
 import { groupReactions } from "@plane/utils";
 import { TeamspaceUpdatesService } from "@/plane-web/services/teamspace/teamspace-updates.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamspaceUpdatesStore {
   // observables

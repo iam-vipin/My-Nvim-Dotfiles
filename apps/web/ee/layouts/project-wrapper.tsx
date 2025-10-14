@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ce imports
-import { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
+import type { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // layouts

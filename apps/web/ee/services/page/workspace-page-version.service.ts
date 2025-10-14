@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane types
-import { TPageVersion } from "@plane/types";
+import type { TPageVersion } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

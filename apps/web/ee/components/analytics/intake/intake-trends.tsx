@@ -5,7 +5,7 @@ import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { LineChart } from "@plane/propel/charts/line-chart";
-import { IChartResponse, TChartData } from "@plane/types";
+import type { IChartResponse, TChartData } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";

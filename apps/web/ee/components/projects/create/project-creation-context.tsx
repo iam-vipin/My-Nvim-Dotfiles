@@ -1,8 +1,8 @@
 import { createContext } from "react";
 // react-hook-form
-import { UseFormReset } from "react-hook-form";
+import type { UseFormReset } from "react-hook-form";
 // plane imports
-import { TProject } from "@plane/types";
+import type { TProject } from "@plane/types";
 
 export type THandleTemplateChangeProps = {
   workspaceSlug: string;

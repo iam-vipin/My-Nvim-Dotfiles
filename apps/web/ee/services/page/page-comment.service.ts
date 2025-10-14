@@ -1,7 +1,7 @@
 // constants
 import { API_BASE_URL } from "@plane/constants";
 // types
-import { TPageComment, TPageCommentReaction } from "@plane/types";
+import type { TPageComment, TPageCommentReaction } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

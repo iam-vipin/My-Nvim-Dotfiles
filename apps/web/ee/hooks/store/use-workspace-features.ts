@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { IWorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
+import type { IWorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
 
 export const useWorkspaceFeatures = (): IWorkspaceFeatureStore => {
   const context = useContext(StoreContext);

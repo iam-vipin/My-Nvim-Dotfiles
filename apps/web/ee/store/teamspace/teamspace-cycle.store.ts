@@ -2,12 +2,12 @@ import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { ICycle, TLoader } from "@plane/types";
+import type { ICycle, TLoader } from "@plane/types";
 // plane web services
 import { TeamspaceCycleService } from "@/plane-web/services/teamspace/teamspace-cycles.service";
 // plane web store
-import { ICycleStore } from "@/plane-web/store/cycle";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { ICycleStore } from "@/plane-web/store/cycle";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamspaceCycleStore {
   // observables

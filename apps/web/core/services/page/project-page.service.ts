@@ -1,6 +1,6 @@
 // types
 import { API_BASE_URL } from "@plane/constants";
-import { TDocumentPayload, TPage, TPagesSummary } from "@plane/types";
+import type { TDocumentPayload, TPage, TPagesSummary } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";

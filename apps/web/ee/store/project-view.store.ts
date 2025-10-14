@@ -1,12 +1,11 @@
 import { set } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
-import { EViewAccess, IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
+import type { IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 import { ViewService } from "@/plane-web/services/project/view.service";
-import {
-  IProjectViewStore as ICoreProjectViewStore,
-  ProjectViewStore as CoreProjectViewStore,
-} from "@/store/project-view.store";
-import { RootStore } from "./root.store";
+import type { IProjectViewStore as ICoreProjectViewStore } from "@/store/project-view.store";
+import { ProjectViewStore as CoreProjectViewStore } from "@/store/project-view.store";
+import type { RootStore } from "./root.store";
 
 export interface IProjectViewStore extends ICoreProjectViewStore {
   lockView: (workspaceSlug: string, projectId: string, viewId: string) => Promise<void>;

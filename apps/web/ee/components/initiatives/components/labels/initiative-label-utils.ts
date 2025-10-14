@@ -1,5 +1,5 @@
-import { TDropTarget } from "@plane/types";
-import { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TDropTarget } from "@plane/types";
+import type { TInitiativeLabel } from "@/plane-web/types/initiative";
 
 /**
  * This provides a boolean to indicate if the label can be dropped onto the droptarget

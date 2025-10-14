@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

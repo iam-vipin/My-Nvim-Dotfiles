@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
 import { EpicIcon, LayersIcon } from "@plane/propel/icons";
-import { TLogoProps } from "@plane/types";
+import type { TLogoProps } from "@plane/types";
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { cn, generateIconColors } from "@plane/utils";
 

@@ -7,12 +7,13 @@ import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { AlertModalCore, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
+import type { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
 
 type TRecurringWorkItemQuickActionsProps = {
   deleteRecurringWorkItem: (id: string) => Promise<void>;

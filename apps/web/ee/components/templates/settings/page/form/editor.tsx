@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EFileAssetType, TSearchEntityRequestPayload } from "@plane/types";
+import type { TSearchEntityRequestPayload } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks

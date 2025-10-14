@@ -1,7 +1,7 @@
 import type { TCommentConfig } from "@plane/editor";
-import {
+import type {
   INavigationPaneExtensionComponent,
-  type INavigationPaneExtension as ICoreNavigationPaneExtension,
+  INavigationPaneExtension as ICoreNavigationPaneExtension,
 } from "@/components/pages/navigation-pane";
 
 // EE-specific navigation pane extension data types

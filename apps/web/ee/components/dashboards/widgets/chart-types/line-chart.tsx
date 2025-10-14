@@ -4,9 +4,11 @@ import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
-import { EWidgetChartModels, TLineChartWidgetConfig, TLineItem } from "@plane/types";
+import type { TLineChartWidgetConfig, TLineItem } from "@plane/types";
+import { EWidgetChartModels } from "@plane/types";
 // local imports
-import { generateExtendedColors, TWidgetComponentProps } from ".";
+import type { TWidgetComponentProps } from ".";
+import { generateExtendedColors } from ".";
 
 const LineChart = dynamic(() =>
   import("@plane/propel/charts/line-chart").then((mod) => ({

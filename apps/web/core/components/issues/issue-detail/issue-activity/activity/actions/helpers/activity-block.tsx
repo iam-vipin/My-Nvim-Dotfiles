@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Network } from "lucide-react";
 // plane imports

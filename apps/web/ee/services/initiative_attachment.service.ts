@@ -1,7 +1,7 @@
-import { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import { TInitiativeAttachment, TInitiativeAttachmentUploadResponse } from "@plane/types";
+import type { TInitiativeAttachment, TInitiativeAttachmentUploadResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 import { FileUploadService } from "@/services/file-upload.service";

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   AlignLeft,
   ArrowRightLeft,
@@ -12,12 +12,12 @@ import {
   Users,
 } from "lucide-react";
 import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/propel/icons";
-import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
+import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
 import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 
 // Get the key for the issue property type based on the property type and relation type
 export const getEpicActivityKey = (activityField: TEpicActivityFields | undefined, activityVerb: TEpicActivityVerbs) =>

@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, useRef } from "react";
+import type { MutableRefObject } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -12,11 +13,11 @@ import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
-import { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import { TProject } from "@/plane-web/types/projects";
+import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
+import type { TProject } from "@/plane-web/types/projects";
 import { ProjectColumn } from "./project-column";
 
 interface Props {

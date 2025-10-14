@@ -1,9 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // Plane-web
-import { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/plane-web/types/initiative";
 //
-import { InitiativeStore } from "./initiatives.store";
+import type { InitiativeStore } from "./initiatives.store";
 
 export interface IInitiativeLinkStore {
   initiativeLinksMap: Record<string, TInitiativeLink[]>;

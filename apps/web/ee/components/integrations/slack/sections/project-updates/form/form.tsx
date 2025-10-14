@@ -1,6 +1,7 @@
-import { FC, useState, useEffect } from "react";
+import type { FC } from "react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
-import { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import type { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";

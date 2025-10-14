@@ -8,7 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
-import { EFileAssetType } from "@plane/types";
+import type { EFileAssetType } from "@plane/types";
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

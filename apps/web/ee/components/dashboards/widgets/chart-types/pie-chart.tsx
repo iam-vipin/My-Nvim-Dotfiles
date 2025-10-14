@@ -6,9 +6,10 @@ import { useTheme } from "next-themes";
 // plane constants
 import { CHART_COLOR_PALETTES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@plane/types";
+import type { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@plane/types";
 // local imports
-import { generateExtendedColors, TWidgetComponentProps } from ".";
+import type { TWidgetComponentProps } from ".";
+import { generateExtendedColors } from ".";
 
 const PieChart = dynamic(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({

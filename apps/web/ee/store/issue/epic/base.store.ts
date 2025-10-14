@@ -1,6 +1,7 @@
 import { makeObservable } from "mobx";
 import type { CoreRootStore } from "@/store/root.store";
-import { IUpdateStore, UpdateStore } from "../../updates/base.store";
+import type { IUpdateStore } from "../../updates/base.store";
+import { UpdateStore } from "../../updates/base.store";
 
 export interface IEpicBaseStore {
   updatesStore: IUpdateStore;

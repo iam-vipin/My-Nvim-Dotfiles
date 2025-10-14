@@ -6,10 +6,11 @@ import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
 import { EGithubEntityConnectionType } from "@plane/etl/github";
-import { E_INTEGRATION_KEYS, TGithubEntityConnection } from "@plane/types";
+import type { TGithubEntityConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { GithubEntityService } from "@/plane-web/services/integrations/github";
 // plane web store
-import { IGithubStore } from "@/plane-web/store/integrations";
+import type { IGithubStore } from "@/plane-web/store/integrations";
 
 export interface IGithubEntityStore {
   // store instances

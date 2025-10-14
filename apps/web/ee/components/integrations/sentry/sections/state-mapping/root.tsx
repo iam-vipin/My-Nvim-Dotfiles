@@ -1,10 +1,11 @@
 "use client";
 
-import { FC, useState, useCallback, useMemo } from "react";
+import type { FC } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus, AlertTriangle, RefreshCw } from "lucide-react";
-import { TSentryConfig, TSentryStateMapping } from "@plane/etl/sentry";
+import type { TSentryConfig, TSentryStateMapping } from "@plane/etl/sentry";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";

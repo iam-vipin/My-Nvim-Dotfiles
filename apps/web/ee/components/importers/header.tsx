@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
-import { TImporterConfig } from "./common/dashboard/base-dashboard";
+import type { TImporterConfig } from "./common/dashboard/base-dashboard";
 export interface IImporterHeaderProps<T> {
   config: Partial<TImporterConfig<T>>;
   actions?: React.ReactNode;

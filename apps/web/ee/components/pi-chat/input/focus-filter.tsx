@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -6,7 +6,8 @@ import { AtSign } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
+import type { IProject, IWorkspace } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 import { CustomSelect, Loader, Logo, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -16,7 +17,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { TFocus } from "@/plane-web/types";
+import type { TFocus } from "@/plane-web/types";
 
 type TProps = {
   focus: TFocus;

@@ -1,12 +1,13 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TEpicStats, TLoader } from "@plane/types";
-import { InitiativeService } from "@/plane-web/services/initiative.service";
-import { TInitiativeAnalytics } from "@/plane-web/types/initiative";
-import { RootStore } from "../root.store";
-import { IInitiativeEpicsFilterStore, InitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
-import { InitiativeStore } from "./initiatives.store";
+import type { TEpicStats, TLoader } from "@plane/types";
+import type { InitiativeService } from "@/plane-web/services/initiative.service";
+import type { TInitiativeAnalytics } from "@/plane-web/types/initiative";
+import type { RootStore } from "../root.store";
+import type { IInitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
+import { InitiativeEpicsFilterStore } from "./initiative-epics-filter.store";
+import type { InitiativeStore } from "./initiatives.store";
 
 export interface IInitiativeEpicStore {
   initiativeEpicLoader: Record<string, TLoader>;

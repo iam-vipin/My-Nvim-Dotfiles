@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,9 +29,9 @@ import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/prio
 import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // assets
 import ImagelLight from "@/public/empty-state/empty-updates-light.png";
 

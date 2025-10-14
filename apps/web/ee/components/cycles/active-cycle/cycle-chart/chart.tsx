@@ -17,7 +17,7 @@ import {
   LabelList,
 } from "recharts";
 // plane imports
-import { ICycle, TCycleEstimateSystemAdvanced, TProgressChartData } from "@plane/types";
+import type { ICycle, TCycleEstimateSystemAdvanced, TProgressChartData } from "@plane/types";
 // helpers
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { chartHelper, getColors } from "./helper";

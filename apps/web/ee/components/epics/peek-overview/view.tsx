@@ -1,4 +1,5 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -18,7 +19,8 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
-import { EpicPeekOverviewHeader, TPeekModes } from "./header";
+import type { TPeekModes } from "./header";
+import { EpicPeekOverviewHeader } from "./header";
 import { EpicPeekOverviewLoader } from "./loader";
 
 interface IEpicView {

@@ -5,17 +5,12 @@ import useSWR from "swr";
 import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {
-  ETemplateType,
-  PartialDeep,
-  TWorkItemTemplateForm,
-  TWorkItemTemplateFormData,
-  TIssuePropertyValues,
-} from "@plane/types";
+import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
+import { ETemplateType } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
 import {
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,
-  TWorkItemSanitizationResult,
   workItemTemplateDataToSanitizedFormData,
   workItemTemplateFormDataToTemplate,
   processWorkItemCustomProperties,
@@ -33,7 +28,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // local imports
-import { EWorkItemFormOperation, TWorkItemTemplateFormSubmitData, WorkItemTemplateFormRoot } from "./form";
+import type { TWorkItemTemplateFormSubmitData } from "./form";
+import { EWorkItemFormOperation, WorkItemTemplateFormRoot } from "./form";
 import { WorkItemTemplateLoader } from "./loader";
 
 type TCreateUpdateWorkItemTemplateProps = {

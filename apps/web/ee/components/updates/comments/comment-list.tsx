@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { SendHorizonal } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUpdateEntityType, TUpdateComment, TUpdateOperations } from "@plane/types";
+import type { EUpdateEntityType, TUpdateComment, TUpdateOperations } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";

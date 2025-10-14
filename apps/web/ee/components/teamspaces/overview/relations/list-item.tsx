@@ -3,9 +3,10 @@ import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ERelationType, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
+import type { ERelationType } from "@plane/constants";
+import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import { TTeamspaceDependencyWorkItem } from "@plane/types";
+import type { TTeamspaceDependencyWorkItem } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components

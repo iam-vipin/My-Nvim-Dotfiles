@@ -1,19 +1,17 @@
-import { FC, useCallback } from "react";
+import type { FC } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { FolderOpen, Users } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
-import { TProject } from "@plane/types";
+import type { TProject } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useTeamspaces, useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import {
-  E_IMPORTER_STEPS,
-  TZipImporterProps,
-  EDocImporterDestinationType,
-} from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { E_IMPORTER_STEPS, EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation, Dropdown } from "../../../ui";
 
 export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }) => {

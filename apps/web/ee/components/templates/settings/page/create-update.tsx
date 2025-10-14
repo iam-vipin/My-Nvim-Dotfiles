@@ -6,7 +6,8 @@ import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { extractAssetsFromHTMLContent } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { ETemplateType, PartialDeep, TPageTemplateForm } from "@plane/types";
+import type { PartialDeep, TPageTemplateForm } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 import {
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,
@@ -23,7 +24,8 @@ import { useFlag } from "@/plane-web/hooks/store";
 import { usePageTemplates } from "@/plane-web/hooks/store/templates/use-page-templates";
 // local imports
 import { FileService } from "@/services/file.service";
-import { EPageFormOperation, PageTemplateFormRoot, TPageTemplateFormSubmitData } from "./form";
+import type { TPageTemplateFormSubmitData } from "./form";
+import { EPageFormOperation, PageTemplateFormRoot } from "./form";
 import { PageTemplateLoader } from "./loader";
 
 const fileService = new FileService();

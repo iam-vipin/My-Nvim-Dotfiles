@@ -1,6 +1,6 @@
 import React from "react";
 import { MessageCircle } from "lucide-react";
-import { type TCommentFilters } from "@/plane-web/store/pages/comments/comment.store";
+import type { TCommentFilters } from "@/plane-web/store/pages/comments/comment.store";
 
 export type CommentsEmptyStateProps = {
   hasComments: boolean;

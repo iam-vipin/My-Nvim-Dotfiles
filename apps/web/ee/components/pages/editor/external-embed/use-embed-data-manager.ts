@@ -2,10 +2,11 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps, TExternalEmbedBlockAttributes } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps, TExternalEmbedBlockAttributes } from "@plane/editor";
+import { EExternalEmbedAttributeNames } from "@plane/editor";
 import { useUser } from "@/hooks/store/user";
 import { liveService } from "@/plane-web/services/live.service";
-import { EmbedData } from "./embed-handler";
+import type { EmbedData } from "./embed-handler";
 
 export const useEmbedDataManager = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {
   // attributes

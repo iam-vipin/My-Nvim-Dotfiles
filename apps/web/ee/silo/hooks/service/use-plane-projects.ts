@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import useSWR from "swr";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // silo hooks
 import { useBaseImporter } from "@/plane-web/silo/hooks";
 // services

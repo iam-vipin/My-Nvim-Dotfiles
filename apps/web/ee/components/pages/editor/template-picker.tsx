@@ -5,7 +5,8 @@ import { Shapes } from "lucide-react";
 import { PAGE_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ce imports
-import { PageTemplatePicker as PageTemplatePickerCE, TPageTemplatePickerProps } from "@/ce/components/pages/editor";
+import type { TPageTemplatePickerProps } from "@/ce/components/pages/editor";
+import { PageTemplatePicker as PageTemplatePickerCE } from "@/ce/components/pages/editor";
 // plane web imports
 import { TemplateSelectModal } from "@/plane-web/components/pages/modals";
 import { useFlag } from "@/plane-web/hooks/store";

@@ -3,9 +3,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 // components
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 import { DeleteMultiplePagesModal } from "./delete-multiple-pages-modal";
 
 export type TPageModalsProps = {

@@ -1,16 +1,12 @@
 "use client";
 
-import { FC, FormEvent, useMemo, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { CircleAlert, XCircle } from "lucide-react";
-import {
-  EMobileAuthSteps,
-  EMobileAuthModes,
-  TMobileAuthSteps,
-  TMobileAuthModes,
-  TMobileAuthErrorInfo,
-} from "@plane/constants";
+import type { TMobileAuthSteps, TMobileAuthModes, TMobileAuthErrorInfo } from "@plane/constants";
+import { EMobileAuthSteps, EMobileAuthModes } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { IEmailCheckData } from "@plane/types";
+import type { IEmailCheckData } from "@plane/types";
 import { Input, Spinner } from "@plane/ui";
 import { checkEmailValidity, cn } from "@plane/utils";
 // helpers

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TFilterProperty, TFilterConditionNodeForDisplay } from "@plane/types";
+import type { TFilterProperty, TFilterConditionNodeForDisplay } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
 import { EMPTY_FILTER_PLACEHOLDER_TEXT } from "@/components/rich-filters/shared";

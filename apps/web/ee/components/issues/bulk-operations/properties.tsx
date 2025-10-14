@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
-import { BULK_OPERATION_ERROR_DETAILS, E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
+import type { E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
+import { BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -26,12 +27,10 @@ import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 // plane web imports
-import {
-  IssueTypeDropdown,
-  type TIssueTypeOptionTooltip,
-} from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import type { TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 

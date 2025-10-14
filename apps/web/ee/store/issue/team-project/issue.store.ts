@@ -1,6 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
+import type {
   TIssue,
   TLoader,
   IssuePaginationOptions,
@@ -11,10 +11,11 @@ import {
 // services
 import { TeamspaceWorkItemsService } from "@/plane-web/services/teamspace/teamspace-work-items.service";
 // base class
-import { BaseIssuesStore, IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
+import type { IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
+import { BaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
 // store
-import { IIssueRootStore } from "@/store/issue/root.store";
-import { ITeamProjectWorkItemsFilter } from "./filter.store";
+import type { IIssueRootStore } from "@/store/issue/root.store";
+import type { ITeamProjectWorkItemsFilter } from "./filter.store";
 
 export interface ITeamProjectWorkItems extends IBaseIssuesStore {
   viewFlags: ViewFlags;

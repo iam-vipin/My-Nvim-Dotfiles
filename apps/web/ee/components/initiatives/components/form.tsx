@@ -1,10 +1,12 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EmojiPicker, TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
+import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -28,7 +30,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 
 // plane web components
-import { TInitiative } from "@/plane-web/types";
+import type { TInitiative } from "@/plane-web/types";
 
 // local components
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";

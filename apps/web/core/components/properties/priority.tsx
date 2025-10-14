@@ -1,6 +1,6 @@
 import { PriorityIcon } from "@plane/propel/icons";
 import { cn } from "@plane/propel/utils";
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 
 export const DisplayPriority = (props: { priority: TIssuePriorities; className?: string }) => {
   const { priority, className } = props;

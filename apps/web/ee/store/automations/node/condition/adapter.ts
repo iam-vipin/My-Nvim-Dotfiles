@@ -1,12 +1,12 @@
 // plane imports
 import { FilterAdapter } from "@plane/shared-state";
-import {
-  LOGICAL_OPERATOR,
+import type {
   TAutomationConditionFilterExpressionData,
   TFilterExpression,
   TAutomationConditionFilterProperty,
   TAutomationConditionFilterExpression,
 } from "@plane/types";
+import { LOGICAL_OPERATOR } from "@plane/types";
 import {
   isAndGroupNode,
   isOrGroupNode,

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane imports
@@ -8,7 +8,7 @@ import { INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
 import { InitiativeStateIcon } from "@plane/propel/icons";
-import { TInitiativeStates } from "@plane/types";
+import type { TInitiativeStates } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // types

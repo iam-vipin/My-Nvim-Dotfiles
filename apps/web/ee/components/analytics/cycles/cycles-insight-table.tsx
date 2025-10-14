@@ -1,12 +1,13 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CycleGroupIcon, ProjectIcon, TCycleGroups } from "@plane/propel/icons";
-import { CycleInsightColumns } from "@plane/types";
+import type { TCycleGroups } from "@plane/propel/icons";
+import { CycleGroupIcon, ProjectIcon } from "@plane/propel/icons";
+import type { CycleInsightColumns } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components

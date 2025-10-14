@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 
 // plane imports
-import { TInboxForm } from "@plane/types";
+import type { TInboxForm } from "@plane/types";
 // services
 import { InboxIssueService as CeInboxIssueService } from "@/services/inbox";
 

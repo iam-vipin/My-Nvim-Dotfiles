@@ -4,10 +4,11 @@ import { EUserProjectRoles } from "@plane/types";
 // plane imports
 import { getHighestRole } from "@plane/utils";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // store
-import { IMemberRootStore } from "@/store/member";
-import { BaseProjectMemberStore, IBaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import type { IMemberRootStore } from "@/store/member";
+import type { IBaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import { BaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
 
 export type IProjectMemberStore = IBaseProjectMemberStore;
 

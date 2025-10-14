@@ -9,7 +9,7 @@ import { WORKSPACE_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
 // components

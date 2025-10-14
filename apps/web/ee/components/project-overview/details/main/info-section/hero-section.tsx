@@ -5,7 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
+import type { IProject, IWorkspace } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
@@ -15,7 +16,7 @@ import { captureClick, captureError, captureSuccess } from "@/helpers/event-trac
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 
 type THeroSection = {
   project: TProject;

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
 import { observer } from "mobx-react";
 // ce imports

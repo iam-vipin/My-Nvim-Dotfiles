@@ -1,11 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, IProjectView, TTeamspaceView } from "@plane/types";
+import type { IProjectView, TTeamspaceView } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { joinUrlPath } from "@plane/utils";

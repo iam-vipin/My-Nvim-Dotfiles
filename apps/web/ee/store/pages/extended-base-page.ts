@@ -1,15 +1,15 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import {
-  EPageSharedUserAccess,
-  type TPageCommentDescription,
-  type TCollaborator,
-  type TPage,
-  type TPageExtended,
-  type TPageSharedUser,
-  type JSONContent,
+import { EPageSharedUserAccess } from "@plane/types";
+import type {
+  TPageCommentDescription,
+  TCollaborator,
+  TPage,
+  TPageExtended,
+  TPageSharedUser,
+  JSONContent,
 } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TBasePageServices, TPageInstance } from "@/store/pages/base-page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TBasePageServices, TPageInstance } from "@/store/pages/base-page";
 import { CommentStore } from "./comments/comment.store";
 
 // Define PageWithConfig interface to match comment store expectations

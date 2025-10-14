@@ -17,7 +17,7 @@ import {
   validateWhitespaceI18n,
 } from "@/plane-web/components/templates/settings/common";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
-import { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
 
 type TTemplateBasicDetailsProps<T extends TBaseTemplateWithData> = {
   templateInstance: IBaseTemplateInstance<T>;

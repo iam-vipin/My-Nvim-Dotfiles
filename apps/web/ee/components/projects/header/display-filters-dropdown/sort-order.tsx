@@ -5,7 +5,7 @@ import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/fi
 // constants
 import { PROJECT_SORT_ORDER_OPTIONS } from "@/plane-web/constants/project";
 // types
-import { TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";
 
 type TDisplayFilterSortOrder = {
   filterValue: TProjectSortOrder | undefined;

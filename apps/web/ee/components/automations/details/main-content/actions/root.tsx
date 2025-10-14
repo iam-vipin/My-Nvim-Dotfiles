@@ -2,12 +2,8 @@ import { observer } from "mobx-react";
 import { Workflow } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import {
-  EActionNodeHandlerName,
-  EAutomationSidebarTab,
-  TAddCommentActionConfig,
-  TChangePropertyActionConfig,
-} from "@plane/types";
+import type { TAddCommentActionConfig, TChangePropertyActionConfig } from "@plane/types";
+import { EActionNodeHandlerName, EAutomationSidebarTab } from "@plane/types";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports

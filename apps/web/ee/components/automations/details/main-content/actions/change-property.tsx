@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { PencilLine } from "lucide-react";
 // plane imports
-import { EAutomationChangeType, type TChangePropertyActionConfig } from "@plane/types";
+import { EAutomationChangeType } from "@plane/types";
+import type { TChangePropertyActionConfig } from "@plane/types";
 import { getAutomationChangePropertyTypeLabel } from "@plane/utils";
 // plane web imports
 import { useAutomationActionConfig } from "@/plane-web/hooks/automations/use-automation-action-config";

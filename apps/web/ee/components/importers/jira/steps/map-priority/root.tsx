@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
+import type { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
@@ -15,8 +16,9 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { TPlanePriorityData } from "@/plane-web/types";
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
+import type { TPlanePriorityData } from "@/plane-web/types";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/jira";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira";
 import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];

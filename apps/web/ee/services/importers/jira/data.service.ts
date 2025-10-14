@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { JiraResource, JiraProject, JiraStates, JiraPriority, ImportedJiraUser } from "@plane/etl/jira";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { JiraResource, JiraProject, JiraStates, JiraPriority, ImportedJiraUser } from "@plane/etl/jira";
+import type { IAdditionalUsersResponse } from "@plane/types";
 
 export class JiraService {
   protected baseURL: string;

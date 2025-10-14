@@ -1,19 +1,20 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
-import {
-  CollaborativeDocumentEditorWithRef,
-  type EditorRefApi,
-  type TAIMenuProps,
-  type TDisplayConfig,
-  type TFileHandler,
-  type TRealtimeConfig,
-  type TServerHandler,
-  type EditorTitleRefApi,
+import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
+import type {
+  EditorRefApi,
+  TAIMenuProps,
+  TDisplayConfig,
+  TFileHandler,
+  TRealtimeConfig,
+  TServerHandler,
+  EditorTitleRefApi,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
@@ -26,11 +27,12 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";

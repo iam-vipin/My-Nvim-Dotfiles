@@ -1,15 +1,16 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { StateConfig, AsanaSection } from "@plane/etl/asana";
+import type { StateConfig, AsanaSection } from "@plane/etl/asana";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ExState } from "@plane/sdk";
-import { IState } from "@plane/types";
+import type { ExState } from "@plane/sdk";
+import type { IState } from "@plane/types";
 // asana types
 // plane web components
 import { MapStatesSelection } from "@/plane-web/components/importers/asana";
@@ -18,7 +19,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
 import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { Pencil } from "lucide-react";

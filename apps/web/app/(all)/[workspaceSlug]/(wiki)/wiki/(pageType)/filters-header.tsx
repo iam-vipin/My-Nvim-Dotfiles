@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import { TPageFilterProps } from "@plane/types";
+import type { TPageFilterProps } from "@plane/types";
 // components
 import { calculateTotalFilters } from "@plane/utils";
 import { PageAppliedFiltersList } from "@/components/pages/list/applied-filters/index";

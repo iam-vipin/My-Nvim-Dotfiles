@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
 import { IssueFormRoot } from "@/components/issues/issue-modal/form";
-import { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { useWorkItemData } from "../useArtifactData";
 
 interface TWorkItemDetailProps {

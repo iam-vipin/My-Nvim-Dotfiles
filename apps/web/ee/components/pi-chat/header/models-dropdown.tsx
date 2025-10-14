@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { TAiModels } from "@/plane-web/types";
+import type { TAiModels } from "@/plane-web/types";
 
 export type TModelsDropdown = {
   className?: string;

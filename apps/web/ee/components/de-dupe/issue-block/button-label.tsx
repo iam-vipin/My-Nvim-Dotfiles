@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { ChevronRight } from "lucide-react";
 // plane imports
 import { PlaneAIIcon } from "@plane/propel/icons";

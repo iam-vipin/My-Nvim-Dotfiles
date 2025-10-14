@@ -3,7 +3,8 @@
 import React, { memo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps } from "@plane/editor";
+import { EExternalEmbedAttributeNames } from "@plane/editor";
 import type { IframelyResponse } from "@plane/types";
 import {
   CrossOriginLoader,

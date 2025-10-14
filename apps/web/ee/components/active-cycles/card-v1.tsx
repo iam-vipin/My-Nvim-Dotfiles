@@ -1,7 +1,8 @@
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 // types
-import { IActiveCycle } from "@plane/types";
+import type { IActiveCycle } from "@plane/types";
 // plane web components
 import { Card } from "@plane/ui";
 import {

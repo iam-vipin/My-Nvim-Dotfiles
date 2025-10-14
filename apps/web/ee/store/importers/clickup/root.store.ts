@@ -1,26 +1,24 @@
 import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
-import { TClickUpConfig } from "@plane/etl/clickup";
+import type { TClickUpConfig } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 // plane web constants
 import { IMPORTER_CLICKUP_STEPS } from "@/plane-web/constants/importers/clickup";
 // plane web store types
-import {
-  IImporterBaseStore,
-  ImporterBaseStore,
-  IImporterJobStore,
-  ImporterJobStore,
-} from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
+import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
+import type {
   TImporterClickUpDataPayload,
   TClickUpImporterStepKeys,
   TClickUpImporterStep,
-  E_CLICKUP_IMPORTER_STEPS,
 } from "@/plane-web/types/importers/clickup";
-import { ClickUpAuthStore, IClickUpAuthStore } from "./auth.store";
-import { ClickUpDataStore, IClickUpDataStore } from "./data.store";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
+import type { IClickUpAuthStore } from "./auth.store";
+import { ClickUpAuthStore } from "./auth.store";
+import type { IClickUpDataStore } from "./data.store";
+import { ClickUpDataStore } from "./data.store";
 
 // constants
 const defaultImporterData: TImporterClickUpDataPayload = {

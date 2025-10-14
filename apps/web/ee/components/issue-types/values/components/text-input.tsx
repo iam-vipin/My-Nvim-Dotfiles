@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
-import {
+import type {
   EIssuePropertyType,
   EIssuePropertyValueError,
   TIssueProperty,

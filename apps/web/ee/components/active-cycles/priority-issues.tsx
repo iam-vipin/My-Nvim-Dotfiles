@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -6,7 +6,8 @@ import { CalendarCheck } from "lucide-react";
 // plane imports
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType, IActiveCycle } from "@plane/types";
+import type { IActiveCycle } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { generateWorkItemLink, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";

@@ -7,8 +7,8 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web hooks
 import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
-import { type TPageInstance } from "@/store/pages/base-page";
-import { EPageStoreType } from "../store";
+import type { TPageInstance } from "@/store/pages/base-page";
+import type { EPageStoreType } from "../store";
 
 export type TExtendedEditorExtensionsConfig = Pick<
   IEditorPropsExtended,

@@ -1,6 +1,7 @@
 // plane imports
 import { observer } from "mobx-react";
-import { EProductSubscriptionEnum, IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web hooks

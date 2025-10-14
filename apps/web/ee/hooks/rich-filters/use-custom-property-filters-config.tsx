@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 // plane imports
 import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
-import {
+import type {
   EIssuePropertyType,
   IIssueProperty,
   IUserLite,
@@ -10,6 +10,7 @@ import {
   TFilterValue,
 } from "@plane/types";
 import { Avatar } from "@plane/ui";
+import type { TCustomPropertyFilterParams, TFilterIconType } from "@plane/utils";
 import {
   getBooleanPropertyFilterConfig,
   getDatePropertyFilterConfig,
@@ -19,11 +20,9 @@ import {
   getMemberPickerPropertyFilterConfig,
   getNumberPropertyFilterConfig,
   getTextPropertyFilterConfig,
-  TCustomPropertyFilterParams,
-  TFilterIconType,
 } from "@plane/utils";
 // ce imports
-import { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
+import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 import { CUSTOM_PROPERTY_ICON_MAP } from "@/plane-web/components/issue-types/properties/property-icon";
 
 interface TUseCustomPropertyFiltersConfigProps {

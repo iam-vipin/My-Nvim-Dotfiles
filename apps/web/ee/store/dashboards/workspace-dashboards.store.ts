@@ -2,10 +2,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { WorkspaceDashboardsService } from "@plane/services";
-import { EUserWorkspaceRoles, TDashboard } from "@plane/types";
+import type { TDashboard } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { BaseDashboardsStore } from "./base-dashboards.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { BaseDashboardsStore } from "./base-dashboards.store";
 
 type TModalPayload = (Partial<TDashboard> & { id: string }) | null;
 

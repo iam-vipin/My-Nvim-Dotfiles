@@ -2,7 +2,8 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { EWorkItemTypeEntity, IIssueType, TIssuePropertyValues } from "@plane/types";
+import type { IIssueType, TIssuePropertyValues } from "@plane/types";
+import { EWorkItemTypeEntity } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // plane web components

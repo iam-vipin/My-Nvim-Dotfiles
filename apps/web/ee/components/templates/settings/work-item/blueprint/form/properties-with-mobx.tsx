@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
-import { FieldValues, useFormContext } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 // plane imports
 import { EWorkItemTypeEntity } from "@plane/types";
 // hooks
@@ -10,7 +11,7 @@ import { DefaultWorkItemBlueprintProperties } from "@/plane-web/components/templ
 import { SelectionDropdown } from "@/plane-web/components/templates/settings/work-item/blueprint/form/selection-dropdown";
 import { WorkItemBlueprintDetails } from "@/plane-web/components/templates/settings/work-item/blueprint/form/work-item-details";
 // local imports
-import { TWorkItemBlueprintPropertiesWithMobxProps } from "./common";
+import type { TWorkItemBlueprintPropertiesWithMobxProps } from "./common";
 
 /**
  * This component is used to render the properties of a work item blueprint with MobX integration.

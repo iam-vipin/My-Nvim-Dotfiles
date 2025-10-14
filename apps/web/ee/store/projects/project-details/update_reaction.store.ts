@@ -4,7 +4,7 @@ import { makeObservable, observable, runInAction } from "mobx";
 import { groupReactions } from "@plane/utils";
 // helpers
 import { ProjectUpdateReactionService } from "@/plane-web/services/project/project_update_reaction.service";
-import { TProjectUpdateReaction } from "@/plane-web/types";
+import type { TProjectUpdateReaction } from "@/plane-web/types";
 
 export interface IProjectUpdatesReactionStore {
   // observables

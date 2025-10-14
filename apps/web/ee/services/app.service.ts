@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
-import { TApplicationPublishDetails, TUserApplication } from "@plane/types";
+import type { TApplicationPublishDetails, TUserApplication } from "@plane/types";
 import { Input, ModalCore } from "@plane/ui";
 
 // form to publish app

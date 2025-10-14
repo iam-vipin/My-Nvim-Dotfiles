@@ -20,7 +20,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { PagesAppCommandPaletteSearchResults } from "@/plane-web/components/command-palette";
 import { AppService } from "@/plane-web/services/app.service";
-import { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/plane-web/types";
 
 const appService = new AppService();
 

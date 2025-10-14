@@ -9,7 +9,7 @@ import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { cn } from "@plane/utils";
 // types
 import { SECTION_DETAILS } from "../constants";
-import { SectionHeaderProps } from "../types";
+import type { SectionHeaderProps } from "../types";
 
 /**
  * Component for rendering section header with label, icon and actions

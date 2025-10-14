@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 // types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { Logo } from "@/components/common/logo";
 

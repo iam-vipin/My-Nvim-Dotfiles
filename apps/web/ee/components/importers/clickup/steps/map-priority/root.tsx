@@ -1,10 +1,11 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { TClickUpPriority, TClickUpPriorityConfig } from "@plane/etl/clickup";
+import type { TClickUpPriority, TClickUpPriorityConfig } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // plane web components
@@ -13,8 +14,9 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { TPlanePriorityData } from "@/plane-web/types";
-import { E_CLICKUP_IMPORTER_STEPS, TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import type { TPlanePriorityData } from "@/plane-web/types";
+import type { TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
 
 type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES];
 

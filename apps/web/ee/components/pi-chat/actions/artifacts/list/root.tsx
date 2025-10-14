@@ -1,4 +1,4 @@
-import { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/plane-web/types";
 import { PreviewCard } from "../preview-cards/root";
 
 export const PiChatArtifactsListRoot = (props: { artifacts: TArtifact[] }) => {

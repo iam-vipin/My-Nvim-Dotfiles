@@ -1,10 +1,7 @@
 import { SeparatorBasedFilterAdapter } from "@plane/shared-state";
 import { EQUALITY_OPERATOR } from "@plane/types";
-import {
-  EXTERNAL_INITIATIVE_FILTER_OPERATOR_SEPARATOR,
-  TExternalInitiativeFilterExpression,
-  TInitiativeFilterKeys,
-} from "@/plane-web/types/initiative";
+import type { TExternalInitiativeFilterExpression, TInitiativeFilterKeys } from "@/plane-web/types/initiative";
+import { EXTERNAL_INITIATIVE_FILTER_OPERATOR_SEPARATOR } from "@/plane-web/types/initiative";
 
 export class InitiativesFilterAdapter extends SeparatorBasedFilterAdapter<
   TInitiativeFilterKeys,

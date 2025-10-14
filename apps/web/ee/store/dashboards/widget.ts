@@ -1,11 +1,10 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { E_FEATURE_FLAGS, WIDGET_CHART_MODELS_LIST } from "@plane/constants";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
+import { WIDGET_CHART_MODELS_LIST } from "@plane/constants";
 // plane types
-import {
-  EWidgetChartModels,
-  EWidgetChartTypes,
+import type {
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
@@ -14,9 +13,10 @@ import {
   TDashboardWidgetData,
   TExternalDashboardWidgetFilterExpression,
 } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { TDashboardWidgetHelpers } from "./dashboard-widgets.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TDashboardWidgetHelpers } from "./dashboard-widgets.store";
 
 export interface IDashboardWidgetInstance extends TDashboardWidget {
   isFetchingData: boolean;

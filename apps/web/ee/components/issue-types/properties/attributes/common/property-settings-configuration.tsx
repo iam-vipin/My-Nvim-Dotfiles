@@ -1,7 +1,7 @@
 import { get, set } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
+import type { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { RadioInput } from "@/components/estimates/radio-select";

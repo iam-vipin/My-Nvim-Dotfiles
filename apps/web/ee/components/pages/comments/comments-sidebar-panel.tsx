@@ -6,7 +6,7 @@ import useSWR from "swr";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useScrollManager } from "@/plane-web/hooks/pages/use-scroll-manager";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local components
 import { PageCommentCreationHandler } from "./comment-creation-handler";
 import { PageCommentFilterControls } from "./comment-filter-controls";

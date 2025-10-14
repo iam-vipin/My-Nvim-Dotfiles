@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { JSONContent } from "@plane/types";
+import type { JSONContent } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // store types
 import { useCommentMarkInteraction } from "@/plane-web/hooks/pages/use-comment-mark-interaction";
-import { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
+import type { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
 import { FileService } from "@/services/file.service";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local components
 import { PageCommentDisplay } from "./comment-display";
 import { PageCommentForm } from "./comment-form";

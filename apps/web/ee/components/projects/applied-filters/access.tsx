@@ -3,7 +3,7 @@ import { Globe2, X, Lock } from "lucide-react";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
 
 type Props = {
   handleRemove: (val: TProjectAccess) => void;

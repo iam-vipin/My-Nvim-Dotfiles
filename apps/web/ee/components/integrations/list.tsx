@@ -1,12 +1,12 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web components
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { IntegrationListItem } from "@/plane-web/components/integrations";
 // plane web types
-import { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import GitHubLogo from "@/public/services/github.svg";
 import GitlabLogo from "@/public/services/gitlab.svg";

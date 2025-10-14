@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types / constants
 import { DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA } from "@plane/constants";
-import {
+import type {
   TCreateUpdateInitiativeModal,
   TCreateUpdateTeamspaceModal,
   TCreateUpdateTeamspaceViewModal,
@@ -12,7 +12,8 @@ import {
   DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA,
 } from "@/plane-web/constants/teamspace";
 // store
-import { BaseCommandPaletteStore, IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import type { IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import { BaseCommandPaletteStore } from "@/store/base-command-palette.store";
 import { DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA } from "../constants/initiative";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {

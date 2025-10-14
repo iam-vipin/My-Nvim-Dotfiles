@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { ETeamspaceAnalyticsValueKeys } from "@plane/constants";
+import type { ETeamspaceAnalyticsValueKeys } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_VALUE_KEY_MAP } from "@/plane-web/constants/teamspace";
-import { TStatisticsFilterProps } from "@/plane-web/types";
+import type { TStatisticsFilterProps } from "@/plane-web/types";
 
 export const StatisticsValueKeyFilter: React.FC<TStatisticsFilterProps<"value_key">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

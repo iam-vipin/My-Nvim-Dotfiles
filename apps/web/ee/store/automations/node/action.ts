@@ -1,12 +1,13 @@
 // plane imports
-import {
+import type {
   EAutomationNodeType,
   TAutomationActionNodeConfig,
   TActionNodeHandlerName,
   TAutomationActionNode,
 } from "@plane/types";
 // local imports
-import { AutomationBaseNode, IAutomationBaseNode, TAutomationBaseNodeHelpers } from "./base";
+import type { IAutomationBaseNode, TAutomationBaseNodeHelpers } from "./base";
+import { AutomationBaseNode } from "./base";
 
 export type IAutomationActionNodeInstance = IAutomationBaseNode<
   EAutomationNodeType.ACTION,

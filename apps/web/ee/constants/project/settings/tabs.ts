@@ -7,7 +7,7 @@ import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project"
 // icons
 import { SettingIcon } from "@/components/icons/attachment";
 // components
-import { Props } from "@/components/icons/types";
+import type { Props } from "@/components/icons/types";
 
 export const PROJECT_SETTINGS = {
   ...PROJECT_SETTINGS_CE,

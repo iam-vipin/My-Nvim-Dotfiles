@@ -3,13 +3,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRightLeft } from "lucide-react";
 // plane imports
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
-import {
-  IssueTypeSwitcher as BaseIssueTypeSwitcher,
-  TIssueTypeSwitcherProps,
-} from "@/ce/components/issues/issue-details/issue-type-switcher";
+import type { TIssueTypeSwitcherProps } from "@/ce/components/issues/issue-details/issue-type-switcher";
+import { IssueTypeSwitcher as BaseIssueTypeSwitcher } from "@/ce/components/issues/issue-details/issue-type-switcher";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks

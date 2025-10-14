@@ -1,11 +1,10 @@
 import { set } from "lodash-es";
 import { action, runInAction } from "mobx";
-import { EViewAccess, IWorkspaceView } from "@plane/types";
-import {
-  IGlobalViewStore as ICoreGlobalViewStore,
-  GlobalViewStore as CoreGlobalViewStore,
-} from "@/ce/store/global-view.store";
-import { RootStore } from "@/ce/store/root.store";
+import type { IWorkspaceView } from "@plane/types";
+import { EViewAccess } from "@plane/types";
+import type { IGlobalViewStore as ICoreGlobalViewStore } from "@/ce/store/global-view.store";
+import { GlobalViewStore as CoreGlobalViewStore } from "@/ce/store/global-view.store";
+import type { RootStore } from "@/ce/store/root.store";
 
 export interface IGlobalViewStore extends ICoreGlobalViewStore {
   lockView: (workspaceSlug: string, viewId: string) => Promise<void>;

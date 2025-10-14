@@ -3,12 +3,12 @@ import { computedFn } from "mobx-utils";
 // constants
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // silo types
-import { AsanaWorkspace, AsanaProject, AsanaSection, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
+import type { AsanaWorkspace, AsanaProject, AsanaSection, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 // plane web services
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse } from "@plane/types";
 import { AsanaService } from "@/plane-web/services/importers/asana/data.service";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IAsanaDataStore {
   // observables

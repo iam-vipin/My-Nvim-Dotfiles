@@ -4,13 +4,13 @@ import { computedFn } from "mobx-utils";
 
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TEpicStats, TLoader, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
+import type { TEpicStats, TLoader, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
 import { convertToISODateString } from "@plane/utils";
 
 // plane-web imports
 import { InitiativeLabelsService } from "@/plane-web/services/initiative-labels.service";
 import { InitiativeService } from "@/plane-web/services/initiative.service";
-import {
+import type {
   TExternalInitiativeFilterExpression,
   TInitiative,
   TInitiativeAnalytics,
@@ -21,14 +21,18 @@ import {
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 // local imports
-import { RootStore } from "../root.store";
-import { IUpdateStore, UpdateStore } from "../updates/base.store";
-import { IInitiativeAttachmentStore, InitiativeAttachmentStore } from "./initiative-attachment.store";
+import type { RootStore } from "../root.store";
+import type { IUpdateStore } from "../updates/base.store";
+import { UpdateStore } from "../updates/base.store";
+import type { IInitiativeAttachmentStore } from "./initiative-attachment.store";
+import { InitiativeAttachmentStore } from "./initiative-attachment.store";
 import { InitiativeEpicStore } from "./initiative-epics.store";
-import { IInitiativeLinkStore, InitiativeLinkStore } from "./initiative-links.store";
+import type { IInitiativeLinkStore } from "./initiative-links.store";
+import { InitiativeLinkStore } from "./initiative-links.store";
 import { InitiativeScopeStore } from "./initiative-scope-filters.store";
-import { IInitiativeCommentActivityStore, InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
-import { IInitiativeFilterStore } from "./initiatives-filter.store";
+import type { IInitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
+import { InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
+import type { IInitiativeFilterStore } from "./initiatives-filter.store";
 
 export const ALL_INITIATIVES = "All Initiatives";
 

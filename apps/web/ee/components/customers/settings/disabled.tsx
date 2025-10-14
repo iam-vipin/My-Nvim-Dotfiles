@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // assets

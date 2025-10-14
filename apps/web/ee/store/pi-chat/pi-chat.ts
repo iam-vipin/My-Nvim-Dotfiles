@@ -6,10 +6,9 @@ import { PI_BASE_URL } from "@plane/constants";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import { RootStore } from "@/plane-web/store/root.store";
-import {
+import type { RootStore } from "@/plane-web/store/root.store";
+import type {
   EFeedback,
-  ESource,
   IFormattedValue,
   TAiModels,
   TChatHistory,
@@ -20,10 +19,10 @@ import {
   TQuery,
   TTemplate,
   TUserThreads,
-  EExecutionStatus,
   TArtifact,
   TUpdatedArtifact,
 } from "@/plane-web/types";
+import { ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
 import { PiChatAttachmentStore } from "./attachment.store";
 

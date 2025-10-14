@@ -8,10 +8,8 @@ import { StateGroupIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Spinner } from "@plane/ui";
 // ce imports
-import {
-  TChangeWorkItemStateListProps,
-  ChangeWorkItemStateList as ChangeWorkItemStateListCE,
-} from "@/ce/components/command-palette/actions/work-item-actions";
+import type { TChangeWorkItemStateListProps } from "@/ce/components/command-palette/actions/work-item-actions";
+import { ChangeWorkItemStateList as ChangeWorkItemStateListCE } from "@/ce/components/command-palette/actions/work-item-actions";
 // store hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports

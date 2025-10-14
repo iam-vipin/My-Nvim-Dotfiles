@@ -2,10 +2,10 @@ import { set, orderBy } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { IBaseTemplateActionCallbacks, TBaseTemplateWithData, TLoader } from "@plane/types";
+import type { IBaseTemplateActionCallbacks, TBaseTemplateWithData, TLoader } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
-import { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "@/plane-web/store/templates/instance";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "@/plane-web/store/templates/instance";
 
 export type TBaseTemplateStoreProps<T extends TBaseTemplateWithData> = {
   root: RootStore;

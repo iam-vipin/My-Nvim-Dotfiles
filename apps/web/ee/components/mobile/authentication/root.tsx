@@ -1,18 +1,11 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  EMobileAuthSteps,
-  EMobileAuthModes,
-  EMobileErrorAlertType,
-  TMobileAuthSteps,
-  TMobileAuthModes,
-  TMobileAuthErrorInfo,
-  EMobileAuthErrorCodes,
-  TMobileAuthErrorCodes,
-} from "@plane/constants";
-import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
+import type { TMobileAuthSteps, TMobileAuthModes, TMobileAuthErrorInfo, TMobileAuthErrorCodes } from "@plane/constants";
+import { EMobileAuthSteps, EMobileAuthModes, EMobileErrorAlertType, EMobileAuthErrorCodes } from "@plane/constants";
+import type { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 import { mobileAuthErrorHandler } from "@plane/utils";
 // plane web components
 import {

@@ -1,11 +1,11 @@
-import React from "react";
+import type React from "react";
 // plane imports
-import { EPageSharedUserAccess } from "@plane/types";
+import type { EPageSharedUserAccess } from "@plane/types";
 // local imports
-import { TPageShareFormReturn } from "@/plane-web/hooks/pages/use-page-share-form";
-import { EPageStoreType } from "@/plane-web/hooks/store";
-import { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageShareFormReturn } from "@/plane-web/hooks/pages/use-page-share-form";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TSharePageModalProps = {
   isOpen: boolean;

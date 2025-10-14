@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronRight, CornerDownRight, LucideIcon, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { ChevronRight, CornerDownRight, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,7 +12,8 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
 import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services
-import { AIService, TTaskPayload } from "@/services/ai.service";
+import type { TTaskPayload } from "@/services/ai.service";
+import { AIService } from "@/services/ai.service";
 const aiService = new AIService();
 
 type Props = {

@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 // Plane  imports
 
-import { UserInsightColumns } from "@plane/types";
+import type { UserInsightColumns } from "@plane/types";
 
 // Local imports
 

@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";

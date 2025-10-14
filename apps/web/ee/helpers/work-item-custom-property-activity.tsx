@@ -1,5 +1,5 @@
 // plane imports
-import { EIssuePropertyType, IIssueProperty, TBaseActivityVerbs, TIssuePropertyTypeKeys } from "@plane/types";
+import type { EIssuePropertyType, IIssueProperty, TBaseActivityVerbs, TIssuePropertyTypeKeys } from "@plane/types";
 import { getIssuePropertyTypeKey, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // store context
 import { store } from "@/lib/store-context";

@@ -1,11 +1,12 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { TPageComment, TPageCommentReaction } from "@plane/types";
+import type { TPageComment, TPageCommentReaction } from "@plane/types";
 // services
 import { ConfigurablePageCommentService } from "@/plane-web/services/page/page-comment.service";
-import { type RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { CommentInstance, TCommentInstance } from "./comment-instance";
+import type { TCommentInstance } from "./comment-instance";
+import { CommentInstance } from "./comment-instance";
 
 // Types for comment configuration
 type PageWithConfig = {

@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TEpicStats, TIssue, TIssueParams, TInitiativeDisplayFilters } from "@plane/types";
-import {
+import type { TEpicStats, TIssue, TIssueParams, TInitiativeDisplayFilters } from "@plane/types";
+import type {
   TInitiativeComment,
   TInitiativeLink,
   TInitiativeReaction,

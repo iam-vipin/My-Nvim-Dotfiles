@@ -3,10 +3,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles, ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";

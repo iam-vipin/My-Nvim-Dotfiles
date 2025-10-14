@@ -8,14 +8,14 @@ import { Button } from "@plane/propel/button";
 import { InfoIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuePropertyType,
+import type {
   TIssueProperty,
   TIssuePropertyOption,
   TIssuePropertyOptionCreateUpdateData,
   TIssuePropertyPayload,
   TOperationMode,
 } from "@plane/types";
+import { EIssuePropertyType } from "@plane/types";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -30,7 +30,7 @@ import { PropertyTitleDescriptionInput } from "./dropdowns/property-title";
 import { PropertyTypeDropdown } from "./dropdowns/property-type";
 import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
 import { IssuePropertyQuickActions } from "./quick-actions";
-import { TIssuePropertyCreateList } from "./root";
+import type { TIssuePropertyCreateList } from "./root";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;

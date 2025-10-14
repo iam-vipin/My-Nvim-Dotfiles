@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { InfoIcon } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import {
+import type {
   EIssuePropertyType,
   EIssuePropertyValueError,
   IIssueProperty,

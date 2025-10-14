@@ -4,15 +4,15 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import {
-  EActionNodeHandlerName,
+import type {
   TAutomationActionNode,
   TChangePropertyActionFormConfig,
   TAddCommentActionConfig,
   TAutomationActionNodeConfig,
 } from "@plane/types";
+import { EActionNodeHandlerName } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // plane web imports
 import { AutomationDetailsSidebarActionButtons } from "@/plane-web/components/automations/details/sidebar/action-buttons";

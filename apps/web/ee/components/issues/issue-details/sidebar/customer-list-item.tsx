@@ -1,4 +1,5 @@
-import React, { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import React, { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";

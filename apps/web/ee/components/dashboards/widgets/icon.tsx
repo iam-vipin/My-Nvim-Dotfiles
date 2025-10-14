@@ -1,4 +1,5 @@
 // plane imports
+import type { ISvgIcons } from "@plane/propel/icons";
 import {
   BasicAreaChartIcon,
   BasicBarChartIcon,
@@ -8,7 +9,6 @@ import {
   BasicPieChartIcon,
   ComparisonAreaChartIcon,
   GroupedBarChartIcon,
-  ISvgIcons,
   MultiLineLineChartIcon,
   ProgressDonutChartIcon,
   StackedAreaChartIcon,

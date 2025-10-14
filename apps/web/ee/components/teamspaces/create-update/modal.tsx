@@ -1,10 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TTeamspace } from "@plane/types";
+import type { TTeamspace } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getRandomEmoji } from "@plane/utils";
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";

@@ -6,7 +6,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ALL_WIDGETS_Y_AXIS_METRICS_LIST, WIDGET_X_AXIS_PROPERTIES_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TDashboardWidget } from "@plane/types";
+import type { TDashboardWidget } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // plane web hooks

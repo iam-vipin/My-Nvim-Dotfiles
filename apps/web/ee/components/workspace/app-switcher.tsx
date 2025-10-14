@@ -5,7 +5,8 @@ import React from "react";
 import { Grip } from "lucide-react";
 import { Popover } from "@headlessui/react";
 import { cn } from "@plane/utils";
-import { AppSidebarItem, AppSidebarItemData } from "@/components/sidebar/sidebar-item";
+import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { withDockItems } from "../app-rail";
 
 type Props = {

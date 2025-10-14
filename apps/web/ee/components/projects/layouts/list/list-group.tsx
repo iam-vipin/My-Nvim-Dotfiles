@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
-import { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
+import type { TIssueGroupByOptions, IIssueDisplayProperties } from "@plane/types";
 //
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";

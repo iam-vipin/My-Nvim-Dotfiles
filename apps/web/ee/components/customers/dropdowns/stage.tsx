@@ -1,7 +1,8 @@
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 import { CUSTOMER_STAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCustomerStage } from "@plane/types";
+import type { TCustomerStage } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 
 type TProps = {

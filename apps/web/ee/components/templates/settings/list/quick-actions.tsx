@@ -16,8 +16,10 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
-import { AlertModalCore, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TBaseTemplateWithData } from "@plane/types";
+import { ETemplateType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, ContextMenu, CustomMenu } from "@plane/ui";
 import {
   cn,
   getCreateUpdateTemplateSettingsPath,
@@ -29,7 +31,7 @@ import { captureClick, captureError, captureSuccess } from "@/helpers/event-trac
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IBaseTemplateStore } from "@/plane-web/store/templates";
+import type { IBaseTemplateStore } from "@/plane-web/store/templates";
 
 type TTemplateQuickActionsProps<T extends TBaseTemplateWithData> = {
   templateId: string;

@@ -6,15 +6,15 @@ import { computedFn } from "mobx-utils";
 // plane web services
 import workspaceFeatureService from "@/plane-web/services/workspace-feature.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
+import type {
   TWorkspaceFeatures,
   TWorkspaceFeature,
   EWorkspaceFeatures,
   TWorkspaceFeatureLoader,
-  EWorkspaceFeatureLoader,
 } from "@/plane-web/types/workspace-feature";
+import { EWorkspaceFeatureLoader } from "@/plane-web/types/workspace-feature";
 
 export interface IWorkspaceFeatureStore {
   // observables

@@ -1,5 +1,5 @@
 // plane web types
-import { EProjectStateGroup, EProjectPriority, EProjectAccess } from "@/plane-web/types/workspace-project-states";
+import type { EProjectStateGroup, EProjectPriority, EProjectAccess } from "@/plane-web/types/workspace-project-states";
 
 export type TProjectAppliedDisplayFilterKeys = "my_projects" | "archived_projects";
 

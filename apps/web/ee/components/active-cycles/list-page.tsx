@@ -1,4 +1,5 @@
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
 // components
 import { WorkspaceActiveCycleLoader } from "@/components/ui/loader/workspace-active-cycle";

@@ -10,7 +10,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import ActionStatusBlock from "@/plane-web/components/pi-chat/actions/action-status-block";
 import { PiChatArtifactsListRoot } from "@/plane-web/components/pi-chat/actions/artifacts/list/root";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TDialogue } from "@/plane-web/types";
+import type { TDialogue } from "@/plane-web/types";
 // local imports
 import { Feedback } from "./feedback";
 import { ReasoningBlock } from "./reasoning";

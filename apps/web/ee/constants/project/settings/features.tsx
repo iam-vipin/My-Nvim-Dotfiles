@@ -1,10 +1,10 @@
 import { ListTodo, Mail, Zap } from "lucide-react";
 // plane imports
+import type { TProperties } from "@/ce/constants/project/settings/features";
 import {
   PROJECT_BASE_FEATURES_LIST as CE_PROJECT_BASE_FEATURES_LIST,
   PROJECT_OTHER_FEATURES_LIST as CE_PROJECT_OTHER_FEATURES_LIST,
   PROJECT_FEATURES_LIST as CE_PROJECT_FEATURES_LIST,
-  TProperties,
 } from "@/ce/constants/project/settings/features";
 
 export type TIntakeFeatureKeys = "in_app" | "email" | "form";

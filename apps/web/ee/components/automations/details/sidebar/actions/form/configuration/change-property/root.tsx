@@ -3,12 +3,12 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
-import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
+import type { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useAutomationActionConfig } from "@/plane-web/hooks/automations/use-automation-action-config";
 // local imports
-import { TAutomationActionFormData } from "../../root";
+import type { TAutomationActionFormData } from "../../root";
 import { ChangeTypeSelect } from "./change-type-select";
 import { PropertyNameSelect } from "./property-name-select";
 import { PropertyValueSelect } from "./property-value-select";

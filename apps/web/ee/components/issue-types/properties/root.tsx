@@ -6,7 +6,7 @@ import { InfoIcon, Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
+import type {
   EIssuePropertyType,
   IIssueType,
   TCreationListModes,

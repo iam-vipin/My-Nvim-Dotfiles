@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type TCommentReplyController = {
   comment: TCommentInstance;

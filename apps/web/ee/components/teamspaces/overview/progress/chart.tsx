@@ -2,14 +2,10 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Loader as Spinner } from "lucide-react";
 // plane imports
-import {
-  EProgressDataKeys,
-  EProgressXAxisKeys,
-  ETeamspaceAnalyticsValueKeys,
-  TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import type { EProgressXAxisKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
+import { EProgressDataKeys, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { TBarItem, TChartData } from "@plane/types";
+import type { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
 // helpers

@@ -1,5 +1,6 @@
 "use client";
-import { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import { useMemo, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";

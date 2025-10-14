@@ -1,10 +1,11 @@
-import React, { SetStateAction, Dispatch, useRef, useState } from "react";
+import type { SetStateAction, Dispatch } from "react";
+import React, { useRef, useState } from "react";
 import { Check, LoaderCircle, MicIcon, X } from "lucide-react";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
-import { TFocus, TPiLoaders } from "@/plane-web/types";
+import type { TFocus, TPiLoaders } from "@/plane-web/types";
 import { Waveform } from "./voice-chart";
 
 export const SPEECH_LOADERS = ["recording", "transcribing"];

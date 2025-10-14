@@ -18,11 +18,9 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeLabel } from "@/plane-web/types";
-import {
-  CreateUpdateInitiativeLabelInline,
-  TInitiativeLabelOperationsCallbacks,
-} from "./create-update-initiative-label-inline";
+import type { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
+import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
 import { InitiativeLabelItem } from "./initiative-label-item";
 

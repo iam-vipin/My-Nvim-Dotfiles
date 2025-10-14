@@ -1,4 +1,5 @@
-import React, { FC, useEffect } from "react";
+import type { FC } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { EUserPermissionsLevel } from "@plane/constants";

@@ -6,10 +6,8 @@ import { extractAndSanitizeProjectCreationFormData } from "@plane/utils";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
-import {
-  ProjectCreationContext,
-  THandleTemplateChangeProps,
-} from "@/plane-web/components/projects/create/project-creation-context";
+import type { THandleTemplateChangeProps } from "@/plane-web/components/projects/create/project-creation-context";
+import { ProjectCreationContext } from "@/plane-web/components/projects/create/project-creation-context";
 import { useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 
 export type TProjectCreationProviderProps = {

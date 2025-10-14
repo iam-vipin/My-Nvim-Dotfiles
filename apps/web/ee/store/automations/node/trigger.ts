@@ -1,12 +1,13 @@
 // plane imports
-import {
+import type {
   EAutomationNodeType,
   TAutomationTriggerNodeConfig,
   TTriggerNodeHandlerName,
   TAutomationTriggerNode,
 } from "@plane/types";
 // local imports
-import { AutomationBaseNode, IAutomationBaseNode, TAutomationBaseNodeHelpers } from "./base";
+import type { IAutomationBaseNode, TAutomationBaseNodeHelpers } from "./base";
+import { AutomationBaseNode } from "./base";
 
 export type IAutomationTriggerNodeInstance = IAutomationBaseNode<
   EAutomationNodeType.TRIGGER,

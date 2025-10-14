@@ -1,13 +1,14 @@
 // types
-import { FC } from "react";
-import { CustomerRequestIcon, CustomersIcon, ISvgIcons } from "@plane/propel/icons";
-import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
+import type { FC } from "react";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
+import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
+import type { TGetScopeMemberIdsResult } from "@/ce/components/issues/issue-layouts/utils";
 import {
   SpreadSheetPropertyIconMap as CeSpreadSheetPropertyIconMap,
   SPREADSHEET_COLUMNS as CE_SPREAD_SHEET_COLUMNS,
   getScopeMemberIds as getCeScopeMemberIds,
-  TGetScopeMemberIdsResult,
 } from "@/ce/components/issues/issue-layouts/utils";
 import { Logo } from "@/components/common/logo";
 // store

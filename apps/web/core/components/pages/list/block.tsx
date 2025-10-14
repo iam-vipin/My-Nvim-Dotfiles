@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, Loader } from "lucide-react";
 // plane imports
 import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
@@ -17,7 +18,8 @@ import { BlockItemAction } from "@/components/pages/list/block-item-action";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   handleToggleExpanded: () => void;

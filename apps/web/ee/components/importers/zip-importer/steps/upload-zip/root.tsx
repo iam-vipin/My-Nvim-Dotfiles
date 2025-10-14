@@ -1,4 +1,5 @@
-import { FC, useState, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
@@ -11,7 +12,8 @@ import { CircularProgressIndicator } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
-import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
 
 interface UploadedFile {

@@ -12,7 +12,7 @@ import { usePageShareForm } from "@/plane-web/hooks/pages/use-page-share-form";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { SharePageRoolModal } from "../modals/share-page-root-modal";
 

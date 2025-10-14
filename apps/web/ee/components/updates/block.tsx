@@ -6,7 +6,8 @@ import { MessageCircle } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUpdateEntityType, EUserProjectRoles, EUserWorkspaceRoles, TUpdate, TUpdateOperations } from "@plane/types";
+import type { EUpdateEntityType, TUpdate, TUpdateOperations } from "@plane/types";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

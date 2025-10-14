@@ -3,7 +3,7 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // components
 import { ChevronDown } from "lucide-react";
-import {
+import type {
   EIssuePropertyType,
   EIssuePropertyValueError,
   IIssueProperty,

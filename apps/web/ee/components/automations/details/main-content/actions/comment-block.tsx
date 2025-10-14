@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web imports
-import { TAddCommentActionConfig } from "@plane/types";
+import type { TAddCommentActionConfig } from "@plane/types";
 import { LiteTextEditor } from "@/components/editor/lite-text/editor";
 
 type TProps = {

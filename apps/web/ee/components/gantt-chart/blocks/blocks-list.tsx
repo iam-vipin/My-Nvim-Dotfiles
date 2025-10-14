@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { GanttChartBlocksProps } from "@/ce/components/gantt-chart/blocks/blocks-list";
+import type { GanttChartBlocksProps } from "@/ce/components/gantt-chart/blocks/blocks-list";
 import { GanttChartBlock } from "@/components/gantt-chart/blocks/block";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";

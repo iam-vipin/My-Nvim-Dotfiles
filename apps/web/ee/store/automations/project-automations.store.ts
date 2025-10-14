@@ -3,7 +3,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { DEFAULT_CREATE_UPDATE_MODAL_CONFIG, EUserPermissions } from "@plane/constants";
 import { ProjectAutomationsService } from "@plane/services";
-import {
+import type {
   EAutomationNodeType,
   TAutomation,
   TAutomationDetails,
@@ -15,11 +15,11 @@ import {
   TCreateUpdateModalConfig,
 } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { IAutomationInstance, TAutomationHelpers } from "./automation";
-import { TAutomationBaseNodeHelpers } from "./node/base";
-import { AutomationsRootStore } from "./root.store";
+import type { IAutomationInstance, TAutomationHelpers } from "./automation";
+import type { TAutomationBaseNodeHelpers } from "./node/base";
+import type { AutomationsRootStore } from "./root.store";
 
 export interface IProjectAutomationsStore {
   // observables

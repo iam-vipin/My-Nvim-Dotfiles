@@ -1,9 +1,10 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import type { FC, ReactNode } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
 import { PlaneLogo } from "@plane/propel/icons";
-import { TMobileWorkspaceInvitation } from "@plane/types";
+import type { TMobileWorkspaceInvitation } from "@plane/types";
 // plane web mobile services
 import mobileAuthService from "@/plane-web/services/mobile.service";
 

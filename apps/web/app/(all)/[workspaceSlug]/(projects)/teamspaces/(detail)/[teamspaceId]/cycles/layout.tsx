@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useParams } from "next/navigation";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components

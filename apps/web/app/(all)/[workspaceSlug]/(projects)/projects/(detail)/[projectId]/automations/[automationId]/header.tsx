@@ -7,7 +7,8 @@ import { Activity, Repeat } from "lucide-react";
 import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EAutomationSidebarTab, ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { EAutomationSidebarTab } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
 // hooks
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

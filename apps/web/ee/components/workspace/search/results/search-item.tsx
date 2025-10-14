@@ -1,13 +1,13 @@
 "use client";
 // types
-import {
-  ESearchFilterKeys,
+import type {
   IWorkspaceDefaultEnhancedSearchResult,
   IWorkspaceIssueEnhancedSearchResult,
   IWorkspacePageEnhancedSearchResult,
   IWorkspaceProjectEnhancedSearchResult,
   IWorkspaceCommentEnhancedSearchResult,
 } from "@plane/constants";
+import { ESearchFilterKeys } from "@plane/constants";
 
 // ui
 import {

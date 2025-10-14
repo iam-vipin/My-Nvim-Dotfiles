@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserWorkspaceRoles, TInitiativeStates } from "@plane/types";
+import type { TInitiativeStates } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";

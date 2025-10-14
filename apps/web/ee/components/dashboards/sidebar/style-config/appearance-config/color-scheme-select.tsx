@@ -3,7 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { CHART_COLOR_PALETTES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig, TWidgetChartColorScheme } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig, TWidgetChartColorScheme } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { WidgetPropertyWrapper } from "../../property-wrapper";
 import { WidgetConfigSelectButton } from "../../select-button";

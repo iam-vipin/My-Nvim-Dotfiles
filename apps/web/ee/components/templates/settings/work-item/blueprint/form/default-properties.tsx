@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, PathValue, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
-import { cn, TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
+import type { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
+import type { TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdownBase } from "@/components/dropdowns/module/base";

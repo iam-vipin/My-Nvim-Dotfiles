@@ -1,14 +1,15 @@
 import { unset, set } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 // types
-import {
+import type {
   IEstimate as IEstimateType,
   IEstimatePoint as IEstimatePointType,
   IEstimateFormData,
   TEstimatePointsObject,
 } from "@plane/types";
 // plane web store
-import { IEstimate as ICeEstimate, Estimate as CeEstimate } from "@/ce/store/estimates/estimate";
+import type { IEstimate as ICeEstimate } from "@/ce/store/estimates/estimate";
+import { Estimate as CeEstimate } from "@/ce/store/estimates/estimate";
 // plane web service
 import estimateService from "@/plane-web/services/project/estimate.service";
 // store

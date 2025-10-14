@@ -11,7 +11,8 @@ import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage } from "@/plane-web/hooks/store";
 
 export interface IPageBreadcrumbProps {
   pageId: string;

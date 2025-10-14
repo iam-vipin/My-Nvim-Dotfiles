@@ -1,11 +1,12 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { GITLAB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TGitlabEntityConnection } from "@plane/types";
+import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -13,7 +14,7 @@ import { EntityForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
 // local imports
 import { projectMapInit } from "../root";
 

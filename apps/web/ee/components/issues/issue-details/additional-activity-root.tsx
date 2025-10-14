@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 // components
-import { TAdditionalActivityRoot } from "@/ce/components/issues/issue-details/additional-activity-root";
+import type { TAdditionalActivityRoot } from "@/ce/components/issues/issue-details/additional-activity-root";
 // local imports
 import { WorkItemConvertActivity } from "./convert";
 import { CustomerActivity } from "./customer-activity";

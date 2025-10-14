@@ -1,4 +1,4 @@
-import { EDependencyPosition, ETimelineRelation } from "../constants";
+import type { EDependencyPosition, ETimelineRelation } from "../constants";
 
 export type TIssueRelationTypes =
   | "blocking"

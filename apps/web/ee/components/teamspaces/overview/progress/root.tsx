@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -16,7 +17,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
-import { TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { TWorkloadFilter } from "@/plane-web/types/teamspace";
 // local imports
 import { TeamspaceProgressBanner } from "./banner";
 import { TeamspaceProgressChart } from "./chart";

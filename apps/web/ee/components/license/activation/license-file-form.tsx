@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, X } from "lucide-react";

@@ -1,7 +1,8 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import { SentryAuthState, TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
-import { TWorkspaceConnection } from "@plane/types";
+import type { SentryAuthState, TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
+import type { TWorkspaceConnection } from "@plane/types";
 
 export class SentryIntegrationService {
   protected baseURL: string;

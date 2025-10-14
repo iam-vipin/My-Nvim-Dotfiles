@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { Edit, Key, Share, Trash2 } from "lucide-react";
@@ -9,7 +10,8 @@ import { Edit, Key, Share, Trash2 } from "lucide-react";
 
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles, TUserApplication } from "@plane/types";
+import type { TUserApplication } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
 
 // local imports

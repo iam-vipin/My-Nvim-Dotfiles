@@ -10,15 +10,10 @@ import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMEN
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import {
-  PartialDeep,
-  TWorkItemTemplateForm,
-  TWorkItemTemplateFormData,
-  TIssuePropertyValues,
-  EUserWorkspaceRoles,
-  EUserProjectRoles,
-} from "@plane/types";
-import { cn, TWorkItemSanitizationResult } from "@plane/utils";
+import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
+import { EUserWorkspaceRoles, EUserProjectRoles } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web imports
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";

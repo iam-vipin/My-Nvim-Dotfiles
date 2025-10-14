@@ -1,6 +1,6 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
-import { TUserApplication, TWorkspaceAppInstallation } from "@plane/types";
+import type { TUserApplication, TWorkspaceAppInstallation } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -1,4 +1,4 @@
-import {
+import type {
   CORE_OPERATORS,
   LOGICAL_OPERATOR,
   TFilterExpression,

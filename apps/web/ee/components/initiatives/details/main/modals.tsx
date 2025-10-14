@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components

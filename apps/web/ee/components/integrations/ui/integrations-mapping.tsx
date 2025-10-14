@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
-import Image, { StaticImageData } from "next/image";
+import type { ReactNode } from "react";
+import type { StaticImageData } from "next/image";
+import Image from "next/image";
 import { ArrowRight, ArrowRightLeft, Pencil, Trash2 } from "lucide-react";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 import { Logo } from "@plane/ui";
 
 type TIntegrationsMappingProps = {

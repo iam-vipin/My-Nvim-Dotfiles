@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 

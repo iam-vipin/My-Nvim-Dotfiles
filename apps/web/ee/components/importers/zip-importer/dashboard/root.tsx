@@ -1,13 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 import { Loader, RefreshCcw, ExternalLink } from "lucide-react";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
-import { TJobStatus } from "@plane/etl/core";
+import type { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -15,7 +15,8 @@ import { ProjectIcon } from "@plane/propel/icons";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import { EDocImporterDestinationType, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
 
 export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverType, logo, serviceName }) => {

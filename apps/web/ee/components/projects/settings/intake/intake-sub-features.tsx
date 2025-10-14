@@ -7,11 +7,12 @@ import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserProjectRoles, TInboxForm } from "@plane/types";
+import type { TInboxForm } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // ce imports
-import { TProperties } from "@/ce/constants/project";
+import type { TProperties } from "@/ce/constants/project";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";

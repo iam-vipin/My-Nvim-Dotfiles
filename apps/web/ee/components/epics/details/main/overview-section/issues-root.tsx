@@ -1,11 +1,13 @@
 "use client";
-import React, { FC, useEffect, useState, useCallback } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
 import { LayersIcon } from "@plane/propel/icons";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TSubIssueOperations } from "@plane/types";
+import type { TIssue, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";

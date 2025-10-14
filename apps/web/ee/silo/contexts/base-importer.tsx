@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { createContext } from "react";
 
 type TImporterCreateContext = {
   // default props

@@ -1,5 +1,5 @@
 import { set } from "lodash-es";
-import { TCustomerPayload, TCustomerRequest } from "@plane/types";
+import type { TCustomerPayload, TCustomerRequest } from "@plane/types";
 
 export function getChangedCustomerFields(
   formData: Partial<TCustomerPayload>,

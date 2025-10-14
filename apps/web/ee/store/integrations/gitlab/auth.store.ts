@@ -4,13 +4,13 @@ import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { GitLabAuthorizeState } from "@plane/etl/gitlab";
+import type { GitLabAuthorizeState } from "@plane/etl/gitlab";
 // plane web services
-import { TGitlabWorkspaceConnection, TGitlabAppConfig } from "@plane/types";
+import type { TGitlabWorkspaceConnection, TGitlabAppConfig } from "@plane/types";
 import { GitlabAuthService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
 import { ApplicationService } from "@/plane-web/services/marketplace";
-import { IGitlabStore } from "@/plane-web/store/integrations";
+import type { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
 
 export interface IGitlabAuthStore {

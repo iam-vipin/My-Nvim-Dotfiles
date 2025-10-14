@@ -3,18 +3,16 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ENotificationLoader } from "@plane/constants";
-import { TNotification } from "@plane/types";
+import type { TNotification } from "@plane/types";
 // helpers
 import { convertToEpoch } from "@plane/utils";
 // services
 import inboxService from "@/plane-web/services/inbox.service";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
-import { INotification } from "@/store/notifications/notification";
-import {
-  IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore,
-  WorkspaceNotificationStore as WorkspaceNotificationStoreCore,
-} from "@/store/notifications/workspace-notifications.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { INotification } from "@/store/notifications/notification";
+import type { IWorkspaceNotificationStore as IWorkspaceNotificationStoreCore } from "@/store/notifications/workspace-notifications.store";
+import { WorkspaceNotificationStore as WorkspaceNotificationStoreCore } from "@/store/notifications/workspace-notifications.store";
 
 export type TGroupedNotifications = Record<string, TNotification[]>;
 

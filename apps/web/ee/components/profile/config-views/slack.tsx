@@ -6,7 +6,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Checkbox } from "@plane/ui";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
-import { TPersonalAccountConnectProps } from "../personal-account-view";
+import type { TPersonalAccountConnectProps } from "../personal-account-view";
 
 export function SlackConfigView(props: TPersonalAccountConnectProps) {
   const { provider, isConnectionLoading, isUserConnected } = props;

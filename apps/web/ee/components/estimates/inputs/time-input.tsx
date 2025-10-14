@@ -1,7 +1,8 @@
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { Input } from "@plane/ui";
 import { convertMinutesToHoursAndMinutes, convertHoursMinutesToMinutes } from "@plane/utils";
-import { TEstimateTimeInputProps } from "@/ce/components/estimates/inputs";
+import type { TEstimateTimeInputProps } from "@/ce/components/estimates/inputs";
 
 export const EstimateTimeInput: FC<TEstimateTimeInputProps> = (props) => {
   const { value, handleEstimateInputValue } = props;

@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // components
@@ -13,7 +13,7 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // helpers
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 // local imports
 import { MembersDropdown } from "../dropdowns/members-dropdown";
 import { StateDropdown } from "../dropdowns/state-dropdown";

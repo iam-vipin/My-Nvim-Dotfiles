@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
@@ -9,7 +10,8 @@ import {
   TEAMSPACE_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles, EViewAccess, TTeamspaceView } from "@plane/types";
+import type { TTeamspaceView } from "@plane/types";
+import { EUserWorkspaceRoles, EViewAccess } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";

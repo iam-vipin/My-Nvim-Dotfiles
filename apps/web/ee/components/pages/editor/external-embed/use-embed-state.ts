@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps, EExternalEmbedEntityType } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps } from "@plane/editor";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@plane/editor";
 
 // React State Family - Handles component state and interactions
 export const useEmbedState = (externalEmbedNodeView: ExternalEmbedNodeViewProps) => {

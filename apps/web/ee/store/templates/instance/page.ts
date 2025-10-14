@@ -1,8 +1,9 @@
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import { TPageTemplate } from "@plane/types";
+import type { TPageTemplate } from "@plane/types";
 // local imports
-import { BaseTemplateInstance, IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import { BaseTemplateInstance } from "./base";
 
 export type TPageTemplateInstanceProps = TBaseTemplateInstanceProps<TPageTemplate>;
 

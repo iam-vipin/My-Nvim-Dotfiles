@@ -1,14 +1,15 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
 import { Button } from "@plane/propel/button";
-import { TProjectLink, TProjectLinkEditableFields } from "@plane/types";
+import type { TProjectLink, TProjectLinkEditableFields } from "@plane/types";
 import { Input, ModalCore } from "@plane/ui";
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
 

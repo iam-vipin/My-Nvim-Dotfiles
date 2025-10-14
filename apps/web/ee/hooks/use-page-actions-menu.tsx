@@ -3,15 +3,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
 // plane imports
-import { AlertModalCore, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // components
 import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TPageOperations } from "@/hooks/use-page-operations";
+import type { TPageOperations } from "@/hooks/use-page-operations";
 // plane web imports
 import { LockPageModal } from "@/plane-web/components/pages";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

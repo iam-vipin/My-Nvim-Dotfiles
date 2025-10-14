@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { IZipImporterStore } from "@/plane-web/store/importers";
+import type { IZipImporterStore } from "@/plane-web/store/importers";
 import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
 
 export const useZipImporter = (type: EZipDriverType): IZipImporterStore => {

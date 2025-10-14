@@ -3,16 +3,16 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // PLane-web
 import { EActivityFilterType } from "@plane/constants";
-import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
+import type { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
 import { groupReactions } from "@plane/utils";
-import {
+import type {
   TInitiativeComment,
   TInitiativeReaction,
   TInitiativeActivity,
   TInitiativeActivityComment,
 } from "@/plane-web/types/initiative";
 //
-import { InitiativeStore } from "./initiatives.store";
+import type { InitiativeStore } from "./initiatives.store";
 
 export interface IInitiativeCommentActivityStore {
   initiativeCommentsMap: Record<string, TInitiativeComment[]>;

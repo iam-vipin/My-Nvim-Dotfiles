@@ -1,14 +1,16 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EEstimateSystem, TEstimatePointsObject } from "@plane/types";
+import type { TEstimatePointsObject } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // ce imports
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-import { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
+import type { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store/estimates";
 // plane web components

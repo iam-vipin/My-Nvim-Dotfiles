@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { Button } from "@plane/propel/button";

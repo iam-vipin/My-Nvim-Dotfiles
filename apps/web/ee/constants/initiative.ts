@@ -1,5 +1,5 @@
 import { INITIATIVE_STATES } from "@plane/constants";
-import { TCreateUpdateInitiativeModal, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
+import type { TCreateUpdateInitiativeModal, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
 
 export const DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA: TCreateUpdateInitiativeModal = {
   isOpen: false,

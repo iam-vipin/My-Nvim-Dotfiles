@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 // plane types
-import { TSearchEntityRequestPayload, TUserSearchResponse } from "@plane/types";
+import type { TSearchEntityRequestPayload, TUserSearchResponse } from "@plane/types";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 

@@ -6,7 +6,7 @@ import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/const
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TPlacement } from "@plane/propel/utils";
+import type { TPlacement } from "@plane/propel/utils";
 import { ETemplateType } from "@plane/types";
 import { CustomSearchSelect, Loader } from "@plane/ui";
 // helpers

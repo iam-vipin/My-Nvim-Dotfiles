@@ -10,7 +10,7 @@ import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageOperations = {
   toggleLock: ({ recursive }: { recursive?: boolean }) => void;

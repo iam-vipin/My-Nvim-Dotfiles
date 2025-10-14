@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { IFilterInstance } from "@plane/shared-state";
-import { TExternalDashboardWidgetFilterExpression, TDashboardWidgetFilterKeys } from "@plane/types";
+import type { IFilterInstance } from "@plane/shared-state";
+import type { TExternalDashboardWidgetFilterExpression, TDashboardWidgetFilterKeys } from "@plane/types";
 import { FilterItem } from "@/components/rich-filters/filter-item/root";
 
 type Props = {

@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { EProductSubscriptionEnum } from "@plane/types";
+import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { getSubscriptionTextColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";

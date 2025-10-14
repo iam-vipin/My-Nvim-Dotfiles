@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { LayersIcon } from "@plane/propel/icons";
-import { IIssueType } from "@plane/types";
+import type { IIssueType } from "@plane/types";
 import { CustomSearchSelect, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports

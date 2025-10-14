@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks

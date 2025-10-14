@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, FC, useEffect } from "react";
+import type { FC } from "react";
+import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
@@ -8,9 +9,9 @@ import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/cons
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
+import type { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
 // types
-import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
+import type { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
@@ -25,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // local imports
 import ProjectAttributes from "./attributes";

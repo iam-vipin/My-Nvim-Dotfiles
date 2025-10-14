@@ -4,14 +4,15 @@ import { CircleCheck, Pencil, Trash2 } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { JSONContent } from "@plane/types";
-import { AlertModalCore, CustomMenu, TContextMenuItem, Tooltip } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, CustomMenu, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 // store types
-import { type TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
-import { type TPageInstance } from "@/store/pages/base-page";
+import type { TCommentInstance } from "@/plane-web/store/pages/comments/comment-instance";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageCommentAvatar } from "./comment-avatar";
 import { PageCommentForm } from "./comment-form";

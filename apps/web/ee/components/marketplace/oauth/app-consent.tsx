@@ -9,12 +9,13 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { IWorkspace, TUserApplication } from "@plane/types";
+import type { IWorkspace, TUserApplication } from "@plane/types";
 import { cn, CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
-import { ApplicationService, OAuthService, TConsentParams } from "@/plane-web/services/marketplace";
+import type { TConsentParams } from "@/plane-web/services/marketplace";
+import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
 import ConnectSvg from "@/public/marketplace/connect.svg";
 import { AuthService } from "@/services/auth.service";
 import {

@@ -13,7 +13,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag, useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // local imports
-import { EProjectFormOperation, TProjectTemplateFormSubmitData, ProjectTemplateFormRoot } from "./form";
+import type { TProjectTemplateFormSubmitData } from "./form";
+import { EProjectFormOperation, ProjectTemplateFormRoot } from "./form";
 
 type TCreateUpdateProjectTemplateProps = {
   workspaceSlug: string;

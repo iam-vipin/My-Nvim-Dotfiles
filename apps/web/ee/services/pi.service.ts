@@ -1,6 +1,6 @@
 // plane imports
 import { PI_BASE_URL } from "@plane/constants";
-import { TDuplicateIssuePayload, TDuplicateIssueResponse } from "@plane/types";
+import type { TDuplicateIssuePayload, TDuplicateIssueResponse } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

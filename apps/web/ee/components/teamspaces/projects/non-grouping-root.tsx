@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TProjectAppliedDisplayFilterKeys, TProjectFilters, TTeamspace } from "@plane/types";
+import type { TProjectAppliedDisplayFilterKeys, TProjectFilters, TTeamspace } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ProjectAppliedFiltersList } from "@/components/project/applied-filters";

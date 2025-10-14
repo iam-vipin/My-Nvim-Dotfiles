@@ -13,7 +13,7 @@ import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-sc
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
+import type { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
 
 type TDataCardProps = {
   workspaceSlug: string;

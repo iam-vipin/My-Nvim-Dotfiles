@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Info } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { BetaBadge } from "@plane/ui";
 // plane web components
-import { IntegrationProps } from "@/plane-web/components/integrations";
+import type { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 

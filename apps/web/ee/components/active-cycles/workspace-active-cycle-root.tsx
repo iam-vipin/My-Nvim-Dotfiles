@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
-import { IActiveCycle } from "@plane/types";
+import type { IActiveCycle } from "@plane/types";
 import { useFlag } from "@/plane-web/hooks/store";
 
 export type ActiveCycleInfoCardProps = {

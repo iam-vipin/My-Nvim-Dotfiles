@@ -6,13 +6,9 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
-import {
-  INTEGRATION_TRACKER_EVENTS,
-  TUserConnection,
-  USER_CONNECTION_PROVIDERS,
-  E_INTEGRATION_KEYS,
-} from "@plane/constants";
-import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
+import type { TUserConnection } from "@plane/constants";
+import { INTEGRATION_TRACKER_EVENTS, USER_CONNECTION_PROVIDERS, E_INTEGRATION_KEYS } from "@plane/constants";
+import type { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";

@@ -3,7 +3,7 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { ExternalLink, Pencil } from "lucide-react";
 // ui
-import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
 // helpers
 import { cn, extractURLComponents } from "@plane/utils";

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import useSWR from "swr";
 // helpers
 import { cn } from "@plane/utils";

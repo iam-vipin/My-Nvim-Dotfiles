@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
-import { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
+import type { TProjectTemplateSelect } from "@/ce/components/projects/create/template-select";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks

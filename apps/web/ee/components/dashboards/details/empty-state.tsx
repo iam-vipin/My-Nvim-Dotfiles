@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
+import type { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks

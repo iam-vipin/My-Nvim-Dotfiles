@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 import { BasePagesListHeaderRoot } from "@/components/pages/header/base";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";

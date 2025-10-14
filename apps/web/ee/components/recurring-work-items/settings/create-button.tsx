@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, TButtonSizes } from "@plane/propel/button";
+import type { TButtonSizes } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles } from "@plane/types";
 import { getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks

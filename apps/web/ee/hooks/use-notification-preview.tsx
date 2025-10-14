@@ -2,7 +2,7 @@ import { useEffect } from "react";
 // plane imports
 import { EIssueServiceType } from "@plane/types";
 // ce imports
-import { TNotificationPreview } from "@/ce/hooks/use-notification-preview";
+import type { TNotificationPreview } from "@/ce/hooks/use-notification-preview";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks

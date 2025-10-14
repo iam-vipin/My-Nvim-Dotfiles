@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { JiraPriority } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
@@ -8,7 +8,7 @@ import { PriorityIcon } from "@plane/propel/icons";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
-import { TPlanePriorityData } from "@/plane-web/types/importers";
+import type { TPlanePriorityData } from "@/plane-web/types/importers";
 
 type TMapPrioritiesSelection = {
   value: string | undefined;

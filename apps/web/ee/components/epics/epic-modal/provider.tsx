@@ -4,22 +4,16 @@ import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {
-  EIssueServiceType,
-  EWorkItemConversionType,
-  ISearchIssueResponse,
-  TIssue,
-  TIssuePropertyValueErrors,
-  TIssuePropertyValues,
-} from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { EIssueServiceType, EWorkItemConversionType } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
-import {
-  IssueModalContext,
+import type {
   TActiveAdditionalPropertiesProps,
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues/issue-modal/context";
+import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web components

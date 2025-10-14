@@ -11,14 +11,14 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {
-  EProductSubscriptionEnum,
+import type {
   IPaymentProduct,
   IPaymentProductPrice,
   TBillingFrequency,
   TProductBillingFrequency,
   TUpgradeParams,
 } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Loader, getBillingAndPlansCardVariantStyle } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers

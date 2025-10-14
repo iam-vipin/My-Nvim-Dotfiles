@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +16,8 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // plane web  types
-import { E_CLICKUP_IMPORTER_STEPS, TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import type { TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
 import { SkipAdditionalDataToggle } from "./skip-additional-data";
 
 type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP];

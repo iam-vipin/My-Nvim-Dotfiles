@@ -1,7 +1,8 @@
 "use client";
 
-import React, { FC } from "react";
-import { LucideProps } from "lucide-react";
+import type { FC } from "react";
+import React from "react";
+import type { LucideProps } from "lucide-react";
 // ui
 import { Tabs } from "@plane/ui";
 // local components

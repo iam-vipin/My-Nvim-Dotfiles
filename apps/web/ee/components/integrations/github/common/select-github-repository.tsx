@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -11,7 +11,7 @@ import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations";
 // public images
 import GithubDarkLogo from "@/public/services/github-dark.svg";
 import GithubLightLogo from "@/public/services/github-light.svg";

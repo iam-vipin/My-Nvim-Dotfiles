@@ -1,7 +1,8 @@
 import { Controller, useFormContext } from "react-hook-form";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { EWidgetChartModels, EWidgetChartTypes, TDashboardWidget } from "@plane/types";
+import type { TDashboardWidget } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // local components
 import { WidgetPropertySelect } from "./property-select";
 

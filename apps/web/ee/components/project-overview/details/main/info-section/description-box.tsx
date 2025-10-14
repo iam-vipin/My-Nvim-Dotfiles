@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useUser } from "@/hooks/store/user";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 import { Actions } from "./actions";
 import { ProjectDescriptionInput } from "./description-input";
 import { ProjectReaction } from "./update-reaction";

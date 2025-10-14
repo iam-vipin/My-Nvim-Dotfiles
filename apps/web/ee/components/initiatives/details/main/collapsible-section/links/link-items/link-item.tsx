@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -14,9 +14,9 @@ import { calculateTimeAgoShort, copyTextToClipboard } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/plane-web/types/initiative";
 // local components
-import { TLinkOperationsModal } from "./link-list";
+import type { TLinkOperationsModal } from "./link-list";
 
 type TInitiativeLinkItem = {
   link: TInitiativeLink;

@@ -1,6 +1,6 @@
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/propel/icons";
-import { TStateGroups } from "@plane/types";
+import type { TStateGroups } from "@plane/types";
 import { cn } from "@plane/ui";
 import { addSpaceIfCamelCase } from "@plane/utils";
 

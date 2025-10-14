@@ -2,9 +2,9 @@ import { concat, debounce, pull, set, uniq, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
-import { TInitiativeAttachment, TInitiativeAttachmentIdMap, TInitiativeAttachmentMap } from "@plane/types";
+import type { TInitiativeAttachment, TInitiativeAttachmentIdMap, TInitiativeAttachmentMap } from "@plane/types";
 import { InitiativeAttachmentService } from "@/plane-web/services/initiative_attachment.service";
-import { IInitiativeStore } from "./initiatives.store";
+import type { IInitiativeStore } from "./initiatives.store";
 // services
 
 export type TAttachmentUploadStatus = {

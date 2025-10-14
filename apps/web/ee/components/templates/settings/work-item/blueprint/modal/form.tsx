@@ -4,14 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
+import type { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common/helpers";
 // local imports
-import {
+import type {
   TWorkItemBlueprintPropertiesBaseProps,
   TWorkItemBlueprintWithAdditionalPropsData,
   TWorkItemBlueprintWithMobxData,

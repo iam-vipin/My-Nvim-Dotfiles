@@ -1,9 +1,9 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane imports
-import { TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
+import type { TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
 // plane web imports
-import { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
 // services
 import { APIService } from "@/services/api.service";
 

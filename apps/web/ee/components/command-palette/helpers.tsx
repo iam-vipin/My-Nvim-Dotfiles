@@ -1,6 +1,6 @@
 // plane imports
 import { DashboardIcon, InitiativeIcon, PageIcon, TeamsIcon } from "@plane/propel/icons";
-import {
+import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
   IWorkspaceSearchResult,
@@ -9,7 +9,8 @@ import {
 } from "@plane/types";
 // plane web imports
 import { generateWorkItemLink } from "@plane/utils";
-import { commandGroups as commandGroupsCE, TCommandGroups } from "@/ce/components/command-palette/helpers";
+import type { TCommandGroups } from "@/ce/components/command-palette/helpers";
+import { commandGroups as commandGroupsCE } from "@/ce/components/command-palette/helpers";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export const commandGroups: TCommandGroups = {

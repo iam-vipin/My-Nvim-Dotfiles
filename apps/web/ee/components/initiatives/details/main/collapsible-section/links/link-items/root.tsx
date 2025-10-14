@@ -1,4 +1,4 @@
-import { TInitiativeLink } from "@/plane-web/types/initiative";
+import type { TInitiativeLink } from "@/plane-web/types/initiative";
 
 export type TLinkOperations = {
   create: (data: Partial<TInitiativeLink>) => Promise<void>;

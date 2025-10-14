@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
-import { EProjectFeatureKey } from "@plane/constants";
+import type { EProjectFeatureKey } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
 // plane web hooks

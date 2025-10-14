@@ -5,7 +5,7 @@ import type { TPageEmbedConfig } from "@plane/editor";
 import { EmptyPageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 // plane web store
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // embed content component
 import { PageEmbedContent } from "./content";
 

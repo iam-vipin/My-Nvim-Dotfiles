@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 // types
 import { observer } from "mobx-react";
-import { IActiveCycle } from "@plane/types";
+import type { IActiveCycle } from "@plane/types";
 // plane web components
 import { ActiveCyclesProjectTitle, ActiveCycleHeader } from "@/plane-web/components/active-cycles";
 import ActiveCycleDetail from "../cycles/active-cycle/details";

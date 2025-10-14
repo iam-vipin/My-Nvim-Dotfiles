@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { Avatar, Table } from "@plane/ui";
 // helpers
 import { convertMinutesToHoursMinutesString, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -10,7 +10,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 // plane web types
-import { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/plane-web/types";
 
 export type TWorklogsPaginatedTableRoot = {
   workspaceSlug: string;

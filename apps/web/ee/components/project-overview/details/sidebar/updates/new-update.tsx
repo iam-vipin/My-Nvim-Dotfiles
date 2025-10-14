@@ -4,7 +4,7 @@ import { Button } from "@plane/propel/button";
 import { EUpdateStatus } from "@plane/types";
 import { TextArea } from "@plane/ui";
 // plane web types
-import { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/plane-web/types";
 // components
 import { StatusDropdown } from "./status-dropdown";
 

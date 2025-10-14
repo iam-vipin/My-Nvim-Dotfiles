@@ -2,10 +2,10 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
-import { ITeamspacePageStore } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
+import type { IWorkspacePageStore } from "@/plane-web/store/pages/workspace-page.store";
+import type { ITeamspacePageStore } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
 // mobx store
-import { IProjectPageStore } from "@/store/pages/project-page.store";
+import type { IProjectPageStore } from "@/store/pages/project-page.store";
 
 export enum EPageStoreType {
   PROJECT = "PROJECT_PAGE",

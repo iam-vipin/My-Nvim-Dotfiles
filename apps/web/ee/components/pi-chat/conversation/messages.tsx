@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IUser } from "@plane/types";
+import type { IUser } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { scrollIntoViewHelper } from "../helper";

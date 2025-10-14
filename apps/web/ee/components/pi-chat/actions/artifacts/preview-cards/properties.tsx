@@ -1,7 +1,7 @@
 import { Calendar, Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
 import { ProjectIcon, ProjectStatesIcon } from "@plane/propel/icons";
 import { cn } from "@plane/propel/utils";
-import { TIssuePriorities, TLogoProps, TStateGroups } from "@plane/types";
+import type { TIssuePriorities, TLogoProps, TStateGroups } from "@plane/types";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { DisplayDates } from "@/components/properties/dates";

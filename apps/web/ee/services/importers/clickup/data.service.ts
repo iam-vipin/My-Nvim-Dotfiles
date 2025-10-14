@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { TClickUpFolder, TClickUpSpace, TClickUpTeam } from "@plane/etl/clickup";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { TClickUpFolder, TClickUpSpace, TClickUpTeam } from "@plane/etl/clickup";
+import type { IAdditionalUsersResponse } from "@plane/types";
 
 export class ClickUpDataService {
   protected baseURL: string;

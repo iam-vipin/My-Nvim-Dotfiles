@@ -3,11 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import {
-  attachClosestEdge,
-  extractClosestEdge,
-  type Edge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
@@ -15,7 +12,7 @@ import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // plane ui
 import { DropIndicator } from "@plane/ui";
 // plane utils

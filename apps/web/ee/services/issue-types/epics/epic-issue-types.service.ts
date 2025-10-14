@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import {
+import type {
   IIssueTypesService,
   TFetchIssueTypesPayload,
   TIssueType,

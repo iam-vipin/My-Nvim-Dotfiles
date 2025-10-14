@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { ProjectIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
-import { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/plane-web/types";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";

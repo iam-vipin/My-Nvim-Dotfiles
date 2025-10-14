@@ -14,7 +14,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
-import { IAutomationInstance } from "@/plane-web/store/automations/automation";
+import type { IAutomationInstance } from "@/plane-web/store/automations/automation";
 // local imports
 import { TableEmptyState } from "./empty-state";
 import { SuccessFailureIndicator } from "./indicator";

@@ -1,6 +1,7 @@
 import { format, startOfToday } from "date-fns";
 import { isEmpty, orderBy, uniqBy } from "lodash-es";
-import { EEstimateSystem, ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
+import type { ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { findTotalDaysInRange, generateDateArray } from "@plane/utils";
 
 const scope = (p: Record<string, number>, isTypeIssue: boolean, toHoursHandler: (value: number) => number) => {

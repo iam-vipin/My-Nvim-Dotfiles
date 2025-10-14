@@ -1,8 +1,9 @@
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import { TWorkItemTemplate } from "@plane/types";
+import type { TWorkItemTemplate } from "@plane/types";
 // local imports
-import { BaseTemplateInstance, IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import { BaseTemplateInstance } from "./base";
 
 export type TWorkItemTemplateInstanceProps = TBaseTemplateInstanceProps<TWorkItemTemplate>;
 

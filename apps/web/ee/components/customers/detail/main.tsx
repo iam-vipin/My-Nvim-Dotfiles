@@ -1,4 +1,5 @@
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
@@ -6,7 +7,8 @@ import { ExternalLink } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EFileAssetType, TCustomerPayload } from "@plane/types";
+import type { TCustomerPayload } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Tabs } from "@plane/ui";
 // hooks
 import { formatURLForDisplay } from "@plane/utils";

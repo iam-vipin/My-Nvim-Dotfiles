@@ -1,14 +1,14 @@
 import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { TServiceAuthConfiguration } from "@plane/etl/core";
-import { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
+import type { TServiceAuthConfiguration } from "@plane/etl/core";
+import type { JiraAuthState, JiraPATAuthState } from "@plane/etl/jira";
 // plane web services
 import { JiraAuthService } from "@/plane-web/services/importers/jira/auth.service";
 // store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TJiraPATFormFields } from "@/plane-web/types/importers/jira";
+import type { TJiraPATFormFields } from "@/plane-web/types/importers/jira";
 
 export interface IJiraAuthStore {
   // observables

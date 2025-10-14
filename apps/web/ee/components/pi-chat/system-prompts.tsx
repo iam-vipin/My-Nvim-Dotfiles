@@ -5,7 +5,7 @@ import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TTemplate } from "@/plane-web/types";
+import type { TTemplate } from "@/plane-web/types";
 
 type TSystemPrompt = {
   prompt: TTemplate;

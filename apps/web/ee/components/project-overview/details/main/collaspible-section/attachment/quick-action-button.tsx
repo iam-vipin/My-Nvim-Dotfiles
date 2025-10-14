@@ -1,8 +1,10 @@
 "use client";
 
-import React, { FC, useCallback, useState } from "react";
+import type { FC } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
 // plane ui
 import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";

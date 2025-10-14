@@ -1,12 +1,13 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import type { MutableRefObject } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 //hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTableKeyboardNavigation } from "@/hooks/use-table-keyboard-navigation";
 // components
-import { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import { TProject } from "@/plane-web/types/projects";
-import { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
+import type { TProject } from "@/plane-web/types/projects";
+import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
 import { SpreadsheetProjectRow } from "./project-row";
 import { SpreadsheetHeader } from "./spreadsheet-header";
 

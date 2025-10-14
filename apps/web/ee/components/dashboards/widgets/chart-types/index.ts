@@ -3,12 +3,8 @@ export * from "./root";
 import { getWeekOfMonth, isValid } from "date-fns";
 // plane imports
 import { TO_CAPITALIZE_PROPERTIES, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
-import {
-  EWidgetXAxisDateGrouping,
-  EWidgetXAxisProperty,
-  TDashboardWidgetData,
-  TDashboardWidgetDatum,
-} from "@plane/types";
+import type { EWidgetXAxisProperty, TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
+import { EWidgetXAxisDateGrouping } from "@plane/types";
 // helpers
 import {
   capitalizeFirstLetter,
@@ -19,7 +15,7 @@ import {
   renderFormattedDateWithoutYear,
 } from "@plane/utils";
 // plane web store
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 export type TWidgetComponentProps = {
   parsedData: TDashboardWidgetData;

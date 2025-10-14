@@ -1,11 +1,11 @@
-import { FC } from "react";
+import type { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { BetaBadge } from "@plane/ui";
 // plane web components
-import { ImporterProps } from "@/plane-web/components/importers";
+import type { ImporterProps } from "@/plane-web/components/importers";
 import { useFlag } from "@/plane-web/hooks/store";
 
 export type ImportersListItemProps = {

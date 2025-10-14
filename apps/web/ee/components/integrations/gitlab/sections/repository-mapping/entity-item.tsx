@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, ReactElement, useState } from "react";
+import type { FC, ReactElement } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane web components
@@ -8,7 +9,7 @@ import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS 
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TGitlabEntityConnection } from "@plane/types";
+import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

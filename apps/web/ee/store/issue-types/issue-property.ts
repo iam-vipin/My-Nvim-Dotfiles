@@ -2,7 +2,7 @@ import { uniq, concat, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import {
+import type {
   EIssuePropertyRelationType,
   EIssuePropertyType,
   ICustomPropertyStoreInstanceServices,
@@ -16,7 +16,7 @@ import {
 } from "@plane/types";
 // plane web store
 import { IssuePropertyOption } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 type TIssuePropertyStore<T extends EIssuePropertyType> = {
   root: RootStore;

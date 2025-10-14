@@ -1,4 +1,4 @@
-import { FieldError, FieldValues, Path, RegisterOptions } from "react-hook-form";
+import type { FieldError, FieldValues, Path, RegisterOptions } from "react-hook-form";
 
 export type BaseFieldProps<T extends FieldValues> = {
   id: Path<T>;

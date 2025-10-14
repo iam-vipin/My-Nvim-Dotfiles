@@ -1,12 +1,13 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TGithubAppConfig } from "@plane/types";
+import type { TGithubAppConfig } from "@plane/types";
 import { Input } from "@plane/ui";
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 

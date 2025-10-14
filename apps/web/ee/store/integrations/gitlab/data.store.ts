@@ -4,11 +4,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
-import { IGitlabEntity } from "@plane/etl/gitlab";
-import { TGitlabRepository } from "@plane/types";
+import type { IGitlabEntity } from "@plane/etl/gitlab";
+import type { TGitlabRepository } from "@plane/types";
 import { GitlabDataService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
-import { IGitlabStore } from "@/plane-web/store/integrations";
+import type { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
 
 export interface IGitlabDataStore {

@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
-import { TNotification } from "@plane/types";
+import type { TNotification } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { NotificationContent } from "@/components/workspace-notifications/sidebar/notification-card/content";

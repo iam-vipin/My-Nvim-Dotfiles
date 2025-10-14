@@ -1,15 +1,15 @@
 import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { TClickUpAuthState } from "@plane/etl/clickup";
-import { TServiceAuthConfiguration } from "@plane/etl/core";
+import type { TClickUpAuthState } from "@plane/etl/clickup";
+import type { TServiceAuthConfiguration } from "@plane/etl/core";
 // plane web services
 import { ClickUpAuthService } from "@/plane-web/services/importers/clickup/auth.service";
 // store types
 import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TClickUpPATFormFields } from "@/plane-web/types/importers/clickup";
+import type { TClickUpPATFormFields } from "@/plane-web/types/importers/clickup";
 
 export interface IClickUpAuthStore {
   // observables

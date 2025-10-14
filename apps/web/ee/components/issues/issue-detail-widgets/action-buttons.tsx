@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PageIcon } from "@plane/propel/icons";

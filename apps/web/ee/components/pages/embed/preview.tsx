@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components

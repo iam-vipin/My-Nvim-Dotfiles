@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
 // plane imports
@@ -16,7 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/plane-web/types/workspace-project-states";
 
 type TProjectStateDelete = {
   workspaceSlug: string;

@@ -2,7 +2,7 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import {
+import type {
   EUserProjectRoles,
   EUserWorkspaceRoles,
   TUserPermissions,
@@ -10,7 +10,7 @@ import {
   TRecurringWorkItem,
 } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export type TRecurringWorkItemInstanceProps = {
   root: RootStore;

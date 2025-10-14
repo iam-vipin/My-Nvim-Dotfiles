@@ -4,7 +4,8 @@ import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
+import type { TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { formatTextList } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";

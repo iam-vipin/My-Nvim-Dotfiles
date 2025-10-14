@@ -1,12 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Activity } from "lucide-react";
 import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
 // hooks
-import { TInitiativeStates } from "@plane/types";
+import type { TInitiativeStates } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
 import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";

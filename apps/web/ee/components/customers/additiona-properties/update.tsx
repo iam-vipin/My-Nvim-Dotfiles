@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // ui
 import { CustomerPropertyValueService } from "@plane/services";
-import { TIssuePropertyValues } from "@plane/types";
+import type { TIssuePropertyValues } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web hooks
 import { useCustomerProperties } from "@/plane-web/hooks/store";

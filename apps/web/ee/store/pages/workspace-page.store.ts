@@ -3,16 +3,18 @@ import { makeObservable, observable, runInAction, action, computed, reaction } f
 import { computedFn } from "mobx-utils";
 import { EPageAccess } from "@plane/constants";
 // types
-import { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
+import type { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // services
-import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import { PageShareService } from "@/plane-web/services/page/page-share.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { TWorkspacePage, WorkspacePage } from "./workspace-page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TWorkspacePage } from "./workspace-page";
+import { WorkspacePage } from "./workspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 

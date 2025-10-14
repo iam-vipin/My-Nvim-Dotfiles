@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { Loader } from "@plane/ui";
 // hooks
 // plane-web
-import { TUserThreads } from "@/plane-web/types";
+import type { TUserThreads } from "@/plane-web/types";
 import { SidebarItem } from "./sidebar-item";
 
 type TProps = {

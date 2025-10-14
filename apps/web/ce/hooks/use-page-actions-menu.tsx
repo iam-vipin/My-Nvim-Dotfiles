@@ -3,15 +3,15 @@ import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { ArchiveIcon } from "@plane/propel/icons";
-import { TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
 // components
 import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks
-import { TPageOperations } from "@/hooks/use-page-operations";
+import type { TPageOperations } from "@/hooks/use-page-operations";
 // plane web imports
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export const usePageActionsMenu = (props: {
   page: TPageInstance;

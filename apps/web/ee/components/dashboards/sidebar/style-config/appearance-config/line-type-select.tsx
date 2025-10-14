@@ -1,7 +1,7 @@
 // plane imports
 import { LINE_CHART_LINE_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWidgetLineChartLineType } from "@plane/types";
+import type { TWidgetLineChartLineType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // local imports
 import { WidgetPropertyWrapper } from "../../property-wrapper";

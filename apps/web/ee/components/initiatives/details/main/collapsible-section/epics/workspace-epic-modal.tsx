@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EpicIcon } from "@plane/propel/icons";
 // types
-import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
+import type { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
 import { Checkbox, Loader } from "@plane/ui";
 // helpers

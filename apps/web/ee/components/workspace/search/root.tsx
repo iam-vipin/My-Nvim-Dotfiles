@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // ui
-import { TSearchResultItem } from "@plane/constants";
+import type { TSearchResultItem } from "@plane/constants";
 import { Input } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";

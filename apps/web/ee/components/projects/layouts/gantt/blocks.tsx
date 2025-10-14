@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { IGanttBlock } from "@plane/types";
+import type { IGanttBlock } from "@plane/types";
 import { Logo } from "@plane/ui";
 import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
 // hooks

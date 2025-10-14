@@ -1,10 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EMPTY_PLANE_STATE } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { IState, E_STATE_MAP_KEYS, TStateMap, TStateMapKeys } from "@plane/types";
+import type { IState, TStateMap, TStateMapKeys } from "@plane/types";
+import { E_STATE_MAP_KEYS } from "@plane/types";
 // plane web components
 import { StateFormSelection } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks

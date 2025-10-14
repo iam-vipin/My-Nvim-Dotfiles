@@ -3,8 +3,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 // types
 import { ProjectUpdateCommentService } from "@/plane-web/services";
-import { TProjectUpdatesComment, TProjectUpdatesCommentMap } from "@/plane-web/types";
-import { IProjectUpdatesReactionStore } from "./update_reaction.store";
+import type { TProjectUpdatesComment, TProjectUpdatesCommentMap } from "@/plane-web/types";
+import type { IProjectUpdatesReactionStore } from "./update_reaction.store";
 
 export type TCommentLoader = "fetch" | "create" | "update" | "delete" | "mutate" | undefined;
 

@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
@@ -9,7 +10,8 @@ import { Button } from "@plane/propel/button";
 import { LayersIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
-import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
+import type { ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components

@@ -4,9 +4,9 @@ import { computedFn } from "mobx-utils";
 // plane web services
 import { PublishPageService } from "@/plane-web/services/page";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/plane-web/types";
 
 export interface IPublishPageStore {
   // observables

@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
+import type { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
 // plane web imports
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 // local imports
-import { TIssuePropertyFormError } from "../property-list-item";
+import type { TIssuePropertyFormError } from "../property-list-item";
 import { PropertyMultiSelect } from "./common/property-multi-select";
 import { PropertySettingsConfiguration } from "./common/property-settings-configuration";
 import { IssuePropertyOptionsRoot } from "./options";

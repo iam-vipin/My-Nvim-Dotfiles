@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Accept, useDropzone } from "react-dropzone";
+import type { Accept } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { ImageUp, Upload, X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports

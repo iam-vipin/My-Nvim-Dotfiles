@@ -8,8 +8,9 @@ import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueType } from "@plane/types";
-import { CustomMenu, TContextMenuItem, ToggleSwitch } from "@plane/ui";
+import type { IIssueType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 

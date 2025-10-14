@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, ReactNode } from "react";
+import type { ReactNode } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { CornerDownLeft } from "lucide-react";
 // plane imports

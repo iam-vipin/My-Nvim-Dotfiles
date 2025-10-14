@@ -2,10 +2,11 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane types
-import { TDashboard, TDashboardLevel, TLogoProps } from "@plane/types";
+import type { TDashboard, TDashboardLevel, TLogoProps } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { DashboardWidgetsStore, IDashboardWidgetsStore, TDashboardWidgetHelpers } from "./dashboard-widgets.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IDashboardWidgetsStore, TDashboardWidgetHelpers } from "./dashboard-widgets.store";
+import { DashboardWidgetsStore } from "./dashboard-widgets.store";
 
 export interface IDashboardInstance extends TDashboard {
   // observables

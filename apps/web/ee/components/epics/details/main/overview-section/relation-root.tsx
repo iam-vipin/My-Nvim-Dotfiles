@@ -1,5 +1,6 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { getButtonStyling } from "@plane/propel/button";

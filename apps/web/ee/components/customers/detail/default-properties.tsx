@@ -1,10 +1,12 @@
-import React, { FC, useEffect } from "react";
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import type { FC } from "react";
+import React, { useEffect } from "react";
+import type { FieldValues } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { CUSTOMER_WEBSITE_AND_SOURCE_URL_REGEX } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TCustomer } from "@plane/types";
+import type { TCustomer } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 // plane imports
 import { EPageSharedUserAccess } from "@plane/types";
 // plane web imports
-import { TWorkspacePage } from "@/plane-web/store/pages/workspace-page";
+import type { TWorkspacePage } from "@/plane-web/store/pages/workspace-page";
 
 export type TPageShareFormUser = {
   id: string; // Unique identifier for the form

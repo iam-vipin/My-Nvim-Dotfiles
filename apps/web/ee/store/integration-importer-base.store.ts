@@ -1,9 +1,9 @@
 import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
+import type { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export type TBaseLoader = "fetch-projects" | "fetch_states" | undefined;
 

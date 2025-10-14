@@ -1,10 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { ArrowRight, Hash } from "lucide-react";
 
 // Plane components
-import { SlackConversation } from "@plane/etl/slack";
+import type { SlackConversation } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { PlaneLogo, ProjectIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
@@ -15,7 +15,7 @@ import { useSlackIntegration } from "@/plane-web/hooks/store";
 
 // Types
 import SlackLogo from "@/public/services/slack.png";
-import { SlackProjectNotificationMap } from "./form";
+import type { SlackProjectNotificationMap } from "./form";
 
 // Assets
 

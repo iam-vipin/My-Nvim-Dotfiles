@@ -2,7 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
-import { EIssueServiceType, EWorkItemTypeEntity, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import type { TWorkItemModalAdditionalPropertiesProps } from "@/ce/components/issues/issue-modal/modal-additional-properties";

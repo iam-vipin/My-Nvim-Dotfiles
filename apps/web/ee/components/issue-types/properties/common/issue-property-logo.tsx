@@ -1,7 +1,8 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { TriangleAlert } from "lucide-react";
 // plane imports
-import { TLogoProps } from "@plane/types";
+import type { TLogoProps } from "@plane/types";
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { cn } from "@plane/utils";
 

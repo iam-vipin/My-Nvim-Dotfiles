@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { ERelationType } from "@plane/constants";
+import type { ERelationType } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { TEAM_STATISTICS_DEPENDENCY_MAP } from "@/plane-web/constants/teamspace";
-import { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
 export const StatisticsDependencyFilter: React.FC<TStatisticsFilterProps<"dependency_type">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

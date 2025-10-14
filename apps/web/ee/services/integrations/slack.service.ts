@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import {
+import type {
   SlackAuthState,
   SlackUserAuthState,
   TSlackUserAlertsConfig,
@@ -9,7 +10,7 @@ import {
   TSlackProjectUpdatesConfig,
   TUserConnectionStatus,
 } from "@plane/etl/slack";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 export class SlackIntegrationService {
   protected baseURL: string;

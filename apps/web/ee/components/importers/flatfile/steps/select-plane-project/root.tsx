@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
 import { Button } from "@plane/propel/button";
 import { ProjectIcon } from "@plane/propel/icons";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -16,7 +17,8 @@ import { Logo } from "@/components/common/logo";
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/flatfile";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 

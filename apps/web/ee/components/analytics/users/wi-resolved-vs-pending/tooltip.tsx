@@ -1,9 +1,9 @@
 import React from "react";
-import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { useTranslation } from "@plane/i18n";
 import { Card, ECardSpacing } from "@plane/propel/card";
-import { IUserLite } from "@plane/types";
+import type { IUserLite } from "@plane/types";
 import { UserAvatarName } from "../../user-avatar-name";
 
 type TooltipItem = {

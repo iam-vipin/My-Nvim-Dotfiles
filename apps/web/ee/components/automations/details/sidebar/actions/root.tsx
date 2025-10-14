@@ -6,24 +6,20 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // helpers
-import {
-  EActionNodeHandlerName,
-  EAutomationNodeType,
+import type {
   TAutomationActionNodeConfig,
   TChangePropertyActionConfig,
   TChangePropertyActionFormConfig,
 } from "@plane/types";
+import { EActionNodeHandlerName, EAutomationNodeType } from "@plane/types";
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
-import { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
+import type { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
 // local imports
 import { DeleteAutomationNodeConfirmationModal } from "../delete-confirmation-modal";
-import {
-  AutomationDetailsSidebarActionsFormRoot,
-  EAutomationActionFormType,
-  TAutomationActionFormData,
-} from "./form/root";
+import type { TAutomationActionFormData } from "./form/root";
+import { AutomationDetailsSidebarActionsFormRoot, EAutomationActionFormType } from "./form/root";
 
 type Props = {
   automationId: string;

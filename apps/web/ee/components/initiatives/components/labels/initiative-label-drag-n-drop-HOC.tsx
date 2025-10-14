@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -11,12 +12,13 @@ import { createRoot } from "react-dom/client";
 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles, InstructionType } from "@plane/types";
+import type { InstructionType } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 
 // local imports
 import { useUserPermissions } from "@/hooks/store/user";
-import { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TInitiativeLabel } from "@/plane-web/types/initiative";
 import { InitiativeLabelName } from "./initiative-label-name";
 import { getInitiativeCanDrop } from "./initiative-label-utils";
 

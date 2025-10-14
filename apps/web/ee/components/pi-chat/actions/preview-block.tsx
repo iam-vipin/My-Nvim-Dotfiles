@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
-import { TArtifact } from "@/plane-web/types";
+import type { TArtifact } from "@/plane-web/types";
 
 export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon") => {
   switch (type) {

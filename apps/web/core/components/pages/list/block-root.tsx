@@ -9,9 +9,10 @@ import { useParams } from "next/navigation";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import { PageListBlock } from "./block";
 

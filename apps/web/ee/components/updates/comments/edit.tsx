@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TUpdateComment, TUpdateOperations } from "@plane/types";
+import type { TUpdateComment, TUpdateOperations } from "@plane/types";
 import { Input } from "@plane/ui";
 
 type TProps = {

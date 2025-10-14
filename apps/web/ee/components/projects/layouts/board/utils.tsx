@@ -2,14 +2,18 @@
 
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { PriorityIcon } from "@plane/propel/icons";
-import { IWorkspace, IWorkspaceMember } from "@plane/types";
+import type { IWorkspace, IWorkspaceMember } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { ProjectStateIcon } from "@/plane-web/components/workspace-project-states";
 import { PROJECT_PRIORITY_MAP } from "@/plane-web/constants/project";
 import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-project-states";
-import { GroupDetails, TProjectPriority } from "@/plane-web/types/workspace-project-filters";
-import { EProjectStateGroup, TProjectState, TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import type { GroupDetails, TProjectPriority } from "@/plane-web/types/workspace-project-filters";
+import type {
+  EProjectStateGroup,
+  TProjectState,
+  TProjectStateGroupKey,
+} from "@/plane-web/types/workspace-project-states";
 
 const HIGHLIGHT_CLASS = "highlight";
 const HIGHLIGHT_WITH_LINE = "highlight-with-line";

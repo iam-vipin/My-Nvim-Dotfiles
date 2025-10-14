@@ -1,9 +1,10 @@
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { capitalize } from "lodash-es";
 import { Check, ChevronDown } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TEstimateSystemKeys } from "@plane/types";
+import type { TEstimateSystemKeys } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports

@@ -4,10 +4,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, EViewAccess, TTeamspaceView, TWorkItemFilterExpression } from "@plane/types";
+import type { TTeamspaceView, TWorkItemFilterExpression } from "@plane/types";
+import { EUserProjectRoles, EViewAccess } from "@plane/types";
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { WorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/base";
-import {
+import type {
   TEnableSaveViewProps,
   TEnableUpdateViewProps,
   TSharedWorkItemFiltersHOCProps,

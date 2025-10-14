@@ -7,9 +7,16 @@ import { AtSign, CircleUserRound, Files, SignalHigh, Tag, Users } from "lucide-r
  * plane imports
  */
 
-import { CycleGroupIcon, DiceIcon, DoubleCircleIcon, PriorityIcon, StateGroupIcon, ViewsIcon } from "@plane/propel/icons";
-import { FilterInstance } from "@plane/shared-state";
 import {
+  CycleGroupIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  PriorityIcon,
+  StateGroupIcon,
+  ViewsIcon,
+} from "@plane/propel/icons";
+import { FilterInstance } from "@plane/shared-state";
+import type {
   ICycle,
   IIssueLabel,
   IModule,

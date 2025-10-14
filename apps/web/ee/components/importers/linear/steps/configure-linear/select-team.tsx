@@ -1,9 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { LinearTeam } from "@plane/etl/linear";
+import type { LinearTeam } from "@plane/etl/linear";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components

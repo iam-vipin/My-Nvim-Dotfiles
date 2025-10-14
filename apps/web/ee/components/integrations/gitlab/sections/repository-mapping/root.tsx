@@ -1,13 +1,15 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { E_STATE_MAP_KEYS, TStateMap } from "@plane/types";
+import type { TStateMap } from "@plane/types";
+import { E_STATE_MAP_KEYS } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web components
 import {
@@ -18,7 +20,7 @@ import {
 //  plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,

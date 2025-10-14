@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TIssueGroupByOptions } from "@plane/types";
+import type { TIssueGroupByOptions } from "@plane/types";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 

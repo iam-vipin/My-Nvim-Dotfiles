@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { IProjectState } from "@/plane-web/store/workspace-project-states";
+import type { IProjectState } from "@/plane-web/store/workspace-project-states";
 
 export const useProjectState = (projectStateId: string | undefined): IProjectState => {
   const context = useContext(StoreContext);

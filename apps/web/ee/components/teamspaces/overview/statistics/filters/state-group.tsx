@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { TStateGroups } from "@plane/types";
+import type { TStateGroups } from "@plane/types";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
 export const StatisticsStateGroupFilter: React.FC<TStatisticsFilterProps<"state_group">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

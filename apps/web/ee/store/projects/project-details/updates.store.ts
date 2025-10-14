@@ -3,9 +3,11 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 import { ProjectUpdateService } from "@/plane-web/services";
 // types
-import { TProjectUpdate, TProjectUpdateReaction } from "@/plane-web/types";
-import { IUpdateCommentStore, ProjectUpdateCommentStore } from "./comment.store";
-import { IProjectUpdatesReactionStore, ProjectUpdatesReactionStore } from "./update_reaction.store";
+import type { TProjectUpdate, TProjectUpdateReaction } from "@/plane-web/types";
+import type { IUpdateCommentStore } from "./comment.store";
+import { ProjectUpdateCommentStore } from "./comment.store";
+import type { IProjectUpdatesReactionStore } from "./update_reaction.store";
+import { ProjectUpdatesReactionStore } from "./update_reaction.store";
 
 export interface IProjectUpdateStoreActions {
   fetchUpdates: (workspaceSlug: string, projectId: string) => Promise<TProjectUpdate[]>;

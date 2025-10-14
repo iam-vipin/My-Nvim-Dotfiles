@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { ChevronRight } from "lucide-react";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 // ui
 import { CustomMenu, Header } from "@plane/ui";
 // components

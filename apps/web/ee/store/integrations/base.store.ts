@@ -4,12 +4,12 @@ import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_URL } from "@plane/constants";
-import { IApiToken, IProject, IState, IUser, IWebhook, IWorkspace } from "@plane/types";
+import type { IApiToken, IProject, IState, IUser, IWebhook, IWorkspace } from "@plane/types";
 // plane web services
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
 import internalWebhookService from "@/plane-web/services/internal-webhook.service";
 // plane web root store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IIntegrationBaseStore {
   // observables

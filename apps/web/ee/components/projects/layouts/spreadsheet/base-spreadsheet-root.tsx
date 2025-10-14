@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
-import { TProject } from "@/plane-web/types/projects";
-import { EProjectLayouts, TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TProject } from "@/plane-web/types/projects";
+import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export const BaseSpreadsheetRoot = observer(() => {

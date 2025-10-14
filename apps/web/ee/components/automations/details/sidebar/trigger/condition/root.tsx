@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TAutomationConditionFilterExpression } from "@plane/types";
+import type { TAutomationConditionFilterExpression } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
 import { AddFilterButton } from "@/components/rich-filters/add-filters/button";

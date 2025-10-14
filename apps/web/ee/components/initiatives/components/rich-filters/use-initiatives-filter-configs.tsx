@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
 import { INITIATIVE_STATES } from "@plane/constants";
 import { InitiativeStateIcon } from "@plane/propel/icons";
-import { IUserLite } from "@plane/types";
+import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import {
   getInitiativeLeadFilterConfig,
@@ -10,7 +10,7 @@ import {
   getInitiativeEndDateFilterConfig,
   getInitiativeStatesFilterConfig,
 } from "@plane/utils";
-import { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
+import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 
 interface UseInitiativesFilterConfigsProps {
   workspaceMembers: IUserLite[];

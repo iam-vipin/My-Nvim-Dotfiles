@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EViewAccess, TViewFilterProps } from "@plane/types";
+import type { EViewAccess, TViewFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // constants
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";

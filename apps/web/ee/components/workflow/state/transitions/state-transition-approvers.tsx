@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IStateTransition } from "@plane/types";
+import type { IStateTransition } from "@plane/types";
 // components
 import { AppliedMembersFilters } from "@/components/issues/issue-layouts/filters";
 // hooks

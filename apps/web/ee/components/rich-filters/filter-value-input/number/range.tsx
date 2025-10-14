@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TFilterProperty, TFilterConditionNodeForDisplay } from "@plane/types";
+import type { TFilterProperty, TFilterConditionNodeForDisplay } from "@plane/types";
 import { Input } from "@plane/ui";
 import { toFilterArray } from "@plane/utils";
 // components

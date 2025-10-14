@@ -7,11 +7,13 @@ import {
   workspacePageTemplateService as workspaceLevelService,
   projectPageTemplateService as projectLevelService,
 } from "@plane/services";
-import { IBaseTemplateActionCallbacks, ITemplateService, TPageTemplate } from "@plane/types";
+import type { IBaseTemplateActionCallbacks, ITemplateService, TPageTemplate } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
-import { BaseTemplateStore, IBaseTemplateInstance, IBaseTemplateStore } from "@/plane-web/store/templates";
-import { PageTemplateInstance, TPageTemplateInstanceProps } from "../instance/page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IBaseTemplateInstance, IBaseTemplateStore } from "@/plane-web/store/templates";
+import { BaseTemplateStore } from "@/plane-web/store/templates";
+import type { TPageTemplateInstanceProps } from "../instance/page";
+import { PageTemplateInstance } from "../instance/page";
 
 type TBasePageTemplateProps = {
   workspaceSlug: string;

@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { MODULE_STATUS, MODULE_STATUS_COLORS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IModuleProgressData, IChartResponse, TChartData, TModuleStatus } from "@plane/types";
+import type { IModuleProgressData, IChartResponse, TChartData, TModuleStatus } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
@@ -17,7 +17,8 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 8; // services
 import { AnalyticsService } from "@/services/analytics.service";
-import ModulesCyclesTooltip, { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
+import type { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
+import ModulesCyclesTooltip from "../modules-cycles-tooltip";
 
 const analyticsService = new AnalyticsService();
 const ModuleProgress = observer(() => {

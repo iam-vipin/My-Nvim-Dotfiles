@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState, type RefObject } from "react";
+import { useCallback, useMemo, useState } from "react";
+import type { RefObject } from "react";
 import { useSearchParams } from "next/navigation";
 import type { EditorRefApi, TCommentClickPayload } from "@plane/editor";
 import {

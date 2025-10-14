@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
@@ -19,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabel } from "@/plane-web/types";
 import { getInitiativeLabelsArray } from "./initiative-label-utils";
 
 export interface IInitiativeLabelPropertyDropdownProps {

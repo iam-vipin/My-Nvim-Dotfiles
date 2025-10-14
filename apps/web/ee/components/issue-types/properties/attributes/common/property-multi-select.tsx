@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { DROPDOWN_ATTRIBUTES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssuePropertyTypeKeys } from "@plane/types";
+import type { TIssuePropertyTypeKeys } from "@plane/types";
 // components
 import { RadioInput } from "@/components/estimates/radio-select";
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-import { type JSONContent } from "@plane/types";
+import type { JSONContent } from "@plane/types";
 import { useNewComment } from "@/plane-web/hooks/pages/use-new-comment";
 import { FileService } from "@/services/file.service";
-import { type TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 import { PageCommentForm } from "./comment-form";
 
 const fileService = new FileService();

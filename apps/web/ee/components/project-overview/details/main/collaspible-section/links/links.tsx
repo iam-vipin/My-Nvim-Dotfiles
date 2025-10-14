@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useProjectLinks } from "@/plane-web/hooks/store";
 import { ProjectLinkDetail } from "./link-detail";
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 // hooks
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;

@@ -2,12 +2,12 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { INITIATIVE_DEFAULT_DISPLAY_FILTERS } from "@plane/constants";
-import { TInitiativeDisplayFilters } from "@plane/types";
+import type { TInitiativeDisplayFilters } from "@plane/types";
 // Plane-web
 import { InitiativeService } from "@/plane-web/services/initiative.service";
-import { TExternalInitiativeFilterExpression } from "@/plane-web/types/initiative";
+import type { TExternalInitiativeFilterExpression } from "@/plane-web/types/initiative";
 //
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 
 export interface IInitiativeFilterStore {
   displayFilters: Record<string, TInitiativeDisplayFilters>;

@@ -1,9 +1,11 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
+import type { FC, ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
+import type { TIssueComment } from "@plane/types";
+import { EIssueCommentAccessSpecifier } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks

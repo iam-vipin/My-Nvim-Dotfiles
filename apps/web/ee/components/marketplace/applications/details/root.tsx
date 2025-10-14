@@ -2,9 +2,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
+import type { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
 import { AppList } from "@/plane-web/components/marketplace";
-import { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
 
 import GitHubLogo from "@/public/logos/integrations/github.png";
 import GitlabLogo from "@/public/logos/integrations/gitlab.png";

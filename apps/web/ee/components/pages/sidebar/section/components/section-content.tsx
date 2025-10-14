@@ -12,7 +12,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
 // local imports
 import { WikiPageSidebarListItemRoot } from "../../list-item-root";
-import { SectionContentProps } from "../types";
+import type { SectionContentProps } from "../types";
 
 /**
  * Component for rendering section content with virtualization

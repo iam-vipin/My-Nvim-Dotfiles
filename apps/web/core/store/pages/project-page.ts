@@ -3,14 +3,15 @@ import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 // store
-import { BasePage, type TPageInstance } from "./base-page";
+import { BasePage } from "./base-page";
+import type { TPageInstance } from "./base-page";
 
 export type TProjectPage = TPageInstance;
 

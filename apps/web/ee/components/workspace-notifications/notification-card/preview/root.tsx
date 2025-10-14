@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { orderBy } from "lodash-es";
-import { TNotification, TNotificationIssueLite } from "@plane/types";
+import type { TNotification, TNotificationIssueLite } from "@plane/types";
 import { convertToEpoch } from "@plane/utils";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { NotificationPreviewActivity } from "./preview-activity";

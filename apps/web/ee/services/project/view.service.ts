@@ -1,4 +1,4 @@
-import { EViewAccess, TPublishViewSettings } from "@plane/types";
+import type { EViewAccess, TPublishViewSettings } from "@plane/types";
 // helpers
 // services
 import { ViewService as CoreViewService } from "@/services/view.service";

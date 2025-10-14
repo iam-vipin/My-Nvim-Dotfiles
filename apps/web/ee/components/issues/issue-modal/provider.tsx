@@ -5,14 +5,8 @@ import { mutate } from "swr";
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {
-  EWorkItemConversionType,
-  EWorkItemTypeEntity,
-  ISearchIssueResponse,
-  TIssue,
-  TIssuePropertyValueErrors,
-  TIssuePropertyValues,
-} from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
   extractAndSanitizeWorkItemTemplateFormData,
@@ -21,8 +15,7 @@ import {
 // ce imports
 import type { TIssueModalProviderProps } from "@/ce/components/issues/issue-modal/provider";
 // components
-import {
-  IssueModalContext,
+import type {
   TActiveAdditionalPropertiesProps,
   TCreateSubWorkItemProps,
   TCreateUpdatePropertyValuesProps,
@@ -30,6 +23,7 @@ import {
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues/issue-modal/context";
+import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";

@@ -7,7 +7,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
 import { getButtonStyling } from "@plane/propel/button";
-import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // plane ui
 // plane utils
 import { cn } from "@plane/utils";
@@ -15,13 +16,14 @@ import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import type { TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import { PageRoot } from "@/components/pages/editor/page-root";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web imports
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";

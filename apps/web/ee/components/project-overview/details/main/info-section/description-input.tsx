@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -16,7 +17,7 @@ import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 const workspaceService = new WorkspaceService();
 
 export type ProjectDescriptionInputProps = {

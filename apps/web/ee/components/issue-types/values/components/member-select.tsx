@@ -3,11 +3,11 @@ import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { MemberDropdownProps } from "@/components/dropdowns/member/types";
+import type { MemberDropdownProps } from "@/components/dropdowns/member/types";
 
 type TMemberValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;

@@ -3,11 +3,12 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
-import { EProductSubscriptionEnum, IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
+import type { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 const paymentService = new PaymentService();
 

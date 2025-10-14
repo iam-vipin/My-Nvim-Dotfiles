@@ -3,7 +3,7 @@ import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } 
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
-import { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
 
 type RowData = IWorklogDownload;
 const checkExpiry = (inputDateString: string) => {

@@ -1,4 +1,4 @@
-import { TPublishSettings } from "@plane/types";
+import type { TPublishSettings } from "@plane/types";
 
 export type TPagePublishViewProps = object;
 

@@ -8,7 +8,7 @@ import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCustomers } from "@/plane-web/hooks/store";
 // types
-import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;

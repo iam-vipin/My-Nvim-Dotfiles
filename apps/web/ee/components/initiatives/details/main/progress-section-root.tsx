@@ -1,11 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TStateAnalytics } from "@plane/types";
+import type { TStateAnalytics } from "@plane/types";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

@@ -1,4 +1,5 @@
-import { FC, useCallback } from "react";
+import type { FC } from "react";
+import { useCallback } from "react";
 // constants
 import { observer } from "mobx-react";
 import {
@@ -7,13 +8,13 @@ import {
   SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE,
 } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   IIssueDisplayFilterOptions,
   TIssueServiceType,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { SubIssuesActionButton, SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";

@@ -2,10 +2,11 @@ import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TExtensions } from "@plane/editor";
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { TExtensions } from "@plane/editor";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 // plane-web
-import { FeatureFlagService, TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
+import type { TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
+import { FeatureFlagService } from "@/plane-web/services/feature-flag.service";
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";

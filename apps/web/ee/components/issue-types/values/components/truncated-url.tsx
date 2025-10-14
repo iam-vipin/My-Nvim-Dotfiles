@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
-import { cn, IURLComponents } from "@plane/utils";
+import type { IURLComponents } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 interface TruncatedUrlProps {
   url: IURLComponents;

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
@@ -11,7 +11,7 @@ import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations";
 // public images
 
 type TSelectProject = {

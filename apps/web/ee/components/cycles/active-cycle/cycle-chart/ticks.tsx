@@ -1,5 +1,5 @@
 import { startOfToday, format, differenceInWeeks } from "date-fns";
-import { TCycleProgress, TProgressChartData } from "@plane/types";
+import type { TCycleProgress, TProgressChartData } from "@plane/types";
 
 type TProps = {
   x?: number;

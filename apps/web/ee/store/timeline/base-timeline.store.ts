@@ -2,19 +2,17 @@ import { flatten, get, set, uniq } from "lodash-es";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EGanttBlockType, IBlockUpdateDependencyData, TGanttBlockGroup } from "@plane/types";
+import type { EGanttBlockType, IBlockUpdateDependencyData, TGanttBlockGroup } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // components
-import {
-  BaseTimeLineStore as ExtendableTimelineStore,
-  IBaseTimelineStore as IExtendableTimelineStore,
-} from "@/ce/store/timeline/base-timeline.store";
+import type { IBaseTimelineStore as IExtendableTimelineStore } from "@/ce/store/timeline/base-timeline.store";
+import { BaseTimeLineStore as ExtendableTimelineStore } from "@/ce/store/timeline/base-timeline.store";
 import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
 // Plane-web
-import { EDependencyPosition } from "@/plane-web/constants";
-import { DependencyDraggingDetails, Relation } from "@/plane-web/types";
+import type { EDependencyPosition } from "@/plane-web/constants";
+import type { DependencyDraggingDetails, Relation } from "@/plane-web/types";
 // local
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOfBlock, getRelationType } from "./utils";
 
 export interface IBaseTimelineStore extends IExtendableTimelineStore {

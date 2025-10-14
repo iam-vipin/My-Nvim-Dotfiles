@@ -8,7 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 // ui
-import { AlertModalCore, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

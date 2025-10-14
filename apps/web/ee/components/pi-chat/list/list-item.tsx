@@ -5,11 +5,12 @@ import { useParams } from "next/navigation";
 import { Pencil, Star, Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { CustomMenu, EModalPosition, EModalWidth, ModalCore, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TUserThreads } from "@/plane-web/types";
+import type { TUserThreads } from "@/plane-web/types";
 import { ChatDeleteModal } from "../modals/delete-modal";
 import { EditForm } from "../modals/edit-form";
 

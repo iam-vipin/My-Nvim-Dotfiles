@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EAutomationNodeType } from "@plane/types";
+import type { EAutomationNodeType } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 
 type Props = {

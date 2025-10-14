@@ -1,12 +1,14 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { E_STATE_MAP_KEYS, TGithubEntityConnection, TStateMap } from "@plane/types";
+import type { TGithubEntityConnection, TStateMap } from "@plane/types";
+import { E_STATE_MAP_KEYS } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -14,7 +16,7 @@ import { SelectProject } from "@/plane-web/components/integrations/github/common
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations";
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 import { MapProjectPRState } from "./common";

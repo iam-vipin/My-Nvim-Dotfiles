@@ -4,13 +4,13 @@ import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // types
 import { RequestAttachmentService } from "@plane/services";
-import {
+import type {
   TCustomerRequestAttachment,
   TCustomerRequestAttachmentMap,
   TCustomerRequestAttachmentIdMap,
   TCustomerRequest,
 } from "@plane/types";
-import { CustomerStore } from "./customers.store";
+import type { CustomerStore } from "./customers.store";
 
 export type TRequestAttachmentUploadStatus = {
   id: string;

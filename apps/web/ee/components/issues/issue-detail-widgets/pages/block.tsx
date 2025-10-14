@@ -1,12 +1,14 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { CircleX, Files, Link2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
-import { TContextMenuItem, CustomMenu, Logo } from "@plane/ui";
+import type { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, Logo } from "@plane/ui";
 import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

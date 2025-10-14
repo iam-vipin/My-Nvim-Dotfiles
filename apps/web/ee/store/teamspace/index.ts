@@ -1,13 +1,20 @@
 // root store
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 // teamspace stores
-import { ITeamspacePageStore, TeamspacePageStore } from "./pages/teamspace-page.store";
-import { ITeamspaceAnalyticsStore, TeamspaceAnalyticsStore } from "./teamspace-analytics.store";
-import { ITeamspaceCycleStore, TeamspaceCycleStore } from "./teamspace-cycle.store";
-import { ITeamspaceFilterStore, TeamspaceFilterStore } from "./teamspace-filter.store";
-import { ITeamspaceUpdatesStore, TeamspaceUpdatesStore } from "./teamspace-updates.store";
-import { ITeamspaceViewStore, TeamspaceViewStore } from "./teamspace-view.store";
-import { ITeamspaceStore, TeamspaceStore } from "./teamspace.store";
+import type { ITeamspacePageStore } from "./pages/teamspace-page.store";
+import { TeamspacePageStore } from "./pages/teamspace-page.store";
+import type { ITeamspaceAnalyticsStore } from "./teamspace-analytics.store";
+import { TeamspaceAnalyticsStore } from "./teamspace-analytics.store";
+import type { ITeamspaceCycleStore } from "./teamspace-cycle.store";
+import { TeamspaceCycleStore } from "./teamspace-cycle.store";
+import type { ITeamspaceFilterStore } from "./teamspace-filter.store";
+import { TeamspaceFilterStore } from "./teamspace-filter.store";
+import type { ITeamspaceUpdatesStore } from "./teamspace-updates.store";
+import { TeamspaceUpdatesStore } from "./teamspace-updates.store";
+import type { ITeamspaceViewStore } from "./teamspace-view.store";
+import { TeamspaceViewStore } from "./teamspace-view.store";
+import type { ITeamspaceStore } from "./teamspace.store";
+import { TeamspaceStore } from "./teamspace.store";
 
 export interface ITeamspaceRootStore {
   teamspaces: ITeamspaceStore;

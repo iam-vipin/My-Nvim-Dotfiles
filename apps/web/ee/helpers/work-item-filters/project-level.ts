@@ -1,9 +1,7 @@
 // ce imports
 import { EIssuesStoreType } from "@plane/types";
-import {
-  getAdditionalProjectLevelFiltersHOCProps as getCoreAdditionalProjectLevelFiltersHOCProps,
-  TGetAdditionalPropsForProjectLevelFiltersHOC,
-} from "@/ce/helpers/work-item-filters/project-level";
+import type { TGetAdditionalPropsForProjectLevelFiltersHOC } from "@/ce/helpers/work-item-filters/project-level";
+import { getAdditionalProjectLevelFiltersHOCProps as getCoreAdditionalProjectLevelFiltersHOCProps } from "@/ce/helpers/work-item-filters/project-level";
 // store imports
 import { store } from "@/lib/store-context";
 

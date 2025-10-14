@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { TInitiativeDisplayFilters } from "@plane/types";
+import type { TInitiativeDisplayFilters } from "@plane/types";
 
 // plane imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

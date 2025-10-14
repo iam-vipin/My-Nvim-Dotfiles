@@ -1,13 +1,15 @@
 "use client";
 
-import { MutableRefObject, useRef, useState } from "react";
-import { LucideIcon, X } from "lucide-react";
+import type { MutableRefObject } from "react";
+import { useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { X } from "lucide-react";
 
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabel } from "@/plane-web/types";
 
 // local imports
 import { InitiativeLabelName } from "./initiative-label-name";

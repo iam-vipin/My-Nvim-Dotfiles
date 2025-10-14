@@ -11,12 +11,12 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import {
-  EAutomationSidebarTab,
+import type {
   ICustomSearchSelectOption,
   TAutomationConditionFilterExpression,
   TTriggerNodeHandlerName,
 } from "@plane/types";
+import { EAutomationSidebarTab } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, generateConditionPayload } from "@plane/utils";
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";

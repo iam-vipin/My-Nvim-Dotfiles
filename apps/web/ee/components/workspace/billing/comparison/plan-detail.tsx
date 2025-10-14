@@ -1,8 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { SUBSCRIPTION_WITH_BILLING_FREQUENCY, SUBSCRIPTION_WITH_TRIAL } from "@plane/constants";
-import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
+import type { IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Loader } from "@plane/ui";
 import {
   cn,
@@ -14,7 +15,7 @@ import {
 } from "@plane/utils";
 // constants
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
-import { TPlanDetail } from "@/constants/plans";
+import type { TPlanDetail } from "@/constants/plans";
 // plane web
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports

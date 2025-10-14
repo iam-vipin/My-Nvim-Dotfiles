@@ -5,7 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { projectTemplateService } from "@plane/services";
-import { EUserPermissions, IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
+import { EUserPermissions } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks

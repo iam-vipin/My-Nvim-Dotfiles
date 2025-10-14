@@ -2,7 +2,12 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
+import type {
+  TCycleEstimateSystemAdvanced,
+  TCycleEstimateType,
+  TCyclePlotType,
+  TProgressChartData,
+} from "@plane/types";
 import { Loader } from "@plane/ui";
 import { calculateCycleProgress } from "@plane/utils";
 // local components

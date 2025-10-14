@@ -8,7 +8,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -20,7 +20,7 @@ import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { SectionHeader, SectionContent } from "./components";
 import { SECTION_DETAILS } from "./constants";
 import { useSectionDragAndDrop, useSectionPages } from "./hooks";
-import { SectionRootProps } from "./types";
+import type { SectionRootProps } from "./types";
 
 const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((props) => {
   const { expandedPageIds, sectionType, setExpandedPageIds, currentPageId } = props;

@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
+import type { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // plane web components
 import {

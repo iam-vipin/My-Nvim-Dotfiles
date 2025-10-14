@@ -1,6 +1,6 @@
 import { CircleChevronDown, MessageCircle } from "lucide-react";
 // plane imports
-import { TAutomationActionHandlerIconKey } from "@plane/constants";
+import type { TAutomationActionHandlerIconKey } from "@plane/constants";
 
 type Props = {
   iconKey: TAutomationActionHandlerIconKey;

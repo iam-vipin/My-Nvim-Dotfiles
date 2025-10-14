@@ -5,7 +5,7 @@ import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/fi
 // constants
 import { PROJECT_SORT_BY_OPTIONS } from "@/plane-web/constants/project";
 // types
-import { TProjectSortBy } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectSortBy } from "@/plane-web/types/workspace-project-filters";
 
 type TDisplayFilterSortBy = {
   filterValue: TProjectSortBy | undefined;

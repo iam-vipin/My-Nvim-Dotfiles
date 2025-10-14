@@ -2,15 +2,12 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-import { TChangeHandlerProps } from "@plane/ui";
+import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
+import type { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
-import {
-  ExtendedBasePage,
-  TExtendedBasePagePermissions,
-  TExtendedPageInstance,
-} from "@/plane-web/store/pages/extended-base-page";
+import type { TExtendedBasePagePermissions, TExtendedPageInstance } from "@/plane-web/store/pages/extended-base-page";
+import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
 import { PageEditorInstance } from "./page-editor-info";

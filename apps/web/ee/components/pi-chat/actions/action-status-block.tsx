@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Info } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EExecutionStatus, TDialogue } from "@/plane-web/types";
+import type { TDialogue } from "@/plane-web/types";
+import { EExecutionStatus } from "@/plane-web/types";
 import { ConfirmBlock } from "./confirm-block";
 import { SummaryBlock } from "./summary";
 

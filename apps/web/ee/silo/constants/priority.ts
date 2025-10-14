@@ -1,4 +1,5 @@
-import { E_PLANE_PRIORITY, TPlanePriorityData } from "@/plane-web/silo/types/common";
+import type { TPlanePriorityData } from "@/plane-web/silo/types/common";
+import { E_PLANE_PRIORITY } from "@/plane-web/silo/types/common";
 
 export const PLANE_PRIORITIES: TPlanePriorityData[] = [
   {

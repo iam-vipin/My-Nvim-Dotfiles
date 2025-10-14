@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { type JSONContent } from "@plane/types";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { JSONContent } from "@plane/types";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type NewCommentSelection = {
   from: number;

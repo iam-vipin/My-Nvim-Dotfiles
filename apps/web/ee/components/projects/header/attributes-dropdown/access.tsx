@@ -7,8 +7,8 @@ import { Globe2, Lock } from "lucide-react";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web hooks
 import { PROJECT_ACCESS } from "@/plane-web/constants/project";
-import { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
-import { EProjectAccess } from "@/plane-web/types/workspace-project-states";
+import type { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
+import type { EProjectAccess } from "@/plane-web/types/workspace-project-states";
 
 type TFilterAccess = {
   workspaceId: string;

@@ -1,8 +1,8 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType } from "@plane/constants";
-import {
+import type { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -15,7 +15,7 @@ import {
   updateSubWorkItemFilters,
 } from "@/store/issue/helpers/base-issues-utils";
 import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
-import { InitiativeEpicStore } from "./initiative-epics.store";
+import type { InitiativeEpicStore } from "./initiative-epics.store";
 
 export interface IInitiativeEpicsFilterStore {
   initiativeEpicsFiltersMap: Record<string, Partial<ISubWorkItemFilters>>;

@@ -1,6 +1,7 @@
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import type { FieldValues, UseFormRegister } from "react-hook-form";
 import { cn, Input } from "@plane/ui";
-import { BaseFieldProps, FieldWrapper } from "./base-field";
+import type { BaseFieldProps } from "./base-field";
+import { FieldWrapper } from "./base-field";
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   type: "text" | "email" | "url";

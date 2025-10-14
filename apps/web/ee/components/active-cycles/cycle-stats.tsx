@@ -1,4 +1,5 @@
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -11,7 +12,8 @@ import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType, IActiveCycle } from "@plane/types";
+import type { IActiveCycle } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // components

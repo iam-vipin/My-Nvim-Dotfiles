@@ -13,7 +13,7 @@ import {
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import {
+import type {
   EIssuePropertyType,
   IIssueProperty,
   IIssueType,
@@ -21,13 +21,13 @@ import {
   TProjectTemplateForm,
   TProjectTemplateFormData,
 } from "@plane/types";
+import type { TProjectSanitizationResult } from "@plane/utils";
 import {
   cn,
   generateAdditionalProjectTemplateFormData,
   projectTemplateFormGettersHelpers,
   processWorkItemCustomProperties,
   projectTemplateDataToSanitizedFormData,
-  TProjectSanitizationResult,
 } from "@plane/utils";
 // root store
 import { useMember } from "@/hooks/store/use-member";

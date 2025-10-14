@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { useParams } from "next/navigation";
-import { IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { SidebarItemBase } from "@/components/workspace/sidebar/sidebar-item";
 import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 import { UpgradeBadge } from "../upgrade-badge";

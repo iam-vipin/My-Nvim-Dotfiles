@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { TClickUpConfig } from "@plane/etl/clickup";
-import { TImportJob } from "@plane/types";
+import type { TClickUpConfig } from "@plane/etl/clickup";
+import type { TImportJob } from "@plane/types";
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // assets
 import ClickUpLogo from "@/public/services/clickup.svg";

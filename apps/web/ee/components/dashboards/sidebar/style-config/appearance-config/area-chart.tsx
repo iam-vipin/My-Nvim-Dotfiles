@@ -3,7 +3,8 @@ import { debounce } from "lodash-es";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EWidgetChartModels, TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels } from "@plane/types";
 import { Input, ToggleSwitch } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";

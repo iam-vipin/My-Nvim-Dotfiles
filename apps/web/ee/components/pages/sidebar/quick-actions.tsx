@@ -8,7 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage } from "@plane/types";
 import { EPageAccess } from "@plane/types";
-import { cn } from "@plane/utils";
+// ui
+import { SidebarAddButton } from "@/components/sidebar/add-button";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
@@ -62,19 +63,17 @@ export const PagesAppSidebarQuickActions = observer(() => {
       .finally(() => setIsCreatingPage(false));
   };
   return (
-    <div className="flex items-center justify-between gap-1 cursor-pointer">
-      <button
-        type="button"
-        className={cn(
-          "flex-grow text-custom-text-300 text-sm font-medium border-[0.5px] border-custom-sidebar-border-300 text-left rounded h-8 px-3 flex items-center gap-2",
-          !isCreatingPage && "hover:bg-custom-sidebar-background-90"
-        )}
+    <div className="flex items-center justify-between gap-2 cursor-pointer">
+      <SidebarAddButton
+        label={
+          <>
+            <FilePlus2 className="size-4" />
+            {isCreatingPage ? t("common.creating") : `New page`}
+          </>
+        }
         onClick={handleCreatePage}
         disabled={isCreatingPage}
-      >
-        <FilePlus2 className="size-4" />
-        {isCreatingPage ? t("common.creating") : `New page`}
-      </button>
+      />
 
       <AppSearch />
     </div>

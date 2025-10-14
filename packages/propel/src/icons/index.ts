@@ -16,6 +16,7 @@ export * from "./calendar-before-icon";
 export * from "./center-panel-icon";
 export * from "./chat-icon";
 export * from "./comment-fill-icon";
+export * from "./dashboard-icon";
 export * from "./create-icon";
 export * from "./customers-icon";
 export * from "./customer-request-icon";

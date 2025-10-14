@@ -75,6 +75,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "plane.middleware.request_body_size.RequestBodySizeLimitMiddleware",
     "plane.middleware.logger.APITokenLogMiddleware",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "plane.middleware.logger.RequestLoggerMiddleware",

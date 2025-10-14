@@ -399,6 +399,10 @@ LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "live/")
 LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY", "")
 
+PI_BASE_URL = os.environ.get("PI_BASE_URL", "")
+PI_BASE_PATH = os.environ.get("PI_BASE_PATH", "/pi")
+PI_URL = urljoin(PI_BASE_URL, PI_BASE_PATH)
+
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 

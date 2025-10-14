@@ -2,7 +2,7 @@ import { update, set, isEmpty } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { PI_BASE_URL } from "@plane/constants";
+import { PI_URL } from "@plane/constants";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
@@ -362,7 +362,7 @@ export class PiChatStore implements IPiChatStore {
     workspaceId: string | undefined,
     newDialogue: TDialogue
   ) => {
-    const url = `${PI_BASE_URL}/api/v1/chat/stream-answer/${token}`;
+    const url = `${PI_URL}/api/v1/chat/stream-answer/${token}`;
 
     const eventSource = new EventSource(url, {
       withCredentials: true,

@@ -1,6 +1,6 @@
 // constants
 import type { AxiosRequestConfig } from "axios";
-import { PI_BASE_URL } from "@plane/constants";
+import { PI_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 // services
 import { APIService } from "@/services/api.service";
@@ -62,13 +62,13 @@ export const getPiFileURL = (path: string): string | undefined => {
   if (!path) return undefined;
   const isValidURL = path.startsWith("http");
   if (isValidURL) return path;
-  return `${PI_BASE_URL}${path}`;
+  return `${PI_URL}${path}`;
 };
 
 export class PiChatService extends APIService {
   private fileUploadService: FileUploadService;
   constructor() {
-    super(PI_BASE_URL);
+    super(PI_URL);
     // upload service
     this.fileUploadService = new FileUploadService();
   }

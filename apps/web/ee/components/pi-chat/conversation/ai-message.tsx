@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 // plane imports
-import { PI_BASE_URL } from "@plane/constants";
+import { PI_URL } from "@plane/constants";
 import { Loader } from "@plane/ui";
 // plane-web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -43,7 +43,7 @@ export const AiMessage = observer((props: TProps) => {
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in"
             components={{
               a: ({ children, href }) =>
-                href?.startsWith(`${PI_BASE_URL}/api/v1/oauth/authorize/`) && !isLatest ? ( // NOTE: Prev auth links shouldn't be accessible
+                href?.startsWith(`${PI_URL}/api/v1/oauth/authorize/`) && !isLatest ? ( // NOTE: Prev auth links shouldn't be accessible
                   <span className="!underline !text-custom-text-350">{children}</span>
                 ) : (
                   <a href={href || ""} rel="noopener noreferrer">

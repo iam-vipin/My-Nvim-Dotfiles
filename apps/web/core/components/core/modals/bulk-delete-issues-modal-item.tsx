@@ -4,7 +4,6 @@ import { Combobox } from "@headlessui/react";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Checkbox } from "@plane/ui";
 // hooks
-// hooks
 // plane web hooks
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 

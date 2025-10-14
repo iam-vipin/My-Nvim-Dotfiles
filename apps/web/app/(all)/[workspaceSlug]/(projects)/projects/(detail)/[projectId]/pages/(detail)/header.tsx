@@ -7,6 +7,7 @@ import { ChevronRight } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
 import { PageIcon } from "@plane/propel/icons";
+// types
 import type { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomMenu, BreadcrumbNavigationSearchDropdown } from "@plane/ui";

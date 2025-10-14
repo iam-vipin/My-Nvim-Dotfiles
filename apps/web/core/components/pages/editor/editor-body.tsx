@@ -6,12 +6,12 @@ import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type {
   EditorRefApi,
+  EditorTitleRefApi,
   TAIMenuProps,
   TDisplayConfig,
   TFileHandler,
   TRealtimeConfig,
   TServerHandler,
-  EditorTitleRefApi,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
@@ -19,8 +19,8 @@ import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQu
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions/root";
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 

@@ -10,8 +10,8 @@ import type { IIssueDetail } from "@/plane-web/store/issue/issue-details/root.st
 import { IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import type { ITeamIssuesFilter, ITeamIssues } from "@/plane-web/store/issue/team";
 import { TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
-import type { ITeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project";
-import { TeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project";
+import type { ITeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project/filter.store";
+import { TeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project/filter.store";
 import type { ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
 import { TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
 import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";

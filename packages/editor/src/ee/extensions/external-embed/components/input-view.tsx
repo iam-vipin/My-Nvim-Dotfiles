@@ -125,6 +125,9 @@ export const ExternalEmbedInputView: React.FC<ExternalEmbedInputViewProps> = ({
               if (e.key === "Enter") {
                 e.preventDefault();
                 handleEmbedClick();
+              } else if (e.key === "Escape") {
+                e.preventDefault();
+                setIsOpen(false);
               }
             }}
             mode="primary"

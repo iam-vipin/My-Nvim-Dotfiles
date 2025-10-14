@@ -81,7 +81,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                     ? "today"
                     : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
                   <span className="text-sm font-medium text-custom-text-300">
-                    • Billable seats when you upgrade: {subscriptionDetail?.billable_members}
+                    • Billable seats when you upgrade: {subscriptionDetail?.purchased_seats}
                   </span>
                 </div>
               )}
@@ -93,7 +93,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                     {startDate
                       ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                       : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
-                    • Billable seats: {subscriptionDetail?.billable_members}
+                    • Billable seats: {subscriptionDetail?.purchased_seats}
                   </div>
                 ))}
             </>

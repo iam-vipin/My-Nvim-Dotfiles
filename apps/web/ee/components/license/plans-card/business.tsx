@@ -82,7 +82,7 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
                   {startDate
                     ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                     : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
-                  • Billable seats: {subscriptionDetail?.billable_members}
+                  • Billable seats: {subscriptionDetail?.purchased_seats}
                 </div>
               )}
             </>

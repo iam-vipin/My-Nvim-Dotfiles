@@ -9,6 +9,8 @@ from plane.utils.filters.filterset import IssueFilterSet, UUIDInFilter, CharInFi
 from plane.utils.exception_logger import log_exception
 from plane.ee.models import Initiative
 from plane.utils.uuid import is_valid_uuid
+
+
 class ExtendedIssueFilterSet(IssueFilterSet):
     team_project_id = filters.UUIDFilter(field_name="project_id")
     team_project_id__in = UUIDInFilter(field_name="project_id", lookup_expr="in")
@@ -62,7 +64,6 @@ class ExtendedIssueFilterSet(IssueFilterSet):
             return fields
         return []
 
-
     def filter_custom_property_value(self, queryset, name, value):
         """Filter by custom property value (exact match)"""
         return self._filter_custom_property_value_with_lookup(queryset, "exact", value)
@@ -113,7 +114,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
     def _filter_custom_property_value_with_lookup(self, queryset, lookup, value):
         """Helper method to filter by custom property value with a specific lookup.
-        
+
         This method handles the actual filtering logic for custom properties by:
         1. Getting the property_id from the request context (set by the filter backend)
         2. Joining with the IssuePropertyValue table
@@ -136,12 +137,13 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                 return Q()
 
             # Get the property to determine its type
-            property_obj = IssueProperty.objects.get(
-                id=property_id
-            )
-            
+            property_obj = IssueProperty.objects.get(id=property_id)
+
             # Build the filter based on the property type and lookup
-            if property_obj.property_type in [PropertyTypeEnum.TEXT.value, PropertyTypeEnum.URL.value,]:
+            if property_obj.property_type in [
+                PropertyTypeEnum.TEXT.value,
+                PropertyTypeEnum.URL.value,
+            ]:
                 field_name = "value_text"
             elif property_obj.property_type == PropertyTypeEnum.DECIMAL:
                 field_name = "value_decimal"
@@ -171,7 +173,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}": value}
+                    **{f"properties__{field_name}": value},
                 )
             elif lookup == "in" and property_obj.property_type in [
                 PropertyTypeEnum.OPTION.value,
@@ -182,7 +184,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__in": value}
+                    **{f"properties__{field_name}__in": value},
                 )
             elif lookup == "gte" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
@@ -193,7 +195,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__gte": value}
+                    **{f"properties__{field_name}__gte": value},
                 )
             elif lookup == "gt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
@@ -204,7 +206,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__gt": value}
+                    **{f"properties__{field_name}__gt": value},
                 )
             elif lookup == "lte" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
@@ -215,7 +217,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__lte": value}
+                    **{f"properties__{field_name}__lte": value},
                 )
             elif lookup == "lt" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
@@ -226,7 +228,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__lt": value}
+                    **{f"properties__{field_name}__lt": value},
                 )
             elif lookup == "icontains" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
@@ -237,7 +239,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__icontains": value}
+                    **{f"properties__{field_name}__icontains": value},
                 )
             elif lookup == "contains" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
@@ -248,7 +250,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__contains": value}
+                    **{f"properties__{field_name}__contains": value},
                 )
             elif lookup == "startswith" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
@@ -259,7 +261,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__startswith": value}
+                    **{f"properties__{field_name}__startswith": value},
                 )
             elif lookup == "endswith" and property_obj.property_type in [
                 PropertyTypeEnum.TEXT.value,
@@ -270,7 +272,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     properties__property_id=property_id,
                     properties__property__deleted_at__isnull=True,
                     properties__deleted_at__isnull=True,
-                    **{f"properties__{field_name}__endswith": value}
+                    **{f"properties__{field_name}__endswith": value},
                 )
             elif lookup == "range" and property_obj.property_type in [
                 PropertyTypeEnum.DECIMAL.value,
@@ -283,7 +285,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                         properties__property_id=property_id,
                         properties__property__deleted_at__isnull=True,
                         properties__deleted_at__isnull=True,
-                        **{f"properties__{field_name}__range": value}
+                        **{f"properties__{field_name}__range": value},
                     )
                 return Q()
             else:
@@ -296,6 +298,8 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 class InitiativeFilterSet(BaseFilterSet):
     lead = filters.UUIDFilter(field_name="lead")
     lead__in = UUIDInFilter(field_name="lead", lookup_expr="in")
+    label_id = filters.UUIDFilter(method="filter_label_id")
+    label_id__in = UUIDInFilter(method="filter_label_id_in", lookup_expr="in")
 
     class Meta:
         model = Initiative
@@ -304,3 +308,17 @@ class InitiativeFilterSet(BaseFilterSet):
             "end_date": ["exact", "gte", "gt", "lte", "lt", "range"],
             "state": ["exact", "in"],
         }
+
+    def filter_label_id(self, queryset, name, value):
+        """Filter by label IDs (in), excluding soft deleted labels"""
+        return Q(
+            initiative_label_associations__label_id=value,
+            initiative_label_associations__deleted_at__isnull=True,
+        )
+
+    def filter_label_id_in(self, queryset, name, value):
+        """Filter by label IDs (in), excluding soft deleted labels"""
+        return Q(
+            initiative_label_associations__label_id__in=value,
+            initiative_label_associations__deleted_at__isnull=True,
+        )

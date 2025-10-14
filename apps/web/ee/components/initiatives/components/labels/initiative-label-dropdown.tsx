@@ -10,11 +10,11 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
 import { EUserWorkspaceRoles } from "@plane/types";
+import type { TInitiativeLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // types
 import { useUserPermissions } from "@/hooks/store/user";
-import type { TInitiativeLabel } from "@/plane-web/types/initiative";
 
 export type TInitiativeLabelDropdownProps = {
   value: string[];

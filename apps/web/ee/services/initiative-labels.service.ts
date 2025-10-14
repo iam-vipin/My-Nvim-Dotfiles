@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "@plane/constants";
 
 // services
-import type { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabel } from "@plane/types";
 // types
 import { APIService } from "@/services/api.service";
 

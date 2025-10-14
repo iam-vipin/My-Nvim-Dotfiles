@@ -10,10 +10,8 @@ import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import type { TInitiativeLabel } from "@plane/types";
 import { Button, Input } from "@plane/ui";
-
-// local imports
-import type { TInitiativeLabel } from "@/plane-web/types";
 
 export type TInitiativeLabelOperationsCallbacks = {
   createLabel: (data: Partial<TInitiativeLabel>) => Promise<TInitiativeLabel | undefined>;

@@ -12,6 +12,7 @@ import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
+import type { TInitiativeLabel } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 
 // local imports
@@ -19,7 +20,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@/plane-web/types";
 import { getInitiativeLabelsArray } from "./initiative-label-utils";
 
 export interface IInitiativeLabelPropertyDropdownProps {

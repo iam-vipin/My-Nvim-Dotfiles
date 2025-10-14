@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import SettingsHeading from "@/components/settings/heading";
@@ -18,7 +19,6 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@/plane-web/types";
 import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";

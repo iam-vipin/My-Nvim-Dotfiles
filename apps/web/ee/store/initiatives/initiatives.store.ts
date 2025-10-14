@@ -4,7 +4,13 @@ import { computedFn } from "mobx-utils";
 
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { TEpicStats, TLoader, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
+import type {
+  TEpicStats,
+  TLoader,
+  TInitiativeGroupByOptions,
+  TInitiativeOrderByOptions,
+  TInitiativeLabel,
+} from "@plane/types";
 import { convertToISODateString } from "@plane/utils";
 
 // plane-web imports
@@ -14,7 +20,6 @@ import type {
   TExternalInitiativeFilterExpression,
   TInitiative,
   TInitiativeAnalytics,
-  TInitiativeLabel,
   TInitiativeReaction,
   TInitiativeStats,
 } from "@/plane-web/types/initiative";
@@ -406,6 +411,10 @@ export class InitiativeStore implements IInitiativeStore {
 
         if (!this.initiativesMap) this.initiativesMap = {};
         this.initiativesMap[response.id] = response;
+
+        if (this.filteredInitiativesMap) {
+          this.filteredInitiativesMap[response.id] = response;
+        }
       });
 
       this.fetchInitiativesStats(workspaceSlug);
@@ -735,6 +744,26 @@ const getGroupedInitiativeIds = (initiatives: TInitiative[], key: TInitiativeGro
   const groupedInitiativeIds: Record<string, string[]> = {};
 
   if (!key) return { [ALL_INITIATIVES]: initiatives.map((initiative) => initiative.id) };
+
+  if (key === "label_ids") {
+    for (const initiative of initiatives) {
+      const labelIds = initiative.label_ids;
+      if (!labelIds || labelIds.length === 0) {
+        if (!groupedInitiativeIds["None"]) {
+          groupedInitiativeIds["None"] = [];
+        }
+        groupedInitiativeIds["None"].push(initiative.id);
+      } else {
+        labelIds.forEach((labelId) => {
+          if (!groupedInitiativeIds[labelId]) {
+            groupedInitiativeIds[labelId] = [];
+          }
+          groupedInitiativeIds[labelId].push(initiative.id);
+        });
+      }
+    }
+    return groupedInitiativeIds;
+  }
 
   for (const initiative of initiatives) {
     const groupId = initiative[key] ?? "None";

@@ -7,9 +7,9 @@ import { X } from "lucide-react";
 
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import type { TInitiativeLabel } from "@plane/types";
 import { CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
-import type { TInitiativeLabel } from "@/plane-web/types";
 
 // local imports
 import { InitiativeLabelName } from "./initiative-label-name";

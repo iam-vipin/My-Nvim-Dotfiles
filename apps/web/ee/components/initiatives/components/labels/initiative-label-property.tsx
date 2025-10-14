@@ -9,12 +9,12 @@ import { Tags } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
+import type { TInitiativeLabel } from "@plane/types";
 
 // local imports
 import { cn } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@/plane-web/types";
 import { InitiativeLabelPropertyDropdown } from "./initiative-label-property-dropdown";
 
 export interface IInitiativeLabelProperty {

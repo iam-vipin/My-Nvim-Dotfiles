@@ -1,5 +1,12 @@
 // plane imports
-import { COLLECTION_OPERATOR, EQUALITY_OPERATOR, IUserLite, TInitiativeStates, TFilterProperty } from "@plane/types";
+import {
+  COLLECTION_OPERATOR,
+  EQUALITY_OPERATOR,
+  IUserLite,
+  TInitiativeStates,
+  TFilterProperty,
+  TInitiativeLabel,
+} from "@plane/types";
 // local imports
 import {
   createFilterConfig,
@@ -22,6 +29,11 @@ export type TCreateInitiativeLeadFilterParams = TCreateFilterConfigParams &
 export type TCreateInitiativeStatesFilterParams = TCreateFilterConfigParams &
   IFilterIconConfig<TInitiativeStates> & {
     items: Array<{ key: TInitiativeStates; title: string; icon: React.FC<React.SVGAttributes<SVGElement>> }>;
+  };
+
+export type TCreateInitiativeLabelsFilterParams = TCreateFilterConfigParams &
+  IFilterIconConfig<string> & {
+    labels: TInitiativeLabel[];
   };
 
 // ------------ Lead filter ------------
@@ -83,6 +95,44 @@ export const getInitiativeStatesFilterConfig =
             },
             {
               ...updatedParams,
+            }
+          )
+        ),
+      ]),
+    });
+
+// ------------ Labels filter ------------
+
+/**
+ * Get the labels filter config for initiatives
+ * @template K - The filter key
+ * @param key - The filter key to use
+ * @returns A function that takes parameters and returns the labels filter config
+ */
+export const getInitiativeLabelsFilterConfig =
+  <P extends string>(key: P) =>
+  (params: TCreateInitiativeLabelsFilterParams) =>
+    createFilterConfig<P, string>({
+      id: key,
+      label: "Labels",
+      icon: params.filterIcon,
+      isEnabled: params.isEnabled,
+      supportedOperatorConfigsMap: new Map([
+        createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
+          getMultiSelectConfig<TInitiativeLabel, string, string>(
+            {
+              items: params.labels,
+              getId: (label) => label.id,
+              getLabel: (label) => label.name,
+              getValue: (label) => label.id,
+              getIconData: (label) => label.color,
+            },
+            {
+              singleValueOperator: EQUALITY_OPERATOR.EXACT,
+              ...updatedParams,
+            },
+            {
+              getOptionIcon: params.getOptionIcon,
             }
           )
         ),

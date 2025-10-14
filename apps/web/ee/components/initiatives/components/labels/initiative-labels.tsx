@@ -14,7 +14,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TInitiativeLabel } from "@plane/types";
 import { InitiativeLabelPropertyDropdown } from "./initiative-label-property-dropdown";
 import { getInitiativeLabelsArray } from "./initiative-label-utils";
 

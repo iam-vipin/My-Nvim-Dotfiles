@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
-import type { TInitiativeLabel } from "@/plane-web/types/initiative";
+import type { TInitiativeLabel } from "@plane/types";
 // components
 import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";

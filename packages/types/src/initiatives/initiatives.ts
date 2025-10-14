@@ -26,6 +26,13 @@ export type TInitiativeAttachment = {
   updated_by: string;
 };
 
+export type TInitiativeLabel = {
+  id: string;
+  name: string;
+  color: string;
+  sort_order: number;
+};
+
 export type TInitiativeAttachmentUploadResponse = TFileSignedURLResponse & {
   attachment: TInitiativeAttachment;
 };
@@ -49,5 +56,5 @@ export type TInitiativeDisplayFilters = {
   order_by?: TInitiativeOrderByOptions;
 };
 
-export type TInitiativeGroupByOptions = "lead" | "created_by" | "state" | undefined;
+export type TInitiativeGroupByOptions = "lead" | "created_by" | "state" | "label_ids" | undefined;
 export type TInitiativeOrderByOptions = "-updated_at" | "-created_at" | "sort_order";

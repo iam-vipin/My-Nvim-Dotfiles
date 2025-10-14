@@ -13,7 +13,7 @@ export type TInitiativeStoredFilters = {
 
 // initiative rich filters
 
-export type TInitiativeFilterKeys = "lead" | "start_date" | "end_date" | "state";
+export type TInitiativeFilterKeys = "lead" | "start_date" | "end_date" | "state" | "label_id";
 
 export type TExternalInitiativeFilterOperator =
   | typeof CORE_OPERATORS.EXACT
@@ -42,8 +42,8 @@ export type TExternalInitiativeFilterGroup =
 
 export type TExternalInitiativeFilterExpressionData =
   | {
-      [key in TInitiativeFilterKeys]?: TFilterValue;
-    }
+    [key in TInitiativeFilterKeys]?: TFilterValue;
+  }
   | TExternalInitiativeFilterGroup;
 
 export type TInternalInitiativeFilterExpression = TFilterExpression<TInitiativeFilterKeys>;

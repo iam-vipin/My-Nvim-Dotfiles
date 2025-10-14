@@ -13,6 +13,7 @@ export const INITIATIVE_GROUP_BY_OPTIONS: {
   { key: "lead", title: "Lead" },
   { key: "created_by", title: "Created By" },
   { key: "state", title: "States" },
+  { key: "label_ids", title: "Labels" },
   { key: undefined, title: "None" },
 ];
 

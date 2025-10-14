@@ -11,7 +11,7 @@ import { AlertModalCore } from "@plane/ui";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@/plane-web/types";
+import type { TInitiativeLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

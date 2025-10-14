@@ -202,9 +202,3 @@ export type TInitiativeStats = {
   off_track_updates: number;
 };
 
-export type TInitiativeLabel = {
-  id: string;
-  name: string;
-  color: string;
-  sort_order: number;
-};

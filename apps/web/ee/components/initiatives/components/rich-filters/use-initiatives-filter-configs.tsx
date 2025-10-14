@@ -1,25 +1,28 @@
 import { useMemo } from "react";
-import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Tags, Users } from "lucide-react";
 import { INITIATIVE_STATES } from "@plane/constants";
 import { InitiativeStateIcon } from "@plane/propel/icons";
-import type { IUserLite } from "@plane/types";
+import type { IUserLite, TInitiativeLabel } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import {
   getInitiativeLeadFilterConfig,
   getInitiativeStartDateFilterConfig,
   getInitiativeEndDateFilterConfig,
   getInitiativeStatesFilterConfig,
+  getInitiativeLabelsFilterConfig,
 } from "@plane/utils";
 import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
 
 interface UseInitiativesFilterConfigsProps {
   workspaceMembers: IUserLite[];
   operatorConfigs: TFiltersOperatorConfigs;
+  labels: TInitiativeLabel[];
 }
 
 export const useInitiativesFilterConfigs = ({
   workspaceMembers,
   operatorConfigs,
+  labels,
 }: UseInitiativesFilterConfigsProps) => {
   const leadFilterConfig = useMemo(
     () =>
@@ -68,10 +71,26 @@ export const useInitiativesFilterConfigs = ({
       }),
     [operatorConfigs]
   );
+
+  const labelsFilterConfig = useMemo(
+    () =>
+      getInitiativeLabelsFilterConfig("label_id")({
+        isEnabled: true,
+        filterIcon: Tags,
+        labels: labels,
+        getOptionIcon: (color: string) => (
+          <span className="flex flex-shrink-0 size-2.5 rounded-full" style={{ backgroundColor: color }} />
+        ),
+        ...operatorConfigs,
+      }),
+    [labels, operatorConfigs]
+  );
+
   return {
     leadFilterConfig,
     startDateFilterConfig,
     endDateFilterConfig,
     statesFilterConfig,
+    labelsFilterConfig,
   };
 };

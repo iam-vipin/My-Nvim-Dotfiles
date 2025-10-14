@@ -43,6 +43,7 @@ const InitiativesFilterInstanceProvider = observer(
   }) => {
     const {
       initiativeFilters: { updateFilters },
+      initiative: { getInitiativesLabels },
     } = useInitiatives();
 
     const [filterInstance] = useState(() =>
@@ -57,15 +58,18 @@ const InitiativesFilterInstanceProvider = observer(
       getUserDetails,
     } = useMember();
 
+    const labels = getInitiativesLabels(workspaceSlug);
+
     const workspaceMembers = useMemo(() => {
       if (!workspaceMemberIds) return [];
       return workspaceMemberIds.map((memberId) => getUserDetails(memberId)).filter(Boolean) as IUserLite[];
     }, [getUserDetails, workspaceMemberIds]);
 
-    const { leadFilterConfig, startDateFilterConfig, endDateFilterConfig, statesFilterConfig } =
+    const { leadFilterConfig, startDateFilterConfig, endDateFilterConfig, statesFilterConfig, labelsFilterConfig } =
       useInitiativesFilterConfigs({
         workspaceMembers,
         operatorConfigs,
+        labels: Array.from(labels?.values() || []),
       });
 
     // Register all filter configs
@@ -74,6 +78,7 @@ const InitiativesFilterInstanceProvider = observer(
       startDateFilterConfig,
       endDateFilterConfig,
       statesFilterConfig,
+      labelsFilterConfig,
     ]);
 
     const value = useMemo(

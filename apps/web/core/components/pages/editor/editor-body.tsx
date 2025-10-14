@@ -20,6 +20,7 @@ import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
 // hooks
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions/root";
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 

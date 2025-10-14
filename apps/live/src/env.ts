@@ -23,6 +23,8 @@ const envSchema = z.object({
   REDIS_HOST: z.string().optional(),
   REDIS_PORT: z.string().default("6379").transform(Number),
   REDIS_URL: z.string().optional(),
+  // Iframely configuration
+  IFRAMELY_URL: z.string(),
 });
 
 const validateEnv = () => {

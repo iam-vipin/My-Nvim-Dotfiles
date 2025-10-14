@@ -186,6 +186,18 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetching filtered initiatives
+  useSWR(
+    workspaceSlug && isInitiativesFeatureEnabled ? `initFilteredInitiatives-${workspaceSlug}` : null,
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? () => initiative.initFilteredInitiatives(workspaceSlug.toString())
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
   // fetching all initiative labels
   useSWR(
     workspaceSlug && isInitiativesFeatureEnabled

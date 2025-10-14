@@ -58,17 +58,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <MergedDateDisplay startDate={initiative.start_date} endDate={initiative.end_date} className="flex-grow" />
         </PropertyBlockWrapper>
       )}
-      {/* state */}
-      {initiative.state && (
-        <PropertyBlockWrapper>
-          <InitiativeStateDropdown
-            value={initiative.state}
-            placeholder="State"
-            buttonClassName="h-full"
-            onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
-          />
-        </PropertyBlockWrapper>
-      )}
+
       {/*  lead */}
       {lead && (
         <PropertyBlockWrapper>
@@ -94,6 +84,17 @@ export const InitiativesBlockProperties = observer((props: Props) => {
         <PropertyBlockWrapper>
           <EpicIcon className="h-4 w-4" />
           <span className="flex-grow truncate max-w-40">{initiative.epic_ids.length}</span>
+        </PropertyBlockWrapper>
+      )}
+      {/* state */}
+      {initiative.state && (
+        <PropertyBlockWrapper>
+          <InitiativeStateDropdown
+            value={initiative.state}
+            placeholder="State"
+            buttonClassName="h-full"
+            onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
+          />
         </PropertyBlockWrapper>
       )}
       {/* labels */}

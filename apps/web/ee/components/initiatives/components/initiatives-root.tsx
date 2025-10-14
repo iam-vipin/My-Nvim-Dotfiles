@@ -30,25 +30,19 @@ export const InitiativesRoot = observer(() => {
   // derived values
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
-  const groupedInitiativeIds = initiative.currentGroupedInitiativeIds;
+  const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
   const generalResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/initiatives" });
   const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  if (initiative.initiativesLoader) return <ListLayoutLoader />;
 
-  if (!groupedInitiativeIds) return <></>;
+  if (initiative.fetchingFilteredInitiatives) return <ListLayoutLoader />;
 
-  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
-
-  // Check if the object is empty or contains only empty arrays
-
-  const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds).every(
+  const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
   );
-
   const isEmptyInitiatives = isEmpty(groupedInitiativeIds) || emptyGroupedInitiativeIds;
 
   if (emptyGroupedInitiativeIds && size(initiative.initiativesMap) > 0) {
@@ -77,6 +71,8 @@ export const InitiativesRoot = observer(() => {
       />
     );
   }
+
+  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
 
   return (
     <div className={`relative size-full bg-custom-background-90`}>

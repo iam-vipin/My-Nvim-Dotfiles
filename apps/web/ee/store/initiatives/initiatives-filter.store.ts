@@ -101,7 +101,7 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
       console.error("Failed to save initiative filters to user properties:", error);
     }
 
-    this.rootStore.initiativeStore.fetchInitiatives(workspaceSlug, filters);
+    this.rootStore.initiativeStore.fetchFilteredInitiatives(workspaceSlug, filters);
   };
 
   clearAllFilters = async (workspaceSlug: string) => {

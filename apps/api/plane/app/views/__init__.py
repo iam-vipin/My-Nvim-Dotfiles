@@ -224,7 +224,6 @@ from .notification.base import (
     UserNotificationPreferenceEndpoint,
 )
 
-from .exporter.base import ExportIssuesEndpoint
 
 
 from .webhook.base import (

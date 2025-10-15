@@ -209,9 +209,7 @@ class Issue(ProjectBaseModel):
         deferred_fields = self.get_deferred_fields()
         self._original_name = self.name if "name" not in deferred_fields else None
         self._original_description_stripped = (
-            self.description_stripped
-            if "description_stripped" not in deferred_fields
-            else None
+            self.description_stripped if "description_stripped" not in deferred_fields else None
         )
 
     class Meta:

@@ -88,6 +88,8 @@ class FeatureFlag(Enum):
     PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS"
     # Recurring Work Items
     RECURRING_WORKITEMS = "RECURRING_WORKITEMS"
+    # Exports
+    ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
 
 
 class AdminFeatureFlag(Enum):

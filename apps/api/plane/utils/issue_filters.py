@@ -439,6 +439,17 @@ def filter_issue_type(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_is_epic(params, issue_filter, method, prefix=""):
+    # check if the is_epic is true or false
+    is_epic = params.get("is_epic", "false")
+
+    if is_epic == "true" or is_epic == "True":
+        issue_filter[f"{prefix}type__is_epic"] = True
+    else:
+        issue_filter[f"{prefix}type__is_epic"] = False
+    return issue_filter
+
+
 def filter_team_project(params, issue_filter, method, prefix=""):
     if method == "GET":
         projects = [
@@ -474,6 +485,15 @@ def filter_dependencies(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_is_intake_workitem(params, issue_filter, method, prefix=""):
+    is_intake_workitem = params.get("is_intake_workitem", "false")
+    if is_intake_workitem == "true" or is_intake_workitem == "True":
+        issue_filter["issue_intake__isnull"] = False
+    else:
+        issue_filter["issue_intake__isnull"] = True
+    return issue_filter
+
+
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -506,6 +526,8 @@ def issue_filters(query_params, method, prefix=""):
         "issue_type": filter_issue_type,
         "team_project": filter_team_project,
         "dependency_type": filter_dependencies,
+        "is_epic": filter_is_epic,
+        "is_intake_workitem": filter_is_intake_workitem,
     }
 
     for key, value in ISSUE_FILTER.items():

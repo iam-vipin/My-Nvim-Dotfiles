@@ -228,8 +228,6 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 track_event.delay(
                     email=email,
                     user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=get_client_ip(request=request),
-                    event_name="MEMBER_ACCEPTED",
                     properties={
                         "event_id": uuid.uuid4().hex,
                         "user": {"email": email, "id": str(user)},

@@ -2,13 +2,12 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import ExporterHistory, Project, Workspace
-
-# Module imports
-from .. import BaseAPIView
+from plane.ee.views.base import BaseAPIView
 
 
 class ExportIssuesEndpoint(BaseAPIView):
@@ -23,6 +22,8 @@ class ExportIssuesEndpoint(BaseAPIView):
         provider = request.data.get("provider", False)
         multiple = request.data.get("multiple", False)
         project_ids = request.data.get("project", [])
+        filters = request.data.get("filters", None)
+        rich_filters = request.data.get("rich_filters", None)
 
         if provider in ["csv", "xlsx", "json"]:
             if not project_ids:
@@ -41,6 +42,8 @@ class ExportIssuesEndpoint(BaseAPIView):
                 initiated_by=request.user,
                 provider=provider,
                 type="issue_exports",
+                filters=filters,
+                rich_filters=rich_filters,
             )
 
             issue_export_task.delay(

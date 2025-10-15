@@ -35,6 +35,7 @@ import {
   getAssigneeFilterConfig,
   getCreatedByFilterConfig,
   getCycleFilterConfig,
+  getFileURL,
   getLabelFilterConfig,
   getMentionFilterConfig,
   getModuleFilterConfig,
@@ -226,7 +227,9 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
         isEnabled: true,
         filterIcon: AtSign,
         members: joinedProjectData.members,
-        getOptionIcon: (member: IUserLite) => <Avatar src={member.avatar_url} name={member.display_name} size="sm" />,
+        getOptionIcon: (member: IUserLite) => (
+          <Avatar src={getFileURL(member.avatar_url)} name={member.display_name} size="sm" />
+        ),
         ...operatorConfigs,
       }),
     [joinedProjectData.members, operatorConfigs]
@@ -238,7 +241,9 @@ const FilterContent: React.FC<Props> = observer(({ projectIds, initialFilters, h
         isEnabled: true,
         filterIcon: CircleUserRound,
         members: joinedProjectData.members,
-        getOptionIcon: (member: IUserLite) => <Avatar src={member.avatar_url} name={member.display_name} size="sm" />,
+        getOptionIcon: (member: IUserLite) => (
+          <Avatar src={getFileURL(member.avatar_url)} name={member.display_name} size="sm" />
+        ),
         ...operatorConfigs,
       }),
     [joinedProjectData.members, operatorConfigs]

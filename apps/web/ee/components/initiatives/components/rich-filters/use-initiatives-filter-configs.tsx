@@ -9,6 +9,7 @@ import {
   getInitiativeStartDateFilterConfig,
   getInitiativeEndDateFilterConfig,
   getInitiativeStatesFilterConfig,
+  getFileURL,
   getInitiativeLabelsFilterConfig,
 } from "@plane/utils";
 import type { TFiltersOperatorConfigs } from "@/ce/hooks/rich-filters/use-filters-operator-configs";
@@ -30,7 +31,9 @@ export const useInitiativesFilterConfigs = ({
         isEnabled: true,
         filterIcon: Users,
         members: workspaceMembers,
-        getOptionIcon: (member: IUserLite) => <Avatar src={member.avatar_url} name={member.display_name} size="sm" />,
+        getOptionIcon: (member: IUserLite) => (
+          <Avatar src={getFileURL(member.avatar_url)} name={member.display_name} size="sm" />
+        ),
         ...operatorConfigs,
       }),
     [workspaceMembers, operatorConfigs]

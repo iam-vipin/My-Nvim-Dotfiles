@@ -35,6 +35,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     dragDropEnabled = true,
     isTouchDevice,
     mentionHandler,
+    pageRestorationInProgress,
     onAssetChange,
     onChange,
     onEditorFocus,
@@ -45,10 +46,14 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     tabIndex,
     user,
     extendedDocumentEditorProps,
+    titleRef,
+    updatePageProperties,
+    isFetchingFallbackBinary,
+    hasServerConnectionFailed,
   } = props;
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
+  const { editor, titleEditor, isEditorContentReady, isContentInIndexedDb } = useCollaborativeEditor({
     disabledExtensions,
     editable,
     editorClassName,
@@ -73,6 +78,8 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     tabIndex,
     user,
     extendedDocumentEditorProps,
+    titleRef,
+    updatePageProperties,
   });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -81,34 +88,42 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
+
+  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !isContentInIndexedDb && hasServerConnectionFailed;
+  const isLoading = !isEditorContentReady || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
   return (
     <>
-      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
+      <DocumentEditorSideEffects
+        editor={editor}
+        id={id}
+        updatePageProperties={updatePageProperties}
+        extendedEditorProps={extendedEditorProps}
+      />
       <PageRenderer
         aiHandler={aiHandler}
         bubbleMenuEnabled={bubbleMenuEnabled}
         displayConfig={displayConfig}
         documentLoaderClassName={documentLoaderClassName}
-        editor={editor}
-        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-        id={id}
-        isTouchDevice={!!isTouchDevice}
-        isLoading={!hasServerSynced && !hasServerConnectionFailed}
-        tabIndex={tabIndex}
-        flaggedExtensions={flaggedExtensions}
         disabledExtensions={disabledExtensions}
         extendedDocumentEditorProps={extendedDocumentEditorProps}
+        editor={editor}
+        flaggedExtensions={flaggedExtensions}
+        titleEditor={titleEditor}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        extendedEditorProps={extendedEditorProps}
+        id={id}
+        isLoading={isLoading}
+        isTouchDevice={!!isTouchDevice}
+        tabIndex={tabIndex}
       />
     </>
   );
 };
 
 const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-  )
+  (props, ref) => <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
 );
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";

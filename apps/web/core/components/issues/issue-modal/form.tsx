@@ -492,7 +492,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
-              <div>
+              <div className="pb-3">
                 <IssueDefaultProperties
                   control={control}
                   id={data?.id}

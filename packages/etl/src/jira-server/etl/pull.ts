@@ -16,7 +16,7 @@ import {
   JiraCustomFieldKeys,
   JiraV2Service,
 } from "..";
-import { fetchPaginatedData, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
+import { fetchPaginatedDataByKey, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
 
 export async function pullUsers(client: JiraV2Service): Promise<ImportedJiraUser[]> {
   const jiraUsers = await client.getJiraUsers();
@@ -47,13 +47,10 @@ export async function pullLabels(client: JiraV2Service, projectId: string): Prom
 }
 
 export async function pullIssues(client: JiraV2Service, projectKey: string, from?: Date): Promise<IJiraIssue[]> {
-  const issues: IJiraIssue[] = [];
-  await fetchPaginatedData(
+  return await fetchPaginatedDataByKey<IJiraIssue>(
     (startAt) => client.getProjectIssues(projectKey, startAt, from ? formatDateStringForHHMM(from) : ""),
-    (values) => issues.push(...(values as IJiraIssue[])),
     "issues"
   );
-  return issues;
 }
 
 export async function pullComments(issues: IJiraIssue[], client: JiraV2Service): Promise<any[]> {
@@ -67,18 +64,16 @@ export async function pullSprints(client: JiraV2Service, projectId: string): Pro
     for (const board of boards) {
       const sprints = await client.getBoardSprints(board.id as number);
       for (const sprint of sprints.values) {
-        const boardIssues: unknown[] = [];
-        await fetchPaginatedData(
+        const boardIssues = await fetchPaginatedDataByKey<IJiraIssue>(
           (startAt) =>
             client.getBoardSprintsIssues(
               board.id as number,
               sprint.id as number,
               startAt
             ) as Promise<PaginatedResponse>,
-          (values) => boardIssues.push(...(values as IJiraIssue[])),
           "issues"
         );
-        jiraSprints.push({ sprint, issues: boardIssues as IJiraIssue[] });
+        jiraSprints.push({ sprint, issues: boardIssues });
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -106,21 +101,17 @@ export async function pullComponents(client: JiraV2Service, projectKey: string):
 }
 
 export const pullCommentsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<JiraComment[]> => {
-  const comments: JiraComment[] = [];
-  await fetchPaginatedData(
+  const values = await fetchPaginatedDataByKey<JComment>(
     (startAt) => client.getIssueComments(issue.id, startAt),
-    (values) => {
-      const jiraComments = values.map(
-        (comment): JiraComment => ({
-          ...(comment as JComment),
-          issue_id: issue.id,
-        })
-      );
-      comments.push(...jiraComments);
-    },
     "comments"
   );
-  return comments;
+
+  return values.map(
+    (comment): JiraComment => ({
+      ...comment,
+      issue_id: issue.id,
+    })
+  );
 };
 
 export const pullCommentsInBatches = async (

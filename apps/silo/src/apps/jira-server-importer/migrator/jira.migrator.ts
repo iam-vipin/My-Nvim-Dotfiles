@@ -17,7 +17,9 @@ import { logger } from "@plane/logger";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
+import { createETLLogger } from "@/helpers/etl-logger";
 import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
+import { E_KNOWN_ETL_ASSET, E_KNOWN_ETL_PHASE } from "@/types/etl";
 import { TBatch } from "@/worker/types";
 import { createJiraClient, filterComponentsForIssues, filterSprintsForIssues } from "../helpers/migration-helpers";
 import {
@@ -63,15 +65,26 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
       return [];
     }
 
+    // Create scoped logger for Pull phase
+    const withLog = createETLLogger({
+      jobId: job.id,
+      workspaceSlug: job.workspace_slug,
+      phase: E_KNOWN_ETL_PHASE.Pull,
+    });
+
     /* -------------- Pull Jira Data --------------- */
-    const users = job.config.skipUserImport ? [] : await pullUsers(client);
-    const labels = await pullLabels(client, projectId);
-    const issues = await pullIssues(client, projectKey);
-    const sprints = await pullSprints(client, projectId);
-    const comments = await pullComments(issues, client);
-    const components = await pullComponents(client, projectKey);
-    const issueTypes = await pullIssueTypes(client, projectId);
-    const issueFields = await pullIssueFields(client, projectId);
+    const users = job.config.skipUserImport ? [] : await withLog(E_KNOWN_ETL_ASSET.Users, () => pullUsers(client));
+    const labels = await withLog(E_KNOWN_ETL_ASSET.Labels, () => pullLabels(client, projectId));
+    const issues = await withLog(E_KNOWN_ETL_ASSET.Issues, () => pullIssues(client, projectKey));
+    const sprints = await withLog(E_KNOWN_ETL_ASSET.Sprints, () => pullSprints(client, projectId));
+    const components = await withLog(E_KNOWN_ETL_ASSET.Components, () => pullComponents(client, projectKey));
+    const issueTypes = await withLog(E_KNOWN_ETL_ASSET.IssueTypes, () => pullIssueTypes(client, projectId));
+    const issueFields = await withLog(E_KNOWN_ETL_ASSET.IssueFields, () => pullIssueFields(client, projectId));
+    const comments = await withLog(
+      E_KNOWN_ETL_ASSET.Comments,
+      () => pullComments(issues, client),
+      (result) => result.reduce((sum, issue) => sum + issue.comments.length, 0)
+    );
     /* -------------- Pull Jira Data --------------- */
 
     // Update Job for the actual start time of the migration
@@ -109,8 +122,17 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
 
     const credentials = await getJobCredentials(job);
 
+    // Create scoped logger for Transform phase
+    const withLog = createETLLogger({
+      jobId: job.id,
+      workspaceSlug: job.workspace_slug,
+      phase: E_KNOWN_ETL_PHASE.Transform,
+    });
+
     const resourceUrl = job.config.resource?.url || credentials.source_hostname;
-    const transformedIssue = getTransformedIssues(job, entities, resourceUrl || "");
+    const transformedIssue = await withLog(E_KNOWN_ETL_ASSET.Issues, async () =>
+      getTransformedIssues(job, entities, resourceUrl || "")
+    );
 
     /* Todo: Remove this antipattern logic when issue types come to plane */
     if (job.config.issueType) {
@@ -133,15 +155,31 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     entities.labels.push("JIRA IMPORTED");
 
     // Perrforming the transformation of the data from Jira to Plane
-    const transformedLabels = getTransformedLabels(job, entities.labels);
-    const transformedUsers = getTransformedUsers(job, entities);
-    const transformedModules = getTransformedComponents(job, entities);
-    const transformedComments = getTransformedComments(job, entities);
-    const transformedSprintsAsCycles = getTransformedSprints(job, entities);
-    const transformedIssueTypes = getTransformedIssueTypes(job, entities);
-    const transformedIssueFields = getTransformedIssueFields(job, entities);
-    const transformedIssueFieldOptions = getTransformedIssueFieldOptions(job, entities);
-    const transformedIssuePropertyValues = getTransformedIssuePropertyValues(job, entities, transformedIssueFields);
+    const transformedLabels = await withLog(E_KNOWN_ETL_ASSET.Labels, async () =>
+      getTransformedLabels(job, entities.labels)
+    );
+    const transformedUsers = await withLog(E_KNOWN_ETL_ASSET.Users, async () => getTransformedUsers(job, entities));
+    const transformedModules = await withLog(E_KNOWN_ETL_ASSET.Components, async () =>
+      getTransformedComponents(job, entities)
+    );
+    const transformedComments = await withLog(E_KNOWN_ETL_ASSET.Comments, async () =>
+      getTransformedComments(job, entities)
+    );
+    const transformedSprintsAsCycles = await withLog(E_KNOWN_ETL_ASSET.Sprints, async () =>
+      getTransformedSprints(job, entities)
+    );
+    const transformedIssueTypes = await withLog(E_KNOWN_ETL_ASSET.IssueTypes, async () =>
+      getTransformedIssueTypes(job, entities)
+    );
+    const transformedIssueFields = await withLog(E_KNOWN_ETL_ASSET.IssueFields, async () =>
+      getTransformedIssueFields(job, entities)
+    );
+    const transformedIssueFieldOptions = await withLog(E_KNOWN_ETL_ASSET.IssueFieldOptions, async () =>
+      getTransformedIssueFieldOptions(job, entities)
+    );
+    const transformedIssuePropertyValues = await withLog(E_KNOWN_ETL_ASSET.IssuePropertyValues, async () =>
+      getTransformedIssuePropertyValues(job, entities, transformedIssueFields)
+    );
 
     // Return the transformed data
     return [

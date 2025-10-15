@@ -5,13 +5,7 @@ import {
 } from "jira.js/out/version2/models";
 import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import {
-  IPriorityConfig,
-  IStateConfig,
-  JiraCustomFieldKeys,
-  JiraIssueField,
-  PaginatedResponse,
-} from "@/jira-server/types";
+import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
@@ -72,30 +66,88 @@ export const getTargetPriority = (priorityMap: IPriorityConfig[], sourcePriority
   return targetPriority?.target_priority;
 };
 
+/**
+ * Generic helper for fetching paginated data from Jira's Paginated<T> endpoints
+ * that use isLast and maxResults for pagination control
+ */
 export const fetchPaginatedData = async <T>(
-  fetchFunction: (startAt: number) => Promise<PaginatedResponse>,
-  processFunction: (values: T[]) => void,
-  listPropertyName: string
-) => {
-  let hasMore = true;
+  fetchFunction: (startAt: number) => Promise<{ values?: T[]; isLast?: boolean; maxResults?: number }>
+): Promise<T[]> => {
+  const results: T[] = [];
   let startAt = 0;
-  let total = 0;
 
-  while (hasMore) {
+  while (true) {
     const response = await fetchFunction(startAt);
-    const values = response[listPropertyName] as T[]; // Type assertion
-    if (response.total == 0) {
+
+    // Exit if no values or empty array
+    if (!response || !response.values || response.values.length === 0) {
       break;
     }
-    if (response && response.total && values) {
-      total = response.total;
-      processFunction(values);
-      startAt += values.length;
-      if (response.total <= startAt) {
-        hasMore = false;
-      }
+
+    results.push(...response.values);
+
+    // Exit if this is the last page
+    if (response.isLast) {
+      break;
+    }
+
+    // Guard against invalid maxResults
+    if (!response.maxResults || response.maxResults <= 0) {
+      break;
+    }
+
+    startAt += response.maxResults;
+  }
+
+  return results;
+};
+
+type PaginatedResponseWithKey = {
+  total?: number;
+  maxResults?: number;
+  [key: string]: any;
+};
+
+/**
+ * Generic helper for fetching paginated data with dynamic property key pattern
+ * Used for APIs that return data in a custom property (e.g., { issues: [...], total: N })
+ */
+export const fetchPaginatedDataByKey = async <T>(
+  fetchFunction: (startAt: number) => Promise<PaginatedResponseWithKey>,
+  listPropertyName: string
+): Promise<T[]> => {
+  const results: T[] = [];
+  let startAt = 0;
+
+  while (true) {
+    const response = await fetchFunction(startAt);
+
+    if (!response || response.total === 0) {
+      break;
+    }
+
+    const values = response[listPropertyName] as T[];
+
+    // Process values if they exist
+    if (values && values.length > 0) {
+      results.push(...values);
+    }
+
+    // Advance by maxResults (items fetched) if available, otherwise by values length
+    const increment = values?.length || 0;
+
+    if (increment === 0) {
+      break; // No progress possible, exit to prevent infinite loop
+    }
+
+    startAt += increment;
+
+    if (response.total && startAt >= response.total) {
+      break;
     }
   }
+
+  return results;
 };
 
 export const getPropertyAttributes = (jiraIssueField: JiraIssueField): Partial<ExIssueProperty> => {

@@ -229,7 +229,10 @@ export default {
   load_more: "Charger plus",
   select_or_customize_your_interface_color_scheme:
     "Sélectionnez ou personnalisez votre schéma de couleurs d'interface.",
+  select_the_cursor_motion_style_that_feels_right_for_you:
+    "Sélectionnez le style de mouvement du curseur qui vous convient le mieux.",
   theme: "Thème",
+  smooth_cursor: "Curseur fluide",
   system_preference: "Préférence système",
   light: "Clair",
   dark: "Sombre",

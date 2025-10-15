@@ -7,7 +7,6 @@ from plane.app.views import (
     IssueLinkViewSet,
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
@@ -18,7 +17,6 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
@@ -92,11 +90,6 @@ urlpatterns = [
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
-    ),
     ##
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
@@ -140,12 +133,6 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
         IssueAttachmentV2Endpoint.as_view(),
         name="project-issue-attachments",
-    ),
-    ## Export Issues
-    path(
-        "workspaces/<str:slug>/export-issues/",
-        ExportIssuesEndpoint.as_view(),
-        name="export-issues",
     ),
     ## End Issues
     ## Issue Activity

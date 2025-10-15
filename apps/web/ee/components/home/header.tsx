@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -13,9 +14,14 @@ import { InputBox } from "../pi-chat/input";
 
 export const HomePageHeader = observer(() => {
   const { workspaceSlug } = useParams();
-  const { activeChatId } = usePiChat();
+  const { activeChatId, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
+
+  useEffect(() => {
+    initPiChat();
+  }, []);
+
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
       <div className="flex flex-col gap-1">
@@ -35,6 +41,7 @@ export const HomePageHeader = observer(() => {
           isProjectLevel
           showProgress // Required since its taken to a whole different page
           className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
+          activeChatId={activeChatId}
         />
       </div>
     </WithFeatureFlagHOC>

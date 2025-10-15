@@ -77,7 +77,7 @@ export const DndWrapper: FC<Props> = observer((props) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: `Failed to upload ${currentFile.name}`,
-                message: e?.detail || "File could not be attached. Try uploading again.",
+                message: typeof e?.detail === "string" ? e?.detail : "File could not be attached. Try uploading again.",
               });
             });
         }

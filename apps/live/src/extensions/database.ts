@@ -6,20 +6,11 @@ import {
 } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 // lib
 import { getPageService } from "@/services/page/handler";
 // type
 import type { FetchPayloadWithContext, StorePayloadWithContext } from "@/types";
-
-const normalizeToError = (error: unknown, fallbackMessage: string) => {
-  if (error instanceof Error) {
-    return error;
-  }
-
-  const message = typeof error === "string" && error.trim().length > 0 ? error : fallbackMessage;
-
-  return new Error(message);
-};
 
 const fetchDocument = async ({ context, documentName: pageId }: FetchPayloadWithContext) => {
   try {
@@ -38,8 +29,9 @@ const fetchDocument = async ({ context, documentName: pageId }: FetchPayloadWith
     // return binary data
     return binaryData;
   } catch (error) {
-    logger.error("DATABASE_EXTENSION: Error in fetching document", error);
-    throw normalizeToError(error, `Failed to fetch document: ${pageId}`);
+    const appError = new AppError(error, { context: { pageId } });
+    logger.error("Error in fetching document", appError);
+    throw appError;
   }
 };
 
@@ -47,8 +39,10 @@ const storeDocument = async ({ context, state: pageBinaryData, documentName: pag
   try {
     const service = getPageService(context.documentType, context);
     // convert binary data to all formats
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromDocumentEditorBinaryData(pageBinaryData);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      pageBinaryData,
+      true
+    );
     // create payload
     const payload = {
       description_binary: contentBinaryEncoded,
@@ -57,8 +51,9 @@ const storeDocument = async ({ context, state: pageBinaryData, documentName: pag
     };
     await service.updateDescriptionBinary(pageId, payload);
   } catch (error) {
-    logger.error("DATABASE_EXTENSION: Error in updating document:", error);
-    throw normalizeToError(error, `Failed to update document: ${pageId}`);
+    const appError = new AppError(error, { context: { pageId } });
+    logger.error("Error in updating document:", appError);
+    throw appError;
   }
 };
 

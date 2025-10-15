@@ -5,6 +5,7 @@ import { Controller, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 import { type TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation
@@ -53,7 +54,8 @@ export class DocumentController {
           },
         });
       } else {
-        logger.error("DOCUMENT_CONTROLLER: Internal server error", error);
+        const appError = new AppError(error);
+        logger.error("DOCUMENT_CONTROLLER: Internal server error", appError);
         return res.status(500).json({
           message: `Internal server error.`,
         });

@@ -365,7 +365,6 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
-  EActivityFilterType.DEFAULT,
   EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,

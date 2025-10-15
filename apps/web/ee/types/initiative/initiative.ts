@@ -201,4 +201,3 @@ export type TInitiativeStats = {
   at_risk_updates: number;
   off_track_updates: number;
 };
-

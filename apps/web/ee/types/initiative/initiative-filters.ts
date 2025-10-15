@@ -42,8 +42,8 @@ export type TExternalInitiativeFilterGroup =
 
 export type TExternalInitiativeFilterExpressionData =
   | {
-    [key in TInitiativeFilterKeys]?: TFilterValue;
-  }
+      [key in TInitiativeFilterKeys]?: TFilterValue;
+    }
   | TExternalInitiativeFilterGroup;
 
 export type TInternalInitiativeFilterExpression = TFilterExpression<TInitiativeFilterKeys>;

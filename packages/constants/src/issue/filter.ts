@@ -367,6 +367,9 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.ASSIGNEE,
   EActivityFilterType.DEFAULT,
   EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
 ];
 
 export const filterActivityOnSelectedFilters = (
@@ -374,7 +377,11 @@ export const filterActivityOnSelectedFilters = (
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
   activity.filter(
-    (activity) => filters.some((filter) => shouldRenderActivity(activity, filter)) // EE: Render activity based on the selected filters.
+    (activity) =>
+      filters.some((filter) => {
+        if (filter === EActivityFilterType.DEFAULT) return true;
+        return shouldRenderActivity(activity, filter);
+      }) // EE: Render activity based on the selected filters.
   );
 
 export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

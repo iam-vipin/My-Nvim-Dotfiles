@@ -1,4 +1,3 @@
-import { orderBy } from "lodash-es";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
@@ -44,37 +43,13 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
-    const currentStore =
-      this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
-
-    let activityComments: TIssueActivityComment[] = [];
-
-    const activities = this.getActivitiesByIssueId(issueId);
-    const comments = currentStore.comment.getCommentsByIssueId(issueId);
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId);
     const additionalPropertiesActivities = this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId);
 
-    if (!activities || !comments || !worklogs || !additionalPropertiesActivities) return undefined;
+    const baseItems = this.buildActivityAndCommentItems(issueId);
+    if (!baseItems || !worklogs || !additionalPropertiesActivities) return undefined;
 
-    activities.forEach((activityId) => {
-      const activity = this.getActivityById(activityId);
-      if (!activity) return;
-      activityComments.push({
-        id: activity.id,
-        activity_type: EActivityFilterType.ACTIVITY,
-        created_at: activity.created_at,
-      });
-    });
-
-    comments.forEach((commentId) => {
-      const comment = currentStore.comment.getCommentById(commentId);
-      if (!comment) return;
-      activityComments.push({
-        id: comment.id,
-        activity_type: EActivityFilterType.COMMENT,
-        created_at: comment.created_at,
-      });
-    });
+    const activityComments: TIssueActivityComment[] = [...baseItems];
 
     worklogs.forEach((worklogId) => {
       const worklog = this.store.workspaceWorklogs.worklogById(worklogId);
@@ -96,9 +71,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
-
-    return activityComments;
+    return this.sortActivityComments(activityComments, sortOrder);
   });
 
   // actions

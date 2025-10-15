@@ -7,11 +7,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TInitiativeLabel } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import type { TInitiativeLabel } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

@@ -1537,6 +1537,11 @@ export default {
         description: "Les éléments de travail qui correspondent aux filtres, suivez-les tous ici.",
       },
     },
+    delete_view: {
+      title: "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      content:
+        "Si vous confirmez, toutes les options de tri, de filtrage et d'affichage + la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer.",
+    },
   },
   workspace_settings: {
     label: "Paramètres de l'espace de travail",
@@ -2187,6 +2192,11 @@ export default {
         title: "Aucune vue correspondante",
         description: "Aucune vue ne correspond aux critères de recherche. \n Créez plutôt une nouvelle vue.",
       },
+    },
+    delete_view: {
+      title: "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      content:
+        "Si vous confirmez, toutes les options de tri, de filtrage et d'affichage + la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer.",
     },
   },
   project_page: {

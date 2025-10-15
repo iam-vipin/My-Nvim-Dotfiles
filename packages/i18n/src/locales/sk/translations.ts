@@ -1519,6 +1519,11 @@ export default {
         description: "Zobrazia sa položky zodpovedajúce filtru.",
       },
     },
+    delete_view: {
+      title: "Ste si istí, že chcete vymazať toto zobrazenie?",
+      content:
+        "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia.",
+    },
   },
   workspace_settings: {
     label: "Nastavenia pracovného priestoru",
@@ -2143,6 +2148,11 @@ export default {
         title: "Žiadne zodpovedajúce zobrazenia",
         description: "Vytvorte nové zobrazenie.",
       },
+    },
+    delete_view: {
+      title: "Ste si istí, že chcete vymazať toto zobrazenie?",
+      content:
+        "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia.",
     },
   },
   project_page: {

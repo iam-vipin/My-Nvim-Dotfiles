@@ -1519,6 +1519,11 @@ export default {
         description: "Wyświetlane są elementy spełniające filtr.",
       },
     },
+    delete_view: {
+      title: "Czy na pewno chcesz usunąć ten widok?",
+      content:
+        "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia.",
+    },
   },
   workspace_settings: {
     label: "Ustawienia przestrzeni roboczej",
@@ -2145,6 +2150,11 @@ export default {
         title: "Brak pasujących widoków",
         description: "Utwórz nowy widok.",
       },
+    },
+    delete_view: {
+      title: "Czy na pewno chcesz usunąć ten widok?",
+      content:
+        "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia.",
     },
   },
   project_page: {

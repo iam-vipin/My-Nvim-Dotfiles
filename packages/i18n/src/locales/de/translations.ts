@@ -1536,6 +1536,11 @@ export default {
         description: "Hier werden Elemente angezeigt, die den Filterkriterien entsprechen.",
       },
     },
+    delete_view: {
+      title: "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
+      content:
+        "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
+    },
   },
   workspace_settings: {
     label: "Arbeitsbereich-Einstellungen",
@@ -2171,6 +2176,11 @@ export default {
         title: "Keine passenden Ansichten",
         description: "Erstellen Sie eine neue Ansicht.",
       },
+    },
+    delete_view: {
+      title: "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
+      content:
+        "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
     },
   },
   project_page: {

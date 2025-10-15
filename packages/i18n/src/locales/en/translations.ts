@@ -1359,6 +1359,11 @@ export default {
         description: "Work items that applies to the filters, track all of them here.",
       },
     },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
+    },
   },
   account_settings: {
     profile: {},
@@ -1951,6 +1956,10 @@ export default {
             description: "You can create a view from here with as many properties as filters as you see fit.",
           },
         },
+        filter: {
+          title: "No matching views",
+          description: "No views match the search criteria. \n Create a new view instead.",
+        },
       },
       no_archived_issues: {
         title: "No archived work items yet",
@@ -1981,6 +1990,11 @@ export default {
         title: "No shared pages yet",
         description: "Pages that others have shared with you will appear here.",
       },
+    },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
     },
   },
   issue_relation: {

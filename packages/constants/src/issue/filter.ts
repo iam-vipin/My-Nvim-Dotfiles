@@ -326,16 +326,27 @@ export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFi
 export enum EActivityFilterType {
   ACTIVITY = "ACTIVITY",
   COMMENT = "COMMENT",
+  STATE = "STATE",
+  ASSIGNEE = "ASSIGNEE",
+  DEFAULT = "DEFAULT",
 }
 
 export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
 
-export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilters, { labelTranslationKey: string }> = {
+export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
+
+export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { labelTranslationKey: string }> = {
   [EActivityFilterType.ACTIVITY]: {
     labelTranslationKey: "common.updates",
   },
   [EActivityFilterType.COMMENT]: {
     labelTranslationKey: "common.comments",
+  },
+  [EActivityFilterType.STATE]: {
+    labelTranslationKey: "common.state",
+  },
+  [EActivityFilterType.ASSIGNEE]: {
+    labelTranslationKey: "common.assignee",
   },
   [EActivityFilterTypeEE.WORKLOG]: {
     labelTranslationKey: "common.worklogs",
@@ -352,6 +363,9 @@ export type TActivityFilterOption = {
 export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.COMMENT,
+  EActivityFilterType.STATE,
+  EActivityFilterType.ASSIGNEE,
+  EActivityFilterType.DEFAULT,
   EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
 ];
 

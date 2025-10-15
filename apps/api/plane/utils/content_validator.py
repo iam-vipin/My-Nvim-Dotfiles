@@ -71,6 +71,7 @@ EE_CUSTOM_TAGS = {
     "attachment-component",
     "inline-math-component",
     "block-math-component",
+    "drawio-component",
 }
 
 # Combine custom components and editor-specific nodes into a single set of tags

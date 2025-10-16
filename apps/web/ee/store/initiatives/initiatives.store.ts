@@ -490,10 +490,15 @@ export class InitiativeStore implements IInitiativeStore {
     payload: Partial<TInitiative>
   ): Promise<void> => {
     const preUpdateInitiative = clone(this.initiativesMap?.[initiativeId]);
+    const preUpdateFilteredInitiative = clone(this.filteredInitiativesMap?.[initiativeId]);
+
     try {
       runInAction(() => {
         if (this.initiativesMap?.[initiativeId]) {
           this.initiativesMap[initiativeId] = { ...this.initiativesMap[initiativeId], ...payload };
+        }
+        if (this.filteredInitiativesMap?.[initiativeId]) {
+          this.filteredInitiativesMap[initiativeId] = { ...this.filteredInitiativesMap[initiativeId], ...payload };
         }
       });
 
@@ -505,6 +510,9 @@ export class InitiativeStore implements IInitiativeStore {
       runInAction(() => {
         if (this.initiativesMap?.[initiativeId] && preUpdateInitiative) {
           this.initiativesMap[initiativeId] = { ...preUpdateInitiative };
+        }
+        if (this.filteredInitiativesMap?.[initiativeId] && preUpdateFilteredInitiative) {
+          this.filteredInitiativesMap[initiativeId] = { ...preUpdateFilteredInitiative };
         }
       });
       console.error("error while updating initiative", error);

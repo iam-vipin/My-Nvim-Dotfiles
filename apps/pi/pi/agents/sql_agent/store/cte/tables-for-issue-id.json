@@ -1,0 +1,51 @@
+{
+    "intake_issues": [
+        "issue_id"
+    ],
+    "issue_comments": [
+        "issue_id"
+    ],
+    "issue_attachments": [
+        "issue_id"
+    ],
+    "cycle_issues": [
+        "issue_id"
+    ],
+    "issue_mentions": [
+        "issue_id"
+    ],
+    "issue_relations": [
+        "issue_id",
+        "related_issue_id"
+    ],
+    "issue_sequences": [
+        "issue_id"
+    ],
+    "issue_subscribers": [
+        "issue_id"
+    ],
+    "issue_activities": [
+        "issue_id"
+    ],
+    "issue_assignees": [
+        "issue_id"
+    ],
+    "issue_labels": [
+        "issue_id"
+    ],
+    "issue_links": [
+        "issue_id"
+    ],
+    "issues": [
+        "id"
+    ],
+    "module_issues": [
+        "issue_id"
+    ],
+    "issue_worklogs": [
+        "issue_id"
+    ],
+    "issue_property_values": [
+        "issue_id"
+    ]
+}

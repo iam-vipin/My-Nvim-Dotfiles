@@ -267,3 +267,5 @@ from .timezone.base import TimezoneEndpoint
 
 
 from .asset.proxy import ProxyUploadEndpoint, ProxyDownloadEndpoint
+
+from .exporter.base import ExportIssuesEndpoint

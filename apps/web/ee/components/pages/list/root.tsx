@@ -241,6 +241,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           storeType={EPageStoreType.WORKSPACE}
           pageType={pageType}
           paddingLeft={0}
+          sectionType={pageType}
         />
       ))}
     </div>

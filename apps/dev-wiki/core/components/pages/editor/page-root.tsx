@@ -3,25 +3,26 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
-import { useQueryParams } from "@/hooks/use-query-params";
-import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
-import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
+import { PageEditorBody } from "./editor-body";
+import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
+import { ContentLimitBanner } from "./content-limit-banner";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
@@ -59,10 +60,9 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
+  const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useAppRouter();
   // derived values
   const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
@@ -76,7 +76,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     hasConnectionFailed,
     updatePageDescription: handlers.updateDescription,
   });
-  const { updateQueryParams } = useQueryParams();
 
   const handleEditorReady = useCallback(
     (status: boolean) => {
@@ -106,6 +105,20 @@ export const PageRoot = observer((props: TPageRootProps) => {
     editorRef,
   });
 
+  // Merge custom event handlers with content too large handler
+  const mergedCustomEventHandlers = {
+    ...customRealtimeEventHandlers,
+    error: (params: any) => {
+      console.log("params", params);
+      // Check if it's content too large error
+      if (params.data.error_code === "content_too_large") {
+        setShowContentTooLargeBanner(true);
+      }
+      // Call original error handler if exists
+      customRealtimeEventHandlers?.error?.(params);
+    },
+  };
+
   // Get extended editor extensions configuration
   const extendedEditorProps = useExtendedEditorProps({
     workspaceSlug,
@@ -126,7 +139,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
       if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
         page.setVersionToBeRestored(version, descriptionHTML);
         page.setRestorationStatus(true);
-        setToast({ id: "restoring-version", type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
         if (page.id) {
           await handlers.restoreVersion(page.id, version);
         }
@@ -162,9 +175,15 @@ export const PageRoot = observer((props: TPageRootProps) => {
           isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
+        {showContentTooLargeBanner && (
+          <ContentLimitBanner
+            className="px-page-x"
+            onDismiss={() => setShowContentTooLargeBanner(false)}
+          />
+        )}
         <PageEditorBody
           config={config}
-          customRealtimeEventHandlers={customRealtimeEventHandlers}
+          customRealtimeEventHandlers={mergedCustomEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
           handleConnectionStatus={setHasConnectionFailed}

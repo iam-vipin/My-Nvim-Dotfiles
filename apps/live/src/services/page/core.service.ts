@@ -76,7 +76,7 @@ export abstract class PageCoreService extends APIService {
 
     try {
       return await Promise.race([
-        this.patch(`${this.basePath}/pages/${pageId}`, data, {
+        this.patch(`${this.basePath}/pages/${pageId}/`, data, {
           headers: this.getHeader(),
           signal: abortSignal,
         })

@@ -7,7 +7,7 @@ import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
-import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
@@ -22,6 +22,7 @@ import { PagesVersionEditor } from "../version/editor";
 import { PageEditorBody } from "./editor-body";
 import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
+import { ContentLimitBanner } from "./content-limit-banner";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
@@ -59,6 +60,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
+  const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // derived values
@@ -102,6 +104,25 @@ export const PageRoot = observer((props: TPageRootProps) => {
     page,
     editorRef,
   });
+
+  // Type-safe error handler for content too large errors
+  const errorHandler: PageUpdateHandler<"error"> = (params) => {
+    const { data } = params;
+
+    // Check if it's content too large error
+    if (data.error_code === "content_too_large") {
+      setShowContentTooLargeBanner(true);
+    }
+
+    // Call original error handler if exists
+    customRealtimeEventHandlers?.error?.(params);
+  };
+
+  // Merge custom event handlers with content too large handler
+  const mergedCustomEventHandlers: TCustomEventHandlers = {
+    ...customRealtimeEventHandlers,
+    error: errorHandler,
+  };
 
   // Get extended editor extensions configuration
   const extendedEditorProps = useExtendedEditorProps({
@@ -159,9 +180,10 @@ export const PageRoot = observer((props: TPageRootProps) => {
           isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
+        {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
         <PageEditorBody
           config={config}
-          customRealtimeEventHandlers={customRealtimeEventHandlers}
+          customRealtimeEventHandlers={mergedCustomEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
           handleConnectionStatus={setHasConnectionFailed}

@@ -80,7 +80,7 @@ def sync_with_external_service(entity_name, description_html):
             url,
             json=data,
             headers={
-                "LIVE_SERVER_SECRET_KEY": settings.LIVE_SERVER_SECRET_KEY,
+                "live-server-secret-key": settings.LIVE_SERVER_SECRET_KEY,
             },
         )
         if response.status_code == 200:

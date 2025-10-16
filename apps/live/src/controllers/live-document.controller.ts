@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import * as Y from "yjs";
 import { z } from "zod";
-import { Controller, Get } from "@plane/decorators";
+import { Controller, Get, Middleware } from "@plane/decorators";
 
 // Server agent
 import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor/lib";
@@ -9,8 +9,9 @@ import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor
 // Helpers
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
-import { env } from "@/env";
+import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
+// Import authentication middleware
 import { HocusPocusServerContext } from "@/types";
 
 // Types
@@ -25,19 +26,9 @@ const getLiveDocumentValuesSchema = z.object({
 @Controller("/live-document")
 export class LiveDocumentController {
   @Get("/")
+  @Middleware(requireSecretKey)
   async getLiveDocumentValues(req: Request, res: Response) {
     try {
-      if (req.headers["live-server-secret-key"] !== env.LIVE_SERVER_SECRET_KEY) {
-        return res.status(401).json({
-          message: "Unauthorized access",
-          status: 401,
-          context: {
-            component: "get-live-document-values-controller",
-            operation: "getLiveDocumentValues",
-          },
-        });
-      }
-
       const validatedData = getLiveDocumentValuesSchema.parse(req.query);
       const { documentId, workspaceSlug } = validatedData;
 

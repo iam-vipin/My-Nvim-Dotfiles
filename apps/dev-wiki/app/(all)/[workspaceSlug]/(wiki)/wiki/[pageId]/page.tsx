@@ -7,19 +7,20 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+// import { EFileAssetType } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
-// import { IssuePeekOverview } from "@/components/issues";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
+// import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { PageRoot, type TPageRootConfig, type TPageRootHandlers } from "@/components/pages/editor/page-root";
 // hooks
-import { useEditorConfig } from "@/hooks/editor";
-import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor/use-editor-config";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-// import { EpicPeekOverview } from "@/plane-web/components/epics";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
@@ -49,7 +50,6 @@ const PageDetailsPage = observer(() => {
     [getWorkspaceBySlug, workspaceSlug]
   );
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
-
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
@@ -85,11 +85,15 @@ const PageDetailsPage = observer(() => {
         if (!workspaceSlug) return;
         return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
       },
+      restoreVersion: async (pageId, versionId) => {
+        if (!workspaceSlug) return;
+        await workspacePageVersionService.restoreVersion(workspaceSlug.toString(), pageId, versionId);
+      },
       getRedirectionLink: (pageId) => {
         if (pageId) {
-          return `/${workspaceSlug}/pages/${pageId}`;
+          return `/${workspaceSlug}/wiki/${pageId}`;
         } else {
-          return `/${workspaceSlug}/pages`;
+          return `/${workspaceSlug}/wiki`;
         }
       },
       updateDescription: updateDescription ?? (async () => {}),
@@ -180,10 +184,9 @@ const PageDetailsPage = observer(() => {
             storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug.toString()}
-            isPageDetailsLoading={isPageDetailsLoading}
           />
-          {/* <IssuePeekOverview /> */}
-          {/* <EpicPeekOverview /> */}
+          {/*<IssuePeekOverview />
+          <EpicPeekOverview />*/}
         </div>
       </div>
     </>

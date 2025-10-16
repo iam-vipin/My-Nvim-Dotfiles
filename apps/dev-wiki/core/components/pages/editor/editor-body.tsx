@@ -1,36 +1,36 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
   type EditorRefApi,
+  type EditorTitleRefApi,
   type TAIMenuProps,
   type TDisplayConfig,
   type TFileHandler,
   type TRealtimeConfig,
   type TServerHandler,
-  type EditorTitleRefApi,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions/root";
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import { useRealtimePageEvents, type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -101,6 +101,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+
   // derived values
   const {
     id: pageId,
@@ -196,15 +197,31 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
     // Construct the WebSocket Collaboration URL
     try {
-      const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
+      let LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
+      
+      // DEVELOPMENT: Randomly select between localhost:3004 and localhost:3005 (50/50)
+      // This helps test load balancing and multi-server scenarios
+      if (LIVE_SERVER_BASE_URL.includes('localhost:3004') || LIVE_SERVER_BASE_URL.includes('localhost:3005')) {
+        const randomServer = Math.random() < 0.5 ? '3004' : '3005';
+        LIVE_SERVER_BASE_URL = LIVE_SERVER_BASE_URL.replace(/:(3004|3005)/, `:${randomServer}`);
+        console.log(`🎲 [DEV] Randomly selected live server: localhost:${randomServer}`);
+      }
+      
       const WS_LIVE_URL = new URL(LIVE_SERVER_BASE_URL);
       const isSecureEnvironment = window.location.protocol === "https:";
       WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
       WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+
+      // Append query parameters to the URL
+      Object.entries(webhookConnectionParams)
+        .filter(([_, value]) => value !== undefined && value !== null)
+        .forEach(([key, value]) => {
+          WS_LIVE_URL.searchParams.set(key, String(value));
+        });
+
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);
@@ -228,7 +245,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isPageLoading = pageId === undefined || !realtimeConfig || !extendedEditorProps;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
@@ -281,7 +298,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             id={pageId}
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
-            extendedEditorProps={extendedEditorProps}
             ref={editorForwardRef}
             titleRef={titleEditorRef}
             containerClassName="h-full p-0 pb-64"
@@ -309,6 +325,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             aiHandler={{
               menu: getAIMenu,
             }}
+            extendedEditorProps={extendedEditorProps}
             isFetchingFallbackBinary={isFetchingFallbackBinary}
             hasServerConnectionFailed={hasServerConnectionFailed}
           />

@@ -37,6 +37,12 @@ export type UnsharedPayload = CreatePayload<{
 }>;
 export type RestoredPayload = CreatePayload<{ deleted_page_ids?: string[] }>;
 export type SubPagePayload = BaseActionPayload;
+export type ErrorPayload = CreatePayload<{
+  error_message: string;
+  error_type: "fetch" | "store";
+  error_code?: "content_too_large" | "page_locked" | "page_archived";
+  should_disconnect?: boolean;
+}>;
 
 // Enhanced DocumentCollaborativeEvents with payload types.
 // Both the client name and server name are defined, and we add a "payloadType" property
@@ -131,5 +137,10 @@ export const DocumentCollaborativeEvents = {
     client: "unshared",
     server: "unshared",
     payloadType: {} as UnsharedPayload,
+  },
+  error: {
+    client: "error",
+    server: "error",
+    payloadType: {} as ErrorPayload,
   },
 } as const;

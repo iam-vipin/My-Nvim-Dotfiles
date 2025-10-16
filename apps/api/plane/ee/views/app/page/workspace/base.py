@@ -228,7 +228,7 @@ class WorkspacePageViewSet(BaseViewSet):
                         slug=slug,
                         user_id=request.user.id,
                         extra={
-                            "old_parent_id": page.parent_id,
+                            "old_parent_id": current_instance.get("parent_id"),
                             "new_parent_id": parent,
                             "access": request.data.get("access", page.access),
                         },

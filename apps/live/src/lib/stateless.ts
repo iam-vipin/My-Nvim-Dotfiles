@@ -10,7 +10,6 @@ import { serverAgentManager } from "@/agents/server-agent";
  */
 export const onStateless = async ({ payload, document, connection }: onStatelessPayload) => {
   const payloadStr = payload as string;
-  logger.info("ON_STATELESS: payload", { payloadStr });
 
   // Function to safely parse JSON without throwing exceptions
   const safeJsonParse = (str: string) => {
@@ -64,7 +63,9 @@ export const onStateless = async ({ payload, document, connection }: onStateless
 
     // Handle synced action
     if (parsedPayload.action === "synced" && parsedPayload.workspaceSlug) {
-      serverAgentManager.notifySyncTrigger(document.name, connection.context);
+      serverAgentManager.notifySyncTrigger(document.name, connection.context).catch((error) => {
+        logger.error("ON_STATELESS: Error in notifySyncTrigger:", error);
+      });
       return;
     }
   }

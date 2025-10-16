@@ -6,6 +6,7 @@ dotenv.config();
 // Environment variable validation
 const envSchema = z.object({
   APP_VERSION: z.string().default("1.0.0"),
+  NODE_ENV: z.string().default("production"),
   HOSTNAME: z.string().optional(),
   PORT: z.string().default("3000"),
   API_BASE_URL: z.string().url("API_BASE_URL must be a valid URL"),

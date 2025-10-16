@@ -1,3 +1,4 @@
+import { AppError } from "@/lib/errors";
 import { PageService } from "./extended.service";
 
 interface WorkspacePageServiceParams {
@@ -11,9 +12,9 @@ export class WorkspacePageService extends PageService {
   constructor(params: WorkspacePageServiceParams) {
     super();
     const { workspaceSlug } = params;
-    if (!workspaceSlug) throw new Error("Missing required fields.");
+    if (!workspaceSlug) throw new AppError("Missing required fields.");
     // validate cookie
-    if (!params.cookie) throw new Error("Cookie is required.");
+    if (!params.cookie) throw new AppError("Cookie is required.");
     // set cookie
     this.setHeader("Cookie", params.cookie);
     // set base path

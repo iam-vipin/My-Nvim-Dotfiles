@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
-import { Controller, Post } from "@plane/decorators";
+import { Controller, Middleware, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
+import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
 import { type TConvertDocumentRequestBody } from "@/types";
 
@@ -21,6 +22,7 @@ const convertDocumentSchema = z.object({
 @Controller("/convert-document")
 export class DocumentController {
   @Post("/")
+  @Middleware(requireSecretKey)
   async convertDocument(req: Request, res: Response) {
     try {
       // Validate request body

@@ -1,7 +1,7 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 // react
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
@@ -16,6 +16,13 @@ import { TCollaborativeEditorHookProps } from "@/types";
 // local imports
 import { useEditorNavigation } from "./use-editor-navigation";
 import { useTitleEditor } from "./use-title-editor";
+
+// Helper to check if a close code indicates a forced close
+const isForcedCloseCode = (code: number | undefined): boolean => {
+  if (!code) return false;
+  // All custom close codes (4000-4003) are treated as forced closes
+  return code >= 4000 && code <= 4003;
+};
 
 // Clears IndexedDB for a page when the document is confirmed to be empty from the server
 const clearIndexedDbForPage = async (pageId: string) => {
@@ -62,8 +69,23 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   const [isIndexedDbSynced, setIsIndexedDbSynced] = useState(false);
   const [isEditorContentReady, setIsEditorContentReady] = useState(false);
 
+  // Connection tracking (ref avoids closure issues in provider callbacks)
+  const connectionRef = useRef({
+    connectionAttempts: 0,
+    isPermanentlyStopped: false,
+    forceCloseReceived: false,
+  });
+
+  // Constants
+  const maxConnectionAttempts = 3;
+
   // Create navigation handlers
   const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
+
+  // Reset force close state when document ID changes
+  useEffect(() => {
+    connectionRef.current.forceCloseReceived = false;
+  }, [id]);
 
   // Initialize Hocuspocus provider for real-time collaboration
   const provider = useMemo(
@@ -73,24 +95,31 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         // using user id as a token to verify the user on the server
         token: JSON.stringify(user),
         url: realtimeConfig.url,
+        // NOTE: maxAttempts config is broken in Hocuspocus (see GitHub issue #762)
+        // We handle retry limiting manually in the onClose handler below
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
           setHasServerConnectionFailed(true);
         },
-        onConnect: () => serverHandler?.onConnect?.(),
+        onConnect: () => {
+          // If we've permanently stopped, reject this connection (zombie reconnection from Hocuspocus)
+          if (connectionRef.current.isPermanentlyStopped) {
+            provider?.disconnect();
+            return;
+          }
+
+          // Reset retry counter on successful connection
+          connectionRef.current.connectionAttempts = 0;
+        },
         onStatus: (status) => {
           if (status.status === "disconnected") {
             serverHandler?.onServerError?.();
             setHasServerConnectionFailed(true);
           }
         },
-        onClose: (data) => {
-          if (data.event.code === 1006) {
-            serverHandler?.onServerError?.();
-            setHasServerConnectionFailed(true);
-          }
-        },
         onSynced: () => {
+          // Reset retry counter on successful sync (stable connection)
+          connectionRef.current.connectionAttempts = 0;
           serverHandler?.onServerSynced?.();
           const workspaceSlug = new URLSearchParams(realtimeConfig.url).get("workspaceSlug");
           const projectId = new URLSearchParams(realtimeConfig.url).get("projectId");
@@ -113,7 +142,76 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     [id, provider]
   );
 
-  // Handle IndexedDB sync and check for content availability
+  // Helper function to permanently stop the provider and prevent all reconnection attempts
+  const permanentlyStopProvider = useCallback(() => {
+    const wsProvider = provider.configuration?.websocketProvider;
+
+    // Set flag FIRST to prevent any close event handlers from running
+    connectionRef.current.isPermanentlyStopped = true;
+
+    // Disable reconnection in WebSocket provider
+    if (wsProvider) {
+      wsProvider.shouldConnect = false;
+    }
+
+    // Destroy the provider completely (kills all internal timers and listeners)
+    try {
+      provider.destroy();
+    } catch (error) {
+      console.error(`   ✗ Error destroying provider:`, error);
+    }
+  }, [provider]);
+
+  // Handle connection close events - check close code to determine behavior
+  useEffect(() => {
+    const handleClose = (event: { event?: { code?: number; reason?: string } }) => {
+      const closeCode = event.event?.code;
+      const conn = connectionRef.current;
+
+      // CRITICAL: If we've already permanently stopped, ignore ALL close events
+      if (conn.isPermanentlyStopped) {
+        return;
+      }
+
+      // Forced close can be detected in two ways:
+      // 1. Close code 4000-4003 (if transmitted correctly by WebSocket)
+      // 2. force_close message received before close event (backup method)
+      const isForcedClose = isForcedCloseCode(closeCode) || conn.forceCloseReceived;
+
+      if (isForcedClose) {
+        // Trigger fallback mechanism (show error UI to user)
+        serverHandler?.onServerError?.();
+        setHasServerConnectionFailed(true);
+
+        // Permanently stop the provider (destroys all timers)
+        permanentlyStopProvider();
+
+        // Reset values
+        conn.connectionAttempts = 0;
+        conn.forceCloseReceived = false;
+      } else {
+        // Increment connection attempts counter
+        conn.connectionAttempts++;
+
+        // Always trigger fallback
+        serverHandler?.onServerError?.();
+        setHasServerConnectionFailed(true);
+
+        // Stop after max attempts
+        if (conn.connectionAttempts >= maxConnectionAttempts) {
+          // Permanently stop the provider (destroys all timers and prevents zombie reconnections)
+          permanentlyStopProvider();
+        }
+      }
+    };
+
+    provider?.on("close", handleClose);
+
+    return () => {
+      provider?.off("close", handleClose);
+    };
+  }, [provider, serverHandler, id, maxConnectionAttempts, permanentlyStopProvider]);
+
   useEffect(() => {
     if (!localProvider) return;
 
@@ -167,6 +265,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   // Clean up providers on unmount
   useEffect(
     () => () => {
+      // CRITICAL: Set permanently stopped flag BEFORE destroying
+      // This prevents the onClose handler from processing the unmount close event
+      connectionRef.current.isPermanentlyStopped = true;
+
       provider?.destroy();
       localProvider?.destroy();
     },
@@ -222,12 +324,18 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     tabIndex,
   });
 
+  // Create setter function for realtime events hook
+  const setForceCloseReceived = useCallback((value: boolean) => {
+    connectionRef.current.forceCloseReceived = value;
+  }, []);
+
   // Use the new hook for realtime events
   useRealtimeEvents({
     editor,
     provider,
     id,
     updatePageProperties,
+    setForceCloseReceived,
   });
 
   // Initialize title editor

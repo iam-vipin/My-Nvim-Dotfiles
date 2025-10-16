@@ -4,9 +4,9 @@ import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
 // editor extensions
 import { TITLE_EDITOR_EXTENSIONS, createRealtimeEvent } from "@plane/editor";
-// helpers
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
+// helpers
 import { getPageService } from "@/services/page/handler";
 import type { HocusPocusServerContext, OnLoadDocumentPayloadWithContext } from "@/types";
 import { generateTitleProsemirrorJson } from "@/utils";
@@ -18,11 +18,19 @@ import { extractTextFromHTML } from "./title-update/title-utils";
  * Hocuspocus extension for synchronizing document titles
  */
 export class TitleSyncExtension implements Extension {
-  instance!: Hocuspocus;
-
   // Maps document names to their observers and update managers
   private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
   private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
+  // Store minimal data needed for each document's title observer (prevents closure memory leaks)
+  private titleObserverData: Map<
+    string,
+    {
+      parentId?: string | null;
+      userId: string;
+      workspaceSlug: string | null;
+      instance: Hocuspocus;
+    }
+  > = new Map();
 
   /**
    * Handle document loading - migrate old titles if needed
@@ -71,38 +79,57 @@ export class TitleSyncExtension implements Extension {
     // Store the manager
     this.titleUpdateManagers.set(documentName, updateManager);
 
-    // Set up observer for title field
-    const titleObserver = (events: Y.YEvent<any>[]) => {
-      let title = "";
-      events.forEach((event) => {
-        title = extractTextFromHTML(event.currentTarget.toJSON());
-      });
+    // Store minimal data needed for the observer (prevents closure memory leak)
+    this.titleObserverData.set(documentName, {
+      parentId: context.parentId,
+      userId: context.userId,
+      workspaceSlug: context.workspaceSlug,
+      instance: instance,
+    });
 
-      // Schedule an update with the manager
-      const manager = this.titleUpdateManagers.get(documentName);
-
-      // In your titleObserver
-      if (context.parentId) {
-        const event = createRealtimeEvent({
-          user_id: context.userId,
-          workspace_slug: context.workspaceSlug as string,
-          action: "property_updated",
-          page_id: documentName,
-          data: { name: title },
-          descendants_ids: [],
-        });
-
-        broadcastMessageToPage(instance, context.parentId, event);
-      }
-
-      if (manager) {
-        manager.scheduleUpdate(title);
-      }
-    };
+    // Create observer using bound method to avoid closure capturing heavy objects
+    const titleObserver = this.handleTitleChange.bind(this, documentName);
 
     // Observe the title field
     document.getXmlFragment("title").observeDeep(titleObserver);
     this.titleObservers.set(documentName, titleObserver);
+  }
+
+  /**
+   * Handle title changes for a document
+   * This is a separate method to avoid closure memory leaks
+   */
+  private handleTitleChange(documentName: string, events: Y.YEvent<any>[]) {
+    let title = "";
+    events.forEach((event) => {
+      title = extractTextFromHTML(event.currentTarget.toJSON());
+    });
+
+    // Get the manager for this document
+    const manager = this.titleUpdateManagers.get(documentName);
+
+    // Get the stored data for this document
+    const data = this.titleObserverData.get(documentName);
+
+    // Broadcast to parent page if it exists
+    if (data?.parentId && data.workspaceSlug && data.instance) {
+      const event = createRealtimeEvent({
+        user_id: data.userId,
+        workspace_slug: data.workspaceSlug,
+        action: "property_updated",
+        page_id: documentName,
+        data: { name: title },
+        descendants_ids: [],
+      });
+
+      // Use the instance from stored data (guaranteed to be set)
+      broadcastMessageToPage(data.instance, data.parentId, event);
+    }
+
+    // Schedule the title update
+    if (manager) {
+      manager.scheduleUpdate(title);
+    }
   }
 
   /**
@@ -121,12 +148,23 @@ export class TitleSyncExtension implements Extension {
   /**
    * Remove observers after document unload
    */
-  async afterUnloadDocument({ documentName }: { documentName: string }) {
+  async afterUnloadDocument({ documentName, document }: { documentName: string; document?: Document }) {
     // Clean up observer when document is unloaded
     const observer = this.titleObservers.get(documentName);
     if (observer) {
+      // unregister observer from Y.js document to prevent memory leak
+      if (document) {
+        try {
+          document.getXmlFragment("title").unobserveDeep(observer);
+        } catch (error) {
+          logger.error("Failed to unobserve title field", new AppError(error, { context: { documentName } }));
+        }
+      }
       this.titleObservers.delete(documentName);
     }
+
+    // Clean up the observer data map to prevent memory leak
+    this.titleObserverData.delete(documentName);
 
     // Ensure manager is cleaned up if beforeUnloadDocument somehow didn't run
     if (this.titleUpdateManagers.has(documentName)) {

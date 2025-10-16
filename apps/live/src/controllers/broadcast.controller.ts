@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import * as Y from "yjs";
-import { Controller, Post } from "@plane/decorators";
+import { Controller, Middleware, Post } from "@plane/decorators";
 import {
   BroadcastPayloadUnion,
   CommonRealtimeFields,
@@ -10,6 +10,7 @@ import {
 } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
+import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
 import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/utils";
 import { broadcastMessageToPage } from "@/utils/broadcast-message";
@@ -17,6 +18,8 @@ import { broadcastMessageToPage } from "@/utils/broadcast-message";
 // (Optional) additional types used in your controller
 interface ConnectionContext {
   workspaceSlug: string;
+  projectId?: string;
+  teamspaceId?: string;
 }
 
 // If needed, you can also define a metadata type.
@@ -29,11 +32,13 @@ export interface CompleteMetadata extends CommonRealtimeFields {
 @Controller("/broadcast")
 export class BroadcastController {
   @Post("/")
+  @Middleware(requireSecretKey)
   async handleBroadcast(req: Request<any, any, BroadcastPayloadUnion>, res: Response) {
     try {
       const payload = req.body;
       // Destructure common properties
-      const { action, descendants_ids, page_id, parent_id, data, workspace_slug, user_id } = payload;
+      const { action, descendants_ids, page_id, parent_id, data, workspace_slug, user_id, project_id, teamspace_id } =
+        payload;
 
       // Add user_id to data
       data.user_id = user_id;
@@ -46,6 +51,8 @@ export class BroadcastController {
         descendants_ids,
         data,
         workspace_slug: workspace_slug || "",
+        project_id: project_id || "",
+        teamspace_id: teamspace_id || "",
         user_id: user_id || "",
       });
 
@@ -58,23 +65,31 @@ export class BroadcastController {
       // Create a context object for later operations
       const connectionContext: ConnectionContext = {
         workspaceSlug: workspace_slug || "",
+        projectId: project_id || "",
+        teamspaceId: teamspace_id || "",
       };
 
       res.status(200).json({ success: true });
 
-      // Send response immediately for moved_internally to prevent hanging
+      // Handle specific actions with early returns
       if (action === "moved_internally" && page_id) {
-        this.handleMovedInternally(payload, connectionContext);
+        await this.handleMovedInternally(payload, connectionContext);
         return;
       }
 
-      // Handle specific actions
       if (action === "duplicated" && parent_id && page_id) {
-        this.handleDuplicated(payload, connectionContext);
-      } else if (action === "deleted" && parent_id && page_id) {
-        this.handleDeleted(payload, connectionContext);
-      } else if (action === "sub_page") {
-        this.handleSubPage(payload, connectionContext);
+        await this.handleDuplicated(payload, connectionContext);
+        return;
+      }
+
+      if (action === "deleted" && parent_id && page_id) {
+        await this.handleDeleted(payload, connectionContext);
+        return;
+      }
+
+      if (action === "sub_page") {
+        await this.handleSubPage(payload, connectionContext);
+        return;
       }
     } catch (error) {
       const appError = new AppError(error, {
@@ -107,7 +122,8 @@ export class BroadcastController {
   private broadcastToAffectedPages(pageIds: string[], metadata: CompleteMetadata): void {
     pageIds.forEach((pageId) => {
       try {
-        broadcastMessageToPage(serverAgentManager, pageId, metadata);
+        if (!serverAgentManager.hocuspocusServer) return;
+        broadcastMessageToPage(serverAgentManager.hocuspocusServer, pageId, metadata);
       } catch (error) {
         const appError = new AppError(error, {
           context: { operation: "broadcastToAffectedPages", pageId },
@@ -117,7 +133,7 @@ export class BroadcastController {
     });
   }
 
-  private handleMovedInternally(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
+  private async handleMovedInternally(payload: BroadcastPayloadUnion, context: ConnectionContext): Promise<void> {
     if (payload.action !== "moved_internally" || !payload.page_id) return;
 
     const { page_id, workspace_slug, data } = payload;
@@ -126,27 +142,23 @@ export class BroadcastController {
 
     // Handle old parent (remove page embed)
     if (old_parent_id) {
-      setTimeout(() => {
-        this.removePageEmbedFromParent(old_parent_id, page_id, context);
-      }, 100);
+      await this.removePageEmbedFromParent(old_parent_id, page_id, context);
     }
 
     // Handle new parent (add page embed)
     if (new_parent_id) {
-      setTimeout(() => {
-        this.addPageEmbedToParent(new_parent_id, page_id, workspace_slug || "", context);
-      }, 500);
+      await this.addPageEmbedToParent(new_parent_id, page_id, workspace_slug || "", context);
     }
   }
 
-  private handleDuplicated(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
+  private async handleDuplicated(payload: BroadcastPayloadUnion, context: ConnectionContext): Promise<void> {
     if (payload.action !== "duplicated" || !payload.parent_id || !payload.page_id) return;
     if (!payload.data || !payload.data.new_page_id) return;
 
     const { parent_id, page_id, data, workspace_slug } = payload;
 
-    serverAgentManager
-      .executeTransaction(
+    try {
+      await serverAgentManager.executeTransaction(
         parent_id,
         (doc) => {
           const xmlFragment = doc.getXmlFragment("default");
@@ -168,31 +180,28 @@ export class BroadcastController {
             });
           }
         },
-        { workspaceSlug: context.workspaceSlug || "" }
-      )
-      .catch((error) => {
-        const appError = new AppError(error, {
-          context: { operation: "broadcastHandleDuplicated", parentPageId: parent_id, pageId: page_id },
-        });
-        logger.error("Error handling duplicated action", appError);
-      });
+        context
+      );
+    } catch (error) {
+      logger.error("BROADCAST_CONTROLLER: Error handling duplicated action:", error);
+    }
   }
 
-  private handleSubPage(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
+  private async handleSubPage(payload: BroadcastPayloadUnion, context: ConnectionContext): Promise<void> {
     if (payload.action !== "sub_page" || !payload.parent_id || !payload.page_id) return;
 
     const { parent_id, page_id } = payload;
 
-    this.addPageEmbedToParent(parent_id, page_id, context.workspaceSlug || "", context);
+    await this.addPageEmbedToParent(parent_id, page_id, context.workspaceSlug || "", context);
   }
 
-  private handleDeleted(payload: BroadcastPayloadUnion, context: ConnectionContext): void {
+  private async handleDeleted(payload: BroadcastPayloadUnion, context: ConnectionContext): Promise<void> {
     if (payload.action !== "deleted" || !payload.parent_id || !payload.page_id) return;
 
     const { parent_id, page_id } = payload;
 
-    serverAgentManager
-      .executeTransaction(
+    try {
+      await serverAgentManager.executeTransaction(
         parent_id,
         (doc) => {
           const xmlFragment = doc.getXmlFragment("default");
@@ -210,22 +219,23 @@ export class BroadcastController {
             }
           }
         },
-        { workspaceSlug: context.workspaceSlug || "" }
-      )
-      .catch((error) => {
-        const appError = new AppError(error, {
-          context: { operation: "broadcastHandleDeleted", parentId: parent_id, pageId: page_id },
-        });
-        logger.error("Error handling deleted action", appError);
+        context
+      );
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: { operation: "broadcastHandleDeleted", parentId: parent_id, pageId: page_id },
       });
+      logger.error("Error handling deleted action", appError);
+    }
   }
 
-  private removePageEmbedFromParent(parentId: string, pageId: string, context: ConnectionContext): void {
-    serverAgentManager
-      .executeTransaction(
+  private async removePageEmbedFromParent(parentId: string, pageId: string, context: ConnectionContext): Promise<void> {
+    try {
+      await serverAgentManager.executeTransaction(
         parentId,
         (doc) => {
           const xmlFragment = doc.getXmlFragment("default");
+
           const matchingEmbeds = findAllElementsRecursive(
             xmlFragment,
             "pageEmbedComponent",
@@ -240,24 +250,24 @@ export class BroadcastController {
             }
           }
         },
-        { workspaceSlug: context.workspaceSlug || "" }
-      )
-      .catch((error) => {
-        const appError = new AppError(error, {
-          context: { operation: "broadcastRemovePageEmbedFromParent", parentPageId: parentId, pageId },
-        });
-        logger.error("Error removing from old parent", appError);
+        context
+      );
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: { operation: "broadcastRemovePageEmbedFromParent", parentPageId: parentId, pageId },
       });
+      logger.error("Error removing from old parent", appError);
+    }
   }
 
-  private addPageEmbedToParent(
+  private async addPageEmbedToParent(
     parentId: string,
     pageId: string,
     workspaceSlug: string,
     context: ConnectionContext
-  ): void {
-    serverAgentManager
-      .executeTransaction(
+  ): Promise<void> {
+    try {
+      await serverAgentManager.executeTransaction(
         parentId,
         (doc) => {
           const xmlFragment = doc.getXmlFragment("default");
@@ -268,16 +278,13 @@ export class BroadcastController {
           newPageEmbedNode.setAttribute("workspace_identifier", workspaceSlug);
           xmlFragment.push([newPageEmbedNode]);
         },
-        {
-          documentType: "workspace_page",
-          workspaceSlug: context.workspaceSlug || "",
-        }
-      )
-      .catch((error) => {
-        const appError = new AppError(error, {
-          context: { operation: "broadcastAddPageEmbedToParent", parentPageId: parentId, pageId },
-        });
-        logger.error("Error adding to new parent", appError);
+        context
+      );
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: { operation: "broadcastAddPageEmbedToParent", parentPageId: parentId, pageId },
       });
+      logger.error("Error adding to new parent", appError);
+    }
   }
 }

@@ -7,7 +7,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import ExporterHistory, Project, Workspace
-from plane.ee.views.base import BaseAPIView
+from plane.app.views.base import BaseAPIView
 
 
 class ExportIssuesEndpoint(BaseAPIView):

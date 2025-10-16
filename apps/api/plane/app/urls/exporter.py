@@ -1,7 +1,6 @@
 from django.urls import path
+from plane.app.views import ExportIssuesEndpoint
 
-
-from plane.app.views.exporter import ExportIssuesEndpoint
 
 urlpatterns = [
     path(

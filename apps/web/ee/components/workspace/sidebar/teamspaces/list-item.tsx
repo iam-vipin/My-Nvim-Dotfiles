@@ -52,7 +52,7 @@ export const TeamspaceSidebarListItem = observer((props: Props) => {
             }}
           >
             <Logo logo={teamspace.logo_props} size={16} />
-            <p className="text-sm leading-5 font-medium truncate">{teamspace.name}</p>
+            <p className="text-sm text-custom-sidebar-text-200 leading-5 font-medium truncate">{teamspace.name}</p>
           </div>
         </Disclosure.Button>
         <Disclosure.Button

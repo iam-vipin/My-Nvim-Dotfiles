@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import { CollaborationCaret } from "@tiptap/extension-collaboration-caret";
+import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
 // types
 import { TUserDetails } from "@/types";
 
@@ -33,7 +33,7 @@ const renderUserCursor = (user: TUserDetails): HTMLSpanElement => {
 export const CustomCollaborationCaret = (props: Props) => {
   const { provider, userDetails } = props;
 
-  return CollaborationCaret.configure({
+  return CollaborationCursor.configure({
     user: userDetails,
     render: renderUserCursor,
     provider,

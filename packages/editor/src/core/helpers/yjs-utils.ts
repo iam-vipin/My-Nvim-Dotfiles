@@ -1,4 +1,4 @@
-import { getSchema } from "@tiptap/core";
+import { Extensions, getSchema } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import * as Y from "yjs";
@@ -13,7 +13,7 @@ import { TitleExtensions } from "@/extensions/title-extension";
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
-export const TITLE_EDITOR_EXTENSIONS = TitleExtensions;
+export const TITLE_EDITOR_EXTENSIONS: Extensions = TitleExtensions;
 // editor schemas
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
@@ -46,9 +46,10 @@ export const convertBinaryDataToBase64String = (document: Uint8Array): string =>
 /**
  * @description this function decodes base64 string to binary data
  * @param {string} document
- * @returns {ArrayBuffer}
+ * @returns {Buffer<ArrayBuffer>}
  */
-export const convertBase64StringToBinaryData = (document: string): ArrayBuffer => Buffer.from(document, "base64");
+export const convertBase64StringToBinaryData = (document: string): Buffer<ArrayBuffer> =>
+  Buffer.from(document, "base64");
 
 /**
  * @description this function generates the binary equivalent of html content for the rich text editor

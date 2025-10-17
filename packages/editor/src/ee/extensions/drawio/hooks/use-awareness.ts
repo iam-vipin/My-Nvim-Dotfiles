@@ -1,6 +1,6 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/core";
-import type { CollaborationCaretOptions } from "@tiptap/extension-collaboration-caret";
+import type { CollaborationCursorOptions } from "@tiptap/extension-collaboration-cursor";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 // plane imports
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
@@ -43,7 +43,7 @@ export const useDrawioAwareness = (editor: Editor, diagramId: string | null) => 
     const collaborationCaret = editor.extensionManager.extensions.find(
       (ext) => ext.name === ADDITIONAL_EXTENSIONS.COLLABORATION_CARET
     );
-    const collaborationCaretOptions = collaborationCaret?.options as CollaborationCaretOptions;
+    const collaborationCaretOptions = collaborationCaret?.options as CollaborationCursorOptions;
     return (collaborationCaretOptions?.provider as HocuspocusProvider)?.awareness || null;
   }, [editor]);
 

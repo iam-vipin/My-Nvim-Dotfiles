@@ -23,7 +23,7 @@ export const DocumentEditorSideEffects = ({
   const { users } = useEditorState({
     editor,
     selector: (ctx) => ({
-      users: ctx.editor.storage.collaborationCaret?.users || [],
+      users: ctx.editor.storage.collaborationCursor?.users || [],
     }),
   });
 

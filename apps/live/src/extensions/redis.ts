@@ -1,5 +1,5 @@
 import { Redis as HocuspocusRedis } from "@hocuspocus/extension-redis";
-import type { onConfigurePayload } from "@hocuspocus/server";
+import { OutgoingMessage, type onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 import { redisManager } from "@/redis";
@@ -27,7 +27,7 @@ export class Redis extends HocuspocusRedis {
 
     // Subscribe to admin channel
     await new Promise<void>((resolve, reject) => {
-      this.sub.subscribe(this.ADMIN_CHANNEL, (error) => {
+      this.sub.subscribe(this.ADMIN_CHANNEL, (error: Error) => {
         if (error) {
           logger.error(`[Redis] Failed to subscribe to admin channel:`, error);
           reject(error);
@@ -97,7 +97,7 @@ export class Redis extends HocuspocusRedis {
   async onDestroy() {
     // Unsubscribe from admin channel
     await new Promise<void>((resolve) => {
-      this.sub.unsubscribe(this.ADMIN_CHANNEL, (error) => {
+      this.sub.unsubscribe(this.ADMIN_CHANNEL, (error: Error) => {
         if (error) {
           logger.error(`[Redis] Error unsubscribing from admin channel:`, error);
         }
@@ -113,17 +113,22 @@ export class Redis extends HocuspocusRedis {
   }
 
   /**
-   * Legacy method for compatibility with existing code
-   * Uses the standard HocusPocus broadcastStateless mechanism
+   * Broadcast a message to a document across all servers via Redis.
+   * Uses empty identifier so ALL servers process the message.
    */
-  public async broadcastToDocument(documentName: string, payload: unknown): Promise<void> {
-    const document = this.instance?.documents.get(documentName);
-    if (!document) {
-      logger.warn(`[Redis] Document ${documentName} not found for broadcast`);
-      return;
-    }
-
+  public async broadcastToDocument(documentName: string, payload: unknown): Promise<number> {
     const stringPayload = typeof payload === "string" ? payload : JSON.stringify(payload);
-    document.broadcastStateless(stringPayload);
+
+    const message = new OutgoingMessage(documentName).writeBroadcastStateless(stringPayload);
+
+    const emptyPrefix = Buffer.concat([Buffer.from([0])]);
+    const channel = this["pubKey"](documentName);
+    const encodedMessage = Buffer.concat([emptyPrefix, Buffer.from(message.toUint8Array())]);
+
+    const result = await this.pub.publishBuffer(channel, encodedMessage);
+
+    logger.info(`REDIS_EXTENSION: Published to ${documentName}, ${result} subscribers`);
+
+    return result;
   }
 }

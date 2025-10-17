@@ -42,14 +42,14 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
 
     useEffect(() => {
       // Only set default values if shouldLoadDefaultValues is true and we have active properties
-      if (shouldLoadDefaultValues && activeProperties?.length) {
+      if (shouldLoadDefaultValues && activeProperties?.length && !arePropertyValuesInitializing) {
         handleIssuePropertyValueUpdate({
           ...getPropertiesDefaultValues(activeProperties),
           ...issuePropertyValues,
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeProperties, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
+    }, [activeProperties, arePropertyValuesInitializing, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
 
     const handlePropertyValueChange = (propertyId: string, value: string[]) => {
       handleIssuePropertyValueUpdate((prev) => ({

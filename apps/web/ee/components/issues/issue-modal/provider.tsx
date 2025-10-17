@@ -166,7 +166,9 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     )
       .then(() => {
         // mutate issue property values
-        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isWorkItemTypeEnabled}`);
+        mutate(
+          `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${EWorkItemTypeEntity.WORK_ITEM}_${isWorkItemTypeEnabled}`
+        );
         // fetch property activities
         fetchPropertyActivities(workspaceSlug, projectId, issueId);
         // reset issue property values

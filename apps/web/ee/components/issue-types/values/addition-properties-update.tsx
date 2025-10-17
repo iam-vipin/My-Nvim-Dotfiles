@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports

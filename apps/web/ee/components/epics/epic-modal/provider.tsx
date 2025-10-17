@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
-import { EIssueServiceType, EWorkItemConversionType } from "@plane/types";
+import { EIssueServiceType, EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
 import type {
@@ -127,7 +127,9 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
       .create(workspaceSlug, projectId, issueId, filteredIssuePropertyValues)
       .then(() => {
         // mutate issue property values
-        mutate(`ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${isEpicEnabled}`);
+        mutate(
+          `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${EWorkItemTypeEntity.EPIC}_${isEpicEnabled}`
+        );
         // fetch property activities
         fetchPropertyActivities(workspaceSlug, projectId, issueId);
         // reset issue property values

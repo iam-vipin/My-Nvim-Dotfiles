@@ -228,7 +228,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    */
   get canCurrentUserCommentOnPage() {
     const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    return this.isCurrentUserOwner || (!!userRole && userRole >= EUserWorkspaceRoles.MEMBER);
   }
 
   /**

@@ -225,7 +225,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     const { workspaceSlug } = this.rootStore.router;
     const currentUserWorkspaceRole =
       workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-    return currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**

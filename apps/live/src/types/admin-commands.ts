@@ -101,9 +101,7 @@ export interface ClientForceCloseMessage {
 /**
  * Admin command handler function type
  */
-export type AdminCommandHandler<T extends AdminCommandData = AdminCommandData> = (
-  data: T
-) => Promise<void> | void;
+export type AdminCommandHandler<T extends AdminCommandData = AdminCommandData> = (data: T) => Promise<void> | void;
 
 /**
  * Type guard to check if data is a ForceCloseCommandData
@@ -131,20 +129,14 @@ export function isValidForceCloseReason(reason: string): reason is ForceCloseRea
  */
 export function getForceCloseMessage(reason: ForceCloseReason): string {
   const messages: Record<ForceCloseReason, string> = {
-    [ForceCloseReason.CRITICAL_ERROR]:
-      "A critical error occurred. Please refresh the page.",
-    [ForceCloseReason.MEMORY_LEAK]:
-      "Memory limit exceeded. Please refresh the page.",
+    [ForceCloseReason.CRITICAL_ERROR]: "A critical error occurred. Please refresh the page.",
+    [ForceCloseReason.MEMORY_LEAK]: "Memory limit exceeded. Please refresh the page.",
     [ForceCloseReason.DOCUMENT_TOO_LARGE]:
       "Content limit reached and live sync is off. Create a new page or use nested pages to continue syncing.",
-    [ForceCloseReason.ADMIN_REQUEST]:
-      "Connection closed by administrator. Please try again later.",
-    [ForceCloseReason.SERVER_SHUTDOWN]:
-      "Server is shutting down. Please reconnect in a moment.",
-    [ForceCloseReason.SECURITY_VIOLATION]:
-      "Security violation detected. Connection terminated.",
-    [ForceCloseReason.CORRUPTION_DETECTED]:
-      "Data corruption detected. Please refresh the page.",
+    [ForceCloseReason.ADMIN_REQUEST]: "Connection closed by administrator. Please try again later.",
+    [ForceCloseReason.SERVER_SHUTDOWN]: "Server is shutting down. Please reconnect in a moment.",
+    [ForceCloseReason.SECURITY_VIOLATION]: "Security violation detected. Connection terminated.",
+    [ForceCloseReason.CORRUPTION_DETECTED]: "Data corruption detected. Please refresh the page.",
   };
 
   return messages[reason] || "Connection closed. Please refresh the page.";

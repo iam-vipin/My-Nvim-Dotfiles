@@ -34,12 +34,7 @@ export const usePageActionsMenu = (props: {
   const router = useAppRouter();
 
   // derived values
-  const {
-    is_locked,
-    archived_at,
-    canCurrentUserLockPage,
-    editor: { editorRef },
-  } = page;
+  const { is_locked, archived_at, canCurrentUserLockPage } = page;
 
   // Custom menu items
   const customMenuItems: (TContextMenuItem & { key: TPageActions })[] = [
@@ -74,12 +69,7 @@ export const usePageActionsMenu = (props: {
   // Modal components
   const ModalsComponent = observer(() => (
     <>
-      <LockPageModal
-        editorRef={editorRef}
-        page={page}
-        setLockPageModal={setLockPageModal}
-        lockPageModal={lockPageModal}
-      />
+      <LockPageModal page={page} setLockPageModal={setLockPageModal} lockPageModal={lockPageModal} />
       <AlertModalCore
         variant="primary"
         isOpen={restorePageModal}

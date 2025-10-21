@@ -16,12 +16,12 @@ type CollaborativeActionEvent =
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   page: TPageInstance;
 };
 
 export const useCollaborativePageActions = (props: Props) => {
-  const { editorRef, page } = props;
+  const { page } = props;
+  const editorRef = page.editor.editorRef;
 
   // @ts-expect-error - TODO: fix this
   const actionHandlerMap: Record<TDocumentEventsClient, CollaborativeAction> = useMemo(

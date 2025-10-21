@@ -24,7 +24,6 @@ export type TPageOperations = {
 };
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   page: TPageInstance;
 };
 

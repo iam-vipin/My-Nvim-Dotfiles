@@ -25,6 +25,7 @@ import { env } from "@/env";
  * }
  * ```
  */
+// TODO - Move to hmac
 export const requireSecretKey = (req: Request, res: Response, next: NextFunction): void => {
   const secretKey = req.headers["live-server-secret-key"];
 

@@ -1,6 +1,6 @@
 export enum ADDITIONAL_EXTENSIONS {
   PAGE_EMBED_COMPONENT = "pageEmbedComponent",
-  COLLABORATION_CARET = "collaborationCaret",
+  COLLABORATION_CARET = "collaborationCursor",
   ATTACHMENT = "attachmentComponent",
   COMMENTS = "commentMark",
   MATHEMATICS = "mathematics",

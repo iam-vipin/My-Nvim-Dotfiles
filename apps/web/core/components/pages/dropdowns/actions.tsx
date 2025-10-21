@@ -4,8 +4,6 @@ import { observer } from "mobx-react";
 import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-// plane editor
-import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -39,7 +37,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -49,14 +46,13 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
+  const { extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
 
   // states for common modals
   const [deletePageModal, setDeletePageModal] = useState(false);
 
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
 

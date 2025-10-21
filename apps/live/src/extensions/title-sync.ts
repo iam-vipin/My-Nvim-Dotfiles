@@ -48,7 +48,6 @@ export class TitleSyncExtension implements Extension {
           generateTitleProsemirrorJson(title),
           "title",
           // editor
-          // @ts-expect-error hocuspocus types are incorrect
           TITLE_EDITOR_EXTENSIONS
         );
         document.merge(titleField);

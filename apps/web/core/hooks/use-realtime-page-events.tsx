@@ -353,7 +353,7 @@ export const useRealtimePageEvents = ({
         // Now TypeScript knows that handler and data match in type
         handler({ pageIds: normalizedPageIds, data, performAction });
       } else {
-        console.warn(`No handler for message type: ${actionType}`);
+        console.warn(`No handler for message type: ${actionType.toString()}`);
       }
     },
     [ACTION_HANDLERS]

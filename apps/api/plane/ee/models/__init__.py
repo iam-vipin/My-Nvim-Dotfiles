@@ -38,7 +38,8 @@ from .workspace import (
     WorkspaceEntityConnection,
 )
 
-from .intake import IntakeSetting
+from .intake import IntakeSetting, IntakeForm, IntakeFormField
+
 from .initiative import (
     Initiative,
     InitiativeProject,

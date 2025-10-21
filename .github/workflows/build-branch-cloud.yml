@@ -52,7 +52,6 @@ jobs:
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       dh_img_pi: ${{ steps.set_env_variables.outputs.dh_img_pi }}
-      harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}

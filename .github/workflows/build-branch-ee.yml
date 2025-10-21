@@ -71,8 +71,6 @@ jobs:
       dh_img_email: ${{ steps.set_env_variables.outputs.DH_IMG_EMAIL }}
       dh_img_aio: ${{ steps.set_env_variables.outputs.DH_IMG_AIO }}
 
-      harbor_push: ${{ steps.set_env_variables.outputs.HARBOR_PUSH }}
-
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
@@ -117,7 +115,6 @@ jobs:
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
-          HARBOR_PUSH=false
 
           BUILD_AIRGAPPED=${{ env.AIRGAPPED_BUILD }}
           BUILD_AIO=${{ env.AIO_BUILD }}
@@ -125,7 +122,6 @@ jobs:
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
             echo "FLAT_RELEASE_VERSION=${FLAT_RELEASE_VERSION}" >> $GITHUB_OUTPUT
-            # HARBOR_PUSH=true
 
             semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
             if [[ ! $FLAT_RELEASE_VERSION =~ $semver_regex ]]; then
@@ -145,7 +141,6 @@ jobs:
           echo "BUILD_RELEASE=${BUILD_RELEASE}" >> $GITHUB_OUTPUT
           echo "BUILD_PRERELEASE=${BUILD_PRERELEASE}" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
-          echo "HARBOR_PUSH=${HARBOR_PUSH}" >> $GITHUB_OUTPUT
 
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
@@ -178,11 +173,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
@@ -205,11 +195,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
@@ -232,11 +217,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
@@ -259,11 +239,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
@@ -286,11 +261,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
           build-context: .
@@ -313,11 +283,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
           build-context: ./apps/api
@@ -340,11 +305,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
           build-context: ./apps/proxy
@@ -381,11 +341,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_monitor }}
           build-context: ./apps/monitor
@@ -414,11 +369,6 @@ jobs:
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          private-registry-push: ${{ needs.branch_build_setup.outputs.harbor_push }}
-          private-registry-username: ${{ secrets.HARBOR_USERNAME }}
-          private-registry-token: ${{ secrets.HARBOR_TOKEN }}
-          private-registry-addr: ${{ vars.HARBOR_REGISTRY }}
-          private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_email }}
           build-context: ./apps/email

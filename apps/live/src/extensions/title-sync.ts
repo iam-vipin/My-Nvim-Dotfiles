@@ -48,7 +48,7 @@ export class TitleSyncExtension implements Extension {
           generateTitleProsemirrorJson(title),
           "title",
           // editor
-          TITLE_EDITOR_EXTENSIONS
+          TITLE_EDITOR_EXTENSIONS as any
         );
         document.merge(titleField);
       }

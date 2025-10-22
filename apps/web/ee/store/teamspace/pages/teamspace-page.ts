@@ -103,7 +103,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   }
 
   get subPages() {
-    return this.subPageIds.map((id) => this.rootStore.projectPages.data[id]);
+    return this.subPageIds.map((id) => this.rootStore.teamspaceRoot.teamspacePage.data[id]);
   }
 
   private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {

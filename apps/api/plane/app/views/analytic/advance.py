@@ -2,11 +2,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any
 
-from django.db.models import QuerySet, Q, Count
+from django.db import models
+from django.db.models import (
+    QuerySet,
+    Q,
+    Count,
+    Case,
+    When,
+    Value,
+    F,
+    CharField,
+    Max,
+)
 from django.http import HttpRequest
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, Cast, Concat
 from django.utils import timezone
-from django.db.models.functions import Cast
 from django.db.models.fields.json import KeyTextTransform
 
 from plane.app.views.base import BaseAPIView
@@ -21,6 +31,7 @@ from plane.db.models import (
     ProjectPage,
     Workspace,
     ProjectMember,
+    User,
 )
 from plane.ee.models import EntityUpdates, ProjectAttribute
 from plane.utils.build_chart import build_analytics_chart
@@ -29,10 +40,6 @@ from plane.utils.date_utils import (
 )
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from django.db.models import Max
-from django.db import models
-from django.db.models import Case, When, Value, F, CharField
-from django.db.models.functions import Concat
 from plane.payment.flags.flag_decorator import ErrorCodes
 
 
@@ -93,7 +100,13 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "total_cycles": self.get_filtered_counts(Cycle.objects.filter(**self.filters["base_filters"])),
             "total_intake": self.get_filtered_counts(
                 Issue.objects.filter(**self.filters["base_filters"]).filter(
-                    issue_intake__status__in=["-2", "-1", "0", "1", "2"]  # TODO: Add description for reference.
+                    issue_intake__status__in=[
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                    ]  # TODO: Add description for reference.
                 )
             ),
         }
@@ -390,116 +403,101 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
 
         return list(projects)
 
-    def get_users_stats(self) -> QuerySet:
+    def get_users_stats(self) -> List[Dict[str, Any]]:
+        # get all the workspace members with active status
+        member_ids = WorkspaceMember.objects.filter(
+            workspace__slug=self._workspace_slug,
+            member__is_bot=False,
+        ).values_list("member_id", flat=True)
+
         if self.request.GET.get("project_ids", None):
             project_ids = [str(project_id) for project_id in self.request.GET.get("project_ids", "").split(",")]
-            active_member_ids = ProjectMember.objects.filter(
-                project_id__in=project_ids, is_active=True, member__is_bot=False
-            ).values_list("member_id", flat=True)
-            inactive_member_ids = ProjectMember.objects.filter(
-                project_id__in=project_ids, is_active=False, member__is_bot=False
-            ).values_list("member_id", flat=True)
-        else:
-            active_member_ids = WorkspaceMember.objects.filter(
-                workspace__slug=self._workspace_slug,
-                is_active=True,
-                member__is_bot=False,
-            ).values_list("member_id", flat=True)
-            inactive_member_ids = WorkspaceMember.objects.filter(
-                workspace__slug=self._workspace_slug,
-                is_active=False,
-                member__is_bot=False,
-            ).values_list("member_id", flat=True)
-
-        # Combine active and inactive ids for filtering issues
-        member_ids = list(active_member_ids) + list(inactive_member_ids)
-
-        # Get stats for all members in a single query
-        return (
-            Issue.issue_objects.filter(
-                **self.filters["base_filters"],
+            member_ids = list(
+                ProjectMember.objects.filter(project_id__in=project_ids, member__is_bot=False)
+                .values_list("member_id", flat=True)
+                .distinct()
             )
+
+        # Base issue filter
+        base_filters = self.filters["base_filters"]
+
+        # Pre-aggregate issue counts by assignee and state group in a single query
+        assignee_stats = (
+            Issue.issue_objects.filter(
+                assignees__in=member_ids,
+                **base_filters,
+            )
+            .values("assignees", "state__group")
+            .annotate(count=Count("id"))
+        )
+
+        # Build a dictionary of user_id -> {state_group -> count}
+        assignee_counts = {}
+        for stat in assignee_stats:
+            user_id = stat["assignees"]
+            state_group = stat["state__group"]
+            count = stat["count"]
+
+            if user_id not in assignee_counts:
+                assignee_counts[user_id] = {}
+            assignee_counts[user_id][state_group] = count
+
+        # Pre-aggregate issues created by user in a single query
+        creator_stats = (
+            Issue.issue_objects.filter(
+                created_by__in=member_ids,
+                **base_filters,
+            )
+            .values("created_by")
+            .annotate(count=Count("id"))
+        )
+
+        # Build a dictionary of user_id -> created_count
+        creator_counts = {stat["created_by"]: stat["count"] for stat in creator_stats}
+
+        # Get user profile information
+        users_data = (
+            User.objects.filter(id__in=member_ids)
             .annotate(
-                display_name=Case(
-                    When(Q(created_by__in=member_ids), then=F("created_by__display_name")),
-                    When(Q(assignees__in=member_ids), then=F("assignees__display_name")),
-                    default=Value(None),
-                    output_field=models.CharField(),
-                ),
-                user_id=Case(
-                    When(Q(created_by__in=member_ids), then=F("created_by")),
-                    When(Q(assignees__in=member_ids), then=F("assignees__id")),
-                    default=Value(None),
-                    output_field=models.CharField(),
-                ),
-                avatar=Case(
-                    When(Q(created_by__in=member_ids), then=F("created_by__avatar")),
-                    When(Q(assignees__in=member_ids), then=F("assignees__avatar")),
-                    default=Value(None),
-                    output_field=models.CharField(),
-                ),
                 avatar_url=Case(
                     When(
-                        Q(created_by__in=member_ids) & Q(created_by__avatar_asset__isnull=False),
+                        avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            "created_by__avatar_asset",
+                            F("avatar_asset"),
                             Value("/"),
                         ),
                     ),
-                    When(
-                        Q(assignees__in=member_ids) & Q(assignees__avatar_asset__isnull=False),
-                        then=Concat(
-                            Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",
-                            Value("/"),
-                        ),
-                    ),
-                    When(Q(created_by__in=member_ids), then=F("created_by__avatar")),
-                    When(Q(assignees__in=member_ids), then=F("assignees__avatar")),
+                    When(avatar__isnull=False, then=F("avatar")),
                     default=Value(None),
                     output_field=models.CharField(),
                 ),
-                is_active=Case(
-                    When(
-                        Q(created_by__in=active_member_ids) | Q(assignees__in=active_member_ids),
-                        then=Value(True),
-                    ),
-                    default=Value(False),
-                    output_field=models.BooleanField(),
-                ),
             )
-            .values("display_name", "user_id", "avatar_url", "is_active")
-            .annotate(
-                cancelled_work_items=Count(
-                    "id",
-                    filter=Q(state__group="cancelled") & Q(assignees__in=member_ids),
-                    distinct=True,
-                ),
-                completed_work_items=Count(
-                    "id",
-                    filter=Q(state__group="completed") & Q(assignees__in=member_ids),
-                    distinct=True,
-                ),
-                backlog_work_items=Count(
-                    "id",
-                    filter=Q(state__group="backlog") & Q(assignees__in=member_ids),
-                    distinct=True,
-                ),
-                un_started_work_items=Count(
-                    "id",
-                    filter=Q(state__group="unstarted") & Q(assignees__in=member_ids),
-                    distinct=True,
-                ),
-                started_work_items=Count(
-                    "id",
-                    filter=Q(state__group="started") & Q(assignees__in=member_ids),
-                    distinct=True,
-                ),
-                created_work_items=Count("id", filter=Q(created_by__in=member_ids), distinct=True),
-            )
-            .order_by("-is_active", "display_name")
+            .values("id", "display_name", "avatar_url")
+            .order_by("display_name")
         )
+
+        # Combine the data
+        result = []
+        for user in users_data:
+            user_id = user["id"]
+            user_stats = assignee_counts.get(user_id, {})
+
+            result.append(
+                {
+                    "user_id": user_id,
+                    "display_name": user["display_name"],
+                    "avatar_url": user["avatar_url"],
+                    "cancelled_work_items": user_stats.get("cancelled", 0),
+                    "completed_work_items": user_stats.get("completed", 0),
+                    "backlog_work_items": user_stats.get("backlog", 0),
+                    "un_started_work_items": user_stats.get("unstarted", 0),
+                    "started_work_items": user_stats.get("started", 0),
+                    "created_work_items": creator_counts.get(user_id, 0),
+                }
+            )
+
+        return result
 
     def get_cycle_stats(self, filters: Dict[str, Any]) -> QuerySet:
         qs = Cycle.objects.filter(

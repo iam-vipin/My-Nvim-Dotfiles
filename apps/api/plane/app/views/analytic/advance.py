@@ -391,11 +391,13 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         return list(projects)
 
     def get_users_stats(self) -> QuerySet:
-        # First get all project members
         if self.request.GET.get("project_ids", None):
             project_ids = [str(project_id) for project_id in self.request.GET.get("project_ids", "").split(",")]
-            member_ids = ProjectMember.objects.filter(
+            active_member_ids = ProjectMember.objects.filter(
                 project_id__in=project_ids, is_active=True, member__is_bot=False
+            ).values_list("member_id", flat=True)
+            inactive_member_ids = ProjectMember.objects.filter(
+                project_id__in=project_ids, is_active=False, member__is_bot=False
             ).values_list("member_id", flat=True)
         else:
             active_member_ids = WorkspaceMember.objects.filter(
@@ -460,8 +462,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 ),
                 is_active=Case(
                     When(
-                        Q(created_by__in=active_member_ids)
-                        | Q(assignees__in=active_member_ids),
+                        Q(created_by__in=active_member_ids) | Q(assignees__in=active_member_ids),
                         then=Value(True),
                     ),
                     default=Value(False),

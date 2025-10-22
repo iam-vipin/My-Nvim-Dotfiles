@@ -3,11 +3,18 @@ from typing import Any, Dict
 
 from django.db.models import QuerySet
 
-from plane.utils.exporters.schemas.base import BooleanField, JSONField, ListField, StringField
+from plane.utils.exporters.schemas.base import (
+    BooleanField,
+    JSONField,
+    ListField,
+    StringField,
+)
 from plane.utils.exporters.schemas.issue import IssueExportSchema
 
 
-def get_issue_custom_properties_dict(issues_queryset: QuerySet) -> Dict[str, Dict[str, Any]]:
+def get_issue_custom_properties_dict(
+    issues_queryset: QuerySet,
+) -> Dict[str, Dict[str, Any]]:
     """Get custom properties dictionary for the given issues queryset.
 
     Args:
@@ -21,7 +28,7 @@ def get_issue_custom_properties_dict(issues_queryset: QuerySet) -> Dict[str, Dic
     # Pre-fetch all property values for all issues in the queryset
     property_values = IssuePropertyValue.objects.filter(
         issue_id__in=issues_queryset.values_list("id", flat=True),
-        property__issue_type_id__in=issues_queryset.values_list("type_id", flat=True)
+        property__issue_type_id__in=issues_queryset.values_list("type_id", flat=True),
     ).select_related("property", "value_option")
 
     # Build nested dictionary: issue_id -> {property_display_name -> value}
@@ -43,15 +50,23 @@ def get_issue_custom_properties_dict(issues_queryset: QuerySet) -> Dict[str, Dic
             case PropertyTypeEnum.DECIMAL:
                 value = prop_value.value_decimal
             case PropertyTypeEnum.DATETIME:
-                value = prop_value.value_datetime.isoformat() if prop_value.value_datetime else None
+                value = (
+                    prop_value.value_datetime.isoformat()
+                    if prop_value.value_datetime
+                    else None
+                )
             case PropertyTypeEnum.OPTION:
-                value = prop_value.value_option.name if prop_value.value_option else None
+                value = (
+                    prop_value.value_option.name if prop_value.value_option else None
+                )
             case PropertyTypeEnum.RELATION | PropertyTypeEnum.FILE:
                 value = str(prop_value.value_uuid) if prop_value.value_uuid else None
             case _:
                 value = None
 
-        custom_properties_dict[prop_value.issue_id][prop_value.property.display_name] = value
+        custom_properties_dict[prop_value.issue_id][
+            prop_value.property.display_name
+        ] = value
 
     return custom_properties_dict
 
@@ -68,9 +83,7 @@ class ExtendedIssueExportSchema(IssueExportSchema):
     initiatives = ListField(label="Initiatives")
 
     def prepare_epic(self, i):
-        if not i.parent:
-            return ""
-        if i.parent.type.is_epic:
+        if i.parent and i.parent.type and i.parent.type.is_epic:
             return f"{i.parent.project.identifier}-{i.parent.sequence_id}"
         return ""
 
@@ -97,9 +110,7 @@ class ExtendedIssueExportSchema(IssueExportSchema):
         return [f"{ie.initiative.name}" for ie in i.initiative_epics.all()]
 
     def prepare_parent(self, i):
-        if not i.parent:
-            return ""
-        if not i.parent.type.is_epic:
+        if i.parent and i.parent.type and not i.parent.type.is_epic:
             return f"{i.parent.project.identifier}-{i.parent.sequence_id}"
         return ""
 

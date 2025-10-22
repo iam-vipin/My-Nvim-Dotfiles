@@ -4,16 +4,11 @@ import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import {
-  ArchiveIcon,
-  CustomMenu,
-  FavoriteStar,
-  setPromiseToast,
-  setToast,
-  TContextMenuItem,
-  TOAST_TYPE,
-} from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, FavoriteStar } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -22,7 +17,7 @@ import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   project: TProject;
@@ -182,9 +177,7 @@ export const Details: React.FC<Props> = observer((props) => {
               {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                 >

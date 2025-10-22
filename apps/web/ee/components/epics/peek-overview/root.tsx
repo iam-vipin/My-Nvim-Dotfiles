@@ -1,16 +1,18 @@
 "use client";
 
-import { FC, useEffect, useState, useMemo, useCallback } from "react";
+import type { FC } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
-import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, IWorkItemPeekOverview } from "@plane/types";
+import { EIssueServiceType, EUserProjectRoles } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";

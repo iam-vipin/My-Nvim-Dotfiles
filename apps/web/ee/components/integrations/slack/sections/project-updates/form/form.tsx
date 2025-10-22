@@ -1,9 +1,12 @@
-import { FC, useState, useEffect } from "react";
+import type { FC } from "react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
-import { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import type { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TWorkspaceEntityConnection } from "@plane/types";
-import { ModalCore, Loader, Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { ModalCore, Loader } from "@plane/ui";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { SlackProjectChannelForm } from "./channel-map";
 
@@ -72,9 +75,8 @@ const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
     }
   }, [modal, projectConnection]);
 
-  const appConnection = appConnectionIds && appConnectionIds.length > 0
-    ? getAppByConnectionId(appConnectionIds[0])
-    : undefined;
+  const appConnection =
+    appConnectionIds && appConnectionIds.length > 0 ? getAppByConnectionId(appConnectionIds[0]) : undefined;
 
   // Fetch Slack channels data (useSWR must be called unconditionally)
   const {

@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;

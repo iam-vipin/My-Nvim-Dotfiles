@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // ce imports
-import { TSendWorkspaceInvitationModalProps } from "@/ce/components/workspace/members/invite-modal";
+import type { TSendWorkspaceInvitationModalProps } from "@/ce/components/workspace/members/invite-modal";
 // components
 import { InvitationModalActions } from "@/components/workspace/invite-modal/actions";
 import { InvitationFields } from "@/components/workspace/invite-modal/fields";

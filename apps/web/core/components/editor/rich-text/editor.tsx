@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { RichTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -15,8 +16,8 @@ import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
-  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "extendedEditorProps">,
+  "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -48,7 +49,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
   // editor flaggings
-  const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { richText: richTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -68,7 +71,6 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
         workspaceSlug,
       })}
-      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);
@@ -80,8 +82,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           display_name: getUserDetails(id)?.display_name ?? "",
         }),
       }}
-      embedHandler={{
-        externalEmbedComponent: { widgetCallback: EmbedHandler },
+      extendedEditorProps={{
+        isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        embedHandler: {
+          externalEmbedComponent: { widgetCallback: EmbedHandler },
+        },
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

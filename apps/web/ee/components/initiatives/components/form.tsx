@@ -1,25 +1,40 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
+import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { InitiativeIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
-import { cn, getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
+import { Input, EmojiIconPickerTypes } from "@plane/ui";
+import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
+
 // components
+import { Logo } from "@/components/common/logo";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
+
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+
 // plane web hooks
+import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
+
 // plane web components
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types";
+
 // local components
-import { EpicsDropdown } from "../../dropdowns";
+import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
+import { InitiativeStateDropdown } from "./states/initiative-state-dropdown";
 
 type Props = {
   initiativeDetail?: TInitiative;
@@ -32,16 +47,24 @@ type Props = {
 
 export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const { initiativeDetail, formData, isSubmitting, handleFormDataChange, handleClose, handleFormSubmit } = props;
+  const [isOpen, setIsOpen] = useState(false);
+
   // router
   const { workspaceSlug } = useParams();
   // state
   const [errors, setErrors] = useState<{ name?: string; project_ids?: string }>({});
+
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
   const { uploadEditorAsset } = useEditorAsset();
+  const {
+    initiative: { getInitiativesLabels, createInitiativeLabel },
+  } = useInitiatives();
+  const allLabels = getInitiativesLabels(workspaceSlug?.toString());
+
   // translation
   const { t } = useTranslation();
   // use editor mention search
@@ -64,7 +87,17 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
     validateForm({ ...formData, name: value });
   };
 
+  const createLabel = async (labelName: string) => {
+    const createdLabel = await createInitiativeLabel(workspaceSlug.toString(), {
+      name: labelName,
+      color: getRandomLabelColor(),
+    });
+    return createdLabel;
+  };
+
   if (!workspaceSlug || !currentWorkspace || !formData) return null;
+
+  const logoValue = formData?.logo_props;
 
   return (
     <form
@@ -85,7 +118,48 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         <h3 className="text-xl font-medium text-custom-text-200">
           {formData.id ? t("initiatives.update_initiative") : t("initiatives.create_initiative")}
         </h3>
-        <div className={cn("flex items-center gap-2 w-full", errors.name && "items-start")}>
+        <div className="flex items-start gap-2 w-full">
+          <EmojiPicker
+            iconType="lucide"
+            isOpen={isOpen}
+            handleToggle={(val: boolean) => setIsOpen(val)}
+            className="flex items-center justify-center flex-shrink0"
+            buttonClassName="flex items-center justify-center"
+            label={
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+                <>
+                  {logoValue?.in_use ? (
+                    <Logo logo={logoValue} size={18} type="lucide" />
+                  ) : (
+                    <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+                  )}
+                </>
+              </span>
+            }
+            onChange={(val: TChangeHandlerProps) => {
+              let logoValue = {};
+
+              if (val?.type === "emoji")
+                logoValue = {
+                  value: val.value,
+                };
+              else if (val?.type === "icon") logoValue = val.value;
+
+              const logoProps = {
+                in_use: val?.type,
+                emoji: val?.type === "emoji" ? logoValue : undefined,
+                icon: val?.type === "icon" ? logoValue : undefined,
+              };
+              handleFormDataChange("logo_props", logoProps);
+              setIsOpen(false);
+            }}
+            defaultIconColor={logoValue?.in_use && logoValue?.in_use === "icon" ? logoValue?.icon?.color : undefined}
+            defaultOpen={
+              logoValue?.in_use && logoValue?.in_use === "emoji"
+                ? EmojiIconPickerTypes.EMOJI
+                : EmojiIconPickerTypes.ICON
+            }
+          />
           <div className="space-y-1 flew-grow w-full">
             <Input
               id="name"
@@ -138,34 +212,11 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
         />
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="h-7">
-            <ProjectDropdown
-              buttonVariant={"border-with-text"}
-              onChange={(val) => {
-                handleFormDataChange("project_ids", val);
-              }}
-              value={formData.project_ids || []}
-              multiple
-              showTooltip
-              tabIndex={2}
-            />
-          </div>
-          <div className="h-7">
-            <EpicsDropdown
-              buttonVariant={"border-with-text"}
-              onChange={(val) => {
-                handleFormDataChange("epic_ids", val);
-              }}
-              value={formData.epic_ids || []}
-              multiple
-              showTooltip
-              tabIndex={2}
-              searchParams={{
-                initiative_id: initiativeDetail?.id,
-              }}
-            />
-          </div>
-
+          <InitiativeStateDropdown
+            value={formData?.state ?? DEFAULT_INITIATIVE_STATE}
+            onChange={(val) => handleFormDataChange("state", val)}
+            placeholder={t("state")}
+          />
           <DateRangeDropdown
             buttonVariant="border-with-text"
             className="h-7"
@@ -186,7 +237,6 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             }}
             tabIndex={3}
           />
-
           <div className="h-7">
             <MemberDropdown
               value={formData?.lead ?? ""}
@@ -198,6 +248,13 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
               showUserDetails
             />
           </div>
+          <InitiativeLabelDropdown
+            value={formData?.label_ids || []}
+            labels={allLabels}
+            onChange={(val: string[]) => handleFormDataChange("label_ids", val)}
+            placeholder={t("label")}
+            onAddLabel={createLabel}
+          />
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">

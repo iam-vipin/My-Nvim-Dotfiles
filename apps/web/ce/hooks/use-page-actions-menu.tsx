@@ -2,15 +2,16 @@ import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TContextMenuItem, ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import type { TContextMenuItem } from "@plane/ui";
 // components
 import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks
-import { TPageOperations } from "@/hooks/use-page-operations";
+import type { TPageOperations } from "@/hooks/use-page-operations";
 // plane web imports
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export const usePageActionsMenu = (props: {
   page: TPageInstance;

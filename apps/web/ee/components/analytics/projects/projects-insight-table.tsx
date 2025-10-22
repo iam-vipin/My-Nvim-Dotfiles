@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { ProjectInsightColumns } from "@plane/types";
+import { ProjectIcon } from "@plane/propel/icons";
+import type { ProjectInsightColumns } from "@plane/types";
 import { Logo } from "@plane/ui";
 // components
 import { exportCSV } from "@/components/analytics/export";
@@ -69,7 +69,7 @@ const ProjectsInsightTable = observer(() => {
                 {row.original.logo_props ? (
                   <Logo logo={row.original.logo_props} size={18} />
                 ) : (
-                  <Briefcase className="h-4 w-4" />
+                  <ProjectIcon className="h-4 w-4" />
                 )}
                 {row.original.name}
               </div>

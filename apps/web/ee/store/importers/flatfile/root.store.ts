@@ -1,25 +1,18 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
-import { FlatfileConfig } from "@plane/etl/flatfile";
+import type { TServiceAuthConfiguration } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { FlatfileConfig } from "@plane/etl/flatfile";
 // plane web store types
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/flatfile";
 import { FlatfileAuthService } from "@/plane-web/services/importers/flatfile/auth.service";
-import {
-  IImporterBaseStore,
-  IImporterJobStore,
-  ImporterBaseStore,
-  ImporterJobStore,
-} from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { IImporterBaseStore, IImporterJobStore } from "@/plane-web/store/importers";
+import { ImporterBaseStore, ImporterJobStore } from "@/plane-web/store/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
-  TImporterDataPayload,
-  TImporterStepKeys,
-  E_IMPORTER_STEPS,
-  TImporterStep,
-} from "@/plane-web/types/importers/flatfile";
+import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/plane-web/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

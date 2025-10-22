@@ -1,13 +1,13 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { JiraResource, JiraProject, JiraStatus, ILabelConfig, JiraPriority } from "@plane/etl/jira";
+import type { JiraResource, JiraProject, JiraStatus, JiraPriority } from "@plane/etl/jira";
 // plane web services
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse } from "@plane/types";
 import { JiraServerDataService } from "@/plane-web/services/importers/jira-server/data.service";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IJiraServerDataStore {
   // observables

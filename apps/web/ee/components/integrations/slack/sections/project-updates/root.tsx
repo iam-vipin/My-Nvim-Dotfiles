@@ -1,14 +1,17 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus, AlertTriangle, RefreshCw, Hash } from "lucide-react";
 import { SLACK_INTEGRATION_TRACKER_EVENTS, SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
-import { E_SLACK_ENTITY_TYPE, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
-import { TWorkspaceEntityConnection } from "@plane/types";
-import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TWorkspaceEntityConnection } from "@plane/types";
 // plane web components
 //  plane web hooks
 // plane web types

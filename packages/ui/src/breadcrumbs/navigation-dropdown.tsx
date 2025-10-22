@@ -3,8 +3,8 @@
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
+import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, TContextMenuItem } from "../dropdowns";
-import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 
@@ -98,9 +98,7 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
         return (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               if (item.key === selectedItemKey) return;
               item.action();
             }}

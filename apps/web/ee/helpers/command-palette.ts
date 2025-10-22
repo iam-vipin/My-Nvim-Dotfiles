@@ -1,5 +1,5 @@
 // types
-import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
+import type { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // ce helpers
 import {
   getGlobalShortcutsList as getGlobalShortcutsListCE,

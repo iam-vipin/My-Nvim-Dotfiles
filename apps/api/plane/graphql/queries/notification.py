@@ -1,4 +1,5 @@
 # Python Imports
+import copy
 from typing import Optional
 
 # Third-Party Imports
@@ -33,7 +34,7 @@ from plane.graphql.types.notification import (
     NotificationType,
 )
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.paginator import query_paginate_async
 
 
 @sync_to_async
@@ -45,18 +46,14 @@ def get_notification_count(user_id: str) -> NotificationCountBaseType:
         user_id=user_id, workspace_slug=None, mentioned=True, combined=False
     )
 
-    return NotificationCountBaseType(
-        unread=unread_notification_count, mentioned=mentioned_notification_count
-    )
+    return NotificationCountBaseType(unread=unread_notification_count, mentioned=mentioned_notification_count)
 
 
 @sync_to_async
 def get_notification_count_by_workspaces(
     user_id: str,
 ) -> NotificationCountWorkspaceType:
-    user_workspaces = Workspace.objects.filter(
-        workspace_member__member=user_id, workspace_member__is_active=True
-    )
+    user_workspaces = Workspace.objects.filter(workspace_member__member=user_id, workspace_member__is_active=True)
 
     workspaces_notification_counts = []
 
@@ -99,9 +96,7 @@ class NotificationCountQuery:
         user_id = str(user.id)
 
         global_notification_count = await get_notification_count(user_id=user_id)
-        workspaces_notification_counts = await get_notification_count_by_workspaces(
-            user_id=user_id
-        )
+        workspaces_notification_counts = await get_notification_count_by_workspaces(user_id=user_id)
 
         return NotificationCountType(
             unread=global_notification_count.unread,
@@ -112,16 +107,14 @@ class NotificationCountQuery:
 
 @strawberry.type
 class NotificationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def notifications(
         self,
         info: Info,
         slug: str,
         type: Optional[JSON] = "all",
-        snoozed: Optional[bool] = None,
-        archived: Optional[bool] = None,
+        snoozed: Optional[bool] = False,
+        archived: Optional[bool] = False,
         mentioned: Optional[bool] = None,
         read: Optional[str] = None,
         cursor: Optional[str] = None,
@@ -134,122 +127,112 @@ class NotificationQuery:
             user_id=user_id, workspace_slug=slug
         )
 
-        # Inbox Filters
         notification_queryset = (
-            Notification.objects.filter(workspace__slug=slug)
+            Notification.objects.filter(project_teamspace_filter.query)
+            .filter(workspace__slug=slug)
             .filter(receiver_id=user_id)
             .filter(entity_name__in=["issue", "epic"])
-            .filter(project_teamspace_filter.query)
             .distinct()
-            .select_related("workspace", "project", "triggered_by", "receiver")
-            .order_by("snoozed_till", "-created_at")
         )
 
-        now = timezone.now()
         q_filters = Q()
 
         # Apply snoozed filter
-        if snoozed is not None:
-            if snoozed:
-                notification_queryset = notification_queryset.filter(
-                    Q(snoozed_till__lt=now) | Q(snoozed_till__isnull=False)
-                )
-            else:
-                notification_queryset = notification_queryset.filter(
-                    Q(snoozed_till__gte=now) | Q(snoozed_till__isnull=True)
-                )
+        now = timezone.now()
+        snoozed = False if snoozed is None else snoozed
+        if snoozed:
+            q_filters &= Q(snoozed_till__isnull=False)
+        else:
+            q_filters &= Q(snoozed_till__lt=now) | Q(snoozed_till__isnull=True)
 
         # Apply archived filter
-        if archived is not None:
-            if archived:
-                notification_queryset = notification_queryset.filter(
-                    archived_at__isnull=False
-                )
-            else:
-                notification_queryset = notification_queryset.filter(
-                    archived_at__isnull=True
-                )
+        archived = False if archived is None else archived
+        if archived:
+            q_filters &= Q(archived_at__isnull=False)
+        else:
+            q_filters &= Q(archived_at__isnull=True)
 
         # Apply read filter
         if read is not None:
             if read == "true":
-                notification_queryset = notification_queryset.filter(
-                    read_at__isnull=False
-                )
+                q_filters &= Q(read_at__isnull=False)
             elif read == "false":
-                notification_queryset = notification_queryset.filter(
-                    read_at__isnull=True
-                )
+                q_filters &= Q(read_at__isnull=True)
 
         # Apply mentioned filter
         if mentioned is not None:
             if mentioned:
-                notification_queryset = notification_queryset.filter(
-                    sender__icontains="mentioned"
-                )
+                q_filters &= Q(sender__icontains="mentioned")
             else:
-                notification_queryset = notification_queryset.exclude(
-                    sender__icontains="mentioned"
-                )
+                q_filters &= ~Q(sender__icontains="mentioned")
 
-        # Subscribed issues
-        type_list = type.split(",")
-        # Subscribed issues
-        if "subscribed" in type_list:
-            issue_ids = await sync_to_async(list)(
-                IssueSubscriber.objects.filter(
-                    workspace__slug=slug, subscriber_id=user_id
-                )
-                .annotate(
-                    created=Exists(
-                        Issue.objects.filter(
-                            created_by=user, pk=OuterRef("issue_id")
-                        ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
+        type_q_filters = Q()
+        if type is not None and type != "all":
+            filter_type = type.split(",")
+
+            # Subscribed issues subquery
+            if "subscribed" in filter_type:
+                subscribed_subquery = (
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug, subscriber_id=user_id, issue_id=OuterRef("entity_identifier")
                     )
-                )
-                .annotate(
-                    assigned=Exists(
-                        IssueAssignee.objects.filter(
-                            pk=OuterRef("issue_id"), assignee=user
+                    .annotate(
+                        created=Exists(
+                            Issue.objects.filter(created_by=user, pk=OuterRef("issue_id")).filter(
+                                Q(type__isnull=True) | Q(type__is_epic=False)
+                            )
                         )
                     )
+                    .annotate(
+                        assigned=Exists(IssueAssignee.objects.filter(issue_id=OuterRef("issue_id"), assignee=user))
+                    )
+                    .filter(created=False, assigned=False)
                 )
-                .filter(created=False, assigned=False)
-                .values_list("issue_id", flat=True)
-            )
-            q_filters = Q(entity_identifier__in=issue_ids)
 
-        # Assigned Issues
-        if "assigned" in type_list:
-            issue_ids = await sync_to_async(list)(
-                IssueAssignee.objects.filter(
-                    workspace__slug=slug, assignee_id=user_id
-                ).values_list("issue_id", flat=True)
-            )
-            q_filters |= Q(entity_identifier__in=issue_ids)
+                type_q_filters |= Q(entity_identifier__in=subscribed_subquery.values("issue_id"))
 
-        # Created issues
-        if "created" in type_list:
-            has_permission = await sync_to_async(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=slug,
-                    member=user,
-                    role__lt=15,
-                    is_active=True,
-                ).exists
-            )()
-
-            if has_permission:
-                notification_queryset = notification_queryset.none()
-            else:
-                issue_ids = await sync_to_async(list)(
-                    Issue.objects.filter(workspace__slug=slug, created_by=user)
-                    .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                    .values_list("pk", flat=True)
+            # Assigned issues subquery
+            if "assigned" in filter_type:
+                assigned_subquery = IssueAssignee.objects.filter(
+                    workspace__slug=slug, assignee_id=user_id, issue_id=OuterRef("entity_identifier")
                 )
-                q_filters = Q(entity_identifier__in=issue_ids)
 
-        notification_queryset = notification_queryset.filter(q_filters)
-        notifications = await sync_to_async(list)(notification_queryset)
+                type_q_filters |= Q(entity_identifier__in=assigned_subquery.values("issue_id"))
 
-        return paginate(results_object=notifications, cursor=cursor)
+            # Created issues subquery
+            if "created" in filter_type:
+                has_permission = await sync_to_async(
+                    WorkspaceMember.objects.filter(
+                        workspace__slug=slug,
+                        member=user,
+                        role__lt=15,
+                        is_active=True,
+                    ).exists
+                )()
+                if has_permission:
+                    notification_queryset = notification_queryset.none()
+                else:
+                    created_subquery = Issue.objects.filter(
+                        workspace__slug=slug, created_by=user, pk=OuterRef("entity_identifier")
+                    ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
+
+                    type_q_filters |= Q(entity_identifier__in=created_subquery.values("pk"))
+
+        q = q_filters & type_q_filters
+        notification_queryset = notification_queryset.filter(q)
+
+        notification_count_queryset = copy.deepcopy(notification_queryset)
+        notification_queryset = (
+            notification_queryset.select_related("workspace", "project", "triggered_by", "receiver")
+            .prefetch_related(
+                "project__project_projectmember",
+                "project__project_projectmember__member",
+            )
+            .order_by("snoozed_till", "-created_at")
+        )
+
+        return await query_paginate_async(
+            base_queryset=notification_count_queryset,
+            query_set=notification_queryset,
+            cursor=cursor,
+        )

@@ -1,23 +1,25 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import Fuse from "fuse.js";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import Fuse from "fuse.js";
 
-import { IStateConfig, LinearState } from "@plane/etl/linear";
-import { ExState } from "@plane/sdk";
-import { IState } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import type { IStateConfig, LinearState } from "@plane/etl/linear";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import type { ExState } from "@plane/sdk";
+import type { IState } from "@plane/types";
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/linear";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 //  plane web types
-import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
-import { useTranslation } from "@plane/i18n";
+import type { TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
 import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.MAP_STATES];

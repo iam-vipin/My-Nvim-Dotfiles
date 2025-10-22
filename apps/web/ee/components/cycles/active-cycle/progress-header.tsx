@@ -1,10 +1,12 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { format, startOfToday } from "date-fns";
 // plane imports
-import { ICycle, TCycleProgress } from "@plane/types";
-import { BetaBadge, ControlLink, Loader, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { ICycle, TCycleProgress } from "@plane/types";
+import { BetaBadge, ControlLink, Loader } from "@plane/ui";
 import { findHowManyDaysLeft } from "@plane/utils";
 import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-action";
 // hooks
@@ -53,7 +55,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
               <div className="text-xs text-custom-primary-200 font-medium">Currently active cycle</div>
               <BetaBadge />
             </div>
-            <Tooltip tooltipContent={cycleDetails.name} position="bottom-right">
+            <Tooltip tooltipContent={cycleDetails.name} position="bottom-end">
               <div className="inline-block line-clamp-1 truncate font-bold text-custom-text-100 my-1 text-[20px] text-left">
                 {cycleDetails.name}
               </div>

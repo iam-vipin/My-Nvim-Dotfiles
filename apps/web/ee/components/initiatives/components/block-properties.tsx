@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 // plane
-import { Avatar, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -12,7 +13,7 @@ import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 // Plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 import { EpicsDropdown } from "../../dropdowns";
 
 type Props = {

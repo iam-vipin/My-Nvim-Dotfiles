@@ -1,23 +1,43 @@
 // constants
-import { PI_BASE_URL } from "@plane/constants";
+import type { AxiosRequestConfig } from "axios";
+import { PI_URL } from "@plane/constants";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 // services
 import { APIService } from "@/services/api.service";
-import {
+import { FileUploadService } from "@/services/file-upload.service";
+import type {
   TFeedback,
   TQuery,
   TSearchQuery,
   TTemplate,
-  TChatHistory,
   TUserThreads,
   TAiModels,
   TInitPayload,
+  TAction,
+  TExecuteActionResponse,
+  TDialogue,
+  TArtifact,
+  TFollowUpResponse,
+  TUpdatedArtifact,
+  TPiAttachmentUploadResponse,
+  TPiAttachment,
 } from "../types";
 
 type TTemplateResponse = {
   templates: TTemplate[];
 };
 type TChatHistoryResponse = {
-  results: TChatHistory;
+  results: {
+    chat_id: string;
+    dialogue: TDialogue[];
+    title: string;
+    last_modified: string;
+    is_favorite: boolean;
+    is_focus_enabled: boolean;
+    focus_workspace_id: string;
+    focus_project_id: string;
+    workspace_id?: string;
+  };
 };
 export type TUserThreadsResponse = {
   results: TUserThreads[];
@@ -32,9 +52,25 @@ type TTitleResponse = {
 type TAiModelsResponse = {
   models: TAiModels[];
 };
+
+/**
+ * @description combine the file path with the base URL
+ * @param {string} path
+ * @returns {string} final URL with the base URL
+ */
+export const getPiFileURL = (path: string): string | undefined => {
+  if (!path) return undefined;
+  const isValidURL = path.startsWith("http");
+  if (isValidURL) return path;
+  return `${PI_URL}${path}`;
+};
+
 export class PiChatService extends APIService {
+  private fileUploadService: FileUploadService;
   constructor() {
-    super(PI_BASE_URL);
+    super(PI_URL);
+    // upload service
+    this.fileUploadService = new FileUploadService();
   }
 
   // initiatialize chat
@@ -243,6 +279,109 @@ export class PiChatService extends APIService {
   // delete chat
   async destroyChat(chatId: string, workspaceSlug: string): Promise<void> {
     return this.delete(`/api/v1/chat/delete-chat/`, { chat_id: chatId, workspace_slug: workspaceSlug })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // execute action
+  async executeAction(data: TAction): Promise<TExecuteActionResponse> {
+    return this.post(`/api/v1/chat/execute-action/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get artifact
+  async listArtifacts(chatId: string): Promise<TArtifact[]> {
+    return this.get(`/api/v1/artifacts/chat/${chatId}/`)
+      .then((response) => response.data.artifacts)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // follow up
+  async followUp(
+    query: string,
+    workspace_id: string,
+    chat_id: string,
+    artifact_id: string,
+    current_artifact_data: TUpdatedArtifact,
+    user_message_id: string,
+    entity_type: string,
+    project_id: string
+  ): Promise<TFollowUpResponse> {
+    return this.post(`/api/v1/artifacts/${artifact_id}/followup/`, {
+      query,
+      workspace_id,
+      chat_id,
+      artifact_id,
+      current_artifact_data,
+      user_message_id,
+      entity_type,
+      project_id,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get attachments
+  async listAttachments(chatId: string): Promise<TPiAttachment[]> {
+    return this.get(`/api/v1/attachments/chat/`, {
+      params: {
+        chat_id: chatId,
+      },
+    })
+      .then((response) => response.data.attachments)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // upload attachments
+  async uploadAttachment(
+    file: File,
+    workspaceId: string,
+    chatId: string,
+    uploadProgressHandler: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TPiAttachment | void> {
+    const fileMetaData = await getFileMetaDataForUpload(file);
+
+    const response = await this.post(`/api/v1/attachments/upload-attachment/`, {
+      filename: fileMetaData.name,
+      file_size: fileMetaData.size,
+      content_type: fileMetaData.type,
+      workspace_id: workspaceId,
+      chat_id: chatId,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TPiAttachmentUploadResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        const finalResponse = await this.completeAttachmentUpload(signedURLResponse.attachment_id, chatId);
+        return finalResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+    return response;
+  }
+
+  // complete attachment upload
+  async completeAttachmentUpload(attachmentId: string, chatId: string): Promise<TPiAttachment> {
+    return this.patch(`/api/v1/attachments/complete-upload/`, {
+      attachment_id: attachmentId,
+      chat_id: chatId,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

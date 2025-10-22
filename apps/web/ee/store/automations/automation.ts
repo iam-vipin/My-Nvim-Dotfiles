@@ -1,11 +1,8 @@
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
+import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import {
-  EAutomationNodeType,
-  EAutomationStatus,
+import type {
   TAutomation,
   TAutomationActionNode,
   TAutomationActivity,
@@ -21,28 +18,21 @@ import {
   TCreateTriggerPayload,
   TCreateTriggerResponse,
 } from "@plane/types";
+import { EAutomationNodeType, EAutomationStatus } from "@plane/types";
 import { generateConditionPayload, getAutomationSettingsPath, joinUrlPath } from "@plane/utils";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
 import { AutomationActivityStore } from "./automation-activity";
-import {
-  AutomationActionNodeInstance,
-  type IAutomationActionNodeInstance,
-  type TAutomationActionNodeHelpers,
-} from "./node/action";
+import { AutomationActionNodeInstance } from "./node/action";
+import type { IAutomationActionNodeInstance, TAutomationActionNodeHelpers } from "./node/action";
 import type { TAutomationBaseNodeHelpers } from "./node/base";
-import {
-  AutomationConditionNodeInstance,
-  type IAutomationConditionNodeInstance,
-  type TAutomationConditionNodeHelpers,
-} from "./node/condition/root";
-import {
-  AutomationTriggerNodeInstance,
-  type IAutomationTriggerNodeInstance,
-  type TAutomationTriggerNodeHelpers,
-} from "./node/trigger";
-import { AutomationDetailSidebarHelper, IAutomationDetailSidebarHelper } from "./sidebar-helper";
+import { AutomationConditionNodeInstance } from "./node/condition/root";
+import type { IAutomationConditionNodeInstance, TAutomationConditionNodeHelpers } from "./node/condition/root";
+import { AutomationTriggerNodeInstance } from "./node/trigger";
+import type { IAutomationTriggerNodeInstance, TAutomationTriggerNodeHelpers } from "./node/trigger";
+import type { IAutomationDetailSidebarHelper } from "./sidebar-helper";
+import { AutomationDetailSidebarHelper } from "./sidebar-helper";
 
 type TAutomationNodeInstance =
   | IAutomationTriggerNodeInstance

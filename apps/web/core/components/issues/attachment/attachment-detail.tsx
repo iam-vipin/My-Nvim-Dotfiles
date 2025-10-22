@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import {
   convertBytesToSize,
   getFileExtension,
@@ -25,7 +26,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 
 type TAttachmentOperationsRemoveModal = Exclude<TAttachmentHelpers, "create">;
 

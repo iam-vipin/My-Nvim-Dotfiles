@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,10 @@ import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling, PlaneLogo, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { PlaneLogo } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";

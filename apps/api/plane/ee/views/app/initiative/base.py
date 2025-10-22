@@ -1,6 +1,8 @@
 # Python imports
 import json
 from collections import defaultdict
+from datetime import date, timedelta
+
 
 # Module imports
 from django.db.models import OuterRef, Subquery, Q, Count, Prefetch, Func, F
@@ -20,67 +22,90 @@ from plane.db.models import Workspace, Issue, Project
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
-    InitiativeLabel,
     InitiativeReaction,
     InitiativeEpic,
     ProjectAttribute,
     EntityUpdates,
+    InitiativeLabelAssociation,
 )
-from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer
+from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer, InitiativeWriteSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
-from plane.db.models import State
+from plane.db.models import State, IssueAssignee, IssueActivity
+from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
 
 
 class InitiativeEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
     model = Initiative
     serializer_class = InitiativeSerializer
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = InitiativeFilterSet
 
     def get_queryset(self):
+        return (
+            Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .prefetch_related(
+                Prefetch(
+                    "initiative_reactions",
+                    queryset=InitiativeReaction.objects.select_related("initiative", "actor"),
+                ),
+                Prefetch(
+                    "initiative_label_associations",
+                    queryset=InitiativeLabelAssociation.objects.filter(deleted_at__isnull=True),
+                ),
+                Prefetch(
+                    "projects",
+                    queryset=InitiativeProject.objects.filter(
+                        project__archived_at__isnull=True, project__deleted_at__isnull=True
+                    ).select_related("project"),
+                ),
+                Prefetch("initiative_epics", queryset=InitiativeEpic.objects.all().select_related("epic")),
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    def apply_annotations(self, queryset):
         project_ids = (
             Project.objects.filter(
                 workspace__slug=self.kwargs.get("slug"),
                 project_projectfeature__is_epic_enabled=True,
+                archived_at__isnull=True,
             )
             .accessible_to(self.request.user.id, self.kwargs.get("slug"))
             .values_list("id", flat=True)
         )
 
-        return (
-            Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        InitiativeProject.objects.filter(
-                            initiative_id=OuterRef("pk"),
-                            workspace__slug=self.kwargs.get("slug"),
-                        )
-                        .values("initiative_id")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
+        return queryset.annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    InitiativeProject.objects.filter(
+                        initiative_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .values("initiative_id")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")
                 ),
-                epic_ids=Coalesce(
-                    Subquery(
-                        InitiativeEpic.objects.filter(
-                            initiative_id=OuterRef("pk"),
-                            workspace__slug=self.kwargs.get("slug"),
-                        )
-                        .filter(epic__project_id__in=project_ids)
-                        .values("initiative_id")
-                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
-                        .values("epic_ids")
-                    ),
-                    [],
+                [],
+            ),
+            epic_ids=Coalesce(
+                Subquery(
+                    InitiativeEpic.objects.filter(
+                        initiative_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                    .filter(epic__project_id__in=project_ids)
+                    .values("initiative_id")
+                    .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                    .values("epic_ids")
                 ),
-            )
-            .order_by(self.kwargs.get("order_by", "-created_at"))
-            .distinct()
+                [],
+            ),
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
@@ -88,25 +113,19 @@ class InitiativeEndpoint(BaseAPIView):
     def get(self, request, slug, pk=None):
         # Get initiative by pk
         if pk:
-            initiative = (
-                self.get_queryset()
-                .filter(pk=pk)
-                .prefetch_related(
-                    Prefetch(
-                        "initiative_reactions",
-                        queryset=InitiativeReaction.objects.select_related(
-                            "initiative", "actor"
-                        ),
-                    )
-                )
-                .first()
-            )
+            initiative = self.get_queryset().filter(pk=pk).first()
             serializer = InitiativeSerializer(initiative)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all initiatives in workspace
         initiatives = self.get_queryset()
+
+        # Apply filters
+        initiatives = self.filter_queryset(initiatives)
+
+        # Apply annotations
+        initiatives = self.apply_annotations(initiatives)
 
         serializer = InitiativeSerializer(initiatives, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -116,7 +135,7 @@ class InitiativeEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        serializer = InitiativeSerializer(
+        serializer = InitiativeWriteSerializer(
             data=request.data,
             context={
                 "lead": request.data.get("lead", request.user.id),
@@ -148,44 +167,20 @@ class InitiativeEndpoint(BaseAPIView):
     def patch(self, request, slug, pk):
         initiative = (
             Initiative.objects.filter(pk=pk)
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        InitiativeProject.objects.filter(
-                            initiative_id=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .values("initiative_id")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
-                ),
-                epic_ids=Coalesce(
-                    Subquery(
-                        InitiativeEpic.objects.filter(
-                            initiative_id=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .filter(epic__project__deleted_at__isnull=True)
-                        .filter(
-                            epic__project__project_projectfeature__is_epic_enabled=True
-                        )
-                        .values("initiative_id")
-                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
-                        .values("epic_ids")
-                    ),
-                    [],
-                ),
+            .prefetch_related(
+                Prefetch(
+                    "initiative_label_associations",
+                    queryset=InitiativeLabelAssociation.objects.filter(deleted_at__isnull=True),
+                )
             )
             .first()
         )
 
-        current_instance = json.dumps(
-            InitiativeSerializer(initiative).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(InitiativeSerializer(initiative).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
-        serializer = InitiativeSerializer(initiative, data=request.data, partial=True)
+        serializer = InitiativeWriteSerializer(initiative, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -234,12 +229,14 @@ class InitiativeProjectEndpoint(BaseAPIView):
     def get(self, request, slug, initiative_id, project_id=None):
         # Get all projects in initiative
         initiative_projects = InitiativeProject.objects.filter(
-            initiative_id=initiative_id, workspace__slug=slug
+            initiative_id=initiative_id,
+            workspace__slug=slug,
+            project__archived_at__isnull=True,
         ).values_list("project_id", flat=True)
 
         # Get all projects in initiative
         projects = (
-            Project.objects.filter(id__in=initiative_projects)
+            Project.objects.filter(id__in=initiative_projects, archived_at__isnull=True)
             .annotate(
                 total_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"))
                 .order_by()
@@ -247,19 +244,13 @@ class InitiativeProjectEndpoint(BaseAPIView):
                 .values("count")
             )
             .annotate(
-                completed_issues=Issue.issue_objects.filter(
-                    project_id=OuterRef("pk"), state__group="completed"
-                )
+                completed_issues=Issue.issue_objects.filter(project_id=OuterRef("pk"), state__group="completed")
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
             .annotate(
-                state_id=Subquery(
-                    ProjectAttribute.objects.filter(project_id=OuterRef("pk")).values(
-                        "state_id"
-                    )[:1]
-                )
+                state_id=Subquery(ProjectAttribute.objects.filter(project_id=OuterRef("pk")).values("state_id")[:1])
             )
             .values(
                 "id",
@@ -287,7 +278,7 @@ class InitiativeProjectEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = InitiativeSerializer(
+        serializer = InitiativeWriteSerializer(
             data=request.data,
             context={
                 "lead": request.data.get("lead", request.user_id),
@@ -306,56 +297,6 @@ class InitiativeProjectEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class InitiativeLabelEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceUserPermission]
-    model = InitiativeLabel
-    serializer_class = InitiativeSerializer
-
-    def get(self, request, slug, initiative_id, pk=None):
-        # Get all labels in initiative
-        if pk:
-            initiative_label = InitiativeLabel.objects.get(
-                pk=pk, initiative_id=initiative_id, workspace__slug=slug
-            )
-            serializer = InitiativeSerializer(initiative_label)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # Get all labels in initiative
-        initiative_labels = InitiativeLabel.objects.filter(
-            initiative_id=initiative_id, workspace__slug=slug
-        )
-        serializer = InitiativeSerializer(initiative_labels, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, slug, initiative_id):
-        label_ids = request.data.get("label_ids", [])
-
-        if not label_ids:
-            return Response(
-                {"error": "Label id's are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Create InitiativeLabel objects
-        initiatives = InitiativeLabel.objects.bulk_create(
-            [
-                InitiativeLabel(initiative_id=initiative_id, label_id=label_id)
-                for label_id in label_ids
-            ],
-            ignore_conflicts=True,
-            batch_size=1000,
-        )
-        # Serialize and return
-        serializer = InitiativeSerializer(initiatives, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def delete(self, request, slug, initiative_id, label_id):
-        initiative_label = InitiativeLabel.objects.get(
-            initiative_id=initiative_id, label_id=label_id, workspace__slug=slug
-        )
-        initiative_label.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class InitiativeAnalyticsEndpoint(BaseAPIView):
     def projects_issues_count(self, state, project_ids):
         return Count("id", filter=Q(state__group=state, project_id__in=project_ids))
@@ -369,15 +310,11 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             ),
         )
 
-    def total_issues_count(
-        self, state, initiative_epics, related_issues_ids, project_ids
-    ):
+    def total_issues_count(self, state, initiative_epics, related_issues_ids, project_ids):
         return Count(
             "id",
             filter=Q(
-                Q(project_id__in=project_ids)
-                | Q(id__in=initiative_epics)
-                | Q(id__in=related_issues_ids),
+                Q(project_id__in=project_ids) | Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
             )
             & Q(state__group=state),
         )
@@ -385,8 +322,7 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
     def issues_counts(self, project_ids, initiative_epics, related_issues_ids):
         # Annotate the counts for different states in one query
         issues_counts = Issue.objects.filter(
-            Q(issue_intake__status__in=[-1, 1, 2])
-            | Q(issue_intake__status__isnull=True),
+            Q(issue_intake__status__in=[-1, 1, 2]) | Q(issue_intake__status__isnull=True),
             deleted_at__isnull=True,
             archived_at__isnull=True,
             project__archived_at__isnull=True,
@@ -398,21 +334,11 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             started_issues=self.projects_issues_count(State.STARTED, project_ids),
             completed_issues=self.projects_issues_count(State.COMPLETED, project_ids),
             cancelled_issues=self.projects_issues_count(State.CANCELLED, project_ids),
-            epic_backlog_issues=self.epic_issues_count(
-                State.BACKLOG, initiative_epics, related_issues_ids
-            ),
-            epic_unstarted_issues=self.epic_issues_count(
-                State.UNSTARTED, initiative_epics, related_issues_ids
-            ),
-            epic_started_issues=self.epic_issues_count(
-                State.STARTED, initiative_epics, related_issues_ids
-            ),
-            epic_completed_issues=self.epic_issues_count(
-                State.COMPLETED, initiative_epics, related_issues_ids
-            ),
-            epic_cancelled_issues=self.epic_issues_count(
-                State.CANCELLED, initiative_epics, related_issues_ids
-            ),
+            epic_backlog_issues=self.epic_issues_count(State.BACKLOG, initiative_epics, related_issues_ids),
+            epic_unstarted_issues=self.epic_issues_count(State.UNSTARTED, initiative_epics, related_issues_ids),
+            epic_started_issues=self.epic_issues_count(State.STARTED, initiative_epics, related_issues_ids),
+            epic_completed_issues=self.epic_issues_count(State.COMPLETED, initiative_epics, related_issues_ids),
+            epic_cancelled_issues=self.epic_issues_count(State.CANCELLED, initiative_epics, related_issues_ids),
             total_backlog_issues=self.total_issues_count(
                 State.BACKLOG, initiative_epics, related_issues_ids, project_ids
             ),
@@ -475,42 +401,39 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
     def get(self, request, slug, initiative_id):
         initiative = (
             Initiative.objects.filter(id=initiative_id, workspace__slug=slug)
-            .prefetch_related("projects", "initiative_epics")
+            .prefetch_related(
+                Prefetch(
+                    "projects",
+                    queryset=InitiativeProject.objects.filter(workspace__slug=slug, project__archived_at__isnull=True),
+                ),
+                Prefetch(
+                    "initiative_epics",
+                    queryset=InitiativeEpic.objects.filter(
+                        workspace__slug=slug, epic__project__archived_at__isnull=True
+                    ),
+                ),
+            )
             .first()
         )
 
         if not initiative:
-            return Response(
-                {"error": "Initiative not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Initiative not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Now we can get the IDs from the prefetched relations
         project_ids = [p.project_id for p in initiative.projects.all()]
         initiative_epics = [e.epic_id for e in initiative.initiative_epics.all()]
 
-        related_issues_ids = [
-            issue_id
-            for epic_id in initiative_epics
-            for issue_id in get_all_related_issues(epic_id)
-        ]
+        related_issues_ids = [issue_id for epic_id in initiative_epics for issue_id in get_all_related_issues(epic_id)]
 
-        issues_counts = self.issues_counts(
-            project_ids, initiative_epics, related_issues_ids
-        )
+        issues_counts = self.issues_counts(project_ids, initiative_epics, related_issues_ids)
 
         updates_counts = self.updates_counts(project_ids, initiative_epics)
 
         result = {
             "epic": {
-                "on_track_updates": updates_counts.get("epic", {}).get(
-                    "on_track_updates", 0
-                ),
-                "off_track_updates": updates_counts.get("epic", {}).get(
-                    "off_track_updates", 0
-                ),
-                "at_risk_updates": updates_counts.get("epic", {}).get(
-                    "at_risk_updates", 0
-                ),
+                "on_track_updates": updates_counts.get("epic", {}).get("on_track_updates", 0),
+                "off_track_updates": updates_counts.get("epic", {}).get("off_track_updates", 0),
+                "at_risk_updates": updates_counts.get("epic", {}).get("at_risk_updates", 0),
                 "backlog_issues": issues_counts.get("epic_backlog_issues", 0),
                 "unstarted_issues": issues_counts.get("epic_unstarted_issues", 0),
                 "started_issues": issues_counts.get("epic_started_issues", 0),
@@ -518,15 +441,9 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
                 "cancelled_issues": issues_counts.get("epic_cancelled_issues", 0),
             },
             "project": {
-                "on_track_updates": updates_counts.get("project", {}).get(
-                    "on_track_updates", 0
-                ),
-                "off_track_updates": updates_counts.get("project", {}).get(
-                    "off_track_updates", 0
-                ),
-                "at_risk_updates": updates_counts.get("project", {}).get(
-                    "at_risk_updates", 0
-                ),
+                "on_track_updates": updates_counts.get("project", {}).get("on_track_updates", 0),
+                "off_track_updates": updates_counts.get("project", {}).get("off_track_updates", 0),
+                "at_risk_updates": updates_counts.get("project", {}).get("at_risk_updates", 0),
                 "backlog_issues": issues_counts.get("backlog_issues", 0),
                 "unstarted_issues": issues_counts.get("unstarted_issues", 0),
                 "started_issues": issues_counts.get("started_issues", 0),
@@ -552,30 +469,35 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, project_id=None):
-        initiatives = Initiative.objects.filter(workspace__slug=slug).annotate(
-            project_ids=Coalesce(
-                Subquery(
-                    InitiativeProject.objects.filter(
-                        workspace__slug=slug, initiative_id=OuterRef("pk")
-                    )
-                    .values("initiative_id")
-                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                    .values("project_ids")[:1]
+        initiatives = (
+            Initiative.objects.filter(workspace__slug=slug, projects__project__archived_at__isnull=True)
+            .distinct()
+            .annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        InitiativeProject.objects.filter(
+                            workspace__slug=slug,
+                            initiative_id=OuterRef("pk"),
+                            project__archived_at__isnull=True,
+                        )
+                        .values("initiative_id")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")[:1]
+                    ),
+                    [],
                 ),
-                [],
-            ),
-            epic_ids=Coalesce(
-                Subquery(
-                    InitiativeEpic.objects.filter(
-                        workspace__slug=slug, initiative_id=OuterRef("pk")
-                    )
-                    .filter(epic__project__project_projectfeature__is_epic_enabled=True)
-                    .values("initiative_id")
-                    .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
-                    .values("epic_ids")[:1]
+                epic_ids=Coalesce(
+                    Subquery(
+                        InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=OuterRef("pk"))
+                        .filter(epic__project__project_projectfeature__is_epic_enabled=True)
+                        .filter(epic__project__archived_at__isnull=True)
+                        .values("initiative_id")
+                        .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
+                        .values("epic_ids")[:1]
+                    ),
+                    [],
                 ),
-                [],
-            ),
+            )
         )
 
         result = []
@@ -620,9 +542,7 @@ class InitiativeEpicAnalytics(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
         initiative_epic = (
-            InitiativeEpic.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            )
+            InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
             .filter(epic__project__deleted_at__isnull=True)
             .values_list("epic_id", flat=True)
         )
@@ -638,15 +558,11 @@ class InitiativeEpicAnalytics(BaseAPIView):
             issue_ids = get_all_related_issues(epic_id)
 
             completed_issues = (
-                issues.filter(id__in=issue_ids, workspace__slug=slug)
-                .filter(state__group="completed")
-                .count()
+                issues.filter(id__in=issue_ids, workspace__slug=slug).filter(state__group="completed").count()
             )
 
             cancelled_issues = (
-                issues.filter(id__in=issue_ids, workspace__slug=slug)
-                .filter(state__group="cancelled")
-                .count()
+                issues.filter(id__in=issue_ids, workspace__slug=slug).filter(state__group="cancelled").count()
             )
 
             total_issues = issues.filter(id__in=issue_ids, workspace__slug=slug).count()
@@ -661,3 +577,84 @@ class InitiativeEpicAnalytics(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class InitiativeProgressEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, initiative_id):
+        initiative = Initiative.objects.prefetch_related(
+            "projects",
+            "initiative_epics",
+        ).get(pk=initiative_id)
+
+        project_ids = [init_project.project_id for init_project in initiative.projects.all()]
+
+        epic_ids = [init_epics.epic_id for init_epics in initiative.initiative_epics.all()]
+
+        issues = (
+            Issue.objects.prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.select_related("assignee").filter(deleted_at__isnull=True),
+                ),
+                Prefetch(
+                    "issue_activity",
+                    queryset=IssueActivity.objects.filter(
+                        verb="updated",
+                        field="state",
+                    ).order_by("-created_at"),
+                    to_attr="state_activities",
+                ),
+            )
+            .select_related("state")
+            .filter((Q(project_id__in=project_ids) | Q(id__in=epic_ids)), workspace__slug=slug)
+        )
+
+        unassigned_workitems = []
+        past_due_date = []
+        no_due_date = []
+        completed_work_items = []
+        last_week_completed_work_items = []
+        resources_used = set()
+
+        today = date.today()
+        last_monday = today - timedelta(days=today.weekday(), weeks=1)
+        last_friday = last_monday + timedelta(days=5)
+
+        for issue in issues:
+            if not issue.issue_assignee.all():
+                unassigned_workitems.append(issue)
+
+            if issue.target_date is not None and issue.target_date < today:
+                past_due_date.append(issue)
+
+            if not issue.target_date:
+                no_due_date.append(issue)
+
+            if issue.state.group == State.COMPLETED:
+                completed_work_items.append(issue)
+
+                latest_state_activity = issue.state_activities[0] if issue.state_activities else None
+
+                if (
+                    latest_state_activity
+                    and (latest_state_activity.created_at).date() >= last_monday
+                    and (latest_state_activity.created_at).date() <= last_friday
+                ):
+                    last_week_completed_work_items.append(issue)
+
+            if issue.issue_assignee.all():
+                resources_used.update(issue_assignee.assignee.username for issue_assignee in issue.issue_assignee.all())
+
+        response = {
+            "unassigned_workitem": len(unassigned_workitems),
+            "total_workitem": len(issues),
+            "completed_workitem": len(completed_work_items),
+            "workitem_with_no_due_date": len(no_due_date),
+            "work_item_with_past_due_date": len(past_due_date),
+            "resources_used": len(resources_used),
+            "last_week_completed_workitem": len(last_week_completed_work_items),
+        }
+
+        return Response(response, status=status.HTTP_200_OK)

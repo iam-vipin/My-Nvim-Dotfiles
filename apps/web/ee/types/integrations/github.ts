@@ -1,6 +1,6 @@
-import { TGithubWorkspaceConnectionData } from "@plane/etl/core";
-import { IState } from "@plane/sdk";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { TGithubWorkspaceConnectionData } from "@plane/etl/core";
+import type { IState } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 // auth types
 export type TGithubWorkspaceConnection = TWorkspaceConnection<object, TGithubWorkspaceConnectionData>;
@@ -27,6 +27,17 @@ export enum E_STATE_MAP_KEYS {
 }
 export type TStateMapKeys = keyof typeof E_STATE_MAP_KEYS;
 
+// entity types
+export enum E_ISSUE_STATE_MAP_KEYS {
+  ISSUE_OPEN = "ISSUE_OPEN",
+  ISSUE_CLOSED = "ISSUE_CLOSED",
+}
+export type TIssueStateMapKeys = keyof typeof E_ISSUE_STATE_MAP_KEYS;
+
+export type TIssueStateMap = {
+  [key in TIssueStateMapKeys]: IState | undefined;
+};
+
 export type TProjectMap = {
   entityId: string | undefined; // organization id
   projectId: string | undefined;
@@ -36,7 +47,10 @@ export type TStateMap = {
   [key in TStateMapKeys]: IState | undefined;
 };
 
-export type TGithubEntityConnectionConfig = object & { states: { mergeRequestEventMapping: TStateMap } };
+export type TGithubEntityConnectionConfig = object & {
+  states: { mergeRequestEventMapping?: TStateMap; issueEventMapping?: TIssueStateMap };
+  allowBidirectionalSync?: boolean;
+};
 
 export type TGithubEntityConnection = TWorkspaceEntityConnection & {
   entity_data: object & {

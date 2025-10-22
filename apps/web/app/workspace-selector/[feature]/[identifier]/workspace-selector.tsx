@@ -2,9 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { projectTemplateService } from "@plane/services";
-import { EUserPermissions, IWorkspace } from "@plane/types";
-import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import type { IWorkspace } from "@plane/types";
+import { EUserPermissions } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -20,6 +23,7 @@ const oauthService = new OAuthService();
 
 export enum ESupportedFeatures {
   APPS = "apps",
+  IMPORTERS = "importers",
   PROJECT_TEMPLATES = "project-templates",
   EXTERNAL_APPS = "external-apps",
 }
@@ -28,6 +32,8 @@ const getFeatureName = (feature: ESupportedFeatures) => {
   switch (feature) {
     case ESupportedFeatures.APPS:
       return "Apps";
+    case ESupportedFeatures.IMPORTERS:
+      return "Importers";
     case ESupportedFeatures.PROJECT_TEMPLATES:
       return "Project templates";
     case ESupportedFeatures.EXTERNAL_APPS:
@@ -114,6 +120,9 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
       switch (feature) {
         case ESupportedFeatures.APPS:
           router.push(`/${selectedWorkspaceSlug}/settings/integrations/${identifier}`);
+          break;
+        case ESupportedFeatures.IMPORTERS:
+          router.push(`/${selectedWorkspaceSlug}/settings/imports/${identifier}`);
           break;
         case ESupportedFeatures.PROJECT_TEMPLATES:
           await projectTemplateService.copy(selectedWorkspaceSlug, identifier);

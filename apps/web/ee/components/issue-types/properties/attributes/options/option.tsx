@@ -1,11 +1,13 @@
-import { FC, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
-import { Input, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
+import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { usePropertyOptions } from "@/plane-web/hooks/store";

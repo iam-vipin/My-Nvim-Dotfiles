@@ -1,10 +1,13 @@
 /* eslint-disable no-useless-catch */
 "use client";
 
-import { createContext, ReactNode } from "react";
-import useSWR, { KeyedMutator, SWRResponse } from "swr";
-import { JobService, TJobConfigResponse, TImporterKeys } from "@plane/etl/core";
-import { TImportJob } from "@plane/types";
+import type { ReactNode } from "react";
+import { createContext } from "react";
+import type { KeyedMutator, SWRResponse } from "swr";
+import useSWR from "swr";
+import type { TJobConfigResponse, TImporterKeys } from "@plane/etl/core";
+import { JobService } from "@plane/etl/core";
+import type { TImportJob } from "@plane/types";
 // silo hooks
 import { useApiServiceToken, useBaseImporter } from "@/plane-web/silo/hooks";
 
@@ -21,6 +24,7 @@ export type TImporterCreateContext<T> = {
 
 export const ImporterSyncJobContext = createContext<TImporterCreateContext<any>>({} as TImporterCreateContext<any>);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type TImporterSyncJobContextProvider<T> = {
   importerType: TImporterKeys;
   children: ReactNode;

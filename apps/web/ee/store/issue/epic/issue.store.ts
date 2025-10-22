@@ -1,8 +1,7 @@
-import clone from "lodash/clone";
+import { clone } from "lodash-es";
 import { action, makeObservable, runInAction } from "mobx";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TLoader,
   ViewFlags,
@@ -12,12 +11,14 @@ import {
   TBaseIssue,
   TIssueResponseResults,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // store
 import { IssueService } from "@/services/issue";
-import { BaseIssuesStore, IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
-import { IIssueRootStore } from "@/store/issue/root.store";
+import type { IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
+import { BaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
+import type { IIssueRootStore } from "@/store/issue/root.store";
 // local store
-import { IProjectEpicsFilter } from "./filter.store";
+import type { IProjectEpicsFilter } from "./filter.store";
 
 export interface IProjectEpics extends IBaseIssuesStore {
   viewFlags: ViewFlags;

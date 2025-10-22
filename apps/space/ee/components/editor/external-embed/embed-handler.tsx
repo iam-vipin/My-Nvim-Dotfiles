@@ -2,16 +2,12 @@ import React, { memo } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane editor
-import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, ExternalEmbedNodeViewProps } from "@plane/editor";
+import type { ExternalEmbedNodeViewProps } from "@plane/editor";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@plane/editor";
 // plane types
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 // plane components
-import { EmbedLoading } from "@plane/ui/src/editor/embed-loading";
-import { ErrorState } from "@plane/ui/src/editor/error-state";
-import { HTMLContent } from "@plane/ui/src/editor/html-content";
-import { InViewportRenderer } from "@plane/ui/src/editor/is-in-viewport";
-import { RichCard } from "@plane/ui/src/editor/rich-card";
-import { TwitterEmbed } from "@plane/ui/src/editor/twitter-embed";
+import { EmbedLoading, ErrorState, HTMLContent, InViewportRenderer, RichCard, TwitterEmbed } from "@plane/ui";
 
 // Main wrapper component that uses lazy loading through InViewportRenderer
 export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(

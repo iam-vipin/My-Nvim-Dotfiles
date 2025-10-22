@@ -1,20 +1,21 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CycleInsightColumns } from "@plane/types";
-import { CycleGroupIcon, Logo, TCycleGroups } from "@plane/ui";
+import type { TCycleGroups } from "@plane/propel/icons";
+import { CycleGroupIcon, ProjectIcon } from "@plane/propel/icons";
+import type { CycleInsightColumns } from "@plane/types";
+import { Logo } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
 // hooks
-import { useMember } from "@/hooks/store/use-member";
 import { useAnalytics } from "@/hooks/store/use-analytics";
+import { useMember } from "@/hooks/store/use-member";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 import { UserAvatarName } from "../user-avatar-name";
@@ -101,7 +102,7 @@ const CyclesInsightTable = observer(() => {
               {row.original.project__logo_props ? (
                 <Logo logo={row.original.project__logo_props} size={18} />
               ) : (
-                <Briefcase className="h-4 w-4" />
+                <ProjectIcon className="h-4 w-4" />
               )}
               {row.original.project__name}
             </div>

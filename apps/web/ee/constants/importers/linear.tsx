@@ -8,7 +8,8 @@ import {
   SummaryRoot,
 } from "@/plane-web/components/importers/linear";
 // types
-import { E_LINEAR_IMPORTER_STEPS, TLinearImporterStep } from "@/plane-web/types/importers/linear";
+import type { TLinearImporterStep } from "@/plane-web/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
 
 export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
   {

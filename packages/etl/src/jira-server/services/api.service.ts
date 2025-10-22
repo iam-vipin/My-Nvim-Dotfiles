@@ -1,7 +1,9 @@
 // services
 import axios from "axios";
-import { Version2Client } from "jira.js/out/version2";
+import { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
+import { Board } from "jira.js/out/agile/models";
+import { Version2Client } from "jira.js/out/version2";
 import {
   CustomFieldContextOption,
   FieldDetails,
@@ -9,12 +11,9 @@ import {
   IssueTypeDetails,
   JiraStatus,
   Project,
-  User,
 } from "jira.js/out/version2/models";
-import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
-import { Paginated } from "jira.js";
-import { Board } from "jira.js/out/agile/models";
 import { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
+import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;
@@ -43,10 +42,10 @@ export class JiraV2Service {
   }
 
   async getJiraUsers(): Promise<JiraApiUser[]> {
-    // @ts-ignore
+    // @ts-expect-error
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
-      // @ts-ignore
+      // @ts-expect-error
       includeActive: true,
     })) as JiraApiUser[];
   }
@@ -54,7 +53,7 @@ export class JiraV2Service {
   // Verified
   async getNumberOfIssues(projectKey: string) {
     const issues = await this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `project = ${projectKey}`,
+      jql: `project = "${projectKey}"`,
       maxResults: 0,
     });
     return issues.total;
@@ -79,35 +78,20 @@ export class JiraV2Service {
 
   // Verified
   async getProjectStatuses(projectId: string) {
-    const types: JiraStatus[] = [];
-    let isLast = false;
-    let startAt = 0;
-
     try {
-      while (!isLast) {
-        const response = await axios.get(
-          `${this.hostname}/rest/api/2/status/page?projectIds=${projectId}&startAt=${startAt}`,
-          {
+      return await fetchPaginatedData<JiraStatus>((startAt) =>
+        axios
+          .get(`${this.hostname}/rest/api/2/status/page?projectIds=${projectId}&startAt=${startAt}`, {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          }
-        );
-
-        const data = response.data as Paginated<JiraStatus>;
-
-        if (data.values) {
-          types.push(...data.values);
-        }
-
-        isLast = data.isLast;
-        startAt += data.maxResults;
-      }
+          })
+          .then((res) => res.data as Paginated<JiraStatus>)
+      );
     } catch (e) {
+      console.error("error getProjectStatuses", e);
       throw e;
     }
-
-    return types;
   }
 
   // Verified
@@ -125,7 +109,7 @@ export class JiraV2Service {
   // Verified
   async getProjectComponentIssues(componentId: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `component = ${componentId}`,
+      jql: `component = "${componentId}"`,
     });
   }
 
@@ -159,28 +143,17 @@ export class JiraV2Service {
   async getProjectBoards(projectId: string) {
     const board = new BoardClient(this.jiraClient);
 
-    const result: Board[] = [];
-    let isLast = false;
-    let startAt = 0;
-
     try {
-      while (!isLast) {
-        const boards = await board.getAllBoards({
+      return await fetchPaginatedData<Board>((startAt) =>
+        board.getAllBoards({
           projectKeyOrId: projectId,
-        });
-
-        if (boards.values) {
-          result.push(...boards.values);
-        }
-
-        isLast = boards.isLast ?? false;
-        startAt += boards.maxResults ?? 0;
-      }
+          startAt: startAt,
+        })
+      );
     } catch (e) {
+      console.error("error getProjectBoards", e);
       throw e;
     }
-
-    return result;
   }
 
   // Verified
@@ -191,13 +164,8 @@ export class JiraV2Service {
   // Verified
   async getAllProjectLabels(projectId: string) {
     try {
-      const labels: string[] = [];
-      await fetchPaginatedData(
-        (startAt) => this.getProjectLabels(projectId, startAt),
-        (values) => labels.push(...(values as string[])),
-        "labels"
-      );
-      return labels;
+      const allLabels = await fetchPaginatedData<string>((startAt) => this.getProjectLabels(projectId, startAt));
+      return Array.from(new Set(allLabels));
     } catch (error) {
       console.error("error getAllProjectLabels", error);
       return [];
@@ -208,9 +176,10 @@ export class JiraV2Service {
   async getProjectLabels(projectId: string, startAt = 0) {
     const response = await axios.get(`${this.hostname}/rest/api/2/search`, {
       params: {
-        jql: `project = ${projectId}`,
+        jql: `project = "${projectId}" AND labels is not EMPTY`,
         fields: ["labels"],
         startAt: startAt,
+        maxResults: 1000,
       },
       headers: {
         Authorization: `Bearer ${this.patToken}`,
@@ -227,7 +196,12 @@ export class JiraV2Service {
       }
     });
 
-    return { labels: Array.from(allLabels), total: data.total };
+    return {
+      values: Array.from(allLabels) as string[],
+      total: data.total,
+      maxResults: data.maxResults || issues.length,
+      isLast: data.total ? startAt + issues.length >= data.total : issues.length === 0,
+    };
   }
 
   // Verified
@@ -239,35 +213,20 @@ export class JiraV2Service {
 
   // Verified
   async getProjectIssueTypes(projectId: string) {
-    const types: IssueTypeDetails[] = [];
-    let isLast = false;
-    let startAt = 0;
-
     try {
-      while (!isLast) {
-        const response = await axios.get(
-          `${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}`,
-          {
+      return await fetchPaginatedData<IssueTypeDetails>((startAt) =>
+        axios
+          .get(`${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}`, {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          }
-        );
-
-        const data = response.data as Paginated<IssueTypeDetails>;
-
-        if (data.values) {
-          types.push(...data.values);
-        }
-
-        isLast = data.isLast;
-        startAt += data.maxResults;
-      }
+          })
+          .then((res) => res.data as Paginated<IssueTypeDetails>)
+      );
     } catch (e) {
+      console.error("error getProjectIssueTypes", e);
       throw e;
     }
-
-    return types;
   }
 
   // Verified
@@ -278,35 +237,20 @@ export class JiraV2Service {
   }
 
   async getCustomFieldsWithContext(projectId?: string) {
-    const fields: JiraCustomFieldWithCtx[] = [];
-    let isLast = false;
-    let startAt = 0;
-
     try {
-      while (!isLast) {
-        const response = await axios.get(
-          `${this.hostname}/rest/api/2/customFields?startAt=${startAt}&projectIds=${projectId ?? ""}`,
-          {
+      return await fetchPaginatedData<JiraCustomFieldWithCtx>((startAt) =>
+        axios
+          .get(`${this.hostname}/rest/api/2/customFields?startAt=${startAt}&projectIds=${projectId ?? ""}`, {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          }
-        );
-
-        const data = response.data as Paginated<JiraCustomFieldWithCtx>;
-
-        if (data.values) {
-          fields.push(...data.values);
-        }
-
-        isLast = data.isLast;
-        startAt += data.maxResults;
-      }
+          })
+          .then((res) => res.data as Paginated<JiraCustomFieldWithCtx>)
+      );
     } catch (e) {
+      console.error("error getCustomFieldsWithContext", e);
       throw e;
     }
-
-    return fields;
   }
 
   async getProjectFieldContexts(fieldId: string, startAt = 0) {
@@ -351,8 +295,8 @@ export class JiraV2Service {
   async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
-        ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
-        : `project = ${projectKey}`,
+        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
+        : `project = "${projectKey}"`,
       expand: "renderedFields",
       fields: ["*all"],
       startAt,
@@ -360,28 +304,12 @@ export class JiraV2Service {
   }
 
   async getAllLabels() {
-    const labels: string[] = [];
-    let startAt = 0;
-    const maxResults = 1000;
-
-    while (true) {
-      const response = await this.jiraClient.labels.getAllLabels({
+    return await fetchPaginatedData<string>((startAt) =>
+      this.jiraClient.labels.getAllLabels({
         startAt,
-        maxResults,
-      });
-
-      if (response.values) {
-        labels.push(...response.values);
-      }
-
-      if (response.isLast) {
-        break;
-      }
-
-      startAt += maxResults;
-    }
-
-    return labels;
+        maxResults: 1000,
+      })
+    );
   }
 
   async getNumberOfLabels() {

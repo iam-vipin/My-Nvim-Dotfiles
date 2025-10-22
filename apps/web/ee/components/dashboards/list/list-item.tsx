@@ -5,7 +5,7 @@ import { usePlatformOS } from "@plane/hooks";
 // components
 import { ListItem } from "@/components/core/list";
 // plane web store
-import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
+import type { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
 // local components
 import { DashboardListItemActions } from "./list-item-actions";
 

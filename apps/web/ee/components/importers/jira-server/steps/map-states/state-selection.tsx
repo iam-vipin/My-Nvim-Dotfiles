@@ -1,13 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { JiraStatus } from "@plane/etl/jira";
-import { IState } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { StateGroupIcon } from "@plane/propel/icons";
+import type { IState } from "@plane/types";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
-import { useTranslation } from "@plane/i18n";
 
 type TMapStatesSelection = {
   value: string | undefined;

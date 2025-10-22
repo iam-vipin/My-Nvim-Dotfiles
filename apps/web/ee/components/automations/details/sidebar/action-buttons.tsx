@@ -1,6 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // plane imports
-import { Button, cn } from "@plane/ui";
+import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { cn } from "@plane/ui";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 
 type TProps = {
   nextButton?: {
@@ -36,7 +40,10 @@ export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) =
             size="sm"
             prependIcon={previousButton.renderIcon === false ? undefined : <ChevronLeft className="size-5" />}
             disabled={previousButton.isDisabled}
-            onClick={previousButton.onClick}
+            onClick={() => {
+              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_PREVIOUS_BUTTON });
+              previousButton.onClick?.();
+            }}
           >
             {previousButton.label}
           </Button>
@@ -48,7 +55,10 @@ export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) =
             size="sm"
             appendIcon={nextButton.renderIcon === false ? undefined : <ChevronRight className="size-5" />}
             disabled={nextButton.isDisabled}
-            onClick={nextButton.onClick}
+            onClick={() => {
+              captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.SIDEBAR_NEXT_BUTTON });
+              nextButton.onClick?.();
+            }}
           >
             {nextButton.label}
           </Button>

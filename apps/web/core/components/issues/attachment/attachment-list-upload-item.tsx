@@ -2,7 +2,8 @@
 
 import { observer } from "mobx-react";
 // ui
-import { CircularProgressIndicator, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { getFileExtension } from "@plane/utils";
 import { getFileIcon } from "@/components/icons";
@@ -10,7 +11,7 @@ import { getFileIcon } from "@/components/icons";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 
 type Props = {
   uploadStatus: TAttachmentUploadStatus;

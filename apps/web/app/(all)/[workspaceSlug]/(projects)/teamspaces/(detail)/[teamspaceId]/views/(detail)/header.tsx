@@ -3,40 +3,30 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers, Lock } from "lucide-react";
-// plane constants
+import { Lock } from "lucide-react";
+// plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // types
-import {
-  EIssuesStoreType,
-  EUserWorkspaceRoles,
-  EViewAccess,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  EIssueLayoutTypes,
-  IIssueFilterOptions,
-} from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
+import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, EIssueLayoutTypes } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
+import { Breadcrumbs, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
-import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
+import { getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
-import {
-  DisplayFiltersSelection,
-  FiltersDropdown,
-  FilterSelection,
-  LayoutSelection,
-} from "@/components/issues/issue-layouts/filters";
+import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
+import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
@@ -46,6 +36,7 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
   const viewId = routerViewId ? routerViewId.toString() : undefined;
+  const router = useAppRouter();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -54,19 +45,28 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   } = useIssues(EIssuesStoreType.TEAM_VIEW);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
   const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
-  const { getTeamspaceViewsLoader, getViewById } = useTeamspaceViews();
+  const { getViewById, getTeamspaceViewIds } = useTeamspaceViews();
   // derived values
-  const teamspaceViewLoader = teamspaceId ? getTeamspaceViewsLoader(teamspaceId) : undefined;
   const teamspace = teamspaceId ? getTeamspaceById(teamspaceId) : undefined;
   const view = teamspace && viewId ? getViewById(teamspace.id, viewId.toString()) : null;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const publishLink = getPublishViewLink(view?.anchor);
   const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
+  const teamspaceViewIds = teamspaceId ? getTeamspaceViewIds(teamspaceId) : [];
+
+  const switcherOptions = teamspaceViewIds
+    ?.map((id) => {
+      if (!teamspaceId) return;
+      const _view = id === viewId ? view : getViewById(teamspaceId, id);
+      if (!_view) return;
+      return {
+        value: _view.id,
+        query: _view.name,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
   // permissions
   const canUserCreateIssue = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -85,33 +85,6 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
       );
     },
     [workspaceSlug, teamspaceId, viewId, updateFilters]
-  );
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !teamspaceId || !viewId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        teamspaceId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        viewId.toString()
-      );
-    },
-    [workspaceSlug, teamspaceId, viewId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -178,28 +151,26 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
-                  icon={<Layers className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />
             <Breadcrumbs.Item
               component={
-                <>
-                  {teamspaceViewLoader === "init-loader" && !view ? (
-                    <Loader.Item height="20px" width="140px" />
-                  ) : view ? (
-                    <BreadcrumbLink
-                      label={view.name}
-                      icon={
-                        view?.logo_props?.in_use ? (
-                          <Logo logo={view?.logo_props} size={16} type="lucide" />
-                        ) : (
-                          <Layers className="size-4 text-custom-text-300" />
-                        )
-                      }
-                    />
-                  ) : null}
-                </>
+                <BreadcrumbNavigationSearchDropdown
+                  selectedItem={viewId?.toString() ?? ""}
+                  navigationItems={switcherOptions}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/views/${value}`);
+                  }}
+                  title={view?.name}
+                  icon={
+                    <Breadcrumbs.Icon>
+                      <SwitcherIcon logo_props={view?.logo_props} LabelIcon={ViewsIcon} size={16} />
+                    </Breadcrumbs.Icon>
+                  }
+                  isLast
+                />
               }
             />
           </Breadcrumbs>
@@ -230,50 +201,31 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem>
-        {!view?.is_locked ? (
-          <>
-            <LayoutSelection
-              layouts={[
-                EIssueLayoutTypes.LIST,
-                EIssueLayoutTypes.KANBAN,
-                EIssueLayoutTypes.CALENDAR,
-                EIssueLayoutTypes.SPREADSHEET,
-              ]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
+        {!view?.is_locked && (
+          <LayoutSelection
+            layouts={[
+              EIssueLayoutTypes.LIST,
+              EIssueLayoutTypes.KANBAN,
+              EIssueLayoutTypes.CALENDAR,
+              EIssueLayoutTypes.SPREADSHEET,
+            ]}
+            onChange={(layout) => handleLayoutChange(layout)}
+            selectedLayout={activeLayout}
+          />
+        )}
+        {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.TEAM_VIEW} entityId={viewId} />}
+        {!view?.is_locked && (
+          <FiltersDropdown title={t("common.display")} placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[activeLayout] : undefined
+              }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
-            <FiltersDropdown
-              title={t("common.filters")}
-              placement="bottom-end"
-              disabled={!canUserCreateIssue}
-              isFiltersApplied={isIssueFilterActive(issueFilters)}
-            >
-              <FilterSelection
-                filters={issueFilters?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
-                }
-                labels={workspaceLabels}
-                memberIds={workspaceMemberIds ?? undefined}
-              />
-            </FiltersDropdown>
-            <FiltersDropdown title={t("common.display")} placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={
-                  activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
-                }
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-              />
-            </FiltersDropdown>
-          </>
-        ) : (
-          <></>
+          </FiltersDropdown>
         )}
         {canUserCreateIssue ? (
           <Button

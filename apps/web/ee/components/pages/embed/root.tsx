@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 import type { TPageEmbedConfig } from "@plane/editor";
-import type { TPage } from "@plane/types";
 // icons
-import { EmptyPageIcon } from "@plane/ui";
+import { EmptyPageIcon } from "@plane/propel/icons";
+import type { TPage } from "@plane/types";
 // plane web store
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // embed content component
 import { PageEmbedContent } from "./content";
 

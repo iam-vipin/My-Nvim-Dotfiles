@@ -31,6 +31,7 @@ class FileAsset(BaseModel):
         ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION"
         COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION"
         PAGE_DESCRIPTION = "PAGE_DESCRIPTION"
+        PAGE_COMMENT_DESCRIPTION = "PAGE_COMMENT_DESCRIPTION"
         USER_COVER = "USER_COVER"
         USER_AVATAR = "USER_AVATAR"
         WORKSPACE_LOGO = "WORKSPACE_LOGO"
@@ -58,27 +59,13 @@ class FileAsset(BaseModel):
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    comment = models.ForeignKey(
-        "db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, null=True, related_name="assets"
-    )
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, null=True, related_name="assets")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets")
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, null=True, related_name="assets")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, null=True, related_name="assets")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, null=True, related_name="assets")
+    comment = models.ForeignKey("db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, null=True, related_name="assets")
     entity_type = models.CharField(max_length=255, null=True, blank=True)
     entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
@@ -94,6 +81,11 @@ class FileAsset(BaseModel):
         verbose_name_plural = "File Assets"
         db_table = "file_assets"
         ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=["entity_type"], name="asset_entity_type_idx"),
+            models.Index(fields=["entity_identifier"], name="asset_entity_identifier_idx"),
+            models.Index(fields=["entity_type", "entity_identifier"], name="asset_entity_idx"),
+        ]
 
     def __str__(self):
         return str(self.asset)
@@ -114,7 +106,7 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type == self.EntityTypeContext.PROJECT_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/attachments/{self.id}/"
@@ -142,6 +134,7 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.CUSTOMER_DESCRIPTION,
             self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            self.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

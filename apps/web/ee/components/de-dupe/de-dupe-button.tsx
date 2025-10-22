@@ -1,5 +1,6 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";

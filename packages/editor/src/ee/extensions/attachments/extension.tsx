@@ -3,14 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
-import { TFileHandler } from "@/types";
-// block
+import type { TFileHandler } from "@/types";
+// local imports
 import { CustomAttachmentNodeView, CustomAttachmentNodeViewProps } from "./components/node-view";
-// config
 import { CustomAttachmentExtensionConfig } from "./extension-config";
-// types
-import { TAttachmentBlockAttributes } from "./types";
-// utils
+import type { AttachmentExtensionOptions, AttachmentExtensionStorage, TAttachmentBlockAttributes } from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES, getAttachmentExtensionFileMap } from "./utils";
 
 type Props = {
@@ -24,7 +21,7 @@ export const CustomAttachmentExtension = (props: Props) => {
   // derived values
   const { checkIfAssetExists, getAssetSrc, restore } = fileHandler;
 
-  return CustomAttachmentExtensionConfig.extend({
+  return CustomAttachmentExtensionConfig.extend<AttachmentExtensionOptions, AttachmentExtensionStorage>({
     selectable: isEditable,
     draggable: isEditable,
 

@@ -3,7 +3,7 @@ import { Download, File } from "lucide-react";
 import { ADDITIONAL_EXTENSIONS } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ce imports
-import { TAdditionalPageNavigationPaneAssetItemProps } from "@/ce/components/pages/navigation-pane/tab-panels/assets";
+import type { TAdditionalPageNavigationPaneAssetItemProps } from "@/ce/components/pages/navigation-pane/tab-panels/assets";
 
 export const AdditionalPageNavigationPaneAssetItem: React.FC<TAdditionalPageNavigationPaneAssetItemProps> = (props) => {
   const { asset, assetSrc, assetDownloadSrc } = props;

@@ -1,13 +1,14 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Logo, PhotoFilterIcon } from "@plane/ui";
+import { PhotoFilterIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/ui";
 // hooks
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
 import { ViewNavbarControls } from ".";
 
 type Props = {

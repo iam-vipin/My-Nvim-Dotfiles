@@ -3,10 +3,10 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { EPageSharedUserAccess } from "@plane/types";
+import type { EPageSharedUserAccess } from "@plane/types";
 import { Avatar, Collapsible } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
+import type { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
 import { UserListItem } from "./user-list-item";
 
 type TExistingUsersSectionProps = {

@@ -1,13 +1,19 @@
 // plane web stores
-import { IPagesListStore, PagesListStore } from "@/plane-web/store/pages";
+import type { IPagesListStore } from "@/plane-web/store/pages";
+import { PagesListStore } from "@/plane-web/store/pages";
 // store
 import { CoreRootStore } from "@/store/root.store";
-import { FeatureFlagsStore, IFeatureFlagsStore } from "./feature_flags.store";
-import { IIntakeStore, IntakeStore } from "./intake.store";
-import { CalendarStore, ICalendarStore } from "./issue_calendar_view.store";
+import type { IFeatureFlagsStore } from "./feature_flags.store";
+import { FeatureFlagsStore } from "./feature_flags.store";
+import type { IIntakeStore } from "./intake.store";
+import { IntakeStore } from "./intake.store";
+import type { ICalendarStore } from "./issue_calendar_view.store";
+import { CalendarStore } from "./issue_calendar_view.store";
 import { ProjectViewStore } from "./views/project-view.store";
-import { IViewIssueFilterStore, ViewIssueFilterStore } from "./views/view-issue-filters.store";
-import { IViewIssueStore, ViewIssueStore } from "./views/view-issues.store";
+import type { IViewIssueFilterStore } from "./views/view-issue-filters.store";
+import { ViewIssueFilterStore } from "./views/view-issue-filters.store";
+import type { IViewIssueStore } from "./views/view-issues.store";
+import { ViewIssueStore } from "./views/view-issues.store";
 
 export class RootStore extends CoreRootStore {
   pagesListStore: IPagesListStore;

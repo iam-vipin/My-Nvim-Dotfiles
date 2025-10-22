@@ -1,26 +1,32 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
-import { FileText, Paperclip } from "lucide-react";
-// core imports
-import {
-  TDocumentEditorAdditionalExtensionsProps,
-  TDocumentEditorAdditionalExtensionsRegistry,
-} from "src/ce/extensions";
+import { Paperclip, PenTool, Presentation } from "lucide-react";
 // plane imports
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon, PageIcon } from "@plane/propel/icons";
+import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
+// ce imports
+import { TDocumentEditorAdditionalExtensionsProps, TDocumentEditorAdditionalExtensionsRegistry } from "@/ce/extensions";
 // extensions
-import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
+import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
-import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
+import {
+  IssueEmbedSuggestions,
+  WorkItemSuggestionsDropdownRenderer,
+  PageEmbedExtension,
+} from "@/plane-editor/extensions";
 // types
 import { TExtensions } from "@/types";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
-import { CustomCollaborationCursor } from "./collaboration-cursor";
+import { CustomCollaborationCaret } from "./collaboration-caret";
+import { CommentsExtension } from "./comments";
+import { DrawioExtension } from "./drawio/extension";
+import { EDrawioMode } from "./drawio/types";
 
 /**
+
  * Registry for slash commands
  * Each entry defines a single slash command option with its own enabling logic
  */
@@ -50,21 +56,26 @@ const slashCommandRegistry: {
     // Page embed slash command
     isEnabled: (disabledExtensions, flaggedExtensions) =>
       !disabledExtensions.includes("nested-pages") && !flaggedExtensions.includes("nested-pages"),
-    getOption: ({ embedConfig }) => {
+    getOption: ({ extendedEditorProps }) => {
       // Only enable if page config with createCallback exists
-      const pageConfig = embedConfig?.page;
-      if (!pageConfig?.createCallback) return null;
+      const pageConfig = extendedEditorProps.embedHandler?.page;
+      const createCallback = pageConfig?.createCallback;
+      if (!createCallback) return null;
 
-      const createCallback = pageConfig.createCallback;
       return {
         commandKey: "page-embed",
         key: "page-embed",
         title: "Page",
         description: "Embed a page from the project.",
         searchTerms: ["page", "link", "embed", "sub-page"],
-        icon: <FileText className="size-3.5" />,
+        icon: <PageIcon className="size-3.5" />,
         command: async ({ editor, range }) => {
-          const res = await createCallback();
+          const currentPos = editor.state.selection.from;
+          let pageEmbedNodesBeforeCurrentPos = 0;
+          editor.state.doc.nodesBetween(0, currentPos, (node) => {
+            if (node.type.name === ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT) pageEmbedNodesBeforeCurrentPos++;
+          });
+          const res = await createCallback(pageEmbedNodesBeforeCurrentPos);
           if (!res) return;
           insertPageEmbed(
             {
@@ -96,6 +107,41 @@ const slashCommandRegistry: {
       pushAfter: "image",
     }),
   },
+  {
+    // Draw.io diagram slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("drawio") && !flaggedExtensions.includes("drawio"),
+    getOption: () => ({
+      commandKey: "drawio-diagram",
+      key: "drawio",
+      title: "Draw.io diagram",
+      description: "Create diagrams, flowcharts, and visual documentation.",
+      searchTerms: ["draw.io", "diagram", "flowchart", "chart", "visual", "drawing"],
+      icon: <PenTool className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).insertDrawioDiagram({ mode: EDrawioMode.DIAGRAM }).run();
+      },
+      section: "general",
+      pushAfter: "attachment",
+    }),
+  },
+  {
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("drawio") && !flaggedExtensions.includes("drawio"),
+    getOption: () => ({
+      commandKey: "drawio-board",
+      key: "drawio-board",
+      title: "Draw.io board",
+      description: "Create whiteboards with freehand drawing and collaboration.",
+      searchTerms: ["draw.io", "board", "whiteboard", "sketch", "brainstorm", "collaboration", "kanban"],
+      icon: <Presentation className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().deleteRange(range).insertDrawioDiagram({ mode: EDrawioMode.BOARD }).run();
+      },
+      section: "general",
+      pushAfter: "drawio-diagram",
+    }),
+  },
 ];
 
 /**
@@ -121,10 +167,24 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     },
   },
   {
+    // Page embed extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    getExtension: ({ extendedEditorProps }) => {
+      const workItemEmbedConfig = extendedEditorProps.embedHandler?.issue;
+
+      // Only enable if widget callback exists
+      if (!workItemEmbedConfig) return undefined;
+
+      return WorkItemEmbedExtension({
+        widgetCallback: workItemEmbedConfig.widgetCallback,
+      });
+    },
+  },
+  {
     // Work item embed suggestions extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
-    getExtension: ({ embedConfig }) => {
-      const issueConfig = embedConfig?.issue;
+    getExtension: ({ extendedEditorProps }) => {
+      const issueConfig = extendedEditorProps.embedHandler?.issue;
       const searchCallback = issueConfig?.searchCallback;
 
       // Only enable if search callback exists
@@ -132,17 +192,17 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
 
       return IssueEmbedSuggestions.configure({
         suggestion: {
-          render: () => IssueListRenderer(searchCallback),
+          render: WorkItemSuggestionsDropdownRenderer(searchCallback),
         },
       });
     },
   },
   {
     // Collaboration cursor extension
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-caret"),
     getExtension: ({ provider, userDetails }) =>
       provider &&
-      CustomCollaborationCursor({
+      CustomCollaborationCaret({
         provider,
         userDetails,
       }),
@@ -150,8 +210,8 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // Page embed extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
-    getExtension: ({ embedConfig }) => {
-      const pageConfig = embedConfig?.page;
+    getExtension: ({ extendedEditorProps }) => {
+      const pageConfig = extendedEditorProps.embedHandler?.page;
 
       // Only enable if widget callback exists
       if (!pageConfig) return undefined;
@@ -162,6 +222,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         unarchivePage: pageConfig.unarchivePage,
         deletePage: pageConfig.deletePage,
         getPageDetailsCallback: pageConfig.getPageDetailsCallback,
+        onNodesPosChanged: pageConfig.onNodesPosChanged,
       });
     },
   },
@@ -175,6 +236,37 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         isEditable,
       }),
   },
+  {
+    // Comment mark extension (for styling)
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("comments"),
+    getExtension: ({ extendedEditorProps, flaggedExtensions }) => {
+      const { onClick, onDelete, onRestore, onResolve, onUnresolve, shouldHideComment } =
+        extendedEditorProps.commentConfig ?? {};
+      return CommentsExtension({
+        isFlagged: flaggedExtensions.includes("comments"),
+        onCommentClick: onClick,
+        onCommentDelete: onDelete,
+        onCommentRestore: onRestore,
+        onCommentResolve: onResolve,
+        onCommentUnresolve: onUnresolve,
+        shouldHideComment: !!shouldHideComment,
+      });
+    },
+  },
+  {
+    // Draw.io extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("drawio"),
+    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) => {
+      const { extensionOptions } = extendedEditorProps ?? {};
+      const { onClick } = extensionOptions?.[ADDITIONAL_EXTENSIONS.DRAWIO] ?? {};
+      return DrawioExtension({
+        isFlagged: flaggedExtensions.includes("drawio"),
+        fileHandler,
+        onClick,
+        logoSpinner: extendedEditorProps?.logoSpinner,
+      });
+    },
+  },
 ];
 
 /**
@@ -184,10 +276,10 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
   const { disabledExtensions, flaggedExtensions } = props;
 
   // Filter enabled extensions and flatten the result
-  const extensions: Extensions = extensionRegistry
+  const documentExtensions: Extensions = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
     .map((config) => config.getExtension(props))
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
-  return extensions;
+  return documentExtensions;
 };

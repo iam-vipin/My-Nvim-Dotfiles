@@ -1,7 +1,7 @@
 "use client";
 
-import { FC } from "react";
-import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
+import type { FC } from "react";
+import type { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 // plane web components
 import { GitHubAuthButton } from "./github";
 import { GoogleAuthButton } from "./google";

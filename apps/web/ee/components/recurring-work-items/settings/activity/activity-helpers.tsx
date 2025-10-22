@@ -1,21 +1,22 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { ArrowRightLeft, CalendarIcon, ClockIcon, MessageSquare, Signal, Tag, Users } from "lucide-react";
 // plane imports
-import {
-  ERecurringWorkItemRunLogStatus,
-  TBaseActivityVerbs,
-  TRecurringWorkItemActivity,
-  TRecurringWorkItemActivityKeys,
-  TRecurringWorkItemActivityVerbs,
-} from "@plane/types";
 import {
   DiceIcon,
   DoubleCircleIcon,
   RecurringWorkItemFailureIcon,
   RecurringWorkItemIcon,
   RecurringWorkItemSuccessIcon,
-} from "@plane/ui";
+} from "@plane/propel/icons";
+import type {
+  TBaseActivityVerbs,
+  TRecurringWorkItemActivity,
+  TRecurringWorkItemActivityKeys,
+  TRecurringWorkItemActivityVerbs,
+} from "@plane/types";
+import { ERecurringWorkItemRunLogStatus } from "@plane/types";
 import { cn, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // root store
 import { store } from "@/lib/store-context";

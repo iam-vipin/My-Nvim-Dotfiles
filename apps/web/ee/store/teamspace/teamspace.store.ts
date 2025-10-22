@@ -1,22 +1,16 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
-import xor from "lodash/xor";
+import { concat, set, uniq, update, xor } from "lodash-es";
 import { makeObservable, action, computed, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// constants
+// Plane imports
 import { ETeamspaceScope } from "@plane/constants";
-// types
-import { TLoader, TTeamspace, TTeamspaceMember, TTeamspaceEntities, TNameDescriptionLoader } from "@plane/types";
-// utils
+import type { TLoader, TTeamspace, TTeamspaceMember, TTeamspaceEntities, TNameDescriptionLoader } from "@plane/types";
 import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
 import { TeamspaceService } from "@/plane-web/services/teamspace/teamspace.service";
 // plane web types
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // root store
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 
 export interface ITeamspaceStore {
   loader: TLoader;

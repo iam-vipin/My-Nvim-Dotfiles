@@ -1,10 +1,12 @@
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CustomerRequestIcon, CustomersIcon, Tooltip } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { getFileURL, formatURLForDisplay } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // plane web imports
@@ -66,7 +68,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {customer.website_url}
+                {formatURLForDisplay(customer.website_url)}
               </Link>
             )}
           </div>

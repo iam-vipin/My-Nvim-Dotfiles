@@ -1,10 +1,10 @@
 from .base import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
-    InitiativeLabelEndpoint,
     InitiativeAnalyticsEndpoint,
     WorkspaceInitiativeAnalytics,
     InitiativeEpicAnalytics,
+    InitiativeProgressEndpoint,
 )
 
 from .link import InitiativeLinkViewSet
@@ -19,3 +19,6 @@ from .update import (
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,
 )
+
+from .user_properties import InitiativeUserPropertiesEndpoint
+from .label import InitiativeLabelsEndpoint

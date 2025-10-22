@@ -17,7 +17,8 @@ import { DashboardWidgetHeader } from "./header";
 import { DashboardLineChartWidget } from "./line-chart";
 import { DashboardNumberWidget } from "./number";
 import { DashboardPieChartWidget } from "./pie-chart";
-import { commonWidgetClassName, parseWidgetData, TWidgetComponentProps } from "./";
+import type { TWidgetComponentProps } from "./";
+import { commonWidgetClassName, parseWidgetData } from "./";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;

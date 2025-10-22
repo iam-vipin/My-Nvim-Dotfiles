@@ -1,14 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ICycle } from "@plane/types";
-import { Button, ContentWrapper, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { ICycle } from "@plane/types";
+import { ContentWrapper, Loader } from "@plane/ui";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web components

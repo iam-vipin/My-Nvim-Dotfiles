@@ -1,12 +1,14 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { TAutomation } from "@plane/types";
+import type { TAutomation } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { AutomationInstance, IAutomationInstance, TAutomationHelpers } from "./automation";
-import { IProjectAutomationsStore, ProjectAutomationsStore } from "./project-automations.store";
+import type { IAutomationInstance, TAutomationHelpers } from "./automation";
+import { AutomationInstance } from "./automation";
+import type { IProjectAutomationsStore } from "./project-automations.store";
+import { ProjectAutomationsStore } from "./project-automations.store";
 
 export interface IAutomationsRootStore {
   // computed functions

@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS } from "@plane/constants";
-import { TTeamspaceActivity } from "@plane/types";
+import type { TTeamspaceActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";

@@ -2,10 +2,9 @@ import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { PlaneWebhookPayload } from "@plane/sdk";
 import { Store } from "@/worker/base";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
 import { createActivityLinkback } from "../../views/activity";
-
 
 export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const activities = await getActivities(payload);
@@ -26,14 +25,14 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
 
   const { slackService, entityConnection, workspaceConnection } = details;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
   const activityBlocks = createActivityLinkback({
     activities,
     workspaceSlug: entityConnection.workspace_slug,
     projectId: entityConnection.project_id!,
     issueId: payload.id,
-    userMap,
+    userMap: userMap,
   });
 
   const entityData = entityConnection.entity_data as TSlackIssueEntityData;
@@ -90,7 +89,7 @@ export const getActivities = async (payload: PlaneWebhookPayload): Promise<Activ
     const actorDisplayName = fieldActivities[0].actor.display_name;
 
     if (isArrayField) {
-      const { added, removed } = getArrayActivity(fieldActivities);
+      const { added, removed, addedIdentifiers, removedIdentifiers } = getArrayActivity(fieldActivities);
       latestActivities.set(field, {
         isArrayField: true,
         field,
@@ -98,6 +97,8 @@ export const getActivities = async (payload: PlaneWebhookPayload): Promise<Activ
         actorDisplayName,
         added,
         removed,
+        addedIdentifiers,
+        removedIdentifiers,
         timestamp: fieldActivities[fieldActivities.length - 1].timestamp,
       });
     } else {
@@ -110,6 +111,8 @@ export const getActivities = async (payload: PlaneWebhookPayload): Promise<Activ
         actorDisplayName,
         newValue: latestActivity.new_value || "",
         oldValue: latestActivity.old_value || "",
+        newIdentifier: latestActivity.new_identifier || "",
+        oldIdentifier: latestActivity.old_identifier || "",
         timestamp: latestActivity.timestamp,
       });
     }
@@ -128,14 +131,22 @@ export const getArrayActivity = (activities: PlaneActivityWithTimestamp[]) => {
 
   const added: string[] = [];
   const removed: string[] = [];
+  const addedIdentifiers: string[] = [];
+  const removedIdentifiers: string[] = [];
 
   for (const activity of activities) {
     if (activity.old_value === null && activity.new_value !== null) {
       added.push(activity.new_value);
+      if (activity.new_identifier) {
+        addedIdentifiers.push(activity.new_identifier);
+      }
     } else if (activity.old_value !== null && activity.new_value === null) {
       removed.push(activity.old_value);
+      if (activity.old_identifier) {
+        removedIdentifiers.push(activity.old_identifier);
+      }
     }
   }
 
-  return { added, removed };
+  return { added, removed, addedIdentifiers, removedIdentifiers };
 };

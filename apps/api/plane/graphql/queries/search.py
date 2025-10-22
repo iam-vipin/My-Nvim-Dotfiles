@@ -38,16 +38,14 @@ from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.cycle import CycleLiteType
 from plane.graphql.types.issues.base import IssueLiteType
 from plane.graphql.types.module import ModuleLiteType
-from plane.graphql.types.page import PageLiteType
+from plane.graphql.types.pages import PageLiteType
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.types.search import GlobalSearchType
 
 
 @sync_to_async
 def check_user_is_workspace_admin(user, slug):
-    return WorkspaceMember.objects.filter(
-        member=user, workspace__slug=slug, role=20
-    ).exists()
+    return WorkspaceMember.objects.filter(member=user, workspace__slug=slug, role=20).exists()
 
 
 async def filter_projects(
@@ -65,9 +63,7 @@ async def filter_projects(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    project_query = Project.objects.filter(
-        q, workspace__slug=slug, archived_at__isnull=True
-    )
+    project_query = Project.objects.filter(q, workspace__slug=slug, archived_at__isnull=True)
 
     user_id = str(user.id)
     project_teamspace_filter = await project_member_filter_via_teamspaces_async(
@@ -99,11 +95,7 @@ async def filter_projects(
     )
 
     projects = await sync_to_async(
-        lambda: list(
-            project_query.distinct().values(
-                "id", "name", "identifier", "is_member", "logo_props"
-            )
-        )
+        lambda: list(project_query.distinct().values("id", "name", "identifier", "is_member", "logo_props"))
     )()
 
     if (
@@ -192,15 +184,10 @@ async def filter_modules(
         module_query = module_query.filter(project=project)
 
     user_id = str(user.id)
-    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
-        user_id=user_id, workspace_slug=slug
-    )
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(user_id=user_id, workspace_slug=slug)
     modules = await sync_to_async(
         lambda: list(
-            module_query.filter(q)
-            .filter(project_teamspace_filter.query)
-            .distinct()
-            .values("id", "name", "project")
+            module_query.filter(q).filter(project_teamspace_filter.query).distinct().values("id", "name", "project")
         )
     )()
 
@@ -228,15 +215,10 @@ async def filter_cycles(
         cycle_query = cycle_query.filter(project=project)
 
     user_id = str(user.id)
-    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
-        user_id=user_id, workspace_slug=slug
-    )
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(user_id=user_id, workspace_slug=slug)
     cycles = await sync_to_async(
         lambda: list(
-            cycle_query.filter(q)
-            .filter(project_teamspace_filter.query)
-            .distinct()
-            .values("id", "name", "project")
+            cycle_query.filter(q).filter(project_teamspace_filter.query).distinct().values("id", "name", "project")
         )
     )()
 
@@ -259,9 +241,7 @@ async def filter_pages(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    page_query = Page.objects.filter(
-        workspace__slug=slug, archived_at__isnull=True, moved_to_page__isnull=True
-    )
+    page_query = Page.objects.filter(workspace__slug=slug, archived_at__isnull=True, moved_to_page__isnull=True)
     if project:
         user_id = str(user.id)
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
@@ -274,30 +254,22 @@ async def filter_pages(
                 "projects__archived_at__isnull": True,
             },
         )
-        page_query = page_query.filter(projects=project).filter(
-            project_teamspace_filter.query
-        )
+        page_query = page_query.filter(projects=project).filter(project_teamspace_filter.query)
 
     pages = await sync_to_async(lambda: list(page_query.filter(q).distinct()))()
     return pages
 
 
 @sync_to_async
-def filter_epics(
-    query: str, slug: str, user, project: Optional[strawberry.ID] = None
-) -> list[IssueLiteType]:
+def filter_epics(query: str, slug: str, user, project: Optional[strawberry.ID] = None) -> list[IssueLiteType]:
     user_id = str(user.id)
 
-    epic_feature_flagged = is_epic_feature_flagged(
-        user_id=user_id, workspace_slug=slug, raise_exception=False
-    )
+    epic_feature_flagged = is_epic_feature_flagged(user_id=user_id, workspace_slug=slug, raise_exception=False)
     if epic_feature_flagged is False:
         return []
 
     if project:
-        project_epics_enabled = is_project_epics_enabled(
-            workspace_slug=slug, project_id=project, raise_exception=False
-        )
+        project_epics_enabled = is_project_epics_enabled(workspace_slug=slug, project_id=project, raise_exception=False)
         if project_epics_enabled is False:
             return []
 
@@ -313,9 +285,7 @@ def filter_epics(
 
     epic_query = epic_base_query(workspace_slug=slug, user_id=user_id)
     if project:
-        epic_query = epic_base_query(
-            workspace_slug=slug, project_id=project, user_id=user_id
-        )
+        epic_query = epic_base_query(workspace_slug=slug, project_id=project, user_id=user_id)
 
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
@@ -338,9 +308,7 @@ def filter_epics(
 
 @strawberry.type
 class GlobalSearchQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def globalSearch(
         self,
         info: Info,
@@ -354,13 +322,9 @@ class GlobalSearchQuery:
         user = info.context.user
 
         if not query:
-            return GlobalSearchType(
-                projects=[], issues=[], modules=[], cycles=[], pages=[], epics=[]
-            )
+            return GlobalSearchType(projects=[], issues=[], modules=[], cycles=[], pages=[], epics=[])
 
-        projects = await filter_projects(
-            query, slug, user, project, include_unjoined_projects
-        )
+        projects = await filter_projects(query, slug, user, project, include_unjoined_projects)
         issues = await filter_issues(query, slug, user, project, module, cycle)
         modules = await filter_modules(query, slug, user, project, module, cycle)
         cycles = await filter_cycles(query, slug, user, project, module, cycle)

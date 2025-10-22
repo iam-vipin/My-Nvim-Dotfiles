@@ -1,7 +1,9 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CustomerRequestIcon, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import { CustomerRequestIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 

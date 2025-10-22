@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TMemberInviteCheck } from "@plane/types";
+import type { TMemberInviteCheck } from "@plane/types";
 import { Loader } from "@plane/ui";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

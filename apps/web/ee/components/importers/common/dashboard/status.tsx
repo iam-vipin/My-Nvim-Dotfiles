@@ -1,8 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
+import type { TJobStatus } from "@plane/etl/core";
+import { E_JOB_STATUS } from "@plane/etl/core";
 // helpers
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";

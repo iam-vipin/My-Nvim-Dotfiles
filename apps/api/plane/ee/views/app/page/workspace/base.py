@@ -1,10 +1,21 @@
 # Python imports
 import json
-import base64
 from datetime import datetime, timedelta
 
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Subquery, Count, F, Func
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Subquery,
+    Count,
+    F,
+    Func,
+    Max,
+    Case,
+    When,
+    IntegerField,
+)
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
@@ -39,10 +50,13 @@ from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_descendants import get_all_parent_ids
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag_decorator import (
+    check_feature_flag,
+    check_workspace_feature_flag,
+)
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import WorkspacePagePermission
+from plane.app.serializers import PageBinaryUpdateSerializer
 
 
 class WorkspacePageViewSet(BaseViewSet):
@@ -103,6 +117,12 @@ class WorkspacePageViewSet(BaseViewSet):
             .distinct()
         )
 
+    def get_largest_sort_order(self, slug, parent_id):
+        largest_sort_order = Page.objects.filter(
+            workspace__slug=slug, parent_id=parent_id
+        ).aggregate(largest=Max("sort_order"))["largest"]
+        return largest_sort_order + 10000 if largest_sort_order else 65535
+
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
@@ -114,6 +134,13 @@ class WorkspacePageViewSet(BaseViewSet):
                 "workspace_id": workspace.id,
             },
         )
+
+        if request.data.get("parent_id") and request.data.get("sort_order") is None:
+            largest_sort_order = self.get_largest_sort_order(
+                slug, request.data.get("parent_id")
+            )
+            if largest_sort_order is not None:
+                request.data["sort_order"] = largest_sort_order
 
         if serializer.is_valid():
             serializer.save(is_global=True)
@@ -161,6 +188,21 @@ class WorkspacePageViewSet(BaseViewSet):
                 )
 
             current_instance = WorkspacePageDetailSerializer(page).data
+
+            moved_internally = False
+            if request.data.get("parent_id") and current_instance.get(
+                "parent_id"
+            ) != request.data.get("parent_id"):
+                moved_internally = True
+                if request.data.get("sort_order") is None:
+                    # get the largest sort order for the new parent
+                    largest_sort_order = self.get_largest_sort_order(
+                        slug, request.data.get("parent_id")
+                    )
+                    # Page ordering
+                    if largest_sort_order is not None:
+                        page.sort_order = largest_sort_order
+
             serializer = WorkspacePageDetailSerializer(
                 page, data=request.data, partial=True
             )
@@ -179,16 +221,14 @@ class WorkspacePageViewSet(BaseViewSet):
                         user_id=request.user.id,
                     )
 
-                if request.data.get("parent_id") and current_instance.get(
-                    "parent_id"
-                ) != request.data.get("parent_id"):
+                if moved_internally:
                     nested_page_update.delay(
                         page_id=page_id,
                         action=PageAction.MOVED_INTERNALLY,
                         slug=slug,
                         user_id=request.user.id,
                         extra={
-                            "old_parent_id": page.parent_id,
+                            "old_parent_id": current_instance.get("parent_id"),
                             "new_parent_id": parent,
                             "access": request.data.get("access", page.access),
                         },
@@ -217,6 +257,7 @@ class WorkspacePageViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
+        track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         if not page:
             return Response(
@@ -240,12 +281,13 @@ class WorkspacePageViewSet(BaseViewSet):
                 {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
-            recent_visited_task.delay(
-                slug=slug,
-                entity_name="workspace_page",
-                entity_identifier=page_id,
-                user_id=request.user.id,
-            )
+            if track_visit:
+                recent_visited_task.delay(
+                    slug=slug,
+                    entity_name="workspace_page",
+                    entity_identifier=page_id,
+                    user_id=request.user.id,
+                )
             return Response(
                 WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK
             )
@@ -356,6 +398,7 @@ class WorkspacePageViewSet(BaseViewSet):
             self.get_queryset()
             .annotate(sub_pages_count=Subquery(sub_pages_count))
             .filter(filters)
+            .order_by("sort_order", "-created_at")
         )
 
         pages = WorkspacePageSerializer(queryset, many=True).data
@@ -500,7 +543,8 @@ class WorkspacePageViewSet(BaseViewSet):
                     )
                 )
             )
-        )
+        ).order_by("sort_order", "-created_at")
+
         serializer = WorkspacePageLiteSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -517,6 +561,42 @@ class WorkspacePageViewSet(BaseViewSet):
 
         serializer = WorkspacePageLiteSerializer(ordered_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def summary(self, request, slug):
+        user_pages = PageUser.objects.filter(
+            user_id=request.user.id,
+            workspace__slug=slug,
+        ).values_list("page_id", flat=True)
+
+        queryset = (
+            Page.objects.filter(workspace__slug=slug, is_global=True)
+            .filter(parent__isnull=True)
+            .filter(moved_to_page__isnull=True)
+            .filter(Q(owned_by=request.user) | Q(access=0) | Q(id__in=user_pages))
+            .distinct()
+        )
+
+        stats = queryset.aggregate(
+            public_pages=Count(
+                Case(
+                    When(access=Page.PUBLIC_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            private_pages=Count(
+                Case(
+                    When(access=Page.PRIVATE_ACCESS, archived_at__isnull=True, then=1),
+                    output_field=IntegerField(),
+                )
+            ),
+            archived_pages=Count(
+                Case(
+                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
+                )
+            ),
+        )
+
+        return Response(stats, status=status.HTTP_200_OK)
 
 
 class WorkspacePageDuplicateEndpoint(BaseAPIView):
@@ -620,33 +700,27 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
-        # Get the base64 data from the request
-        base64_data = request.data.get("description_binary")
-
-        # If base64 data is provided
-        if base64_data:
-            # Decode the base64 data to bytes
-            new_binary_data = base64.b64decode(base64_data)
-            # capture the page transaction
+        # Use serializer for validation and update
+        serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
+        if serializer.is_valid():
+            # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_value=request.data, old_value=existing_instance, page_id=page_id
                 )
-            # Store the updated binary data
-            page.name = request.data.get("name", page.name)
-            page.description_binary = new_binary_data
-            page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
-            page.save()
-            # Return a success response
+
+            # Update the page using serializer
+            updated_page = serializer.save()
+
+            # Run background tasks
             page_version.delay(
-                page_id=page.id,
+                page_id=updated_page.id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
             return Response({"message": "Updated successfully"})
         else:
-            return Response({"error": "No binary data provided"})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WorkspacePageVersionEndpoint(BaseAPIView):

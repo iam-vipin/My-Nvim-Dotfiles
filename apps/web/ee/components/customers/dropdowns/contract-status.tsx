@@ -1,7 +1,8 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { CUSTOMER_CONTRACT_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCustomerContractStatus } from "@plane/types";
+import type { TCustomerContractStatus } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 
 type TProps = {

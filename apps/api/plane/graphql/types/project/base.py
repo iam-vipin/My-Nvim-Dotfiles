@@ -70,9 +70,7 @@ class ProjectType:
     @strawberry.field
     async def total_members(self, info: strawberry.Info) -> int:
         projects = await sync_to_async(
-            lambda: ProjectMember.objects.filter(
-                project_id=self.id, is_active=True
-            ).count()
+            lambda: ProjectMember.objects.filter(project_id=self.id, is_active=True).count()
         )()
         return projects
 
@@ -87,9 +85,7 @@ class ProjectType:
 
     @strawberry.field
     async def total_issues(self, info: Info) -> int:
-        projects = await sync_to_async(
-            lambda: Issue.issue_objects.filter(project_id=self.id).count()
-        )()
+        projects = await sync_to_async(lambda: Issue.issue_objects.filter(project_id=self.id).count())()
         return projects
 
     @strawberry.field
@@ -126,8 +122,8 @@ class ProjectMemberType:
 
 @strawberry_django.type(Project)
 class ProjectLiteType:
-    id: strawberry.ID
-    name: str
-    identifier: str
-    is_member: Optional[bool]
-    logo_props: JSON
+    id: Optional[strawberry.ID] = None
+    name: Optional[str] = None
+    identifier: Optional[str] = None
+    is_member: Optional[bool] = False
+    logo_props: Optional[JSON] = None

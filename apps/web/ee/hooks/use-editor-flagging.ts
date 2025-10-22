@@ -1,77 +1,110 @@
+import { useMemo } from "react";
 // plane imports
 import type { TExtensions } from "@plane/editor";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 // ce imports
-import { TEditorFlaggingHookReturnType } from "@/ce/hooks/use-editor-flagging";
-// plane web hooks
+import type { TEditorFlaggingHookReturnType, TEditorFlaggingHookProps } from "@/ce/hooks/use-editor-flagging";
+// lib
 import { store } from "@/lib/store-context";
+// plane web imports
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
+// hooks
+import { useFeatureFlags } from "../hooks/store/use-feature-flags";
 import { EWorkspaceFeatures } from "../types/workspace-feature";
 
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreType): TEditorFlaggingHookReturnType => {
+export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => {
+  const { workspaceSlug, storeType } = props;
+  // store hooks
+  const { getIntegrations } = useFeatureFlags();
+  // feature flags
   const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
-  const { isNestedPagesEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
+  const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
+  // check integrations
+  const integrations = getIntegrations(workspaceSlug);
+  const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
 
   // disabled and flagged in the document editor
-  const documentDisabled: TExtensions[] = [];
-  const documentFlagged: TExtensions[] = [];
+  const document = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
   // disabled and flagged in the rich text editor
-  const richTextDisabled: TExtensions[] = [];
-  const richTextFlagged: TExtensions[] = [];
+  const richText = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
   // disabled and flagged in the lite text editor
-  const liteTextDisabled: TExtensions[] = [];
-  const liteTextFlagged: TExtensions[] = [];
-
-  liteTextDisabled.push("external-embed");
+  const liteText = useMemo(
+    () => ({
+      disabled: new Set<TExtensions>(["external-embed"]),
+      flagged: new Set<TExtensions>(),
+    }),
+    []
+  );
 
   if (!isWorkItemEmbedEnabled) {
-    documentFlagged.push("issue-embed");
+    document.flagged.add("issue-embed");
   }
   if (!isEditorAIOpsEnabled) {
-    documentDisabled.push("ai");
+    document.disabled.add("ai");
   }
   if (!isCollaborationCursorEnabled) {
-    documentDisabled.push("collaboration-cursor");
+    document.disabled.add("collaboration-caret");
   }
   if (storeType && !isNestedPagesEnabled(workspaceSlug)) {
-    documentFlagged.push("nested-pages");
+    document.flagged.add("nested-pages");
   }
   if (!isEditorAttachmentsEnabled) {
-    documentFlagged.push("attachments");
-    richTextFlagged.push("attachments");
+    document.flagged.add("attachments");
+    richText.flagged.add("attachments");
   }
   if (!isEditorMathematicsEnabled) {
-    documentFlagged.push("mathematics");
-    richTextFlagged.push("mathematics");
-    liteTextFlagged.push("mathematics");
+    document.flagged.add("mathematics");
+    richText.flagged.add("mathematics");
+    liteText.flagged.add("mathematics");
+  }
+  if (storeType && !isCommentsEnabled(workspaceSlug)) {
+    document.flagged.add("comments");
   }
   if (!isExternalEmbedEnabled) {
-    documentFlagged.push("external-embed");
-    richTextFlagged.push("external-embed");
-    liteTextFlagged.push("external-embed");
+    document.flagged.add("external-embed");
+    richText.flagged.add("external-embed");
+    liteText.flagged.add("external-embed");
+  }
+
+  // check for drawio integration
+  if (!hasDrawioIntegration) {
+    document.flagged.add("drawio");
   }
 
   return {
     document: {
-      disabled: documentDisabled,
-      flagged: documentFlagged,
+      disabled: Array.from(document.disabled),
+      flagged: Array.from(document.flagged),
     },
     liteText: {
-      disabled: liteTextDisabled,
-      flagged: liteTextFlagged,
+      disabled: Array.from(liteText.disabled),
+      flagged: Array.from(liteText.flagged),
     },
     richText: {
-      disabled: richTextDisabled,
-      flagged: richTextFlagged,
+      disabled: Array.from(richText.disabled),
+      flagged: Array.from(richText.flagged),
     },
   };
 };

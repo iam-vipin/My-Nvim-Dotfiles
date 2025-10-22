@@ -1,12 +1,12 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web components
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { IntegrationListItem } from "@/plane-web/components/integrations";
 // plane web types
-import { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import GitHubLogo from "@/public/services/github.svg";
 import GitlabLogo from "@/public/services/gitlab.svg";
@@ -32,10 +32,26 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     beta: true,
   },
   {
+    flag: E_FEATURE_FLAGS.GITHUB_ENTERPRISE_INTEGRATION,
+    urlSlug: "github-enterprise",
+    key: "github_enterprise",
+    title: "GitHub Enterprise",
+    logo: GitHubLogo,
+    beta: true,
+  },
+  {
     flag: E_FEATURE_FLAGS.GITLAB_INTEGRATION,
     urlSlug: "gitlab",
     key: "gitlab",
     title: "GitLab",
+    logo: GitlabLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.GITLAB_ENTERPRISE_INTEGRATION,
+    urlSlug: "gitlab-enterprise",
+    key: "gitlab_enterprise",
+    title: "GitLab Enterprise",
     logo: GitlabLogo,
     beta: true,
   },
@@ -53,14 +69,6 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     key: "sentry",
     title: "Sentry",
     logo: SentryLogo,
-    beta: true,
-  },
-  {
-    flag: E_FEATURE_FLAGS.GITHUB_ENTERPRISE_INTEGRATION,
-    urlSlug: "github-enterprise",
-    key: "github_enterprise",
-    title: "GitHub Enterprise",
-    logo: GitHubLogo,
     beta: true,
   },
 ];

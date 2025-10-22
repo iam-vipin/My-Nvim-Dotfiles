@@ -3,8 +3,10 @@ from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSe
 from .app.issue import IssueLiteSerializer, WorkItemPageSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
 from .app.page import (
+    PageCommentSerializer,
     WorkspacePageSerializer,
     WorkspacePageLiteSerializer,
+    PageCommentReactionSerializer,
     WorkspacePageDetailSerializer,
     WorkspacePageVersionSerializer,
     WorkspacePageVersionDetailSerializer,
@@ -48,6 +50,8 @@ from .app.initiative import (
     InitiativeReactionSerializer,
     InitiativeActivitySerializer,
     InitiativeEpicSerializer,
+    InitiativeLabelSerializer,
+    InitiativeWriteSerializer,
 )
 
 from .app.teamspace import (
@@ -62,6 +66,7 @@ from .app.teamspace import (
     TeamspaceCommentReactionSerializer,
     TeamspaceUserPropertySerializer,
     TeamspaceActivitySerializer,
+    TeamspacePageLiteSerializer,
 )
 
 from .app.epic import (
@@ -114,6 +119,8 @@ from .app.recurring_work_item import (
     RecurringWorkItemSerializer,
     RecurringWorkItemTaskActivitySerializer,
 )
+
+from .app.description import DescriptionSerializer
 
 # Space imports
 from .space.page import (

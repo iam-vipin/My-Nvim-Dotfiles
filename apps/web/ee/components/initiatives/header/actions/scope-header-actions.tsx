@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { EIssueLayoutTypes } from "@plane/types";
-import { Button } from "@plane/ui";
 import { LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

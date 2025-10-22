@@ -4,7 +4,8 @@ import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TOperationMode } from "@plane/types";
-import { CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -69,9 +70,7 @@ export const IssuePropertyQuickActions = observer((props: TIssuePropertyQuickAct
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
             className={cn("flex items-center gap-2")}

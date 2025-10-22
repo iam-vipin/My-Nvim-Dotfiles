@@ -5,8 +5,8 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { ICycleProgressData, IChartResponse, TChartData, TCycleGroups } from "@plane/types";
-import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/ui";
+import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/propel/icons";
+import type { ICycleProgressData, IChartResponse, TChartData, TCycleGroups } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
@@ -18,7 +18,8 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 // local components
-import ModulesCyclesTooltip, { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
+import type { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
+import ModulesCyclesTooltip from "../modules-cycles-tooltip";
 
 const analyticsService = new AnalyticsService();
 const CycleProgress = observer(() => {

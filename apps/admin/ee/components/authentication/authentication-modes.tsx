@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Mails, KeyRound } from "lucide-react";
-import {
+import type {
   TInstanceAuthenticationMethodKeys as TBaseAuthenticationMethods,
   TInstanceAuthenticationModes,
   TInstanceEnterpriseAuthenticationMethodKeys,

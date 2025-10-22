@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { isEqual } from "lodash";
+import React, { useCallback } from "react";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import type { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { MemberDropdownProps } from "@/components/dropdowns/member/types";
+import type { MemberDropdownProps } from "@/components/dropdowns/member/types";
 
 type TMemberValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.RELATION>>;
@@ -33,20 +33,14 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
     buttonClassName,
     onMemberValueChange,
   } = props;
-  // states
-  const [data, setData] = useState<string[]>([]);
   // plane hooks
   const { t } = useTranslation();
-
-  useEffect(() => {
-    setData(value);
-  }, [value]);
 
   const memberPickerProps: Partial<MemberDropdownProps> = {
     buttonClassName: cn(
       "h-full py-1 text-sm justify-between bg-custom-background-100",
       {
-        "text-custom-text-400": !data?.length,
+        "text-custom-text-400": !value?.length,
         "border-custom-border-200": variant === "create",
         "border-red-500": Boolean(error),
       },
@@ -58,17 +52,20 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
     dropdownArrowClassName: "h-3.5 w-3.5 hidden group-hover:inline",
     placeholder: isMultiSelect ? "Select members" : "Select a member",
     disabled: isDisabled,
-    hideIcon: !data?.length,
+    hideIcon: !value?.length,
     placement: "bottom-start",
     dropdownArrow: true,
     showUserDetails: true,
-    onClose: () => {
-      if (!isEqual(data, value)) {
-        onMemberValueChange(data);
-      }
-      document.body?.removeAttribute("data-delay-outside-click");
-    },
   };
+
+  const handleChange = useCallback(
+    (newValue: string[]) => {
+      if (!isEqual(newValue, value)) {
+        onMemberValueChange(newValue);
+      }
+    },
+    [value, onMemberValueChange]
+  );
 
   return (
     <>
@@ -76,15 +73,15 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
         <MemberDropdown
           {...memberPickerProps}
           projectId={projectId}
-          value={data || []}
+          value={value || []}
           onChange={(memberIds) => {
             // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
             document.body?.setAttribute("data-delay-outside-click", "true");
-            setData(memberIds);
+            handleChange(memberIds);
           }}
           buttonVariant={
             variant === "update" && !Boolean(error)
-              ? data.length > 1
+              ? value.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"
               : "border-with-text"
@@ -96,15 +93,19 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
         <MemberDropdown
           {...memberPickerProps}
           projectId={projectId}
-          value={data?.[0] || null}
+          value={value?.[0] || null}
           onChange={(memberId) => {
             // add data-delay-outside-click to delay the dropdown from closing so that data can be synced
             document.body?.setAttribute("data-delay-outside-click", "true");
-            setData(memberId && !data?.includes(memberId) ? [memberId] : []);
+            if (memberId && memberId === value?.[0]) {
+              handleChange([]);
+            } else {
+              handleChange(memberId ? [memberId] : []);
+            }
           }}
           buttonVariant={
             variant === "update" && !Boolean(error)
-              ? data.length > 1
+              ? value.length > 1
                 ? "transparent-without-text"
                 : "transparent-with-text"
               : "border-with-text"

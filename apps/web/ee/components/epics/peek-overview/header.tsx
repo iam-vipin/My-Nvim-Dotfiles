@@ -1,28 +1,25 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType, TIssue } from "@plane/types";
-import {
-  CenterPanelIcon,
-  CustomSelect,
-  FullScreenPanelIcon,
-  SidePanelIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType } from "@plane/types";
+import { CustomSelect } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
 import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useProject } from "@/hooks/store/use-project"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

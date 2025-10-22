@@ -7,11 +7,8 @@ import { ACCEPTED_ATTACHMENT_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { EFileError } from "@/helpers/file";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { uploadFirstFileAndInsertRemaining, useDropZone, useUploader } from "@/hooks/use-file-upload";
-// plane editor imports
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
 import { getAttachmentExtensionErrorMap, getAttachmentExtensionFileMap } from "../utils";
@@ -27,7 +24,7 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
   const hasTriggeredFilePickerRef = useRef(false);
   // derived values
   const { id: attachmentBlockId } = node.attrs;
-  const maxFileSize = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.ATTACHMENT)?.maxFileSize;
+  const maxFileSize = editor.storage.attachmentComponent?.maxFileSize;
   const attachmentExtensionFileMap = useMemo(() => getAttachmentExtensionFileMap(editor), [editor]);
   const attachmentExtensionErrorMap = useMemo(() => getAttachmentExtensionErrorMap(editor), [editor]);
 
@@ -52,7 +49,12 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
 
       // only if the cursor is at the current image component, manipulate
       // the cursor position
-      if (currentNode && currentNode.type.name === node.type.name && currentNode.attrs.src === url) {
+      if (
+        currentNode &&
+        currentNode.type.name === node.type.name &&
+        currentNode.attrs.src === url &&
+        pos !== undefined
+      ) {
         // control cursor position after upload
         const nextNode = editor.state.doc.nodeAt(pos + 1);
 
@@ -89,7 +91,7 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
 
   const handleProgressStatus = useCallback(
     (isUploading: boolean) => {
-      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+      editor.storage.utility.uploadInProgress = isUploading;
     },
     [editor]
   );
@@ -117,7 +119,7 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
   // dropzone
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
-    pos: getPos(),
+    getPos,
     type: "attachment",
     uploader: uploadFile,
   });
@@ -126,12 +128,13 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const filesList = e.target.files;
-      if (!filesList) return;
+      const pos = getPos();
+      if (!filesList || pos === undefined) return;
 
       await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
-        pos: getPos(),
+        pos,
         type: "attachment",
         uploader: uploadFile,
       });

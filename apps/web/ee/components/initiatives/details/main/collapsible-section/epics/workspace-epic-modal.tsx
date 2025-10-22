@@ -1,14 +1,16 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { EpicIcon } from "@plane/propel/icons";
 // types
-import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
+import type { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Button, Checkbox, EpicIcon, Loader } from "@plane/ui";
+import { Checkbox, Loader } from "@plane/ui";
 // helpers
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // hooks

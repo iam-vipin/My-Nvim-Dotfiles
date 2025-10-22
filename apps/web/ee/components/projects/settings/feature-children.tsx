@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // plane web components
 import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
 // hooks

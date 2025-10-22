@@ -1,16 +1,17 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ProjectCard } from "@/plane-web/components/projects/layouts/gallery/card";

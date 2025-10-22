@@ -4,10 +4,9 @@ import { observer } from "mobx-react";
 import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
-// plane editor
-import type { EditorRefApi } from "@plane/editor";
 // plane ui
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
@@ -16,7 +15,7 @@ import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // Import the custom menu hook
 import { usePageActionsMenu } from "@/plane-web/hooks/use-page-actions-menu";
 // store types
@@ -38,7 +37,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -48,14 +46,13 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
+  const { extraOptions, optionsOrder, page, parentRef, storeType, realtimeEvents = true } = props;
 
   // states for common modals
   const [deletePageModal, setDeletePageModal] = useState(false);
 
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
 
@@ -70,6 +67,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
   const { access, archived_at, canCurrentUserChangeAccess, canCurrentUserDeletePage, canCurrentUserDuplicatePage } =
     page;
 
+  const isProjectPage = page.project_ids && page.project_ids.length > 0;
   // Base menu items that are common across all implementations
   const baseMenuItems: (TContextMenuItem & { key: TPageActions })[] = useMemo(
     () => [
@@ -81,7 +79,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           });
           pageOperations.toggleAccess();
         },
-        title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
+        title: access === EPageAccess.PUBLIC ? "Make private" : isProjectPage ? "Make public" : "Open to workspace",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
@@ -128,6 +126,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
       access,
       archived_at,
       canCurrentUserChangeAccess,
+      isProjectPage,
       canCurrentUserDeletePage,
       canCurrentUserDuplicatePage,
       pageOperations,
@@ -187,9 +186,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action?.();
               }}
               className={cn("flex items-center gap-2", item.className)}

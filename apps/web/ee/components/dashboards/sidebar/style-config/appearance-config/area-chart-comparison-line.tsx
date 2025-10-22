@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { LINE_CHART_LINE_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";
 import { WidgetColorPicker } from "./color-picker";

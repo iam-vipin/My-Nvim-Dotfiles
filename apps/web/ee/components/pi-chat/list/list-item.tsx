@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Pencil, Star, Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, EModalPosition, EModalWidth, ModalCore, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TUserThreads } from "@/plane-web/types";
+import type { TUserThreads } from "@/plane-web/types";
 import { ChatDeleteModal } from "../modals/delete-modal";
 import { EditForm } from "../modals/edit-form";
 
@@ -105,9 +107,7 @@ export const PiChatListItem = observer((props: TProps) => {
               return (
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                   className={cn(

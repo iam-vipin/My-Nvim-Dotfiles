@@ -14,22 +14,19 @@ class Command(BaseCommand):
     This command is used to manage marketplace apps.
     """
 
-    help = "Marketplace app operations (assign-owner, publish, unpublish, make-app-internal, make-app-external)"
+    help = """
+    Marketplace app operations (assign-owner, publish, unpublish, make-app-internal, make-app-external, 
+    set-app-priority, set-app-status)
+    """
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(dest="subcommand", required=True)
 
         # Subcommand: assign-owner
-        assign_owner_parser = subparsers.add_parser(
-            "assign-owner", help="Assign owner to app"
-        )
+        assign_owner_parser = subparsers.add_parser("assign-owner", help="Assign owner to app")
         assign_owner_parser.add_argument("app_slug", type=str, help="App slug")
-        assign_owner_parser.add_argument(
-            "--workspace-slug", type=str, required=True, help="Workspace slug"
-        )
-        assign_owner_parser.add_argument(
-            "--user-email", type=str, required=True, help="User email"
-        )
+        assign_owner_parser.add_argument("--workspace-slug", type=str, required=True, help="Workspace slug")
+        assign_owner_parser.add_argument("--user-email", type=str, required=True, help="User email")
 
         # Subcommand: publish
         publish_parser = subparsers.add_parser("publish", help="Publish app")
@@ -53,6 +50,16 @@ class Command(BaseCommand):
         make_app_external_parser = subparsers.add_parser("make-app-external", help="Make app external")
         make_app_external_parser.add_argument("app_slug", type=str, help="App slug")
 
+        # Subcommand: set-app-priority
+        set_app_priority_parser = subparsers.add_parser("set-app-priority", help="Set app priority")
+        set_app_priority_parser.add_argument("app_slug", type=str, help="App slug")
+        set_app_priority_parser.add_argument("priority", type=int, help="Priority")
+
+        # Subcommand: set-app-status
+        set_app_status_parser = subparsers.add_parser("set-app-status", help="Set app status")
+        set_app_status_parser.add_argument("app_slug", type=str, help="App slug")
+        set_app_status_parser.add_argument("status", type=str, help="Status")
+
     def handle(self, *args, **options):
         subcommand = options["subcommand"]
 
@@ -61,9 +68,7 @@ class Command(BaseCommand):
             workspace_slug = options["workspace_slug"]
             user_email = options["user_email"]
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"Assigning owner {user_email} to app {app_slug} in workspace {workspace_slug}"
-                )
+                self.style.SUCCESS(f"Assigning owner {user_email} to app {app_slug} in workspace {workspace_slug}")
             )
             self.assign_owner(app_slug, workspace_slug, user_email)
 
@@ -71,10 +76,7 @@ class Command(BaseCommand):
             app_slug = options["app_slug"]
             timestamp = options.get("timestamp")
             self.stdout.write(
-                self.style.SUCCESS(
-                    f"Publishing app {app_slug}"
-                    + (f" at {timestamp}" if timestamp else "")
-                )
+                self.style.SUCCESS(f"Publishing app {app_slug}" + (f" at {timestamp}" if timestamp else ""))
             )
             self.publish(app_slug, timestamp)
 
@@ -92,6 +94,18 @@ class Command(BaseCommand):
             app_slug = options["app_slug"]
             self.stdout.write(self.style.SUCCESS(f"Making app {app_slug} external"))
             self.make_app_external(app_slug)
+
+        elif subcommand == "set-app-priority":
+            app_slug = options["app_slug"]
+            priority = options["priority"]
+            self.stdout.write(self.style.SUCCESS(f"Setting app {app_slug} priority to {priority}"))
+            self.set_app_priority(app_slug, priority)
+
+        elif subcommand == "set-app-status":
+            app_slug = options["app_slug"]
+            status = options["status"]
+            self.stdout.write(self.style.SUCCESS(f"Setting app {app_slug} status to {status}"))
+            self.set_app_status(app_slug, status)
 
         else:
             raise CommandError("Unknown subcommand")
@@ -150,4 +164,20 @@ class Command(BaseCommand):
         """
         app = Application.objects.get(slug=app_slug)
         app.is_internal = False
+        app.save()
+
+    def set_app_priority(self, app_slug, priority):
+        """
+        python manage.py update_marketplace_app set-app-priority <app_slug> <priority>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.priority = priority
+        app.save()
+
+    def set_app_status(self, app_slug, status):
+        """
+        python manage.py update_marketplace_app set-app-status <app_slug> <status>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.status = status
         app.save()

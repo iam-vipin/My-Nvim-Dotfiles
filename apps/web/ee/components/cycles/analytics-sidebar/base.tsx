@@ -1,12 +1,18 @@
 "use client";
 
 import { observer } from "mobx-react";
-// helpers
-import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
+// plane imports
+import type {
+  TCycleEstimateSystemAdvanced,
+  TCycleEstimateType,
+  TCyclePlotType,
+  TProgressChartData,
+} from "@plane/types";
 import { Loader } from "@plane/ui";
+import { calculateCycleProgress } from "@plane/utils";
 // local components
-import { useCycle } from "@/hooks/store/use-cycle"
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCycle } from "@/hooks/store/use-cycle";
 import ActiveCycleChart from "../active-cycle/cycle-chart/chart";
 import Selection from "../active-cycle/selection";
 import useCycleDetails from "../active-cycle/use-cycle-details";
@@ -54,20 +60,8 @@ export const SidebarChart = observer((props: TProps) => {
 
   // derived values
   const computedPlotType: TCyclePlotType = (cycle.id && plotType[cycle.id]) || "burndown";
-  const totalEstimatePoints = cycle?.total_estimate_points || 0;
-  const totalIssues = cycle?.total_issues || 0;
-  const completedIssues = cycle?.completed_issues || 0;
-  const completedEstimatePoints = cycle?.completed_estimate_points || 0;
 
-  const progressHeaderPercentage = cycle
-    ? cycleEstimateType === "points"
-      ? completedEstimatePoints != 0 && totalEstimatePoints != 0
-        ? Math.round((completedEstimatePoints / totalEstimatePoints) * 100)
-        : 0
-      : completedIssues != 0 && completedIssues != 0
-        ? Math.round((completedIssues / totalIssues) * 100)
-        : 0
-    : 0;
+  const progressHeaderPercentage = calculateCycleProgress(cycle, cycleEstimateType);
 
   return (
     <>

@@ -1,17 +1,18 @@
-import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { E_SORT_ORDER, EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
-import { EIssueServiceType, TIssueActivityComment, TIssueServiceType } from "@plane/types";
+import type { E_SORT_ORDER } from "@plane/constants";
+import { EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
+import type { TIssueActivityComment, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ce store
-import {
+import type {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,
   IIssueActivityStore as IIssueActivityStoreCe,
-  IssueActivityStore as IssueActivityStoreCe,
 } from "@/ce/store/issue/issue-details/activity.store";
+import { IssueActivityStore as IssueActivityStoreCe } from "@/ce/store/issue/issue-details/activity.store";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { IssueActivityService } from "@/services/issue";
 
@@ -42,37 +43,13 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 
-    const currentStore =
-      this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
-
-    let activityComments: TIssueActivityComment[] = [];
-
-    const activities = this.getActivitiesByIssueId(issueId);
-    const comments = currentStore.comment.getCommentsByIssueId(issueId);
     const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId);
     const additionalPropertiesActivities = this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId);
 
-    if (!activities || !comments || !worklogs || !additionalPropertiesActivities) return undefined;
+    const baseItems = this.buildActivityAndCommentItems(issueId);
+    if (!baseItems || !worklogs || !additionalPropertiesActivities) return undefined;
 
-    activities.forEach((activityId) => {
-      const activity = this.getActivityById(activityId);
-      if (!activity) return;
-      activityComments.push({
-        id: activity.id,
-        activity_type: EActivityFilterType.ACTIVITY,
-        created_at: activity.created_at,
-      });
-    });
-
-    comments.forEach((commentId) => {
-      const comment = currentStore.comment.getCommentById(commentId);
-      if (!comment) return;
-      activityComments.push({
-        id: comment.id,
-        activity_type: EActivityFilterType.COMMENT,
-        created_at: comment.created_at,
-      });
-    });
+    const activityComments: TIssueActivityComment[] = [...baseItems];
 
     worklogs.forEach((worklogId) => {
       const worklog = this.store.workspaceWorklogs.worklogById(worklogId);
@@ -94,9 +71,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
-
-    return activityComments;
+    return this.sortActivityComments(activityComments, sortOrder);
   });
 
   // actions

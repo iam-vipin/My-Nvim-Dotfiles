@@ -6,22 +6,15 @@ import { CircleMinus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
-import {
-  AlertModalCore,
-  Avatar,
-  AvatarGroup,
-  CustomMenu,
-  Logo,
-  setToast,
-  Table,
-  TeamsIcon,
-  TOAST_TYPE,
-} from "@plane/ui";
+import { TeamsIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TTeamspace } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
+import { AlertModalCore, Avatar, AvatarGroup, CustomMenu, Logo, Table } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";

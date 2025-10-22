@@ -29,9 +29,7 @@ from plane.graphql.types.epics.comment import (
 
 @strawberry.type
 class EpicCommentMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def add_epic_comment(
         self,
         info: Info,

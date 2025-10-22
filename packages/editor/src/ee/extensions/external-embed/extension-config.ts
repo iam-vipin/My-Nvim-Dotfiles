@@ -2,8 +2,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
-import type { ExternalEmbedExtension, InsertExternalEmbedCommandProps } from "./types";
+import { EExternalEmbedAttributeNames, type TExternalEmbedBlockAttributes } from "@/plane-editor/types/external-embed";
+import type { ExternalEmbedExtension, ExternalEmbedExtensionStorage, InsertExternalEmbedCommandProps } from "./types";
 // utils
 import { DEFAULT_EXTERNAL_EMBED_ATTRIBUTES } from "./utils/attribute";
 
@@ -12,6 +12,9 @@ declare module "@tiptap/core" {
     [ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED]: {
       insertExternalEmbed: (props: InsertExternalEmbedCommandProps) => ReturnType;
     };
+  }
+  interface Storage {
+    [ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED]: ExternalEmbedExtensionStorage;
   }
 }
 
@@ -26,12 +29,18 @@ export const ExternalEmbedExtensionConfig: ExternalEmbedExtension = Node.create(
 
   addAttributes() {
     const attributes = {
-      ...Object.values(EExternalEmbedAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_EXTERNAL_EMBED_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(EExternalEmbedAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_EXTERNAL_EMBED_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<
+          EExternalEmbedAttributeNames,
+          { default: TExternalEmbedBlockAttributes[EExternalEmbedAttributeNames] }
+        >
+      ),
     };
     return attributes;
   },

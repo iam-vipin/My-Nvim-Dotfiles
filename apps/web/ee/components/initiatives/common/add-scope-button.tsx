@@ -3,7 +3,10 @@ import { observer } from "mobx-react";
 import { PlusIcon, BriefcaseIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomMenu, EpicIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EpicIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
 // hooks
@@ -113,9 +116,7 @@ export const AddScopeButton = observer((props: Props) => {
         {optionItems.map((item, index) => (
           <CustomMenu.MenuItem
             key={index}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.onClick();
             }}
           >

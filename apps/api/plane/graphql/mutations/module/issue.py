@@ -20,9 +20,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 
 @strawberry.type
 class ModuleIssueMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_module_issues(
         self,
         info: Info,
@@ -35,11 +33,7 @@ class ModuleIssueMutation:
         project = await sync_to_async(Project.objects.get)(pk=project)
 
         existing_module_issues = await sync_to_async(
-            lambda: list(
-                ModuleIssue.objects.filter(module_id=module).values_list(
-                    "issue_id", flat=True
-                )
-            )
+            lambda: list(ModuleIssue.objects.filter(module_id=module).values_list("issue_id", flat=True))
         )()
 
         # Filter out existing issues
@@ -99,9 +93,7 @@ class ModuleIssueMutation:
                         actor_id=str(user.id),
                         issue_id=str(module_issue.issue_id),
                         project_id=str(project.id),
-                        current_instance=json.dumps(
-                            {"module_name": module_issue.module.name}
-                        ),
+                        current_instance=json.dumps({"module_name": module_issue.module.name}),
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=info.context.request.META.get("HTTP_ORIGIN"),
@@ -114,9 +106,7 @@ class ModuleIssueMutation:
 
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def delete_module_issue(
         self,
         info: Info,
@@ -136,9 +126,7 @@ class ModuleIssueMutation:
                 actor_id=str(user.id),
                 issue_id=str(issue),
                 project_id=str(project),
-                current_instance=json.dumps(
-                    {"module_name": module_issue.first().module.name}
-                ),
+                current_instance=json.dumps({"module_name": module_issue.first().module.name}),
                 type="module.activity.deleted",
                 epoch=int(timezone.now().timestamp()),
                 notification=True,

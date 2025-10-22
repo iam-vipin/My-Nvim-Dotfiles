@@ -9,9 +9,10 @@ import { useParams } from "next/navigation";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import { PageListBlock } from "./block";
 
@@ -38,7 +39,7 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
   const itemContentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug, projectId, pageId: currentPageIdParam } = useParams();
   // store hooks
-  const { getPageById, isNestedPagesEnabled } = usePageStore(storeType);
+  const { getPageById, isNestedPagesEnabled, movePageInternally } = usePageStore(storeType);
   const page = usePage({
     pageId,
     storeType,
@@ -243,7 +244,8 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
             updatePayload.access = targetAccess;
           }
 
-          droppedPageDetails.update(updatePayload);
+          // Use the store method instead of direct update
+          movePageInternally(droppedPageId, updatePayload);
         },
         canDrop: ({ source }) => {
           if (
@@ -286,6 +288,7 @@ export const PageListBlockRoot: React.FC<TPageListBlock> = observer((props) => {
     isNestedPagesEnabled,
     workspaceSlug,
     sectionType,
+    movePageInternally,
   ]);
 
   if (!page) return null;

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
+import { Controller, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Post } from "@/lib";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { importTaskManger } from "@/worker";
 import { EZipDriverType } from "../drivers";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClientInternal();
 
 @Controller("/api/zip-importer")
 export class NotionController {
@@ -39,10 +39,10 @@ export class NotionController {
   @Post("/:provider/start-import")
   async startImport(req: Request, res: Response) {
     try {
-      const { workspaceId, userId, fileKey, fileName } = req.body;
+      const { workspaceId, userId, config } = req.body;
       const { provider } = req.params;
 
-      if (!workspaceId || !userId || !fileKey) {
+      if (!workspaceId || !userId || !config) {
         return res.status(400).json({ error: "Missing required parameters: workspaceId, userId or fileKey" });
       }
 
@@ -65,10 +65,7 @@ export class NotionController {
         initiator_id: userId,
         workspace_id: workspaceId,
         source: provider.toUpperCase() as EZipDriverType,
-        config: {
-          fileId: fileKey,
-          fileName: fileName,
-        },
+        config: config,
       });
 
       await apiClient.importReport.updateImportReport(job.report_id, {

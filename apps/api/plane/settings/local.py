@@ -13,9 +13,7 @@ MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Only show emails in console don't send it to smtp
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
-)
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
 CACHES = {
     "default": {
@@ -101,5 +99,10 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.authentication": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        }
     },
 }

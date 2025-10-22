@@ -1,12 +1,14 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web hooks

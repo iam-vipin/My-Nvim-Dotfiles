@@ -1,10 +1,13 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // components
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

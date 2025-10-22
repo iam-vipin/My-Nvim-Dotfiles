@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import { Button } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
@@ -13,7 +13,7 @@ import { PublishPageModal } from "@/plane-web/components/pages";
 import { usePublishPage, useWorkspaceSubscription, EPageStoreType } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 interface PagePublishActionsProps {
   page: TPageInstance;

@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
+import type { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
 // services
 import { APIService } from "@/services/api.service";
 

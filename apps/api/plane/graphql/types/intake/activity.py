@@ -9,7 +9,7 @@ from asgiref.sync import sync_to_async
 
 # Module Imports
 from plane.db.models import IntakeIssue, IssueActivity
-from plane.graphql.types.users import UserLiteType
+from plane.graphql.types.user import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
@@ -76,9 +76,7 @@ class IntakeWorkItemPropertyActivityType:
     async def source(self, info) -> Optional[str]:
         issue_id = self.issue_id or None
         if issue_id:
-            intake_work_item = await sync_to_async(
-                lambda: IntakeIssue.objects.get(issue_id=issue_id)
-            )()
+            intake_work_item = await sync_to_async(lambda: IntakeIssue.objects.get(issue_id=issue_id))()
             return intake_work_item.source if intake_work_item.source else None
         return None
 
@@ -86,10 +84,6 @@ class IntakeWorkItemPropertyActivityType:
     async def source_email(self) -> Optional[str]:
         issue_id = self.issue_id or None
         if issue_id:
-            intake_work_item = await sync_to_async(
-                lambda: IntakeIssue.objects.get(issue_id=issue_id)
-            )()
-            return (
-                intake_work_item.source_email if intake_work_item.source_email else None
-            )
+            intake_work_item = await sync_to_async(lambda: IntakeIssue.objects.get(issue_id=issue_id))()
+            return intake_work_item.source_email if intake_work_item.source_email else None
         return None

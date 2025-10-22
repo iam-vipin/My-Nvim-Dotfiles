@@ -1,12 +1,15 @@
-import React, { FC } from "react";
-import difference from "lodash/difference";
+import type { FC } from "react";
+import React from "react";
+import { difference } from "lodash-es";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomersIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { CustomerDropDown } from "@/plane-web/components/customers";

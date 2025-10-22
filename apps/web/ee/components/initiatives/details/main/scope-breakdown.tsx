@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CircularProgressIndicator, ControlLink, Loader, ScopeIcon } from "@plane/ui";
+import { ScopeIcon } from "@plane/propel/icons";
+import { CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
@@ -12,7 +13,7 @@ import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-sc
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
+import type { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
 
 type TDataCardProps = {
   workspaceSlug: string;
@@ -20,10 +21,11 @@ type TDataCardProps = {
   type: "project" | "epic";
   data: TInitiativeAnalyticData | undefined;
   onAdd: (value?: boolean) => void;
+  count: number;
 };
 
 const DataCard = (props: TDataCardProps) => {
-  const { type, data, workspaceSlug, initiativeId } = props;
+  const { type, data, workspaceSlug, initiativeId, count } = props;
   const router = useRouter();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
   const total =
@@ -45,7 +47,10 @@ const DataCard = (props: TDataCardProps) => {
       onClick={handleControlLinkClick}
     >
       <div className="flex w-full justify-between text-custom-text-300 ">
-        <div className="font-semibold text-base capitalize">{type}s</div>
+        <div className="flex gap-2 items-center">
+          <div className="font-semibold text-base capitalize">{type}s</div>
+          <span className="text-custom-text-400 font-medium text-xs">{count}</span>
+        </div>
       </div>
       {data ? (
         <div className="border border-custom-border-100 bg-custom-background-100 rounded-md p-2 flex md:flex-row flex-col gap-2 justify-between w-full">
@@ -61,9 +66,6 @@ const DataCard = (props: TDataCardProps) => {
               <span className="flex items-baseline text-custom-text-200 justify-center">
                 <span className="font-semibold">{progress}%</span>
               </span>
-              <div className="text-custom-text-350 font-semibold text-sm">
-                {completed}/{total}
-              </div>
             </div>
           </div>
           <div className="flex-1 flex flex-col gap-3">
@@ -119,6 +121,11 @@ export const ScopeBreakdown = observer((props: Props) => {
   const epicsCount = initiativeEpics?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
 
+  const shouldShowProjectsCard = projectsCount > 0;
+  const shouldShowEpicsCard = epicsCount > 0;
+
+  if (!initiative) return null;
+
   return (
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
@@ -141,7 +148,7 @@ export const ScopeBreakdown = observer((props: Props) => {
         </div>
       </div>
       {/* content */}
-      {projectsCount === 0 && epicsCount === 0 ? (
+      {!shouldShowProjectsCard && !shouldShowEpicsCard ? (
         <SectionEmptyState
           heading={t("initiatives.scope.empty_state.title")}
           subHeading={t("initiatives.scope.empty_state.description")}
@@ -153,21 +160,27 @@ export const ScopeBreakdown = observer((props: Props) => {
       ) : (
         <div className="grid gap-4 w-full grid-cols-1 @sm:grid-cols-1 @md:grid-cols-2">
           {/* Projects */}
-          <DataCard
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            type="project"
-            onAdd={toggleProjectModal}
-            data={initiativeAnalytics?.project}
-          />
+          {shouldShowProjectsCard && (
+            <DataCard
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              type="project"
+              onAdd={toggleProjectModal}
+              data={initiativeAnalytics?.project}
+              count={projectsCount}
+            />
+          )}
           {/* Epics */}
-          <DataCard
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            type="epic"
-            onAdd={toggleEpicModal}
-            data={initiativeAnalytics?.epic}
-          />
+          {shouldShowEpicsCard && (
+            <DataCard
+              workspaceSlug={workspaceSlug}
+              initiativeId={initiativeId}
+              type="epic"
+              onAdd={toggleEpicModal}
+              data={initiativeAnalytics?.epic}
+              count={epicsCount}
+            />
+          )}
         </div>
       )}
     </SectionWrapper>

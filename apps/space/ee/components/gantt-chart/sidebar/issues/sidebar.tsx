@@ -1,14 +1,15 @@
 "use client";
 
-import { RefObject, useState } from "react";
+import type { RefObject } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane
-import { TLoader } from "@plane/types";
+import type { TLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 //
-import { IGanttBlock } from "../../types";
+import type { IGanttBlock } from "../../types";
 import { IssuesSidebarBlock } from "./block";
 
 type Props = {

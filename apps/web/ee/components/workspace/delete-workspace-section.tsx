@@ -1,12 +1,14 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, ChevronUp, CircleAlert } from "lucide-react";
 // types
-import { IWorkspace } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IWorkspace } from "@plane/types";
 // ui
-import { Button, Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // plane web hooks

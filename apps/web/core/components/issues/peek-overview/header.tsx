@@ -1,22 +1,19 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EWorkItemConversionType, TNameDescriptionLoader } from "@plane/types";
-import {
-  CenterPanelIcon,
-  CustomSelect,
-  FullScreenPanelIcon,
-  SidePanelIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
+import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

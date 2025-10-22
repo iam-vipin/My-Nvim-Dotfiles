@@ -19,13 +19,11 @@ from plane.graphql.permissions.workspace import IsAuthenticated
 
 
 @sync_to_async
-def get_invitations(
-    invitation_ids: list[str], email: str
-) -> list[WorkspaceMemberInvite]:
+def get_invitations(invitation_ids: list[str], email: str) -> list[WorkspaceMemberInvite]:
     try:
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(
-            id__in=invitation_ids, email=email
-        ).select_related("workspace")
+        workspace_invitations = WorkspaceMemberInvite.objects.filter(id__in=invitation_ids, email=email).select_related(
+            "workspace"
+        )
 
         return list(workspace_invitations)
     except Exception:
@@ -117,20 +115,14 @@ def delete_workspace_invitations(
 
 @strawberry.type
 class WorkspaceInviteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
-    async def join_user_workspace_invites(
-        self, info: Info, invitation_ids: list[str]
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
+    async def join_user_workspace_invites(self, info: Info, invitation_ids: list[str]) -> bool:
         user = info.context.user
         user_id = user.id
         user_email = user.email
 
         # Get the workspace invitations
-        workspace_invitations = await get_invitations(
-            invitation_ids=invitation_ids, email=user_email
-        )
+        workspace_invitations = await get_invitations(invitation_ids=invitation_ids, email=user_email)
 
         # Validate the invitation acceptance
         is_workspace_invitation_valid = await validate_invitation_acceptance(
@@ -140,24 +132,16 @@ class WorkspaceInviteMutation:
             return False
 
         # Update the workspace invitations
-        workspace_invitations = await update_workspace_invitations(
-            workspace_invitations=workspace_invitations
-        )
+        workspace_invitations = await update_workspace_invitations(workspace_invitations=workspace_invitations)
 
         # Get or create the workspace members
-        await get_or_create_workspace_members(
-            workspace_invitations=workspace_invitations, user_id=user_id
-        )
+        await get_or_create_workspace_members(workspace_invitations=workspace_invitations, user_id=user_id)
 
         # Get a random workspace id
-        random_workspace_id = await get_random_workspace_id(
-            workspace_invitations=workspace_invitations
-        )
+        random_workspace_id = await get_random_workspace_id(workspace_invitations=workspace_invitations)
 
         # # Update the user last workspace
-        await update_user_last_workspace(
-            user_id=user_id, workspace_id=random_workspace_id
-        )
+        await update_user_last_workspace(user_id=user_id, workspace_id=random_workspace_id)
 
         # # Delete the workspace invitations
         await delete_workspace_invitations(workspace_invitations=workspace_invitations)

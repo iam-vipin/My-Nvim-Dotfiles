@@ -1,12 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon, Tag } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/types";
+import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 

@@ -1,4 +1,5 @@
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -7,13 +8,14 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { TWorkspaceEpicsSearchParams } from "@plane/types";
-import { ComboDropDown, EpicIcon } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
+import type { TWorkspaceEpicsSearchParams } from "@plane/types";
+import { ComboDropDown } from "@plane/ui";
 // helpers
+import { cn } from "@plane/utils";
 import { DropdownButton } from "@/components/dropdowns/buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
-import { TDropdownProps } from "@/components/dropdowns/types";
-import { cn } from "@plane/utils";
+import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web types

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // community imports
-import { TWorkflowDisabledOverlayProps } from "@/ce/components/workflow/workflow-disabled-overlay";
+import type { TWorkflowDisabledOverlayProps } from "@/ce/components/workflow/workflow-disabled-overlay";
 // local imports
 import { WorkFlowDisabledMessage } from "./workflow-disabled-message";
 

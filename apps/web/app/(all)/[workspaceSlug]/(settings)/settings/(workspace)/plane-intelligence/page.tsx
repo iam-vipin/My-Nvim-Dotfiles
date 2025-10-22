@@ -10,8 +10,10 @@ import {
   PLANE_INTELLIGENCE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { PiIcon } from "@plane/propel/icons";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { PiIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
@@ -59,7 +61,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
         loading: "Updating Plane Intelligence feature...",
         success: {
           title: "Success",
-          message: () => `Pi feature ${isPlaneIntelligenceFeatureEnabled ? "disabled" : "enabled"} successfully!`,
+          message: () => `AI feature ${isPlaneIntelligenceFeatureEnabled ? "disabled" : "enabled"} successfully!`,
         },
         error: {
           title: "Error",
@@ -89,7 +91,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
   return (
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
-      <SettingsHeading title="Pi" description={t("workspace_settings.settings.plane-intelligence.description")} />
+      <SettingsHeading title="Plane AI" description={t("workspace_settings.settings.plane-intelligence.description")} />
       <WithFeatureFlagHOC
         flag={E_FEATURE_FLAGS.PI_CHAT || E_FEATURE_FLAGS.PI_DEDUPE || E_FEATURE_FLAGS.EDITOR_AI_OPS}
         fallback={<PiChatUpgrade />}
@@ -101,7 +103,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
               <PiIcon className="size-5 text-custom-text-300" />
             </div>
             <div className="leading-tight">
-              <h5 className="font-medium">Turn on Pi for this workspace.</h5>
+              <h5 className="font-medium">Turn on AI for this workspace.</h5>
               <span className="text-custom-sidebar-text-400 text-sm">
                 Your new smart teammate, ready when you are.{" "}
               </span>

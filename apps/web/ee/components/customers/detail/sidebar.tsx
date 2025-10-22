@@ -1,8 +1,10 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
-import { TCustomer } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { ScrollArea } from "@plane/propel/scrollarea";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCustomer } from "@plane/types";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SidebarWrapper } from "@/plane-web/components/common/layout/sidebar/sidebar-wrapper";
@@ -61,13 +63,21 @@ export const CustomerDetailSidebar: FC<TProps> = observer((props) => {
 
   return (
     <SidebarWrapper isSidebarOpen={!customerDetailSidebarCollapsed}>
-      <div className="px-6 space-y-2">
-        <CustomerDefaultSidebarProperties customer={customer} updateProperty={updateProperty} isDisabled={isDisabled} />
-        <CustomerAdditionalPropertyValuesUpdate
-          customerId={customerId}
-          workspaceSlug={workspaceSlug}
-          isDisabled={isDisabled}
-        />
+      <div className="flex h-full w-full flex-col overflow-hidden">
+        <ScrollArea className="h-full w-full">
+          <div className="px-6 space-y-2">
+            <CustomerDefaultSidebarProperties
+              customer={customer}
+              updateProperty={updateProperty}
+              isDisabled={isDisabled}
+            />
+            <CustomerAdditionalPropertyValuesUpdate
+              customerId={customerId}
+              workspaceSlug={workspaceSlug}
+              isDisabled={isDisabled}
+            />
+          </div>
+        </ScrollArea>
       </div>
     </SidebarWrapper>
   );

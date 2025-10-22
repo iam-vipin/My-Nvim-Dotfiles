@@ -15,7 +15,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 // local imports
 import { JoinButton } from "../../common/join-button";

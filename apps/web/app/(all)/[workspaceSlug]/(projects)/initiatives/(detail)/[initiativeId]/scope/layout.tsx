@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // layouts
 import { EInitiativeNavigationItem } from "@plane/types";
 import { AppHeader } from "@/components/core/app-header";

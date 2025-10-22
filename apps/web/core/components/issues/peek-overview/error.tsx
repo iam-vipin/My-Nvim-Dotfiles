@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { MoveRight } from "lucide-react";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks

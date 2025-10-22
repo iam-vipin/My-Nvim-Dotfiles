@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import type { TCycleEstimateType, TCyclePlotType } from "@plane/types";
 import { CustomSelect, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

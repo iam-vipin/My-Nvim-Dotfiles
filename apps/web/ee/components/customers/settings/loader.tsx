@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Loader } from "@plane/ui";
 export const CustomerPropertiesLoader: FC = () => (
   <Loader className="space-y-4">

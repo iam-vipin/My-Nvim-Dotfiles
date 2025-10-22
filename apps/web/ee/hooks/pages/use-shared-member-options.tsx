@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { MemberOption } from "../../components/pages/share";
-import { TPageShareFormUser } from "./use-page-share-form";
+import type { TPageShareFormUser } from "./use-page-share-form";
 
 type TMemberOptionsHookProps = {
   workspaceMemberIds: string[];

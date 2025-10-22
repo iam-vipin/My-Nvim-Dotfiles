@@ -1,22 +1,24 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
-import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
+import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { E_INTEGRATION_KEYS } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { SentryIntegrationRoot } from "@/plane-web/components/integrations/sentry";
 //  plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const SentryIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // router

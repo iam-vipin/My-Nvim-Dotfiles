@@ -5,14 +5,12 @@ import os
 from datetime import date
 import uuid
 import requests
-import uuid
 
 from dateutil.relativedelta import relativedelta
 
 # Django imports
-from django.db import IntegrityError, models
-from django.db.models import Case, When, Exists, Value
-from django.db.models.functions import Concat
+from django.db import IntegrityError
+from django.db.models import Exists
 
 # Django imports
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery
@@ -48,9 +46,6 @@ from plane.db.models import (
 )
 from plane.ee.models import WorkspaceLicense
 from plane.app.permissions import ROLE, allow_permission
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
@@ -71,9 +66,7 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            )
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -140,9 +133,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
 
                 # Get total members and role
-                total_members = WorkspaceMember.objects.filter(
-                    workspace_id=serializer.data["id"]
-                ).count()
+                total_members = WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
@@ -213,9 +204,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 return Response(response, status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
                 if hasattr(e, "response") and e.response.status_code == 400:
-                    return Response(
-                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
-                    )
+                    return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
                 return Response(
                     {"error": "error in checking workspace subscription"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -234,37 +223,27 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
-            WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False, is_active=True
-            )
+            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
         )
 
-        role = WorkspaceMember.objects.filter(
-            workspace=OuterRef("id"), member=request.user, is_active=True
-        ).values("role")
+        role = WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True).values(
+            "role"
+        )
 
         workspaces = (
             Workspace.objects.prefetch_related(
                 Prefetch(
                     "workspace_member",
-                    queryset=WorkspaceMember.objects.filter(
-                        member=request.user, is_active=True
-                    ),
+                    queryset=WorkspaceMember.objects.filter(member=request.user, is_active=True),
                 )
             )
             .annotate(role=role, total_members=member_count)
-            .filter(
-                workspace_member__member=request.user, workspace_member__is_active=True
-            )
+            .filter(workspace_member__member=request.user, workspace_member__is_active=True)
             .annotate(
-                current_plan=Subquery(
-                    WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values(
-                        "plan"
-                    )[:1]
-                ),
+                current_plan=Subquery(WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values("plan")[:1]),
                 is_on_trial=Exists(
                     WorkspaceLicense.objects.filter(
                         workspace_id=OuterRef("id"),
@@ -295,10 +274,7 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = (
-            Workspace.objects.filter(slug=slug).exists()
-            or slug in RESTRICTED_WORKSPACE_SLUGS
-        )
+        workspace = Workspace.objects.filter(slug=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 
@@ -337,9 +313,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             .order_by("week_in_month")
         )
 
-        assigned_issues = Issue.issue_objects.filter(
-            workspace__slug=slug, assignees__in=[request.user]
-        ).count()
+        assigned_issues = Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user]).count()
 
         pending_issues_count = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),
@@ -352,18 +326,14 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
         ).count()
 
         issues_due_week = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, assignees__in=[request.user]
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
             .annotate(target_week=ExtractWeek("target_date"))
             .filter(target_week=timezone.now().date().isocalendar()[1])
             .count()
         )
 
         state_distribution = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug, assignees__in=[request.user]
-            )
+            Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user])
             .annotate(state_group=F("state__group"))
             .values("state_group")
             .annotate(state_count=Count("state_group"))
@@ -432,9 +402,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
 
     def post(self, request, slug, user_id):
         if not request.data.get("date"):
-            return Response(
-                {"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         user_activities = (
             IssueActivity.objects.filter(
@@ -474,7 +442,5 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         ]
         csv_buffer = self.generate_csv_from_rows([header] + rows)
         response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
-        response["Content-Disposition"] = (
-            'attachment; filename="workspace-user-activity.csv"'
-        )
+        response["Content-Disposition"] = 'attachment; filename="workspace-user-activity.csv"'
         return response

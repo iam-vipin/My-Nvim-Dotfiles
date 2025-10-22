@@ -1,20 +1,19 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { ContentParser } from "@plane/etl/parser";
 import { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { downloadFile } from "@/helpers/utils";
-import { logger } from "@/logger";
 import { APIClient, getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { createSlackFormParser } from "../../helpers/field-parser/field-parser";
-import { parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
+import { parseLinkWorkItemFormData, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { getSlackThreadUrl } from "../../helpers/urls";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
 import {
   E_MESSAGE_ACTION_TYPES,
@@ -70,7 +69,7 @@ export const handleLinkWorkItemViewSubmission = async (
       linkWorkItemValues.workspaceSlug,
       linkWorkItemValues.projectId,
       linkWorkItemValues.issueId,
-      ["state", "project", "assignees", "labels"]
+      ["state", "project", "assignees", "labels", "created_by", "updated_by"]
     );
 
     // Check if the issue is already linked to a thread
@@ -102,9 +101,13 @@ export const handleLinkWorkItemViewSubmission = async (
       }
 
       const title = "Connected to Slack thread";
-      const link = getSlackThreadUrl(data.team.domain, metadata.entityPayload.channel.id, metadata.entityPayload.message?.ts ?? "");
+      const link = getSlackThreadUrl(
+        data.team.domain,
+        metadata.entityPayload.channel.id,
+        metadata.entityPayload.message?.ts ?? ""
+      );
 
-      const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+      const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
       const linkBack = createSlackLinkback(linkWorkItemValues.workspaceSlug, issue, userMap, true);
       // Send a thread message to the channel
@@ -208,10 +211,20 @@ export const handleIssueCommentViewSubmission = async (
       let comment = "";
 
       Object.entries(data.view.state.values).forEach(([_, blockData]: [string, any]) => {
-        if (blockData.comment_submit?.type === "plain_text_input") {
-          comment = blockData.comment_submit.value;
+        if (blockData.comment_submit?.type === "rich_text_input") {
+          const richTextBlocks = blockData.comment_submit.rich_text_value;
+          const commentMarkdown = richTextBlockToMrkdwn(richTextBlocks);
+          comment = commentMarkdown || "";
         }
       });
+
+      const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
+      const parser = getSlackContentParser({
+        userMap,
+        teamDomain: data.team.domain,
+      });
+
+      const commentHtml = await parser.toPlaneHtml(comment);
 
       const slackUser = await slackService.getUserInfo(user);
       const projectMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
@@ -219,7 +232,7 @@ export const handleIssueCommentViewSubmission = async (
       const member = projectMembers.find((member: any) => member.email === slackUser?.user.profile.email);
 
       await planeClient.issueComment.create(workspaceConnection.workspace_slug, projectId, issueId, {
-        comment_html: "<p>" + comment + "</p>",
+        comment_html: commentHtml,
         created_by: member?.id,
         external_source: "SLACK-PRIVATE_COMMENT",
         external_id: data.view.id,
@@ -327,7 +340,7 @@ export const handleCreateNewWorkItemViewSubmission = async (
     const slackUser = await slackService.getUserInfo(data.user.id);
     const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
     const member = members.find((m: PlaneUser) => m.email === slackUser?.user.profile.email);
-    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+    const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
       userMap,
@@ -379,7 +392,7 @@ async function createIntakeIssueFromViewSubmission(
   const { workspaceConnection, planeClient, slackService } = details;
   let parsedDescription: string;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
   try {
     parsedDescription = await parser.toPlaneHtml(parsedData.data.description_html ?? "<p></p>");
@@ -399,7 +412,7 @@ async function createIntakeIssueFromViewSubmission(
     },
   });
 
-  const linkBack = createSlackIntakeLinkback(workspaceConnection.workspace_slug, issue, userMap, false);
+  const linkBack = createSlackIntakeLinkback(workspaceConnection.workspace_slug, issue, userMap, false, member);
 
   if (metadata.entityPayload.type === ENTITIES.SHORTCUT_PROJECT_SELECTION) {
     const payload = metadata.entityPayload as ShortcutActionPayload;
@@ -494,15 +507,20 @@ async function createWorkItemFromViewSubmission(
     workspaceConnection.workspace_slug,
     projectId,
     issueId,
-    ["state", "project", "assignees", "labels"]
+    ["state", "project", "assignees", "labels", "created_by", "updated_by"]
   );
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
+  const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+    planeUsers: issueWithFields.assignees,
+    currentUserMap: userMap,
+    slackService,
+  });
 
   const linkBack = createSlackLinkback(
     workspaceConnection.workspace_slug,
     issueWithFields,
-    userMap,
+    enhancedUserMap,
     parsedData.data.enable_thread_sync ?? false
   );
 
@@ -654,11 +672,11 @@ async function createOrDeleteThreadConnection(
   projectId: string,
   issueId: string,
   entityData: {
-    channel: string,
+    channel: string;
     message: {
-      ts: string,
-      thread_ts: string,
-    }
+      ts: string;
+      thread_ts: string;
+    };
   },
   enableThreadSync: boolean
 ) {
@@ -712,19 +730,13 @@ async function processCustomFields(params: {
         payload = [{ value: value as string }];
       }
 
-      await planeClient.issuePropertyValue.create(
-        workspaceSlug,
-        projectId,
-        issueId,
-        propertyId,
-        { values: payload }
-      );
+      await planeClient.issuePropertyValue.create(workspaceSlug, projectId, issueId, propertyId, { values: payload });
     })
   );
 }
 
 export const createIssueErrorBlocks = (
-  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>,
   channelName: string,
   threadLink: string,
   issueLink: string

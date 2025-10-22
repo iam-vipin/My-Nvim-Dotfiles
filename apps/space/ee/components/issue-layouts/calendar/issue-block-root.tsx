@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 // components
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { CalendarIssueBlock } from "./issue-block";
 // types
 

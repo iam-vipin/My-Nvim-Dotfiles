@@ -6,8 +6,11 @@ import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
-import { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+import type {
+  IEditorPropsExtended,
+  TExtendedEditorCommands,
+  ICollaborativeDocumentEditorPropsExtended,
+} from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
@@ -17,13 +20,14 @@ import type {
   TDocumentEventEmitter,
   TDocumentEventsServer,
   TEditorAsset,
-  TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
+  TExtendedCommandExtraProps,
+  TExtendedEditorRefApi,
 } from "@/types";
 
 export type TEditorCommands =
@@ -57,8 +61,7 @@ export type TEditorCommands =
   | "attachment"
   | "emoji"
   | "external-embed"
-  | "block-equation"
-  | "inline-equation";
+  | TExtendedEditorCommands;
 
 export type TCommandExtraProps = {
   image: {
@@ -80,24 +83,14 @@ export type TCommandExtraProps = {
   "text-align": {
     alignment: TTextAlign;
   };
-  "block-equation": {
-    latex: string;
-  };
-  "inline-equation": {
-    latex: string;
-  };
-  "external-embed": {
-    src: string;
-    [EExternalEmbedAttributeNames.IS_RICH_CARD]: boolean;
-  };
-};
+} & TExtendedCommandExtraProps;
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
 export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? TCommandExtraProps[T] // If the command has extra props, include them
   : object; // Otherwise, just return the command type with no extra props
 
-type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
+export type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
@@ -106,8 +99,7 @@ export type TDocumentInfo = {
   paragraphs: number;
   words: number;
 };
-
-export type EditorRefApi = {
+export type CoreEditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   createSelectionAtCursorPosition: () => void;
@@ -141,6 +133,7 @@ export type EditorRefApi = {
   getMarkDown: () => string;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
+  isAnyDropbarOpen: () => boolean;
   isEditorReadyToDiscard: () => boolean;
   isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
@@ -159,6 +152,8 @@ export type EditorRefApi = {
   appendText: (textContent: string) => boolean | undefined;
 };
 
+export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
+
 export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
@@ -171,14 +166,13 @@ export type IEditorProps = {
   editable: boolean;
   editorClassName?: string;
   editorProps?: EditorProps;
-  embedHandler?: TEmbedConfig;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id: string;
-  initialValue: string;
+  initialValue: Content;
   isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
@@ -188,8 +182,9 @@ export type IEditorProps = {
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
-  value?: string | null;
-} & IEditorPropsExtended;
+  value?: Content | null;
+  extendedEditorProps: IEditorPropsExtended;
+};
 
 export type ILiteTextEditorProps = IEditorProps;
 
@@ -202,7 +197,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -214,11 +208,13 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   ) => void;
   pageRestorationInProgress?: boolean;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  isFetchingFallbackBinary?: boolean;
+  hasServerConnectionFailed?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
-  embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 };

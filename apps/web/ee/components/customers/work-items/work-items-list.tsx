@@ -1,11 +1,14 @@
-import React, { FC, useState } from "react";
+import type { FC } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
-import { EUserWorkspaceRoles, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

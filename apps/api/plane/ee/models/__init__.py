@@ -38,7 +38,8 @@ from .workspace import (
     WorkspaceEntityConnection,
 )
 
-from .intake import IntakeSetting
+from .intake import IntakeSetting, IntakeForm, IntakeFormField
+
 from .initiative import (
     Initiative,
     InitiativeProject,
@@ -50,6 +51,7 @@ from .initiative import (
     InitiativeReaction,
     InitiativeUserProperty,
     InitiativeEpic,
+    InitiativeLabelAssociation,
 )
 from .teamspace import (
     Teamspace,
@@ -121,3 +123,7 @@ from .automation import (
     AutomationActivity,
     ProcessedAutomationEvent,
 )
+
+from .cycle import AutomatedCycleLog, CycleSettings
+
+from .milestones import Milestone, MilestoneIssue

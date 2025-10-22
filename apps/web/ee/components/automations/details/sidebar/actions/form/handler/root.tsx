@@ -2,7 +2,7 @@ import { ChevronDown, Zap } from "lucide-react";
 // plane imports
 import { AUTOMATION_ACTION_HANDLER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TActionNodeHandlerName } from "@plane/types";
+import type { TActionNodeHandlerName } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports

@@ -7,17 +7,16 @@ import {
   workspaceWorkItemTemplateService as workspaceLevelService,
   projectWorkItemTemplateService as projectLevelService,
 } from "@plane/services";
-import { IBaseTemplateActionCallbacks, TWorkItemTemplate, ITemplateService } from "@plane/types";
+import type { IBaseTemplateActionCallbacks, TWorkItemTemplate, ITemplateService } from "@plane/types";
 import { buildWorkItemTypeBlueprint, isValidId } from "@plane/utils";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
-import {
-  BaseTemplateStore,
+import type { RootStore } from "@/plane-web/store/root.store";
+import type {
   IBaseTemplateInstance,
   IBaseTemplateStore,
   TWorkItemTemplateInstanceProps,
-  WorkItemTemplateInstance,
 } from "@/plane-web/store/templates";
+import { BaseTemplateStore, WorkItemTemplateInstance } from "@/plane-web/store/templates";
 
 type TBaseWorkItemTemplateProps = {
   workspaceSlug: string;
@@ -210,7 +209,10 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
     const currentProjectWorkItemTemplates = this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
     if (currentProjectWorkItemTemplates.length === 0) return;
 
-    const defaultTypeBlueprint = buildWorkItemTypeBlueprint(defaultWorkItemType, this.rootStore.issueTypes.getIssueTypeById);
+    const defaultTypeBlueprint = buildWorkItemTypeBlueprint(
+      defaultWorkItemType,
+      this.rootStore.issueTypes.getIssueTypeById
+    );
 
     for (const template of currentProjectWorkItemTemplates) {
       const templateData = template.template_data;

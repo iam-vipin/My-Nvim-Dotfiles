@@ -7,11 +7,10 @@ import strawberry
 import strawberry_django
 
 # Python Standard Library Imports
-from asgiref.sync import sync_to_async
 
 # Module Imports
 from plane.db.models import IssueActivity
-from plane.graphql.types.users import UserLiteType
+from plane.graphql.types.user import UserLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 

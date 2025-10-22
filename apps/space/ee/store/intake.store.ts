@@ -1,9 +1,9 @@
 import { makeObservable, observable } from "mobx";
 // plane imports
 import { SitesIntakeService } from "@plane/services";
-import { TIntakeIssueForm } from "@plane/types";
+import type { TIntakeIssueForm } from "@plane/types";
 // types
-import { TPublicCycle } from "@/types/cycle";
+import type { TPublicCycle } from "@/types/cycle";
 
 export interface IIntakeStore {
   // observables

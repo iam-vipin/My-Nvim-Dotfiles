@@ -1,7 +1,8 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { LinearTeam, LinearState, LinearOrganization } from "@plane/etl/linear";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { LinearTeam, LinearState, LinearOrganization } from "@plane/etl/linear";
+import type { IAdditionalUsersResponse } from "@plane/types";
 
 export class LinearService {
   protected baseURL: string;

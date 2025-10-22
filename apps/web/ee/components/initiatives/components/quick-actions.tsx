@@ -6,13 +6,15 @@ import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // Plane-web
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 // local components
 import { CreateUpdateInitiativeModal } from "./create-update-initiatives-modal";
 import { InitiativeDeleteModal } from "./initiative-delete-modal";
@@ -113,9 +115,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action();
               }}
               className={cn(

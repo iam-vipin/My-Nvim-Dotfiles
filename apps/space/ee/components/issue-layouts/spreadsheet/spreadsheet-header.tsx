@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // components
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 

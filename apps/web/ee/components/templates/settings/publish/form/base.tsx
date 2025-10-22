@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useMemo } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
-import { IBaseTemplateInstance } from "@/plane-web/store/templates";
+import type { IBaseTemplateInstance } from "@/plane-web/store/templates";
 // local imports
 import { TemplateAdditionalDetails } from "./additional-details";
 import { TemplateBasicDetails } from "./basic-details";

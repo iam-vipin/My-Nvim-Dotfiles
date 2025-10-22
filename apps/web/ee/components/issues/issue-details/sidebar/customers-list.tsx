@@ -1,9 +1,10 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";

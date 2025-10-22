@@ -9,7 +9,7 @@ export const removeSpacesFromKeys = (obj: any) => {
   const newObj = {};
   for (const [key, value] of Object.entries(obj)) {
     const newKey = key.replace(/\s+/g, "_").toLowerCase();
-    // @ts-ignore
+    // @ts-expect-error
     newObj[newKey] = value;
   }
   return newObj;
@@ -54,4 +54,11 @@ export const getFormattedDateFromTimestamp = (timestamp: number | undefined): st
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
   }
+};
+
+export const convertAppSlugToIntegrationKey = (slug: string): string => {
+  // Convert "github" to "GITHUB"
+  // Convert "prd-agent" to "PRD_AGENT"
+  const normalizedSlug = slug.toUpperCase().replace(/-/g, "_");
+  return normalizedSlug;
 };

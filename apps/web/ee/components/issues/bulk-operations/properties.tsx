@@ -6,10 +6,12 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
-import { BULK_OPERATION_ERROR_DETAILS, E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
+import type { E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
+import { BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TBulkIssueProperties } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { CycleDropdown } from "@/components/dropdowns/cycle";
@@ -20,18 +22,15 @@ import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
-import { CreateLabelModal } from "@/components/labels";
 // hooks
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
-import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 // plane web imports
-import {
-  IssueTypeDropdown,
-  type TIssueTypeOptionTooltip,
-} from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
+import type { TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
@@ -56,8 +55,6 @@ const defaultValues: TBulkIssueProperties = {
 
 export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) => {
   const { snapshot } = props;
-  // states
-  const [createLabelModal, setCreateLabelModal] = useState(false);
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane imports
@@ -74,7 +71,6 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     isWorkItemTypeEnabledForProject,
     getIssueTypeIdsWithMandatoryProperties,
   } = useIssueTypes();
-  const { createLabel } = useLabel();
   // derived values
   const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
   const isCyclesEnabled = !!projectDetails?.cycle_view;
@@ -252,18 +248,11 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             control={control}
             render={({ field: { onChange, value } }) => (
               <>
-                <CreateLabelModal
-                  createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId?.toString())}
-                  isOpen={createLabelModal}
-                  handleClose={() => setCreateLabelModal(false)}
-                  onSuccess={(res) => onChange([...value, res.id])}
-                />
                 <div className="h-6">
                   <IssueLabelSelect
                     value={value}
                     projectId={projectId.toString()}
                     onChange={onChange}
-                    setIsOpen={() => setCreateLabelModal(true)}
                     buttonContainerClassName="text-custom-text-300 "
                     placement="top-start"
                   />

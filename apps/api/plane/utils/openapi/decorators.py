@@ -11,7 +11,6 @@ from .parameters import (
     PROJECT_ID_PARAMETER,
     TYPE_ID_PARAMETER,
     PROPERTY_ID_PARAMETER,
-    PAGE_ID_PARAMETER,
 )
 from .responses import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE, NOT_FOUND_RESPONSE
 
@@ -397,11 +396,7 @@ def page_docs(**kwargs):
     defaults = {
         "tags": ["Pages"],
         "summary": "Endpoints for page create/update/delete and fetch page details",
-        "parameters": [
-            WORKSPACE_SLUG_PARAMETER,
-            PROJECT_ID_PARAMETER,
-            PAGE_ID_PARAMETER,
-        ],
+        "parameters": [],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,

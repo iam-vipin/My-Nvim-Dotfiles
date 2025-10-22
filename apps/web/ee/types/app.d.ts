@@ -1,5 +1,5 @@
 // types
-import { IWorkspaceDefaultSearchResult, IWorkspaceSearchResult } from "@plane/types";
+import type { IWorkspaceDefaultSearchResult, IWorkspaceSearchResult } from "@plane/types";
 
 export interface IAppSearchResults {
   results: {

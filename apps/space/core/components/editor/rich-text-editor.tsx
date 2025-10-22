@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { RichTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
@@ -13,7 +14,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled" | "embedHandler">,
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps" | "embedHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -57,16 +58,18 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
       })}
       flaggedExtensions={richTextEditorExtensions.flagged}
-      {...rest}
-      embedHandler={{
-        externalEmbedComponent: {
-          widgetCallback: EmbedHandler,
+      extendedEditorProps={{
+        embedHandler: {
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
         },
+        isSmoothCursorEnabled: false,
       }}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
-      isSmoothCursorEnabled={false}
+      {...rest}
     />
   );
 });

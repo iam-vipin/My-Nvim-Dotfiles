@@ -1,21 +1,22 @@
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { PlaneLogo } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
-import { setToast, TOAST_TYPE, PlaneLogo } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
 // assets
-import GridBgLight from "@/public/images/grid-bg-light.svg";
 import GridBgDark from "@/public/images/grid-bg-dark.svg";
+import GridBgLight from "@/public/images/grid-bg-light.svg";
 // local imports
+import IntakeInfo from "../info";
 import IssueForm from "./form";
 import FormSuccess from "./success";
-import Image from "next/image";
-import IntakeInfo from "../info";
 type TProps = {
   project: Partial<IProject>;
   anchor: string;

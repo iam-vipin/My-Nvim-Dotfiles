@@ -1,4 +1,5 @@
-import React, { FC, useState } from "react";
+import type { FC } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Collapsible } from "@plane/ui";
 import { RequestAttachmentsCollapsibleContent } from "@/plane-web/components/customers";

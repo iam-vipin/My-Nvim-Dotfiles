@@ -2,9 +2,11 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
-import { EWorkItemTypeEntity, IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import type { IIssueType, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
+import { EWorkItemTypeEntity } from "@plane/types";
+import { Loader } from "@plane/ui";
 // plane web imports
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values";
 
@@ -25,7 +27,7 @@ type TIssueAdditionalPropertyValuesUpdateBaseProps = TIssueAdditionalPropertyVal
   issuePropertyValues: TIssuePropertyValues;
   isWorkItemTypeEntityEnabled: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
   propertyValueChangeCallback: (propertyId: string, value: string[]) => void;
-  setIssuePropertyValues: (
+  onPropertyValueChange: (
     issuePropertyValues: TIssuePropertyValues | ((prev: TIssuePropertyValues) => TIssuePropertyValues)
   ) => void;
   updateService: (propertyId: string, value: string[]) => Promise<void>;
@@ -49,7 +51,7 @@ export const IssueAdditionalPropertyValuesUpdateBase: React.FC<TIssueAdditionalP
       isWorkItemTypeEntityEnabled,
       propertyValueChangeCallback,
       projectId,
-      setIssuePropertyValues,
+      onPropertyValueChange,
       updateService,
       workspaceSlug,
     } = props;
@@ -62,7 +64,7 @@ export const IssueAdditionalPropertyValuesUpdateBase: React.FC<TIssueAdditionalP
 
     const handlePropertyValueChange = async (propertyId: string, value: string[]) => {
       const beforeUpdateValue = issuePropertyValues[propertyId];
-      setIssuePropertyValues((prev) => ({
+      onPropertyValueChange((prev) => ({
         ...prev,
         [propertyId]: value,
       }));
@@ -71,7 +73,7 @@ export const IssueAdditionalPropertyValuesUpdateBase: React.FC<TIssueAdditionalP
         .then(() => propertyValueChangeCallback(propertyId, value))
         .catch((error) => {
           // revert the value if update fails
-          setIssuePropertyValues((prev) => ({
+          onPropertyValueChange((prev) => ({
             ...prev,
             [propertyId]: beforeUpdateValue,
           }));

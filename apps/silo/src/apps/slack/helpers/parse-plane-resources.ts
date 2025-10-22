@@ -1,16 +1,17 @@
 import TurndownService from "turndown";
 import { PageSubType, PlaneResource } from "@plane/etl/slack";
 
+import { logger } from "@plane/logger";
 import { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
-import { logger } from "@/logger";
 import { getPlaneContentParser } from "./content-parser";
-import { getUserMapFromSlackWorkspaceConnection } from "./user";
+import { getPlaneToSlackUserMapFromWC } from "./user";
 
 export enum EPlaneURLSegments {
   PROJECTS = "projects",
   ISSUES = "issues",
   PAGES = "pages",
+  WIKI = "wiki",
   BROWSE = "browse",
 }
 
@@ -42,12 +43,12 @@ export function extractPlaneResource(url: string): PlaneResource | null {
         type: "issue",
         issueKey: issueIdentifer,
       };
-    } else if (segments.includes("pages")) {
-      // Format can be one of these: https://sites.plane.so/pages/<pageId>/
-      // https://app.plane.so/plane/pages/<pageId>/
-      // https://app.plane.so/plane/projects/<projectId>/pages/<pageId>/
+    } else if (segments.includes(EPlaneURLSegments.PAGES) || segments.includes(EPlaneURLSegments.WIKI)) {
+      // Format can be one of these: https://sites.plane.so/pages/<pageId>/ or https://sites.plane.so/wiki/<pageId>/
+      // https://app.plane.so/plane/pages/<pageId>/ or https://app.plane.so/plane/wiki/<pageId>/
+      // https://app.plane.so/plane/projects/<projectId>/pages/<pageId>/ or https://app.plane.so/plane/projects/<projectId>/wiki/<pageId>/
 
-      if (segments[0] === EPlaneURLSegments.PAGES) {
+      if (segments[0] === EPlaneURLSegments.PAGES || segments[0] === EPlaneURLSegments.WIKI) {
         // published page
         return {
           pageId: segments[1],
@@ -72,7 +73,7 @@ export function extractPlaneResource(url: string): PlaneResource | null {
           type: "page",
           subType: PageSubType.PROJECT,
         };
-      } else if (segments[1] === EPlaneURLSegments.PAGES) {
+      } else if (segments[1] === EPlaneURLSegments.PAGES || segments[1] === EPlaneURLSegments.WIKI) {
         // workspace level page
         const pageId = segments[2];
         const workspaceSlug = segments[0];
@@ -142,12 +143,12 @@ type TSlackMarkdownFromPlaneHtmlParams = {
 export const getSlackMarkdownFromPlaneHtml = async (params: TSlackMarkdownFromPlaneHtmlParams) => {
   const { workspaceConnection, html } = params;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const planeToSlackUserMap = getPlaneToSlackUserMapFromWC(workspaceConnection);
 
   const parser = getPlaneContentParser({
     appBaseUrl: env.APP_BASE_URL,
     workspaceSlug: workspaceConnection.workspace_slug,
-    userMap,
+    userMap: planeToSlackUserMap,
   });
   const parsedHtml = await parser.toPlaneHtml(html);
   const turndown = new TurndownService({

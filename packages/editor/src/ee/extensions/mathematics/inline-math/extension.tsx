@@ -5,7 +5,7 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EMathAttributeNames } from "../types";
+import { EMathAttributeNames, type TMathAttributes } from "../types";
 // utils
 import { DEFAULT_MATH_ATTRIBUTES } from "../utils/math-attributes";
 // commands
@@ -53,12 +53,15 @@ export const InlineMathExtension: InlineMathExtensionType = Node.create({
 
   addAttributes() {
     const attributes = {
-      ...Object.values(EMathAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_MATH_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(EMathAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_MATH_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<EMathAttributeNames, { default: TMathAttributes[EMathAttributeNames] }>
+      ),
     };
     return attributes;
   },

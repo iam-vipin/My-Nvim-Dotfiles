@@ -4,8 +4,10 @@ import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
+import { ControlLink, CustomMenu } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
@@ -29,7 +31,7 @@ type Props = {
   parentIssueId: string;
   rootIssueId: string;
   spacingLeft: number;
-  disabled: boolean;
+  canEdit: boolean;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -49,7 +51,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
     rootIssueId,
     issueId,
     spacingLeft = 10,
-    disabled,
+    canEdit,
     handleIssueCrudState,
     subIssueOperations,
     issueServiceType = EIssueServiceType.ISSUES,
@@ -110,7 +112,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center gap-3 pr-2 py-1 transition-all hover:bg-custom-background-90"
+            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-custom-background-90"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
             <div className="flex size-5 items-center justify-center flex-shrink-0">
@@ -177,7 +179,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
                 issueId={issueId}
-                disabled={disabled}
+                canEdit={canEdit}
                 updateSubIssue={subIssueOperations.updateSubIssue}
                 displayProperties={displayProperties}
                 issue={issue}
@@ -186,11 +188,9 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
             <div className="flex-shrink-0 text-sm">
               <CustomMenu placement="bottom-end" ellipsis>
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
@@ -203,9 +203,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                  onClick={() => {
                     subIssueOperations.copyLink(workItemLink);
                   }}
                 >
@@ -215,11 +213,9 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={async () => {
                       if (issue.project_id)
                         await subIssueOperations
                           .removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id)
@@ -237,11 +233,9 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   </CustomMenu.MenuItem>
                 )}
 
-                {disabled && (
+                {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}
@@ -270,7 +264,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
             parentIssueId={issue.id}
             rootIssueId={rootIssueId}
             spacingLeft={spacingLeft + 22}
-            disabled={disabled}
+            canEdit={canEdit}
             handleIssueCrudState={handleIssueCrudState}
             subIssueOperations={subIssueOperations}
           />

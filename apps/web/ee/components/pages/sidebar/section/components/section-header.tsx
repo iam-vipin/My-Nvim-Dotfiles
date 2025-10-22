@@ -8,7 +8,8 @@ import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // utils
 import { cn } from "@plane/utils";
 // types
-import { SectionHeaderProps } from "../types";
+import { SECTION_DETAILS } from "../constants";
+import type { SectionHeaderProps } from "../types";
 
 /**
  * Component for rendering section header with label, icon and actions
@@ -24,10 +25,10 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
         )}
       >
         <Link
-          href={`/${workspaceSlug}/pages/${sectionType}`}
+          href={`/${workspaceSlug}/wiki/${sectionType}`}
           className={cn("flex-grow text-sm font-semibold text-custom-sidebar-text-400")}
         >
-          {sectionDetails.label}
+          {sectionDetails.label === SECTION_DETAILS.public.label ? "Workspace" : sectionDetails.label}
         </Link>
 
         <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">

@@ -1,5 +1,6 @@
 // plane imports
-import {
+import { API_BASE_URL } from "@plane/constants";
+import type {
   IIssueTypesService,
   TFetchIssueTypesPayload,
   TIssueType,
@@ -7,7 +8,6 @@ import {
   TDisableIssueTypePayload,
   TFetchIssueTypesProjectLevelPayload,
 } from "@plane/types";
-import { API_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 

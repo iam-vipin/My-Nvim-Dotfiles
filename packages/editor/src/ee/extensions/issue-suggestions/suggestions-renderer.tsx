@@ -1,25 +1,29 @@
-import { Editor } from "@tiptap/core";
-import { ReactRenderer, Range } from "@tiptap/react";
-import { useCallback, useEffect, useState } from "react";
-import tippy from "tippy.js";
+import { FloatingOverlay } from "@floating-ui/react";
+import { ReactRenderer, type Editor } from "@tiptap/react";
+import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
+import { cn, CORE_EXTENSIONS } from "@plane/utils";
 // helpers
-import { cn } from "@plane/utils";
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { TEmbedItem } from "@/types";
+import type { TEmbedItem } from "@/types";
 
-type TSuggestionsListProps = {
-  editor: Editor;
+export type WorkItemSuggestionsDropdownProps = SuggestionProps & {
   searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>;
-  query: string;
-  range: Range;
+  onClose: () => void;
 };
 
-const IssueSuggestionList = (props: TSuggestionsListProps) => {
-  const { editor, searchCallback, query, range } = props;
+const WorkItemSuggestionsDropdown = forwardRef((props: WorkItemSuggestionsDropdownProps, ref) => {
+  const { editor, searchCallback, query, range, onClose } = props;
   // states
   const [items, setItems] = useState<TEmbedItem[] | undefined>(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  // refs
+  const dropdownContainer = useRef<HTMLDivElement>(null);
 
   const selectItem = useCallback(
     (item: TEmbedItem) => {
@@ -60,37 +64,34 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
     [editor, range]
   );
 
-  useEffect(() => {
-    const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
-    const onKeyDown = (e: KeyboardEvent) => {
+  // keydown events handler
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (!items) return;
+      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
+      event.preventDefault();
 
-      if (navigationKeys.includes(e.key)) {
-        if (e.key === "ArrowUp") {
-          const newIndex = selectedIndex - 1;
-          setSelectedIndex(newIndex < 0 ? items.length - 1 : newIndex);
-          return true;
-        }
-        if (e.key === "ArrowDown") {
-          const newIndex = selectedIndex + 1;
-          setSelectedIndex(newIndex >= items.length ? 0 : newIndex);
-          return true;
-        }
-        if (e.key === "Enter") {
-          const item = items[selectedIndex];
-          selectItem(item);
-          return true;
-        }
-        return false;
-      } else if (e.key === "Escape") {
-        if (!editor.isFocused) editor.chain().focus();
+      if (event.key === "ArrowUp") {
+        const newIndex = selectedIndex - 1;
+        setSelectedIndex(newIndex < 0 ? items.length - 1 : newIndex);
+        return true;
       }
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [editor, items, selectedIndex, setSelectedIndex, selectItem]);
+
+      if (event.key === "ArrowDown") {
+        const newIndex = selectedIndex + 1;
+        setSelectedIndex(newIndex >= items.length ? 0 : newIndex);
+        return true;
+      }
+
+      if (event.key === "Enter") {
+        const item = items[selectedIndex];
+        selectItem(item);
+        return true;
+      }
+
+      return true;
+    },
+  }));
 
   useEffect(() => {
     setItems(undefined);
@@ -99,103 +100,112 @@ const IssueSuggestionList = (props: TSuggestionsListProps) => {
     });
   }, [query, searchCallback]);
 
+  useOutsideClickDetector(dropdownContainer, onClose);
+
   return (
-    <div
-      id="issue-list-container"
-      className="z-10 overflow-y-auto overflow-x-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 max-h-60 w-96 px-2 py-2.5 shadow-custom-shadow-rg whitespace-nowrap transition-all"
-    >
-      {items ? (
-        items.length > 0 ? (
-          items.map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              className={cn(
-                "w-full flex items-center gap-2 select-none truncate rounded px-1 py-1.5 text-left text-xs text-custom-text-200 hover:bg-custom-background-90",
-                {
-                  "bg-custom-background-90": index === selectedIndex,
-                }
-              )}
-              onClick={() => selectItem(item)}
-            >
-              <h5 className="whitespace-nowrap text-xs text-custom-text-300 flex-shrink-0">{item.subTitle}</h5>
-              {item.icon}
-              <p className="flex-grow w-full truncate text-xs">{item.title}</p>
-            </button>
-          ))
+    <>
+      {/* Backdrop */}
+      <FloatingOverlay
+        style={{
+          zIndex: 99,
+        }}
+        lockScroll
+      />
+      <div
+        ref={dropdownContainer}
+        id="issue-list-container"
+        className="relative max-h-80 w-96 overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        style={{
+          zIndex: 100,
+        }}
+      >
+        {items ? (
+          items.length > 0 ? (
+            items.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                className={cn(
+                  "w-full flex items-center gap-2 select-none truncate rounded px-1 py-1.5 text-left text-xs text-custom-text-200 hover:bg-custom-background-90",
+                  {
+                    "bg-custom-background-90": index === selectedIndex,
+                  }
+                )}
+                onClick={() => selectItem(item)}
+              >
+                <h5 className="whitespace-nowrap text-xs text-custom-text-300 flex-shrink-0">{item.subTitle}</h5>
+                {item.icon}
+                <p className="flex-grow w-full truncate text-xs">{item.title}</p>
+              </button>
+            ))
+          ) : (
+            <div className="text-center text-xs text-custom-text-400">No results found</div>
+          )
         ) : (
-          <div className="text-center text-xs text-custom-text-400">No results found</div>
-        )
-      ) : (
-        <div className="text-center text-xs text-custom-text-400">Loading</div>
-      )}
-    </div>
+          <div className="text-center text-xs text-custom-text-400">Loading</div>
+        )}
+      </div>
+    </>
   );
-};
+});
 
-export const IssueListRenderer = (searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>) => {
-  let component: ReactRenderer | null = null;
-  let popup: any | null = null;
+export const WorkItemSuggestionsDropdownRenderer =
+  (searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>): SuggestionOptions["render"] =>
+  () => {
+    let component: ReactRenderer<CommandListInstance, WorkItemSuggestionsDropdownProps> | null = null;
+    let cleanup: () => void = () => {};
+    let editorRef: Editor | null = null;
 
-  return {
-    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      const tippyContainer =
-        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
+    const handleClose = (editor?: Editor) => {
+      component?.destroy();
+      component = null;
+      cleanup();
+      (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.WORK_ITEM_EMBED);
+    };
 
-      component = new ReactRenderer(IssueSuggestionList, {
-        props: {
-          ...props,
-          searchCallback,
-        },
-        editor: props.editor,
-      });
-      // @ts-expect-error Tippy overloads are messed up
-      popup = tippy("body", {
-        flipbehavior: ["bottom", "top"],
-        appendTo: tippyContainer,
-        flip: true,
-        flipOnUpdate: true,
-        getReferenceClientRect: props.clientRect,
-        content: component.element,
-        showOnCreate: true,
-        interactive: true,
-        trigger: "manual",
-        placement: "bottom-start",
-      });
+    return {
+      onStart: (props) => {
+        editorRef = props.editor;
+        if (!searchCallback || !props.clientRect) return;
+        component = new ReactRenderer<CommandListInstance, WorkItemSuggestionsDropdownProps>(
+          WorkItemSuggestionsDropdown,
+          {
+            props: {
+              ...props,
+              searchCallback,
+              onClose: () => handleClose(props.editor),
+            } satisfies WorkItemSuggestionsDropdownProps,
+            editor: props.editor,
+            className: "fixed z-[100]",
+          }
+        );
+        const element = component.element as HTMLElement;
+        props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.WORK_ITEM_EMBED);
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
+      },
+      onUpdate: (props) => {
+        if (!component || !component.element) return;
+        component.updateProps(props);
+        if (!props.clientRect) return;
+        const element = component.element as HTMLElement;
+        cleanup();
+        cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
+      },
+      onKeyDown: ({ event }) => {
+        if (event.key === "Escape") {
+          handleClose();
+          return true;
+        }
 
-      tippyContainer?.addEventListener("scroll", () => {
-        popup?.[0].destroy();
-      });
-    },
-    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      component?.updateProps(props);
-      popup?.[0]?.setProps({
-        getReferenceClientRect: props.clientRect,
-      });
-    },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
-      if (props.event.key === "Escape") {
-        popup?.[0].hide();
-        return true;
-      }
+        if (DROPDOWN_NAVIGATION_KEYS.includes(event.key)) {
+          event?.stopPropagation();
+        }
 
-      const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
-      if (navigationKeys.includes(props.event.key)) {
-        // @ts-expect-error fix the types
-        component?.ref?.onKeyDown(props);
-        return true;
-      }
-      return false;
-    },
-    onExit: () => {
-      const container = document.querySelector(".frame-renderer") as HTMLElement;
-      if (container) {
-        container.removeEventListener("scroll", () => {});
-      }
-      popup?.[0].destroy();
-      setTimeout(() => {
-        component?.destroy();
-      }, 300);
-    },
+        return component?.ref?.onKeyDown({ event }) ?? false;
+      },
+      onExit: ({ editor }) => {
+        component?.element.remove();
+        handleClose(editor);
+      },
+    };
   };
-};

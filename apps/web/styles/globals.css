@@ -1,4 +1,6 @@
 @import "@plane/propel/styles/fonts";
+@import "@plane/editor/styles";
+@import "./animations.css";
 
 @tailwind base;
 @tailwind components;
@@ -175,6 +177,27 @@
 
     --color-subscription-enterprise-200: 86, 5, 145;
     --color-subscription-enterprise-400: 73, 4, 123;
+
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
   }
 
   [data-theme="light"],
@@ -422,39 +445,6 @@
     --color-onboarding-border-300: 34, 35, 38, 0.5;
 
     --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
-
-    /* toast theme */
-    --color-toast-success-text: 178, 221, 181;
-    --color-toast-error-text: 206, 44, 49;
-    --color-toast-warning-text: 255, 186, 24;
-    --color-toast-info-text: 141, 164, 239;
-    --color-toast-loading-text: 255, 255, 255;
-    --color-toast-secondary-text: 185, 187, 198;
-    --color-toast-tertiary-text: 139, 141, 152;
-
-    --color-toast-success-background: 46, 46, 46;
-    --color-toast-error-background: 46, 46, 46;
-    --color-toast-warning-background: 46, 46, 46;
-    --color-toast-info-background: 46, 46, 46;
-    --color-toast-loading-background: 46, 46, 46;
-
-    --color-toast-success-border: 42, 126, 59;
-    --color-toast-error-border: 100, 23, 35;
-    --color-toast-warning-border: 79, 52, 34;
-    --color-toast-info-border: 58, 91, 199;
-    --color-toast-loading-border: 96, 100, 108;
-
-    --color-pi-50: var(--color-background-90);
-    --color-pi-100: var(--color-background-90);
-    --color-pi-200: var(--color-primary-200);
-    --color-pi-300: var(--color-primary-200);
-    --color-pi-400: var(--color-primary-200);
-    --color-pi-500: var(--color-primary-200);
-    --color-pi-600: 202, 201, 252;
-    --color-pi-700: var(--color-primary-100);
-    --color-pi-800: 231, 231, 255;
-    --color-pi-900: 245, 245, 255;
-    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="dark-contrast"] {
@@ -1075,6 +1065,12 @@ html.todesktop .header button {
   }
 }
 
+.pi-cursor {
+  background-color: rgb(var(--color-background-100));
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+
 /* react-grid-layout */
 .react-grid-item {
   .react-resizable-handle {
@@ -1290,6 +1286,25 @@ input[type="color"].custom-color-picker {
   }
 }
 
+@keyframes grow-shrink-vertically {
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-vertical-scale {
+  transform-origin: center; /* ensures it grows from both ends */
+  animation: grow-shrink-vertically 0.8s ease-in-out infinite;
+}
+
+.animate-scale-up-down {
+  animation: scale-up-down 2s ease-in-out infinite;
+}
+
 .animate-fade-in {
   animation: fadeIn 200ms var(--ease-out-quad) forwards;
 }
@@ -1312,6 +1327,10 @@ input[type="color"].custom-color-picker {
 
 .animate-fade-transition {
   animation: fadeTransition 200ms var(--ease-out-cubic) forwards;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
 }
 
 :root {
@@ -1345,5 +1364,36 @@ input[type="color"].custom-color-picker {
   100% {
     background-color: transparent;
     border-radius: 4px;
+  }
+}
+
+.shimmer {
+  display: inline-block;
+  background-color: rgb(var(--color-text-100));
+  background-image: linear-gradient(to left, transparent 0%, rgb(var(--color-text-400)) 50%, transparent 100%);
+  background-position: -4rem top;
+  background-repeat: no-repeat;
+  background-clip: text; /* non-prefixed fallback */
+  -webkit-background-clip: text; /* required for Safari/WebKit */
+  -webkit-text-fill-color: transparent;
+
+  -webkit-animation: shimmer-ltr 2.2s linear infinite;
+  animation: shimmer-ltr 2.2s linear infinite;
+
+  -webkit-background-size: 60% 100%;
+  background-size: 60% 100%; /* unprefixed too */
+}
+
+@keyframes shimmer-ltr {
+  0% {
+    background-position: -4rem top; /*50px*/
+  }
+
+  70% {
+    background-position: 200% top; /*200px*/
+  }
+
+  100% {
+    background-position: 200% top; /*200px*/
   }
 }

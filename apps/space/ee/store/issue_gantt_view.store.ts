@@ -3,7 +3,7 @@ import { computedFn } from "mobx-utils";
 // components
 import { currentViewDataWithView } from "../components/gantt-chart/data";
 // types
-import { ChartDataType, TGanttViews } from "../types";
+import type { ChartDataType, TGanttViews } from "../types";
 
 export interface IGanttStore {
   // observables

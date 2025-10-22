@@ -5,19 +5,23 @@ import { useParams } from "next/navigation";
 // plane imports
 import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { InitiativeIcon } from "@plane/propel/icons";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 // component
-import { InitiativeIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
+
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { InitiativeLabelList } from "@/plane-web/components/initiatives/components/labels/initiative-label-list";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
@@ -29,7 +33,6 @@ const InitiativesSettingsPage = observer(() => {
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
-
   const { t } = useTranslation();
 
   // derived values
@@ -95,7 +98,7 @@ const InitiativesSettingsPage = observer(() => {
           fallback={<InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />}
           workspaceSlug={workspaceSlug?.toString()}
         >
-          <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
+          <div className=" py-6 flex items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-4">
               <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
                 <InitiativeIcon className="size-5 text-custom-text-300" />
@@ -108,6 +111,10 @@ const InitiativesSettingsPage = observer(() => {
               </div>
             </div>
             <ToggleSwitch value={isInitiativesFeatureEnabled} onChange={toggleInitiativesFeature} size="sm" />
+          </div>
+
+          <div className="py-6">
+            <InitiativeLabelList />
           </div>
         </WithFeatureFlagHOC>
       </div>

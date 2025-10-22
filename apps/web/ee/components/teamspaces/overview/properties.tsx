@@ -3,9 +3,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIconPicker } from "@plane/ui";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
-import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
+// components
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -47,7 +52,8 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
   if (!teamspace) return <></>;
   return (
     <div className="flex flex-col gap-y-2 p-4">
-      <CustomEmojiIconPicker
+      <EmojiPicker
+        iconType="material"
         isOpen={isEmojiPickerOpen}
         handleToggle={(val: boolean) => setIsEmojiPickerOpen(val)}
         label={
@@ -63,8 +69,7 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
           let logoValue = {};
           if (val?.type === "emoji")
             logoValue = {
-              value: convertHexEmojiToDecimal(val.value.unified),
-              url: val.value.imageUrl,
+              value: val.value,
             };
           else if (val?.type === "icon") logoValue = val.value;
           updateTeamspace(workspaceSlug.toString(), teamspaceId, {

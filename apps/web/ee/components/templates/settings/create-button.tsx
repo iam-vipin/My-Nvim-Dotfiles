@@ -11,13 +11,12 @@ import {
   WORKITEM_TEMPLATE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import type { TButtonSizes } from "@plane/propel/button";
+import { Button } from "@plane/propel/button";
 import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-import { CustomMenu, Button, TButtonSizes } from "@plane/ui";
-import {
-  getCreateUpdateTemplateSettingsPath,
-  getTemplateI18nLabel,
-  TCreateTemplateSettingsPathProps,
-} from "@plane/utils";
+import { CustomMenu } from "@plane/ui";
+import type { TCreateTemplateSettingsPathProps } from "@plane/utils";
+import { getCreateUpdateTemplateSettingsPath, getTemplateI18nLabel } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks

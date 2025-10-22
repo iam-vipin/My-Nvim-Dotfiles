@@ -1,14 +1,10 @@
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, pull, set, uniq, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
 // types
 import { ProjectUpdateCommentService } from "@/plane-web/services";
-import { TProjectUpdatesComment, TProjectUpdatesCommentMap } from "@/plane-web/types";
-import { IProjectUpdatesReactionStore } from "./update_reaction.store";
+import type { TProjectUpdatesComment, TProjectUpdatesCommentMap } from "@/plane-web/types";
+import type { IProjectUpdatesReactionStore } from "./update_reaction.store";
 
 export type TCommentLoader = "fetch" | "create" | "update" | "delete" | "mutate" | undefined;
 

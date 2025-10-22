@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
-import { TNumberWidgetConfig } from "@plane/types";
+import type { TNumberWidgetConfig } from "@plane/types";
 // local imports
-import { TWidgetComponentProps } from ".";
+import type { TWidgetComponentProps } from ".";
 
 export const DashboardNumberWidget: React.FC<TWidgetComponentProps> = observer((props) => {
   const { widget } = props;

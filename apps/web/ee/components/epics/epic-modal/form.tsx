@@ -1,14 +1,17 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
-import { EIssueServiceType, EWorkItemTypeEntity, type ISearchIssueResponse, type TIssue } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { cn, getChangedIssuefields, getTabIndex } from "@plane/utils";
 // components
 import {
@@ -16,17 +19,15 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
-import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
-import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-modal/additional-properties";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 // local imports
 import { EpicDefaultProperties } from "./components/default-properties";
 
@@ -77,7 +78,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
   } = props;
 
   // states
-  const [labelModal, setLabelModal] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
@@ -100,7 +100,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
-  const { createLabel } = useLabel();
 
   const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
 
@@ -261,17 +260,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      {projectId && (
-        <CreateLabelModal
-          createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId)}
-          isOpen={labelModal}
-          handleClose={() => setLabelModal(false)}
-          onSuccess={(response) => {
-            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
-            handleFormChange();
-          }}
-        />
-      )}
       <div className="flex gap-2 bg-transparent">
         <div className="rounded-lg w-full">
           <form
@@ -356,7 +344,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
                   parentId={watch("parent_id")}
                   isDraft={false}
                   handleFormChange={handleFormChange}
-                  setLabelModal={setLabelModal}
                   setSelectedParentIssue={setSelectedParentIssue}
                 />
               </div>

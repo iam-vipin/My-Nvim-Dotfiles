@@ -1,5 +1,6 @@
 "use client";
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
@@ -10,7 +11,7 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeActivity, TInitiativeActivityComment } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity, TInitiativeActivityComment } from "@/plane-web/types/initiative";
 // local components
 import { InitiativeActivityItem } from "./activity/activity-block";
 

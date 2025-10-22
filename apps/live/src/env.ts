@@ -1,52 +1,39 @@
-import * as dotenvx from "@dotenvx/dotenvx";
+import * as dotenv from "@dotenvx/dotenvx";
 import { z } from "zod";
 
-// Load environment variables from .env file
-dotenvx.config();
+dotenv.config();
 
-// Define environment schema with validation
+// Environment variable validation
 const envSchema = z.object({
-  // Server configuration
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  PORT: z.string().default("3000").transform(Number),
-  LIVE_BASE_PATH: z.string().default("/live"),
-
+  APP_VERSION: z.string().default("1.0.0"),
+  NODE_ENV: z.string().default("production"),
+  HOSTNAME: z.string().optional(),
+  PORT: z.string().default("3000"),
+  API_BASE_URL: z.string().url("API_BASE_URL must be a valid URL"),
   // CORS configuration
-  CORS_ALLOWED_ORIGINS: z.string().default("*"),
+  CORS_ALLOWED_ORIGINS: z.string().default(""),
+  // Live running location
+  LIVE_BASE_PATH: z.string().default("/live"),
   // Compression options
   COMPRESSION_LEVEL: z.string().default("6").transform(Number),
   COMPRESSION_THRESHOLD: z.string().default("5000").transform(Number),
-
-  // Sentry configuration
-  LIVE_SENTRY_DSN: z.string().optional(),
-  LIVE_SENTRY_RELEASE_VERSION: z.string().optional(),
-
-  // Hocuspocus server configuration
-  HOCUSPOCUS_URL: z.string().optional(),
-  HOCUSPOCUS_USERNAME: z.string().optional(),
-  HOCUSPOCUS_PASSWORD: z.string().optional(),
-
-  // Graceful termination timeout
-  SHUTDOWN_TIMEOUT: z.string().default("10000").transform(Number),
-
-  // Live server secret key
+  // secret
   LIVE_SERVER_SECRET_KEY: z.string(),
-
+  // Redis configuration
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().default("6379").transform(Number),
+  REDIS_URL: z.string().optional(),
   // Iframely configuration
   IFRAMELY_URL: z.string(),
 });
 
-// Validate the environment variables
-function validateEnv() {
+const validateEnv = () => {
   const result = envSchema.safeParse(process.env);
-
   if (!result.success) {
     console.error("❌ Invalid environment variables:", JSON.stringify(result.error.format(), null, 4));
     process.exit(1);
   }
-
   return result.data;
-}
+};
 
-// Export the validated environment
 export const env = validateEnv();

@@ -1,7 +1,11 @@
-import { ExIntakeIssue } from "@plane/sdk";
+import { ExIntakeIssue, PlaneUser } from "@plane/sdk";
 import { getIntakeUrl } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
-import { createSlackLinkbackMutationContext, E_MUTATION_CONTEXT_FORMAT_TYPE, E_MUTATION_CONTEXT_ITEM_TYPE } from "../helpers/blocks";
+import {
+  createSlackLinkbackMutationContext,
+  E_MUTATION_CONTEXT_FORMAT_TYPE,
+  E_MUTATION_CONTEXT_ITEM_TYPE,
+} from "../helpers/blocks";
 import { INTAKE_STATUSES } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
@@ -9,7 +13,8 @@ export const createSlackIntakeLinkback = (
   workspaceSlug: string,
   issue: ExIntakeIssue,
   userMap: Map<string, string>,
-  showLogo = false
+  showLogo = false,
+  createdBy: PlaneUser | undefined
 ) => {
   const { issue_detail } = issue;
   const planeToSlackUserMap = invertStringMap(userMap);
@@ -79,7 +84,15 @@ export const createSlackIntakeLinkback = (
 
   // Build markdown content for creation/update info
   const mutationContext = createSlackLinkbackMutationContext({
-    issue,
+    issueCtx: {
+      createdBy: createdBy
+        ? {
+            id: createdBy.id,
+            display_name: createdBy.display_name,
+          }
+        : undefined,
+      updatedBy: undefined,
+    },
     planeToSlackUserMap,
     workspaceSlug,
     options: {

@@ -3,21 +3,16 @@ import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Rss } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICustomSearchSelectOption, EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
-import {
-  BreadcrumbNavigationDropdown,
-  BreadcrumbNavigationSearchDropdown,
-  Breadcrumbs,
-  Header,
-  InitiativeIcon,
-  ScopeIcon,
-} from "@plane/ui";
+import { InitiativeIcon, ScopeIcon, OverviewIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
+import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
@@ -64,7 +59,12 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
         query: _initiative.name,
         content: (
           <Link href={`/${workspaceSlug}/initiatives/${_initiative.id}`}>
-            <SwitcherLabel name={_initiative.name} LabelIcon={InitiativeIcon} />
+            <SwitcherLabel
+              name={_initiative.name}
+              logo_props={_initiative.logo_props}
+              LabelIcon={InitiativeIcon}
+              type="lucide"
+            />
           </Link>
         ),
       };
@@ -77,7 +77,7 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
         key: EInitiativeNavigationItem.OVERVIEW,
         title: t("initiatives.overview"),
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/`),
-        icon: Rss,
+        icon: OverviewIcon,
       },
       {
         key: EInitiativeNavigationItem.SCOPE,
@@ -131,7 +131,11 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
                 title={initiativesDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <InitiativeIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                    {initiativesDetails?.logo_props?.in_use ? (
+                      <Logo logo={initiativesDetails?.logo_props} size={16} type="lucide" />
+                    ) : (
+                      <InitiativeIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                    )}
                   </Breadcrumbs.Icon>
                 }
                 isLast

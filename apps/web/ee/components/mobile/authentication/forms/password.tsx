@@ -1,17 +1,13 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-import {
-  EMobileAuthSteps,
-  EMobileAuthModes,
-  TMobileAuthSteps,
-  TMobileAuthModes,
-  API_BASE_URL,
-  E_PASSWORD_STRENGTH,
-} from "@plane/constants";
-import { TMobileCSRFToken } from "@plane/types";
-import { Button, Input, Spinner } from "@plane/ui";
+import type { TMobileAuthSteps, TMobileAuthModes } from "@plane/constants";
+import { EMobileAuthSteps, EMobileAuthModes, API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import type { TMobileCSRFToken } from "@plane/types";
+import { Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // services
 import mobileAuthService from "@/plane-web/services/mobile.service";

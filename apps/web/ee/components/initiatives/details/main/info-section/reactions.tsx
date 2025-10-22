@@ -1,21 +1,22 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
-// hooks
-// ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, formatTextList } from "@plane/utils";
 // components
 import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeReaction } from "@/plane-web/types/initiative";
+import type { TInitiativeReaction } from "@/plane-web/types/initiative";
 
 export type TIssueReaction = {
   workspaceSlug: string;

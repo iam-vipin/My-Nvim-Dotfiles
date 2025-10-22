@@ -1,14 +1,15 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

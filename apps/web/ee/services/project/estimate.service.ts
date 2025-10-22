@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 
 // types
-import { IEstimate, IEstimateFormData, IEstimatePoint } from "@plane/types";
+import type { IEstimate, IEstimateFormData, IEstimatePoint } from "@plane/types";
 // ce services
 import { EstimateService as CeEstimateService } from "@/ce/services/project/estimate.service";
 

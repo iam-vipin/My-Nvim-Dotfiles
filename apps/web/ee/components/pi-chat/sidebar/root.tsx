@@ -15,12 +15,12 @@ export const PiSidebar = observer(() => {
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // store
-  const { geUserThreads, geFavoriteChats, fetchFavoriteChats, isLoadingThreads } = usePiChat();
+  const { activeChatId, geUserThreads, geFavoriteChats, fetchFavoriteChats, isLoadingThreads } = usePiChat();
   const userThreads = geUserThreads();
   const { workspaceSlug } = useParams();
   const { getWorkspaceBySlug } = useWorkspace();
 
-  const { isLoading: isLoadingFavoriteChats } = useSWR(
+  useSWR(
     workspaceSlug ? `PI_FAVORITE_CHATS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug as string)?.id || "") : null,
     {
@@ -38,15 +38,18 @@ export const PiSidebar = observer(() => {
 
   return (
     <SidebarWrapper
-      title="Pi Chat"
+      title="Plane AI"
       quickActions={<Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} />}
     >
       {/* Favorites */}
-      {favoriteChats && favoriteChats.length > 0 && (
-        <FavoriteChats favoriteChats={favoriteChats} isLoading={isLoadingFavoriteChats} />
-      )}
+      {favoriteChats && favoriteChats.length > 0 && <FavoriteChats favoriteChats={favoriteChats} />}
       {/* History List */}
-      <RecentChats userThreads={filteredUserThread ?? []} isLoading={isLoadingThreads} />
+      <RecentChats
+        userThreads={filteredUserThread ?? []}
+        isLoading={isLoadingThreads}
+        activeChatId={activeChatId}
+        isFullScreen
+      />
     </SidebarWrapper>
   );
 });

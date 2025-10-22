@@ -1,12 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { AsanaCustomField } from "@plane/etl/asana";
+import type { AsanaCustomField } from "@plane/etl/asana";
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
-import { useTranslation } from "@plane/i18n";
 
 type TConfigureAsanaSelectPriority = {
   value: string | undefined;

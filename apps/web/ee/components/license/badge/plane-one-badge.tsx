@@ -1,9 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { PlaneOneIcon, Tooltip } from "@plane/ui";
+import { PlaneOneIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionName } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";

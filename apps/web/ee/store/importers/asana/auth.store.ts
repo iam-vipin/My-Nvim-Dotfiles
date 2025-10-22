@@ -1,15 +1,14 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { AsanaAuthState, AsanaPATAuthState } from "@plane/etl/asana";
-import { TServiceAuthConfiguration } from "@plane/etl/core";
+import type { AsanaAuthState, AsanaPATAuthState } from "@plane/etl/asana";
+import type { TServiceAuthConfiguration } from "@plane/etl/core";
 // plane web services
 import { AsanaAuthService } from "@/plane-web/services/importers/asana/auth.service";
 // store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
+import type { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
 
 export interface IAsanaAuthStore {
   // observables

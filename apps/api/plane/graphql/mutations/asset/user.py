@@ -100,9 +100,7 @@ def delete_asset_entity(asset, entity_type: UserAssetEnumType) -> dict:
 @strawberry.type
 class UserAssetMutation:
     # asset entity create
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def create_user_asset(
         self,
         info: Info,
@@ -163,12 +161,8 @@ class UserAssetMutation:
         )
 
     # asset entity update
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
-    async def update_user_asset(
-        self, info: Info, asset_id: strawberry.ID, attributes: Optional[JSON] = None
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
+    async def update_user_asset(self, info: Info, asset_id: strawberry.ID, attributes: Optional[JSON] = None) -> bool:
         user = info.context.user
 
         asset = await sync_to_async(FileAsset.objects.get)(id=asset_id, user_id=user.id)
@@ -185,18 +179,14 @@ class UserAssetMutation:
             get_asset_object_metadata.delay(asset_id=str(asset_id))
 
         # get the entity and save the asset id for the request field
-        await update_asset_entity(
-            asset_id=asset_id, asset=asset, entity_type=asset.entity_type
-        )
+        await update_asset_entity(asset_id=asset_id, asset=asset, entity_type=asset.entity_type)
 
         # save the asset
         await sync_to_async(asset.save)(update_fields=["is_uploaded", "attributes"])
         return True
 
     # asset entity delete
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def delete_user_asset(self, info: Info, asset_id: strawberry.ID) -> bool:
         user = info.context.user
 

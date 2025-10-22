@@ -4,7 +4,8 @@ import { AlertTriangle } from "lucide-react";
 // constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
-import { EIssueServiceType, EUserProjectRoles, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
+import { EIssueServiceType, EUserProjectRoles } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components

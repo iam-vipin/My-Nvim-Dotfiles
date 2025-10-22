@@ -1,12 +1,11 @@
 import React from "react";
-import { useParams } from "next/navigation";
-import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { useRouter, useParams, usePathname } from "next/navigation";
+import { BriefcaseIcon, Loader as Spinner } from "lucide-react";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TTemplate } from "@/plane-web/types";
+import type { TTemplate } from "@/plane-web/types";
 
 type TSystemPrompt = {
   prompt: TTemplate;
@@ -22,18 +21,19 @@ const SystemPrompts = (props: TSystemPrompt) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // router
   const { workspaceSlug, projectId } = useParams();
-  const router = useAppRouter();
+  const router = useRouter();
+  const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
 
   const getIcon = (type: string) => {
     switch (type) {
       case "pages":
-        return FileText;
+        return PageIcon;
       case "cycles":
-        return ContrastIcon;
+        return CycleIcon;
       case "modules":
-        return DiceIcon;
+        return ModuleIcon;
       case "projects":
         return BriefcaseIcon;
       case "issues":
@@ -54,7 +54,16 @@ const SystemPrompts = (props: TSystemPrompt) => {
     setIsInitializing("");
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
-    getAnswer(newChatId, prompt.text, focus, isProjectLevel, workspaceSlug?.toString(), workspaceId?.toString());
+    getAnswer(
+      newChatId,
+      prompt.text,
+      focus,
+      isProjectLevel,
+      workspaceSlug?.toString(),
+      workspaceId?.toString(),
+      pathname,
+      []
+    );
   };
   const promptIcon = getIcon(prompt.type);
 

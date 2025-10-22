@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -14,12 +15,14 @@ import {
   SUBSCRIPTION_WEBPAGE_URLS,
   SUBSCRIPTION_WITH_TRIAL,
 } from "@plane/constants";
-import { EProductSubscriptionEnum, IPaymentProduct } from "@plane/types";
-import { EModalWidth, ModalCore, TOAST_TYPE, setToast, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IPaymentProduct } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
+import { EModalWidth, ModalCore, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
-import { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
+import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
 // plane web imports
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";

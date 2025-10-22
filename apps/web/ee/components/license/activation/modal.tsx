@@ -1,12 +1,14 @@
 "use client";
 
-import { FC, useCallback, useMemo } from "react";
+import type { FC } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";

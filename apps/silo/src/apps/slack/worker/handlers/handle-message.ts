@@ -1,14 +1,14 @@
 import { PageResource, PageSubType, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { ExPage } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
 import { getProjectPageUrl, getPublishedPageUrl, getWorkspacePageUrl } from "@/helpers/urls";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
@@ -81,7 +81,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
-    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+    const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const parser = getSlackContentParser({
       userMap,
@@ -124,7 +124,7 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
 
     const { workspaceConnection, planeClient, slackService } = details;
 
-    const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+    const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
     const unfurlMap: UnfurlMap = {};
 
@@ -140,17 +140,29 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
             workspaceConnection.workspace_slug,
             resource.projectIdentifier,
             Number(resource.issueKey),
-            ["state", "project", "assignees", "labels", "type"],
+            ["state", "project", "assignees", "labels", "type", "created_by", "updated_by"],
             true
           );
 
+          const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+            planeUsers: issue.assignees,
+            currentUserMap: userMap,
+            slackService,
+          });
+
           const hideActions = issue.type?.is_epic ?? false;
 
-          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false, hideActions);
+          const linkBack = createSlackLinkback(
+            workspaceConnection.workspace_slug,
+            issue,
+            enhancedUserMap,
+            false,
+            hideActions,
+            true
+          );
           unfurlMap[link.url] = {
             blocks: linkBack.blocks,
           };
-
         } else if (resource.type === "page") {
           const linkBack = await getPageLinkback(resource, details);
           if (!linkBack) return;
@@ -232,7 +244,11 @@ export const getPageLinkback = async (
         logger.error(`[SLACK] No project ID found for page`, { pageResource });
         return;
       }
-      page = await planeClient.page.getProjectPage(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
+      page = await planeClient.page.getProjectPage(
+        workspaceConnection.workspace_slug,
+        pageResource.projectId,
+        pageResource.pageId
+      );
       pageURL = getProjectPageUrl(workspaceConnection.workspace_slug, pageResource.projectId, pageResource.pageId);
       break;
     default:

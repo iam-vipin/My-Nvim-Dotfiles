@@ -1,12 +1,12 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TMessageActionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
@@ -65,7 +65,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
   const { slackService, planeClient, workspaceConnection } = details;
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
 
   const metadata = {
     type: "message_action",
@@ -92,7 +92,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
       workspaceEntityConnections[0].workspace_slug,
       workspaceEntityConnections[0].project_id!,
       workspaceEntityConnections[0].issue_id!,
-      ["state", "project", "assignees", "labels"]
+      ["state", "project", "assignees", "labels", "created_by", "updated_by"]
     );
     const statesPromise = planeClient.state.list(
       workspaceEntityConnections[0].workspace_slug,
@@ -101,7 +101,13 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
     const [issue, states] = await Promise.all([issuePromise, statesPromise]);
 
-    modal = alreadyLinkedModalView(workspaceEntityConnections[0].workspace_slug, issue, states.results, userMap, metadata);
+    modal = alreadyLinkedModalView(
+      workspaceEntityConnections[0].workspace_slug,
+      issue,
+      states.results,
+      userMap,
+      metadata
+    );
   } else {
     modal = createLinkIssueModalView(metadata);
   }

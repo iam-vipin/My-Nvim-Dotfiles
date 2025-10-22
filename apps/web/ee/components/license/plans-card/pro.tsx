@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
@@ -81,7 +81,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                     ? "today"
                     : `in ${subscriptionDetail.remaining_trial_days} days`}{" "}
                   <span className="text-sm font-medium text-custom-text-300">
-                    • Billable seats when you upgrade: {subscriptionDetail?.billable_members}
+                    • Billable seats when you upgrade: {subscriptionDetail?.purchased_seats}
                   </span>
                 </div>
               )}
@@ -93,7 +93,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
                     {startDate
                       ? `Current billing cycle: ${renderFormattedDate(startDate)} - ${renderFormattedDate(endDate)}`
                       : `Your billing cycle renews on ${renderFormattedDate(endDate)}`}{" "}
-                    • Billable seats: {subscriptionDetail?.billable_members}
+                    • Billable seats: {subscriptionDetail?.purchased_seats}
                   </div>
                 ))}
             </>

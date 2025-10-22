@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import type { EditorRefApi, TDocumentEventsServer } from "@plane/editor";
-import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName } from "@plane/editor/lib";
-// plane ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import type { TDocumentEventsClient } from "@plane/editor/lib";
+import { DocumentCollaborativeEvents, getServerEventName } from "@plane/editor/lib";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -16,12 +16,12 @@ type CollaborativeActionEvent =
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   page: TPageInstance;
 };
 
 export const useCollaborativePageActions = (props: Props) => {
-  const { editorRef, page } = props;
+  const { page } = props;
+  const editorRef = page.editor.editorRef;
 
   // @ts-expect-error - TODO: fix this
   const actionHandlerMap: Record<TDocumentEventsClient, CollaborativeAction> = useMemo(

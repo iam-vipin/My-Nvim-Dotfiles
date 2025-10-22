@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
@@ -10,10 +10,10 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-import { IIssueDisplayProperties } from "@plane/types";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
-import { ISvgIcons } from "@plane/ui/src/icons/type";
-import { IIssue } from "@/types/issue";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import type { IIssueDisplayProperties } from "@plane/types";
+import type { IIssue } from "@/types/issue";
 import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
@@ -85,7 +85,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   cycle: {
     title: "Cycle",
-    icon: ContrastIcon,
+    icon: CycleIcon,
     Column: SpreadsheetCycleColumn,
   },
   priority: {

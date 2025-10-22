@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/ui";
-import { IPage } from "@/plane-web/store/pages";
+import type { IPage } from "@/plane-web/store/pages";
 
 type Props = {
   pageDetails: IPage;
@@ -13,7 +13,7 @@ export const PageHeader: React.FC<Props> = observer(({ pageDetails }) => (
         {pageDetails.logo_props?.in_use ? (
           <Logo logo={pageDetails.logo_props} size={36} type="lucide" />
         ) : (
-          <FileText className="size-9 text-custom-text-300" />
+          <PageIcon className="size-9 text-custom-text-300" />
         )}
       </div>
       <h1 className="tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] break-words">{pageDetails.name}</h1>

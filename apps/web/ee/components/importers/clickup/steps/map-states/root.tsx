@@ -1,23 +1,26 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import isEqual from "lodash/isEqual";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 
-import { TClickUpStatus, TClickUpStateConfig } from "@plane/etl/clickup";
+import type { TClickUpStatus, TClickUpStateConfig } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
-import { ExState } from "@plane/sdk";
-import { IState } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { ExState } from "@plane/sdk";
+import type { IState } from "@plane/types";
+import { Loader } from "@plane/ui";
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/clickup";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 //  plane web types
-import { E_CLICKUP_IMPORTER_STEPS, TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import type { TImporterClickUpDataPayload } from "@/plane-web/types/importers/clickup";
+import { E_CLICKUP_IMPORTER_STEPS } from "@/plane-web/types/importers/clickup";
 
 type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.MAP_STATES];
 

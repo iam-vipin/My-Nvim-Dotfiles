@@ -24,12 +24,8 @@ from plane.graphql.types.epics.comment import EpicCommentActivityType
 
 @strawberry.type
 class EpicCommentQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_comments(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> list[EpicCommentActivityType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_comments(self, info: Info, slug: str, project: str, epic: str) -> list[EpicCommentActivityType]:
         user = info.context.user
         user_id = str(user.id)
 

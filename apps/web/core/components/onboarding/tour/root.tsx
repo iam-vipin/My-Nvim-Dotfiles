@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 // plane imports
-import { Avatar, Button, PlaneLockup } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { PlaneLockup } from "@plane/propel/icons";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

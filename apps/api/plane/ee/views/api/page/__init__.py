@@ -1,2 +1,13 @@
-from .page import WikiBulkOperationAPIView
-from .base import ProjectPageDetailAPIEndpoint, WorkspacePageDetailAPIEndpoint, PublishedPageDetailAPIEndpoint
+from .page import (
+    WikiBulkOperationAPIView,
+    ProjectPageBulkOperationAPIView,
+    TeamspacePageBulkOperationAPIView
+)
+
+from .base import (
+    ProjectPageDetailAPIEndpoint,
+    WorkspacePageDetailAPIEndpoint,
+    PublishedPageDetailAPIEndpoint,
+    ProjectPageAPIEndpoint,
+    WorkspacePageAPIEndpoint,
+)

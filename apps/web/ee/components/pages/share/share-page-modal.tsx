@@ -2,11 +2,11 @@
 
 import React from "react";
 // plane imports
-import { EPageSharedUserAccess } from "@plane/types";
+import type { EPageSharedUserAccess } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // types
-import { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";
-import { TPendingSharedUser, TModifiedSharedUser } from "./types";
+import type { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";
+import type { TPendingSharedUser, TModifiedSharedUser } from "./types";
 // components
 import { ModalHeader, MemberSearch, PendingUsersSection, ExistingUsersSection, EmptyState, ModalFooter } from ".";
 

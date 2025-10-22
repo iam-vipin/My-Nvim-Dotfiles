@@ -1,17 +1,15 @@
 /* eslint-disable no-useless-catch */
 
-import { isEmpty, set } from "lodash";
+import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web store helpers
-import { IProjectFilterHelper, ProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
+import type { IProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
+import { ProjectFilterHelper } from "@/plane-web/store/workspace-project-states/filters";
 // plane web types
-import { TProject } from "@/plane-web/types/projects";
-import {
-  EProjectFilters,
-  EProjectLayouts,
-  EProjectScope,
+import type { TProject } from "@/plane-web/types/projects";
+import type {
   TProjectAttributes,
   TProjectDisplayFilters,
   TProjectFilters,
@@ -19,6 +17,7 @@ import {
   TProjectScope,
   TProjectsLayoutStructure,
 } from "@/plane-web/types/workspace-project-filters";
+import { EProjectFilters, EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
 
 export interface IProjectFilterStore extends IProjectFilterHelper {
   // constants

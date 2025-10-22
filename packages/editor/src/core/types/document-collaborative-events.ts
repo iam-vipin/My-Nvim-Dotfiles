@@ -33,6 +33,8 @@ export type CommonRealtimeFields = {
     descendantPages: string[];
   };
   workspace_slug: string;
+  project_id?: string;
+  teamspace_id?: string;
   user_id: string;
   timestamp: string;
 };
@@ -48,6 +50,8 @@ export function createRealtimeEvent<T extends keyof EventToPayloadMap>(
       descendantPages: opts.descendants_ids || [],
     },
     workspace_slug: opts.workspace_slug,
+    project_id: opts.project_id || "",
+    teamspace_id: opts.teamspace_id || "",
     user_id: opts.user_id,
     timestamp: new Date().toISOString(),
     action: opts.action,
@@ -61,6 +65,8 @@ export type ApiServerPayload<T extends keyof EventToPayloadMap> = {
   page_id?: string;
   parent_id?: string;
   data: EventToPayloadMap[T];
+  project_id?: string;
+  teamspace_id?: string;
   workspace_slug: string;
   user_id: string;
 };

@@ -9,6 +9,7 @@ export enum E_KNOWN_FIELD_KEY {
   NAME = "name",
   PRIORITY = "priority",
   TYPE_ID = "type_id",
+  ASSIGNEE_IDS = "assignee_ids",
 }
 
 // Conditional visibility rules
@@ -89,18 +90,18 @@ export type FormField =
 export type FieldValue<T extends FormField> = T extends TextField
   ? string
   : T extends SelectField
-  ? string
-  : T extends RelationField
-  ? string
-  : T extends DateField
-  ? string
-  : T extends NumberField
-  ? number
-  : T extends BooleanField
-  ? boolean
-  : T extends FileUploadField
-  ? File[]
-  : never;
+    ? string
+    : T extends RelationField
+      ? string
+      : T extends DateField
+        ? string
+        : T extends NumberField
+          ? number
+          : T extends BooleanField
+            ? boolean
+            : T extends FileUploadField
+              ? File[]
+              : never;
 
 // Generic form state type
 export type FormState<T extends readonly FormField[]> = {

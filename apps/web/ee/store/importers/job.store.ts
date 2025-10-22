@@ -1,10 +1,11 @@
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
+import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_JOB_STATUS, JobService, TImporterKeys, TJobConfigResponse } from "@plane/etl/core";
-import { TImportJob } from "@plane/types";
+import type { TImporterKeys, TJobConfigResponse } from "@plane/etl/core";
+import { E_JOB_STATUS, JobService } from "@plane/etl/core";
+import type { TImportJob } from "@plane/types";
 
 export type TJobLoader = "fetch" | "re-fetch" | "fetch_by_id" | "create" | "start" | "create_config" | undefined;
 

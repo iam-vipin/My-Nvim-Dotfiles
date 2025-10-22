@@ -1,9 +1,9 @@
 import { Extensions } from "@tiptap/core";
-import CharacterCount from "@tiptap/extension-character-count";
+import { CharacterCount } from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import TextStyle from "@tiptap/extension-text-style";
-import TiptapUnderline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Underline } from "@tiptap/extension-underline";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -20,19 +20,16 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
-  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
   TableRow,
   UtilityExtension,
 } from "@/extensions";
-// helpers
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
-import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
-import type { IEditorProps, TEmbedConfig } from "@/types";
+import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
@@ -48,11 +45,11 @@ type TArguments = Pick<
   | "mentionHandler"
   | "placeholder"
   | "tabIndex"
-  | "embedHandler"
+  | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
-} & Pick<IEditorPropsExtended, "embedHandler" | "extensionOptions" | "isSmoothCursorEnabled">;
+};
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const {
@@ -65,10 +62,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     placeholder,
     tabIndex,
     editable,
-    // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
+    extendedEditorProps,
   } = args;
 
   const extensions = [
@@ -82,7 +76,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ListKeymap({ tabIndex }),
     CustomLinkExtension,
     CustomTypographyExtension,
-    TiptapUnderline,
+    Underline,
     TextStyle,
     TaskList.configure({
       HTMLAttributes: {
@@ -121,17 +115,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      extendedEditorProps,
       flaggedExtensions,
       fileHandler,
-      // additional props
-      embedHandler,
-      extensionOptions,
     }),
   ];
-
-  if (isSmoothCursorEnabled) {
-    extensions.push(SmoothCursorExtension);
-  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

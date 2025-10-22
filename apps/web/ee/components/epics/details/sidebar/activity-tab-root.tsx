@@ -1,13 +1,15 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssueActivityComment } from "@plane/types";
+import type { TIssueActivityComment } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks

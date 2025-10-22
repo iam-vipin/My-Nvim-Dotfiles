@@ -1,14 +1,14 @@
 import { format } from "date-fns";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { ICycle } from "@plane/types";
-import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import type { ICycle } from "@plane/types";
+import type { CYCLE_ACTION } from "@/plane-web/constants/cycle";
 import { CycleUpdateService, CycleService } from "@/plane-web/services/cycle.service";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TCycleUpdateReaction, TCycleUpdates } from "@/plane-web/types";
-import { ICycleStore as ICeCycleStore, CycleStore as CeCycleStore } from "@/store/cycle.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TCycleUpdateReaction, TCycleUpdates } from "@/plane-web/types";
+import type { ICycleStore as ICeCycleStore } from "@/store/cycle.store";
+import { CycleStore as CeCycleStore } from "@/store/cycle.store";
 
 export interface ICycleStore extends ICeCycleStore {
   cycleUpdateIds: string[];

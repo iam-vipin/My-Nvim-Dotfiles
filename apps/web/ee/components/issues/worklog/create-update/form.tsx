@@ -1,12 +1,14 @@
 "use client";
 
-import { FC, FormEvent, useEffect, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Timer } from "lucide-react";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, TextArea } from "@plane/ui";
 // plane web helpers
 import { convertHoursMinutesToMinutes } from "@plane/utils";
 // plane web types
-import { TWorklog } from "@/plane-web/types";
+import type { TWorklog } from "@/plane-web/types";
 
 type TWorklogForm = {
   hours: string;

@@ -1,33 +1,38 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TGitlabEntityConnection, TStateMap } from "@plane/types";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TGitlabEntityConnection, TProjectMap, TStateMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
+
 // local imports
 import { projectMapInit, stateMapInit } from "../root";
 
 type TFormCreate = {
   modal: boolean;
   handleModal: Dispatch<SetStateAction<boolean>>;
+  isEnterprise: boolean;
 };
 
 export const FormCreate: FC<TFormCreate> = observer((props) => {
   // props
-  const { modal, handleModal } = props;
+  const { modal, handleModal, isEnterprise } = props;
 
   // hooks
   const {
     workspace,
     fetchStates,
     entityConnection: { createEntityConnection },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
@@ -85,7 +90,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
         <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.link")}</div>
 
         <div className="space-y-4">
-          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
+          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
@@ -97,6 +102,7 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
                 projectId={projectMap?.projectId || undefined}
                 value={stateMap}
                 handleChange={handleStateMapChange}
+                isEnterprise={isEnterprise}
               />
             </div>
           </div>

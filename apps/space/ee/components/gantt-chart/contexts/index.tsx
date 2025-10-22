@@ -1,4 +1,5 @@
-import React, { FC, createContext } from "react";
+import type { FC } from "react";
+import React, { createContext } from "react";
 import { GanttStore } from "@/plane-web/store/issue_gantt_view.store";
 
 let ganttViewStore = new GanttStore();

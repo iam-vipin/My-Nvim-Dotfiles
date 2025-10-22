@@ -2,12 +2,14 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, RotateCw, Trash2 } from "lucide-react";
 // plane imports
-import { ContextMenu, CustomMenu, DragHandle, TContextMenuItem, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // plane web store
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 // local imports
 import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 
@@ -133,9 +135,7 @@ export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
                 return (
                   <CustomMenu.MenuItem
                     key={item.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       item.action();
                     }}
                     className="flex items-center gap-2"

@@ -21,21 +21,15 @@ from plane.graphql.types.catch_up import CatchUpTypeEnum
 
 def mark_as_read_async(notification_ids: list[str]) -> bool:
     try:
-        Notification.objects.filter(id__in=notification_ids).update(
-            read_at=timezone.now()
-        )
+        Notification.objects.filter(id__in=notification_ids).update(read_at=timezone.now())
         return True
     except Exception:
         return False
 
 
-def get_notification_ids(
-    workspace_slug: str, user_id: str, type_id: Optional[str] = None
-) -> Optional[list[str]]:
+def get_notification_ids(workspace_slug: str, user_id: str, type_id: Optional[str] = None) -> Optional[list[str]]:
     # Teamspace Filter
-    project_teamspace_filter = project_member_filter_via_teamspaces(
-        user_id=user_id, workspace_slug=workspace_slug
-    )
+    project_teamspace_filter = project_member_filter_via_teamspaces(user_id=user_id, workspace_slug=workspace_slug)
 
     notification_query = (
         Notification.objects.filter(project_teamspace_filter.query)
@@ -98,9 +92,7 @@ def mark_notification_ids_async(
 
 @strawberry.type
 class CatchUpMarkAsReadMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def catch_up_mark_as_read(
         self,
         info: Info,
@@ -111,21 +103,15 @@ class CatchUpMarkAsReadMutation:
         user = info.context.user
         user_id = str(user.id)
 
-        is_marked = await mark_notification_ids_async(
-            workspace_slug=slug, user_id=user_id, type_id=type_id, type=type
-        )
+        is_marked = await mark_notification_ids_async(workspace_slug=slug, user_id=user_id, type_id=type_id, type=type)
 
-        return is_marked
+        return bool(is_marked)
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def catch_up_mark_all_as_read(self, info: Info, slug: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
 
-        is_marked = await mark_notification_ids_async(
-            workspace_slug=slug, user_id=user_id
-        )
+        is_marked = await mark_notification_ids_async(workspace_slug=slug, user_id=user_id)
 
-        return is_marked
+        return bool(is_marked)

@@ -1,4 +1,5 @@
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { PencilIcon } from "lucide-react";
 // plane constants
@@ -11,8 +12,11 @@ import {
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { EFileAssetType, TCustomerPayload } from "@plane/types";
-import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCustomerPayload } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import { CustomSearchSelect, Input } from "@plane/ui";
 // utils
 import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";

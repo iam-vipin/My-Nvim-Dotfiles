@@ -1,11 +1,13 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, EModalWidth, ModalCore, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { EModalWidth, ModalCore, Loader } from "@plane/ui";
 // plane web hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";

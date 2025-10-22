@@ -21,20 +21,14 @@ from plane.graphql.types.teamspace import TeamspaceMemberType
 
 @strawberry.type
 class TeamspaceMemberQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def teamspace_members_by_project(
-        self, info: Info, slug: str, project: str
-    ) -> list[TeamspaceMemberType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
+    async def teamspace_members_by_project(self, info: Info, slug: str, project: str) -> list[TeamspaceMemberType]:
         try:
             user = info.context.user
             user_id = str(user.id)
 
             # check if teamspace feature flag is enabled
-            teamspace_feature_flagged = await is_teamspace_feature_flagged_async(
-                workspace_slug=slug, user_id=user_id
-            )
+            teamspace_feature_flagged = await is_teamspace_feature_flagged_async(workspace_slug=slug, user_id=user_id)
             if not teamspace_feature_flagged:
                 message = "Teamspace feature flag is not enabled for the workspace"
                 error_extensions = {
@@ -55,7 +49,6 @@ class TeamspaceMemberQuery:
 
             teamspace_members = await sync_to_async(list)(
                 TeamspaceMember.objects.filter(
-                    member_id=user_id,
                     workspace__slug=slug,
                     team_space__projects__project_id=project,
                 )

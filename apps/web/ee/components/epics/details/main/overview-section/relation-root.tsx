@@ -1,10 +1,11 @@
 "use client";
-import React, { FC } from "react";
-import { isEmpty } from "lodash";
+import type { FC } from "react";
+import React from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { LayersIcon } from "lucide-react";
+import { getButtonStyling } from "@plane/propel/button";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { EIssueServiceType } from "@plane/types";
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { RelationActionButton, RelationsCollapsibleContent } from "@/components/issues/issue-detail-widgets/relations";
@@ -37,7 +38,7 @@ export const EpicRelationsOverviewRoot: FC<Props> = observer((props) => {
           <SectionEmptyState
             heading="No relations yet"
             subHeading="Start adding relations to manage and track the progress of the epic."
-            icon={<LayersIcon className="size-4" />}
+            icon={<WorkItemsIcon className="size-4" />}
             actionElement={
               <RelationActionButton
                 issueId={epicId}

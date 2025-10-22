@@ -2,7 +2,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // plane web types
-import {
+import type {
   TWorklog,
   TWorklogDownload,
   TWorklogDownloadPaginatedInfo,

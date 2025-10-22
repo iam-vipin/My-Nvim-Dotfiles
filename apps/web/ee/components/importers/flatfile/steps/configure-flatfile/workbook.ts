@@ -1,5 +1,5 @@
-import { Flatfile } from "@flatfile/api";
-import { IState } from "@plane/types";
+import type { Flatfile } from "@flatfile/api";
+import type { IState } from "@plane/types";
 
 interface StateOption {
   label: string;

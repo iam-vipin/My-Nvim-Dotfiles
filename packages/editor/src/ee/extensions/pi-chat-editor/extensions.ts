@@ -1,5 +1,5 @@
 import { Extension, type Extensions } from "@tiptap/core";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
@@ -13,14 +13,14 @@ import { PiChatEditorEnterKeyExtension } from "./enter-key";
 import { PiChatEditorMentionExtension } from "./mention/extension";
 
 type Props = {
-  editorClass: string;
+  placeholder?: string;
   handleSubmit?: () => void;
-  mentionSuggestions?: (query: string) => Promise<any>;
+  searchCallback?: (query: string) => Promise<any>;
   setEditorCommand?: (command: any) => void;
 };
 
 export const PiChatEditorExtensions = (props: Props): Extensions => {
-  const { editorClass, handleSubmit, mentionSuggestions, setEditorCommand } = props;
+  const { handleSubmit, searchCallback, setEditorCommand, placeholder } = props;
 
   return [
     StarterKit.configure({
@@ -36,7 +36,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       italic: false,
       paragraph: {
         HTMLAttributes: {
-          class: `text-[14px] leading-5 font-normal ${editorClass}`,
+          class: `text-[14px] leading-5 font-normal`,
         },
       },
       strike: false,
@@ -57,7 +57,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       },
     }),
     PiChatEditorMentionExtension({
-      mentionSuggestions,
+      searchCallback,
     }),
     PiChatEditorEnterKeyExtension(handleSubmit),
     TaskList.configure({
@@ -82,14 +82,14 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
         if (!editor.isEditable) return "";
 
         const text = editor.getText();
-        return text.trim().length > 0 ? "" : "How can I help you today?";
+        return text.trim().length > 0 ? "" : placeholder || "How can I help you today?";
       },
     }),
     Extension.create({
       onUpdate(this) {
         setEditorCommand?.({
           getHTML: () => getTrimmedHTML(this.editor?.getHTML()),
-          clear: () => this.editor?.commands.clearContent(),
+          clear: () => this.editor?.commands.clearContent(false),
         });
       },
     }),

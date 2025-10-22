@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Accept, useDropzone } from "react-dropzone";
+import type { Accept } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { ImageUp, Plus, Loader as Spinner, Upload, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType } from "@plane/types";
-import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EFileAssetType } from "@plane/types";
 import { cn, checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -143,15 +145,15 @@ export const UploadAppAttachments: React.FC<Props> = observer((props) => {
       ) : (
         <div
           className={cn(
-            "group border border-dashed border-custom-border-200 bg-custom-background-90 hover:bg-custom-background-80/70 rounded-md flex items-center justify-center gap-1.5 p-4 cursor-pointer",
+            "group border border-dashed border-custom-primary-80  h-24 bg-custom-background-100 rounded-md flex items-center justify-center gap-1.5 p-4 cursor-pointer",
             {
               "border-red-500": hasError,
             }
           )}
           {...getRootProps()}
         >
-          <ImageUp className="size-5 text-custom-text-400" />
-          <div className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
+          <ImageUp className="size-5 text-custom-primary-80" />
+          <div className="text-sm font-medium group-hover:text-custom-text-200 text-custom-primary-80">
             Drag and drop to upload external files
           </div>
           <input {...getInputProps()} />

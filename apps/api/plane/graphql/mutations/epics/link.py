@@ -35,9 +35,7 @@ from plane.graphql.types.epics.link import (
 from plane.graphql.utils.roles import Roles
 
 
-def epic_link_base_query(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str
-):
+def epic_link_base_query(workspace_id: str, project_id: str, epic_id: str, user_id: str):
     project_teamspace_filter = project_member_filter_via_teamspaces(
         user_id=user_id,
         workspace_slug=workspace_id,
@@ -77,9 +75,7 @@ def epic_link_exists(
 
 
 @sync_to_async
-def get_epic_link(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str, link_id: str
-):
+def get_epic_link(workspace_id: str, project_id: str, epic_id: str, user_id: str, link_id: str):
     try:
         epic_link_query = epic_link_base_query(
             workspace_id=workspace_id,
@@ -127,13 +123,7 @@ def remove_epic_link_sync(epic_link: IssueLink):
 
 @strawberry.type
 class EpicLinkMutation:
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def create_epic_link(
         self,
         info: Info,
@@ -210,13 +200,7 @@ class EpicLinkMutation:
 
         return epic_link
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def update_epic_link(
         self,
         info: Info,
@@ -313,16 +297,8 @@ class EpicLinkMutation:
 
         return epic_link
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
-    async def delete_epic_link(
-        self, info: Info, slug: str, project: str, epic: str, link: str
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
+    async def delete_epic_link(self, info: Info, slug: str, project: str, epic: str, link: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
 

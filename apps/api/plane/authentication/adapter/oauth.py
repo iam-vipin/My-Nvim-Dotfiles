@@ -1,4 +1,5 @@
 # Python imports
+import logging
 import requests
 import os
 
@@ -15,6 +16,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger("plane.authentication")
 
 
 class OauthAdapter(Adapter):
@@ -81,9 +84,14 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
+            logger.warning("Error getting user token", extra={
+                "error_code": code,
+                "error_message": str(code),
+            })
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
             )
+
 
     def get_user_response(self):
         try:
@@ -97,6 +105,10 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
+            logger.warning("Error getting user response", extra={
+                "error_code": code,
+                "error_message": str(code),
+            })
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
             )
@@ -116,12 +128,8 @@ class OauthAdapter(Adapter):
             if account:
                 account.access_token = self.token_data.get("access_token")
                 account.refresh_token = self.token_data.get("refresh_token", None)
-                account.access_token_expired_at = self.token_data.get(
-                    "access_token_expired_at"
-                )
-                account.refresh_token_expired_at = self.token_data.get(
-                    "refresh_token_expired_at"
-                )
+                account.access_token_expired_at = self.token_data.get("access_token_expired_at")
+                account.refresh_token_expired_at = self.token_data.get("refresh_token_expired_at")
                 account.last_connected_at = timezone.now()
                 account.id_token = self.token_data.get("id_token", "")
                 account.save()
@@ -130,17 +138,11 @@ class OauthAdapter(Adapter):
                 Account.objects.create(
                     user=user,
                     provider=self.provider,
-                    provider_account_id=self.user_data.get("user", {}).get(
-                        "provider_id"
-                    ),
+                    provider_account_id=self.user_data.get("user", {}).get("provider_id"),
                     access_token=self.token_data.get("access_token"),
                     refresh_token=self.token_data.get("refresh_token", None),
-                    access_token_expired_at=self.token_data.get(
-                        "access_token_expired_at"
-                    ),
-                    refresh_token_expired_at=self.token_data.get(
-                        "refresh_token_expired_at"
-                    ),
+                    access_token_expired_at=self.token_data.get("access_token_expired_at"),
+                    refresh_token_expired_at=self.token_data.get("refresh_token_expired_at"),
                     last_connected_at=timezone.now(),
                     id_token=self.token_data.get("id_token", ""),
                 )

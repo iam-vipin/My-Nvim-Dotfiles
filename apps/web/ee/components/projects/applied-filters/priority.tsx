@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // constants
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project/default-root";
-import { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
 
 type Props = {
   handleRemove: (val: TProjectPriority) => void;

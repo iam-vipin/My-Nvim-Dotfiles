@@ -9,8 +9,8 @@ import {
   TEAMSPACE_PAGE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -44,18 +44,13 @@ export const TeamspacePagesList = observer((props: Props) => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // plane web hooks
-  const {
-    getTeamspacePagesLoader,
-    getTeamspacePageIds,
-    getFilteredTeamspacePageIds,
-    getTeamspacePagesFilters,
-    createPage,
-  } = usePageStore(EPageStoreType.TEAMSPACE);
+  const { loader, getCurrentTeamspacePageIds, getCurrentTeamspaceFilteredPageIdsByTab, filters, createPage } =
+    usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
-  const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
-  const teamspacePageIds = getTeamspacePageIds(teamspaceId);
-  const filteredTeamspacePageIds = getFilteredTeamspacePageIds(teamspaceId);
-  const teamspacePagesFilters = getTeamspacePagesFilters(teamspaceId);
+  const teamspacePagesLoader = loader;
+  const teamspacePageIds = getCurrentTeamspacePageIds(teamspaceId);
+  const filteredTeamspacePageIds = getCurrentTeamspaceFilteredPageIdsByTab("public"); // Default to public
+  const teamspacePagesFilters = filters;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE

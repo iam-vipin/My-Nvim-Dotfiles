@@ -1,10 +1,12 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssueType } from "@plane/types";
-import { EModalPosition, EModalWidth, getRandomIconName, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { EModalPosition, EModalWidth, getRandomIconName, ModalCore } from "@plane/ui";
 import { getRandomBackgroundColor } from "@plane/utils";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

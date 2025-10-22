@@ -1,18 +1,20 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
-import { Button } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 // plane web components
 import { ConfigureAsanaSelectWorkspace, ConfigureAsanaSelectProject } from "@/plane-web/components/importers/asana";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
-import { useTranslation } from "@plane/i18n";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/asana";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.CONFIGURE_ASANA];
 

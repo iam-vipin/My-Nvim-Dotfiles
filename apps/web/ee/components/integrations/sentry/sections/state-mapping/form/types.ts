@@ -1,5 +1,5 @@
-import { TSentryStateMapping } from "@plane/etl/sentry";
-import { ExState } from "@plane/sdk";
+import type { TSentryStateMapping } from "@plane/etl/sentry";
+import type { ExState } from "@plane/sdk";
 
 /**
  * Interface for Sentry State Mapping Form Props

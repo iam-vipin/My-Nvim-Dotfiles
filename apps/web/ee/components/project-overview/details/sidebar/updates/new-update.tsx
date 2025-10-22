@@ -1,9 +1,10 @@
 import { useState } from "react";
 // plane imports
+import { Button } from "@plane/propel/button";
 import { EUpdateStatus } from "@plane/types";
-import { Button, TextArea } from "@plane/ui";
+import { TextArea } from "@plane/ui";
 // plane web types
-import { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/plane-web/types";
 // components
 import { StatusDropdown } from "./status-dropdown";
 

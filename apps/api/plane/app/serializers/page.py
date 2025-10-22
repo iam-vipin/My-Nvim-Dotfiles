@@ -10,7 +10,6 @@ from plane.utils.content_validator import (
 )
 from plane.db.models import (
     Page,
-    PageLog,
     PageLabel,
     Label,
     ProjectPage,
@@ -67,6 +66,7 @@ class PageSerializer(BaseSerializer):
             "sub_pages_count",
             "shared_access",
             "is_shared",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
@@ -175,16 +175,8 @@ class PageLiteSerializer(BaseSerializer):
             "moved_to_page",
             "moved_to_project",
             "is_shared",
+            "sort_order",
         ]
-
-
-class PageLogSerializer(BaseSerializer):
-    class Meta:
-        model = PageLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "page"]
-
-
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion
@@ -242,9 +234,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
             # Validate the binary data
             is_valid, error_message = validate_binary_data(binary_data)
             if not is_valid:
-                raise serializers.ValidationError(
-                    f"Invalid binary data: {error_message}"
-                )
+                raise serializers.ValidationError(f"Invalid binary data: {error_message}")
 
             return binary_data
         except Exception as e:
@@ -264,7 +254,6 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
 
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
-
 
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""

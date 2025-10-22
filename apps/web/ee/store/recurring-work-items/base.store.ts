@@ -1,13 +1,14 @@
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { RecurringWorkItemServiceBase } from "@plane/services";
-import { IRecurringWorkItemActionCallbacks, TLoader, TRecurringWorkItem } from "@plane/types";
+import type { IRecurringWorkItemActionCallbacks, TLoader, TRecurringWorkItem } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
-import { IRecurringWorkItemInstance, RecurringWorkItemInstance } from "./instance";
+import type { IRecurringWorkItemInstance } from "./instance";
+import { RecurringWorkItemInstance } from "./instance";
 
 export interface IRecurringWorkItemStore {
   // observables

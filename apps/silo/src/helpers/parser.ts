@@ -1,8 +1,11 @@
+import { parse } from "node-html-parser";
 import { ExIssue } from "@plane/sdk";
+import { E_MENTION_COMPONENT_ATTRIBUTES } from "./constants";
 
 export interface IssueReference {
   sequence: number;
   identifier: string;
+  isClosing: boolean;
 }
 
 export interface LinkedIssues {
@@ -45,7 +48,7 @@ export const getReferredIssues = (text: string): LinkedIssues => {
     if (visitedIssues.has(issue)) {
       continue;
     }
-    closingReferences.push(createPlaneIssueReference(issue));
+    closingReferences.push(createPlaneIssueReference(issue, true));
     visitedIssues.add(issue);
   }
 
@@ -53,7 +56,7 @@ export const getReferredIssues = (text: string): LinkedIssues => {
     if (visitedIssues.has(issue)) {
       continue;
     }
-    nonClosingReferences.push(createPlaneIssueReference(issue));
+    nonClosingReferences.push(createPlaneIssueReference(issue, false));
     visitedIssues.add(issue);
   }
 
@@ -75,10 +78,26 @@ const extractIssues = (text: string, pattern: RegExp): string[] =>
     .map((issue) => issue.replace(/[\[\]]/g, ""))
     .filter((issue): issue is string => issue != null);
 
-const createPlaneIssueReference = (issue: string): IssueReference => {
+const createPlaneIssueReference = (issue: string, isClosing: boolean): IssueReference => {
   const [identifier, sequence] = issue.split("-");
   return {
     identifier,
     sequence: parseInt(sequence),
+    isClosing,
   };
+};
+
+/**
+ * Extracts user mentions from HTML using mention-component tags
+ * @param html - HTML string containing mention components
+ * @returns Array of unique user IDs mentioned in the HTML
+ */
+export const extractUserMentionFromHtml = (html: string): string[] => {
+  const root = parse(html);
+  const mentionComponents = root.querySelectorAll(E_MENTION_COMPONENT_ATTRIBUTES.TAG);
+  const mentionedUserIds = mentionComponents
+    .map((component) => component.getAttribute(E_MENTION_COMPONENT_ATTRIBUTES.ENTITY_IDENTIFIER))
+    .filter((id) => id !== undefined);
+
+  return [...new Set(mentionedUserIds)];
 };

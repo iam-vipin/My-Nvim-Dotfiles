@@ -3,15 +3,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
 // plane imports
-import { AlertModalCore, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // components
 import type { TPageActions } from "@/components/pages/dropdowns";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TPageOperations } from "@/hooks/use-page-operations";
+import type { TPageOperations } from "@/hooks/use-page-operations";
 // plane web imports
 import { LockPageModal } from "@/plane-web/components/pages";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -32,12 +34,7 @@ export const usePageActionsMenu = (props: {
   const router = useAppRouter();
 
   // derived values
-  const {
-    is_locked,
-    archived_at,
-    canCurrentUserLockPage,
-    editor: { editorRef },
-  } = page;
+  const { is_locked, archived_at, canCurrentUserLockPage } = page;
 
   // Custom menu items
   const customMenuItems: (TContextMenuItem & { key: TPageActions })[] = [
@@ -72,12 +69,7 @@ export const usePageActionsMenu = (props: {
   // Modal components
   const ModalsComponent = observer(() => (
     <>
-      <LockPageModal
-        editorRef={editorRef}
-        page={page}
-        setLockPageModal={setLockPageModal}
-        lockPageModal={lockPageModal}
-      />
+      <LockPageModal page={page} setLockPageModal={setLockPageModal} lockPageModal={lockPageModal} />
       <AlertModalCore
         variant="primary"
         isOpen={restorePageModal}
@@ -90,7 +82,10 @@ export const usePageActionsMenu = (props: {
             // Traverse up the parent chain until we reach the root
             while (currentPage?.parent_id) {
               // Get the parent page
-              currentPage = (await getOrFetchPageInstance({ pageId: currentPage.parent_id })) as TPageInstance;
+              currentPage = (await getOrFetchPageInstance({
+                pageId: currentPage.parent_id,
+                trackVisit: false,
+              })) as TPageInstance;
               // If we found an archived parent, remember it
               if (currentPage?.archived_at) {
                 lastArchivedParent = currentPage;

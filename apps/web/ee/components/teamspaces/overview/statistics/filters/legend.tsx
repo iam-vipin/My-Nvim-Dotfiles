@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { EStatisticsLegend } from "@plane/constants";
+import type { EStatisticsLegend } from "@plane/constants";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -10,7 +10,7 @@ import {
   WORKSPACE_PROJECT_STATE_GROUPS,
   WORKSPACE_PROJECT_STATE_PRIORITY,
 } from "@/plane-web/constants/workspace-project-states";
-import { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
 export const StatisticsLegend: React.FC<TStatisticsFilterProps<"legend">> = observer((props) => {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;

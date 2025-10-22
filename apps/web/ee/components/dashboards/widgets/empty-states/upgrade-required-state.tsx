@@ -12,7 +12,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web stores
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;

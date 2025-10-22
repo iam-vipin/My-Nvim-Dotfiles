@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useEffect } from "react";
+import type { FC } from "react";
+import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -9,7 +10,8 @@ import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-impor
 import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import { EZipDriverType, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
 import NotionLogo from "@/public/services/notion.svg";
 
 const NotionImporter: FC = observer(() => {

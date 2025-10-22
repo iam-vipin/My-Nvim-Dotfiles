@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 

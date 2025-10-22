@@ -1,22 +1,10 @@
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import get from "lodash/get";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import orderBy from "lodash/orderBy";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -31,8 +19,8 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
 // local-db
@@ -41,10 +29,10 @@ import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
-import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
+import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 //
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -53,7 +41,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -200,7 +188,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // services
   issueService;
   issueArchiveService;
-  issueDraftService;
   moduleService;
   cycleService;
   // root store
@@ -244,8 +231,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       createIssue: action,
       issueUpdate: action,
-      createDraftIssue: action,
-      updateDraftIssue: action,
       updateIssueDates: action,
       issueQuickAdd: action.bound,
       removeIssue: action.bound,
@@ -270,7 +255,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     this.issueService = new IssueService(serviceType);
     this.issueArchiveService = new IssueArchiveService();
-    this.issueDraftService = new IssueDraftService();
     this.moduleService = new ModuleService();
     this.cycleService = new CycleService();
 
@@ -611,54 +595,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
-    } catch (error) {
-      // If errored out update store again to revert the change
-      this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
-      this.updateIssueList(issueBeforeUpdate, { ...issueBeforeUpdate, ...data } as TIssue);
-      throw error;
-    }
-  }
-
-  /**
-   * Similar to Create Issue but for creating Draft issues
-   * @param workspaceSlug
-   * @param projectId
-   * @param data draft issue data
-   * @returns
-   */
-  async createDraftIssue(workspaceSlug: string, projectId: string, data: Partial<TIssue>) {
-    // call API to create a Draft issue
-    const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
-    // call Fetch parent stats
-    this.fetchParentStats(workspaceSlug, projectId);
-    // Add issue to store
-    this.addIssue(response);
-    return response;
-  }
-
-  /**
-   * Similar to update issue but for draft issues.
-   * @param workspaceSlug
-   * @param projectId
-   * @param issueId
-   * @param data Partial Issue Data to be updated
-   */
-  async updateDraftIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) {
-    // Store Before state of the issue
-    const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
-    try {
-      // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
-
-      // call API to update the issue
-      await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
-
-      // call Fetch parent stats
-      this.fetchParentStats(workspaceSlug, projectId);
-
-      // If the issue is updated to not a draft issue anymore remove from the store list
-      if (!isNil(data.is_draft) && !data.is_draft) this.removeIssueFromList(issueId);
     } catch (error) {
       // If errored out update store again to revert the change
       this.rootIssueStore.issues.updateIssue(issueId, issueBeforeUpdate ?? {});
@@ -1740,7 +1676,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

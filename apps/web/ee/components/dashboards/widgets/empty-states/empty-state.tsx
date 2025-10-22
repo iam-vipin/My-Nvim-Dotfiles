@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
@@ -11,7 +11,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // plane web stores
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;

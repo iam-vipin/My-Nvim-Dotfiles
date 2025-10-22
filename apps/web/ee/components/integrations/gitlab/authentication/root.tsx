@@ -1,12 +1,16 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane web components
 import { ConnectOrganization } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 
-export const UserAuthentication: FC = () => (
+interface IUserAuthenticationProps {
+  isEnterprise: boolean;
+}
+
+export const UserAuthentication: FC<IUserAuthenticationProps> = ({ isEnterprise }) => (
   <div className="relative">
-    <ConnectOrganization />
+    <ConnectOrganization isEnterprise={isEnterprise} />
   </div>
 );

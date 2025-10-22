@@ -7,13 +7,15 @@ from plane.db.models import BaseModel
 from plane.utils.html_processor import strip_tags
 
 
-class Initiative(BaseModel):
-    class StatusContext(models.TextChoices):
-        PLANNED = "PLANNED", "Planned"
-        ON_HOLD = "ON_HOLD", "On Hold"
-        IN_PROGRESS = "IN_PROGRESS", "In Progress"
-        DONE = "DONE", "Done"
+class StateChoices(models.TextChoices):
+    DRAFT = "DRAFT", "Draft"
+    PLANNED = "PLANNED", "Planned"
+    ACTIVE = "ACTIVE", "Active"
+    COMPLETED = "COMPLETED", "Completed"
+    CLOSED = "CLOSED", "Closed"
 
+
+class Initiative(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="initiatives"
     )
@@ -31,10 +33,17 @@ class Initiative(BaseModel):
     )
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(
-        max_length=100, choices=StatusContext.choices, default=StatusContext.PLANNED
-    )
     logo_props = models.JSONField(default=dict)
+    state = models.CharField(
+        max_length=100, choices=StateChoices.choices, default=StateChoices.DRAFT
+    )
+    labels = models.ManyToManyField(
+        "ee.InitiativeLabel",
+        through="InitiativeLabelAssociation",
+        through_fields=("initiative", "label"),
+        related_name="initiatives",
+        blank=True,
+    )
 
     class Meta:
         db_table = "initiatives"
@@ -76,12 +85,6 @@ class InitiativeProject(BaseModel):
 
 
 class InitiativeLabel(BaseModel):
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="labels"
-    )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="initiatives"
-    )
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -89,20 +92,71 @@ class InitiativeLabel(BaseModel):
         null=True,
         blank=True,
     )
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    color = models.CharField(max_length=255, blank=True)
     sort_order = models.FloatField(default=65535)
 
     class Meta:
-        unique_together = ["initiative", "label", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "name"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_inlabel_ws_name_null",
+            )
+        ]
+
+        db_table = "initiative_labels"
+        verbose_name = "Initiative Label"
+        verbose_name_plural = "Initiative Labels"
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            last_id = InitiativeLabel.objects.filter(
+                workspace=self.workspace
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+
+            if last_id is not None:
+                self.sort_order = last_id + 10000
+
+        super(InitiativeLabel, self).save(*args, **kwargs)
+
+
+class InitiativeLabelAssociation(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+        null=True,
+        blank=True,
+    )
+    initiative = models.ForeignKey(
+        "ee.Initiative",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+    )
+    label = models.ForeignKey(
+        "ee.InitiativeLabel",
+        on_delete=models.CASCADE,
+        related_name="initiative_label_associations",
+    )
+
+    class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["initiative", "label"],
                 condition=models.Q(deleted_at__isnull=True),
-                name="initiative_label_unique_when_deleted_at_null",
+                name="uniq_ilassoc_init_lbl_null",
             )
         ]
-        db_table = "initiative_labels"
-        verbose_name = "Initiative Label"
-        verbose_name_plural = "Initiative Labels"
+        db_table = "initiative_label_associations"
+        verbose_name = "Initiative Label Association"
+        verbose_name_plural = "Initiative Label Associations"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.initiative.name} {self.label.name}"
@@ -293,6 +347,7 @@ class InitiativeUserProperty(BaseModel):
     filters = models.JSONField(default=dict)
     display_filters = models.JSONField(default=dict)
     display_properties = models.JSONField(default=dict)
+    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Initiative User Property"

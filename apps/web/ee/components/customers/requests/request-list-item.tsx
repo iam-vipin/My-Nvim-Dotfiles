@@ -1,11 +1,14 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Database, LayersIcon, PlusIcon } from "lucide-react";
+import { Database, PlusIcon } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { WorkItemsIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -222,7 +225,7 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
                 onClick={() => setWorkItemsModal(true)}
                 className="text-custom-text-200 bg-custom-background-100 hover:bg-custom-background-100 text-sm"
               >
-                <LayersIcon className="size-3" />
+                <WorkItemsIcon className="size-3" />
                 {t("customers.linked_work_items.link")}
               </Button>
             )}

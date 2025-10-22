@@ -1,8 +1,8 @@
 "use-client";
 
-import uniqBy from "lodash/uniqBy";
+import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
-import { TUserThreads } from "@/plane-web/types";
+import type { TUserThreads } from "@/plane-web/types";
 import { PiChatListItem } from "./list-item";
 import PiChatListLoader from "./loader";
 

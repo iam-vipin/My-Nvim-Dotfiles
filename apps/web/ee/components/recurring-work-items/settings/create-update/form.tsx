@@ -1,21 +1,23 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { PartialDeep, EUserProjectRoles, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
-import { Button } from "@plane/ui";
-import { cn, getDate, renderFormattedPayloadDate, TWorkItemSanitizationResult } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import type { PartialDeep, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { DateDropdown } from "@/components/dropdowns/date";
-import { useProject } from "@/hooks/store/use-project"
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import {

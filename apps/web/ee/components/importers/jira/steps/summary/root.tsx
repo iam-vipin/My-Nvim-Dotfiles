@@ -1,14 +1,16 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
-import { JiraConfig } from "@plane/etl/jira";
+import type { TJobStatus } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
+import type { JiraConfig } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
-import { TImportJob } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TImportJob } from "@plane/types";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";

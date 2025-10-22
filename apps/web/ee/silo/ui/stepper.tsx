@@ -2,12 +2,12 @@
 
 import { Fragment } from "react";
 import Image from "next/image";
-import { Button } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // silo types
-import { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
-import { useTranslation } from "@plane/i18n";
+import type { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
 
 export const Stepper = <T,>(props: TStepper<T>) => {
   // props

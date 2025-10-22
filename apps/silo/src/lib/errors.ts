@@ -1,6 +1,7 @@
 import { AxiosError, RawAxiosResponseHeaders } from "axios";
+import { logger } from "@plane/logger";
 import { wait } from "@/helpers/delay";
-import { captureException, logger } from "@/logger";
+import { captureException } from "@/logger";
 
 export type APIRatelimitResponse = {
   error_code: number;
@@ -25,7 +26,6 @@ interface RateLimitHeaders {
   "x-ratelimit-remaining": string;
   "x-ratelimit-reset": string;
 }
-
 
 function isRateLimitHeaders(headers: any): headers is RateLimitHeaders {
   return (
@@ -79,6 +79,11 @@ export async function protect<T>(fn: (...args: any[]) => Promise<T>, ...args: an
       } else if (error instanceof AxiosError && error.response?.status === 502) {
         logger.info("502 error ====== in protect, retrying in 5 seconds...");
         await wait(5000);
+        continue;
+      } else if ((error as any).error_code === 5900) {
+        // This is Plane's rate limit error code
+        logger.info(`Plane SDK Rate limit exceeded ====== in protect attmept - ${attempt}`);
+        await wait(60000 * (Math.random() + 1));
         continue;
       }
 

@@ -4,8 +4,10 @@ import { Controller, useFormContext } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
-import { Button, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { IssueTypeListItem } from "@/plane-web/components/issue-types/issue-type-list-item";

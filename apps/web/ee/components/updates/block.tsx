@@ -5,11 +5,12 @@ import { MessageCircle } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUpdateEntityType, EUserProjectRoles, EUserWorkspaceRoles, TUpdate, TUpdateOperations } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { EUpdateEntityType, TUpdate, TUpdateOperations } from "@plane/types";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { CommentList } from "./comments/comment-list";

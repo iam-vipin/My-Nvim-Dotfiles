@@ -1,10 +1,12 @@
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IIssueType } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { IIssueType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 

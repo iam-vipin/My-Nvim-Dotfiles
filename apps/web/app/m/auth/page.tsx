@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { TInstanceConfig } from "@plane/types";
+import type { TInstanceConfig } from "@plane/types";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 // components

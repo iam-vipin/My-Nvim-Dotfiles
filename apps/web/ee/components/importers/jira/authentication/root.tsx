@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { OAuth, PersonalAccessTokenAuth } from "@/plane-web/components/importers/jira";

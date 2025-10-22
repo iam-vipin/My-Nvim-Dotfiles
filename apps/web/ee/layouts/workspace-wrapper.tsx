@@ -1,11 +1,11 @@
-import { FC, useEffect } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 // store hooks
-import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
+import type { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // layouts
 import { WorkspaceAuthWrapper as CoreWorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
@@ -31,7 +31,6 @@ import {
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -41,7 +40,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // hooks
   const { currentWorkspace } = useWorkspace();
   // store hooks
-  const { fetchFeatureFlags } = useFeatureFlags();
+  const { fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
   const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
@@ -56,7 +55,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   const { initiative } = useInitiatives();
-  const { initPiChat } = usePiChat();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -70,15 +68,17 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
-  const isPiEnabled =
-    useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
-    workspaceFeatures[workspaceSlug.toString()] &&
-    workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PI_ENABLED];
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchFeatureFlags(workspaceSlug.toString()) : null,
+    { revalidateOnFocus: false, errorRetryCount: 1 }
+  );
+  // fetching integrations
+  useSWR(
+    workspaceSlug ? `WORKSPACE_INTEGRATIONS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchIntegrations(workspaceSlug.toString()) : null,
     { revalidateOnFocus: false, errorRetryCount: 1 }
   );
   // fetch workspace current plane information
@@ -186,6 +186,29 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetching filtered initiatives
+  useSWR(
+    workspaceSlug && isInitiativesFeatureEnabled ? `initFilteredInitiatives-${workspaceSlug}` : null,
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? () => initiative.initFilteredInitiatives(workspaceSlug.toString())
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  // fetching all initiative labels
+  useSWR(
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? ["initiativeLabels", workspaceSlug, isInitiativesFeatureEnabled]
+      : null,
+    workspaceSlug && isInitiativesFeatureEnabled
+      ? () => initiative.fetchInitiativeLabels(workspaceSlug.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   // fetching template categories
   useSWR(
     workspaceSlug && isTemplatePublishEnabled ? ["templateCategories", workspaceSlug, isTemplatePublishEnabled] : null,
@@ -195,12 +218,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // loading state
   const isLoading = flagsLoader && !flagsError;
-
-  useEffect(() => {
-    if (isPiEnabled) {
-      initPiChat();
-    }
-  }, [isPiEnabled]);
 
   // if workspace has exceeded the free member count
   if (isFreeMemberCountExceeded && !isWorkspaceSettingsRoute) {

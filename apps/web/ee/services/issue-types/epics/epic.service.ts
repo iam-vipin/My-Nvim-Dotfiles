@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { EWorkItemConversionType, TEpicAnalytics, TEpicStats } from "@plane/types";
+import type { EWorkItemConversionType, TEpicAnalytics, TEpicStats } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

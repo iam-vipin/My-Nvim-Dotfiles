@@ -1,20 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import pick from "lodash/pick";
+import { pick } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EPIC_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
-import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 // helpers
-import { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
+import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
-import { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
+import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -230,9 +231,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({
                         elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
                         context: {
@@ -273,9 +272,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
                   context: {

@@ -1,9 +1,9 @@
 import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { getUserMapFromSlackWorkspaceConnection } from "../../helpers/user";
+import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
 import { createSlackLinkback } from "../../views/issue-linkback";
 
 const apiClient = getAPIClient();
@@ -42,12 +42,17 @@ export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) =
     workspaceConnection.workspace_slug,
     payload.project,
     payload.id,
-    ["state", "project", "assignees", "labels"]
+    ["state", "project", "assignees", "labels", "created_by", "updated_by"]
   );
 
-  const userMap = getUserMapFromSlackWorkspaceConnection(workspaceConnection);
+  const userMap = getSlackToPlaneUserMapFromWC(workspaceConnection);
+  const enhancedUserMap = await enhanceUserMapWithSlackLookup({
+    planeUsers: issue.assignees,
+    currentUserMap: userMap,
+    slackService,
+  });
 
-  const linkback = createSlackLinkback(workspaceConnection.workspace_slug, issue, userMap, false);
+  const linkback = createSlackLinkback(workspaceConnection.workspace_slug, issue, enhancedUserMap, false);
 
   await Promise.all(
     entityConnections.map(async (entityConnection) => {

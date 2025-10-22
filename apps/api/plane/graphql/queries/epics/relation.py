@@ -30,12 +30,8 @@ from plane.graphql.types.issues.relation import WorkItemRelationTypes
 
 @strawberry.type
 class EpicRelationQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def epic_relation(
-        self, info: Info, slug: str, project: str, epic: str
-    ) -> EpicRelationType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def epic_relation(self, info: Info, slug: str, project: str, epic: str) -> EpicRelationType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -54,9 +50,7 @@ class EpicRelationQuery:
         project_id = str(project.id)
 
         # get the epic work items
-        epic_details = await get_epic(
-            workspace_slug=workspace_slug, project_id=project_id, epic_id=epic
-        )
+        epic_details = await get_epic(workspace_slug=workspace_slug, project_id=project_id, epic_id=epic)
         epic_id = str(epic_details.id)
 
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
@@ -76,12 +70,10 @@ class EpicRelationQuery:
             .distinct()
         )
 
-        timeline_dependency_feature_flagged = (
-            await is_timeline_dependency_feature_flagged_async(
-                user_id=user_id,
-                workspace_slug=slug,
-                raise_exception=False,
-            )
+        timeline_dependency_feature_flagged = await is_timeline_dependency_feature_flagged_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            raise_exception=False,
         )
 
         # getting all blocking work item ids
@@ -116,13 +108,7 @@ class EpicRelationQuery:
             ).values_list("issue_id", flat=True)
         )
 
-        duplicate_work_item_ids = list(
-            set(
-                duplicate_of_work_item_ids
-                or [] + duplicate_of_work_item_ids_related
-                or []
-            )
-        )
+        duplicate_work_item_ids = list(set(duplicate_of_work_item_ids or [] + duplicate_of_work_item_ids_related or []))
 
         # getting all relates to work item ids
         relates_to_work_item_ids = await sync_to_async(list)(
@@ -140,9 +126,7 @@ class EpicRelationQuery:
             ).values_list("issue_id", flat=True)
         )
 
-        relates_work_item_ids = list(
-            set(relates_to_work_item_ids or [] + relates_to_work_item_ids_related or [])
-        )
+        relates_work_item_ids = list(set(relates_to_work_item_ids or [] + relates_to_work_item_ids_related or []))
 
         if timeline_dependency_feature_flagged is False:
             start_after_work_item_ids = []
@@ -197,9 +181,7 @@ class EpicRelationQuery:
         else:
             blocking_work_items = await sync_to_async(list)(
                 work_item_queryset.filter(id__in=blocking_work_item_ids).annotate(
-                    relation_type=Value(
-                        WorkItemRelationTypes.BLOCKING.value, output_field=CharField()
-                    )
+                    relation_type=Value(WorkItemRelationTypes.BLOCKING.value, output_field=CharField())
                 )
             )
 
@@ -209,9 +191,7 @@ class EpicRelationQuery:
         else:
             blocked_by_work_items = await sync_to_async(list)(
                 work_item_queryset.filter(id__in=blocked_by_work_item_ids).annotate(
-                    relation_type=Value(
-                        WorkItemRelationTypes.BLOCKED_BY.value, output_field=CharField()
-                    )
+                    relation_type=Value(WorkItemRelationTypes.BLOCKED_BY.value, output_field=CharField())
                 )
             )
 
@@ -221,9 +201,7 @@ class EpicRelationQuery:
         else:
             duplicate_work_items = await sync_to_async(list)(
                 work_item_queryset.filter(id__in=duplicate_work_item_ids).annotate(
-                    relation_type=Value(
-                        WorkItemRelationTypes.DUPLICATE.value, output_field=CharField()
-                    )
+                    relation_type=Value(WorkItemRelationTypes.DUPLICATE.value, output_field=CharField())
                 )
             )
 
@@ -233,9 +211,7 @@ class EpicRelationQuery:
         else:
             relates_to_work_items = await sync_to_async(list)(
                 work_item_queryset.filter(id__in=relates_work_item_ids).annotate(
-                    relation_type=Value(
-                        WorkItemRelationTypes.RELATES_TO.value, output_field=CharField()
-                    )
+                    relation_type=Value(WorkItemRelationTypes.RELATES_TO.value, output_field=CharField())
                 )
             )
 

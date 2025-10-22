@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text/editor";
 // local imports
-import { TAutomationActionFormData } from "../../root";
+import type { TAutomationActionFormData } from "../../root";
 
 type TProps = {
   automationId: string;
@@ -40,7 +40,7 @@ export const AutomationActionAddCommentConfiguration: React.FC<TProps> = observe
           onChange={(_json, html) => onChange(html)}
           parentClassName="p-2" // TODO: add background if disabled
           editable={!isDisabled}
-          showToolbar={!isDisabled}
+          variant={isDisabled ? "none" : "full"}
         />
       )}
     />

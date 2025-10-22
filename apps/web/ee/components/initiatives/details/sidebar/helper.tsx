@@ -3,12 +3,13 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { formatTextList } from "@plane/utils";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 // plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

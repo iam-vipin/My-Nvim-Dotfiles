@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // mobx store
-import { IGanttStore } from "@/plane-web/store/issue_gantt_view.store";
+import type { IGanttStore } from "@/plane-web/store/issue_gantt_view.store";
 import { GanttStoreContext } from "../contexts";
 // types
 

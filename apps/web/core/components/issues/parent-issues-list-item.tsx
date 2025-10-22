@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Rocket } from "lucide-react";
 // plane imports
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";

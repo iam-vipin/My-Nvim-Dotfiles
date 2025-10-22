@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase, Link, Paperclip } from "lucide-react";
+import { Link, Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { EpicIcon } from "@plane/ui";
+import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
 import { InitiativeActionButton } from "./action-button";
 import { InitiativeAttachmentActionButton } from "./attachment-button";
 import { InitiativeLinksActionButton } from "./link-button";
@@ -49,7 +49,7 @@ export const InitiativeInfoActionItems: FC<Props> = observer((props) => {
         <InitiativeActionButton
           customButton={
             <div className="flex items-center gap-1 p-2 text-custom-text-200 hover:text-custom-text-100 border border-custom-border-200 rounded">
-              <Briefcase className="size-3 flex-shrink-0 text-custom-text-300" />
+              <ProjectIcon className="size-3 flex-shrink-0 text-custom-text-300" />
               <span className="text-sm font-medium">{t("add_project")}</span>
             </div>
           }

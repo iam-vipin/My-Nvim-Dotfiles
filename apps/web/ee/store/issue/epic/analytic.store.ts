@@ -1,11 +1,11 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { IEpicService, TEpicAnalytics, TEpicAnalyticsGroup, TEpicStats, TLoader } from "@plane/types";
+import type { IEpicService, TEpicAnalytics, TEpicAnalyticsGroup, TEpicStats, TLoader } from "@plane/types";
 // plane web imports
 import { epicService } from "@/plane-web/services/issue-types/epics";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IEpicAnalyticStore {
   // observables

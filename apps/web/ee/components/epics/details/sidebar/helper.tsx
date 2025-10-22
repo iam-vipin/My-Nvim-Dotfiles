@@ -1,14 +1,15 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, EIssueServiceType, TCommentsOperations } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCommentsOperations } from "@plane/types";
+import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 
 export const useCommentOperations = (

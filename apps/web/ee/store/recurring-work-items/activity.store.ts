@@ -1,12 +1,10 @@
-import concat from "lodash/concat";
-import orderBy from "lodash/orderBy";
-import uniq from "lodash/uniq";
+import { concat, orderBy, uniq } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { RecurringWorkItemServiceBase } from "@plane/services";
-import { TLoader, TRecurringWorkItemActivity } from "@plane/types";
+import type { TLoader, TRecurringWorkItemActivity } from "@plane/types";
 
 export interface IRecurringWorkItemActivityStore {
   // observables

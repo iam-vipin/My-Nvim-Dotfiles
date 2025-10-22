@@ -1,8 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { MoveRight } from "lucide-react";
-import { Loader, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Loader } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

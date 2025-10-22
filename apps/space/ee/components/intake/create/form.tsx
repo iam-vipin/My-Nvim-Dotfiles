@@ -1,10 +1,12 @@
 import { observer } from "mobx-react";
 // plane types
 import { Controller, useFormContext } from "react-hook-form";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IProject } from "@plane/types";
 // plane ui
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
 import { ProjectLogo } from "@/components/common/project-logo";
@@ -13,12 +15,12 @@ import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 // local types
-import { TFormData } from "./create-issue-modal";
+import type { TFormData } from "./create-issue-modal";
 
 type TProps = {
   project: Partial<IProject>;
   isSubmitting: boolean;
-  descriptionEditorRef: React.RefObject<any>;
+  descriptionEditorRef: React.RefObject<EditorRefApi>;
   anchor: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };

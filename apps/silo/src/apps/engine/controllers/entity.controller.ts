@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express";
-import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } from "@/lib";
-import { responseHandler } from "@/helpers/response-handler";
-import { getAPIClient } from "@/services/client";
+import { Request, Response } from "express";
+import { Controller, Get, Post, Put, Delete } from "@plane/decorators";
+import { logger } from "@plane/logger";
 import { TWorkspaceEntityConnection } from "@plane/types";
-import { logger } from "@/logger";
+import { responseHandler } from "@/helpers/response-handler";
+import { useValidateUserAuthentication } from "@/lib/decorators";
+import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
 
@@ -15,6 +16,8 @@ export class EntityConnectionController {
     try {
       const { workspaceId, workspaceConnectionId } = req.params;
 
+      const { entityType } = req.query;
+
       if (!workspaceId || !workspaceConnectionId) {
         return res.status(400).send({
           message: "Bad Request, expected workspaceId, and workspaceConnectionId to be present.",
@@ -24,6 +27,7 @@ export class EntityConnectionController {
       const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
         workspace_connection_id: workspaceConnectionId,
         workspace_id: workspaceId,
+        entity_type: entityType as string | undefined,
       });
 
       return res.status(200).send(entityConnections);
@@ -82,6 +86,7 @@ export class EntityConnectionController {
         entity_data: reqBody.entity_data,
         entity_type: reqBody.entity_type,
         config: reqBody.config,
+        type: reqBody.type,
       };
 
       const entityConnections = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection(payload);

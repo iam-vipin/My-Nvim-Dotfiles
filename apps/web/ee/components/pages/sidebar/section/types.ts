@@ -1,8 +1,9 @@
-import { Dispatch, RefObject, SetStateAction } from "react";
-import { LucideIcon } from "lucide-react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
+import type { LucideIcon } from "lucide-react";
 // plane imports
-import { TPage, TPageNavigationTabs } from "@plane/types";
-import { ISvgIcons } from "@plane/ui";
+import type { ISvgIcons } from "@plane/propel/icons";
+import type { TPageNavigationTabs } from "@plane/types";
+import { TPage } from "@plane/types";
 
 // Basic section details type
 export type SectionDetails = {
@@ -35,10 +36,10 @@ export interface SectionContentProps {
 
 // Props for main section component
 export interface SectionRootProps {
-  expandedPageIds?: string[];
-  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
-  sectionType: TPageNavigationTabs;
   currentPageId?: string;
+  expandedPageIds?: string[];
+  sectionType: TPageNavigationTabs;
+  setExpandedPageIds?: Dispatch<SetStateAction<string[]>>;
 }
 
 // Return type for drag and drop hook

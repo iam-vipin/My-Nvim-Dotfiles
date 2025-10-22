@@ -3,12 +3,14 @@
 // react
 import React from "react";
 // react-hook-form
-import { Control, Controller, UseFormWatch } from "react-hook-form";
+import type { Control, UseFormWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IModule } from "@plane/types";
+import { DoubleCircleIcon } from "@plane/propel/icons";
+import type { IModule } from "@plane/types";
 // ui
-import { CustomSelect, DoubleCircleIcon } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 // types
 // common
 // constants

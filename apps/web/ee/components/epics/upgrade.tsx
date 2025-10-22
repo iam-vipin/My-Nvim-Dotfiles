@@ -1,14 +1,15 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { Crown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

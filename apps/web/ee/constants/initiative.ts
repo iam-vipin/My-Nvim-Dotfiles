@@ -1,5 +1,5 @@
-import { TCreateUpdateInitiativeModal } from "@plane/types";
-import { TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "../types/initiative";
+import { INITIATIVE_STATES } from "@plane/constants";
+import type { TCreateUpdateInitiativeModal, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
 
 export const DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA: TCreateUpdateInitiativeModal = {
   isOpen: false,
@@ -12,6 +12,8 @@ export const INITIATIVE_GROUP_BY_OPTIONS: {
 }[] = [
   { key: "lead", title: "Lead" },
   { key: "created_by", title: "Created By" },
+  { key: "state", title: "States" },
+  { key: "label_ids", title: "Labels" },
   { key: undefined, title: "None" },
 ];
 
@@ -23,3 +25,5 @@ export const INITIATIVE_ORDER_BY_OPTIONS: {
   { key: "-created_at", title: "Last Created" },
   { key: "-updated_at", title: "Last Updated" },
 ];
+
+export const DEFAULT_INITIATIVE_STATE = INITIATIVE_STATES.DRAFT.key;

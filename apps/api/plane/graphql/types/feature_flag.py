@@ -40,7 +40,6 @@ class FeatureFlagsTypesEnum(Enum):
     BULK_OPS_ONE = "BULK_OPS_ONE"
     BULK_OPS_PRO = "BULK_OPS_PRO"
     # Cycle
-    CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
     CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     # work item
     ISSUE_TYPES = "ISSUE_TYPES"
@@ -72,6 +71,7 @@ class FeatureFlagsTypesEnum(Enum):
     EDITOR_ATTACHMENTS = "EDITOR_ATTACHMENTS"
     EDITOR_MATHEMATICS = "EDITOR_MATHEMATICS"
     EDITOR_EXTERNAL_EMBEDS = "EDITOR_EXTERNAL_EMBEDS"
+    PAGE_COMMENTS = "PAGE_COMMENTS"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -103,6 +103,7 @@ class FeatureFlagsTypesEnum(Enum):
     PI_CHAT = "PI_CHAT"
     PI_DEDUPE = "PI_DEDUPE"
     PI_CONVERSE = "PI_CONVERSE"
+    PI_FILE_UPLOADS = "PI_FILE_UPLOADS"
 
     # advanced search
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
@@ -145,7 +146,6 @@ class FeatureFlagType:
     bulk_ops_one: bool
     bulk_ops_pro: bool
     # Cycle
-    cycle_manual_start_stop: bool
     cycle_progress_charts: bool
     # Work item
     issue_types: bool
@@ -177,6 +177,7 @@ class FeatureFlagType:
     editor_attachments: bool
     editor_mathematics: bool
     editor_external_embeds: bool
+    page_comments: bool
 
     # Silo importers and integrations
     silo: bool
@@ -208,6 +209,7 @@ class FeatureFlagType:
     pi_chat: bool
     pi_dedupe: bool
     pi_converse: bool
+    pi_file_uploads: bool
 
     # advanced search
     advanced_search: bool

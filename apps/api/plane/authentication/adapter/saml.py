@@ -1,5 +1,6 @@
 # Python imports
 import os
+import logging
 
 # Django imports
 from django.conf import settings
@@ -15,6 +16,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger("plane.authentication")
 
 
 class SAMLAdapter(Adapter):
@@ -153,6 +156,13 @@ class SAMLAdapter(Adapter):
         )
 
         if not email:
+            logger.warning(
+                "Email not found in SAML attributes", extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
+                    "error_message": "SAML_PROVIDER_ERROR",
+                    "attributes": attributes,
+                }
+            )
             raise AuthenticationException(
                 error_message=AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
                 error_code="SAML_PROVIDER_ERROR",

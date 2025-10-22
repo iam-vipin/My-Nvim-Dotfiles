@@ -1,14 +1,16 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Header, Popover, Loader } from "@plane/ui";
+import { Breadcrumbs, Header, Popover, Loader } from "@plane/ui";
 // components
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks

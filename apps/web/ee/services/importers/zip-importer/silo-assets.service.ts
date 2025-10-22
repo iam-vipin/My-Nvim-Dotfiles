@@ -1,4 +1,5 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 
 // Types for Silo Assets
 export interface ISiloUploadUrlResponse {

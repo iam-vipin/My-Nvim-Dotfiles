@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // ui
 import { useParams } from "next/navigation";
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components

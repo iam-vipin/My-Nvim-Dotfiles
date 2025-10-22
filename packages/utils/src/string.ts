@@ -1,4 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
+import type { Content, JSONContent } from "@plane/types";
 
 /**
  * @description Adds space between camelCase words
@@ -161,14 +162,89 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
 };
 
 /**
- * @description this function returns whether a comment is empty or not by checking for the following conditions-
- * 1. If comment is undefined
- * 2. If comment is an empty string
- * 3. If comment is "<p></p>"
- * @param {string | undefined} comment
+ * @description
+ * Check if a JSONContent object is empty
+ * @param {JSONContent} content
  * @returns {boolean}
  */
-export const isCommentEmpty = (comment: string | undefined): boolean => {
+export const isJSONContentEmpty = (content: JSONContent | undefined): boolean => {
+  // If it has text, check if text is meaningful
+  if (!content) {
+    return true;
+  }
+  if (content.text !== undefined) {
+    return !content.text || content.text.trim() === "";
+  }
+
+  // If it has no content array, consider it empty
+  if (!content.content || content.content.length === 0) {
+    // Special case: empty paragraph nodes should be considered empty
+    if (content.type === "paragraph" || content.type === "doc") {
+      return true;
+    }
+    // For other node types without content (like hard breaks), check if they're meaningful
+    return (
+      content.type !== "hardBreak" &&
+      content.type !== "image" &&
+      content.type !== "mention-component" &&
+      content.type !== "image-component"
+    );
+  }
+
+  // Check if all nested content is empty
+  return content.content.every(isJSONContentEmpty);
+};
+
+/**
+ * @description
+ * This function will check if the comment is empty or not.
+ * It returns true if comment is empty.
+ * Now supports TipTap Content types (HTMLContent, JSONContent, JSONContent[], null)
+ *
+ * For HTML content:
+ * 1. If comment is undefined/null
+ * 2. If comment is an empty string
+ * 3. If comment is "<p></p>"
+ * 4. If comment contains only empty HTML tags
+ *
+ * For JSON content:
+ * 1. If content is null/undefined
+ * 2. If content has no meaningful text or nested content
+ * 3. If all nested content is empty
+ *
+ * @param {Content} comment - TipTap Content type
+ * @returns {boolean}
+ */
+export const isCommentEmpty = (comment: Content | undefined): boolean => {
+  // Handle null/undefined
+  if (!comment) return true;
+
+  // Handle HTMLContent (string)
+  if (typeof comment === "string") {
+    return (
+      comment.trim() === "" ||
+      comment === "<p></p>" ||
+      isEmptyHtmlString(comment, ["img", "mention-component", "image-component"])
+    );
+  }
+
+  // Handle JSONContent[] (array)
+  if (Array.isArray(comment)) {
+    return comment.length === 0 || comment.every(isJSONContentEmpty);
+  }
+
+  // Handle JSONContent (object)
+  return isJSONContentEmpty(comment);
+};
+
+/**
+ * @description
+ * Legacy function for backward compatibility with string comments
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ * @deprecated Use isCommentEmpty with Content type instead
+ */
+export const isStringCommentEmpty = (comment: string | undefined): boolean => {
   // return true if comment is undefined
   if (!comment) return true;
   return (
@@ -348,4 +424,63 @@ export const joinUrlPath = (...segments: string[]): string => {
     const pathParts = joined.split("/").filter((part) => part !== "");
     return pathParts.length > 0 ? `/${pathParts.join("/")}` : "";
   }
+};
+
+// Utility function to trim empty paragraphs from start and end of JSONContent
+export const trimEmptyParagraphsFromJson = (content: JSONContent): JSONContent => {
+  if (!content?.content) return content;
+
+  const trimmed = [...content.content];
+
+  // Remove empty paragraphs from the beginning
+  while (trimmed.length > 0 && isEmptyParagraph(trimmed[0])) {
+    trimmed.shift();
+  }
+
+  // Remove empty paragraphs from the end
+  while (trimmed.length > 0 && isEmptyParagraph(trimmed[trimmed.length - 1])) {
+    trimmed.pop();
+  }
+
+  // If all content was removed, keep one empty paragraph
+  if (trimmed.length === 0) {
+    trimmed.push({ type: "paragraph" });
+  }
+
+  return {
+    ...content,
+    content: trimmed,
+  };
+};
+
+const isEmptyParagraph = (node: JSONContent): boolean => {
+  if (node.type !== "paragraph") return false;
+  if (!node.content || node.content.length === 0) return true;
+
+  // Check if paragraph only contains empty text nodes or whitespace
+  return node.content.every((child) => {
+    if (child.type === "text") {
+      return !child.text || child.text.trim() === "";
+    }
+    return false;
+  });
+};
+
+// Utility function to trim empty paragraphs from HTML content
+export const trimEmptyParagraphsFromHTML = (html: string): string => {
+  if (!html) return "<p></p>";
+
+  // Remove leading and trailing empty paragraphs
+  const trimmed = html
+    // Remove empty paragraphs at the start
+    .replace(/^(\s*<p[^>]*>\s*<\/p>\s*)*/g, "")
+    // Remove empty paragraphs at the end
+    .replace(/(\s*<p[^>]*>\s*<\/p>\s*)*$/g, "");
+
+  // If all content was removed, return a single empty paragraph
+  if (!trimmed.trim()) {
+    return "<p></p>";
+  }
+
+  return trimmed;
 };

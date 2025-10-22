@@ -1,20 +1,23 @@
 "use client";
 
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { BarIcon, Collapsible, CollapsibleButton, setToast, TOAST_TYPE } from "@plane/ui";
+import { BarIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
-import { TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { TWorkloadFilter } from "@/plane-web/types/teamspace";
 // local imports
 import { TeamspaceProgressBanner } from "./banner";
 import { TeamspaceProgressChart } from "./chart";

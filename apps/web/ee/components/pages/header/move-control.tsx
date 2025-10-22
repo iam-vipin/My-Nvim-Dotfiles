@@ -4,10 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FolderOutput } from "lucide-react";
-// ui components
-import { Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 // core imports
-import { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
+import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
 // plane web hooks
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // local imports

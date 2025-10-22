@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image, { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
+import Image from "next/image";
 // ui
-import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { Loader } from "@plane/ui";
 
 type TInstallationCardProps = {
   providerName: string;

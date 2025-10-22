@@ -1,13 +1,7 @@
 import { useTranslation } from "@plane/i18n";
-import {
-  EGanttBlockType,
-  EIssuesStoreType,
-  IBlockUpdateData,
-  IBlockUpdateDependencyData,
-  TIssue,
-  TProject,
-} from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { IBlockUpdateData, IBlockUpdateDependencyData, TIssue, TProject } from "@plane/types";
+import { EGanttBlockType, EIssuesStoreType } from "@plane/types";
 import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";

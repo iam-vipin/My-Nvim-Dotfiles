@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { FileText, FolderPlus, Search, Settings } from "lucide-react";
+import { FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // components
 import { CommandPaletteThemeActions, CommandPaletteHelpActions } from "@/components/command-palette";
@@ -19,7 +20,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { PagesAppCommandPaletteSearchResults } from "@/plane-web/components/command-palette";
 import { AppService } from "@/plane-web/services/app.service";
-import { IAppSearchResults } from "@/plane-web/types";
+import type { IAppSearchResults } from "@/plane-web/types";
 
 const appService = new AppService();
 
@@ -211,7 +212,7 @@ export const PagesAppCommandModal: React.FC<Props> = observer((props) => {
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <FileText className="h-3.5 w-3.5" />
+                                <PageIcon className="h-3.5 w-3.5" />
                                 Create new page
                               </div>
                               <kbd>D</kbd>

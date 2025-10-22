@@ -1,13 +1,13 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { TClickUpFolder, TClickUpSpace, TClickUpStatus, TClickUpTeam, TClickUpPriority } from "@plane/etl/clickup";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { TClickUpFolder, TClickUpSpace, TClickUpStatus, TClickUpTeam, TClickUpPriority } from "@plane/etl/clickup";
+import type { IAdditionalUsersResponse } from "@plane/types";
 // plane web services
 import { ClickUpDataService } from "@/plane-web/services/importers/clickup";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IClickUpDataStore {
   // observables

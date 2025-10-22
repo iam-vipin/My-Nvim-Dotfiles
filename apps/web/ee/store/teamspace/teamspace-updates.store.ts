@@ -1,15 +1,9 @@
-import concat from "lodash/concat";
-import find from "lodash/find";
-import orderBy from "lodash/orderBy";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, find, orderBy, pull, set, uniq, update } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
-import {
+import type {
   TIssueCommentReaction,
   TIssueCommentReactionIdMap,
   TIssueCommentReactionMap,
@@ -21,7 +15,7 @@ import {
 // plane web imports
 import { groupReactions } from "@plane/utils";
 import { TeamspaceUpdatesService } from "@/plane-web/services/teamspace/teamspace-updates.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITeamspaceUpdatesStore {
   // observables

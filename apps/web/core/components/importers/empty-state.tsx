@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 export type ImportersEmptyStateProps = {

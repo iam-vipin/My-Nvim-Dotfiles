@@ -2,10 +2,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Unplug } from "lucide-react";
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
-import { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
+import type { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
-import { TWorkspaceConnection } from "@plane/types";
-import { Button, CustomMenu } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TWorkspaceConnection } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { cn, renderFormattedDate } from "@plane/utils";
 
@@ -53,9 +54,7 @@ export const ConnectedAppCard = observer((props: TConnectedAppCardProps) => {
         >
           <CustomMenu.MenuItem
             key={t("common.disconnect")}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               handleDisconnectApp();
             }}
             className={cn("flex items-center gap-2")}

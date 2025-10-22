@@ -2,9 +2,9 @@
 
 import React from "react";
 // plane imports
-import { EPageSharedUserAccess } from "@plane/types";
+import type { EPageSharedUserAccess } from "@plane/types";
 // local imports
-import { TPendingSharedUser } from "./types";
+import type { TPendingSharedUser } from "./types";
 import { UserListItem } from "./user-list-item";
 
 type TPendingUsersSectionProps = {

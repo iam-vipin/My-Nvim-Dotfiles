@@ -1,17 +1,12 @@
-import includes from "lodash/includes";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import reverse from "lodash/reverse";
-import sortBy from "lodash/sortBy";
+import { includes, isEmpty, orderBy, reverse, sortBy } from "lodash-es";
 // plane web constants
 import { storage } from "@/lib/local-storage";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TProject } from "@/plane-web/types/projects";
-import {
-  EProjectScope,
+import type { TProject } from "@/plane-web/types/projects";
+import type {
   TProjectAttributes,
   TProjectsBoardLayoutStructure,
   TProjectGroupBy,
@@ -20,6 +15,7 @@ import {
   TProjectPriority,
   TProjectFilters,
 } from "@/plane-web/types/workspace-project-filters";
+import { EProjectScope } from "@/plane-web/types/workspace-project-filters";
 
 export interface IProjectFilterHelper {
   filterProjectsByScope: (projects: TProject[], scope: EProjectScope) => TProject[];

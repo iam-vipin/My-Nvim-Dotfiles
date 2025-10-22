@@ -34,7 +34,7 @@ export class RequestAttachmentService extends APIService {
     requestId?: string,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TCustomerRequestAttachment> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/customer-requests/attachments/`, fileMetaData, {
       params: { customer_request_id: requestId },
     })

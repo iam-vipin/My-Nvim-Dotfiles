@@ -4,8 +4,11 @@ import { Plus, Shapes } from "lucide-react";
 // plane imports
 import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TPlacement } from "@plane/propel/utils";
 import { ETemplateType } from "@plane/types";
-import { Button, CustomSearchSelect, Loader, Tooltip, TPosition } from "@plane/ui";
+import { CustomSearchSelect, Loader } from "@plane/ui";
 // helpers
 import { cn, getCreateUpdateTemplateSettingsPath } from "@plane/utils";
 // plane web hooks
@@ -29,7 +32,7 @@ type TWorkItemTemplateDropdownProps = {
   optionTooltip?: TWorkItemTemplateOptionTooltip;
   buttonClassName?: string;
   customLabelContent?: React.ReactNode;
-  tooltipPosition?: TPosition;
+  tooltipPosition?: TPlacement;
   tooltipI18nContent?: string;
   handleTemplateChange: (value: string) => void;
   handleRedirection?: () => void;

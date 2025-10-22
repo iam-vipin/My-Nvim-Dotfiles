@@ -1,9 +1,10 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 //
-import { Briefcase } from "lucide-react";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { ProjectList } from "./project-list";
@@ -32,7 +33,7 @@ export const InitiativeProjectsCollapsibleContent: FC<Props> = (props) => {
           <SectionEmptyState
             heading="No projects yet"
             subHeading="Start adding projects to manage and track the progress."
-            icon={<Briefcase className="size-4" />}
+            icon={<ProjectIcon className="size-4" />}
             actionElement={
               <button
                 type="button"

@@ -34,6 +34,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
 )
 from plane.utils.ip_address import get_client_ip
+from plane.utils.path_validator import get_safe_redirect_url
 from plane.silo.bgtasks.integration_apps_task import create_integration_applications
 
 
@@ -47,9 +48,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         role = request.data.get("role", 20)
 
         if not email:
-            return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         instance = Instance.objects.first()
         if instance is None:
@@ -61,9 +60,7 @@ class InstanceAdminEndpoint(BaseAPIView):
         # Fetch the user
         user = User.objects.get(email=email)
 
-        instance_admin = InstanceAdmin.objects.create(
-            instance=instance, user=user, role=role
-        )
+        instance_admin = InstanceAdmin.objects.create(instance=instance, user=user, role=role)
         serializer = InstanceAdminSerializer(instance_admin)
         # Create the applications for the instance
         create_integration_applications.delay(user.id)
@@ -129,9 +126,7 @@ class InstanceAdminSignUpEndpoint(View):
         # return error if the email and password is not present
         if not email or not password or not first_name:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME"],
                 error_message="REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME",
                 payload={
                     "email": email,
@@ -371,10 +366,7 @@ class InstanceAdminUserSessionEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        if (
-            request.user.is_authenticated
-            and InstanceAdmin.objects.filter(user=request.user).exists()
-        ):
+        if request.user.is_authenticated and InstanceAdmin.objects.filter(user=request.user).exists():
             serializer = InstanceAdminMeSerializer(request.user)
             data = {"is_authenticated": True}
             data["user"] = serializer.data
@@ -395,7 +387,8 @@ class InstanceAdminSignOutEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = urljoin(base_host(request=request, is_admin=True))
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
             return HttpResponseRedirect(url)
         except Exception:
-            return HttpResponseRedirect(base_host(request=request, is_admin=True))
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_admin=True), next_path="")
+            return HttpResponseRedirect(url)

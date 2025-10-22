@@ -7,6 +7,7 @@ import { WorkspaceConnectionAPIService } from "@/services/workspace/connection.s
 import { WorkspaceCredentialAPIService } from "@/services/workspace/credential.service";
 import { WorkspaceEntityConnectionAPIService } from "@/services/workspace/entity-connection.service";
 import { ClientOptions } from "@/types";
+import { AssetApiService } from "./asset/asset.service";
 import { PageAPIService } from "./page/page.service";
 
 export class APIClient {
@@ -18,6 +19,7 @@ export class APIClient {
   workspaceEntityConnection: WorkspaceEntityConnectionAPIService;
   // App level services
   page: PageAPIService;
+  asset: AssetApiService;
 
   constructor(options: ClientOptions) {
     this.options = options;
@@ -27,6 +29,7 @@ export class APIClient {
     this.importJob = new ImportJobAPIService(options);
     this.importReport = new ImportReportAPIService(options);
     this.page = new PageAPIService(options);
+    this.asset = new AssetApiService(options);
   }
 }
 
@@ -42,3 +45,10 @@ export const getAPIClient = (baseUrl?: string): APIClient => {
   }
   return apiClient;
 };
+
+export const getAPIClientInternal = (): APIClient =>
+  new APIClient({
+    baseURL: env.API_INTERNAL_BASE_URL || env.API_BASE_URL,
+    hmacPrivateKey: env.SILO_HMAC_SECRET_KEY,
+    serviceName: "SILO",
+  });

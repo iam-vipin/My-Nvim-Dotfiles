@@ -1,12 +1,15 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { v4 } from "uuid";
 import { Plus } from "lucide-react";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
+// plane icons
+import { Button } from "@plane/propel/button";
+import { BuildingsIcon } from "@plane/propel/icons";
 // plane types
-import { TCreationListModes } from "@plane/types";
+import type { TCreationListModes } from "@plane/types";
 // plane ui
-import { BuildingsIcon, Button } from "@plane/ui";
 // plane web components
 import { defaultCustomProperty } from "@/plane-web/components/customers/settings";
 import type { TIssuePropertyCreateList } from "@/plane-web/components/issue-types/properties";

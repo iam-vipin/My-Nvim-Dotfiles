@@ -1,4 +1,4 @@
-import { ISlackChannel, ISlackUser, SlackService, TSlackPayload } from "@plane/etl/slack";
+import { ISlackChannel, ISlackUser, SlackService, TSlackPayload, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { IssueWithExpanded, PlaneActivity, Client as PlaneClient } from "@plane/sdk";
 import { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { ENTITIES } from "../helpers/constants";
@@ -47,7 +47,7 @@ export type ShortcutActionPayload = {
   preselected_values?: {
     project_id?: string;
     issue_id?: string;
-  }
+  };
   response_url?: string;
 };
 // Define the payload mapping first
@@ -67,6 +67,9 @@ export type TSlackWorkspaceConnectionConfig = {
     planeUserId: string;
     slackUser: string;
   }[];
+  alertsConfig?: {
+    dmAlerts?: Record<string, TSlackUserAlertsConfig>;
+  };
 };
 
 export type TSlackConnectionDetails = {
@@ -82,6 +85,13 @@ export type SlackPrivateMetadata<T extends keyof EntityPayloadMapping = keyof En
   entityType: T;
   entityPayload: EntityPayloadMapping[T];
 };
+
+export enum E_SLACK_WORKER_EVENTS {
+  PROJECT_UPDATE = "project_update",
+  ISSUE_COMMENT = "issue_comment",
+  ISSUE = "issue",
+  DM_ALERT = "dm_alert",
+}
 
 // export type SlackPrivateMetadata<T extends string> =
 //   | {
@@ -107,15 +117,12 @@ export type TSlackWorkItemOrIntakeModalParams = {
   showThreadSync?: boolean;
 
   // Work item to update
-  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels"]>>
+  workItem?: Partial<IssueWithExpanded<["state", "project", "assignees", "labels", "created_by", "updated_by"]>>;
   disableIssueType?: boolean;
 
   // Connection details
   details: TSlackConnectionDetails;
-} & (
-    | { viewId: string, triggerId?: never }
-    | { viewId?: never, triggerId: string }
-  );
+} & ({ viewId: string; triggerId?: never } | { viewId?: never; triggerId: string });
 
 export enum E_MESSAGE_ACTION_TYPES {
   LINK_WORK_ITEM = "link_work_item",
@@ -137,14 +144,18 @@ export type ActivityForSlack = {
   actorDisplayName: string;
   timestamp: string;
 } & (
-    | {
+  | {
       isArrayField: true;
       removed: string[];
       added: string[];
+      addedIdentifiers: string[];
+      removedIdentifiers: string[];
     }
-    | {
+  | {
       isArrayField: false;
       newValue: string;
       oldValue?: string;
+      newIdentifier?: string;
+      oldIdentifier?: string;
     }
-  );
+);

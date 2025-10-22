@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueOrderByOptions } from "@plane/types";
+import type { TIssueOrderByOptions } from "@plane/types";
 import { cn } from "@plane/utils";
 
 type Props = {

@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -15,7 +16,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useStates } from "@/hooks/store/use-state";
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
 //
 import { BaseCalendarRoot } from "./calendar/base-calendar-root";
 import { ViewAppliedFilters } from "./filters/applied-filters/root";

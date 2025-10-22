@@ -1,14 +1,15 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // types
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 // local components
 import { useLinks } from "./collaspible-section/links/use-links";
 import { DescriptionBox } from "./info-section/description-box";

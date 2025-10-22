@@ -3,17 +3,17 @@ import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/propel/icons";
 import { EUpdateStatus, EUserProjectRoles } from "@plane/types";
-import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import Progress from "@/plane-web/components/updates/progress";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
-import { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/plane-web/types";
 // components
 import { CommentList } from "./comments/comment-list";
 import { NewUpdate } from "./new-update";

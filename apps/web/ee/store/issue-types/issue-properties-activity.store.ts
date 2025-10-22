@@ -1,10 +1,8 @@
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
+import { orderBy, isEmpty, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import {
+import type {
   TLoader,
   TIssuePropertiesActivity,
   IIssuePropertiesActivity,
@@ -16,7 +14,7 @@ import { convertToEpoch } from "@plane/utils";
 import { IssuePropertiesActivityService } from "@/plane-web/services/issue-types";
 // plane web store
 import { IssuePropertiesActivity } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export class IssuePropertiesActivityStore implements IIssuePropertiesActivityStore {
   // observables

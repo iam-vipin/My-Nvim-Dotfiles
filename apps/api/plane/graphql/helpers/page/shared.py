@@ -9,9 +9,7 @@ from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 
 
-def is_shared_page_feature_flagged(
-    user_id: str, workspace_slug: str, raise_exception: bool = True
-):
+def is_shared_page_feature_flagged(user_id: str, workspace_slug: str, raise_exception: bool = True):
     try:
         is_feature_flagged = _validate_feature_flag(
             user_id=user_id,
@@ -39,9 +37,7 @@ def is_shared_page_feature_flagged(
 
 
 @sync_to_async
-def is_shared_page_feature_flagged_async(
-    user_id: str, workspace_slug: str, raise_exception: bool = True
-):
+def is_shared_page_feature_flagged_async(user_id: str, workspace_slug: str, raise_exception: bool = True):
     return is_shared_page_feature_flagged(
         user_id=user_id, workspace_slug=workspace_slug, raise_exception=raise_exception
     )

@@ -1,13 +1,13 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { LinearOrganization, LinearTeam, LinearState } from "@plane/etl/linear";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { LinearOrganization, LinearTeam, LinearState } from "@plane/etl/linear";
+import type { IAdditionalUsersResponse } from "@plane/types";
 // plane web services
 import { LinearService } from "@/plane-web/services/importers/linear/data.service";
 // plane web store types
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ILinearDataStore {
   // observables

@@ -1,6 +1,11 @@
-import { IPaymentProduct, IWorkspaceProductSubscription, TMemberInviteCheck, TProrationPreview } from "@plane/types";
-// helpers
 import { API_BASE_URL } from "@plane/constants";
+import type {
+  IPaymentProduct,
+  IWorkspaceProductSubscription,
+  TMemberInviteCheck,
+  TProrationPreview,
+} from "@plane/types";
+// helpers
 // services
 import { APIService } from "@/services/api.service";
 

@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, PathValue, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
-import { cn, TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
+import type { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
+import type { TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdownBase } from "@/components/dropdowns/module/base";
@@ -13,7 +15,6 @@ import { WorkItemStateDropdownBase } from "@/components/dropdowns/state/base";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { WorkItemLabelSelectBase } from "@/components/issues/select/base";
-import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 // hooks
@@ -68,8 +69,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
     projectId,
     usePropsForAdditionalData,
   } = props;
-  // states
-  const [isCreateLabelModalOpen, setIsCreateLabelModalOpen] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -78,8 +77,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
   const {
     control,
     formState: { errors },
-    watch,
-    setValue,
   } = useFormContext<T>();
   // derived values
   const projectDetails = usePropsForAdditionalData
@@ -101,7 +98,7 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
     disabled: !projectId,
   };
   const commonLabelDropdownProps = {
-    setIsOpen: setIsCreateLabelModalOpen,
+    createLabel: createLabel,
     projectId: projectId || undefined,
     createLabelEnabled: allowLabelCreation,
     buttonClassName: cn(COMMON_BUTTON_CLASS_NAME, {
@@ -124,17 +121,6 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
   if (!projectId) return null;
   return (
     <>
-      {allowLabelCreation && createLabel && (
-        <CreateLabelModal
-          createLabel={createLabel}
-          isOpen={isCreateLabelModalOpen}
-          handleClose={() => setIsCreateLabelModalOpen(false)}
-          onSuccess={(response) => {
-            const currentLabelIds = watch(fieldPaths.labelIds) || [];
-            setValue(fieldPaths.labelIds, [...currentLabelIds, response.id] as PathValue<T, FieldPath<T>>);
-          }}
-        />
-      )}
       <div className="space-y-3 pt-3 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           {/* State */}

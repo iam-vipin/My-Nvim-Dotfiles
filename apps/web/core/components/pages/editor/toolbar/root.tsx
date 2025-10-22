@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
 import { PageToolbar } from "@/components/pages/editor/toolbar";
@@ -10,8 +10,6 @@ import { PageToolbar } from "@/components/pages/editor/toolbar";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
-// plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -19,7 +17,6 @@ type Props = {
   handleOpenNavigationPane: () => void;
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
-  storeType: EPageStoreType;
 };
 
 export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {

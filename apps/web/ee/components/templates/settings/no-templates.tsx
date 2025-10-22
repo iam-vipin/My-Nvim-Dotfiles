@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import type { ETemplateLevel } from "@plane/constants";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks

@@ -1,5 +1,6 @@
 # Python imports
 import json
+import copy
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -67,44 +68,20 @@ from plane.utils.issue_filters import issue_filters
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import ErrorCodes
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
-    def get(self, request, anchor):
-        filters = issue_filters(request.query_params, "GET")
-        order_by_param = request.GET.get("order_by", "-created_at")
-
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
-        if not deploy_board:
-            return Response(
-                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        project_id = deploy_board.entity_identifier
-        slug = deploy_board.workspace.slug
-
-        issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
-            .annotate(
+    def apply_annotations(self, issue_queryset):
+        return (
+            issue_queryset.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -128,9 +105,40 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        ).distinct()
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .prefetch_related(Prefetch("votes", queryset=IssueVote.objects.select_related("actor")))
+        )
 
+    def get(self, request, anchor):
+        filters = issue_filters(request.query_params, "GET")
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
+        if not deploy_board:
+            return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
+
+        project_id = deploy_board.entity_identifier
+        slug = deploy_board.workspace.slug
+
+        issue_queryset = (Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)).distinct()
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
         issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -142,17 +150,13 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -160,6 +164,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -169,12 +174,14 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         sub_group_by_fields=issue_group_values(
                             field=sub_group_by,
                             slug=slug,
                             project_id=project_id,
                             filters=filters,
+                            queryset=total_issue_queryset,
                         ),
                         group_by_field_name=group_by,
                         sub_group_by_field_name=sub_group_by,
@@ -193,6 +200,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -202,6 +210,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         slug=slug,
                         project_id=project_id,
                         filters=filters,
+                        queryset=total_issue_queryset,
                     ),
                     group_by_field_name=group_by,
                     count_filter=Q(
@@ -218,9 +227,8 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                total_count_queryset=total_issue_queryset,
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
 
@@ -319,9 +327,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 project_id=deploy_board.project_id, member=request.user, is_active=True
             ).exists():
                 # Add the user for workspace tracking
-                _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=deploy_board.project_id, member=request.user
-                )
+                _ = ProjectPublicMember.objects.get_or_create(project_id=deploy_board.project_id, member=request.user)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -354,9 +360,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(deploy_board.project_id),
-                current_instance=json.dumps(
-                    IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
-                ),
+                current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -387,9 +391,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(deploy_board.project_id),
-            current_instance=json.dumps(
-                IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
-            ),
+            current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
             epoch=int(timezone.now().timestamp()),
         )
         comment.delete()
@@ -402,9 +404,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("slug")
-            )
+            deploy_board = DeployBoard.objects.get(workspace__slug=self.kwargs.get("slug"))
             if deploy_board.entity_name == "view" and not check_workspace_feature_flag(
                 feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
             ):
@@ -459,9 +459,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 project_id=deploy_board.project_id, member=request.user, is_active=True
             ).exists():
                 # Add the user for workspace tracking
-                _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=deploy_board.project_id, member=request.user
-                )
+                _ = ProjectPublicMember.objects.get_or_create(project_id=deploy_board.project_id, member=request.user)
             issue_activity.delay(
                 type="issue_reaction.activity.created",
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
@@ -504,9 +502,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(deploy_board.project_id),
-            current_instance=json.dumps(
-                {"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}
-            ),
+            current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}),
             epoch=int(timezone.now().timestamp()),
         )
         issue_reaction.delete()
@@ -574,9 +570,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 project_id=deploy_board.project_id, member=request.user, is_active=True
             ).exists():
                 # Add the user for workspace tracking
-                _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=deploy_board.project_id, member=request.user
-                )
+                _ = ProjectPublicMember.objects.get_or_create(project_id=deploy_board.project_id, member=request.user)
             issue_activity.delay(
                 type="comment_reaction.activity.created",
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
@@ -639,9 +633,7 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            deploy_board = DeployBoard.objects.get(
-                workspace__slug=self.kwargs.get("anchor")
-            )
+            deploy_board = DeployBoard.objects.get(workspace__slug=self.kwargs.get("anchor"))
             if deploy_board.entity_name == "view" and not check_workspace_feature_flag(
                 feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
             ):
@@ -685,9 +677,7 @@ class IssueVotePublicViewSet(BaseViewSet):
         if not ProjectMember.objects.filter(
             project_id=deploy_board.project_id, member=request.user, is_active=True
         ).exists():
-            _ = ProjectPublicMember.objects.get_or_create(
-                project_id=deploy_board.project_id, member=request.user
-            )
+            _ = ProjectPublicMember.objects.get_or_create(project_id=deploy_board.project_id, member=request.user)
         issue_vote.vote = request.data.get("vote", 1)
         issue_vote.save()
         issue_activity.delay(
@@ -726,9 +716,7 @@ class IssueVotePublicViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(deploy_board.project_id),
-            current_instance=json.dumps(
-                {"vote": str(issue_vote.vote), "identifier": str(issue_vote.id)}
-            ),
+            current_instance=json.dumps({"vote": str(issue_vote.vote), "identifier": str(issue_vote.id)}),
             epoch=int(timezone.now().timestamp()),
         )
         issue_vote.delete()
@@ -751,9 +739,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -761,10 +747,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -797,9 +780,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     queryset=IssueReaction.objects.select_related("issue", "actor"),
                 )
             )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
+            .prefetch_related(Prefetch("votes", queryset=IssueVote.objects.select_related("actor")))
             .annotate(
                 vote_items=ArrayAgg(
                     Case(
@@ -875,9 +856,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         default=Value(None),
                                         output_field=CharField(),
                                     ),
-                                    display_name=F(
-                                        "issue_reactions__actor__display_name"
-                                    ),
+                                    display_name=F("issue_reactions__actor__display_name"),
                                 ),
                             ),
                         ),

@@ -79,6 +79,7 @@ export type BaseDedupPayload = {
   installationId: string;
   repositoryName: string;
   isEnterprise: boolean;
+  eventActorId: string;
 };
 
 export type GithubIssueDedupPayload = BaseDedupPayload & {
@@ -109,3 +110,8 @@ export type GithubPlaneOAuthState = {
   github_code: string;
   encoded_github_state: string;
 };
+
+export enum EGithubEntityConnectionType {
+  PROJECT_PR_AUTOMATION = "PROJECT_PR_AUTOMATION",
+  PROJECT_ISSUE_SYNC = "PROJECT_ISSUE_SYNC",
+}

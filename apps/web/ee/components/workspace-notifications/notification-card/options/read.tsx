@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications/sidebar/notification-card/options";
 // helpers
@@ -13,7 +13,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 
 type TNotificationItemReadOption = {
   workspaceSlug: string;

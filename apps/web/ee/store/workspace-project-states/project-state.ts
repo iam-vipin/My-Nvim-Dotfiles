@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane web services
 import projectStateService from "@/plane-web/services/workspace-project-states.service";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // types
-import { TProjectState, TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState, TProjectStateGroupKey } from "@/plane-web/types/workspace-project-states";
 
 export interface IProjectState extends TProjectState {
   // constants

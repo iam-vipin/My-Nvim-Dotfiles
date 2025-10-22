@@ -1,7 +1,8 @@
-import { useTranslation } from "@plane/i18n";
-import { Button, Popover, Tooltip } from "@plane/ui";
-import Link from "next/link";
 import { useRef } from "react";
+import Link from "next/link";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { Popover, Tooltip } from "@plane/ui";
 
 const info = [
   "This short form lets you create a new work item in a Plane project.",

@@ -1,11 +1,11 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction, reaction } from "mobx";
 // constants
 import { ETeamspaceScope } from "@plane/constants";
 // types
-import { TTeamspaceDisplayFilters, TTeamspaceFilters } from "@plane/types";
+import type { TTeamspaceDisplayFilters, TTeamspaceFilters } from "@plane/types";
 // root store
-import { RootStore } from "../root.store";
+import type { RootStore } from "../root.store";
 
 export interface ITeamspaceFilterStore {
   // observables

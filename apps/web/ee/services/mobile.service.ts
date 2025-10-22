@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 import { API_BASE_URL } from "@plane/constants";
-import {
+import type {
   TMobileCSRFToken,
   TEmailCheckRequest,
   TEmailCheckResponse,

@@ -4,8 +4,10 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TDashboard } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TDashboard } from "@plane/types";
+import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

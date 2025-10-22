@@ -1,11 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 // plane imports
 import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { CustomMenu, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -77,9 +78,7 @@ export const ProjectAttachmentsListItem: FC<Props> = observer((props) => {
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
                   captureClick({
                     elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.ATTACHMENT_ITEM_CONTEXT_MENU,

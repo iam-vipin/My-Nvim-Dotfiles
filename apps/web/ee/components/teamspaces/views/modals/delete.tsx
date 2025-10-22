@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { TTeamspaceView } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TTeamspaceView } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // plan web hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";

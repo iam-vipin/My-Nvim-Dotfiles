@@ -4,10 +4,11 @@ import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // CE
-import { StateOption as CEStateOption, TStateOptionProps } from "@/ce/components/workflow";
+import type { TStateOptionProps } from "@/ce/components/workflow";
+import { StateOption as CEStateOption } from "@/ce/components/workflow";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
@@ -52,7 +53,7 @@ export const StateOption = observer((props: TStateOptionProps) => {
         )
       }
       className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
-      position={isForWorkItemCreation ? "right" : "right-top"}
+      position={isForWorkItemCreation ? "right" : "right-start"}
       disabled={!isDisabled}
     >
       <div>

@@ -7,7 +7,6 @@ from plane.app.views import (
     IssueLinkViewSet,
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
@@ -135,12 +134,6 @@ urlpatterns = [
         IssueAttachmentV2Endpoint.as_view(),
         name="project-issue-attachments",
     ),
-    ## Export Issues
-    path(
-        "workspaces/<str:slug>/export-issues/",
-        ExportIssuesEndpoint.as_view(),
-        name="export-issues",
-    ),
     ## End Issues
     ## Issue Activity
     path(
@@ -181,9 +174,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/subscribe/",
-        IssueSubscriberViewSet.as_view(
-            {"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}
-        ),
+        IssueSubscriberViewSet.as_view({"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}),
         name="project-issue-subscribers",
     ),
     ## End Issue Subscribers
@@ -226,9 +217,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/archive/",
-        IssueArchiveViewSet.as_view(
-            {"get": "retrieve", "post": "archive", "delete": "unarchive"}
-        ),
+        IssueArchiveViewSet.as_view({"get": "retrieve", "post": "archive", "delete": "unarchive"}),
         name="project-issue-archive-unarchive",
     ),
     ## End Issue Archives

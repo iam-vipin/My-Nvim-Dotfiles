@@ -4,11 +4,13 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
-import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -99,9 +101,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
         {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
           >

@@ -1,4 +1,4 @@
-import { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
+import type { IWorkspaceCommentEnhancedSearchResult } from "@plane/constants";
 import { Avatar } from "@plane/ui";
 import { getFileURL, sanitizeHTML } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";

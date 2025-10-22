@@ -1,7 +1,7 @@
 "use client";
 
-import { FC } from "react";
-import { getButtonStyling } from "@plane/ui";
+import type { FC } from "react";
+import { getButtonStyling } from "@plane/propel/button";
 
 type TUpgradeEmptyStateButtonProps = {
   workspaceSlug: string;

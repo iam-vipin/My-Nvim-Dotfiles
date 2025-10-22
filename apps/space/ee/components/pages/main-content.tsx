@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { DocumentEditorWithRef, type EditorRefApi } from "@plane/editor";
+import { DocumentEditorWithRef } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { ERowVariant, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
@@ -73,19 +74,25 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             mentionHandler={{
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
             }}
-            embedHandler={{
-              issue: {
-                widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
+            extendedEditorProps={{
+              embedHandler: {
+                issue: {
+                  widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
+                },
+                externalEmbedComponent: {
+                  widgetCallback: EmbedHandler,
+                },
+                page: {
+                  widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
+                  workspaceSlug: "",
+                },
               },
-              externalEmbedComponent: {
-                widgetCallback: EmbedHandler,
-              },
-              page: {
-                widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
-                workspaceSlug: "",
+              isSmoothCursorEnabled: false,
+              commentConfig: {
+                canComment: false,
+                shouldHideComment: true,
               },
             }}
-            isSmoothCursorEnabled={false}
           />
         </div>
       </div>

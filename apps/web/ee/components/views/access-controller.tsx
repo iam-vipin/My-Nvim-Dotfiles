@@ -1,8 +1,9 @@
 import { useParams } from "next/navigation";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IProjectView, IWorkspaceView } from "@plane/types";
+import type { IProjectView, IWorkspaceView } from "@plane/types";
 // components
 import { AccessField } from "@/components/common/access-field";
 // constants

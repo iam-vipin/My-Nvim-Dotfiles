@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/helpers/common.helper";
 // constants
 import { SIDEBAR_WIDTH } from "../constants";
-import { IGanttBlock } from "../types";
+import type { IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;

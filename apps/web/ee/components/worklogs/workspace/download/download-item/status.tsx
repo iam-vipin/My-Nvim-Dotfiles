@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 // plane web types
-import { TWorklogDownloadStatus } from "@/plane-web/types";
+import type { TWorklogDownloadStatus } from "@/plane-web/types";
 
 export const WorklogDownloadStatus: FC<{ status: TWorklogDownloadStatus | undefined; loader: boolean }> = (props) => {
   const { status, loader } = props;

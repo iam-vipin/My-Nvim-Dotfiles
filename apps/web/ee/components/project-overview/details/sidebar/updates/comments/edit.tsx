@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Input } from "@plane/ui";
-import { TProjectUpdatesComment } from "@/plane-web/types";
-import { TActivityOperations } from "./comment-list";
+import { Button } from "@plane/propel/button";
+import { Input } from "@plane/ui";
+import type { TProjectUpdatesComment } from "@/plane-web/types";
+import type { TActivityOperations } from "./comment-list";
 
 type TProps = {
   commentData: TProjectUpdatesComment;

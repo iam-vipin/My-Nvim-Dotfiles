@@ -1,9 +1,9 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
-import { IIssuePropertiesActivity, IUserLite, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
+import type { IIssuePropertiesActivity, IUserLite, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export class IssuePropertiesActivity implements IIssuePropertiesActivity {
   // properties

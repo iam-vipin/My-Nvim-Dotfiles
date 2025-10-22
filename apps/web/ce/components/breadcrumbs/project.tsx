@@ -1,16 +1,17 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 // plane imports
-import { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Logo } from "@plane/ui";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
 // components
+import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;
@@ -38,7 +39,12 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
         value: projectId,
         query: project?.name,
         content: (
-          <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} type="material" />
+          <SwitcherLabel
+            name={project?.name}
+            logo_props={project?.logo_props}
+            LabelIcon={ProjectIcon}
+            type="material"
+          />
         ),
       };
     })

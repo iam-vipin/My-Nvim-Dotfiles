@@ -1,16 +1,17 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { EUserWorkspaceRoles, TPage } from "@plane/types";
-import { getPageName } from "@plane/utils";
+import type { TPage } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // store
-import { BasePage, TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
+import { BasePage } from "@/store/pages/base-page";
 
 const workspacePageService = new WorkspacePageService();
 
@@ -55,6 +56,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
         return await workspacePageService.duplicate(workspaceSlug, page.id);
       },
     });
+
     makeObservable(this, {
       // computed
       parentPageIds: computed,
@@ -69,6 +71,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
+      canCurrentUserCommentOnPage: computed,
       isContentEditable: computed,
     });
   }
@@ -90,9 +93,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
-    const sortedPages = filteredPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
+    const sortedPages = filteredPages.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
@@ -209,6 +210,25 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
   }
 
   /**
+   * @description returns true if the current logged in user can comment on the page/reply to the comments
+   */
+  get canCurrentUserCommentOnPage() {
+    // Owner can always comment
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can comment if they have at least view access
+    if (this.hasSharedAccess) {
+      return this.canCommentWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const { workspaceSlug } = this.rootStore.router;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+  }
+
+  /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
@@ -265,7 +285,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
 
   getRedirectionLink = computedFn(() => {
     const { workspaceSlug } = this.rootStore.router;
-    return `/${workspaceSlug}/pages/${this.id}`;
+    return `/${workspaceSlug}/wiki/${this.id}`;
   });
 
   fetchSubPages = async () => {

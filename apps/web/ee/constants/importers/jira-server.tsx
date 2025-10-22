@@ -10,7 +10,8 @@ import {
   SummaryRoot,
 } from "@/plane-web/components/importers/jira-server";
 // types
-import { E_IMPORTER_STEPS, TImporterStep } from "@/plane-web/types/importers/jira-server";
+import type { TImporterStep } from "@/plane-web/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
 
 export const IMPORTER_STEPS: TImporterStep[] = [
   {

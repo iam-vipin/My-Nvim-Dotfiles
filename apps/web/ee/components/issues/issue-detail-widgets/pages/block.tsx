@@ -1,10 +1,14 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { CircleX, Files, FileText, Link2 } from "lucide-react";
+import { CircleX, Files, Link2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
-import { setToast, TContextMenuItem, TOAST_TYPE, CustomMenu, Logo } from "@plane/ui";
+import { PageIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, Logo } from "@plane/ui";
 import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -84,7 +88,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
       <Link
         href={
           page.is_global
-            ? `/${workspaceSlug}/pages/${page.id}`
+            ? `/${workspaceSlug}/wiki/${page.id}`
             : `/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
         }
         target="_blank"
@@ -108,7 +112,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
               {page.logo_props && page.logo_props?.in_use ? (
                 <Logo logo={page.logo_props} size={16} type="lucide" />
               ) : (
-                <FileText className="size-4 text-custom-text-300" />
+                <PageIcon className="size-4 text-custom-text-300" />
               )}
             </div>
             <div className="text-base font-medium text-custom-text-200 line-clamp-2 overflow-hidden break-words min-w-0 flex-1">
@@ -136,9 +140,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
             {MENU_ITEMS.map((item) => (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn("flex items-center gap-2")}

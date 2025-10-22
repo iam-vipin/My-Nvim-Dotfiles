@@ -3,8 +3,10 @@ import Link from "next/link";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
-import { EUpdateEntityType, EUpdateStatus, TUpdate } from "@plane/types";
-import { EpicIcon, Tooltip } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TUpdate } from "@plane/types";
+import { EUpdateEntityType, EUpdateStatus } from "@plane/types";
 import { capitalizeFirstLetter, cn } from "@plane/utils";
 // plane web components
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";

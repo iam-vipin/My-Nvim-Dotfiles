@@ -3,23 +3,24 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserPermissionsLevel } from "@plane/constants";
+import { InitiativeIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { ControlLink, InitiativeIcon } from "@plane/ui";
+import { ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
+import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme"
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
 import { useInitiativeUpdates } from "../details/sidebar/use-updates";
+import { InitiativesBlockProperties } from "./initiatives-block-properties";
 import { InitiativeQuickActions } from "./quick-actions";
-import { ReadOnlyBlockProperties } from "./read-only-properties";
 
 type Props = {
   initiativeId: string;
@@ -31,8 +32,6 @@ export const InitiativeBlock = observer((props: Props) => {
   const parentRef = useRef(null);
   const { workspaceSlug } = useParams();
 
-  // hooks
-  const router = useAppRouter();
   const {
     initiative: { getInitiativeById, getInitiativeStatsById },
   } = useInitiatives();
@@ -57,9 +56,13 @@ export const InitiativeBlock = observer((props: Props) => {
       title={initiative.name}
       itemLink={`/${workspaceSlug}/initiatives/${initiative.id}`}
       prependTitleElement={
-        <div className="flex flex-shrink-0 size-8 items-center justify-center rounded-md bg-custom-background-90">
-          <InitiativeIcon className="size-4 text-custom-text-300" />
-        </div>
+        <>
+          {initiative?.logo_props?.in_use ? (
+            <Logo logo={initiative?.logo_props} size={16} type="lucide" />
+          ) : (
+            <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
+          )}
+        </>
       }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
@@ -70,16 +73,11 @@ export const InitiativeBlock = observer((props: Props) => {
             analytics={initiativeStats}
             showTabs
           />
-          <ControlLink
-            className="relative flex w-full items-center gap-3 overflow-hidden"
-            href={`/${workspaceSlug}/initiatives/${initiative.id}`}
-            target="_self"
-            onClick={() => {
-              router.push(`/${workspaceSlug}/initiatives/${initiative.id}`);
-            }}
-          >
-            <ReadOnlyBlockProperties initiative={initiative} isSidebarCollapsed={isSidebarCollapsed} />
-          </ControlLink>
+          <InitiativesBlockProperties
+            initiative={initiative}
+            isSidebarCollapsed={isSidebarCollapsed}
+            workspaceSlug={workspaceSlug.toString()}
+          />
           <div
             className={cn("hidden", {
               "md:flex": isSidebarCollapsed,

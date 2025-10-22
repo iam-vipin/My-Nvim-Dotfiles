@@ -1,8 +1,10 @@
 // root store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // recurring work items stores
-import { IRecurringWorkItemActivityStore, RecurringWorkItemActivityStore } from "./activity.store";
-import { IRecurringWorkItemStore, RecurringWorkItemStore } from "./base.store";
+import type { IRecurringWorkItemActivityStore } from "./activity.store";
+import { RecurringWorkItemActivityStore } from "./activity.store";
+import type { IRecurringWorkItemStore } from "./base.store";
+import { RecurringWorkItemStore } from "./base.store";
 
 export interface IRecurringWorkItemsRootStore {
   recurringWorkItems: IRecurringWorkItemStore;

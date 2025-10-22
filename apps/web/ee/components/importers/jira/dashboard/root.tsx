@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { JiraConfig } from "@plane/etl/jira";
-import { TImportJob } from "@plane/types";
+import type { JiraConfig } from "@plane/etl/jira";
+import type { TImportJob } from "@plane/types";
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // assets
 import JiraLogo from "@/public/services/jira.svg";

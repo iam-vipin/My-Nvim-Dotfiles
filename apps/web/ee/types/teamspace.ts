@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // plane imports
-import {
+import type {
   ETeamspaceAnalyticsDataKeys,
   ETeamspaceAnalyticsValueKeys,
   EStatisticsLegend,
@@ -8,7 +8,7 @@ import {
   EProgressDataKeys,
   ERelationType,
 } from "@plane/constants";
-import { TChartData, TStateGroups, TTeamspaceActivity, TTeamspaceActivityKeys } from "@plane/types";
+import type { TChartData, TStateGroups, TTeamspaceActivity, TTeamspaceActivityKeys } from "@plane/types";
 
 export type TTeamspaceActivityDetails = {
   icon: ReactNode;

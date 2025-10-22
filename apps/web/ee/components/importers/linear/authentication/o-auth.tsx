@@ -1,11 +1,13 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const OAuth: FC = observer(() => {
   // states

@@ -1,7 +1,12 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EAutomationNodeType, TAutomationNode, TAutomationNodeConfig, TAutomationNodeHandlerName } from "@plane/types";
+import type {
+  EAutomationNodeType,
+  TAutomationNode,
+  TAutomationNodeConfig,
+  TAutomationNodeHandlerName,
+} from "@plane/types";
 
 export interface IAutomationBaseNode<
   T extends EAutomationNodeType,

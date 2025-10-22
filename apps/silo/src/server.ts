@@ -1,10 +1,12 @@
+import * as dotenvx from "@dotenvx/dotenvx";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import * as dotenvx from "@dotenvx/dotenvx";
 import express, { Application, Request, Response, NextFunction } from "express";
 
 // lib
 import expressWinston from "express-winston";
+import { registerController } from "@plane/decorators";
+import { logger } from "@plane/logger";
 import AsanaController from "@/apps/asana-importer/controllers";
 // controllers
 
@@ -26,6 +28,7 @@ import ClickupController from "./apps/clickup-importer/controllers";
 import CSVController from "./apps/flatfile/controllers";
 import GithubEnterpriseController from "./apps/github-enterprise/controllers";
 import GitlabController from "./apps/gitlab/controller";
+import GitlabEnterpriseController from "./apps/gitlab-enterprise/controllers";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 import { NotionController } from "./apps/notion-importer/controller";
 import SentryControllers from "./apps/sentry/controllers";
@@ -34,12 +37,10 @@ import SlackController from "./apps/slack/controllers";
 // Helpers and Utils
 import { env } from "./env";
 import { APIError } from "./lib";
-import { registerControllers } from "./lib/controller";
-import { logger } from "./logger";
 // types
+import { setRawBodyOnRequest } from "./middleware/raw-body.middlware";
 import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
 import { APIErrorResponse } from "./types";
-import { setRawBodyOnRequest } from "./middleware/raw-body.middlware";
 
 export default class Server {
   private readonly app: Application;
@@ -58,6 +59,7 @@ export default class Server {
       JiraController,
       LinearController,
       GitlabController,
+      GitlabEnterpriseController,
       AsanaController,
       NotionController,
       SlackController,
@@ -130,9 +132,16 @@ export default class Server {
 
   private setupControllers(): void {
     const router = express.Router();
-    const allControllers = [...Server.CONTROLLERS.PING, ...Server.CONTROLLERS.ENGINE, ...Server.CONTROLLERS.APPS];
+    const allControllers: any[] = [
+      ...Server.CONTROLLERS.PING,
+      ...Server.CONTROLLERS.ENGINE,
+      ...Server.CONTROLLERS.APPS,
+    ];
 
-    allControllers.forEach((controller) => registerControllers(router, controller));
+    allControllers.forEach((controller) => {
+      registerController(router, controller);
+    });
+
     this.app.use(env.SILO_BASE_PATH || "/", router);
   }
 

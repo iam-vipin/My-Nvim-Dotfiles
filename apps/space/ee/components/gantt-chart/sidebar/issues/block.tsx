@@ -11,7 +11,7 @@ import { BLOCK_HEIGHT } from "../../constants";
 // hooks
 import { useGanttChart } from "../../hooks";
 // types
-import { IGanttBlock } from "../../types";
+import type { IGanttBlock } from "../../types";
 
 type Props = {
   block: IGanttBlock;

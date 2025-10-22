@@ -2,13 +2,13 @@ import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TLoader, IIssueType } from "@plane/types";
+import type { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
 import { IssueTypeLogo } from "./common/issue-type-logo";
-import { IssueTypeQuickActions } from "./quick-actions";
 import { IssuePropertiesRoot } from "./properties";
+import { IssueTypeQuickActions } from "./quick-actions";
 
 type TIssueTypeListItem = {
   issueTypeId: string;

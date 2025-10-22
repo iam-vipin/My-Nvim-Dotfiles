@@ -1,10 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import type { NodeViewProps } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
@@ -39,7 +35,7 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
   // node attributes
   const nodeAttrs = node.attrs;
   const isEmpty = !nodeAttrs[EMathAttributeNames.LATEX]?.trim();
-  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+  const isTouchDevice = !!editor.storage.utility?.isTouchDevice;
 
   // Display logic - use preview latex if available, otherwise use actual latex
   const displayLatex = previewLatex !== null ? previewLatex : nodeAttrs[EMathAttributeNames.LATEX];
@@ -110,7 +106,7 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
 
   // Auto-open modal if openMathModal flag is set
   useEffect(() => {
-    const mathStorage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.MATHEMATICS);
+    const mathStorage = editor.storage.mathematics;
 
     if (mathStorage?.openMathModal && isEmpty && editor.isEditable) {
       mathStorage.openMathModal = false;

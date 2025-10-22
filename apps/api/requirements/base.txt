@@ -1,13 +1,13 @@
 # base requirements
 
 # django
-Django==4.2.22
+Django==4.2.25
 # rest framework
 djangorestframework==3.15.2
 # postgres
-psycopg==3.1.18
-psycopg-binary==3.2.3
-psycopg-c==3.1.18
+psycopg==3.2.9
+psycopg-binary==3.2.9
+psycopg-c==3.2.9
 dj-database-url==2.1.0
 psycopg-pool==3.2.6
 # mongo
@@ -75,7 +75,7 @@ openfeature-sdk==0.7.0
 # graphql
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
-djangorestframework-simplejwt==5.4.0
+djangorestframework-simplejwt==5.5.1
 # firebase admin
 firebase-admin==6.6.0
 # oauth toolkit

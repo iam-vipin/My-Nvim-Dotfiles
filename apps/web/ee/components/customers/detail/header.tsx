@@ -1,11 +1,13 @@
 "use client";
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PanelRight } from "lucide-react";
-import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, CustomersIcon, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { CustomersIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";

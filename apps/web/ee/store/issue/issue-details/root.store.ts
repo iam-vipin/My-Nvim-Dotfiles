@@ -1,11 +1,9 @@
 import { action, makeObservable } from "mobx";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
 import { IssueService } from "@/plane-web/services/issue/issue.service";
-import {
-  IssueDetail as IssueDetailCore,
-  IIssueDetail as IIssueDetailCore,
-} from "@/store/issue/issue-details/root.store";
-import { IIssueRootStore } from "@/store/issue/root.store";
+import type { IIssueDetail as IIssueDetailCore } from "@/store/issue/issue-details/root.store";
+import { IssueDetail as IssueDetailCore } from "@/store/issue/issue-details/root.store";
+import type { IIssueRootStore } from "@/store/issue/root.store";
 import { WorkItemPagesStore } from "./page.store";
 
 export interface IIssueDetail extends IIssueDetailCore {

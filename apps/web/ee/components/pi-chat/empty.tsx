@@ -6,8 +6,9 @@ import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { BetaBadge, Button } from "@plane/ui";
+import { BetaBadge } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -30,14 +31,14 @@ export const EmptyPiChat = observer(() => {
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>
       <div className="flex justify-between h-8">
         <div className="flex gap-1">
-          <Image width={16} height={16} src={PiChatLogo} alt="Pi" className="my-auto" />
-          <span className="font-medium text-sm my-auto "> Pi Chat</span>
+          <Image width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto" />
+          <span className="font-medium text-sm my-auto "> Plane AI</span>
           <BetaBadge />
         </div>
       </div>
       <div className="flex flex-col flex-1 px-page-x pt-4 pb-8 relative h-full">
         <div className="mx-auto flex h-full flex-col justify-center space-y-4 lg:w-3/5">
-          <h4 className="text-xl font-semibold">Upgrade to Pro for unlimited access to Pi Chat</h4>
+          <h4 className="text-xl font-semibold">Upgrade to Pro for unlimited access to Plane AI</h4>
           <p className="text-custom-text-100">
             Whether you need quick guidance, task updates, or help brainstorming ideas, this intelligent assistant is
             here 24/7 to make managing work easier{" "}

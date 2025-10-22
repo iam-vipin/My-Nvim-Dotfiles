@@ -8,7 +8,7 @@ import { BLOCK_HEIGHT } from "../constants";
 // components
 import { ChartScrollable } from "../helpers";
 import { useGanttChart } from "../hooks";
-import { ChartDataType, IGanttBlock } from "../types";
+import type { ChartDataType, IGanttBlock } from "../types";
 
 type Props = {
   blockId: string;

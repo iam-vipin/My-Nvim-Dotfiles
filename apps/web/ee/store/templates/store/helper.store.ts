@@ -1,12 +1,11 @@
-import { orderBy } from "lodash";
-import set from "lodash/set";
+import { set, orderBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { TemplateHelperService } from "@plane/services";
-import { TTemplateCategory } from "@plane/types";
+import type { TTemplateCategory } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ITemplateHelperStore {
   // observables

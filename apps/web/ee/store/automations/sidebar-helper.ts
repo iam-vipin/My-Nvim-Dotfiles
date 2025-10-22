@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
 import { EAutomationSidebarTab } from "@plane/types";
-import { IAutomationInstance } from "./automation";
+import type { IAutomationInstance } from "./automation";
 
 type TSelectedSidebarConfig = {
   tab: EAutomationSidebarTab | null;

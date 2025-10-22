@@ -2,21 +2,26 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleEstimateSystemAdvanced, TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
+import type {
+  TCycleEstimateSystemAdvanced,
+  TCycleEstimateType,
+  TCyclePlotType,
+  TProgressChartData,
+} from "@plane/types";
 import { Loader, Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
-import { useCycle } from "@/hooks/store/use-cycle"
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import ActiveCycleChart from "./cycle-chart/chart";
 import { formatActiveCycle } from "./formatter";
 import Selection from "./selection";
 import Summary from "./summary";
-import useCycleDetails from "./use-cycle-details";
+import type useCycleDetails from "./use-cycle-details";
 
 type ActiveCycleDetailProps = ReturnType<typeof useCycleDetails>;
 

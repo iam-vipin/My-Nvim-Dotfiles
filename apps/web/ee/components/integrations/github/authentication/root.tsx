@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { ConnectOrganization, ConnectPersonalAccount } from "@/plane-web/components/integrations/github";

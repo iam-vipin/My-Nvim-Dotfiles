@@ -26,6 +26,15 @@ class EpicCountType:
     total_epics: Optional[int] = field(default_factory=lambda: None)
 
 
+# Epic Stats Type
+@strawberry.type
+class EpicStatsType:
+    attachments: int = 0
+    relations: int = 0
+    sub_work_items: int = 0
+    links: int = 0
+
+
 # Epic Types
 @strawberry.input
 @dataclass
@@ -134,9 +143,7 @@ class EpicType:
 
     @strawberry.field
     async def analytics(self) -> EpicAnalyticsType:
-        sub_work_items = await sync_to_async(
-            lambda: get_all_related_work_items(work_item_id=self.id)
-        )()
+        sub_work_items = await sync_to_async(lambda: get_all_related_work_items(work_item_id=self.id))()
 
         sub_work_items_count = len(sub_work_items)
 

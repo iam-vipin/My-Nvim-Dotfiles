@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS, TEAMSPACE_UPDATES_TRACKER_EVENTS } from "@plane/constants";
-import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { formatTextList } from "@plane/utils";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
-import { useMember } from "@/hooks/store/use-member"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store";
 

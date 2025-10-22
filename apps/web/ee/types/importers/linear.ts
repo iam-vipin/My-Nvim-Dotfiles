@@ -1,6 +1,6 @@
-import { LinearPATAuthState } from "@plane/etl/linear";
+import type { LinearPATAuthState } from "@plane/etl/linear";
 // plane web types
-import { TStepperBlock } from "@/plane-web/types/importers";
+import type { TStepperBlock } from "@/plane-web/types/importers";
 
 // authentication PAT form field types
 export type TLinearPATFormFields = Omit<LinearPATAuthState, "workspaceId" | "workspaceSlug" | "userId" | "apiToken">;

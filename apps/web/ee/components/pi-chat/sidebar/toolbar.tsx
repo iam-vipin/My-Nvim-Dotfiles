@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Search, SquarePen, X } from "lucide-react";
 // helpers
-import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { SidebarSearchButton } from "@/components/sidebar/search-button";
 
 type Props = {
   searchQuery: string;
@@ -34,9 +35,9 @@ export const Toolbar: FC<Props> = observer((props) => {
     <div className="flex items-center justify-between gap-2 h-8 w-full">
       {/* New */}
       <Link
-        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
+        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/`}
         className={cn(
-          "flex items-center px-3 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
+          "flex items-center px-2 text-custom-text-300 justify-center gap-2 h-8 w-8 rounded-md shadow border-[0.5px] border-custom-sidebar-border-300 transition-[width] ease-linear overflow-hidden disabled:bg-pi-100 disabled:border disabled:border-custom-border-300 disabled:!text-custom-text-300",
           {
             "w-full justify-start": !isSearchOpen,
           }
@@ -50,13 +51,12 @@ export const Toolbar: FC<Props> = observer((props) => {
         {!isSearchOpen && (
           <button
             type="button"
-            className="flex items-center justify-center size-8 rounded bg-custom-background-100 text-custom-text-400 hover:text-custom-text-200 border-[0.5px] border-custom-sidebar-border-300"
             onClick={() => {
               setIsSearchOpen(true);
               inputRef.current?.focus();
             }}
           >
-            <Search className="size-4" />
+            <SidebarSearchButton isActive={isSearchOpen} />
           </button>
         )}
 

@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
+import { E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import { PlaneUser } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import { TWorkspaceConnection, E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
@@ -12,7 +12,11 @@ import { convertIntegrationKeyToProvider } from "./helpers";
 import { OAuthStrategyManager } from "./strategy-manager";
 import { OAuthState, OAuthConnectionStatus, E_INTEGRATION_DISCONNECT_SOURCE, IntegrationUserMap } from "./types";
 
-const PLANE_OAUTH_SUPPORTED_PROVIDERS = [E_INTEGRATION_KEYS.GITHUB_ENTERPRISE, E_INTEGRATION_KEYS.SENTRY];
+const PLANE_OAUTH_SUPPORTED_PROVIDERS = [
+  E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
+  E_INTEGRATION_KEYS.SENTRY,
+  E_INTEGRATION_KEYS.GITLAB_ENTERPRISE,
+];
 
 export class OAuthController {
   private strategyManager = OAuthStrategyManager.getInstance();

@@ -1,7 +1,7 @@
 // plane types
 // helpers
 import { API_BASE_URL } from "@plane/constants";
-import { TProjectUpdate } from "@/plane-web/types";
+import type { TProjectUpdate } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 

@@ -1,31 +1,32 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
+import { Controller, Delete, Get, Post } from "@plane/decorators";
+import { E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGitLabAuth,
   createGitLabService,
-  GitlabWebhookEvent,
-  GitlabWebhook,
-  GitlabEntityType,
-  IGitlabEntity,
-  GitlabEntityData,
   EConnectionType,
   GitLabAuthorizeState,
+  GitlabEntityData,
+  GitlabEntityType,
   GitlabPlaneOAuthState,
+  GitlabWebhook,
+  GitlabWebhookEvent,
+  IGitlabEntity,
 } from "@plane/etl/gitlab";
+import { logger } from "@plane/logger";
 import { ExIssueLabel } from "@plane/sdk";
-import { TWorkspaceEntityConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS, TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, Delete, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
-import { logger } from "@/logger";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
-import { gitlabAuthService, getGitlabClientService } from "../services";
+import { getGitlabClientService, gitlabAuthService } from "../services";
 
 const apiClient = getAPIClient();
 
@@ -57,10 +58,10 @@ export default class GitlabController {
   }
 
   // Disconnect the organization connection
-  @Post("/auth/organization-disconnect/:workspaceId/:connectionId")
+  @Post("/auth/organization-disconnect/:workspaceId/:connectionId/:userId")
   @useValidateUserAuthentication()
   async disconnectOrganization(req: Request, res: Response) {
-    const { workspaceId, connectionId } = req.params;
+    const { workspaceId, connectionId, userId } = req.params;
 
     if (!workspaceId || !connectionId) {
       return res.status(400).send({
@@ -81,7 +82,7 @@ export default class GitlabController {
         const connection = connections[0];
         const workspaceId = connection.workspace_id;
         // remove the webhooks from gitlab
-        const gitlabClientService = await getGitlabClientService(workspaceId);
+        const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
         const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
           workspace_connection_id: connection.id,
         });
@@ -106,23 +107,9 @@ export default class GitlabController {
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
     try {
-      const {
-        workspace_id,
-        workspace_slug,
-        plane_api_token,
-        target_host,
-        user_id,
-        gitlab_hostname,
-        plane_app_installation_id,
-      } = req.body;
-      if (
-        !user_id ||
-        !workspace_id ||
-        !workspace_slug ||
-        !plane_api_token ||
-        !target_host ||
-        !plane_app_installation_id
-      )
+      const { workspace_id, workspace_slug, plane_api_token, user_id, gitlab_hostname, plane_app_installation_id } =
+        req.body;
+      if (!user_id || !workspace_id || !workspace_slug || !plane_api_token || !plane_app_installation_id)
         return res.status(400).send({ message: "Missing required fields" });
 
       const gitlabService = createGitLabAuth({
@@ -138,7 +125,7 @@ export default class GitlabController {
           workspace_id: workspace_id,
           workspace_slug: workspace_slug,
           plane_api_token: plane_api_token,
-          target_host: target_host,
+          target_host: env.API_BASE_URL,
           plane_app_installation_id: plane_app_installation_id,
         })
       );
@@ -432,7 +419,7 @@ export default class GitlabController {
 
       // Add webhook to gitlab
       const { url, token } = await this.getWorkspaceWebhookData(workspaceId);
-      const gitlabClientService = await getGitlabClientService(workspaceId);
+      const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
       // based on enum either add to project or group
       let webhookId;
@@ -518,7 +505,11 @@ export default class GitlabController {
         return res.status(400).json({ error: "Entity connection not found" });
       }
 
-      const gitlabClientService = await getGitlabClientService(entityConnection.workspace_id);
+      const gitlabClientService = await getGitlabClientService(
+        entityConnection.workspace_id,
+        E_INTEGRATION_KEYS.GITLAB,
+        undefined
+      );
       const entityData = entityConnection.entity_data as GitlabEntityData;
 
       if (entityConnection.type === EConnectionType.ENTITY) {
@@ -604,7 +595,7 @@ export default class GitlabController {
       const workspaceId = req.params.workspaceId;
 
       const entities = [];
-      const gitlabClientService = await getGitlabClientService(workspaceId);
+      const gitlabClientService = await getGitlabClientService(workspaceId, E_INTEGRATION_KEYS.GITLAB, undefined);
 
       const projects = await gitlabClientService.getProjects();
       if (projects.length) {

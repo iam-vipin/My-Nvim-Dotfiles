@@ -1,11 +1,13 @@
 "use client";
 
-import { FormEvent, FC, useEffect, useState, useMemo } from "react";
+import type { FormEvent, FC } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
 import { useTranslation } from "@plane/i18n";
-import { Button, Popover, Input, TextArea } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Popover, Input, TextArea } from "@plane/ui";
 // plane web types
-import { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/plane-web/types/workspace-project-states";
 
 type TProjectStateForm = {
   data: Partial<TProjectState>;

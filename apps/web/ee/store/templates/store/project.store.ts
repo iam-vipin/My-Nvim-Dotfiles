@@ -3,15 +3,11 @@ import { action, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { projectTemplateService } from "@plane/services";
-import { IBaseTemplateActionCallbacks, TProjectTemplate, ITemplateService } from "@plane/types";
+import type { IBaseTemplateActionCallbacks, TProjectTemplate, ITemplateService } from "@plane/types";
 // plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
-import {
-  BaseTemplateStore,
-  IBaseTemplateStore,
-  TProjectTemplateInstanceProps,
-  ProjectTemplateInstance,
-} from "@/plane-web/store/templates";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IBaseTemplateStore, TProjectTemplateInstanceProps } from "@/plane-web/store/templates";
+import { BaseTemplateStore, ProjectTemplateInstance } from "@/plane-web/store/templates";
 
 type TBaseProjectTemplateProps = {
   workspaceSlug: string;

@@ -1,7 +1,10 @@
 // This file is a wrapper for the db connection for silo tables in plane
 // this accepts data in single format for all integrations/importers and returns the data in single format
 import { TClickUpRelationMap } from "@plane/etl/clickup";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import {
+  E_INTEGRATION_KEYS,
   TImportJob,
   TImportReport,
   TWorkspaceConnection,
@@ -74,7 +77,7 @@ class IntegrationConnectionHelper {
     connection_type,
   }: {
     workspace_id: string;
-    connection_type: string;
+    connection_type?: string;
   }): Promise<TWorkspaceConnection[]> {
     return this.apiClient.workspaceConnection.listWorkspaceConnections({
       workspace_id,
@@ -107,19 +110,31 @@ class IntegrationConnectionHelper {
     entity_id,
     entity_type,
     entity_data,
+    entity_slug,
+    type,
+    config,
+    project_id,
   }: {
     workspace_id: string;
     workspace_connection_id: string;
-    entity_id: string;
-    entity_type: string;
-    entity_data: object;
+    entity_id?: string;
+    entity_type?: string;
+    entity_data?: object;
+    entity_slug?: string;
+    type?: string;
+    config?: object;
+    project_id?: string;
   }): Promise<TWorkspaceEntityConnection> {
     return this.apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
       workspace_id,
       workspace_connection_id,
+      project_id,
       entity_id,
       entity_type,
       entity_data,
+      entity_slug,
+      type,
+      config,
     });
   }
 
@@ -178,7 +193,6 @@ class IntegrationConnectionHelper {
     });
   }
 
-
   async updateWorkspaceEntityConnection({
     entity_connection_id,
     entity_data,
@@ -231,7 +245,7 @@ class IntegrationConnectionHelper {
     target_identifier?: string;
     target_authorization_type?: string;
     is_pat?: boolean;
-    source_hostname: string;
+    source_hostname?: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.createWorkspaceCredential({
       workspace_id,
@@ -440,6 +454,37 @@ class IntegrationConnectionHelper {
       source,
       status,
     });
+  }
+
+  async getUserAndWSAdminCredentialsWithAdminFallback(
+    source: E_INTEGRATION_KEYS,
+    source_access_token: string,
+    source_identifier: string
+  ) {
+    // Get the admin credentials
+    let planeCredentials: TWorkspaceCredential | null = null;
+    const [planeAdminCredentials] = await this.apiClient.workspaceCredential.listWorkspaceCredentials({
+      source: source,
+      source_access_token: source_access_token,
+    });
+    planeCredentials = planeAdminCredentials;
+    // If the source identifier is provided, check for the user credentials
+    if (source_identifier) {
+      const [planeUserCredentials] = await this.apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[source],
+        source_identifier: source_identifier,
+      });
+      if (planeUserCredentials) {
+        logger.info(`${source} Plane user credentials found`, {
+          source: source,
+          source_access_token: source_access_token,
+          source_identifier: source_identifier,
+        });
+        planeCredentials = planeUserCredentials;
+      }
+    }
+    // Return the plane credentials
+    return { userCredentials: planeCredentials, wsAdminCredentials: planeAdminCredentials };
   }
 }
 

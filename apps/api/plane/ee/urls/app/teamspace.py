@@ -26,6 +26,15 @@ from plane.ee.views.app.teamspace import (
     TeamspacePageDuplicateEndpoint,
     TeamspaceProgressSummaryEndpoint,
     AddTeamspaceProjectEndpoint,
+    TeamspacePageCommentEndpoint,
+    TeamspacePageCommentReactionEndpoint,
+    TeamspacePageResolveCommentEndpoint,
+    TeamspacePageUnresolveCommentEndpoint,
+    TeamspacePageRestoreCommentEndpoint,
+    TeamspacePageCommentRepliesEndpoint,
+    TeamspaceSubPageEndpoint,
+    TeamspaceParentPageEndpoint,
+    TeamspacePageSummaryEndpoint,
 )
 
 urlpatterns = [
@@ -78,9 +87,24 @@ urlpatterns = [
         name="teamspace-pages",
     ),
     path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages-summary/",
+        TeamspacePageSummaryEndpoint.as_view(),
+        name="teamspace-pages-summary",
+    ),
+    path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/",
         TeamspacePageEndpoint.as_view(),
         name="teamspace-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/sub-pages/",
+        TeamspaceSubPageEndpoint.as_view(),
+        name="project-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/parent-pages/",
+        TeamspaceParentPageEndpoint.as_view(),
+        name="project-parent-pages",
     ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/duplicate/",
@@ -182,4 +206,67 @@ urlpatterns = [
         AddTeamspaceProjectEndpoint.as_view(),
         name="teamspace-projects",
     ),
+    # path(
+    #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/publish/",
+    #     TeamspacePagePublishEndpoint.as_view(),
+    #     name="teamspace-pages-publish",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/publish/<uuid:pk>/",
+    #     TeamspacePagePublishEndpoint.as_view(),
+    #     name="teamspace-pages-publish",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/share/",
+    #     TeamspacePageUserEndpoint.as_view(),
+    #     name="teamspace-page-shared",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/share/<uuid:user_id>/",
+    #     TeamspacePageUserEndpoint.as_view(),
+    #     name="teamspace-page-shared",
+    # ),
+    # teamspace page comments
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/",
+        TeamspacePageCommentEndpoint.as_view(),
+        name="teamspace-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/",
+        TeamspacePageCommentEndpoint.as_view(),
+        name="teamspace-page-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/resolve/",
+        TeamspacePageResolveCommentEndpoint.as_view(),
+        name="teamspace-page-comments-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/un-resolve/",
+        TeamspacePageUnresolveCommentEndpoint.as_view(),
+        name="teamspace-page-comments-un-resolve",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/restore/",
+        TeamspacePageRestoreCommentEndpoint.as_view(),
+        name="teamspace-page-comments-restore",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/replies/",
+        TeamspacePageCommentRepliesEndpoint.as_view(),
+        name="teamspace-page-comments-replies",
+    ),
+    # # Comment Reactions
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/",
+        TeamspacePageCommentReactionEndpoint.as_view(),
+        name="teamspace-page-comment-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        TeamspacePageCommentReactionEndpoint.as_view(),
+        name="teamspace-page-comment-reactions",
+    ),
+    # end teamspace page comments
 ]

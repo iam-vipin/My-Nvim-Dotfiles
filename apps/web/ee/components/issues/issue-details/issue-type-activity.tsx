@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -8,10 +8,8 @@ import { ArrowRightLeft } from "lucide-react";
 // plane imports
 import { cn } from "@plane/utils";
 // ce imports
-import {
-  IssueTypeActivity as BaseIssueTypeActivity,
-  TIssueTypeActivity,
-} from "@/ce/components/issues/issue-details/issue-type-activity";
+import type { TIssueTypeActivity } from "@/ce/components/issues/issue-details/issue-type-activity";
+import { IssueTypeActivity as BaseIssueTypeActivity } from "@/ce/components/issues/issue-details/issue-type-activity";
 // components
 import {
   IssueActivityBlockComponent,

@@ -1,7 +1,14 @@
-import axios, { AxiosInstance } from "axios";
-import { AsanaCustomField, AsanaProject, AsanaProjectTaskCount, AsanaSection, AsanaWorkspace } from "@plane/etl/asana";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type {
+  AsanaCustomField,
+  AsanaProject,
+  AsanaProjectTaskCount,
+  AsanaSection,
+  AsanaWorkspace,
+} from "@plane/etl/asana";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { IAdditionalUsersResponse } from "@plane/types";
+import type { IAdditionalUsersResponse } from "@plane/types";
 
 export class AsanaService {
   protected baseURL: string;

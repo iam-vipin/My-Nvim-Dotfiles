@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog } from "@headlessui/react";
-import { TProrationPreview } from "@plane/types";
+import type { TProrationPreview } from "@plane/types";
 // plane web imports
 import { ModalFooter } from "@/plane-web/components/workspace/billing/manage-seats/add-seats/modal-footer";
 import { FormCard, PriceRow } from "@/plane-web/components/workspace/billing/manage-seats/common";

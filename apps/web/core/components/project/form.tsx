@@ -1,24 +1,19 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { IProject, IWorkspace } from "@plane/types";
-import {
-  Button,
-  CustomSelect,
-  Input,
-  TextArea,
-  TOAST_TYPE,
-  setToast,
-  CustomEmojiIconPicker,
-  EmojiIconPickerTypes,
-  Tooltip,
-} from "@plane/ui";
-import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IProject, IWorkspace } from "@plane/types";
+import { CustomSelect, Input, TextArea, EmojiIconPickerTypes } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -203,20 +198,21 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               control={control}
               name="logo_props"
               render={({ field: { value, onChange } }) => (
-                <CustomEmojiIconPicker
+                <EmojiPicker
+                  iconType="material"
                   closeOnSelect={false}
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
                   buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
-                  onChange={(val) => {
+                  // TODO: fix types
+                  onChange={(val: any) => {
                     let logoValue = {};
 
                     if (val?.type === "emoji")
                       logoValue = {
-                        value: convertHexEmojiToDecimal(val.value.unified),
-                        url: val.value.imageUrl,
+                        value: val.value,
                       };
                     else if (val?.type === "icon") logoValue = val.value;
 
@@ -352,7 +348,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 isMobile={isMobile}
                 tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
-                position="right-top"
+                position="right-start"
               >
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
               </Tooltip>

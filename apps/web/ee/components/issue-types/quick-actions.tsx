@@ -6,8 +6,11 @@ import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueType } from "@plane/types";
-import { CustomMenu, setPromiseToast, TContextMenuItem, ToggleSwitch, Tooltip } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 
@@ -135,9 +138,7 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
               <span>
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                   className={cn("flex items-center gap-2")}

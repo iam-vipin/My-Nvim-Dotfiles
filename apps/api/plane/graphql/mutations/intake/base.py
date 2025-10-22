@@ -47,13 +47,7 @@ from plane.graphql.utils.issue_activity import convert_issue_properties_to_activ
 @strawberry.type
 class IntakeWorkItemMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[
-                    ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])
-                ]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])])]
     )
     async def create_intake_work_item(
         self,
@@ -71,15 +65,11 @@ class IntakeWorkItemMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # check if the intake is enabled for the project
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         # check if the intake is enabled for the project
         intake_in_app_enabled = await is_project_settings_enabled_by_settings_key_async(
@@ -93,9 +83,7 @@ class IntakeWorkItemMutation:
             raise GraphQLError(message, extensions=extensions)
 
         # get the intake
-        intake = await get_intake_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        intake = await get_intake_async(workspace_slug=workspace_slug, project_id=project_id)
         intake_id = str(intake.id)
 
         work_item_state_id = work_item_input.state or None
@@ -104,14 +92,10 @@ class IntakeWorkItemMutation:
 
         # check if the workflow is enabled for the project and the state is not passed
         if work_item_state_id is None:
-            state = await get_project_default_state(
-                workspace_slug=workspace_slug, project_id=project_id
-            )
+            state = await get_project_default_state(workspace_slug=workspace_slug, project_id=project_id)
             work_item_state_id = str(state.id)
         else:
-            workflow_feature_flagged = await is_workflow_feature_flagged(
-                user_id=user_id, workspace_slug=workspace_slug
-            )
+            workflow_feature_flagged = await is_workflow_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
             if workflow_feature_flagged:
                 project_workflow_enabled = await is_project_workflow_enabled(
                     workspace_slug=workspace_slug, project_id=project_id
@@ -125,9 +109,7 @@ class IntakeWorkItemMutation:
                     )
 
         # get the issue type
-        work_item_type = await default_work_item_type(
-            workspace_slug=slug, project_id=project
-        )
+        work_item_type = await default_work_item_type(workspace_slug=slug, project_id=project)
         work_item_type_id = str(work_item_type.id) if work_item_type else None
 
         work_item_payload = {
@@ -212,10 +194,10 @@ class IntakeWorkItemMutation:
 
         # Track the issue activity
         await sync_to_async(issue_activity.delay)(
-            type="issue.activity.created",
+            type="intake.activity.created",
             origin=info.context.request.META.get("HTTP_ORIGIN"),
             epoch=int(timezone.now().timestamp()),
-            notification=True,
+            notification=False,
             project_id=str(project),
             issue_id=str(work_item_id),
             actor_id=str(user.id),
@@ -226,13 +208,7 @@ class IntakeWorkItemMutation:
         return intake_work_item
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[
-                    ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])
-                ]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])])]
     )
     async def update_intake_work_item(
         self,
@@ -251,15 +227,11 @@ class IntakeWorkItemMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # check if the intake is enabled for the project
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         # intake
         intake_work_item_id = intake_work_item
@@ -318,9 +290,7 @@ class IntakeWorkItemMutation:
         work_item = await sync_to_async(Issue.objects.get)(id=work_item_id)
 
         # get the current intake work item activity
-        current_intake_work_item_activity = (
-            await convert_issue_properties_to_activity_dict(work_item)
-        )
+        current_intake_work_item_activity = await convert_issue_properties_to_activity_dict(work_item)
 
         # activity tacking data
         current_activity_payload = {}
@@ -334,53 +304,37 @@ class IntakeWorkItemMutation:
         if "descriptionHtml" in provided_fields:
             work_item.description_html = provided_fields["descriptionHtml"]
             activity_payload["description_html"] = provided_fields["descriptionHtml"]
-            current_activity_payload["description_html"] = (
-                current_intake_work_item_activity["description_html"]
-            )
+            current_activity_payload["description_html"] = current_intake_work_item_activity["description_html"]
 
         if "priority" in provided_fields:
             work_item.priority = provided_fields["priority"]
             activity_payload["priority"] = provided_fields["priority"]
-            current_activity_payload["priority"] = current_intake_work_item_activity[
-                "priority"
-            ]
+            current_activity_payload["priority"] = current_intake_work_item_activity["priority"]
 
         if "targetDate" in provided_fields:
             if work_item_input.target_date is not None:
                 work_item.target_date = work_item_input.target_date
-                activity_payload["target_date"] = work_item_input.target_date.strftime(
-                    "%Y-%m-%d"
-                )
-                current_activity_payload["target_date"] = (
-                    current_intake_work_item_activity["target_date"]
-                )
+                activity_payload["target_date"] = work_item_input.target_date.strftime("%Y-%m-%d")
+                current_activity_payload["target_date"] = current_intake_work_item_activity["target_date"]
             else:
                 work_item.target_date = None
                 activity_payload["target_date"] = None
-                current_activity_payload["target_date"] = (
-                    current_intake_work_item_activity["target_date"]
-                )
+                current_activity_payload["target_date"] = current_intake_work_item_activity["target_date"]
 
         if "state" in provided_fields:
             work_item.state_id = provided_fields["state"]
             activity_payload["state_id"] = provided_fields["state"]
-            current_activity_payload["state_id"] = current_intake_work_item_activity[
-                "state_id"
-            ]
+            current_activity_payload["state_id"] = current_intake_work_item_activity["state_id"]
 
         if "parent" in provided_fields:
             work_item.parent_id = provided_fields["parent"]
             activity_payload["parent_id"] = provided_fields["parent"]
-            current_activity_payload["parent_id"] = current_intake_work_item_activity[
-                "parent_id"
-            ]
+            current_activity_payload["parent_id"] = current_intake_work_item_activity["parent_id"]
 
         # validate the workflow if the project has workflows enabled
         state_id = provided_fields["state"] if "state" in provided_fields else None
         if state_id:
-            workflow_enabled = await is_workflow_feature_flagged(
-                workspace_slug=workspace_slug, user_id=user_id
-            )
+            workflow_enabled = await is_workflow_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
             if workflow_enabled:
                 await is_workflow_update_allowed(
                     workspace_slug=workspace_slug,
@@ -395,14 +349,10 @@ class IntakeWorkItemMutation:
         await sync_to_async(work_item.save)()
 
         # creating or updating the assignees
-        assignees = (
-            provided_fields["assignees"] if "assignees" in provided_fields else None
-        )
+        assignees = provided_fields["assignees"] if "assignees" in provided_fields else None
         if assignees is not None:
             activity_payload["assignee_ids"] = assignees
-            current_activity_payload["assignee_ids"] = (
-                current_intake_work_item_activity["assignee_ids"]
-            )
+            current_activity_payload["assignee_ids"] = current_intake_work_item_activity["assignee_ids"]
 
             await sync_to_async(IssueAssignee.objects.filter(issue=work_item).delete)()
             if len(assignees) > 0:
@@ -425,9 +375,7 @@ class IntakeWorkItemMutation:
         labels = provided_fields["labels"] if "labels" in provided_fields else None
         if labels is not None:
             activity_payload["label_ids"] = labels
-            current_activity_payload["label_ids"] = current_intake_work_item_activity[
-                "label_ids"
-            ]
+            current_activity_payload["label_ids"] = current_intake_work_item_activity["label_ids"]
 
             await sync_to_async(IssueLabel.objects.filter(issue=work_item).delete)()
             if len(labels) > 0:
@@ -461,26 +409,18 @@ class IntakeWorkItemMutation:
 
         return intake_work_item
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])]
-    )
-    async def delete_intake_work_item(
-        self, info: Info, slug: str, project: str, intake_work_item: str
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
+    async def delete_intake_work_item(self, info: Info, slug: str, project: str, intake_work_item: str) -> bool:
         # get the workspace
         workspace = await get_workspace(workspace_slug=slug)
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         # check if the intake is enabled for the project
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         intake_work_item = await get_intake_work_item_async(
             workspace_slug=workspace_slug,

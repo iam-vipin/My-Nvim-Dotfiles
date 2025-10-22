@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { Logo, TeamsIcon } from "@plane/ui";
+import { TeamsIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
@@ -11,9 +12,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
 // local imports
+import { JoinTeamspaceButton } from "../actions/join-teamspace";
 import { TeamProperties } from "../actions/properties";
 import { TeamQuickActions } from "../actions/quick-actions";
-import { JoinTeamspaceButton } from "../actions/join-teamspace";
 
 type TeamspaceListItemProps = {
   teamspaceId: string;

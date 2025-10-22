@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import {
@@ -8,13 +8,8 @@ import {
   NUMBER_WIDGET_Y_AXIS_METRICS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EWidgetChartModels,
-  EWidgetChartTypes,
-  EWidgetXAxisProperty,
-  TDashboardWidget,
-  TDashboardWidgetConfig,
-} from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes, EWidgetXAxisProperty } from "@plane/types";
 // local components
 import { WidgetChartTypeIcon } from "../../widgets";
 import { DashboardWidgetChartTypesDropdown } from "../../widgets/dropdown";

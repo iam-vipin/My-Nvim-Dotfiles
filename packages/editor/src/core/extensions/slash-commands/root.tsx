@@ -1,36 +1,16 @@
-import { computePosition, flip, shift } from "@floating-ui/dom";
-import { Editor, Range, Extension } from "@tiptap/core";
-import { ReactRenderer, posToDOMRect } from "@tiptap/react";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
-import { FC } from "react";
+import { type Editor, Extension } from "@tiptap/core";
+import { ReactRenderer } from "@tiptap/react";
+import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { CommandListInstance } from "@/helpers/tippy";
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
-
-const updatePosition = (editor: Editor, element: HTMLElement) => {
-  const virtualElement = {
-    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
-  };
-
-  computePosition(virtualElement, element, {
-    placement: "bottom-start",
-    strategy: "absolute",
-    middleware: [shift(), flip()],
-  }).then(({ x, y, strategy }) => {
-    Object.assign(element.style, {
-      width: "max-content",
-      position: strategy,
-      left: `${x}px`,
-      top: `${y}px`,
-    });
-  });
-};
 
 export type SlashCommandOptions = {
   suggestion: Omit<SuggestionOptions, "editor">;
@@ -47,7 +27,7 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
@@ -70,55 +50,60 @@ const Command = Extension.create<SlashCommandOptions>({
         editor: this.editor,
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+          let cleanup: () => void = () => {};
+          let editorRef: Editor | null = null;
+
+          const handleClose = (editor?: Editor) => {
+            component?.destroy();
+            component = null;
+            (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+            cleanup();
+          };
 
           return {
             onStart: (props) => {
-              const MenuComponent = SlashCommandsMenu as unknown as FC<
-                SlashCommandsMenuProps & { ref: React.Ref<CommandListInstance> }
-              >;
-              component = new ReactRenderer(MenuComponent, {
-                props,
+              editorRef = props.editor;
+              // React renderer component, which wraps the actual dropdown component
+              component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
+                props: {
+                  ...props,
+                  onClose: () => handleClose(props.editor),
+                } satisfies SlashCommandsMenuProps,
                 editor: props.editor,
+                className: "fixed z-[100]",
               });
-
-              if (!props.clientRect) {
-                return;
-              }
-
+              if (!props.clientRect) return;
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
-              element.style.position = "absolute";
-              element.style.zIndex = "100";
-              (props.editor.options.element || document.body).appendChild(element);
-
-              updatePosition(props.editor, element);
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onUpdate: (props) => {
               if (!component || !component.element) return;
-
               component.updateProps(props);
-
-              if (!props.clientRect) {
-                return;
-              }
-
+              if (!props.clientRect) return;
               const element = component.element as HTMLElement;
-              updatePosition(props.editor, element);
+              cleanup();
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
-            onKeyDown: (props) => {
-              if (props.event.key === "Escape") {
-                component?.destroy();
-                component = null;
+            onKeyDown: ({ event }) => {
+              if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              if (event.key === "Escape") {
+                handleClose(this.editor);
                 return true;
               }
 
-              return component?.ref?.onKeyDown(props) ?? false;
+              return component?.ref?.onKeyDown({ event }) ?? false;
             },
 
-            onExit: () => {
-              component?.destroy();
-              component = null;
+            onExit: ({ editor }) => {
+              component?.element.remove();
+              handleClose(editor);
             },
           };
         },

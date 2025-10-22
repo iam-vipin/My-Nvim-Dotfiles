@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactElement, ReactNode } from "react";
+import type { FC, ReactElement, ReactNode } from "react";
 import {
   ArrowRightLeft,
   CalendarDays,
@@ -13,17 +13,10 @@ import {
   Users,
 } from "lucide-react";
 // plane imports
-import { IUserLite } from "@plane/types";
-import {
-  ArchiveIcon,
-  Avatar,
-  ContrastIcon,
-  CustomersIcon,
-  DiceIcon,
-  DoubleCircleIcon,
-  Intake,
-  Tooltip,
-} from "@plane/ui";
+import { ArchiveIcon, CycleIcon, CustomersIcon, ModuleIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IUserLite } from "@plane/types";
+import { Avatar } from "@plane/ui";
 import {
   calculateTimeAgo,
   getFileURL,
@@ -35,7 +28,7 @@ import {
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 
 type TIssueActivityBlock = {
   createdAt: string | undefined;
@@ -55,8 +48,8 @@ export const activityIconMap: Record<string, ReactElement> = {
   parent: <LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />,
   start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
   target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
-  cycles: <ContrastIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  modules: <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   labels: <Tag size={14} className="text-custom-text-200" aria-hidden="true" />,
   link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,

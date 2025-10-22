@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { JiraConfig } from "@plane/etl/jira";
+import type { JiraConfig } from "@plane/etl/jira";
 // silo contexts
-import { ImporterSyncJobContext, TImporterCreateContext } from "@/plane-web/silo/contexts";
+import type { TImporterCreateContext } from "@/plane-web/silo/contexts";
+import { ImporterSyncJobContext } from "@/plane-web/silo/contexts";
 
 export function useJiraSyncJobs() {
   const context = useContext<TImporterCreateContext<JiraConfig>>(ImporterSyncJobContext);

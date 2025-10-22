@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EAutomationChangeType } from "@plane/types";
+import type { EAutomationChangeType } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 // local imports
-import { TAutomationActionFormData } from "../../root";
+import type { TAutomationActionFormData } from "../../root";
 import { getPropertyChangeDropdownClassNames } from "./common";
 
 type TProps = {

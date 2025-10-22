@@ -38,9 +38,7 @@ def get_sub_issue_details(issueId: strawberry.ID, parentIssueId: strawberry.ID):
 
 
 @sync_to_async
-def update_issue_parent(
-    issue: IssuesType, parentIssueId: Optional[strawberry.ID] = None
-):
+def update_issue_parent(issue: IssuesType, parentIssueId: Optional[strawberry.ID] = None):
     issue.parent = parentIssueId
     issue.save()
     return True
@@ -49,9 +47,7 @@ def update_issue_parent(
 @strawberry.type
 class SubIssueMutation:
     # adding issue relation
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def createSubIssue(
         self,
         info: Info,
@@ -88,9 +84,7 @@ class SubIssueMutation:
             return False
 
     # removing issue relation
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def removeSubIssue(
         self,
         info: Info,

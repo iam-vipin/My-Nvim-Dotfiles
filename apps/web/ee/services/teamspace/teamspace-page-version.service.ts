@@ -1,7 +1,7 @@
 // plane types
-import { TPageVersion } from "@plane/types";
-// helpers
 import { API_BASE_URL } from "@plane/constants";
+import type { TPageVersion } from "@plane/types";
+// helpers
 // services
 import { APIService } from "@/services/api.service";
 
@@ -40,6 +40,24 @@ export class TeamspacePageVersionService extends APIService {
     versionId: string
   ): Promise<TPageVersion> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/versions/${versionId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Restore a version of a page for a teamspace
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @param versionId
+   * @returns
+   */
+  async restoreVersion(workspaceSlug: string, teamspaceId: string, pageId: string, versionId: string): Promise<void> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/versions/${versionId}/restore/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

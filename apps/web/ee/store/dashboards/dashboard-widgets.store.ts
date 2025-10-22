@@ -1,11 +1,10 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { Layout, Layouts } from "react-grid-layout";
+import type { Layout, Layouts } from "react-grid-layout";
 // plane imports
 import { DEFAULT_WIDGET_CHART_TYPE_PAYLOAD, EWidgetGridBreakpoints } from "@plane/constants";
-import {
+import type {
   EWidgetChartModels,
   EWidgetChartTypes,
   TDashboardWidget,
@@ -13,7 +12,7 @@ import {
   TDashboardWidgetsLayoutPayload,
 } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { DashboardWidgetInstance } from "./widget";
 
 const TOTAL_COLUMNS = 4;

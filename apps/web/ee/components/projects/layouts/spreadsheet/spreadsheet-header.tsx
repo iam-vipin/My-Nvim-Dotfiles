@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 
 // constants
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
-import { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
-import { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
+import type { TProjectDisplayFilters } from "@/plane-web/types/workspace-project-filters";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {

@@ -30,11 +30,7 @@ class PushNotification:
             private_key = decoded_bytes.decode("utf-8")
 
             if "-----BEGIN PRIVATE KEY-----" not in private_key:
-                private_key = (
-                    f"-----BEGIN PRIVATE KEY-----\n"
-                    f"{private_key}\n"
-                    f"-----END PRIVATE KEY-----"
-                )
+                private_key = f"-----BEGIN PRIVATE KEY-----\n{private_key}\n-----END PRIVATE KEY-----"
 
             return private_key
         except Exception as e:
@@ -49,9 +45,7 @@ class PushNotification:
 
             #  convert private key from base64 to bytes
             private_key = (
-                self.decode_private_key(settings.FIREBASE_PRIVATE_KEY)
-                if settings.FIREBASE_PRIVATE_KEY
-                else None
+                self.decode_private_key(settings.FIREBASE_PRIVATE_KEY) if settings.FIREBASE_PRIVATE_KEY else None
             )
 
             if private_key is not None:
@@ -98,9 +92,7 @@ class PushNotification:
                 data=data or {},
                 token=device_token_id,
                 apns=messaging.APNSConfig(
-                    payload=messaging.APNSPayload(
-                        aps=messaging.Aps(badge=notification_count, sound="default")
-                    )
+                    payload=messaging.APNSPayload(aps=messaging.Aps(badge=notification_count, sound="default"))
                 ),
                 android=messaging.AndroidConfig(
                     notification=messaging.AndroidNotification(

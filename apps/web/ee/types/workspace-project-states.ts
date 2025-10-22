@@ -1,7 +1,7 @@
 // Re-exporting from here to avoid import changes in other files
 // TODO: Remove this once all the imports are updated
 import { EProjectStateGroup, EProjectPriority, EProjectAccess, EProjectStateLoader } from "@plane/constants";
-import {
+import type {
   TProjectStateLoader as TProjectStateLoaderExport,
   TProjectStateDraggableData as TProjectStateDraggableDataExport,
   TProjectStateGroupKey as TProjectStateGroupKeyExport,

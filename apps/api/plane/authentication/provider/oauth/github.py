@@ -1,5 +1,6 @@
 # Python imports
 import os
+import logging
 from datetime import datetime
 from urllib.parse import urlencode
 
@@ -16,6 +17,8 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+
+logger = logging.getLogger("plane.authentication")
 
 
 class GitHubOAuthProvider(OauthAdapter):
@@ -35,23 +38,21 @@ class GitHubOAuthProvider(OauthAdapter):
         callback=None,
         redirect_uri=None,
     ):
-        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "GITHUB_CLIENT_ID",
-                        "default": os.environ.get("GITHUB_CLIENT_ID"),
-                    },
-                    {
-                        "key": "GITHUB_CLIENT_SECRET",
-                        "default": os.environ.get("GITHUB_CLIENT_SECRET"),
-                    },
-                    {
-                        "key": "GITHUB_ORGANIZATION_ID",
-                        "default": os.environ.get("GITHUB_ORGANIZATION_ID"),
-                    },
-                ]
-            )
+        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = get_configuration_value(
+            [
+                {
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID"),
+                },
+                {
+                    "key": "GITHUB_CLIENT_SECRET",
+                    "default": os.environ.get("GITHUB_CLIENT_SECRET"),
+                },
+                {
+                    "key": "GITHUB_ORGANIZATION_ID",
+                    "default": os.environ.get("GITHUB_ORGANIZATION_ID"),
+                },
+            ]
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
@@ -67,19 +68,9 @@ class GitHubOAuthProvider(OauthAdapter):
         if self.organization_id:
             self.scope += f" {self.organization_scope}"
 
-        scheme = (
-            "https"
-            if settings.IS_HEROKU
-            else "https"
-            if request.is_secure()
-            else "http"
-        )
+        scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
 
-        redirect_uri = (
-            redirect_uri
-            if redirect_uri
-            else (f"""{scheme}://{request.get_host()}/auth/github/callback/""")
-        )
+        redirect_uri = redirect_uri if redirect_uri else (f"""{scheme}://{request.get_host()}/auth/github/callback/""")
 
         url_params = {
             "client_id": client_id,
@@ -109,24 +100,18 @@ class GitHubOAuthProvider(OauthAdapter):
             "code": self.code,
             "redirect_uri": self.redirect_uri,
         }
-        token_response = self.get_user_token(
-            data=data, headers={"Accept": "application/json"}
-        )
+        token_response = self.get_user_token(data=data, headers={"Accept": "application/json"})
         super().set_token_data(
             {
                 "access_token": token_response.get("access_token"),
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("expires_in"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("expires_in"), tz=pytz.utc)
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("refresh_token_expired_at"), tz=pytz.utc)
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),
@@ -139,11 +124,15 @@ class GitHubOAuthProvider(OauthAdapter):
             # Github does not provide email in user response
             emails_url = "https://api.github.com/user/emails"
             emails_response = requests.get(emails_url, headers=headers).json()
-            email = next(
-                (email["email"] for email in emails_response if email["primary"]), None
-            )
+            email = next((email["email"] for email in emails_response if email["primary"]), None)
             return email
         except requests.RequestException:
+            logger.warning(
+                "Error getting email from Github", extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
+                }
+            )
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",

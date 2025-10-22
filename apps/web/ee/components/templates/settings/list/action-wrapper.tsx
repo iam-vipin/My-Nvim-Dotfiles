@@ -9,9 +9,10 @@ import {
 } from "@plane/constants";
 import { getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { FileService } from "@plane/services";
-import { EFileAssetType, EIssuesStoreType, ETemplateType, TPage } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import type { TPage } from "@plane/types";
+import { EFileAssetType, EIssuesStoreType, ETemplateType } from "@plane/types";
 import { extractPageFormData } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";

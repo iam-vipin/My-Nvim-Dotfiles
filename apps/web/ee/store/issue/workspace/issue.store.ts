@@ -1,11 +1,9 @@
 import { runInAction } from "mobx";
-import { TIssue, IBlockUpdateDependencyData } from "@plane/types";
-import { IIssueRootStore } from "@/store/issue/root.store";
-import { IWorkspaceIssuesFilter } from "@/store/issue/workspace/filter.store";
-import {
-  IWorkspaceIssues as ICoreWorkspaceIssues,
-  WorkspaceIssues as CoreWorkspaceIssues,
-} from "@/store/issue/workspace/issue.store";
+import type { TIssue, IBlockUpdateDependencyData } from "@plane/types";
+import type { IIssueRootStore } from "@/store/issue/root.store";
+import type { IWorkspaceIssuesFilter } from "@/store/issue/workspace/filter.store";
+import type { IWorkspaceIssues as ICoreWorkspaceIssues } from "@/store/issue/workspace/issue.store";
+import { WorkspaceIssues as CoreWorkspaceIssues } from "@/store/issue/workspace/issue.store";
 
 export interface IWorkspaceIssues extends ICoreWorkspaceIssues {
   updateIssueDates: (workspaceSlug: string, updates: IBlockUpdateDependencyData[]) => Promise<void>;

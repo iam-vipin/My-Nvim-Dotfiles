@@ -1,33 +1,37 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { GITLAB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TGitlabEntityConnection } from "@plane/types";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { EntityForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TGitlabEntityConnection, TProjectMap } from "@/plane-web/types/integrations/gitlab";
+import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
 // local imports
 import { projectMapInit } from "../root";
 
 type TEntityFormCreate = {
   modal: boolean;
   handleModal: Dispatch<SetStateAction<boolean>>;
+  isEnterprise: boolean;
 };
 
 export const EntityFormCreate: FC<TEntityFormCreate> = observer((props) => {
   // props
-  const { modal, handleModal } = props;
+  const { modal, handleModal, isEnterprise } = props;
 
   // hooks
   const {
     entityConnection: { createEntityConnection },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
 
   const { t } = useTranslation();
 
@@ -73,7 +77,7 @@ export const EntityFormCreate: FC<TEntityFormCreate> = observer((props) => {
         <div className="text-xl font-medium text-custom-text-200">Link Gitlab Project</div>
 
         <div className="space-y-4">
-          <EntityForm value={projectMap} handleChange={handleProjectMapChange} />
+          <EntityForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">

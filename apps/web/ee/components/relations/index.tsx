@@ -1,13 +1,13 @@
 import { useParams } from "next/navigation";
-import { CircleDot, CopyPlus, XCircle } from "lucide-react";
+import { CircleDot, CopyPlus, XCircle, ArrowRightToLine, ArrowRightFromLine } from "lucide-react";
 // Plane
-import { RelatedIcon } from "@plane/ui";
+import { RelatedIcon } from "@plane/propel/icons";
 import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "@/ce/components/relations";
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 // Plane-web
 import { useFlag } from "@/plane-web/hooks/store";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 
 export * from "./activity";
 
@@ -65,6 +65,20 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
     key: "finish_after",
     i18n_label: "issue.relation.finish_after",
     icon: (size: number) => <XCircle size={size} />,
+    className: "bg-yellow-500/20 text-yellow-700",
+    placeholder: "None",
+  },
+  implements: {
+    key: "implements",
+    i18n_label: "issue.relation.implements",
+    icon: (size: number) => <ArrowRightToLine size={size} />,
+    className: "bg-red-500/20 text-red-700",
+    placeholder: "None",
+  },
+  implemented_by: {
+    key: "implemented_by",
+    i18n_label: "issue.relation.implemented_by",
+    icon: (size: number) => <ArrowRightFromLine size={size} />,
     className: "bg-yellow-500/20 text-yellow-700",
     placeholder: "None",
   },

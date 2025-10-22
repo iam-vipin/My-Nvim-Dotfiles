@@ -1,9 +1,9 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // components
-import { ChartDataType, IGanttBlock } from "../";
+import type { ChartDataType, IGanttBlock } from "../";
 // constants
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 

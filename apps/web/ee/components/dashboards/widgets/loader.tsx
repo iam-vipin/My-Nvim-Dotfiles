@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
 // plane web stores
-import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 type Props = {
   widget: DashboardWidgetInstance;

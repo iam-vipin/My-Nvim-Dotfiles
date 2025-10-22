@@ -1,11 +1,14 @@
 "use-client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Trash2 } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
-import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
+import { Checkbox } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal } from "@/components/issues/archive-issue-modal";
@@ -15,7 +18,7 @@ import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web imports
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";

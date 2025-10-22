@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 type TModalFooterProps = {

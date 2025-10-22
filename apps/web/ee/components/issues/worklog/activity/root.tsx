@@ -1,11 +1,14 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Ellipsis, Timer } from "lucide-react";
-import { TIssueActivityComment } from "@plane/types";
-import { CustomMenu, Popover, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssueActivityComment } from "@plane/types";
+import { CustomMenu, Popover } from "@plane/ui";
 import {
   getFileURL,
   calculateTimeAgo,

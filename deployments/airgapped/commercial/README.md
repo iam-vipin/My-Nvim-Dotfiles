@@ -31,7 +31,7 @@ Before we get started, make sure your air-gapped machine has:
 - `minio-latest.tar` - Docker image for plane-minio service
 - `postgres-15.7-alpine.tar` - Docker image for plane-db service
 - `rabbitmq-3.13.6-management-alpine.tar` - Docker image for plane-mq service
-- `valkey-7.2.5-alpine.tar` - Docker image for plane-redis service
+- `valkey-7.2.11-alpine.tar` - Docker image for plane-redis service
 
 ## **Install Plane**
 

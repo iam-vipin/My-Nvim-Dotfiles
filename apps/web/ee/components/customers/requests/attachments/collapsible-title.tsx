@@ -1,11 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane ui
-import { DropdownIcon } from "@plane/ui";
+import { DropdownIcon } from "@plane/propel/icons";
 // plane web hooks
 import { cn } from "@plane/utils";
 import { useCustomers } from "@/plane-web/hooks/store";

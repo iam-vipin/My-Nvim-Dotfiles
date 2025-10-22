@@ -1,15 +1,15 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { TClickUpPriority } from "@plane/etl/clickup";
+import type { TClickUpPriority } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 // plane web components
 import { capitalizeFirstLetter } from "@plane/utils";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
-import { TPlanePriorityData } from "@/plane-web/types/importers";
+import type { TPlanePriorityData } from "@/plane-web/types/importers";
 
 type TMapPrioritiesSelection = {
   value: string | undefined;

@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { FlatfileConfig } from "@plane/etl/flatfile";
-import { TImportJob } from "@plane/types";
+import type { FlatfileConfig } from "@plane/etl/flatfile";
+import type { TImportJob } from "@plane/types";
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
 // assets
 import CSVLogo from "@/public/services/csv.svg";

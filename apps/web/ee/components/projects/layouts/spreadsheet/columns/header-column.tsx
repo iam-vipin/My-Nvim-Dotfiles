@@ -5,8 +5,9 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Era
 import { CustomMenu } from "@plane/ui";
 //hooks
 import useLocalStorage from "@/hooks/use-local-storage";
-import { IProjectDisplayProperties, SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
-import { TProjectDisplayFilters, TProjectSortBy } from "@/plane-web/types/workspace-project-filters";
+import type { IProjectDisplayProperties } from "@/plane-web/constants/project/spreadsheet";
+import { SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
+import type { TProjectDisplayFilters, TProjectSortBy } from "@/plane-web/types/workspace-project-filters";
 //types
 //constants
 

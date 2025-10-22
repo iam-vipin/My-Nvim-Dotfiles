@@ -1,9 +1,10 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 // plane imports
-import { IGanttBlock } from "@plane/types";
+import type { IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { BLOCK_HEIGHT, HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";

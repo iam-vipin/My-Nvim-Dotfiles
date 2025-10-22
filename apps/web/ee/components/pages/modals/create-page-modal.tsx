@@ -1,9 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
-import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { TPage } from "@plane/types";
+import type { EPageAccess } from "@plane/constants";
+import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import type { TPage } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages/modals/page-form";
@@ -59,7 +61,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
           },
         });
         handleStateClear();
-        if (redirectionEnabled) router.push(`/${workspaceSlug}/pages/${pageData.id}`);
+        if (redirectionEnabled) router.push(`/${workspaceSlug}/wiki/${pageData.id}`);
       }
     } catch {
       captureError({

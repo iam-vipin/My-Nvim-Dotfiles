@@ -1,16 +1,13 @@
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
-import update from "lodash/update";
+import { isEqual, set, update, cloneDeep } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EStatisticsLegend, ETeamspaceAnalyticsDataKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
-import { TLoader, TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
+import type { TLoader, TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
 // plane web imports
 import { TeamspaceAnalyticsService } from "@/plane-web/services/teamspace/teamspace-analytics.service";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
 
 const DEFAULT_TEAM_STATISTICS_FILTER: TStatisticsFilter = {
   data_key: ETeamspaceAnalyticsDataKeys.PROJECTS,

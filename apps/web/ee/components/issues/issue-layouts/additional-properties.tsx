@@ -1,9 +1,11 @@
-import React, { FC, SyntheticEvent } from "react";
+import type { FC, SyntheticEvent } from "react";
+import React from "react";
 // plane imports
 import { observer } from "mobx-react";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CustomerRequestIcon, CustomersIcon, Tooltip } from "@plane/ui";
+import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import type { TWorkItemLayoutAdditionalProperties } from "@/ce/components/issues/issue-layouts/additional-properties";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";

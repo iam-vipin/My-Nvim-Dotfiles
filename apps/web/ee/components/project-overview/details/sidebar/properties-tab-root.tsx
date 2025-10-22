@@ -1,14 +1,16 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -17,22 +19,21 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
+import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { PriorityDropdown } from "@/plane-web/components/projects/dropdowns/priority-dropdown";
 import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
-import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // assets
 import ImagelLight from "@/public/empty-state/empty-updates-light.png";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;

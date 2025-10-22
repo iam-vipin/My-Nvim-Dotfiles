@@ -3,14 +3,14 @@ import { useMemo } from "react";
 import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useLocalStorage } from "@plane/hooks";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageOperations = {
   toggleLock: ({ recursive }: { recursive?: boolean }) => void;

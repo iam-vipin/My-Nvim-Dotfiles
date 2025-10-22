@@ -1,39 +1,38 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// document-editor
+// plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
-import {
-  CollaborativeDocumentEditorWithRef,
-  type EditorRefApi,
-  type TAIMenuProps,
-  type TDisplayConfig,
-  type TFileHandler,
-  type TRealtimeConfig,
-  type TServerHandler,
-  type EditorTitleRefApi,
+import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
+import type {
+  EditorRefApi,
+  EditorTitleRefApi,
+  TAIMenuProps,
+  TDisplayConfig,
+  TFileHandler,
+  TRealtimeConfig,
+  TServerHandler,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions/root";
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
-import { useUserProfile } from "@/hooks/store/use-user-profile";
+
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
-import { MultipleDeletePagesModal } from "@/plane-web/components/pages/modals/multiple-page-delete-modal";
-// plane web store
-import { EPageStoreType } from "@/plane-web/hooks/store";
-// plane web hooks
-import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
+import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -41,6 +40,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
+// types
 
 // Add a CSS keyframe animation
 export type TEditorBodyConfig = {
@@ -68,6 +68,10 @@ type Props = {
   workspaceSlug: string;
   storeType: EPageStoreType;
   customRealtimeEventHandlers?: TCustomEventHandlers;
+  // Extended editor extensions configuration
+  extendedEditorProps: TExtendedEditorExtensionsConfig;
+  isFetchingFallbackBinary?: boolean;
+  hasServerConnectionFailed?: boolean;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -85,23 +89,21 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     projectId,
     workspaceSlug,
     customRealtimeEventHandlers,
+    extendedEditorProps,
+    isFetchingFallbackBinary,
+    hasServerConnectionFailed,
   } = props;
+
   // states
   const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [deletePageModal, setDeletePageModal] = useState({
-    visible: false,
-    pages: [page],
-  });
   // refs
   const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
-  const {
-    data: { is_smooth_cursor_enabled },
-  } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+
   // derived values
   const {
     id: pageId,
@@ -111,6 +113,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
+
   // Simple animation effect that triggers on mount
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -120,25 +123,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // all editor embeds
-  const { embedProps } = useEditorEmbeds({
-    fetchEmbedSuggestions: handlers.fetchEntity,
-    getRedirectionLink: handlers.getRedirectionLink,
-    workspaceSlug,
-    page,
-    storeType,
-    setDeletePageModal,
-  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug,
+    storeType,
+  });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation
   const { t } = useTranslation();
+
   // derived values
   const displayConfig: TDisplayConfig = useMemo(
     () => ({
@@ -170,7 +168,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         isOpen={isOpen}
         onClose={onClose}
         workspaceId={workspaceId}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        workspaceSlug={workspaceSlug}
       />
     ),
     [editorRef, workspaceId, workspaceSlug]
@@ -206,10 +204,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       const isSecureEnvironment = window.location.protocol === "https:";
       WS_LIVE_URL.protocol = isSecureEnvironment ? "wss" : "ws";
       WS_LIVE_URL.pathname = `${LIVE_BASE_PATH}/collaboration`;
+
+      // Append query parameters to the URL
+      Object.entries(webhookConnectionParams)
+        .filter(([_, value]) => value !== undefined && value !== null)
+        .forEach(([key, value]) => {
+          WS_LIVE_URL.searchParams.set(key, String(value));
+        });
+
       // Construct realtime config
       return {
         url: WS_LIVE_URL.toString(),
-        queryParams: webhookConnectionParams,
       };
     } catch (error) {
       console.error("Error creating realtime config", error);
@@ -284,7 +289,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <CollaborativeDocumentEditorWithRef
             editable={isContentEditable}
             id={pageId}
-            isSmoothCursorEnabled={is_smooth_cursor_enabled}
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
             ref={editorForwardRef}
@@ -305,7 +309,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               setIsDescriptionEmpty(isCommentEmpty(html));
             }}
             updatePageProperties={updatePageProperties}
-            embedHandler={embedProps}
             pageRestorationInProgress={page.restoration.inProgress}
             realtimeConfig={realtimeConfig}
             serverHandler={serverHandler}
@@ -315,18 +318,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             aiHandler={{
               menu: getAIMenu,
             }}
+            extendedEditorProps={extendedEditorProps}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+            hasServerConnectionFailed={hasServerConnectionFailed}
           />
         </div>
       </div>
-      <MultipleDeletePagesModal
-        editorRef={editorRef}
-        isOpen={deletePageModal.visible}
-        onClose={() => {
-          setDeletePageModal({ visible: false, pages: [] });
-        }}
-        pages={deletePageModal.pages}
-        storeType={storeType}
-      />
     </Row>
   );
 });

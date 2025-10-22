@@ -3,9 +3,12 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Home, PanelLeft, SquarePen } from "lucide-react";
+import { PanelLeft, SquarePen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { BetaBadge, Breadcrumbs, Header as HeaderUI, PiIcon, Row, Tooltip } from "@plane/ui";
+// plane imports
+import { HomeIcon, PiIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { BetaBadge, Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
@@ -43,7 +46,7 @@ export const Header = observer((props: THeaderProps) => {
                   <BreadcrumbLink
                     href={"/"}
                     label={t("home.title")}
-                    icon={<Home className="h-4 w-4 text-custom-text-300" />}
+                    icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
                   />
                 }
               />
@@ -55,7 +58,7 @@ export const Header = observer((props: THeaderProps) => {
                   {models?.length > 1 ? (
                     <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
                   ) : (
-                    <span className="font-medium text-sm my-auto">Pi</span>
+                    <span className="font-medium text-sm my-auto">Plane AI</span>
                   )}
                   <BetaBadge />
                 </div>
@@ -66,31 +69,32 @@ export const Header = observer((props: THeaderProps) => {
         <HeaderUI.RightItem>
           {isProjectLevel && (
             <div className="flex gap-2">
-              {!isFullScreen && (
-                <Tooltip tooltipContent="Start a new chat" position="left">
-                  <button className={cn(buttonClass)} onClick={() => initPiChat()}>
-                    <SquarePen className="flex-shrink-0 size-3.5" />
-                  </button>
-                </Tooltip>
-              )}
-              {isFullScreen && !isSidePanelOpen && (
-                <>
+              <>
+                {!isFullScreen ? (
+                  <Tooltip tooltipContent="Start a new chat" position="left">
+                    <button className={cn(buttonClass)} onClick={() => initPiChat()}>
+                      <SquarePen className="flex-shrink-0 size-3.5" />
+                    </button>
+                  </Tooltip>
+                ) : (
                   <Tooltip tooltipContent="Start a new chat" position="bottom">
                     <Link
-                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
+                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
                       tabIndex={-1}
                       className={cn(buttonClass)}
                     >
                       <SquarePen className="flex-shrink-0 size-3.5" />
                     </Link>
                   </Tooltip>
+                )}
+                {!isSidePanelOpen && (
                   <Tooltip tooltipContent="History" position="bottom">
                     <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
                       <PanelLeft className="size-3.5" />
                     </button>
                   </Tooltip>
-                </>
-              )}
+                )}
+              </>
             </div>
           )}
         </HeaderUI.RightItem>

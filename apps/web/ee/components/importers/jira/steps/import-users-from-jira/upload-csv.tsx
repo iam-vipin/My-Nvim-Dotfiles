@@ -1,8 +1,10 @@
 "use client";
 
-import { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 import Papa from "papaparse";
-import Dropzone, { Accept } from "react-dropzone";
+import type { Accept } from "react-dropzone";
+import Dropzone from "react-dropzone";
 import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
 // helpers
 import { useTranslation } from "@plane/i18n";

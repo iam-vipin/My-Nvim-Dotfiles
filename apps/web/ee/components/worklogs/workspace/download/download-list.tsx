@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { Table } from "@plane/ui";
@@ -13,7 +13,7 @@ import {
 import { EWorklogDownloadLoader } from "@/plane-web/constants/workspace-worklog";
 // plane web hooks
 import { useWorkspaceWorklogDownloads } from "@/plane-web/hooks/store";
-import { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
+import type { IWorklogDownload } from "@/plane-web/store/workspace-worklog";
 import { useExportColumns } from "./column";
 
 type TWorkspaceWorklogDownloadList = {

@@ -1,5 +1,6 @@
 import { isChangeOrigin } from "@tiptap/extension-collaboration";
-import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { TPage } from "@plane/types";
 
 const pluginKey = new PluginKey("prevent-page-embed-deletion");
@@ -76,10 +77,10 @@ export const PreventPageEmbedDeletionPlugin = ({
   });
 
 // Helper function to find all nodes of a given type that have an entity_identifier.
-function findNodesWithIds(doc: any, nodeTypeName?: string) {
-  const result: Array<{ id: string; node: any }> = [];
+function findNodesWithIds(doc: EditorState["doc"], nodeTypeName?: string) {
+  const result: Array<{ id: string; node: ProseMirrorNode }> = [];
 
-  doc.descendants((node, pos) => {
+  doc.descendants((node) => {
     if (node.type.name === nodeTypeName && node.attrs.entity_identifier) {
       result.push({
         id: node.attrs.entity_identifier,

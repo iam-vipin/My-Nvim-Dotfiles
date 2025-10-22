@@ -1,13 +1,10 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, uniq, update, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { CustomerPropertiesOptionsService, CustomerPropertyService } from "@plane/services";
 // types
-import {
+import type {
   EIssuePropertyType,
   IIssuePropertiesService,
   IIssueProperty,
@@ -20,7 +17,7 @@ import {
 } from "@plane/types";
 // plane-web store
 import { IssueProperty } from "@/plane-web/store/issue-types";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface ICustomerPropertiesStore {
   loader: boolean;

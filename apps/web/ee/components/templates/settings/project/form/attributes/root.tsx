@@ -3,9 +3,10 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
+import type { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { cn, getDate, TProjectSanitizationResult, renderFormattedPayloadDate } from "@plane/utils";
+import type { TProjectSanitizationResult } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -14,8 +15,8 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
 import { MembersDropdown } from "@/plane-web/components/projects/dropdowns/members-dropdown";
+import { StateDropdown } from "@/plane-web/components/projects/dropdowns/state-dropdown";
 import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 import { useFlag, useWorkspaceFeatures, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";

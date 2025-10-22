@@ -1,11 +1,11 @@
 from .application import (
-    PublishedApplicationSerializer,
     ApplicationCategorySerializer,
-    ApplicationTemplateMetaSerializer,
+    ApplicationMetaSerializer,
+    ApplicationSerializer,
 )
 from .template import (
     TemplateCategorySerializer,
-    PublishedTemplateSerializer,
-    PublishedTemplateDetailSerializer,
-    PublishedTemplateMetaSerializer,
+    TemplateDetailSerializer,
+    TemplateMetaSerializer,
+    TemplateSerializer,
 )

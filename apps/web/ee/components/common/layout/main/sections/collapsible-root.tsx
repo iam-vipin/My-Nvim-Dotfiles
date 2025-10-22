@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 // ui
 import { Collapsible, CollapsibleButton } from "@plane/ui";
 // local components

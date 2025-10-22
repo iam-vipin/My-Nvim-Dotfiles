@@ -1,6 +1,6 @@
-import { FileText, LayoutGrid } from "lucide-react";
 // plane imports
-import {
+import { DashboardIcon, InitiativeIcon, PageIcon, TeamsIcon } from "@plane/propel/icons";
+import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
   IWorkspaceSearchResult,
@@ -8,9 +8,9 @@ import {
   IWorkspaceTeamspaceSearchResult,
 } from "@plane/types";
 // plane web imports
-import { InitiativeIcon, TeamsIcon } from "@plane/ui";
-import { commandGroups as commandGroupsCE, TCommandGroups } from "@/ce/components/command-palette/helpers";
 import { generateWorkItemLink } from "@plane/utils";
+import type { TCommandGroups } from "@/ce/components/command-palette/helpers";
+import { commandGroups as commandGroupsCE } from "@/ce/components/command-palette/helpers";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export const commandGroups: TCommandGroups = {
@@ -57,13 +57,13 @@ export const commandGroups: TCommandGroups = {
 
 export const pagesAppCommandGroups: TCommandGroups = {
   page: {
-    icon: <FileText className="size-3" />,
+    icon: <PageIcon className="size-3" />,
     itemName: (page: IWorkspaceDefaultSearchResult) => page?.name,
     path: (page: IWorkspaceDefaultSearchResult) => `/${page?.workspace__slug}/pages/${page?.id}`,
     title: "Pages",
   },
   workspace: {
-    icon: <LayoutGrid className="size-3" />,
+    icon: <DashboardIcon className="size-3" />,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/pages`,
     title: "Workspaces",

@@ -4,12 +4,12 @@ import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon, Tooltip, Spinner } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Spinner } from "@plane/ui";
 // ce imports
-import {
-  TChangeWorkItemStateListProps,
-  ChangeWorkItemStateList as ChangeWorkItemStateListCE,
-} from "@/ce/components/command-palette/actions/work-item-actions";
+import type { TChangeWorkItemStateListProps } from "@/ce/components/command-palette/actions/work-item-actions";
+import { ChangeWorkItemStateList as ChangeWorkItemStateListCE } from "@/ce/components/command-palette/actions/work-item-actions";
 // store hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
@@ -44,7 +44,7 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
               <Tooltip
                 key={state.id}
                 tooltipContent={<WorkFlowDisabledMessage parentStateId={currentStateId ?? ""} />}
-                position="right-top"
+                position="right-start"
                 className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
                 disabled={!isDisabled}
               >

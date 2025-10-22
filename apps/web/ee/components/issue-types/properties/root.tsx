@@ -4,7 +4,9 @@ import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import {
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
+import type {
   EIssuePropertyType,
   IIssueType,
   TCreationListModes,
@@ -12,7 +14,7 @@ import {
   TIssuePropertyPayload,
   TLoader,
 } from "@plane/types";
-import { Button, Loader, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// types
-import { TStateAnalytics } from "@plane/types";
 // ui
-import { LayersIcon } from "@plane/ui";
+import { LayersIcon } from "@plane/propel/icons";
+// types
+import type { TStateAnalytics } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web

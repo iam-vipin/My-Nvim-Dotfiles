@@ -1,8 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { BulkDeleteIssuesModal } from "@/components/core/modals/bulk-delete-issues-modal";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
@@ -22,7 +23,6 @@ export type TIssueLevelModalsProps = {
 export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
   const { projectId, issueId } = props;
   // router
-  const pathname = usePathname();
   const { workspaceSlug, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
@@ -45,7 +45,6 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
   } = useCommandPalette();
   // derived values
   const issueDetails = issueId ? getIssueById(issueId) : undefined;
-  const isDraftIssue = pathname?.includes("draft-issues") || false;
   const { fetchSubIssues: fetchSubWorkItems } = useIssueDetail();
   const { fetchSubIssues: fetchEpicSubWorkItems } = useIssueDetail(EIssueServiceType.EPICS);
 
@@ -81,7 +80,6 @@ export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => 
         isOpen={isCreateIssueModalOpen}
         onClose={() => toggleCreateIssueModal(false)}
         data={getCreateIssueModalData()}
-        isDraft={isDraftIssue}
         onSubmit={handleCreateIssueSubmit}
         allowedProjectIds={createWorkItemAllowedProjectIds}
       />

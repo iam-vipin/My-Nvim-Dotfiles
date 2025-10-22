@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
-import { Button, Checkbox, Tooltip } from "@plane/ui";
+// plane imports
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 // plane web hooks
@@ -65,7 +67,7 @@ export const IssueBulkOperationsRoot: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <Tooltip
-          position="top-right"
+          position="top-end"
           className="mb-4 rounded-lg shadow"
           disabled={isBulkOpsEnabled}
           tooltipContent={<UpgradeToast />}

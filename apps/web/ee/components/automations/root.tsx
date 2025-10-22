@@ -1,11 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ce imports
-import { TCustomAutomationsRootProps } from "@/ce/components/automations/root";
+import type { TCustomAutomationsRootProps } from "@/ce/components/automations/root";
 // plane web imports
 import { CreateAutomationButton } from "@/plane-web/components/automations/create-button";
 import { AutomationsListRoot } from "@/plane-web/components/automations/list/root";

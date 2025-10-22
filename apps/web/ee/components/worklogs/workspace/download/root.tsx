@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";

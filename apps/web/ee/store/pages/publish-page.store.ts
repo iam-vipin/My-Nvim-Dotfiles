@@ -1,13 +1,12 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
 import { PublishPageService } from "@/plane-web/services/page";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TPagePublishSettings } from "@/plane-web/types";
+import type { TPagePublishSettings } from "@/plane-web/types";
 
 export interface IPublishPageStore {
   // observables
@@ -98,7 +97,7 @@ export class PublishPageStore implements IPublishPageStore {
     }
 
     // Check if page exists in teamspace pages store
-    if (teamspaceId && this.rootStore.teamspaceRoot?.teamspacePage?.pageMap?.[teamspaceId]?.[pageID]) {
+    if (teamspaceId && this.rootStore.teamspaceRoot?.teamspacePage?.data?.[pageID]) {
       return { type: "teamspace" as const, teamspaceId };
     }
 

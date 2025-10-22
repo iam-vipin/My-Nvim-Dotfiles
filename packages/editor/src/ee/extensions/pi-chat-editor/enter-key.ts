@@ -9,7 +9,7 @@ export const PiChatEditorEnterKeyExtension = (onEnterKeyPress?: () => void) =>
     addKeyboardShortcuts(this) {
       return {
         Enter: () => {
-          if (!this.editor.storage.mentionsOpen) {
+          if (!this.editor.storage.mention.mentionsOpen) {
             onEnterKeyPress?.();
             return true;
           }

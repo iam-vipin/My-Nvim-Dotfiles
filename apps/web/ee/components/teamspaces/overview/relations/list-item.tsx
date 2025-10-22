@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useRef } from "react";
-import uniq from "lodash/uniq";
+import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ERelationType, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
-import { TTeamspaceDependencyWorkItem } from "@plane/types";
-import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import type { ERelationType } from "@plane/constants";
+import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type { TTeamspaceDependencyWorkItem } from "@plane/types";
+import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";

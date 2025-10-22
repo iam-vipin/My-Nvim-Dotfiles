@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane web components
-import { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
+import type { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 import { PropertyValueSelect } from "@/plane-web/components/customers";
 // plane web hooks

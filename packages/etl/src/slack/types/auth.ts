@@ -159,6 +159,16 @@ export type TSlackConnectionData = {
   name: string;
 };
 
+export type SlackUserLookupByEmailResponse =
+  | {
+      ok: true;
+      user: SlackUser;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
+
 export type TAppConnection = {
   id: string;
   workspaceId: string;
@@ -171,6 +181,10 @@ export type TAppConnection = {
   config: object;
   createdAt: string;
   updatedAt: string;
+};
+
+export type TSlackUserAlertsConfig = {
+  isEnabled: boolean;
 };
 
 export type TUserConnectionStatus = {

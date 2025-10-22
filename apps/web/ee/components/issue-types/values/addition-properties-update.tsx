@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType, EWorkItemTypeEntity, TIssuePropertyValues } from "@plane/types";
+import type { TIssuePropertyValues } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local imports
-import {
-  IssueAdditionalPropertyValuesUpdateBase,
-  TIssueAdditionalPropertyValuesUpdateProps,
-} from "./addition-properties-update-base";
+import type { TIssueAdditionalPropertyValuesUpdateProps } from "./addition-properties-update-base";
+import { IssueAdditionalPropertyValuesUpdateBase } from "./addition-properties-update-base";
 
 /**
  * Store-connected wrapper for issue additional properties update.
@@ -27,8 +26,6 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       entityType = EWorkItemTypeEntity.WORK_ITEM,
       issueServiceType = EIssueServiceType.ISSUES,
     } = props;
-    // states
-    const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
     // store hooks
     const {
       getIssueTypeById,
@@ -52,8 +49,13 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       await fetchAllPropertiesAndOptions(workspaceSlug, projectId, entityType);
       return issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId);
     }
+
     // fetch issue property values
-    const { data, isLoading } = useSWR(
+    const {
+      data: issuePropertyValues,
+      isLoading,
+      mutate,
+    } = useSWR(
       workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
         ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${entityType}_${isWorkItemTypeEntityEnabled}`
         : null,
@@ -66,9 +68,14 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
       }
     );
 
-    useEffect(() => {
-      if (data) setIssuePropertyValues(data);
-    }, [data]);
+    const handlePropertyValueChange = (
+      value: TIssuePropertyValues | ((prev: TIssuePropertyValues) => TIssuePropertyValues)
+    ) => {
+      mutate((prevData) => {
+        const valueObj = typeof value === "function" ? value(prevData || {}) : value;
+        return { ...prevData, ...valueObj };
+      }, false);
+    };
 
     return (
       <IssueAdditionalPropertyValuesUpdateBase
@@ -76,10 +83,10 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
         getWorkItemTypeById={getIssueTypeById}
         areCustomPropertiesInitializing={propertiesLoader === "init-loader"}
         arePropertyValuesInitializing={isLoading}
-        issuePropertyValues={issuePropertyValues}
+        issuePropertyValues={issuePropertyValues || {}}
         isWorkItemTypeEntityEnabled={isWorkItemTypeEntityEnabledForProject}
         propertyValueChangeCallback={() => fetchPropertyActivities(workspaceSlug, projectId, issueId)}
-        setIssuePropertyValues={setIssuePropertyValues}
+        onPropertyValueChange={handlePropertyValueChange}
         updateService={issuePropertyValuesService.update.bind(
           issuePropertyValuesService,
           workspaceSlug,

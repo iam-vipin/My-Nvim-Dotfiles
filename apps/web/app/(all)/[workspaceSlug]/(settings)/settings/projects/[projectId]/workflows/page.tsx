@@ -6,8 +6,9 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
-import { setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";

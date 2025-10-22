@@ -3,10 +3,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { FileText, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { ICustomSearchSelectOption } from "@plane/types";
+import { PageIcon } from "@plane/propel/icons";
+// types
+import type { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomMenu, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -76,7 +78,7 @@ export const PageDetailsHeader = observer(() => {
         query: _page.name,
         content: (
           <div className="flex gap-2 items-center justify-between">
-            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
             <PageAccessIcon {..._page} />
           </div>
         ),
@@ -159,7 +161,7 @@ export const PageDetailsHeader = observer(() => {
                   title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={FileText} size={16} />
+                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PageIcon} size={16} />
                     </Breadcrumbs.Icon>
                   }
                   isLast

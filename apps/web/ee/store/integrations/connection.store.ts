@@ -1,12 +1,14 @@
 /* eslint-disable no-useless-catch */
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web root store
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { ConnectionService, E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { TWorkspaceUserConnection } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
-import { IIntegrationBaseStore, IntegrationBaseStore } from ".";
+import { ConnectionService } from "@plane/etl/core";
+import type { TWorkspaceUserConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IIntegrationBaseStore } from ".";
+import { IntegrationBaseStore } from ".";
 
 export interface IConnectionStore extends IIntegrationBaseStore {
   // observables

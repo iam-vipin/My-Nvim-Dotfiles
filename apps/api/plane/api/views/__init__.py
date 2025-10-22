@@ -24,6 +24,8 @@ from .issue import (
     IssueActivityDetailAPIEndpoint,
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
+    IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
 )
 
@@ -46,6 +48,19 @@ from .module import (
 
 from .member import ProjectMemberAPIEndpoint, WorkspaceMemberAPIEndpoint
 from .user import UserEndpoint
+
+from .customer import (
+    CustomerAPIEndpoint,
+    CustomerDetailAPIEndpoint,
+    CustomerRequestAPIEndpoint,
+    CustomerRequestDetailAPIEndpoint,
+    CustomerIssuesAPIEndpoint,
+    CustomerIssueDetailAPIEndpoint,
+    CustomerPropertiesAPIEndpoint,
+    CustomerPropertyDetailAPIEndpoint,
+    CustomerPropertyValuesAPIEndpoint,
+    CustomerPropertyValueDetailAPIEndpoint,
+)
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,

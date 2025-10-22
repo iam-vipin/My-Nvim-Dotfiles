@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, TIssueProperty, TOperationMode, TTextAttributeDisplayOptions } from "@plane/types";
+import type { EIssuePropertyType, TIssueProperty, TOperationMode, TTextAttributeDisplayOptions } from "@plane/types";
 import { TextArea } from "@plane/ui";
 import { getTextAttributeDisplayNameKey } from "@plane/utils";
 // local imports

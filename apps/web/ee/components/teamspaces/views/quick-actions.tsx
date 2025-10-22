@@ -5,8 +5,11 @@ import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { EUserWorkspaceRoles, TTeamspaceView } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TTeamspaceView } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -125,9 +128,7 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS,
                 });

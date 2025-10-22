@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Network } from "lucide-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn, renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications/use-workspace-notifications";

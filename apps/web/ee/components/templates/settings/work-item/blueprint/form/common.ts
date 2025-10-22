@@ -1,6 +1,6 @@
-import { FieldPath, FieldValues } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
 // plane imports
-import {
+import type {
   EWorkItemTypeEntity,
   IIssueLabel,
   IIssueType,
@@ -9,7 +9,7 @@ import {
   IUserLite,
   TWorkItemBlueprintFormData,
 } from "@plane/types";
-import { TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
+import type { TProjectBlueprintDetails, TWorkItemSanitizationResult } from "@plane/utils";
 
 export type TWorkItemBlueprintWithAdditionalPropsData = {
   getLabelById: (labelId: string) => IIssueLabel | null;
@@ -63,8 +63,8 @@ export type TWorkItemBlueprintPropertiesBaseProps<T extends FieldValues> = {
   shouldLoadDefaultValues?: boolean;
 };
 
-export type TWorkItemBlueprintPropertiesWithMobxProps<T extends FieldValues> = TWorkItemBlueprintPropertiesBaseProps<T> &
-  TWorkItemBlueprintWithMobxData;
+export type TWorkItemBlueprintPropertiesWithMobxProps<T extends FieldValues> =
+  TWorkItemBlueprintPropertiesBaseProps<T> & TWorkItemBlueprintWithMobxData;
 
 export type TWorkItemBlueprintPropertiesWithAdditionalPropsProps<T extends FieldValues> =
   TWorkItemBlueprintPropertiesBaseProps<T> & TWorkItemBlueprintWithAdditionalPropsData;

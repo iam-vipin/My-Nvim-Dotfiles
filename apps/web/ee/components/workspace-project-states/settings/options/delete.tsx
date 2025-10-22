@@ -1,10 +1,14 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
+// plane imports
 import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -13,7 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/plane-web/types/workspace-project-states";
 
 type TProjectStateDelete = {
   workspaceSlug: string;

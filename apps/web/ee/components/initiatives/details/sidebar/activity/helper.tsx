@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
-import { AlignLeft, Briefcase, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
-import { TBaseActivityVerbs } from "@plane/types";
-import { EpicIcon, InitiativeIcon } from "@plane/ui";
+import type { ReactNode } from "react";
+import { AlignLeft, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
+import { EpicIcon, InitiativeIcon, ProjectIcon } from "@plane/propel/icons";
+import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
-import { TInitiativeActivity } from "@/plane-web/types/initiative";
+import type { TInitiativeActivity } from "@/plane-web/types/initiative";
 
 // Get the key for the issue property type based on the property type and relation type
 export const getInitiativeActivityKey = (
@@ -101,7 +101,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   projects_updated: (activity: TInitiativeActivity) => ({
-    icon: <Briefcase className={commonIconClassName} />,
+    icon: <ProjectIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value ? (

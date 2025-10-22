@@ -1,9 +1,7 @@
 import { useMemo } from "react";
-import { TContextMenuItem } from "@plane/ui";
-import {
-  MenuItemFactoryProps,
-  useMenuItemFactory,
-} from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
+import type { TContextMenuItem } from "@plane/ui";
+import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
+import { useMenuItemFactory } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
 
 export const useEpicMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
   const factory = useMenuItemFactory(props);

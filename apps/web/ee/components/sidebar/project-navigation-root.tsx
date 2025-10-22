@@ -1,13 +1,14 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { RssIcon } from "lucide-react";
+import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
 // components
-import { ProjectNavigation, type TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
+import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
@@ -40,7 +41,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       name: "Overview",
       key: "overview",
       href: `/${workspaceSlug}/projects/${projectId}/overview/`,
-      icon: RssIcon,
+      icon: OverviewIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
       shouldRender: !!isProjectOverviewEnabled,
       sortOrder: -2,

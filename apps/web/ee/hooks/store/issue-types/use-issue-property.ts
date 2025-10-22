@@ -1,6 +1,6 @@
 import { useContext } from "react";
 // plane imports
-import { EIssuePropertyType, IIssueProperty } from "@plane/types";
+import type { EIssuePropertyType, IIssueProperty } from "@plane/types";
 // context
 import { StoreContext } from "@/lib/store-context";
 

@@ -1,16 +1,20 @@
-import { FC, useState, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Button, CircularProgressIndicator, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { CircularProgressIndicator } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
-import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 interface UploadedFile {
   file: File;
@@ -22,7 +26,6 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
 
   const {
     currentStep,
-    handleDashboardView,
     handleStepper,
     handleImporterData,
     uploadZipFile,
@@ -31,6 +34,7 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
     uploadError,
     confirmAndStartImport,
     workspace,
+    resetImporterData,
   } = useZipImporter(driverType);
 
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
@@ -128,7 +132,7 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
           message: `Your ${serviceName} import has been started successfully.`,
         });
         // Now proceed to next step
-        handleDashboardView();
+        resetImporterData();
       } catch (error) {
         console.error(`Failed to confirm upload: ${error}`);
         // Show error toast
@@ -344,7 +348,6 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
           )}
         </div>
       )}
-
       {/* stepper button */}
       <div className="flex-shrink-0 flex justify-end items-center gap-2 mt-8">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

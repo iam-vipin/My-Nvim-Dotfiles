@@ -1,13 +1,13 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { SPACE_BASE_PATH } from "@plane/constants";
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceFailureView } from "@/components/instance/instance-failure-view";

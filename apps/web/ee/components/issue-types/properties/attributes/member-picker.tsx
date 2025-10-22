@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
+import type { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
 // local imports
 import { MemberValueSelect } from "../../values/components/member-select";
 import { PropertyMultiSelect } from "./common/property-multi-select";

@@ -5,22 +5,25 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
-import { IssuesModalProps } from "@/components/issues/issue-modal/modal";
+import type { IssuesModalProps } from "@/components/issues/issue-modal/modal";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUser } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local components
-import { EpicFormProps, EpicFormRoot } from "./form";
+import type { EpicFormProps } from "./form";
+import { EpicFormRoot } from "./form";
 
 export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((props) => {
   const {

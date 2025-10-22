@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -13,12 +14,12 @@ import GithubDarkLogo from "/public/logos/github-dark.svg";
 import GitlabLogo from "/public/logos/gitlab-logo.svg";
 import GoogleLogo from "/public/logos/google-logo.svg";
 // helpers
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
   EAuthModes,
   EAuthSteps,
   EAuthenticationErrorCodes,
   EErrorAlertType,
-  TAuthErrorInfo,
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
@@ -129,7 +130,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       text: `${OauthButtonContent} with GitHub`,
       icon: (
         <Image
-          src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
+          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
           height={18}
           width={18}
           alt="GitHub Logo"

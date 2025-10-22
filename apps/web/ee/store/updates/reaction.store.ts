@@ -1,10 +1,7 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
+import { concat, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
-// types
-// helpers
-import { TUpdateReaction } from "@plane/types";
+// plane imports
+import type { TUpdateReaction } from "@plane/types";
 import { groupReactions } from "@plane/utils";
 
 export interface IUpdatesReactionStore {

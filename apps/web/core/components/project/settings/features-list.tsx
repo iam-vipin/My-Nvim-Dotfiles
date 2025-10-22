@@ -1,12 +1,14 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
-import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IProject } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers

@@ -6,12 +6,14 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
+import type { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
 
 type TRecurringWorkItemQuickActionsProps = {
   deleteRecurringWorkItem: (id: string) => Promise<void>;
@@ -115,9 +117,7 @@ export const RecurringWorkItemQuickActions = observer((props: TRecurringWorkItem
             return (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn(

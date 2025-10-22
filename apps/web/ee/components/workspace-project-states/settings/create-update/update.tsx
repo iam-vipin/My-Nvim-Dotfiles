@@ -1,16 +1,17 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectStateForm } from "@/plane-web/components/workspace-project-states";
 // plane web hooks
 import { useProjectState } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectState } from "@/plane-web/types/workspace-project-states";
+import type { TProjectState } from "@/plane-web/types/workspace-project-states";
 
 type TProjectStateUpdate = {
   workspaceSlug: string;

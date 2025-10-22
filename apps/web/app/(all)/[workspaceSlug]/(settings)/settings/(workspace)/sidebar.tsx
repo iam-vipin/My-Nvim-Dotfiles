@@ -18,8 +18,8 @@ import {
   EUserPermissions,
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
+import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/propel/icons";
+import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SettingsSidebar } from "@/components/settings/sidebar";
 // hooks

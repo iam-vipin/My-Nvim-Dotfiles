@@ -1,10 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
-import omit from "lodash/omit";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { TStateAnalytics } from "@plane/types";
-import { InfoIcon, Tooltip } from "@plane/ui";
+// plane imports
+import { InfoIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TStateAnalytics } from "@plane/types";
 // plane web
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -39,7 +41,7 @@ export const InitiativeProgressSection: FC<Props> = observer((props) => {
         <>
           <Tooltip
             tooltipContent="The progress metrics aggregate all child work items from both Epics and Projects."
-            position="top-left"
+            position="top-start"
           >
             <span className="flex items-center justify-center size-4 text-custom-text-300 hover:text-custom-text-200 cursor-pointer">
               <InfoIcon className="size-3.5" />

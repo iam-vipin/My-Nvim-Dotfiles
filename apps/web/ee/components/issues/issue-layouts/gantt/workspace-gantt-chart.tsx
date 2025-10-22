@@ -3,14 +3,9 @@ import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  TIssue,
-  IBlockUpdateData,
-  EIssuesStoreType,
-  EIssueLayoutTypes,
-  IBlockUpdateDependencyData,
-} from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TIssue, IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";

@@ -17,9 +17,7 @@ from plane.graphql.permissions.project import ProjectBasePermission
 
 @strawberry.type
 class IssueAttachmentQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issue_attachment(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[FileAssetType]:
@@ -35,9 +33,7 @@ class IssueAttachmentQuery:
 
         return issue_attachments
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
     async def issue_attachment_detail(
         self,
         info: Info,

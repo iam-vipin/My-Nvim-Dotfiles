@@ -1,11 +1,12 @@
-import { update } from "lodash";
-import set from "lodash/set";
+import { set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { TUpdate, TUpdateComment, TUpdateReaction } from "@plane/types";
+import type { TUpdate, TUpdateComment, TUpdateReaction } from "@plane/types";
 // types
-import { IUpdateCommentStore, UpdateCommentStore } from "./comment.store";
-import { IUpdatesReactionStore, UpdatesReactionStore } from "./reaction.store";
+import type { IUpdateCommentStore } from "./comment.store";
+import { UpdateCommentStore } from "./comment.store";
+import type { IUpdatesReactionStore } from "./reaction.store";
+import { UpdatesReactionStore } from "./reaction.store";
 
 export interface IUpdateStoreActions {
   fetch: (callbackFn: () => Promise<TUpdate[]>, entityId: string) => Promise<TUpdate[]>;

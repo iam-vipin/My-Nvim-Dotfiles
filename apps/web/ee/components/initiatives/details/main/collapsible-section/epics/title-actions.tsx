@@ -1,10 +1,15 @@
-import { FC, useCallback } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import type { FC } from "react";
+import { useCallback } from "react";
+import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  EIssueFilterType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE,
+} from "@plane/constants";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
@@ -70,7 +75,7 @@ export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) =
     [workspaceSlug, epicsFilters?.filters, updateEpicsFilters, initiativeId]
   );
 
-  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE.initiatives.list;
+  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE.initiatives.layoutOptions.list;
 
   const handlePropagation = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -91,7 +96,7 @@ export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) =
         handleFiltersUpdate={handleFiltersUpdate}
         filters={epicsFilters?.filters ?? {}}
         memberIds={memberIds ?? undefined}
-        layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
+        availableFilters={SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_INITIATIVES_PAGE}
       />
       {!disabled && (
         <div>

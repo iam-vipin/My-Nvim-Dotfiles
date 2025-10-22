@@ -1,8 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Tab } from "@headlessui/react";
-import { TUpdate, EUpdateEntityType, EUpdateStatus } from "@plane/types";
+import type { TUpdate, EUpdateStatus } from "@plane/types";
+import { EUpdateEntityType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";

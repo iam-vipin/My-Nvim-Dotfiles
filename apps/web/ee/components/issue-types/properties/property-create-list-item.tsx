@@ -1,7 +1,8 @@
 import { forwardRef } from "react";
 import { observer } from "mobx-react";
 // local imports
-import { IssuePropertyListItem, type TCustomPropertyOperations } from "./property-list-item";
+import { IssuePropertyListItem } from "./property-list-item";
+import type { TCustomPropertyOperations } from "./property-list-item";
 import type { TIssuePropertyCreateList } from "./root";
 
 export type TIssuePropertyCreateListItem = {

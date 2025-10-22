@@ -1,8 +1,11 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { EditorRefApi } from "@plane/editor";
 // plane editor
-import { type EditorRefApi, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+import { getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+// plane propel
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane types
-import { TDocumentPayload } from "@plane/types";
+import type { TDocumentPayload } from "@plane/types";
 // hooks
 import useAutoSave from "@/hooks/use-auto-save";
 
@@ -15,13 +18,28 @@ type TArgs = {
 
 export const usePageFallback = (args: TArgs) => {
   const { editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription } = args;
+  const hasShownFallbackToast = useRef(false);
+
+  const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
 
   const handleUpdateDescription = useCallback(async () => {
     if (!hasConnectionFailed) return;
     const editor = editorRef.current;
     if (!editor) return;
 
+    // Show toast notification when fallback mechanism kicks in (only once)
+    if (!hasShownFallbackToast.current) {
+      setToast({
+        type: TOAST_TYPE.WARNING,
+        title: "Connection lost",
+        message: "Your changes are being saved using backup mechanism. ",
+      });
+      hasShownFallbackToast.current = true;
+    }
+
     try {
+      setIsFetchingFallbackBinary(true);
+
       const latestEncodedDescription = await fetchPageDescription();
       let latestDecodedDescription: Uint8Array;
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
@@ -40,16 +58,27 @@ export const usePageFallback = (args: TArgs) => {
         description_html: html,
         description: json,
       });
-    } catch (error) {
-      console.error("Error in updating description using fallback logic:", error);
+    } catch (error: any) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: error?.detail || "Failed to update description using backup mechanism.",
+      });
+    } finally {
+      setIsFetchingFallbackBinary(false);
     }
   }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription]);
 
   useEffect(() => {
     if (hasConnectionFailed) {
       handleUpdateDescription();
+    } else {
+      // Reset toast flag when connection is restored
+      hasShownFallbackToast.current = false;
     }
   }, [handleUpdateDescription, hasConnectionFailed]);
 
   useAutoSave(handleUpdateDescription);
+
+  return { isFetchingFallbackBinary };
 };

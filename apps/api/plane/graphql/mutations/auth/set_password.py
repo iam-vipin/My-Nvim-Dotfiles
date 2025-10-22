@@ -38,9 +38,7 @@ def set_password(user: User, password: str) -> bool:
 
 @strawberry.type
 class SetPasswordMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def set_password(self, info: Info, passwordInput: PasswordInputType) -> bool:
         user = info.context.user
         user_id = user.id

@@ -1,9 +1,7 @@
 import { enableStaticRendering } from "mobx-react";
 // stores
-import {
-  IInstanceFeatureFlagsStore,
-  InstanceFeatureFlagsStore,
-} from "@/plane-admin/store/instance-feature-flags.store";
+import type { IInstanceFeatureFlagsStore } from "@/plane-admin/store/instance-feature-flags.store";
+import { InstanceFeatureFlagsStore } from "@/plane-admin/store/instance-feature-flags.store";
 import { CoreRootStore } from "@/store/root.store";
 // plane admin store
 

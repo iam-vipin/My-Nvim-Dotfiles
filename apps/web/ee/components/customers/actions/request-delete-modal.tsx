@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 // ui
 import { mutate } from "swr";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCustomers } from "@/plane-web/hooks/store";

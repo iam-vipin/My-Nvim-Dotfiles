@@ -1,11 +1,12 @@
 "use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // ui
-import { DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
+import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
+// types
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // components
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -16,9 +17,9 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
 // helpers
-import { useIssueDetail } from "@/hooks/store/use-issue-detail"
-import { useMember } from "@/hooks/store/use-member"
-import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";

@@ -56,8 +56,6 @@ class FeatureFlag(Enum):
     SILO_INTEGRATIONS = "SILO_INTEGRATIONS"
     # MOVE_PAGES
     MOVE_PAGES = "MOVE_PAGES"
-    # cycle manual start and stop
-    CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
     # workitem templates
     WORKITEM_TEMPLATES = "WORKITEM_TEMPLATES"
     # Page templates
@@ -84,10 +82,14 @@ class FeatureFlag(Enum):
     NOTION_IMPORTER = "NOTION_IMPORTER"
     # Link Pages
     LINK_PAGES = "LINK_PAGES"
+    # Page Comments
+    PAGE_COMMENTS = "PAGE_COMMENTS"
     # Automations
     PROJECT_AUTOMATIONS = "PROJECT_AUTOMATIONS"
     # Recurring Work Items
     RECURRING_WORKITEMS = "RECURRING_WORKITEMS"
+    # Exports
+    ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
 
 
 class AdminFeatureFlag(Enum):

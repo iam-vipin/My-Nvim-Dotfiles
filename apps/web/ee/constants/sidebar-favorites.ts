@@ -1,4 +1,4 @@
-import { LayoutGrid } from "lucide-react";
+import { DashboardIcon } from "@plane/propel/icons";
 // ce constants
 import {
   FAVORITE_ITEM_ICONS as CE_FAVORITE_ITEM_ICONS,
@@ -7,7 +7,7 @@ import {
 
 export const FAVORITE_ITEM_ICONS: typeof CE_FAVORITE_ITEM_ICONS = {
   ...CE_FAVORITE_ITEM_ICONS,
-  workspace_dashboard: LayoutGrid,
+  workspace_dashboard: DashboardIcon,
 };
 
 export const FAVORITE_ITEM_LINKS: typeof CE_FAVORITE_ITEM_LINKS = {

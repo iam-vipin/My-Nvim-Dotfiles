@@ -2,13 +2,12 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import ExporterHistory, Project, Workspace
-
-# Module imports
-from .. import BaseAPIView
+from plane.app.views.base import BaseAPIView
 
 
 class ExportIssuesEndpoint(BaseAPIView):
@@ -23,6 +22,8 @@ class ExportIssuesEndpoint(BaseAPIView):
         provider = request.data.get("provider", False)
         multiple = request.data.get("multiple", False)
         project_ids = request.data.get("project", [])
+        filters = request.data.get("filters", None)
+        rich_filters = request.data.get("rich_filters", None)
 
         if provider in ["csv", "xlsx", "json"]:
             if not project_ids:
@@ -41,6 +42,8 @@ class ExportIssuesEndpoint(BaseAPIView):
                 initiated_by=request.user,
                 provider=provider,
                 type="issue_exports",
+                filters=filters,
+                rich_filters=rich_filters,
             )
 
             issue_export_task.delay(
@@ -63,18 +66,16 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug, type="issue_exports"
-        ).select_related("workspace", "initiated_by")
+        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_exports").select_related(
+            "workspace", "initiated_by"
+        )
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=exporter_history,
-                on_results=lambda exporter_history: ExporterHistorySerializer(
-                    exporter_history, many=True
-                ).data,
+                on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
             )
         else:
             return Response(

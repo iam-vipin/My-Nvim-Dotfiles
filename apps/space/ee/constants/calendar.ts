@@ -1,4 +1,4 @@
-import { TCalendarLayouts } from "@plane/types";
+import type { TCalendarLayouts } from "@plane/types";
 
 export const MONTHS_LIST: {
   [monthNumber: number]: {

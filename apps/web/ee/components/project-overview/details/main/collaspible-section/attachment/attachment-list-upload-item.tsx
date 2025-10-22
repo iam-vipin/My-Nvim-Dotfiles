@@ -1,16 +1,17 @@
 "use client";
 
 import { observer } from "mobx-react";
-// ui
-import { CircularProgressIndicator, Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { CircularProgressIndicator } from "@plane/ui";
 // components
+import { getFileExtension } from "@plane/utils";
 import { getFileIcon } from "@/components/icons";
 // helpers
-import { getFileExtension } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 
 type Props = {
   uploadStatus: TAttachmentUploadStatus;

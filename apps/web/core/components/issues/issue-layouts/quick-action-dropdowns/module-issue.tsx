@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -11,8 +11,10 @@ import {
   EUserPermissionsLevel,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -27,8 +29,9 @@ import { useIssueType } from "@/plane-web/hooks/store";
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
-import { IQuickActionProps } from "../list/list-view-types";
-import { useModuleIssueMenuItems, MenuItemFactoryProps } from "./helper";
+import type { IQuickActionProps } from "../list/list-view-types";
+import type { MenuItemFactoryProps } from "./helper";
+import { useModuleIssueMenuItems } from "./helper";
 
 export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -138,7 +141,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.MODULE}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
@@ -196,9 +198,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
                 {item.nestedMenuItems.map((nestedItem) => (
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                       nestedItem.action();
                     }}
@@ -234,9 +234,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.MODULE });
                 item.action();
               }}

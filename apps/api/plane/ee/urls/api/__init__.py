@@ -1,15 +1,17 @@
-from .worklog import urlpatterns as worklog_patterns
-from .issue_property import urlpatterns as issue_property_patterns
-from .workspace import urlpatterns as workspace_patterns
+from .asset import urlpatterns as asset_patterns
+from .epic import urlpatterns as epic_patterns
 from .job import urlpatterns as job_patterns
 from .page import urlpatterns as page_patterns
-from .epic import urlpatterns as epic_patterns
+from .worklog import urlpatterns as worklog_patterns
+from .workspace import urlpatterns as workspace_patterns
+from .work_item_property import urlpatterns as work_item_property_patterns
 
 urlpatterns = [
-    *worklog_patterns,
-    *issue_property_patterns,
-    *workspace_patterns,
-    *page_patterns,
-    *job_patterns,
+    *asset_patterns,
     *epic_patterns,
+    *job_patterns,
+    *page_patterns,
+    *worklog_patterns,
+    *workspace_patterns,
+    *work_item_property_patterns,
 ]

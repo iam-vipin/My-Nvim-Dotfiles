@@ -2,11 +2,12 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectTemplateForm } from "@plane/types";
+import type { TProjectTemplateForm } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // plane web imports
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
-import { PROJECT_FEATURES_LIST_FOR_TEMPLATE, TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
+import type { TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
+import { PROJECT_FEATURES_LIST_FOR_TEMPLATE } from "@/plane-web/constants";
 // local imports
 import { ProjectFeatureChildren } from "./children";
 

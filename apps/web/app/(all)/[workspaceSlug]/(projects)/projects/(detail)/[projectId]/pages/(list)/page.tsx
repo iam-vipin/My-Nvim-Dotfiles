@@ -5,19 +5,17 @@ import { useParams, useSearchParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { ProjectPagesListRoot } from "@/components/pages/list/root";
 import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -70,9 +68,7 @@ const ProjectPagesPage = observer(() => {
         pageType={currentPageType()}
         projectId={projectId.toString()}
         workspaceSlug={workspaceSlug.toString()}
-      >
-        <ProjectPagesListRoot pageType={currentPageType()} />
-      </ProjectPagesListView>
+      />
     </>
   );
 });

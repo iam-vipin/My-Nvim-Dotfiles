@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 // types
-import { TDeDupeIssue } from "@plane/types";
+import type { TDeDupeIssue } from "@plane/types";
 // helpers
 import { getTextContent } from "@plane/utils";
 // hooks

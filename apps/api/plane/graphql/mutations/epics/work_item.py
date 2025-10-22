@@ -43,9 +43,7 @@ def bulk_update_work_items(work_items, fields):
 
 @strawberry.type
 class EpicWorkItemsMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_epic_work_item(
         self,
         info: Info,
@@ -64,9 +62,7 @@ class EpicWorkItemsMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the epic
-        epic_details = await get_epic(
-            workspace_slug=slug, project_id=project, epic_id=epic
-        )
+        epic_details = await get_epic(workspace_slug=slug, project_id=project, epic_id=epic)
         epic_id = str(epic_details.id)
 
         # get the workspace
@@ -75,9 +71,7 @@ class EpicWorkItemsMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         issue_state_id = issue_input.state or None
@@ -103,15 +97,11 @@ class EpicWorkItemsMutation:
 
         # if the state id is not passed, get the default state
         if issue_state_id is None:
-            state = await get_project_default_state(
-                workspace_slug=workspace_slug, project_id=project_id
-            )
+            state = await get_project_default_state(workspace_slug=workspace_slug, project_id=project_id)
             issue_state_id = str(state.id)
             issue_payload["state_id"] = issue_state_id
         else:
-            is_feature_flagged = await is_workflow_feature_flagged(
-                user_id=user_id, workspace_slug=workspace_slug
-            )
+            is_feature_flagged = await is_workflow_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
             if is_feature_flagged:
                 await is_workflow_create_allowed(
                     user_id=user_id,
@@ -126,9 +116,7 @@ class EpicWorkItemsMutation:
             user_id=user_id, workspace_slug=workspace_slug
         )
         if work_item_type_feature_flagged:
-            issue_type = await default_work_item_type(
-                workspace_slug=workspace_slug, project_id=project_id
-            )
+            issue_type = await default_work_item_type(workspace_slug=workspace_slug, project_id=project_id)
             if issue_type is not None:
                 issue_default_type_id = issue_type.id
 
@@ -223,9 +211,7 @@ class EpicWorkItemsMutation:
                 current_instance=json.dumps(
                     {
                         "updated_cycle_issues": [],
-                        "created_cycle_issues": serializers.serialize(
-                            "json", [created_cycle]
-                        ),
+                        "created_cycle_issues": serializers.serialize("json", [created_cycle]),
                     }
                 ),
                 epoch=int(timezone.now().timestamp()),
@@ -272,9 +258,7 @@ class EpicWorkItemsMutation:
 
         return issue
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def add_existing_work_items(
         self, info: Info, slug: str, project: str, epic: str, work_item_ids: list[str]
     ) -> bool:
@@ -288,9 +272,7 @@ class EpicWorkItemsMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the epic
-        epic_details = await get_epic(
-            workspace_slug=slug, project_id=project, epic_id=epic
-        )
+        epic_details = await get_epic(workspace_slug=slug, project_id=project, epic_id=epic)
         epic_id = str(epic_details.id)
 
         existing_work_items = await get_existing_work_items(work_item_ids)

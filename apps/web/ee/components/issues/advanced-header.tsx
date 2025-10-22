@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { Circle, ExternalLink, RssIcon } from "lucide-react";
+import { Circle, ExternalLink } from "lucide-react";
 // plane imports
 import {
   EProjectFeatureKey,
@@ -14,8 +14,10 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 // constants
@@ -23,9 +25,9 @@ import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

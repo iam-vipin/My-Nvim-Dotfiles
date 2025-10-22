@@ -4,18 +4,13 @@ import useSWR from "swr";
 // plane imports
 import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  ETemplateType,
-  PartialDeep,
-  TWorkItemTemplateForm,
-  TWorkItemTemplateFormData,
-  TIssuePropertyValues,
-} from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
+import { ETemplateType } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
 import {
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,
-  TWorkItemSanitizationResult,
   workItemTemplateDataToSanitizedFormData,
   workItemTemplateFormDataToTemplate,
   processWorkItemCustomProperties,
@@ -24,16 +19,17 @@ import {
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useLabel } from "@/hooks/store/use-label"
-import { useMember } from "@/hooks/store/use-member"
-import { useModule } from "@/hooks/store/use-module"
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // local imports
-import { EWorkItemFormOperation, TWorkItemTemplateFormSubmitData, WorkItemTemplateFormRoot } from "./form";
+import type { TWorkItemTemplateFormSubmitData } from "./form";
+import { EWorkItemFormOperation, WorkItemTemplateFormRoot } from "./form";
 import { WorkItemTemplateLoader } from "./loader";
 
 type TCreateUpdateWorkItemTemplateProps = {

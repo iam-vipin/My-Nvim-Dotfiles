@@ -1,22 +1,25 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
-import update from "lodash/update";
+import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { ProjectService } from "@/plane-web/services";
-import { RootStore } from "@/plane-web/store/root.store";
-import {
+import type { RootStore } from "@/plane-web/store/root.store";
+import type {
   TProject,
   TProjectAttributesParams,
   TProjectAttributesResponse,
   TProjectFeatures,
   TProjectFeaturesList,
 } from "@/plane-web/types";
-import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
-import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
-import { IProjectReactionStore, ProjectReactionStore } from "./project-details/project_reaction.store";
-import { IProjectUpdateStore, ProjectUpdateStore } from "./project-details/updates.store";
+import type { IProjectAttachmentStore } from "./project-details/attachment.store";
+import { ProjectAttachmentStore } from "./project-details/attachment.store";
+import type { IProjectLinkStore } from "./project-details/link.store";
+import { ProjectLinkStore } from "./project-details/link.store";
+import type { IProjectReactionStore } from "./project-details/project_reaction.store";
+import { ProjectReactionStore } from "./project-details/project_reaction.store";
+import type { IProjectUpdateStore } from "./project-details/updates.store";
+import { ProjectUpdateStore } from "./project-details/updates.store";
 
 export interface IProjectStore {
   reactionStore: IProjectReactionStore;

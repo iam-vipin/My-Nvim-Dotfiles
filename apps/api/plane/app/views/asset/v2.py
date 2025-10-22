@@ -49,9 +49,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new avatar
             user.avatar_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(
-                path="/api/users/me/", url_params=False, user=True, request=request
-            )
+            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -69,9 +67,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new cover image
             user.cover_image_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(
-                path="/api/users/me/", url_params=False, user=True, request=request
-            )
+            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -87,9 +83,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             user = User.objects.get(id=asset.user_id)
             user.avatar_asset_id = None
             user.save()
-            invalidate_cache_directly(
-                path="/api/users/me/", url_params=False, user=True, request=request
-            )
+            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -102,9 +96,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
             user = User.objects.get(id=asset.user_id)
             user.cover_image_asset_id = None
             user.save()
-            invalidate_cache_directly(
-                path="/api/users/me/", url_params=False, user=True, request=request
-            )
+            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -164,9 +156,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -203,9 +193,7 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(
-            entity_type=asset.entity_type, asset=asset, request=request
-        )
+        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -292,18 +280,14 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
-            invalidate_cache_directly(
-                path="/api/workspaces/", url_params=False, user=False, request=request
-            )
+            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/workspaces/",
                 url_params=False,
                 user=True,
                 request=request,
             )
-            invalidate_cache_directly(
-                path="/api/instances/", url_params=False, user=False, request=request
-            )
+            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
             return
 
         # Project Cover
@@ -339,18 +323,14 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 return
             workspace.logo_asset_id = None
             workspace.save()
-            invalidate_cache_directly(
-                path="/api/workspaces/", url_params=False, user=False, request=request
-            )
+            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
             invalidate_cache_directly(
                 path="/api/users/me/workspaces/",
                 url_params=False,
                 user=True,
                 request=request,
             )
-            invalidate_cache_directly(
-                path="/api/instances/", url_params=False, user=False, request=request
-            )
+            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
@@ -439,17 +419,13 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            **self.get_entity_id_field(
-                entity_type=entity_type, entity_id=entity_identifier
-            ),
+            **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_identifier),
         )
 
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -486,9 +462,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(
-            entity_type=asset.entity_type, asset=asset, request=request
-        )
+        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -514,6 +488,67 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
+
+class WorkspaceReuploadAssetEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def post(self, request, slug, asset_id):
+        file_type = request.data.get("type", "image/jpeg")
+        file_size = request.data.get("size")
+        
+        if not file_size:
+            return Response(
+                {"error": "Missing required 'size' parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            file_size = int(file_size)
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Invalid size parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        # Find asset in workspace or project within workspace
+        try:
+            from django.db.models import Q
+            asset = FileAsset.objects.get(
+                Q(workspace__slug=slug),
+                id=asset_id
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": f"Asset with ID {asset_id} does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        
+        if not asset.asset or not asset.asset.name:
+            return Response(
+                {"error": "Asset has no associated file"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            storage = S3Storage(request=request)
+            presigned_url = storage.generate_presigned_post(
+                object_name=asset.asset.name, 
+                file_type=file_type, 
+                file_size=min(file_size, settings.FILE_SIZE_LIMIT)
+            )
+            
+            return Response(
+                {
+                    "upload_data": presigned_url,
+                    "asset_id": str(asset.id),
+                    "asset_url": asset.asset_url,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Error generating upload URL: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 class StaticFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to get the signed URL for a static asset."""
@@ -688,9 +723,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -720,9 +753,7 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def delete(self, request, slug, project_id, pk):
         # Get the asset
-        asset = FileAsset.objects.get(
-            id=pk, workspace__slug=slug, project_id=project_id
-        )
+        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -733,9 +764,7 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, pk):
         # get the asset id
-        asset = FileAsset.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -755,6 +784,61 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
+class ProjectReuploadAssetEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def post(self, request, slug, project_id, asset_id):
+        file_type = request.data.get("type", "image/jpeg")
+        file_size = request.data.get("size")
+        
+        if not file_size:
+            return Response(
+                {"error": "Missing required 'size' parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            file_size = int(file_size)
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Invalid size parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, project_id=project_id)
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": f"Asset with ID {asset_id} does not exist in this project"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        
+        if not asset.asset or not asset.asset.name:
+            return Response(
+                {"error": "Asset has no associated file"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            storage = S3Storage(request=request)
+            presigned_url = storage.generate_presigned_post(
+                object_name=asset.asset.name, 
+                file_type=file_type, 
+                file_size=min(file_size, settings.FILE_SIZE_LIMIT)
+            )
+            
+            return Response(
+                {
+                    "upload_data": presigned_url,
+                    "asset_id": str(asset.id),
+                    "asset_url": asset.asset_url,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Error generating upload URL: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
     def save_project_cover(self, asset, project_id):
@@ -768,9 +852,7 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
 
         # Check if the asset ids are provided
         if not asset_ids:
-            return Response(
-                {"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         # get the asset id
         assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug)
@@ -824,9 +906,7 @@ class AssetCheckEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, asset_id):
-        asset = FileAsset.all_objects.filter(
-            id=asset_id, workspace__slug=slug, deleted_at__isnull=True
-        ).exists()
+        asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).exists()
         return Response({"exists": asset}, status=status.HTTP_200_OK)
 
 
@@ -883,3 +963,65 @@ class ProjectAssetDownloadEndpoint(BaseAPIView):
         )
 
         return HttpResponseRedirect(signed_url)
+
+
+
+class WorkspaceFileAssetServerEndpoint(BaseAPIView):
+    """
+    This endpoint is used to upload cover images/logos
+    etc for workspace, projects and users.
+    """
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        # Generate a presigned URL to share an S3 object
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
+        # Redirect to the signed URL
+        return HttpResponseRedirect(signed_url)
+
+
+class ProjectAssetServerEndpoint(BaseAPIView):
+    """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=asset_id
+        )
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        # Generate a presigned URL to share an S3 object
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
+        # Redirect to the signed URL
+        return HttpResponseRedirect(signed_url)
+

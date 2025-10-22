@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
@@ -9,7 +9,8 @@ import {
   NOTIFICATION_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Spinner } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

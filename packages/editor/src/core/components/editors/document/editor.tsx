@@ -7,7 +7,7 @@ import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { HeadingListExtension, WorkItemEmbedExtension, SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -25,7 +25,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
-    embedHandler,
+    extendedEditorProps,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
@@ -36,19 +36,9 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     onChange,
     user,
     value,
-    // additional props
-    extensionOptions,
-    isSmoothCursorEnabled,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
-    if (embedHandler?.issue) {
-      additionalExtensions.push(
-        WorkItemEmbedExtension({
-          widgetCallback: embedHandler.issue.widgetCallback,
-        })
-      );
-    }
     additionalExtensions.push(
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
@@ -57,7 +47,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       HeadingListExtension,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        embedConfig: embedHandler,
+        extendedEditorProps,
         flaggedExtensions,
         isEditable: editable,
         fileHandler,
@@ -76,6 +66,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     editable,
     editorClassName,
     enableHistory: true,
+    extendedEditorProps,
     extensions,
     fileHandler,
     flaggedExtensions,
@@ -85,10 +76,6 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     initialValue: value,
     mentionHandler,
     onChange,
-    // additional props
-    embedHandler,
-    extensionOptions,
-    isSmoothCursorEnabled,
   });
 
   const editorContainerClassName = getEditorClassNames({
@@ -99,13 +86,14 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
 
   return (
     <PageRenderer
+      extendedEditorProps={extendedEditorProps}
       bubbleMenuEnabled={bubbleMenuEnabled}
+      disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
-      id={id}
       flaggedExtensions={flaggedExtensions}
-      disabledExtensions={disabledExtensions}
+      id={id}
       isTouchDevice={!!isTouchDevice}
     />
   );

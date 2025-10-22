@@ -1,11 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase, Calendar, CalendarCheck2, CalendarClock, UserCircle2 } from "lucide-react";
+import { Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
 // plane imports
+import { EIconSize, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon } from "@plane/ui";
+import { EpicIcon, InitiativeStateIcon, ProjectIcon } from "@plane/propel/icons";
+import type { TInitiativeStates } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -15,18 +17,31 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
+import { InitiativeLabelDropdown } from "@/plane-web/components/initiatives/components/labels/initiative-label-dropdown";
+import { InitiativeStateDropdown } from "@/plane-web/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
+
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
   toggleEpicModal: (value?: boolean) => void;
   toggleProjectModal: (value?: boolean) => void;
+  handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
+  handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal } = props;
+  const {
+    workspaceSlug,
+    initiativeId,
+    disabled,
+    toggleEpicModal,
+    toggleProjectModal,
+    handleInitiativeStateUpdate,
+    handleInitiativeLabelUpdate,
+  } = props;
 
   const {
     initiative: {
@@ -36,6 +51,9 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
     },
   } = useInitiatives();
   const { getUserDetails } = useMember();
+  const {
+    initiative: { getInitiativesLabels, createInitiativeLabel },
+  } = useInitiatives();
 
   const { t } = useTranslation();
 
@@ -43,7 +61,13 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const initiativeEpicIds = getInitiativeEpicsById(initiativeId) ?? [];
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
   const initiativeProjectIds = initiative?.project_ids || [];
+  const initiativeLabelIds = initiative?.label_ids || [];
+
   const createdByDetails = initiative ? getUserDetails(initiative?.created_by) : undefined;
+
+  // Get initiative labels for initiatives
+  const allInitiativeLabels = getInitiativesLabels(workspaceSlug);
+
   if (!initiative) return <></>;
 
   const handleDates = (payload: Partial<TInitiative>) =>
@@ -59,13 +83,31 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
       lead: id,
     });
 
+  const createLabel = async (labelName: string) => {
+    const createdLabel = await createInitiativeLabel(workspaceSlug, { name: labelName, color: getRandomLabelColor() });
+    return createdLabel;
+  };
+
   return (
     <SidebarContentWrapper title="Properties">
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
+        {/* States Drop down */}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <InitiativeStateIcon className="h-4 w-4 flex-shrink-0" state="DRAFT" size={EIconSize.XL} />
+            <span>State</span>
+          </div>
+          <InitiativeStateDropdown
+            value={initiative.state}
+            onChange={(val) => handleInitiativeStateUpdate(val)}
+            disabled={disabled}
+            buttonClassName="h-full"
+          />
+        </div>
         {/* Projects Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Briefcase className="h-4 w-4 flex-shrink-0" />
+            <ProjectIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("projects")}</span>
           </div>
           <button
@@ -73,6 +115,19 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             onClick={() => toggleProjectModal(true)}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
+          </button>
+        </div>
+        {/* Epics dropdown */}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <EpicIcon className="h-4 w-4 text-custom-text-300" />
+            <span>{t("common.epic")}</span>
+          </div>
+          <button
+            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
+            onClick={() => toggleEpicModal(true)}
+          >
+            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
           </button>
         </div>
         {/* Lead Drop down*/}
@@ -91,19 +146,6 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
             showUserDetails
           />
-        </div>
-        {/* Epics dropdown */}
-        <div className="flex h-8 items-center gap-2">
-          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <EpicIcon className="h-4 w-4 text-custom-text-300" />
-            <span>{t("common.epic")}</span>
-          </div>
-          <button
-            className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
-            onClick={() => toggleEpicModal(true)}
-          >
-            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
-          </button>
         </div>
         {/* Dates Drop down*/}
         <div className="flex h-8 items-center gap-2">
@@ -150,7 +192,6 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             minDate={getDate(initiative.start_date)}
           />
         </div>
-
         {createdByDetails && (
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -163,6 +204,20 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             </div>
           </div>
         )}
+        {/* Labels Drop down*/}
+        <div className="flex h-8 items-center gap-2">
+          <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+            <Tags className="h-4 w-4 text-custom-text-300" />
+            <span>Labels</span>
+          </div>
+          <InitiativeLabelDropdown
+            value={initiativeLabelIds || []}
+            labels={allInitiativeLabels}
+            onChange={(val: string[]) => handleInitiativeLabelUpdate(val)}
+            placeholder={t("label")}
+            onAddLabel={createLabel}
+          />
+        </div>
       </div>
     </SidebarContentWrapper>
   );

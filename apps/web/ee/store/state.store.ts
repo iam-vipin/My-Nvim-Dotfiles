@@ -1,14 +1,9 @@
-import concat from "lodash/concat";
-import get from "lodash/get";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { orderBy, get, set, update, uniq, concat } from "lodash-es";
 import { action, autorun, makeObservable, observable, reaction, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_FEATURE_FLAGS, E_SORT_ORDER } from "@plane/constants";
-import {
+import type {
   TLoader,
   IStateTransition,
   IStateWorkFlow,
@@ -18,9 +13,10 @@ import {
 // helpers
 import { convertStringArrayToBooleanObject } from "@plane/utils";
 // store
-import { IStateStore as ICoreStateStore, StateStore as CoreStateStore } from "@/store/state.store";
+import type { IStateStore as ICoreStateStore } from "@/store/state.store";
+import { StateStore as CoreStateStore } from "@/store/state.store";
 // local imports
-import { RootStore } from "./root.store";
+import type { RootStore } from "./root.store";
 
 export interface IStateStore extends ICoreStateStore {
   // observables

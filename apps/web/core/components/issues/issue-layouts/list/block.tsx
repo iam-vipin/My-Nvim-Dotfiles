@@ -1,15 +1,19 @@
 "use client";
 
-import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
+import type { Dispatch, MouseEvent, SetStateAction } from "react";
+import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 // types
-import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
-import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { Spinner, ControlLink, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
@@ -19,14 +23,14 @@ import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
   issueId: string;
@@ -264,7 +268,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             <Tooltip
               tooltipContent={issue.name}
               isMobile={isMobile}
-              position="top-left"
+              position="top-start"
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >

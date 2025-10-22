@@ -1,18 +1,17 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { TPage } from "@plane/types";
-// utils
-import { getPageName } from "@plane/utils";
+import type { TPage } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 const projectPageService = new ProjectPageService();
 // store
-import { BasePage, type TPageInstance } from "./base-page";
+import { BasePage } from "./base-page";
+import type { TPageInstance } from "./base-page";
 
 export type TProjectPage = TPageInstance;
 
@@ -93,9 +92,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
-    const sortedPages = filteredPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
+    const sortedPages = filteredPages.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
@@ -227,6 +224,23 @@ export class ProjectPage extends BasePage implements TProjectPage {
     // Fallback to regular access control
     const highestRole = this.getHighestRoleAcrossProjects();
     return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+  }
+
+  /**
+   * @description returns true if the current logged in user can comment on the page/reply to the comments
+   */
+  get canCurrentUserCommentOnPage() {
+    // Owner can always comment
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can comment if they have at least view access
+    if (this.hasSharedAccess) {
+      return this.canCommentWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const highestRole = this.getHighestRoleAcrossProjects();
+    return !!highestRole && highestRole >= EUserPermissions.MEMBER;
   }
 
   /**

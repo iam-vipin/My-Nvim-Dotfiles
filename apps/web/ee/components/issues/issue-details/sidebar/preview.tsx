@@ -1,11 +1,14 @@
-import React, { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
+import React from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { CUSTOMER_CONTRACT_STATUS, CUSTOMER_STAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCustomer } from "@plane/types";
-import { Button, CustomersIcon, Tooltip } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import { CustomersIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TCustomer } from "@plane/types";
+import { getFileURL, formatURLForDisplay } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useMember } from "@/hooks/store/use-member";
 import { getAbbreviatedNumber } from "@/plane-web/components/customers/utils";
@@ -57,7 +60,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                     rel="noopener noreferrer"
                   >
                     <ExternalLink className="text-custom-text-300 size-3" />
-                    <span className="truncate">{customer.website_url}</span>
+                    <span className="truncate">{formatURLForDisplay(customer.website_url)}</span>
                   </Link>
                 )}
               </div>

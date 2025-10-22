@@ -1,21 +1,22 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { E_FEATURE_FLAGS, WIDGET_CHART_MODELS_LIST } from "@plane/constants";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
+import { WIDGET_CHART_MODELS_LIST } from "@plane/constants";
 // plane types
-import {
-  EWidgetChartModels,
-  EWidgetChartTypes,
+import type {
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
   TDashboardWidget,
   TDashboardWidgetConfig,
   TDashboardWidgetData,
+  TExternalDashboardWidgetFilterExpression,
 } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { TDashboardWidgetHelpers } from "./dashboard-widgets.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TDashboardWidgetHelpers } from "./dashboard-widgets.store";
 
 export interface IDashboardWidgetInstance extends TDashboardWidget {
   isFetchingData: boolean;
@@ -41,6 +42,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
   chart_model: EWidgetChartModels | undefined;
   chart_type: EWidgetChartTypes | undefined;
   config: TDashboardWidgetConfig | undefined;
+  filters: TExternalDashboardWidgetFilterExpression | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
   group_by: EWidgetXAxisProperty | null | undefined;
@@ -79,6 +81,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
     this.x_axis_property = widget.x_axis_property;
     this.y_axis_coord = widget.y_axis_coord === undefined ? 0 : widget.y_axis_coord;
     this.y_axis_metric = widget.y_axis_metric;
+    this.filters = widget.filters;
     // initialize helpers
     this.helpers = helpers;
     // initialize root store
@@ -88,6 +91,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       // observables
       isFetchingData: observable.ref,
       data: observable,
+      filters: observable,
       chart_model: observable.ref,
       chart_type: observable.ref,
       config: observable,
@@ -138,6 +142,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       x_axis_property: this.x_axis_property,
       y_axis_coord: this.y_axis_coord,
       y_axis_metric: this.y_axis_metric,
+      filters: this.filters,
     };
   }
 

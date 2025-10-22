@@ -1,10 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // components
 import { ImportersListItem } from "@/plane-web/components/importers";
 // plane web types
-import { TFeatureFlags } from "@/plane-web/types/feature-flag";
+import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import AsanaLogo from "@/public/services/asana.svg";
 import ClickUpLogo from "@/public/services/clickup.svg";

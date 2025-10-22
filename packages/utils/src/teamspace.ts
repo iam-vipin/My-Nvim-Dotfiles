@@ -1,4 +1,4 @@
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { TTeamspace, TTeamspaceFilters, TTeamspaceOrderByOptions } from "@plane/types";
 
 /**
@@ -7,7 +7,7 @@ import { TTeamspace, TTeamspaceFilters, TTeamspaceOrderByOptions } from "@plane/
  * @param {TTeamFilters} filters
  * @returns {boolean}
  */
-export const shouldFilterTeam = (team: TTeamspace, filters: TTeamspaceFilters): boolean => true;
+export const shouldFilterTeam = (_team: TTeamspace, _filters: TTeamspaceFilters): boolean => true;
 
 export const orderTeams = (teams: TTeamspace[], orderByKey: TTeamspaceOrderByOptions | undefined): TTeamspace[] => {
   let orderedTeams: TTeamspace[] = [];

@@ -4,7 +4,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { PiIcon, PlaneNewIcon, WikiIcon } from "@plane/ui";
+import { PlaneNewIcon, PiIcon, WikiIcon } from "@plane/propel/icons";
 import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
 import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
 import { isAppRailFeatureEnabled } from "@/plane-web/helpers/app-rail.helper";
@@ -29,14 +29,14 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
       {
         label: "Wiki",
         icon: <WikiIcon className="size-4" />,
-        href: `/${workspaceSlug}/pages`,
+        href: `/${workspaceSlug}/wiki`,
         isActive: isWikiPath,
         shouldRender: isAppRailFeatureEnabled("wiki"),
       },
       {
-        label: "Pi",
+        label: "AI",
         icon: <PiIcon className="size-4" />,
-        href: `/${workspaceSlug}/pi-chat/new`,
+        href: `/${workspaceSlug}/pi-chat`,
         isActive: isAiPath,
         shouldRender: isAppRailFeatureEnabled("pi-chat"),
       },

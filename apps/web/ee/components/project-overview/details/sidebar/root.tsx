@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Activity } from "lucide-react";
 // ui
-import { InfoFillIcon, UpdatesIcon } from "@plane/ui";
+import { InfoFillIcon, UpdatesIcon } from "@plane/propel/icons";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web

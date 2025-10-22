@@ -1,15 +1,16 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import {
+import type {
   SlackAuthState,
   SlackUserAuthState,
-  TAppConnection,
+  TSlackUserAlertsConfig,
   TSlackConfig,
   TSlackConnectionData,
   TSlackProjectUpdatesConfig,
   TUserConnectionStatus,
 } from "@plane/etl/slack";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 export class SlackIntegrationService {
   protected baseURL: string;
@@ -196,4 +197,39 @@ export class SlackIntegrationService {
       .catch((error) => {
         throw error?.response?.data;
       });
+
+  /**
+   * @description get the user alerts config
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  async getUserAlertsConfig(workspaceId: string, userId: string): Promise<TSlackUserAlertsConfig> {
+    return this.axiosInstance
+      .get(`/api/slack/user/alerts-config/${workspaceId}/${userId}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description set the user alerts config
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { TSlackUserAlertsConfig } payload
+   * @returns { Promise<TSlackUserAlertsConfig> }
+   */
+  async setUserAlertsConfig(
+    workspaceId: string,
+    userId: string,
+    payload: TSlackUserAlertsConfig
+  ): Promise<TSlackUserAlertsConfig> {
+    return this.axiosInstance
+      .post(`/api/slack/user/alerts-config/${workspaceId}/${userId}`, payload)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

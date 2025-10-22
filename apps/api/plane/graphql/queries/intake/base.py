@@ -12,6 +12,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.graphql.helpers import (
+    get_intake_stats_async,
     get_intake_work_item_async,
     get_intake_work_items_async,
     get_project,
@@ -23,6 +24,7 @@ from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.intake.base import (
     IntakeCountType,
+    IntakeStatsType,
     IntakeWorkItemType,
     IntakeWorkItemStatusType,
 )
@@ -34,9 +36,7 @@ from plane.graphql.utils.roles import Roles
 
 @strawberry.type
 class IntakeCountQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_count(
         self,
         info: Info,
@@ -52,14 +52,10 @@ class IntakeCountQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         current_user_role = None
         project_member = await get_project_member(
@@ -93,10 +89,7 @@ class IntakeCountQuery:
         ):
             intake_status = "open-intakes"
 
-        if (
-            intake_status == "open-intakes"
-            and IntakeWorkItemStatusType.SNOOZED.value not in intake_status_filter
-        ):
+        if intake_status == "open-intakes" and IntakeWorkItemStatusType.SNOOZED.value not in intake_status_filter:
             is_snoozed_work_items_required = True
 
         intake_work_items = await get_intake_work_items_async(
@@ -112,10 +105,17 @@ class IntakeCountQuery:
 
 
 @strawberry.type
+class IntakeStatsQuery:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def intake_stats(self, info: Info, slug: str, project: str, intake_work_item: str) -> IntakeStatsType:
+        stats = await get_intake_stats_async(workspace_slug=slug, project_id=project, intake_work_item=intake_work_item)
+
+        return stats
+
+
+@strawberry.type
 class IntakeWorkItemQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_work_items(
         self,
         info: Info,
@@ -133,14 +133,10 @@ class IntakeWorkItemQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         current_user_role = None
         project_member = await get_project_member(
@@ -174,10 +170,7 @@ class IntakeWorkItemQuery:
         ):
             intake_status = "open-intakes"
 
-        if (
-            intake_status == "open-intakes"
-            and IntakeWorkItemStatusType.SNOOZED.value not in intake_status_filter
-        ):
+        if intake_status == "open-intakes" and IntakeWorkItemStatusType.SNOOZED.value not in intake_status_filter:
             is_snoozed_work_items_required = True
 
         intake_work_items = await get_intake_work_items_async(
@@ -191,12 +184,8 @@ class IntakeWorkItemQuery:
 
         return paginate(results_object=intake_work_items, cursor=cursor)
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
-    async def intake_work_item(
-        self, info: Info, slug: str, project: str, intake_work_item: str
-    ) -> IntakeWorkItemType:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
+    async def intake_work_item(self, info: Info, slug: str, project: str, intake_work_item: str) -> IntakeWorkItemType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -205,14 +194,10 @@ class IntakeWorkItemQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         current_user_role = None
         project_member = await get_project_member(
@@ -250,9 +235,7 @@ class IntakeWorkItemQuery:
 
         return intake_work_item
 
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def intake_work_item_by_work_item(
         self, info: Info, slug: str, project: str, work_item: str
     ) -> IntakeWorkItemType:
@@ -264,14 +247,10 @@ class IntakeWorkItemQuery:
         workspace_slug = workspace.slug
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
-        await is_project_intakes_enabled_async(
-            workspace_slug=workspace_slug, project_id=project_id
-        )
+        await is_project_intakes_enabled_async(workspace_slug=workspace_slug, project_id=project_id)
 
         current_user_role = None
         project_member = await get_project_member(

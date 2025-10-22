@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 // plane constants
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
+import type { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, ILiteTextEditorProps, TFileHandler } from "@plane/editor";
 // components
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -17,8 +18,8 @@ import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
   extends Omit<
-    ILiteTextEditorProps,
-    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled"
+    Omit<ILiteTextEditorProps, "extendedEditorProps">,
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
   > {
   workspaceSlug: string;
   workspaceId: string;
@@ -53,7 +54,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // store hooks
   const {
     data: { is_smooth_cursor_enabled },
@@ -85,7 +88,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
-        isSmoothCursorEnabled={is_smooth_cursor_enabled}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />

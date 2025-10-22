@@ -18,13 +18,14 @@
     "NEXT_PUBLIC_POSTHOG_HOST",
     "NEXT_PUBLIC_GOD_MODE",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
-    "NEXT_PUBLIC_SUPPORT_EMAIL"
+    "NEXT_PUBLIC_SUPPORT_EMAIL",
+    "ENABLE_EXPERIMENTAL_COREPACK"
   ],
   "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "out/**"]
+      "outputs": [".next/**", "dist/**", "build/**", "out/**"]
     },
     "build-storybook": {
       "dependsOn": ["^build"],

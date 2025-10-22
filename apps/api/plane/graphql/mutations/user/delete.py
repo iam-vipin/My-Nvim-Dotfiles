@@ -84,9 +84,7 @@ def delete_user(info: Info, user_id: int, reason: Optional[str] = None) -> bool:
 
 @strawberry.type
 class UserDeleteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def user_delete(self, info: Info, delete_input: UserDeleteInputType) -> bool:
         user = info.context.user
         user_id = user.id

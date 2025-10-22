@@ -1,10 +1,11 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // services
-import { CYCLE_ACTION } from "@/plane-web/constants/cycle";
+import type { CYCLE_ACTION } from "@/plane-web/constants/cycle";
 import { APIService } from "@/services/api.service";
 import { CycleService as CycleServiceCore } from "@/services/cycle.service";
-import { TCycleUpdateReaction, TCycleUpdates, TCycleUpdateStatus } from "../types";
+import type { TCycleUpdateReaction, TCycleUpdates } from "../types";
+import { TCycleUpdateStatus } from "../types";
 
 export class CycleUpdateService extends APIService {
   constructor() {

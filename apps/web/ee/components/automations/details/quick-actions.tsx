@@ -5,9 +5,14 @@ import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, TContextMenuItem, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -54,6 +59,7 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
     {
       key: "edit",
       action: () => {
+        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_EDIT_BUTTON });
         setCreateUpdateModalConfig({ isOpen: true, payload: automation.asJSON });
       },
       title: t("common.actions.edit"),
@@ -62,7 +68,10 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
     },
     {
       key: "delete",
-      action: () => setIsDeleteModalOpen(true),
+      action: () => {
+        captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_DELETE_BUTTON });
+        setIsDeleteModalOpen(true);
+      },
       title: t("common.actions.delete"),
       icon: Trash2,
       shouldRender: automation.canCurrentUserDelete,
@@ -94,9 +103,8 @@ export const AutomationQuickActions = observer((props: TAutomationQuickActionsPr
                 <span>
                   <CustomMenu.MenuItem
                     key={item.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
+                      captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.QUICK_ACTIONS_MENU });
                       item.action();
                     }}
                     className={cn(

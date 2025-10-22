@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
+import type { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
 // local imports
 import { PropertyValueSelect } from "./value-select";
 

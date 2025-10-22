@@ -3,19 +3,14 @@ import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { LayersIcon, PanelRight, Rss } from "lucide-react";
+import { PanelRight } from "lucide-react";
 import { EInitiativeNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
-import { ICustomSearchSelectOption } from "@plane/types";
-import {
-  BreadcrumbNavigationDropdown,
-  BreadcrumbNavigationSearchDropdown,
-  Breadcrumbs,
-  Header,
-  InitiativeIcon,
-  TContextMenuItem,
-} from "@plane/ui";
+import { InitiativeIcon, WorkItemsIcon, OverviewIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -53,13 +48,13 @@ export const InitiativesDetailsHeader = observer((props: TProps) => {
       {
         key: EInitiativeNavigationItem.OVERVIEW,
         title: EInitiativeNavigationItem.OVERVIEW,
-        icon: Rss,
+        icon: OverviewIcon,
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`),
       },
       {
         key: EInitiativeNavigationItem.SCOPE,
         title: EInitiativeNavigationItem.SCOPE,
-        icon: LayersIcon,
+        icon: WorkItemsIcon,
         action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`),
       },
     ],

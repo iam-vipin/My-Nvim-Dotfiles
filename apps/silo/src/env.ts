@@ -1,6 +1,6 @@
 import * as dotenvx from "@dotenvx/dotenvx";
 import { z } from "zod";
-import { logger } from "@/logger";
+import { logger } from "@plane/logger";
 dotenvx.config();
 
 const envSchema = z.object({
@@ -26,6 +26,10 @@ const envSchema = z.object({
     .string()
     .default("")
     // Remove the slash at the end of the URL
+    .transform((str) => str.replace(/\/$/, "")),
+  API_INTERNAL_BASE_URL: z
+    .string()
+    .default("")
     .transform((str) => str.replace(/\/$/, "")),
   SPACE_BASE_URL: z
     .string()

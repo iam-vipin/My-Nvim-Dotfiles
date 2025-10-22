@@ -2,11 +2,12 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
-import { TProjectTemplateForm } from "@plane/types";
+import type { TProjectTemplateForm } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { INTAKE_FEATURES_LIST, TIntakeFeatureKeys, TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
+import type { TIntakeFeatureKeys, TProjectFeatureForTemplateKeys } from "@/plane-web/constants";
+import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
 
 type TProjectFeatureChildrenProps = {
   feature: TProjectFeatureForTemplateKeys;

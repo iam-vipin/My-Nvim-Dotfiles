@@ -15,8 +15,11 @@ import {
   WORKITEM_TEMPLATE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
-import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TBaseTemplateWithData } from "@plane/types";
+import { ETemplateType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, ContextMenu, CustomMenu } from "@plane/ui";
 import {
   cn,
   getCreateUpdateTemplateSettingsPath,
@@ -28,7 +31,7 @@ import { captureClick, captureError, captureSuccess } from "@/helpers/event-trac
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IBaseTemplateStore } from "@/plane-web/store/templates";
+import type { IBaseTemplateStore } from "@/plane-web/store/templates";
 
 type TTemplateQuickActionsProps<T extends TBaseTemplateWithData> = {
   templateId: string;
@@ -302,9 +305,7 @@ export const TemplateQuickActions = observer(
             return (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn(

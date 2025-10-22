@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { SPREADSHEET_PROPERTY_DETAILS } from "./columns";
 
 type Props = {

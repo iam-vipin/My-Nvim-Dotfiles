@@ -21,7 +21,6 @@ from plane.ee.views.app.project import ProjectFeatureEndpoint
 from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
-    InitiativeLabelEndpoint,
     InitiativeUpdateViewSet,
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,
@@ -54,4 +53,12 @@ from plane.ee.views.app.dashboard import (
     WidgetEndpoint,
     WidgetListEndpoint,
     BulkWidgetEndpoint,
+)
+
+from plane.ee.views.app.page import (
+    WorkspacePageCommentViewSet,
+    WorkspacePageCommentReactionViewSet,
+    ProjectPageCommentViewSet,
+    ProjectPageCommentReactionViewSet,
+    WorkspacePageLiveServerEndpoint,
 )

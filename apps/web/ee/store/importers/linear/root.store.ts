@@ -1,29 +1,25 @@
-import set from "lodash/set";
-import update from "lodash/update";
+import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { LinearConfig } from "@plane/etl/linear";
+import type { LinearConfig } from "@plane/etl/linear";
 // plane web constants
 import { IMPORTER_LINEAR_STEPS } from "@/plane-web/constants/importers/linear";
 // plane web store types
-import {
+import type {
   IImporterBaseStore,
-  ImporterBaseStore,
   IImporterJobStore,
-  ImporterJobStore,
   ILinearAuthStore,
-  LinearAuthStore,
   ILinearDataStore,
-  LinearDataStore,
 } from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import { ImporterBaseStore, ImporterJobStore, LinearAuthStore, LinearDataStore } from "@/plane-web/store/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
+import type {
   TImporterLinearDataPayload,
   TImporterLinearStepKeys,
-  E_LINEAR_IMPORTER_STEPS,
   TLinearImporterStep,
 } from "@/plane-web/types/importers/linear";
+import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
 
 // constants
 const defaultImporterData: TImporterLinearDataPayload = {

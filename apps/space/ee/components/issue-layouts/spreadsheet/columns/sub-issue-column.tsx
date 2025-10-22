@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // components
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 type Props = {
   issue: IIssue;

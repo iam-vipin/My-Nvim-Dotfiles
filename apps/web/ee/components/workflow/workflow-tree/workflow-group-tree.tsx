@@ -1,11 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TIssueGroupByOptions } from "@plane/types";
-import { ApproverIcon, Tooltip, WorkflowIcon } from "@plane/ui";
+import { ApproverIcon, WorkflowIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssueGroupByOptions } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser } from "@/hooks/store/user";
 // local imports
 import { WorkFlowEnabledMessage } from "./workflow-enabled-message";
@@ -39,7 +40,7 @@ export const WorkFlowGroupTree = observer((props: Props) => {
     <Tooltip
       tooltipContent={<WorkFlowEnabledMessage parentStateId={groupId} />}
       className="p-3 border-[0.5px] border-custom-border-300 shadow-lg"
-      position="bottom-left"
+      position="bottom-start"
     >
       <div
         className={cn(

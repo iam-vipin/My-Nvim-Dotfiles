@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IIssueType, TIssuePropertyValues } from "@plane/types";
+import type { IIssueType, TIssuePropertyValues } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // store hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -42,14 +42,14 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
 
     useEffect(() => {
       // Only set default values if shouldLoadDefaultValues is true and we have active properties
-      if (shouldLoadDefaultValues && activeProperties?.length) {
+      if (shouldLoadDefaultValues && activeProperties?.length && !arePropertyValuesInitializing) {
         handleIssuePropertyValueUpdate({
           ...getPropertiesDefaultValues(activeProperties),
           ...issuePropertyValues,
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeProperties, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
+    }, [activeProperties, arePropertyValuesInitializing, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
 
     const handlePropertyValueChange = (propertyId: string, value: string[]) => {
       handleIssuePropertyValueUpdate((prev) => ({

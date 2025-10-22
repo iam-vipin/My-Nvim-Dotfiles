@@ -1,7 +1,8 @@
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EWidgetChartModels, TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels } from "@plane/types";
 // local components
 import { WidgetColorPicker } from "./color-picker";
 import { WidgetColorSchemeSelect } from "./color-scheme-select";

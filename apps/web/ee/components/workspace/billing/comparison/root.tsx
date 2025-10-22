@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
+import type { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
 // plane web imports
-import { PLANE_PLANS, TPlanePlans } from "@/constants/plans";
+import type { TPlanePlans } from "@/constants/plans";
+import { PLANE_PLANS } from "@/constants/plans";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports
 import { PlanDetail } from "./plan-detail";

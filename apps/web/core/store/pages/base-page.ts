@@ -1,15 +1,23 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-import { TChangeHandlerProps } from "@plane/ui";
+import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
+import type { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
-import { ExtendedBasePage, TExtendedPageInstance } from "@/plane-web/store/pages/extended-base-page";
+import type { TExtendedBasePagePermissions, TExtendedPageInstance } from "@/plane-web/store/pages/extended-base-page";
+import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
 import { PageEditorInstance } from "./page-editor-info";
+
+// Types for page config
+type TPageConfig = Record<string, string>;
+type TPageConfigParams = {
+  pageId: string;
+  config: TPageConfig;
+};
 
 export type TVersionToBeRestored = {
   versionId: string | null;
@@ -52,6 +60,7 @@ export type TBasePage = TPage & {
   setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
   setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
+  setConfig: (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => void;
   // sub-store
   editor: PageEditorInstance;
 };
@@ -84,6 +93,7 @@ export type TBasePageServices = {
 
 export type TPageInstance = TBasePage &
   TExtendedPageInstance &
+  TExtendedBasePagePermissions &
   TBasePagePermissions & {
     getRedirectionLink: () => string;
     fetchSubPages: () => Promise<void>;
@@ -126,6 +136,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   moved_to_project: string | null;
   // helpers
   oldName: string = "";
+  // page configuration from outside (workspace/project context)
+  private _config: TPageConfig | null = null;
+  private _getBasePath: ((params: TPageConfigParams) => string) | null = null;
   // services
   services: TBasePageServices;
   // reactions
@@ -150,9 +163,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     this.color = page?.color || undefined;
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
-    this.access = page?.access || EPageAccess.PUBLIC;
-    this.is_favorite = page?.is_favorite || false;
-    this.is_locked = page?.is_locked || false;
+    this.access = page?.access ?? EPageAccess.PUBLIC;
+    this.is_favorite = !!page?.is_favorite;
+    this.is_locked = !!page?.is_locked;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
     this.project_ids = page?.project_ids || undefined;
@@ -218,6 +231,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       setVersionToBeRestored: action,
       setRestorationStatus: action,
       setSyncingStatus: action,
+      setConfig: action,
     });
 
     // init
@@ -247,7 +261,66 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       { delay: 2000 }
     );
     this.disposers.push(titleDisposer);
+
+    // Auto-configure page context based on workspace and project information
+    this.autoConfigurePage();
   }
+
+  /**
+   * @description automatically configure page context based on workspace and project information
+   */
+  private autoConfigurePage = () => {
+    if (!this.workspace) return;
+
+    // Get workspace details from workspace ID
+    const workspaceDetails = this.store.workspaceRoot.getWorkspaceById(this.workspace);
+    if (!workspaceDetails) return;
+
+    const workspaceSlug = workspaceDetails.slug;
+
+    // Check if this is a project page (has project_ids)
+    if (this.project_ids && this.project_ids.length > 0) {
+      const projectId = this.project_ids[0];
+      // Set config for project page
+      this.setConfig(
+        {
+          workspaceSlug,
+          projectId,
+        },
+        // Custom getBasePath function for project pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug, projectId } = config;
+          return `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
+        }
+      );
+    } else if (this.team) {
+      // Set config for team page
+      this.setConfig(
+        {
+          workspaceSlug,
+          teamspaceId: this.team,
+        },
+        // Custom getBasePath function for team pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug, teamspaceId } = config;
+          return `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
+        }
+      );
+    } else {
+      // Set config for workspace page
+      this.setConfig(
+        { workspaceSlug },
+        // Custom getBasePath function for workspace pages
+        (params: TPageConfigParams) => {
+          const { pageId, config } = params;
+          const { workspaceSlug } = config;
+          return `/api/workspaces/${workspaceSlug}/pages/${pageId}`;
+        }
+      );
+    }
+  };
 
   // computed
   get asJSON() {
@@ -313,6 +386,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
    */
   update = async (pageData: Partial<TPage>) => {
     const currentPage = { ...this.asJSON };
+
     try {
       runInAction(() => {
         if (pageData.hasOwnProperty("parent_id") && pageData.parent_id !== this.parent_id) {
@@ -329,7 +403,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
 
         Object.keys(pageData).forEach((key) => {
           const currentPageKey = key as keyof TPage;
-          set(this, key, pageData[currentPageKey] || undefined);
+          set(this, key, pageData[currentPageKey] ?? undefined);
         });
 
         // Update the updated_at field locally to ensure reactions trigger
@@ -632,6 +706,20 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   setSyncingStatus = (status: "syncing" | "synced" | "error") => {
     runInAction(() => {
       this.isSyncingWithServer = status;
+    });
+  };
+
+  /**
+   * @description configure page context (workspace/project info for comment handlers etc.)
+   * @param config - Configuration object (e.g., { workspaceSlug } for workspace pages, { workspaceSlug, projectId } for project pages)
+   * @param getBasePath - Function to generate API base path for comments
+   */
+  setConfig = (config: TPageConfig, getBasePath?: (params: TPageConfigParams) => string) => {
+    runInAction(() => {
+      this._config = config;
+      if (getBasePath) {
+        this._getBasePath = getBasePath;
+      }
     });
   };
 }

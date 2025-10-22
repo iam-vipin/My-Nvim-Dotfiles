@@ -1,11 +1,12 @@
 "use client";
 
-import React, { FC, useCallback, useState } from "react";
+import type { FC } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
-// plane ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";

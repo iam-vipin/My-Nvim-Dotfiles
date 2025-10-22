@@ -1,9 +1,10 @@
-import { Calendar, CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft, LucideIcon, Link2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Calendar, CircleChevronDown, ToggleLeft, UsersRound, Hash, AlignLeft, Link2 } from "lucide-react";
 // plane imports
-import { TIssuePropertyTypeIconKey } from "@plane/types";
+import type { TIssuePropertyTypeIconKey } from "@plane/types";
 import { cn } from "@plane/utils";
 
-const ISSUE_PROPERTY_ICON_MAP: Record<TIssuePropertyTypeIconKey, LucideIcon> = {
+export const CUSTOM_PROPERTY_ICON_MAP: Record<TIssuePropertyTypeIconKey, LucideIcon> = {
   AlignLeft: AlignLeft,
   Hash: Hash,
   CircleChevronDown: CircleChevronDown,
@@ -19,6 +20,6 @@ type TPropertyTypeIconProps = {
 };
 
 export const PropertyTypeIcon = ({ iconKey, className }: TPropertyTypeIconProps) => {
-  const Icon = ISSUE_PROPERTY_ICON_MAP[iconKey];
+  const Icon = CUSTOM_PROPERTY_ICON_MAP[iconKey];
   return <Icon className={cn("size-3 text-custom-text-200", className)} />;
 };

@@ -1,24 +1,25 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { DocumentEditorWithRef, type EditorRefApi, type IDocumentEditorProps, type TFileHandler } from "@plane/editor";
-import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import { DocumentEditorWithRef } from "@plane/editor";
+import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
+import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/user";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // local imports
 import { EditorMentionsRoot } from "../embeds/mentions";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type DocumentEditorWrapperProps = MakeOptional<
-  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
-  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
+  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "user" | "extendedEditorProps">,
+  "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
-  embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
+  extendedEditorProps?: Partial<IEditorPropsExtended>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -37,7 +38,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const {
     containerClassName,
     editable,
-    embedHandler,
+    extendedEditorProps,
     workspaceSlug,
     workspaceId,
     projectId,
@@ -47,7 +48,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -59,10 +62,15 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     projectId,
     workspaceSlug,
   });
-
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
+  const {
+    embedHandler,
+    isSmoothCursorEnabled: _isSmoothCursorEnabled,
+    commentConfig,
+    ...restExtendedEditorProps
+  } = extendedEditorProps ?? {};
 
   return (
     <DocumentEditorWithRef
@@ -85,14 +93,22 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         renderComponent: EditorMentionsRoot,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
-      embedHandler={{
-        issue: issueEmbedProps,
-        externalEmbedComponent: {
-          widgetCallback: EmbedHandler,
+      extendedEditorProps={{
+        isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        embedHandler: {
+          issue: issueEmbedProps,
+          externalEmbedComponent: {
+            widgetCallback: EmbedHandler,
+          },
+          ...embedHandler,
         },
-        ...embedHandler,
+        commentConfig: {
+          canComment: false,
+          shouldHideComment: true,
+          ...commentConfig,
+        },
+        ...restExtendedEditorProps,
       }}
-      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

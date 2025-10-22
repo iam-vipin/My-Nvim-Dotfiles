@@ -1,5 +1,5 @@
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TRenderSettingsLink } from "@/ce/helpers/workspace.helper";
+import type { TRenderSettingsLink } from "@/ce/helpers/workspace.helper";
 import { store } from "@/lib/store-context";
 
 export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, settingKey) => {

@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import type { TDisplayConfig } from "@plane/editor";
-import type { TPage, TPageVersion } from "@plane/types";
+import type { JSONContent, TPage, TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
+import { isJSONContentEmpty } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
@@ -12,7 +13,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
@@ -84,7 +85,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       </div>
     );
 
-  const description = versionDetails?.description_json;
+  const description = isJSONContentEmpty(versionDetails?.description_json as JSONContent)
+    ? versionDetails?.description_html
+    : versionDetails?.description_json;
+
   if (!description) return null;
 
   return (
@@ -99,21 +103,23 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       projectId={projectId?.toString()}
       workspaceId={workspaceDetails?.id ?? ""}
       workspaceSlug={workspaceSlug?.toString() ?? ""}
-      embedHandler={{
-        page: {
-          widgetCallback: ({ pageId: pageIdFromNode }) => {
-            const pageDetails = subPagesDetails.find((page) => page.id === pageIdFromNode);
-            return (
-              <PageEmbedCardRoot
-                embedPageId={pageIdFromNode}
-                previewDisabled
-                storeType={storeType}
-                pageDetails={pageDetails}
-                isDroppable={false}
-              />
-            );
+      extendedEditorProps={{
+        embedHandler: {
+          page: {
+            widgetCallback: ({ pageId: pageIdFromNode }) => {
+              const pageDetails = subPagesDetails.find((page) => page.id === pageIdFromNode);
+              return (
+                <PageEmbedCardRoot
+                  embedPageId={pageIdFromNode}
+                  previewDisabled
+                  storeType={storeType}
+                  pageDetails={pageDetails}
+                  isDroppable={false}
+                />
+              );
+            },
+            workspaceSlug: workspaceSlug.toString(),
           },
-          workspaceSlug: workspaceSlug.toString(),
         },
       }}
     />

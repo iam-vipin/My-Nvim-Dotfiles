@@ -1,32 +1,42 @@
-import { set } from "lodash";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { TExtensions } from "@plane/editor";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 // plane-web
-import { FeatureFlagService, TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
-/// store
+import type { TFeatureFlagsResponse } from "@/plane-web/services/feature-flag.service";
+import { FeatureFlagService } from "@/plane-web/services/feature-flag.service";
+import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+// store
 import type { CoreRootStore } from "@/store/root.store";
 
 const featureFlagService = new FeatureFlagService();
-
+const siloAppService = new SiloAppService();
 type TFeatureFlagsMaps = Record<E_FEATURE_FLAGS, boolean>; // feature flag -> boolean
 
 export interface IFeatureFlagsStore {
   flags: Record<string, TFeatureFlagsMaps>; // workspaceSlug -> feature flag map
+  integrations: Map<string, E_INTEGRATION_KEYS[]>; // workspaceSlug -> enabled integrations array
   fetchFeatureFlags: (workspaceSlug: string) => Promise<TFeatureFlagsResponse>;
+  fetchIntegrations: (workspaceSlug: string) => Promise<E_INTEGRATION_KEYS[]>;
   getFeatureFlag: (workspaceSlug: string, flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
   getFeatureFlagForCurrentWorkspace: (flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
+  getIntegrations: (workspaceSlug: string) => E_INTEGRATION_KEYS[];
 }
 
 export class FeatureFlagsStore implements IFeatureFlagsStore {
   flags: Record<string, TFeatureFlagsMaps> = {};
+  integrations: Map<string, E_INTEGRATION_KEYS[]> = new Map();
 
   rootStore: CoreRootStore;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       flags: observable,
+      integrations: observable,
       fetchFeatureFlags: action,
+      fetchIntegrations: action,
     });
 
     this.rootStore = _rootStore;
@@ -49,6 +59,40 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
     }
   };
 
+  fetchIntegrations = async (workspaceSlug: string) => {
+    try {
+      const currentWorkspace = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug);
+      const workspaceId = currentWorkspace?.id;
+
+      if (!workspaceId) {
+        runInAction(() => {
+          this.integrations.set(workspaceSlug, []);
+        });
+        return [];
+      }
+
+      const apiResponse = await siloAppService.getEnabledIntegrations(workspaceId);
+
+      const integrationKeys: E_INTEGRATION_KEYS[] = apiResponse.map(
+        (integration: { connection_provider: TExtensions }) => {
+          const provider = integration.connection_provider;
+          return provider.toUpperCase() as E_INTEGRATION_KEYS;
+        }
+      );
+
+      runInAction(() => {
+        this.integrations.set(workspaceSlug, integrationKeys);
+      });
+
+      return integrationKeys;
+    } catch {
+      runInAction(() => {
+        this.integrations.set(workspaceSlug, []);
+      });
+      return [];
+    }
+  };
+
   getFeatureFlag = computedFn(
     (workspaceSlug: string, flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) =>
       this.flags[workspaceSlug]?.[E_FEATURE_FLAGS[flag]] ?? defaultValue
@@ -61,4 +105,6 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
 
     return this.flags[workspaceSlug]?.[E_FEATURE_FLAGS[flag]] ?? defaultValue;
   });
+
+  getIntegrations = computedFn((workspaceSlug: string) => this.integrations.get(workspaceSlug) ?? []);
 }

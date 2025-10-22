@@ -13,12 +13,8 @@ from plane.graphql.permissions.project import ProjectBasePermission
 
 @strawberry.type
 class PageFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoritePage(
-        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def favoritePage(self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID) -> bool:
         _ = await sync_to_async(UserFavorite.objects.create)(
             entity_identifier=page,
             entity_type="page",
@@ -27,12 +23,8 @@ class PageFavoriteMutation:
         )
         return True
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoritePage(
-        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
-    ) -> bool:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def unFavoritePage(self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID) -> bool:
         page_favorite = await sync_to_async(UserFavorite.objects.get)(
             entity_identifier=page,
             entity_type="page",

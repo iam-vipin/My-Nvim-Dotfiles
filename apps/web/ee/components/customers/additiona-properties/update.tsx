@@ -3,10 +3,11 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // ui
 import { CustomerPropertyValueService } from "@plane/services";
-import { TIssuePropertyValues } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import type { TIssuePropertyValues } from "@plane/types";
+import { Loader } from "@plane/ui";
 // plane web hooks
 import { useCustomerProperties } from "@/plane-web/hooks/store";
 import { CustomerAdditionalPropertyValues } from "./root";

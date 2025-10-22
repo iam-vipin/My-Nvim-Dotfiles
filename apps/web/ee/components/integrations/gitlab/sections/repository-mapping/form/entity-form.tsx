@@ -1,35 +1,36 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { Briefcase } from "lucide-react";
 // components
+import { EConnectionType } from "@plane/etl/gitlab";
+import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TProjectMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations";
 // public images
 import GitlabLogo from "@/public/services/gitlab.svg";
-import { useTranslation } from "@plane/i18n";
-import { EConnectionType } from "@plane/etl/gitlab";
 
 type TEntityForm = {
   value: TProjectMap;
   handleChange: <T extends keyof TProjectMap>(key: T, value: TProjectMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 export const EntityForm: FC<TEntityForm> = observer((props) => {
   // props
-  const { value, handleChange } = props;
+  const { value, handleChange, isEnterprise } = props;
   // hooks
   const {
     data: { gitlabEntityIds, gitlabEntityById },
     entityConnection: { entityConnectionIds, entityConnectionById },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // existing connections

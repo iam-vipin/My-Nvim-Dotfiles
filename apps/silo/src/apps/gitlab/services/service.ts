@@ -1,16 +1,22 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createGitLabService } from "@plane/etl/gitlab";
+import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getAPIClient } from "@/services/client";
-import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
-export const getGitlabClientService = async (workspaceId: string) => {
+export const getGitlabClientService = async (
+  workspaceId: string,
+  glIntegrationKey: E_INTEGRATION_KEYS,
+  baseUrl: string | undefined,
+  clientId?: string,
+  clientSecret?: string
+) => {
   try {
     // Create or update credentials
     const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
       workspace_id: workspaceId,
-      source: E_INTEGRATION_KEYS.GITLAB,
+      source: glIntegrationKey,
     });
 
     if (credentials.length === 0) {
@@ -28,14 +34,17 @@ export const getGitlabClientService = async (workspaceId: string) => {
       source_refresh_token,
       async (access_token, refresh_token) => {
         await apiClient.workspaceCredential.createWorkspaceCredential({
-          source: E_INTEGRATION_KEYS.GITLAB,
+          source: glIntegrationKey,
           target_access_token: target_access_token,
           source_access_token: access_token,
           source_refresh_token: refresh_token,
           workspace_id: workspaceId,
           user_id: userId,
         });
-      }
+      },
+      baseUrl,
+      clientId,
+      clientSecret
     );
     return gitlabService;
   } catch (error) {

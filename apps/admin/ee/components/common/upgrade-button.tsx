@@ -3,7 +3,8 @@
 import React from "react";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
-import { AlertModalCore, Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { AlertModalCore } from "@plane/ui";
 
 export const UpgradeButton: React.FC = () => {
   // states

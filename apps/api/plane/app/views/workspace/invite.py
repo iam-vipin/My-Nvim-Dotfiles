@@ -52,23 +52,13 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         emails = request.data.get("emails", [])
         # Check if email is provided
         if not emails:
-            return Response(
-                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # check for role level of the requesting user
-        requesting_user = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
+        requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
         # Check if any invited user has an higher role
-        if len(
-            [
-                email
-                for email in emails
-                if int(email.get("role", 5)) > requesting_user.role
-            ]
-        ):
+        if len([email for email in emails if int(email.get("role", 5)) > requesting_user.role]):
             return Response(
                 {"error": "You cannot invite a user with higher role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -88,9 +78,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             return Response(
                 {
                     "error": "Some users are already member of workspace",
-                    "workspace_users": WorkSpaceMemberSerializer(
-                        workspace_members, many=True
-                    ).data,
+                    "workspace_users": WorkSpaceMemberSerializer(workspace_members, many=True).data,
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -129,7 +117,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             except ValidationError:
                 return Response(
                     {
-                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"  # noqa: E501
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -150,14 +138,10 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 request.user.email,
             )
 
-        return Response(
-            {"message": "Emails sent successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Emails sent successfully"}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         # Check if the role is being updated
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
@@ -168,18 +152,14 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             )
             if not allowed:
                 return Response(
-                    {
-                        "error": "You cannot change the role the user as it will exceed the purchased limit"
-                    },
+                    {"error": "You cannot change the role the user as it will exceed the purchased limit"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
         return super().partial_update(request, slug, pk)
 
     def destroy(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -198,9 +178,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
     )
     @invalidate_cache(path="/api/users/me/settings/", multiple=True)
     def post(self, request, slug, pk):
-        workspace_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
+        workspace_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
 
         email = request.data.get("email", "")
 
@@ -250,8 +228,6 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 track_event.delay(
                     email=email,
                     user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=get_client_ip(request=request),
-                    event_name="MEMBER_ACCEPTED",
                     properties={
                         "event_id": uuid.uuid4().hex,
                         "user": {"email": email, "id": str(user)},
@@ -283,9 +259,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk):
-        workspace_invitation = WorkspaceMemberInvite.objects.get(
-            workspace__slug=slug, pk=pk
-        )
+        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
         serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -296,10 +270,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
 
     def get_queryset(self):
         return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(email=self.request.user.email)
-            .select_related("workspace")
+            super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
         )
 
     @invalidate_cache(path="/api/workspaces/", user=False)
@@ -319,9 +290,9 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
                 multiple=True,
             )
             # Update the WorkspaceMember for this specific invitation
-            WorkspaceMember.objects.filter(
-                workspace_id=invitation.workspace_id, member=request.user
-            ).update(is_active=True, role=invitation.role)
+            WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
+                is_active=True, role=invitation.role
+            )
 
         # Bulk create the user for all the workspaces
         WorkspaceMember.objects.bulk_create(
@@ -338,10 +309,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
         )
 
         # Sync workspace members
-        [
-            member_sync_task.delay(invitation.workspace.slug)
-            for invitation in workspace_invitations
-        ]
+        [member_sync_task.delay(invitation.workspace.slug) for invitation in workspace_invitations]
 
         # Delete joined workspace invites
         workspace_invitations.delete()

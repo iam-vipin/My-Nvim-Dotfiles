@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
 import { getProgress } from "@plane/utils";
 // hooks
@@ -37,7 +37,10 @@ export const ProjectItem = observer((props: Props) => {
   const projectDetails = getProjectById(projectId);
   const projectAnalyticsCount = getProjectAnalyticsCountById(projectId);
 
-  const progress = getProgress(projectAnalyticsCount?.completed_issues, projectAnalyticsCount?.total_issues);
+  const completedIssuesCount = projectAnalyticsCount?.completed_issues ?? 0;
+  const totalIssuesCount = projectAnalyticsCount?.total_issues ?? 0;
+  const showProgress = totalIssuesCount > 0;
+  const progress = showProgress ? getProgress(completedIssuesCount, totalIssuesCount) : 0;
 
   if (!projectDetails || !currentWorkspace) return;
 
@@ -52,18 +55,18 @@ export const ProjectItem = observer((props: Props) => {
             {projectDetails.logo_props ? (
               <Logo logo={projectDetails.logo_props} size={14} />
             ) : (
-              <Briefcase className="size-[14px] text-custom-text-300" />
+              <ProjectIcon className="size-[14px] text-custom-text-300" />
             )}
           </div>
         </div>
       }
       appendTitleElement={
-        <>
+        showProgress ? (
           <div className="flex items-center gap-1">
             <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
             <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
           </div>
-        </>
+        ) : undefined
       }
       quickActionElement={
         <div className="block md:hidden">

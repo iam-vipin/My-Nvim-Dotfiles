@@ -1,13 +1,15 @@
-import { FC, useMemo, useCallback } from "react";
+import type { FC } from "react";
+import { useMemo, useCallback } from "react";
 import useSWR from "swr";
-import { ExState } from "@plane/sdk";
-import { IState } from "@plane/types";
-import { CustomSearchSelect, Logo, Loader, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import type { ExState } from "@plane/sdk";
+import type { IState } from "@plane/types";
+import { CustomSearchSelect, Logo, Loader } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";
 // types
-import { StateMappingFormContentProps } from "./types";
+import type { StateMappingFormContentProps } from "./types";
 
 // Helper function to convert IState to ExState
 const convertToExState = (state: IState): ExState => ({

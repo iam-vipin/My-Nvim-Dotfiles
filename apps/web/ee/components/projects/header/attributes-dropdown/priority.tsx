@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters/header";
 // plane web constants
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
 // plane web types
-import { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
 
 type TFilterPriority = {
   searchQuery: string;

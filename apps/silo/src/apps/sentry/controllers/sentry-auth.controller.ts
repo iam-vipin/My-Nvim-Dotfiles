@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Post } from "@plane/decorators";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Post, useValidateUserAuthentication } from "@/lib";
+import { EnsureEnabled, useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
@@ -27,19 +28,19 @@ export class SentryAuthController {
       });
 
       if (connections.length === 0) {
-        return res.sendStatus(200)
+        return res.sendStatus(200);
       }
 
       const connection = connections[0];
-      const integrationUrl = `https://${connection.connection_slug}.sentry.io/settings/sentry-apps/${env.SENTRY_INTEGRATION_SLUG}/`
+      const integrationUrl = `https://${connection.connection_slug}.sentry.io/settings/sentry-apps/${env.SENTRY_INTEGRATION_SLUG}/`;
       /*
        * There is no way we can delete a sentry integration from the Sentry API.
        * The sentry documentation mentions about the installation delete event
        * but we don't have a way to delete when the app is disconnected from plane
        * end.
        * https://docs.sentry.io/organization/integrations/integration-platform/public-integration/#uninstallation
-      */
-      return res.send(integrationUrl)
+       */
+      return res.send(integrationUrl);
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -75,7 +76,10 @@ export class SentryAuthController {
         });
       }
 
-      const updatedConnection = await apiClient.workspaceConnection.updateWorkspaceConnection(existingConnection.id, connection);
+      const updatedConnection = await apiClient.workspaceConnection.updateWorkspaceConnection(
+        existingConnection.id,
+        connection
+      );
       return res.json(updatedConnection);
     } catch (error) {
       return responseHandler(res, 500, error);

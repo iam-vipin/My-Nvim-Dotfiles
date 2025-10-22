@@ -1,10 +1,20 @@
 import { format, startOfToday } from "date-fns";
-import { isEmpty, orderBy, uniqBy } from "lodash";
-import { EEstimateSystem, ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
+import { isEmpty, orderBy, uniqBy } from "lodash-es";
+import type { ICycle, TCycleEstimateSystemAdvanced } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { findTotalDaysInRange, generateDateArray } from "@plane/utils";
 
-const scope = (p: any, isTypeIssue: boolean, toHoursHandler: (value: number) => number) =>
-  isTypeIssue ? p.total_issues : toHoursHandler(p.total_estimate_points);
+const scope = (p: Record<string, number>, isTypeIssue: boolean, toHoursHandler: (value: number) => number) => {
+  if (isTypeIssue) {
+    // Exclude cancelled issues from total for consistent progress calculation
+    const total = (p.total_issues || 0) - (p.cancelled_issues || 0);
+    return Math.max(0, total);
+  } else {
+    // Exclude cancelled estimate points from total for consistent progress calculation
+    const total = toHoursHandler(p.total_estimate_points || 0) - toHoursHandler(p.cancelled_estimate_points || 0);
+    return Math.max(0, total);
+  }
+};
 const ideal = (date: string, scope: number, cycle: ICycle) => {
   const totalDays = findTotalDaysInRange(cycle.start_date, cycle.end_date) || 0;
   const currentDayIndex = totalDays - (findTotalDaysInRange(date, cycle.end_date) || 0);
@@ -18,14 +28,22 @@ const toHours = (estimateType: TCycleEstimateSystemAdvanced) => (value: number) 
 const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   const today = format(startOfToday(), "yyyy-MM-dd");
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
+  const startMinusOneDate = new Date(cycle.start_date!);
+  startMinusOneDate.setDate(startMinusOneDate.getDate() - 1);
+  const startMinusOne = format(startMinusOneDate, "yyyy-MM-dd");
   const extendedArray = generateDateArray(endDate, endDate)
-    .filter((d) => d.date >= cycle.start_date! && d.date <= cycle.end_date!)
+    .filter((d) => d.date >= startMinusOne && d.date <= cycle.end_date!)
     .map((d) => d.date);
   if (!data?.completion_chart) return null;
   if (isEmpty(data?.completion_chart)) return generateDateArray(new Date(cycle.start_date!), endDate);
   let progress = [...Object.keys(data.completion_chart), ...extendedArray].map((p) => {
     const pending = data.completion_chart[p] || 0;
-    const total = (isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0;
+    // Use adjusted total that excludes cancelled issues for consistent progress
+    const total = Math.max(
+      0,
+      ((isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0) -
+        ((isTypeIssue ? cycle.cancelled_issues : cycle.cancelled_estimate_points) || 0)
+    );
     const completed = total - pending;
     const idealDone = ideal(p, total, cycle) || 0;
 
@@ -43,7 +61,10 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     };
   });
 
-  progress = uniqBy(orderBy(progress, "date"), "date");
+  // Ensure chart data is clamped to the current cycle window
+  progress = uniqBy(orderBy(progress, "date"), "date").filter(
+    (d) => d.date >= startMinusOne && d.date <= (cycle.end_date as string)
+  );
   return progress;
 };
 
@@ -64,6 +85,9 @@ const formatV2Data = (
   if (!cycle?.progress) return null;
   if (isEmpty(cycle.progress)) return generateDateArray(new Date(cycle.start_date!), endDate);
   const startDate = cycle.start_date && format(new Date(cycle.start_date), "yyyy-MM-dd");
+  const startMinusOneDate = new Date(cycle.start_date!);
+  startMinusOneDate.setDate(startMinusOneDate.getDate() - 1);
+  const startMinusOne = format(startMinusOneDate, "yyyy-MM-dd");
   const todaysData = cycle?.progress[cycle?.progress.length - 1];
   const toHoursHandler = toHours(estimateType);
   const scopeToday = scope(todaysData, isTypeIssue, toHoursHandler);
@@ -111,12 +135,13 @@ const formatV2Data = (
       unstarted: isTypeIssue ? p.unstarted_issues : toHoursHandler(p.unstarted_estimate_points),
       cancelled: isTypeIssue ? p.cancelled_issues : toHoursHandler(p.cancelled_estimate_points),
       pending: Math.abs(pending),
-      ideal: dataDate! <= cycle.end_date! ? (isBurnDown ? computedScope - idealDone : idealDone) : null,
+      ideal: dataDate! <= cycle.end_date! ? (isBurnDown ? (computedScope || 0) - idealDone : idealDone) : null,
       actual: dataDate! <= today ? (isBurnDown ? Math.abs(pending) : completed) : undefined,
     };
   });
   progress = uniqBy(orderBy(progress, "date"), "date");
-
+  // Ensure chart data is strictly within the cycle start and end dates
+  progress = progress.filter((d) => d.date && d.date >= startMinusOne && d.date <= (cycle.end_date as string));
   return progress;
 };
 

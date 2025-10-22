@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
-import { Controller, FieldPath, FieldValues, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { ChevronRight } from "lucide-react";
-import { IIssueType } from "@plane/types";
-import { cn, TProjectBlueprintDetails } from "@plane/utils";
+import type { IIssueType } from "@plane/types";
+import type { TProjectBlueprintDetails } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { ProjectDropdownBase } from "@/components/dropdowns/project/base";
 import { getNestedError } from "@/helpers/react-hook-form.helper";

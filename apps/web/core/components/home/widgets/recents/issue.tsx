@@ -1,8 +1,10 @@
 import { observer } from "mobx-react";
 // plane types
-import { EIssueServiceType, TActivityEntityData, TIssueEntityData } from "@plane/types";
+import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // plane ui
-import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
@@ -76,7 +78,7 @@ export const RecentIssue = observer((props: BlockProps) => {
           ) : (
             <div className="flex gap-2 items-center justify-center">
               <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
-                <LayersIcon className="size-4 text-custom-text-350" />
+                <WorkItemsIcon className="size-4 text-custom-text-350" />
               </div>
               <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}

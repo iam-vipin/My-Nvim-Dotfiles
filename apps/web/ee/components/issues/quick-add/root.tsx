@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+import type { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane types
-import { TIssue, EIssueLayoutTypes } from "@plane/types";
+import type { TIssue, EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { QuickAddIssueFormRoot as BaseQuickAddIssueFormRoot } from "@/ce/components/issues/quick-add";
 // components

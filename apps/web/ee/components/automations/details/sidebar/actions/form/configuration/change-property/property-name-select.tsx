@@ -9,7 +9,7 @@ import { cn, getAutomationChangePropertyTypeLabel } from "@plane/utils";
 // helpers
 import { getNestedError } from "@/helpers/react-hook-form.helper";
 // local imports
-import { TAutomationActionFormData } from "../../root";
+import type { TAutomationActionFormData } from "../../root";
 import { getPropertyChangeDropdownClassNames } from "./common";
 
 type TProps = {

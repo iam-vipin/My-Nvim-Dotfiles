@@ -1,13 +1,15 @@
 "use client";
 
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TDeDupeIssue } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TDeDupeIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";

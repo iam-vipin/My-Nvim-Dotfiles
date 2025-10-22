@@ -10,15 +10,16 @@ import {
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EProductSubscriptionEnum,
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type {
   IPaymentProduct,
   IPaymentProductPrice,
   TBillingFrequency,
   TProductBillingFrequency,
   TUpgradeParams,
 } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE, getBillingAndPlansCardVariantStyle } from "@plane/ui";
+import { EProductSubscriptionEnum } from "@plane/types";
+import { Loader, getBillingAndPlansCardVariantStyle } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
 import { SettingsHeading } from "@/components/settings/heading";

@@ -1,14 +1,16 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { Info, Minus } from "lucide-react";
-// plane ui
-import { Avatar, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import { Avatar, FavoriteStar } from "@plane/ui";
 // plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web store
-import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
+import type { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
 import { DashboardQuickActions } from "../quick-actions";
 
 type Props = {

@@ -20,6 +20,7 @@ from plane.db.models import (
     APIToken,
     FileAsset,
     Workspace,
+    BotTypeEnum,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -44,13 +45,9 @@ class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
         try:
             deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="intake")
         except DeployBoard.DoesNotExist:
-            return Response(
-                {"error": "Intake is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Intake is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug):
             try:
                 project_id = deploy_board.project_id
                 project = Project.objects.get(id=project_id)
@@ -79,9 +76,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
     def post(self, request, anchor):
         # Get the deploy board object
         deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="intake")
-        project = Project.objects.get(
-            workspace_id=deploy_board.workspace_id, pk=deploy_board.project_id
-        )
+        project = Project.objects.get(workspace_id=deploy_board.workspace_id, pk=deploy_board.project_id)
         intake_settings = IntakeSetting.objects.filter(
             workspace_id=deploy_board.workspace_id, project_id=deploy_board.project_id
         ).first()
@@ -92,24 +87,27 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
             )
 
         # Check if the workspace has access to feature
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug):
             intake = Intake.objects.filter(
                 workspace_id=deploy_board.workspace_id,
                 project_id=deploy_board.project_id,
             ).first()
 
             if request.data.get("name") is None:
-                return Response(
-                    {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             api_token = APIToken.objects.filter(
                 workspace_id=deploy_board.workspace_id,
                 user__is_bot=True,
-                user__bot_type="INTAKE_BOT",
+                user__bot_type=BotTypeEnum.INTAKE_BOT,
             ).first()
+
+            if not api_token:
+                return Response(
+                    {"message": "Intake bot not found", "code": "INTAKE_BOT_NOT_FOUND"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
             issue_data = {
                 "name": request.data.get("name"),
                 "description_html": request.data.get("description_html", "<p></p>"),
@@ -181,17 +179,11 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
 
         # Check if publish anchor or workspace slug is empty
         if not publish_anchor or not workspace_slug:
-            return Response(
-                {"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if workspace has feature flag enabled
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug
-        ):
-            return Response(
-                {"error": "Payment required"}, status=status.HTTP_402_PAYMENT_REQUIRED
-            )
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug):
+            return Response({"error": "Payment required"}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
         # Get the deploy boards
         deploy_board = DeployBoard.objects.get(
@@ -202,12 +194,13 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
         api_token = APIToken.objects.filter(
             workspace_id=deploy_board.workspace_id,
             user__is_bot=True,
-            user__bot_type="INTAKE_BOT",
+            user__bot_type=BotTypeEnum.INTAKE_BOT,
         ).first()
 
         if not api_token:
             return Response(
-                {"error": "Intake bot not found"}, status=status.HTTP_404_NOT_FOUND
+                {"message": "Intake bot not found", "code": "INTAKE_BOT_NOT_FOUND"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         # Get the workspace
@@ -239,9 +232,7 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size)
         # Return the presigned URL
         return Response(
             {"asset_id": str(asset.id), "presigned_url": presigned_url},

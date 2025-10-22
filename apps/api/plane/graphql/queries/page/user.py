@@ -17,16 +17,14 @@ from plane.db.models import Page, UserFavorite
 from plane.ee.models import PageUser
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.types.page import PageType
+from plane.graphql.types.pages import PageType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 
 
 @strawberry.type
 class UserPageQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def userPages(
         self,
         info: Info,
@@ -65,11 +63,7 @@ class UserPageQuery:
             ).values("page_id", "user_id")
         )
         shared_page_ids = list(set(str(item["page_id"]) for item in shared_pages_data))
-        pages_shared_with_user = [
-            str(item["page_id"])
-            for item in shared_pages_data
-            if str(item["user_id"]) == user_id
-        ]
+        pages_shared_with_user = [str(item["page_id"]) for item in shared_pages_data if str(item["user_id"]) == user_id]
 
         # Filter archived pages
         if type != "archived":
@@ -79,22 +73,14 @@ class UserPageQuery:
 
         # Filter pages by access level
         if type == "all":
-            page_base_query = page_base_query.filter(
-                Q(access=0) | (Q(access=1) & Q(owned_by_id=user_id))
-            )
+            page_base_query = page_base_query.filter(Q(access=0) | (Q(access=1) & Q(owned_by_id=user_id)))
         elif type == "public":
             page_base_query = page_base_query.filter(access=0)
         elif type == "private":
-            page_base_query = page_base_query.filter(
-                access=1, owned_by_id=user_id
-            ).exclude(id__in=shared_page_ids)
+            page_base_query = page_base_query.filter(access=1, owned_by_id=user_id).exclude(id__in=shared_page_ids)
         elif type == "shared":
             page_base_query = page_base_query.filter(
-                Q(access=1)
-                & (
-                    Q(id__in=pages_shared_with_user)
-                    | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids))
-                )
+                Q(access=1) & (Q(id__in=pages_shared_with_user) | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids)))
             )
 
         subquery = UserFavorite.objects.filter(

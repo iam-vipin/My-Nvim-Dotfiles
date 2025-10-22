@@ -72,9 +72,7 @@ def get_default_display_properties():
 class IssueWorkLog(ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="worklogs")
     description = models.TextField(blank=True)
-    logged_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="worklogs"
-    )
+    logged_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="worklogs")
     duration = models.IntegerField(default=0)
 
     class Meta:
@@ -134,9 +132,7 @@ class EntityIssueStateActivity(BaseModel):
         on_delete=models.DO_NOTHING,
         related_name="entity_issue_state_progress",
     )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.DO_NOTHING, related_name="issue_state_progress"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.DO_NOTHING, related_name="issue_state_progress")
     state_group = models.CharField(max_length=255)
     action = models.CharField(max_length=30, choices=ActionTypeEnum.choices)
     estimate_point = models.ForeignKey(
@@ -159,9 +155,7 @@ class EntityIssueStateActivity(BaseModel):
 
 
 class EntityProgress(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_progress"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_progress")
     cycle = models.ForeignKey(
         "db.Cycle",
         on_delete=models.DO_NOTHING,
@@ -225,9 +219,7 @@ class EntityUpdates(BaseModel):
         SCOPE_INCREASED = "SCOPE_INCREASED", "Scope Increased"
         SCOPE_DECREASED = "SCOPE_DECREASED", "Scope Decreased"
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_updates"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_updates")
     cycle = models.ForeignKey(
         "db.Cycle",
         on_delete=models.DO_NOTHING,
@@ -285,9 +277,7 @@ class EntityUpdates(BaseModel):
 
 
 class UpdateReaction(ProjectBaseModel):
-    update = models.ForeignKey(
-        "ee.EntityUpdates", on_delete=models.CASCADE, related_name="update_reactions"
-    )
+    update = models.ForeignKey("ee.EntityUpdates", on_delete=models.CASCADE, related_name="update_reactions")
     reaction = models.CharField(max_length=20)
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -322,6 +312,7 @@ class EpicUserProperties(ProjectBaseModel):
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Epic User Property"
@@ -343,12 +334,8 @@ class EpicUserProperties(ProjectBaseModel):
 
 
 class WorkItemPage(ProjectBaseModel):
-    issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="workitem_pages"
-    )
-    page = models.ForeignKey(
-        Page, on_delete=models.CASCADE, related_name="workitem_pages"
-    )
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="workitem_pages")
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="workitem_pages")
 
     class Meta:
         verbose_name = "Work Item Page"

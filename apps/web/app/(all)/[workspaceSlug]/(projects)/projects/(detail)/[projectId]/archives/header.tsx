@@ -1,11 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
-import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -30,17 +32,17 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   issues: {
     label: "Work items",
     href: "/issues",
-    icon: LayersIcon,
+    icon: WorkItemsIcon,
   },
   cycles: {
     label: "Cycles",
     href: "/cycles",
-    icon: ContrastIcon,
+    icon: CycleIcon,
   },
   modules: {
     label: "Modules",
     href: "/modules",
-    icon: DiceIcon,
+    icon: ModuleIcon,
   },
 };
 

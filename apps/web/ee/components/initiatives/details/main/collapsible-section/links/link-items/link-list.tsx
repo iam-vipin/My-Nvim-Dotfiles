@@ -1,10 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 //
 import { IssueLinkItem } from "./link-item";
-import { TLinkOperations } from "./root";
+import type { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 

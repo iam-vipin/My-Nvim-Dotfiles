@@ -3,9 +3,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EAutomationScope, TAutomation } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TAutomation } from "@plane/types";
+import { EAutomationScope } from "@plane/types";
+import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
+// helpers
+import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -50,38 +56,65 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
   const { t } = useTranslation();
 
   const handleClose = () => {
+    captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_CANCEL_BUTTON });
     onClose();
   };
 
   const handleCreate = async (payload: Partial<TAutomation>) => {
     if (!canCurrentUserCreateAutomation) return;
-    const res = await createAutomation(workspaceSlug, projectId, payload);
-    if (res?.redirectionLink) {
-      router.push(res?.redirectionLink);
+    try {
+      const res = await createAutomation(workspaceSlug, projectId, payload);
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
+        payload: { id: res?.id },
+      });
+      if (res?.redirectionLink) {
+        router.push(res?.redirectionLink);
+      }
+    } catch (error: any) {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.CREATE,
+        error: error?.error || error?.message,
+        payload: { workspace_slug: workspaceSlug, project_id: projectId },
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.create.error.title"),
+        message: error?.error || t("automations.toasts.create.error.message"),
+      });
     }
   };
 
   const handleUpdate = async (payload: Partial<TAutomation>) => {
     if (!isEditing || !data?.id) return;
-    const automation = getAutomationById(data.id);
-    await automation?.update(payload);
+    try {
+      const automation = getAutomationById(data.id);
+      await automation?.update(payload);
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
+        payload: { id: data.id },
+      });
+    } catch (error: any) {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.UPDATE,
+        error: error?.error || error?.message,
+        payload: { id: data.id },
+      });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.update.error.title"),
+        message: error?.error || t("automations.toasts.update.error.message"),
+      });
+    }
   };
 
   const handleFormSubmit = async (payload: Partial<TAutomation>) => {
-    try {
-      if (isEditing) {
-        await handleUpdate(payload);
-      } else {
-        await handleCreate(payload);
-      }
-      handleClose();
-    } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: isEditing ? "Failed to update automation" : "Failed to create automation",
-        message: error?.error || "Something went wrong. Please try again.",
-      });
+    if (isEditing) {
+      await handleUpdate(payload);
+    } else {
+      await handleCreate(payload);
     }
+    handleClose();
   };
 
   // update form values from pre-defined data
@@ -147,7 +180,13 @@ export const CreateUpdateAutomationModal: React.FC<Props> = observer((props) => 
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            loading={isSubmitting}
+            onClick={() => captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.CREATE_UPDATE_MODAL_SUBMIT_BUTTON })}
+          >
             {isEditing
               ? isSubmitting
                 ? t("common.updating")

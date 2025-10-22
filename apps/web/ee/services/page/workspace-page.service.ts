@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // types
-import { TDocumentPayload, TIssuePage, TPage } from "@plane/types";
+import type { TDocumentPayload, TIssuePage, TPage, TPagesSummary } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -18,8 +18,16 @@ export class WorkspacePageService extends APIService {
       });
   }
 
+  async fetchPagesSummary(workspaceSlug: string): Promise<TPagesSummary> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages-summary/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/pages`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/`, {
       params: { search: searchQuery, type },
     })
       .then((response) => response?.data)
@@ -159,7 +167,7 @@ export class WorkspacePageService extends APIService {
   }
 
   async fetchSubPages(workspaceSlug: string, pageId: string): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/sub-pages`)
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/sub-pages/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

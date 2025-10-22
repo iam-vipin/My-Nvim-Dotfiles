@@ -1,12 +1,11 @@
 import { useMemo } from "react";
-import groupBy from "lodash/groupBy";
-import orderBy from "lodash/orderBy";
+import { groupBy, orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IState, TProjectTemplateForm, TStateOperationsCallbacks } from "@plane/types";
+import type { IState, TProjectTemplateForm, TStateOperationsCallbacks } from "@plane/types";
 import { mockCreateOrUpdateState } from "@plane/utils";
 // components
 import { GroupList } from "@/components/project-states";

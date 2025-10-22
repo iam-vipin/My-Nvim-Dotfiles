@@ -15,7 +15,7 @@ import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useStates } from "@/hooks/store/use-state";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 type Props = {
   issue: IIssue;

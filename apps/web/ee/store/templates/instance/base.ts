@@ -1,8 +1,8 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EUserPermissions, TUserPermissions } from "@plane/constants";
-import {
+import type { EUserPermissions, TUserPermissions } from "@plane/constants";
+import type {
   EUserProjectRoles,
   EUserWorkspaceRoles,
   IBaseTemplateActionCallbacks,
@@ -11,7 +11,7 @@ import {
   TPublishTemplateForm,
 } from "@plane/types";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export type TBaseTemplateInstanceProps<T extends TBaseTemplateWithData> = {
   root: RootStore;

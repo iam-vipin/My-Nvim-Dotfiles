@@ -1,11 +1,10 @@
 import { createContext } from "react";
 // ce imports
-import { UseFormReset, UseFormWatch } from "react-hook-form";
+import type { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
-// plane web imports
-import { TIssueFields } from "ce/components/issues/issue-modal";
+import type { TIssueFields } from "ce/components/issues/issue-modal";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;

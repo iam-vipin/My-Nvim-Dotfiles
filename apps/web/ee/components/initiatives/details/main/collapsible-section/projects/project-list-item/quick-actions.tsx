@@ -2,11 +2,13 @@ import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   workspaceSlug: string;
@@ -75,9 +77,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
           >

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import merge from "lodash/merge";
+import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -9,16 +9,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import {
-  PartialDeep,
-  TWorkItemTemplateForm,
-  TWorkItemTemplateFormData,
-  TIssuePropertyValues,
-  EUserWorkspaceRoles,
-  EUserProjectRoles,
-} from "@plane/types";
-import { Button } from "@plane/ui";
-import { cn, TWorkItemSanitizationResult } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
+import { EUserWorkspaceRoles, EUserProjectRoles } from "@plane/types";
+import type { TWorkItemSanitizationResult } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web imports
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";

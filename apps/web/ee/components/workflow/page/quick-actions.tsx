@@ -5,14 +5,16 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 // ui
-import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { AlertModalCore, CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState } from "@/hooks/store/use-project-state"
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 import { WorkflowChangeHistory } from "./change-history";
 

@@ -1,9 +1,4 @@
-/* eslint-disable no-useless-catch */
-
-import cloneDeep from "lodash/cloneDeep";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { cloneDeep, orderBy, set, unset } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web constants
@@ -11,18 +6,18 @@ import { WORKSPACE_PROJECT_STATE_GROUPS } from "@/plane-web/constants/workspace-
 // plane web services
 import projectStateService from "@/plane-web/services/workspace-project-states.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { IProjectState, ProjectState } from "@/plane-web/store/workspace-project-states";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IProjectState } from "@/plane-web/store/workspace-project-states";
+import { ProjectState } from "@/plane-web/store/workspace-project-states";
 // plane web types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import {
-  EProjectStateGroup,
-  EProjectStateLoader,
+import type {
   TProjectState,
   TProjectStateGroupKey,
   TProjectStateLoader,
   TProjectStateIdsByGroup,
 } from "@/plane-web/types/workspace-project-states";
+import { EProjectStateGroup, EProjectStateLoader } from "@/plane-web/types/workspace-project-states";
 
 export interface IWorkspaceProjectStatesStore {
   // constants

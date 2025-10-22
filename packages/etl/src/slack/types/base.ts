@@ -62,6 +62,7 @@ export type TBlockActionPayload = {
   message?: {
     thread_ts: string;
     text?: string;
+    blocks?: any[];
   };
   response_url?: string;
   actions: ISlackAction[];
@@ -550,7 +551,6 @@ export interface PageResource {
   subType: PageSubType;
   pageId: string;
 }
-
 
 export interface UnfurlBlock {
   blocks: any[];

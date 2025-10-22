@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
+import type { TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // plane web imports
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -11,11 +11,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
-import {
-  CreateUpdateWorkItemBlueprintForm,
-  DEFAULT_WORK_ITEM_BLUEPRINT_FORM_VALUES,
-  TCreateUpdateWorkItemBlueprintFormProps,
-} from "./form";
+import type { TCreateUpdateWorkItemBlueprintFormProps } from "./form";
+import { CreateUpdateWorkItemBlueprintForm, DEFAULT_WORK_ITEM_BLUEPRINT_FORM_VALUES } from "./form";
 
 type TCreateUpdateWorkItemBlueprintWithMobxData = {
   usePropsForAdditionalData: false;
@@ -50,7 +47,9 @@ const CreateUpdateWorkItemBlueprintModalBase: React.FC<TCreateUpdateWorkItemBlue
   // context hooks
   const { setIssuePropertyValues } = useIssueModal();
   // derived values
-  const getProjectDefaultStateId = usePropsForAdditionalData ? props.getProjectDefaultStateId : getProjectDefaultStateIdFromStore;
+  const getProjectDefaultStateId = usePropsForAdditionalData
+    ? props.getProjectDefaultStateId
+    : getProjectDefaultStateIdFromStore;
   const getProjectDefaultWorkItemTypeId = usePropsForAdditionalData
     ? props.getProjectDefaultWorkItemTypeId
     : getProjectDefaultWorkItemTypeIdFromStore;

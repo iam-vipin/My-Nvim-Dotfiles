@@ -1,11 +1,12 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesPagePublishService } from "@plane/services";
-import { TPublicPageResponse } from "@plane/types";
+import type { TPublicPageResponse } from "@plane/types";
 // plane web store
-import { IPage, Page } from "@/plane-web/store/pages";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { IPage } from "@/plane-web/store/pages";
+import { Page } from "@/plane-web/store/pages";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IPagesListStore {
   // observables

@@ -15,22 +15,16 @@ from plane.graphql.permissions.workspace import IsAuthenticated
 
 
 @sync_to_async
-def all_active_devices_by_device_id(
-    user_id, device_id, device_type: DeviceInformationEnumType
-):
+def all_active_devices_by_device_id(user_id, device_id, device_type: DeviceInformationEnumType):
     return list(
-        Device.objects.filter(
-            device_id=device_id, device_type=device_type, is_active=True
-        ).exclude(user_id=user_id)
+        Device.objects.filter(device_id=device_id, device_type=device_type, is_active=True).exclude(user_id=user_id)
     )
 
 
 @sync_to_async
 def get_user_device_information(user, device_id, device_type=DeviceInformationEnumType):
     try:
-        return Device.objects.filter(
-            user=user, device_id=device_id, device_type=device_type
-        ).first()
+        return Device.objects.filter(user=user, device_id=device_id, device_type=device_type).first()
     except Device.DoesNotExist:
         return None
 
@@ -43,9 +37,7 @@ def bulk_update_device_info(devices, fields):
 # updating notification token in user account
 @strawberry.type
 class DeviceInformationMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[IsAuthenticated()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def device_information(
         self,
         info: Info,
@@ -58,9 +50,7 @@ class DeviceInformationMutation:
         user_id = user.id
 
         # get all device information by device id and update is_active to False
-        active_devices = await all_active_devices_by_device_id(
-            user_id, device_id, device_type
-        )
+        active_devices = await all_active_devices_by_device_id(user_id, device_id, device_type)
 
         if len(active_devices) > 0:
             for device in active_devices:
@@ -69,9 +59,7 @@ class DeviceInformationMutation:
             await bulk_update_device_info(active_devices, ["is_active"])
 
         # if device information is not available then create new device information
-        user_device_info = await get_user_device_information(
-            user_id, device_id, device_type
-        )
+        user_device_info = await get_user_device_information(user_id, device_id, device_type)
         if user_device_info is None:
             device_info = await sync_to_async(Device.objects.create)(
                 user=user,

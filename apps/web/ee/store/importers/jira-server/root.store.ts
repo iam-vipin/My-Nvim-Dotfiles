@@ -1,29 +1,26 @@
-import set from "lodash/set";
-import update from "lodash/update";
+import { update, set } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { JiraConfig } from "@plane/etl/jira";
+import type { JiraConfig } from "@plane/etl/jira";
 // plane web constants
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/jira-server";
 // plane web store types
-import {
+import type {
   IImporterBaseStore,
-  ImporterBaseStore,
   IImporterJobStore,
-  ImporterJobStore,
   IJiraServerAuthStore,
-  JiraServerAuthStore,
   IJiraServerDataStore,
+} from "@/plane-web/store/importers";
+import {
+  ImporterBaseStore,
+  ImporterJobStore,
+  JiraServerAuthStore,
   JiraServerDataStore,
 } from "@/plane-web/store/importers";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import {
-  TImporterDataPayload,
-  TImporterStepKeys,
-  E_IMPORTER_STEPS,
-  TImporterStep,
-} from "@/plane-web/types/importers/jira-server";
+import type { TImporterDataPayload, TImporterStepKeys, TImporterStep } from "@/plane-web/types/importers/jira-server";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {

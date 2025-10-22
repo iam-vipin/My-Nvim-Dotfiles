@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import { TGroupedIssues, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
+import type { TGroupedIssues, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
 //
 // import { getGroupByColumns } from "../utils";
 import { ListGroup } from "./list-group";

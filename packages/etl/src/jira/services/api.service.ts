@@ -1,9 +1,9 @@
 // services
-import { Version3Client } from "jira.js/out/version3";
 import axios, { AxiosError } from "axios";
 import { Board } from "jira.js/out/agile";
-import { JiraProps, JiraResource } from "@/jira/types";
+import { Version3Client } from "jira.js/out/version3";
 import { FieldDetails, PageString } from "jira.js/out/version3/models";
+import { JiraProps, JiraResource } from "@/jira/types";
 
 export class JiraService {
   private jiraClient: Version3Client;
@@ -68,11 +68,10 @@ export class JiraService {
   }
 
   async getNumberOfIssues(projectKey: string) {
-    const issues = await this.jiraClient.issueSearch.searchForIssuesUsingJql({
-      jql: `project = ${projectKey}`,
-      maxResults: 0,
+    const issues = await this.jiraClient.issueSearch.countIssues({
+      jql: `project = "${projectKey}"`,
     });
-    return issues.total;
+    return issues.count;
   }
 
   async getIssueFields() {
@@ -109,9 +108,10 @@ export class JiraService {
     });
   }
 
-  async getProjectComponentIssues(componentId: string) {
-    return this.jiraClient.issueSearch.searchForIssuesUsingJql({
+  async getProjectComponentIssues(componentId: string, nextPageToken?: string) {
+    return this.jiraClient.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
       jql: `component = ${componentId}`,
+      nextPageToken: nextPageToken,
     });
   }
 
@@ -203,14 +203,14 @@ export class JiraService {
     });
   }
 
-  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
-    return this.jiraClient.issueSearch.searchForIssuesUsingJql({
+  async getProjectIssues(projectKey: string, nextPageToken?: string, createdAfter?: string) {
+    return this.jiraClient.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
       jql: createdAfter
-        ? `project = ${projectKey} AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
-        : `project = ${projectKey}`,
+        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
+        : `project = "${projectKey}"`,
       expand: "renderedFields",
       fields: ["*all"],
-      startAt,
+      nextPageToken: nextPageToken,
     });
   }
 

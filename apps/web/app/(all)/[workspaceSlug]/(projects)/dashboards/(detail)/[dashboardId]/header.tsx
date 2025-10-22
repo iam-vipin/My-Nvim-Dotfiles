@@ -1,19 +1,13 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
+import { Eye, Pencil, Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
-import {
-  BreadcrumbNavigationSearchDropdown,
-  Breadcrumbs,
-  Button,
-  getButtonStyling,
-  Header,
-  setToast,
-  TOAST_TYPE,
-} from "@plane/ui";
+import { DashboardIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Button, getButtonStyling, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
@@ -73,7 +67,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
       return {
         value: _dashboard.id,
         query: _dashboard.name,
-        content: <SwitcherLabel name={_dashboard.name} LabelIcon={LayoutGrid} />,
+        content: <SwitcherLabel name={_dashboard.name} LabelIcon={DashboardIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -87,7 +81,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/dashboards`}
                 label={t("workspace_dashboards")}
-                icon={<LayoutGrid className="size-4 text-custom-text-300" />}
+                icon={<DashboardIcon className="size-4 text-custom-text-300" />}
               />
             }
           />
@@ -102,7 +96,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
                 title={dashboardDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <LayoutGrid className="size-4 flex-shrink-0 text-custom-text-300" />
+                    <DashboardIcon className="size-4 flex-shrink-0 text-custom-text-300" />
                   </Breadcrumbs.Icon>
                 }
                 isLast

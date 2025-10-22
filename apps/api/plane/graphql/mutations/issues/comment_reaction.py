@@ -14,7 +14,7 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module imports
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.db.models import CommentReaction
 from plane.graphql.helpers import get_work_item, get_workspace
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
@@ -63,9 +63,7 @@ def get_work_item_comment_reactions_by_reaction(
 
 
 @sync_to_async
-def get_work_item_comment_reaction(
-    workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str
-):
+def get_work_item_comment_reaction(workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str):
     try:
         project_teamspace_filter = project_member_filter_via_teamspaces(
             user_id=user_id,
@@ -99,9 +97,7 @@ def validate_comment_reaction(reaction: str):
 
 @strawberry.type
 class WorkItemCommentReactionMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def add_work_item_comment_reaction(
         self,
         info: Info,
@@ -117,9 +113,7 @@ class WorkItemCommentReactionMutation:
         workspace = await get_workspace(workspace_slug=slug)
         workspace_id = str(workspace.id)
 
-        await get_work_item(
-            workspace_slug=slug, project_id=project, work_item_id=work_item
-        )
+        await get_work_item(workspace_slug=slug, project_id=project, work_item_id=work_item)
 
         reaction = reactionInput.reaction
 
@@ -170,9 +164,7 @@ class WorkItemCommentReactionMutation:
         user_ids = [str(reaction.created_by_id) for reaction in comment_reactions]
         return CommentReactionType(reaction=reaction, user_ids=user_ids)
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission()])])
     async def remove_work_item_comment_reaction(
         self,
         info: Info,
@@ -185,9 +177,7 @@ class WorkItemCommentReactionMutation:
         user = info.context.user
         user_id = str(user.id)
 
-        await get_work_item(
-            workspace_slug=slug, project_id=project, work_item_id=work_item
-        )
+        await get_work_item(workspace_slug=slug, project_id=project, work_item_id=work_item)
 
         reaction = reactionInput.reaction
 

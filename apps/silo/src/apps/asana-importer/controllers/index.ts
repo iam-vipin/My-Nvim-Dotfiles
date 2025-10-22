@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 // silo asana
+import { Controller, Get, Post } from "@plane/decorators";
 import {
   createAsanaService,
   AsanaCustomField,
@@ -9,13 +10,13 @@ import {
   pullUsers,
 } from "@plane/etl/asana";
 // silo asana auth
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { createOrUpdateCredentials, deactivateCredentials, getCredentialsByWorkspaceId } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
-import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { useValidateUserAuthentication } from "@/lib/decorators";
 import { asanaAuth } from "../auth/auth";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
 
 @Controller("/api/asana")
 class AsanaController {

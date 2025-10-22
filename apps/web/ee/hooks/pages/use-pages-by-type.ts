@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageNavigationTabs } from "@plane/types";
 // store hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 

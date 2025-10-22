@@ -1,5 +1,6 @@
-import { FC, useState, useRef, useEffect, useCallback } from "react";
-import debounce from "lodash/debounce";
+import type { FC } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { debounce } from "lodash-es";
 import { Search, X } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";

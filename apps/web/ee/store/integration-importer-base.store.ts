@@ -1,9 +1,9 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
+import type { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export type TBaseLoader = "fetch-projects" | "fetch_states" | undefined;
 
@@ -131,20 +131,15 @@ export abstract class IntegrationImporterBaseStore implements IIntegrationImport
    */
   fetchProjects = async (workspaceSlug: string): Promise<IProject[] | undefined> => {
     if (!workspaceSlug) return undefined;
-
-    try {
-      const projects = await this.store.projectRoot.project.fetchProjects(workspaceSlug);
-      if (projects) {
-        runInAction(() => {
-          projects.forEach((project) => {
-            set(this.projects, [workspaceSlug, project.id], project);
-          });
+    const projects = await this.store.projectRoot.project.fetchProjects(workspaceSlug);
+    if (projects) {
+      runInAction(() => {
+        projects.forEach((project) => {
+          set(this.projects, [workspaceSlug, project.id], project);
         });
-      }
-      return projects;
-    } catch (error) {
-      throw error;
+      });
     }
+    return projects;
   };
 
   /**
@@ -154,20 +149,15 @@ export abstract class IntegrationImporterBaseStore implements IIntegrationImport
    */
   fetchStates = async (workspaceSlug: string, projectId: string): Promise<IState[] | undefined> => {
     if (!workspaceSlug || !projectId) return undefined;
-
-    try {
-      const projectStates = await this.store.state.fetchProjectStates(workspaceSlug, projectId);
-      if (projectStates) {
-        runInAction(() => {
-          projectStates.forEach((state) => {
-            set(this.states, [projectId, state.id], state);
-          });
+    const projectStates = await this.store.state.fetchProjectStates(workspaceSlug, projectId);
+    if (projectStates) {
+      runInAction(() => {
+        projectStates.forEach((state) => {
+          set(this.states, [projectId, state.id], state);
         });
-      }
-      return projectStates;
-    } catch (error) {
-      throw error;
+      });
     }
+    return projectStates;
   };
 
   /**

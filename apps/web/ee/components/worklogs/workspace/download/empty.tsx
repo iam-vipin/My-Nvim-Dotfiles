@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 
 // TODO: Implement the WorklogDownloadEmptyScreen component and change the test based on the filters applied

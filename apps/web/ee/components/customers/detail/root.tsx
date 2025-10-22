@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -7,8 +8,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { CustomerDetailSidebar, CustomerEmptyState, CustomerMainRoot } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";

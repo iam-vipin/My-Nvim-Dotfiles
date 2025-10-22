@@ -1,5 +1,5 @@
 // plane imports
-import { EIssuePropertyType, IIssueProperty, TBaseActivityVerbs, TIssuePropertyTypeKeys } from "@plane/types";
+import type { EIssuePropertyType, IIssueProperty, TBaseActivityVerbs, TIssuePropertyTypeKeys } from "@plane/types";
 import { getIssuePropertyTypeKey, joinUrlPath, renderFormattedDate } from "@plane/utils";
 // store context
 import { store } from "@/lib/store-context";
@@ -210,7 +210,26 @@ export const getWorkItemMemberPropertyActivityMessage: TGetWorkItemAdditionalPro
 };
 
 // ------------ URL ------------
-export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () => null;
+export const getWorkItemUrlPropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = (props) => {
+  const { newValue, action, propertyDetail } = props;
+  const propertyName = propertyDetail?.display_name;
+
+  return (
+    <>
+      {newValue ? (
+        <>
+          {action === "created" ? "set " : "changed "}
+          <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
+          <span className="font-medium text-custom-text-100">{newValue}.</span>
+        </>
+      ) : (
+        <>
+          removed the previous URL in <span className="font-medium text-custom-text-100">{propertyName}</span>.
+        </>
+      )}
+    </>
+  );
+};
 
 // ------------ RELATION ISSUE ------------
 export const getWorkItemRelationIssuePropertyActivityMessage: TGetWorkItemAdditionalPropertiesActivityMessage = () =>

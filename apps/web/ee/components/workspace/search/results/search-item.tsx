@@ -1,17 +1,26 @@
 "use client";
 // types
-import { Briefcase, FileText, Layers } from "lucide-react";
-import {
-  ESearchFilterKeys,
+import type {
   IWorkspaceDefaultEnhancedSearchResult,
   IWorkspaceIssueEnhancedSearchResult,
   IWorkspacePageEnhancedSearchResult,
   IWorkspaceProjectEnhancedSearchResult,
   IWorkspaceCommentEnhancedSearchResult,
 } from "@plane/constants";
+import { ESearchFilterKeys } from "@plane/constants";
 
 // ui
-import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, Logo, TeamsIcon } from "@plane/ui";
+import {
+  CycleIcon,
+  ModuleIcon,
+  EpicIcon,
+  WorkItemsIcon,
+  PageIcon,
+  ProjectIcon,
+  TeamsIcon,
+  ViewsIcon,
+} from "@plane/propel/icons";
+import { Logo } from "@plane/ui";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
@@ -32,7 +41,7 @@ export const SearchItems: {
     title: "All",
   },
   [ESearchFilterKeys.CYCLE]: {
-    icon: () => <ContrastIcon className="size-4 my-auto" />,
+    icon: () => <CycleIcon className="size-4 my-auto" />,
     itemName: (cycle: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{cycle.project_identifier}</span> {cycle.name}
@@ -55,7 +64,7 @@ export const SearchItems: {
           />
         ) : (
           <div className="flex gap-2">
-            <LayersIcon width={16} height={16} className="my-auto" />
+            <WorkItemsIcon width={16} height={16} className="my-auto" />
             <IdentifierText
               identifier={`${issue.project_identifier}-${issue.sequence_id}`}
               textContainerClassName="text-xs"
@@ -76,7 +85,7 @@ export const SearchItems: {
     title: "Work items",
   },
   [ESearchFilterKeys.VIEW]: {
-    icon: () => <Layers className="size-4 my-auto" />,
+    icon: () => <ViewsIcon className="size-4 my-auto" />,
     itemName: (view: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{view.project_identifier}</span> {view.name}
@@ -87,7 +96,7 @@ export const SearchItems: {
     title: "Views",
   },
   [ESearchFilterKeys.MODULE]: {
-    icon: () => <DiceIcon className="size-4 my-auto" />,
+    icon: () => <ModuleIcon className="size-4 my-auto" />,
     itemName: (module: IWorkspaceDefaultEnhancedSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{module.project_identifier}</span> {module.name}
@@ -98,7 +107,7 @@ export const SearchItems: {
     title: "Modules",
   },
   [ESearchFilterKeys.PAGE]: {
-    icon: () => <FileText className="size-4 my-auto" />,
+    icon: () => <PageIcon className="size-4 my-auto" />,
     itemName: (page: IWorkspacePageEnhancedSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{page.project_identifiers?.[0]}</span> {page.name}
@@ -114,7 +123,7 @@ export const SearchItems: {
   },
   [ESearchFilterKeys.PROJECT]: {
     icon: (project: IWorkspaceProjectEnhancedSearchResult) =>
-      project.logo_props ? <Logo logo={project?.logo_props} size={16} /> : <Briefcase className="size-4 my-auto" />,
+      project.logo_props ? <Logo logo={project?.logo_props} size={16} /> : <ProjectIcon className="size-4 my-auto" />,
     itemName: (project: IWorkspaceProjectEnhancedSearchResult) => project?.name,
     path: (project: IWorkspaceProjectEnhancedSearchResult) =>
       `/${project?.workspace_slug}/projects/${project?.id}/issues/`,

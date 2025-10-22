@@ -1,6 +1,7 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { TIssuePage, TIssueServiceType } from "@plane/types";
+import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { PagesCollapsibleContentBlock } from "./block";
 
 type TProps = {

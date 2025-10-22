@@ -1,5 +1,5 @@
 // plane imports
-import { IStateWorkFlowResponse, TWorkflowChangeHistory } from "@plane/types";
+import type { IStateWorkFlowResponse, TWorkflowChangeHistory } from "@plane/types";
 // services
 import { ProjectStateService as CoreProjectStateService } from "@/services/project/project-state.service";
 

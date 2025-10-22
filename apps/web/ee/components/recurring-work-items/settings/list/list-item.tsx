@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IIssueType } from "@plane/types";
+import type { IIssueType } from "@plane/types";
 import { getRecurringWorkItemIntervalTypeLabel } from "@plane/utils";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
-import { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
+import type { IRecurringWorkItemInstance } from "@/plane-web/store/recurring-work-items/instance";
 // local imports
 import { RecurringWorkItemQuickActions } from "./quick-actions";
 

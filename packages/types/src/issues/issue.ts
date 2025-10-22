@@ -1,11 +1,11 @@
+import { EUpdateStatus } from "../enums";
 import { TIssuePriorities } from "../issues";
 import { TIssuePublicComment } from "./activity/issue_comment";
+import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes } from "./issue_relation";
-import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
-import { EUpdateStatus } from "../enums";
 
 export enum EIssueLayoutTypes {
   LIST = "list",
@@ -31,7 +31,6 @@ export enum EIssuesStoreType {
   TEAM_VIEW = "TEAM_VIEW",
   PROJECT_VIEW = "PROJECT_VIEW",
   ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
   EPIC = "EPIC",

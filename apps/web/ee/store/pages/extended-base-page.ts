@@ -1,10 +1,45 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// plane imports
-import { EPageSharedUserAccess, TCollaborator, TPage, TPageExtended, TPageSharedUser } from "@plane/types";
-// plane web imports
-import { RootStore } from "@/plane-web/store/root.store";
-// store
-import { TBasePageServices } from "@/store/pages/base-page";
+import { EPageSharedUserAccess } from "@plane/types";
+import type {
+  TPageCommentDescription,
+  TCollaborator,
+  TPage,
+  TPageExtended,
+  TPageSharedUser,
+  JSONContent,
+} from "@plane/types";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TBasePageServices, TPageInstance } from "@/store/pages/base-page";
+import { CommentStore } from "./comments/comment.store";
+
+// Define PageWithConfig interface to match comment store expectations
+type PageWithConfig = {
+  id?: string;
+  _config: Record<string, string> | null;
+  _getBasePath: ((params: { pageId: string; config: Record<string, string> }) => string) | null;
+};
+
+export type TCommentHandlers = {
+  onDelete: (commentId: string) => Promise<void>;
+  onRestore: (commentId: string) => Promise<void>;
+  onResolve: (commentId: string) => Promise<void>;
+  onUnresolve: (commentId: string) => Promise<void>;
+  onFetchComments: () => Promise<void>;
+  onCreateComment: (data: {
+    description: TPageCommentDescription;
+    reference_stripped?: string;
+    parent_id?: string;
+  }) => Promise<any>;
+  onFetchThreadComments: (threadId: string) => Promise<void>;
+  onUpdateComment: (data: {
+    description: { description_html: string; description_json: JSONContent };
+  }) => Promise<void>;
+};
+
+export type TDeletePageModalState = {
+  visible: boolean;
+  pages: TPageInstance[];
+};
 
 export type TExtendedPageInstance = TPageExtended & {
   asJSONExtended: TPageExtended;
@@ -14,6 +49,10 @@ export type TExtendedPageInstance = TPageExtended & {
   canViewWithSharedAccess: boolean;
   canCommentWithSharedAccess: boolean;
   canEditWithSharedAccess: boolean;
+  // page comment store
+  comments: CommentStore;
+  // modals state
+  deletePageModal: TDeletePageModalState;
   // actions
   updateCollaborators: (collaborators: TCollaborator[]) => void;
   updateSharedUsers: (sharedUsers: TPageSharedUser[]) => void;
@@ -22,6 +61,13 @@ export type TExtendedPageInstance = TPageExtended & {
   updateSharedUserAccess: (userId: string, access: EPageSharedUserAccess) => void;
   addSharedUser: (userId: string, access?: EPageSharedUserAccess) => void;
   setSharedAccess: (value: EPageSharedUserAccess | null) => void;
+  // modal actions
+  openDeletePageModal: (pages: TPageInstance[]) => void;
+  closeDeletePageModal: () => void;
+};
+
+export type TExtendedBasePagePermissions = {
+  canCurrentUserCommentOnPage: boolean;
 };
 
 export class ExtendedBasePage implements TExtendedPageInstance {
@@ -33,7 +79,12 @@ export class ExtendedBasePage implements TExtendedPageInstance {
   team: string | null | undefined;
   parent_id: string | null | undefined;
   anchor?: string | null | undefined;
+  sort_order: number | undefined;
   sharedUsers: TPageSharedUser[];
+  comments: CommentStore;
+
+  // modals state
+  deletePageModal: TDeletePageModalState;
 
   // root store and services
   rootStore: RootStore;
@@ -48,10 +99,20 @@ export class ExtendedBasePage implements TExtendedPageInstance {
     this.team = page?.team || null;
     this.parent_id = page?.parent_id === null ? null : page?.parent_id;
     this.anchor = page?.anchor || undefined;
+    this.sort_order = page?.sort_order || undefined;
     this.sharedUsers = [];
+
+    // Initialize modals state
+    this.deletePageModal = {
+      visible: false,
+      pages: [],
+    };
 
     this.rootStore = store;
     this.services = services;
+
+    // Initialize page-specific comment store with context and service
+    this.comments = new CommentStore(store, this as unknown as PageWithConfig);
 
     makeObservable(this, {
       // shared page properties
@@ -62,7 +123,10 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       team: observable.ref,
       parent_id: observable.ref,
       anchor: observable.ref,
+      sort_order: observable.ref,
       sharedUsers: observable,
+      // modals state
+      deletePageModal: observable,
       // computed
       currentUserSharedAccess: computed,
       hasSharedAccess: computed,
@@ -77,6 +141,9 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       updateSharedUserAccess: action,
       addSharedUser: action,
       setSharedAccess: action,
+      // modal actions
+      openDeletePageModal: action,
+      closeDeletePageModal: action,
     });
   }
 
@@ -89,6 +156,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       team: this.team,
       parent_id: this.parent_id,
       anchor: this.anchor,
+      sort_order: this.sort_order,
       sharedUsers: this.sharedUsers,
     };
   }
@@ -192,6 +260,31 @@ export class ExtendedBasePage implements TExtendedPageInstance {
   setSharedAccess = (value: EPageSharedUserAccess | null) => {
     runInAction(() => {
       this.shared_access = value;
+    });
+  };
+
+  /**
+   * @description opens the delete page modal with specified pages
+   * @param pages - array of pages to delete
+   */
+  openDeletePageModal = (pages: TPageInstance[]) => {
+    runInAction(() => {
+      this.deletePageModal = {
+        visible: true,
+        pages,
+      };
+    });
+  };
+
+  /**
+   * @description closes the delete page modal
+   */
+  closeDeletePageModal = () => {
+    runInAction(() => {
+      this.deletePageModal = {
+        visible: false,
+        pages: [],
+      };
     });
   };
 }

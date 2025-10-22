@@ -5,15 +5,16 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
-import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { HeaderFilters } from "@/components/issues/filters";
 // hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports

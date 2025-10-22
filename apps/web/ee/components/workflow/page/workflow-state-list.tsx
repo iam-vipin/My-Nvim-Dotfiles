@@ -1,9 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 // local imports
 import { WorkflowStateItem } from "./workflow-state-item";
 

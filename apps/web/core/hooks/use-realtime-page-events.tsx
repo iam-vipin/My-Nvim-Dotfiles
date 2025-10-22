@@ -1,16 +1,18 @@
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
+import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
+// types
 import type { IUserLite, TCollaborator } from "@plane/types";
-import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 // Type for page update handlers with proper typing for action data
 export type PageUpdateHandler<T extends keyof EventToPayloadMap = keyof EventToPayloadMap> = (params: {
@@ -120,10 +122,12 @@ export const useRealtimePageEvents = ({
           }
         });
       },
-      title_updated: ({ pageIds, data }) => {
+      property_updated: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem && data.title != null) pageItem.updateTitle(data.title);
+          const pageInstance = getPageById(pageId);
+          const { name: updatedName, ...rest } = data;
+          if (updatedName != null) pageInstance?.updateTitle(updatedName);
+          pageInstance?.mutateProperties(rest);
         });
       },
       moved_internally: ({ pageIds, data }) => {
@@ -257,12 +261,42 @@ export const useRealtimePageEvents = ({
           }
         }
       },
+      error: ({ pageIds, data }) => {
+        const errorType = data.error_type;
+        const errorMessage = data.error_message || "An error occurred";
+        const errorCode = data.error_code;
+
+        if (page.id && pageIds.includes(page.id)) {
+          // Show toast notification
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: errorType === "fetch" ? "Failed to load page" : "Failed to save page",
+            message: errorMessage,
+          });
+
+          // Handle specific error codes
+          const pageInstance = getPageById(page.id);
+          if (pageInstance) {
+            if (errorCode === "page_locked") {
+              // Lock the page if not already locked
+              if (!pageInstance.is_locked) {
+                pageInstance.mutateProperties({ is_locked: true });
+              }
+            } else if (errorCode === "page_archived") {
+              // Mark page as archived if not already
+              if (!pageInstance.archived_at) {
+                pageInstance.mutateProperties({ archived_at: new Date().toISOString() });
+              }
+            }
+          }
+        }
+      },
       duplicated: async ({ pageIds, data }) => {
         const duplicatedPage = data.new_page_id;
         dismissToast("duplicating-page");
 
         // create a new page instace of the duplicatedPage in the store
-        await getOrFetchPageInstance({ pageId: duplicatedPage });
+        await getOrFetchPageInstance({ pageId: duplicatedPage, trackVisit: false });
 
         if (page.id === pageIds[0] && data.user_id === currentUser?.id) {
           setToast({
@@ -319,7 +353,7 @@ export const useRealtimePageEvents = ({
         // Now TypeScript knows that handler and data match in type
         handler({ pageIds: normalizedPageIds, data, performAction });
       } else {
-        console.warn(`No handler for message type: ${actionType}`);
+        console.warn(`No handler for message type: ${actionType.toString()}`);
       }
     },
     [ACTION_HANDLERS]

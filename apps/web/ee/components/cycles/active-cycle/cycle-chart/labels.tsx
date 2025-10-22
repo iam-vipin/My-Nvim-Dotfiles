@@ -1,5 +1,5 @@
 import { startOfToday, format } from "date-fns";
-import { TCycleProgress } from "@plane/types";
+import type { TCycleProgress } from "@plane/types";
 
 const renderScopeLabel = (data: TCycleProgress[], props: any) => {
   const { x, y, value } = props;

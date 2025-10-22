@@ -1,11 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Activity } from "lucide-react";
-import { CommentFillIcon, InfoFillIcon } from "@plane/ui";
+import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
 // hooks
+import type { TInitiativeStates } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
 import { SidebarRoot } from "@/plane-web/components/common/layout/sidebar";
@@ -20,10 +21,20 @@ type Props = {
   disabled?: boolean;
   toggleEpicModal: (value?: boolean) => void;
   toggleProjectModal: (value?: boolean) => void;
+  handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
+  handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled = false, toggleEpicModal, toggleProjectModal } = props;
+  const {
+    workspaceSlug,
+    initiativeId,
+    disabled = false,
+    toggleEpicModal,
+    toggleProjectModal,
+    handleInitiativeStateUpdate,
+    handleInitiativeLabelUpdate,
+  } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();
 
@@ -38,6 +49,8 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
           disabled={disabled}
           toggleEpicModal={toggleEpicModal}
           toggleProjectModal={toggleProjectModal}
+          handleInitiativeStateUpdate={handleInitiativeStateUpdate}
+          handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
         />
       ),
     },

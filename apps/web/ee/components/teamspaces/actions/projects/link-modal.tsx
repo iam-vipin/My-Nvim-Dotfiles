@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import difference from "lodash/difference";
-import xor from "lodash/xor";
+import { difference, xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore, TeamsIcon } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TeamsIcon } from "@plane/propel/icons";
+import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, truncateText } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

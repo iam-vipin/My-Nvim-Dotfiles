@@ -1,4 +1,5 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // types
 // ui
@@ -8,7 +9,7 @@ import { getFileName } from "@plane/utils";
 // hooks
 import { useInitiativeAttachments } from "@/plane-web/hooks/store";
 // types
-import { TAttachmentOperations } from "./use-attachments";
+import type { TAttachmentOperations } from "./use-attachments";
 
 export type TAttachmentOperationsRemoveModal = Pick<TAttachmentOperations, "remove">;
 

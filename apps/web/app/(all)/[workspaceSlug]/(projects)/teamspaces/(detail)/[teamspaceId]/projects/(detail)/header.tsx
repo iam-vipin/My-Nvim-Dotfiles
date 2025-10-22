@@ -2,17 +2,18 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Briefcase } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles, ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, TeamsIcon } from "@plane/ui";
+import { ProjectIcon, TeamsIcon } from "@plane/propel/icons";
+import type { ICustomSearchSelectOption } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
+import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -39,7 +40,7 @@ export const TeamspaceProjectDetailHeader: React.FC = observer(() => {
           return {
             value: projectId,
             query: project?.name,
-            content: <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} />,
+            content: <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={ProjectIcon} />,
           };
         })
         .filter((option) => option !== undefined) as ICustomSearchSelectOption[])
@@ -87,7 +88,7 @@ export const TeamspaceProjectDetailHeader: React.FC = observer(() => {
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`}
                   label="Projects"
-                  icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />}
                 />
               }
             />

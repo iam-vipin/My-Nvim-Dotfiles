@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search, Crown } from "lucide-react";
 // ui
-import { Button, ContentWrapper } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { ContentWrapper } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
 // hooks

@@ -28,7 +28,7 @@ const nextConfig = {
       "react-day-picker",
       "react-dropzone",
       "react-hook-form",
-      "lodash",
+      "lodash-es",
       "clsx",
       "tailwind-merge",
       "@plane/constants",
@@ -99,6 +99,11 @@ const nextConfig = {
       {
         source: "/:workspaceSlug/settings/api-tokens",
         destination: "/:workspaceSlug/settings/account/api-tokens",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/pages/:path*",
+        destination: "/:workspaceSlug/wiki/:path*",
         permanent: true,
       },
     ];

@@ -1,19 +1,20 @@
 "use client";
 
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // components
-import { TIssueComment } from "@plane/types";
+import type { TIssueComment } from "@plane/types";
 import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // hooks
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiativeActivityComment } from "@/plane-web/types/initiative";
+import type { TInitiativeActivityComment } from "@/plane-web/types/initiative";
 import { useCommentOperations } from "./helper";
 
 type Props = {

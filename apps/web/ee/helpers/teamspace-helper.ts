@@ -1,6 +1,6 @@
 // plane imports
 import { ETeamspaceEntityScope } from "@plane/constants";
-import { TTeamspaceActivityKeys, TTeamspaceActivityVerbs, TTeamspaceActivityFields } from "@plane/types";
+import type { TTeamspaceActivityKeys, TTeamspaceActivityVerbs, TTeamspaceActivityFields } from "@plane/types";
 
 // Get the label for the entity scope
 export const getTeamspaceEntityScopeLabel = (entity: ETeamspaceEntityScope) => {

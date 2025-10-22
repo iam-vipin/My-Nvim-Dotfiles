@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState, useEffect, useCallback, useRef } from "react";
+import type { FC } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";

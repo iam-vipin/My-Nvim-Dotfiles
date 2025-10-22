@@ -2,10 +2,13 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import { useParams } from "next/navigation";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles, ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -15,7 +18,7 @@ import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 // hooks
-import { useProjectEstimates } from "@/hooks/store/estimates"
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -30,12 +33,12 @@ type TIssueDefaultPropertiesProps = {
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
-  setLabelModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
 export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
-  const { id, control, projectId, startDate, targetDate, handleFormChange, setLabelModal } = props;
+  const { id, control, projectId, startDate, targetDate, handleFormChange } = props;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { isMobile } = usePlatformOS();
@@ -43,7 +46,9 @@ export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = obs
   // derived values
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
-  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId &&
+    allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug.toString(), projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
@@ -116,7 +121,6 @@ export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = obs
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <IssueLabelSelect
-              setIsOpen={setLabelModal}
               value={value}
               onChange={(labelIds) => {
                 onChange(labelIds);
@@ -124,7 +128,7 @@ export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = obs
               }}
               projectId={projectId ?? undefined}
               tabIndex={getIndex("label_ids")}
-              createLabelEnabled={canCreateLabel}
+              createLabelEnabled={!!canCreateLabel}
             />
           </div>
         )}

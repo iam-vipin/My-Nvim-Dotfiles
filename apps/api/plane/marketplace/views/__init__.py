@@ -1,11 +1,11 @@
 from .application import (
-    PublishedApplicationEndpoint,
+    ApplicationBySlugEndpoint,
     ApplicationCategoryEndpoint,
-    PublishedApplicationBySlugEndpoint,
-    PublishedApplicationMetaEndpoint,
+    ApplicationEndpoint,
+    ApplicationMetaEndpoint,
 )
 from .template import (
     TemplateCategoryEndpoint,
-    PublishedTemplateEndpoint,
-    PublishedTemplateMetaEndpoint,
+    TemplateEndpoint,
+    TemplateMetaEndpoint,
 )

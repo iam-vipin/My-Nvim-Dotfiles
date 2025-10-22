@@ -1,6 +1,5 @@
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
-import {
+import type {
   EViewAccess,
   IBlockUpdateDependencyData,
   ISearchIssueResponse,
@@ -12,7 +11,7 @@ import { WorkspaceService as CoreWorkspaceService } from "@/services/workspace.s
 
 export class WorkspaceService extends CoreWorkspaceService {
   constructor() {
-    super(API_BASE_URL);
+    super();
   }
 
   async updateViewAccess(workspaceSlug: string, viewId: string, access: EViewAccess): Promise<any> {

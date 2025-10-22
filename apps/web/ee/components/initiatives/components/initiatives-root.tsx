@@ -1,4 +1,4 @@
-import { isEmpty, size } from "lodash";
+import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -9,8 +9,8 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
-import { useMember } from "@/hooks/store/use-member"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
@@ -30,7 +30,7 @@ export const InitiativesRoot = observer(() => {
   // derived values
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
-  const groupedInitiativeIds = initiative.currentGroupedInitiativeIds;
+  const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
   const generalResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/initiatives" });
   const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
@@ -38,23 +38,11 @@ export const InitiativesRoot = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  if (initiative.initiativesLoader) return <ListLayoutLoader />;
+  if (initiative.fetchingFilteredInitiatives) return <ListLayoutLoader />;
 
-  if (!groupedInitiativeIds) return <></>;
-
-  const groupIds = Object.keys(groupedInitiativeIds).sort((a, b) => {
-    if (a === "none") return -1;
-    return 1;
-  });
-
-  const groupList = getGroupList(groupIds, groupBy, getUserDetails);
-
-  // Check if the object is empty or contains only empty arrays
-
-  const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds).every(
+  const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
   );
-
   const isEmptyInitiatives = isEmpty(groupedInitiativeIds) || emptyGroupedInitiativeIds;
 
   if (emptyGroupedInitiativeIds && size(initiative.initiativesMap) > 0) {
@@ -84,11 +72,13 @@ export const InitiativesRoot = observer(() => {
     );
   }
 
+  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
+
   return (
     <div className={`relative size-full bg-custom-background-90`}>
       <div className="relative size-full flex flex-col">
         {groupList && (
-          <div className="size-full vertical-scrollbar scrollbar-lg relative overflow-auto vertical-scrollbar-margin-top-md">
+          <div className="size-full vertical-scrollbar scrollbar-lg overflow-auto relative vertical-scrollbar-margin-top-md">
             {groupList.map((group) => (
               <InitiativeGroup
                 key={group.id}

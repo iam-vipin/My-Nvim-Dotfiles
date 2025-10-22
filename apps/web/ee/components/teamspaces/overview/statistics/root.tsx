@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -8,14 +9,16 @@ import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, CollapsibleButton, setToast, TOAST_TYPE, TreeMapIcon } from "@plane/ui";
+import { TreeMapIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Collapsible, CollapsibleButton } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useTeamspaces, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";
-import { TStatisticsFilter } from "@/plane-web/types/teamspace";
+import type { TStatisticsFilter } from "@/plane-web/types/teamspace";
 // local imports
 import { TeamspaceStatisticsMap } from "./chart";
 import { StatisticsDataKeyFilter } from "./filters/data-key";

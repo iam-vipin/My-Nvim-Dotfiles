@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EProductSubscriptionEnum } from "@plane/types";
@@ -8,9 +8,9 @@ import { EProductSubscriptionEnum } from "@plane/types";
 import { PaymentService } from "@/plane-web/services/payment.service";
 import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
+import type { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
 
 const paymentService = new PaymentService();
 

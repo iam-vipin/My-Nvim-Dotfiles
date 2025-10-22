@@ -1,11 +1,15 @@
 "use client";
-import React, { FC, useRef, useState } from "react";
-import { omit } from "lodash";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
+import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // plane utils
-import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
-import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TWorkspaceDraftIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -152,7 +156,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
                 <div className="size-4 grid place-items-center flex-shrink-0" />
               </div>
 
-              <Tooltip tooltipContent={issue.name} position="top-left" renderByDefault={false}>
+              <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
                 <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
               </Tooltip>
             </div>

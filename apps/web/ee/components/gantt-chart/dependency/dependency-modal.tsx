@@ -4,8 +4,10 @@ import { useParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
-import { ControlLink, EModalPosition, EModalWidth, ModalCore, setToast, Spinner, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue } from "@plane/types";
+import { ControlLink, EModalPosition, EModalWidth, ModalCore, Spinner } from "@plane/ui";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // hooks
@@ -14,9 +16,9 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
-import { EDependencyPosition } from "@/plane-web/constants";
+import type { EDependencyPosition } from "@/plane-web/constants";
 import { getRelationType } from "@/plane-web/store/timeline/utils";
-import { Relation } from "@/plane-web/types";
+import type { Relation } from "@/plane-web/types";
 //
 import { IssueIdentifier } from "../../issues/issue-details/issue-identifier";
 import { useTimeLineRelationOptions } from "../../relations";

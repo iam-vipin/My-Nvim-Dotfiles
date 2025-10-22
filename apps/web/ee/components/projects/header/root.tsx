@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -39,12 +39,12 @@ export const ProjectsListHeader = observer(() => {
     <div className="flex-shrink-0 relative z-10 flex h-header w-full">
       {/* flex-row items-center justify-between gap-x-2 gap-y-4 */}
       <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-4 flex-grow">
+        <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
             <Breadcrumbs.Item
               component={
-                <BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />
+                <BreadcrumbLink label="Projects" icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
             {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}

@@ -1,9 +1,14 @@
-import { isEmpty } from "lodash";
+import type { Dispatch, SetStateAction } from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { AtSign } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { CustomSelect, Loader, Logo, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomSelect, Loader, Logo, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -12,27 +17,31 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { TFocus } from "@/plane-web/types";
+import type { TFocus } from "@/plane-web/types";
 
 type TProps = {
   focus: TFocus;
   isLoading: boolean;
-  setFocus: (key: keyof TFocus, value: TFocus[keyof TFocus]) => void;
+  setFocus: Dispatch<SetStateAction<TFocus>>;
 };
 export const FocusFilter = observer((props: TProps) => {
   const { focus, setFocus, isLoading } = props;
   // router params
   const { workspaceSlug } = useParams();
-
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { workspaceProjectIds, getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
-
-  //   derived values
+  // derived values
   const workspace = getWorkspaceBySlug(workspaceSlug as string);
-  const selectedFocus =
-    focus.entityType === "workspace_id" ? workspace?.name : getProjectById(focus.entityIdentifier)?.name;
+  const selectedFocus = focus.entityType === "workspace_id" ? workspace : getProjectById(focus.entityIdentifier);
+  // helper
+  const updateFocus = <K extends keyof TFocus>(key: K, value: TFocus[K]) => {
+    setFocus((prev) => {
+      const updated = { ...prev, [key]: value };
+      return updated;
+    });
+  };
 
   if (isLoading)
     return (
@@ -46,27 +55,39 @@ export const FocusFilter = observer((props: TProps) => {
       value={focus}
       label={
         <Tooltip
-          tooltipContent="Turn this on if you want Pi to use your work data from Plane."
+          tooltipContent="Turn this on if you want AI to use your work data from Plane."
           position="top"
           className="ml-4 max-w-[200px] font-medium text-custom-text-300"
           disabled={focus.isInWorkspaceContext}
         >
-          <div className="flex rounded-full pl-2 font-medium gap-2 w-full overflow-hidden">
-            <span className="text-sm font-medium text-custom-text-300 my-auto">
-              Focus{!isEmpty(focus) && focus.isInWorkspaceContext && ": "}
-            </span>
-            {!isEmpty(focus) && focus.isInWorkspaceContext && (
-              <span className="text-sm my-auto capitalize truncate">{selectedFocus}</span>
+          <div className="flex rounded-full font-medium gap-2 w-full overflow-hidden">
+            {!isEmpty(focus) && !isEmpty(selectedFocus) && focus.isInWorkspaceContext ? (
+              <div className=" flex items-center gap-2 text-sm my-auto capitalize truncate">
+                {focus.entityType === "workspace_id" ? (
+                  <WorkspaceLogo
+                    logo={(selectedFocus as IWorkspace)?.logo_url}
+                    name={selectedFocus?.name}
+                    classNames={"w-4 h-4 text-[9px]"}
+                  />
+                ) : (
+                  <Logo logo={(selectedFocus as IProject)?.logo_props} />
+                )}
+                <span className="truncate">{selectedFocus?.name}</span>
+              </div>
+            ) : (
+              <div className="text-sm font-medium text-custom-text-300 my-auto flex items-center gap-2">
+                <AtSign className="size-4" /> <span>Add context </span>
+              </div>
             )}
           </div>
         </Tooltip>
       }
-      noChevron={false}
+      noChevron
       onChange={(val: string) => {
-        setFocus("entityType", val.split("%")[0]);
-        setFocus("entityIdentifier", val.split("%")[1]);
+        updateFocus("entityType", val.split("%")[0]);
+        updateFocus("entityIdentifier", val.split("%")[1]);
         if (!focus.isInWorkspaceContext) {
-          setFocus("isInWorkspaceContext", true);
+          updateFocus("isInWorkspaceContext", true);
         }
       }}
       maxHeight="lg"
@@ -78,7 +99,7 @@ export const FocusFilter = observer((props: TProps) => {
     >
       <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px] max-h-full">
         <div>
-          <span className="text-custom-text-350 font-medium">Ask Pi to use data from:</span>
+          <span className="text-custom-text-350 font-medium">Ask AI to use data from:</span>
           <CustomSelect.Option
             value={`workspace_id%${workspace?.id}`}
             className="text-sm text-custom-text-200 font-medium flex justify-start"
@@ -116,12 +137,12 @@ export const FocusFilter = observer((props: TProps) => {
         </div>
         <div className="pt-2 flex justify-between gap-2">
           <div className="text-wrap font-medium text-custom-text-350">
-            Turn this off if you don’t want Pi to use your work from Plane.{" "}
+            Turn this off if you don’t want AI to use your work from Plane.{" "}
           </div>
           <ToggleSwitch
             value={focus.isInWorkspaceContext ?? false}
             onChange={() => {
-              setFocus("isInWorkspaceContext", !focus.isInWorkspaceContext);
+              updateFocus("isInWorkspaceContext", !focus.isInWorkspaceContext);
             }}
             size="sm"
           />

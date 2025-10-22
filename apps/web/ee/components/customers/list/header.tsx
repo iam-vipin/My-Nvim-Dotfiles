@@ -4,14 +4,16 @@ import { useParams } from "next/navigation";
 // plane imports
 import { CUSTOMER_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { CustomersIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { Breadcrumbs, Button, CustomersIcon } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace"
-import { useUserPermissions } from "@/hooks/store/user"
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CustomerSearch } from "@/plane-web/components/customers/list";
 

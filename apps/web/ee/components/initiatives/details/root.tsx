@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TInitiativeStates } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+
 // components
 import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
+
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+
 // plane web imports
 import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+
 // local imports
 import { InitiativeEmptyState } from "../details/empty-state";
 import { WorkspaceEpicsListModal } from "./main/collapsible-section/epics/workspace-epic-modal";
@@ -31,6 +37,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
   // states
   const [isProjectsOpen, setIsProjectsOpen] = useState(false);
   const [isEpicModalOpen, setIsEpicModalOpen] = useState(false);
+
   // store hooks
   const {
     initiative: {
@@ -75,21 +82,46 @@ export const InitiativeDetailRoot = observer((props: Props) => {
       });
   };
 
+  const handleInitiativeLabelUpdate = (labelIds: string[]) => {
+    if (!initiativeId) return;
+    try {
+      updateInitiative(workspaceSlug?.toString(), initiativeId, { label_ids: labelIds }).then(() => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+      });
+    } catch {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("initiatives.toast.label_update_error"),
+      });
+    }
+  };
+
   const handleAddEpicToInitiative = async (epicIds: string[]) => {
     try {
       addEpicsToInitiative(workspaceSlug?.toString(), initiativeId, epicIds).then(async () => {
         fetchInitiativeAnalytics(workspaceSlug, initiativeId);
-        setToast({
-          title: t("toast.success"),
-          type: TOAST_TYPE.SUCCESS,
-          message: t("initiatives.toast.epic_update_success", { count: epicIds.length }),
-        });
       });
     } catch {
       setToast({
-        title: t("toast.success"),
+        title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("initiatives.toast.epic_update_error"),
+      });
+    }
+  };
+
+  const handleInitiativeStateUpdate = (state: TInitiativeStates) => {
+    try {
+      if (!initiativeId) return;
+      updateInitiative(workspaceSlug, initiativeId, { state }).then(() => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
+      });
+    } catch {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("initiatives.toast.state_update_error"),
       });
     }
   };
@@ -115,6 +147,8 @@ export const InitiativeDetailRoot = observer((props: Props) => {
         disabled={!isEditable}
         toggleEpicModal={toggleEpicModal}
         toggleProjectModal={toggleProjectsModal}
+        handleInitiativeStateUpdate={handleInitiativeStateUpdate}
+        handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
       />
       <ProjectMultiSelectModal
         isOpen={isProjectsOpen}

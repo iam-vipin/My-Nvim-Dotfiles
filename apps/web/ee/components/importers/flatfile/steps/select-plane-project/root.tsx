@@ -1,21 +1,24 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
-import isEqual from "lodash/isEqual";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
 // types
-import { IProject } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
+import type { IProject } from "@plane/types";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web components
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
-import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/flatfile";
+import type { TImporterDataPayload } from "@/plane-web/types/importers/flatfile";
+import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/flatfile";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 
@@ -96,7 +99,7 @@ export const SelectPlaneProject: FC = observer(() => {
                 {option && option?.logo_props ? (
                   <Logo logo={option?.logo_props} size={14} />
                 ) : (
-                  <Briefcase className="w-4 h-4" />
+                  <ProjectIcon className="w-4 h-4" />
                 )}
               </div>
             )}

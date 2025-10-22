@@ -1,37 +1,40 @@
 "use client";
 
-import { FC, ReactElement, useState } from "react";
+import type { FC, ReactElement } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane web components
 import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
-import { Button, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TGitlabEntityConnection } from "@plane/types";
+import { ModalCore } from "@plane/ui";
 import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
 // public images
 import GitlabLogo from "@/public/services/gitlab.svg";
 
 type TEntityConnectionItem = {
   entityConnection: TGitlabEntityConnection;
+  isEnterprise: boolean;
 };
 
 export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) => {
   // props
-  const { entityConnection } = props;
+  const { entityConnection, isEnterprise } = props;
   const { t } = useTranslation();
 
   // hooks
   const {
     getProjectById,
     entityConnection: { deleteEntityConnection },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
 
   // states
   const [editModal, setEditModal] = useState<boolean>(false);
@@ -114,7 +117,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       </ModalCore>
 
       {/* entity edit */}
-      <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} />
+      <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} isEnterprise={isEnterprise} />
 
       <div className="relative flex items-center gap-2 p-2 bg-custom-background-90/20">
         <div className="flex-shrink-0 relative flex justify-center items-center w-8 h-8 rounded">

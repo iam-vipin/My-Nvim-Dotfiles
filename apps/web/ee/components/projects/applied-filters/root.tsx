@@ -2,11 +2,12 @@
 
 import { X } from "lucide-react";
 // plane imports
-import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EHeaderVariant, Header, Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // plane web imports
-import { TProjectFilters, TProjectAttributes } from "@/plane-web/types/workspace-project-filters";
-import { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { TProjectAttributes, TProjectFilters } from "@/plane-web/types/workspace-project-filters";
+import type { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // local imports
 import { AppliedAccessFilters } from "./access";
 import { AppliedMembersFilters } from "./members";

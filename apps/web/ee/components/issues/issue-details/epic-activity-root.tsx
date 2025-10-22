@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 import { observer } from "mobx-react";
 import { ArrowRightLeft } from "lucide-react";
-import { TIssueActivity } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
+import { EpicIcon } from "@plane/propel/icons";
+import type { TIssueActivity } from "@plane/types";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 

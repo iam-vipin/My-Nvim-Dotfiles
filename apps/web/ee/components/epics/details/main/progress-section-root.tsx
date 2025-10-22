@@ -1,9 +1,13 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, TStateAnalytics } from "@plane/types";
-import { InfoIcon, Tooltip } from "@plane/ui";
+// plane imports
+import { InfoIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TStateAnalytics } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web
@@ -33,7 +37,7 @@ export const EpicProgressSection: FC<Props> = observer((props) => {
     <ProgressSection
       data={epicAnalytics as TStateAnalytics}
       indicatorElement={
-        <Tooltip tooltipContent="The progress metrics aggregate all child work items from Epics." position="top-left">
+        <Tooltip tooltipContent="The progress metrics aggregate all child work items from Epics." position="top-start">
           <span className="flex items-center justify-center size-4 text-custom-text-300 hover:text-custom-text-200 cursor-pointer">
             <InfoIcon className="size-3.5" />
           </span>

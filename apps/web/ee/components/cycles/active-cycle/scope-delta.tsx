@@ -1,5 +1,5 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { TCycleProgress } from "@plane/types";
+import type { TCycleProgress } from "@plane/types";
 type Props = {
   data: Partial<TCycleProgress>[] | null;
   dataToday: Partial<TCycleProgress> | undefined;

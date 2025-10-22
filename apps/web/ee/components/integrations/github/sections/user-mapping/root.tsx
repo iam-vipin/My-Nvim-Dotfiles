@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 
 export const UserMappingRoot: FC = (props) => {
   const {} = props;

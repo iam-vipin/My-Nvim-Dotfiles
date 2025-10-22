@@ -2,10 +2,12 @@
 
 import { CheckCircle, Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Button, ModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// helpers
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ModalCore } from "@plane/ui";
 import { copyTextToClipboard, csvDownload } from "@plane/utils";
+// helpers
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -13,10 +15,11 @@ type Props = {
   clientSecret: string;
   clientId: string;
   handleClose: () => void;
+  mode?: "create" | "update";
 };
 
 export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
-  const { isOpen, clientSecret, clientId, handleClose } = props;
+  const { isOpen, clientSecret, clientId, handleClose, mode = "create" } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
 
@@ -48,10 +51,14 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
           </div>
           <div className="space-y-1 text-wrap">
             <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-              {t("workspace_settings.settings.applications.app_available")}
+              {t(
+                `workspace_settings.settings.applications.${mode === "create" ? "app_created" : "app_credentials_regenrated"}.title`
+              )}
             </h3>
             <p className="text-sm text-custom-text-400">
-              {t("workspace_settings.settings.applications.app_available_description")}
+              {t(
+                `workspace_settings.settings.applications.${mode === "create" ? "app_created" : "app_credentials_regenrated"}.description`
+              )}
             </p>
           </div>
         </div>
@@ -81,7 +88,7 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
               {t("workspace_settings.settings.applications.client_secret")}
             </p>
             <div
-              className={`flex items-center justify-between mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100`}
+              className={`flex items-center justify-between mt-4  truncate w-full rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100`}
             >
               <span className={`truncate pr-2 text-custom-text-100`}>{clientSecret}</span>
               <div className="flex items-center space-x-2">

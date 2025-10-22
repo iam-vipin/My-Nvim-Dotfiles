@@ -1,21 +1,24 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
-import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { E_INTEGRATION_KEYS } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
-const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+const siloAppService = new SiloAppService();
 
 const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // hooks
@@ -77,7 +80,7 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
     return (
       <div className="relative space-y-6">
         {/* header */}
-        <GitlabHeader />
+        <GitlabHeader isEnterprise={false} />
         <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
           {/* Icon and Title Section */}
           <div className="flex items-center justify-between">
@@ -124,13 +127,13 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   return (
     <div className="relative space-y-6">
       {/* header */}
-      <GitlabHeader />
+      <GitlabHeader isEnterprise={false} />
 
       {/* integration auth root */}
-      <UserAuthentication />
+      <UserAuthentication isEnterprise={false} />
 
       {/* integration root */}
-      {organization && <IntegrationRoot />}
+      {organization && <IntegrationRoot isEnterprise={false} />}
     </div>
   );
 });

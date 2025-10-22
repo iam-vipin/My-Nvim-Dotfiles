@@ -1,10 +1,14 @@
 // root store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // templates stores
-import { ITemplateHelperStore, TemplateHelperStore } from "./helper.store";
-import { IPageTemplateStore, PageTemplateStore } from "./page.store";
-import { IProjectTemplateStore, ProjectTemplateStore } from "./project.store";
-import { IWorkItemTemplateStore, WorkItemTemplateStore } from "./work-item.store";
+import type { ITemplateHelperStore } from "./helper.store";
+import { TemplateHelperStore } from "./helper.store";
+import type { IPageTemplateStore } from "./page.store";
+import { PageTemplateStore } from "./page.store";
+import type { IProjectTemplateStore } from "./project.store";
+import { ProjectTemplateStore } from "./project.store";
+import type { IWorkItemTemplateStore } from "./work-item.store";
+import { WorkItemTemplateStore } from "./work-item.store";
 
 export interface ITemplatesRootStore {
   projectTemplates: IProjectTemplateStore;

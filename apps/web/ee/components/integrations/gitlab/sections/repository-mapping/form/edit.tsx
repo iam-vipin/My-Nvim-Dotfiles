@@ -1,38 +1,42 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { GITLAB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TGitlabEntityConnection, TStateMap } from "@plane/types";
+import { E_STATE_MAP_KEYS } from "@plane/types";
+import { ModalCore } from "@plane/ui";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations";
+import type { TProjectMap } from "@/plane-web/types/integrations/gitlab";
 // plane web helpers
 // local imports
-import { TGitlabEntityConnection } from "@/plane-web/types/integrations/gitlab";
 import { projectMapInit, stateMapInit } from "../root";
 
 type TFormEdit = {
   modal: boolean;
   handleModal: Dispatch<SetStateAction<boolean>>;
   data: TGitlabEntityConnection;
+  isEnterprise: boolean;
 };
 
 export const FormEdit: FC<TFormEdit> = observer((props) => {
   // props
-  const { modal, handleModal, data } = props;
+  const { modal, handleModal, data, isEnterprise } = props;
 
   // hooks
   const {
     workspace,
     fetchStates,
     entityConnection: { updateEntityConnection },
-  } = useGitlabIntegration();
+  } = useGitlabIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
@@ -121,7 +125,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
         <div className="text-xl font-medium text-custom-text-200">{t("gitlab_integration.link_plane_project")}</div>
 
         <div className="space-y-4">
-          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
+          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
@@ -133,6 +137,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
                 projectId={projectMap?.projectId || undefined}
                 value={stateMap}
                 handleChange={handleStateMapChange}
+                isEnterprise={isEnterprise}
               />
             </div>
           </div>

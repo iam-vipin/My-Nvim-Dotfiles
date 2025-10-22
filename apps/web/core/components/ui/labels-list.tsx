@@ -1,9 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // ui
-import { IIssueLabel } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueLabel } from "@plane/types";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks

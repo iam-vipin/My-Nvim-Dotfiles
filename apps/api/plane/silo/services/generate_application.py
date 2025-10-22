@@ -2,7 +2,6 @@
 from logging import getLogger
 
 # Django imports
-from django.conf import settings
 from django.db import models, transaction
 
 # Third Party imports
@@ -45,6 +44,7 @@ def generate_application(
     user = user_model.objects.get(id=user_id)
 
     webhook_url = app_data.get("webhook_url", None)
+    setup_url = app_data.get("setup_url", None)
 
     with transaction.atomic():
         client_secret = generate_client_secret()
@@ -56,12 +56,13 @@ def generate_application(
             "short_description": app_data["short_description"],
             "company_name": user.display_name,
             "redirect_uris": app_data["redirect_uris"],
-            "skip_authorization": True,
+            "skip_authorization": app_data.get("skip_authorization", True),
             "client_type": "confidential",
             "authorization_grant_type": "authorization-code",
             "user_id": user_id,
             "client_secret": client_secret,
             "webhook_url": webhook_url,
+            "setup_url": setup_url,
         }
 
         # check if application already exists
@@ -71,6 +72,7 @@ def generate_application(
             application.client_secret = client_secret
             application.redirect_uris = app_data["redirect_uris"]
             application.webhook_url = webhook_url
+            application.setup_url = setup_url
             application.save()
         else:
             application = application_model.objects.create(**application_data)
@@ -80,9 +82,7 @@ def generate_application(
 
         application_secret_model.objects.bulk_create(
             [
-                application_secret_model(
-                    key=f"x-{app_key}-id", value=application.id, is_secured=False
-                ),
+                application_secret_model(key=f"x-{app_key}-id", value=application.id, is_secured=False),
                 application_secret_model(
                     key=f"x-{app_key}-client_id",
                     value=application.client_id,

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
 interface IChatDelete {
@@ -41,7 +42,7 @@ export const ChatDeleteModal: React.FC<IChatDelete> = observer((props) => {
       });
     }
     if (activeChatId === chatId) {
-      router.push(`/${workspaceSlug}/pi-chat/new`);
+      router.push(`/${workspaceSlug}/pi-chat`);
     }
     setLoader(false);
     handleClose();

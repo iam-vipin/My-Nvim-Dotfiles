@@ -41,16 +41,8 @@ from plane.graphql.utils.issue_activity import convert_issue_properties_to_activ
 
 @strawberry.type
 class EpicMutation:
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
-    async def create_epic(
-        self, info: Info, slug: str, project: str, epic_input: EpicCreateInputType
-    ) -> EpicType:
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
+    async def create_epic(self, info: Info, slug: str, project: str, epic_input: EpicCreateInputType) -> EpicType:
         user = info.context.user
         user_id = str(user.id)
 
@@ -66,9 +58,7 @@ class EpicMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         epic_state_id = epic_input.state or None
@@ -77,14 +67,10 @@ class EpicMutation:
 
         # check if the workflow is enabled for the project and the state is not passed
         if epic_state_id is None:
-            state = await get_project_default_state(
-                workspace_slug=workspace_slug, project_id=project_id
-            )
+            state = await get_project_default_state(workspace_slug=workspace_slug, project_id=project_id)
             epic_state_id = str(state.id)
         else:
-            workflow_feature_flagged = await is_workflow_feature_flagged(
-                user_id=user_id, workspace_slug=workspace_slug
-            )
+            workflow_feature_flagged = await is_workflow_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
             if workflow_feature_flagged:
                 project_workflow_enabled = await is_project_workflow_enabled(
                     workspace_slug=workspace_slug, project_id=project_id
@@ -186,13 +172,7 @@ class EpicMutation:
 
         return epic
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def update_epic(
         self,
         info: Info,
@@ -216,9 +196,7 @@ class EpicMutation:
         workspace_id = str(workspace.id)
 
         # get the project
-        project_details = await get_project(
-            workspace_slug=workspace_slug, project_id=project
-        )
+        project_details = await get_project(workspace_slug=workspace_slug, project_id=project)
         project_id = str(project_details.id)
 
         provided_fields = {
@@ -246,9 +224,7 @@ class EpicMutation:
         if "descriptionHtml" in provided_fields:
             epic.description_html = provided_fields["descriptionHtml"]
             activity_payload["description_html"] = provided_fields["descriptionHtml"]
-            current_activity_payload["description_html"] = current_epic_activity[
-                "description_html"
-            ]
+            current_activity_payload["description_html"] = current_epic_activity["description_html"]
 
         if "priority" in provided_fields:
             epic.priority = provided_fields["priority"]
@@ -258,34 +234,22 @@ class EpicMutation:
         if "startDate" in provided_fields:
             if epic_input.start_date is not None:
                 epic.start_date = epic_input.start_date
-                activity_payload["start_date"] = epic_input.start_date.strftime(
-                    "%Y-%m-%d"
-                )
-                current_activity_payload["start_date"] = current_epic_activity[
-                    "start_date"
-                ]
+                activity_payload["start_date"] = epic_input.start_date.strftime("%Y-%m-%d")
+                current_activity_payload["start_date"] = current_epic_activity["start_date"]
             else:
                 epic.start_date = None
                 activity_payload["start_date"] = None
-                current_activity_payload["start_date"] = current_epic_activity[
-                    "start_date"
-                ]
+                current_activity_payload["start_date"] = current_epic_activity["start_date"]
 
         if "targetDate" in provided_fields:
             if epic_input.target_date is not None:
                 epic.target_date = epic_input.target_date
-                activity_payload["target_date"] = epic_input.target_date.strftime(
-                    "%Y-%m-%d"
-                )
-                current_activity_payload["target_date"] = current_epic_activity[
-                    "target_date"
-                ]
+                activity_payload["target_date"] = epic_input.target_date.strftime("%Y-%m-%d")
+                current_activity_payload["target_date"] = current_epic_activity["target_date"]
             else:
                 epic.target_date = None
                 activity_payload["target_date"] = None
-                current_activity_payload["target_date"] = current_epic_activity[
-                    "target_date"
-                ]
+                current_activity_payload["target_date"] = current_epic_activity["target_date"]
 
         if "state" in provided_fields:
             epic.state_id = provided_fields["state"]
@@ -300,9 +264,7 @@ class EpicMutation:
         # validate the workflow if the project has workflows enabled
         state_id = provided_fields["state"] if "state" in provided_fields else None
         if state_id:
-            workflow_enabled = await is_workflow_feature_flagged(
-                workspace_slug=workspace_slug, user_id=user_id
-            )
+            workflow_enabled = await is_workflow_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
             if workflow_enabled:
                 await is_workflow_update_allowed(
                     workspace_slug=workspace_slug,
@@ -317,14 +279,10 @@ class EpicMutation:
         await sync_to_async(epic.save)()
 
         # creating or updating the assignees
-        assignees = (
-            provided_fields["assignees"] if "assignees" in provided_fields else None
-        )
+        assignees = provided_fields["assignees"] if "assignees" in provided_fields else None
         if assignees is not None:
             activity_payload["assignee_ids"] = assignees
-            current_activity_payload["assignee_ids"] = current_epic_activity[
-                "assignee_ids"
-            ]
+            current_activity_payload["assignee_ids"] = current_epic_activity["assignee_ids"]
 
             await sync_to_async(IssueAssignee.objects.filter(issue=epic).delete)()
             if len(assignees) > 0:
@@ -381,9 +339,7 @@ class EpicMutation:
 
         return epic
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
     async def delete_epic(self, info: Info, slug: str, project: str, epic: str) -> bool:
         user = info.context.user
         user_id = str(user.id)
@@ -394,9 +350,7 @@ class EpicMutation:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        epics_base_query = epic_base_query(
-            workspace_slug=slug, project_id=project, user_id=user_id
-        )
+        epics_base_query = epic_base_query(workspace_slug=slug, project_id=project, user_id=user_id)
 
         epic = await sync_to_async(epics_base_query.get)(id=epic)
         epic_id = str(epic.id)
@@ -411,9 +365,10 @@ class EpicMutation:
         # Track the issue
         issue_activity.delay(
             type="issue.activity.deleted",
-            requested_data=json.dumps({"epic_id": str(epic)}),
+            requested_data=json.dumps({"issue_id": str(epic)}),
             actor_id=user_id,
             issue_id=epic_id,
+            notification=True,
             project_id=str(project),
             current_instance=current_epic_activity,
             epoch=int(timezone.now().timestamp()),

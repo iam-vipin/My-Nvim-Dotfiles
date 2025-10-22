@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS, AUTOMATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EActionNodeHandlerName,
-  EAutomationNodeType,
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// helpers
+import type {
   TAutomationActionNodeConfig,
   TChangePropertyActionConfig,
   TChangePropertyActionFormConfig,
 } from "@plane/types";
-import { Button } from "@plane/ui";
+import { EActionNodeHandlerName, EAutomationNodeType } from "@plane/types";
+import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
-import { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
+import type { IAutomationActionNodeInstance } from "@/plane-web/store/automations/node/action";
 // local imports
 import { DeleteAutomationNodeConfirmationModal } from "../delete-confirmation-modal";
-import {
-  AutomationDetailsSidebarActionsFormRoot,
-  EAutomationActionFormType,
-  TAutomationActionFormData,
-} from "./form/root";
+import type { TAutomationActionFormData } from "./form/root";
+import { AutomationDetailsSidebarActionsFormRoot, EAutomationActionFormType } from "./form/root";
 
 type Props = {
   automationId: string;
@@ -96,33 +96,83 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
 
   const handleCreateAction = async (data: TAutomationActionFormData) => {
     const validConfig = validateAndTransformFormData(data);
-    if (!validConfig || !data.handler_name) return; // TODO: Add toast error
+    if (!validConfig || !data.handler_name) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.action.create.error.title"),
+        message: t("automations.toasts.action.create.error.message"),
+      });
+      return;
+    }
 
     setIsCreatingUpdatingAction(true);
-    await automation?.createAction({
-      handler_name: data.handler_name,
-      config: validConfig,
-    });
-    setIsActionFormOpen(false);
-    setIsCreatingUpdatingAction(false);
+    try {
+      await automation?.createAction({
+        handler_name: data.handler_name,
+        config: validConfig,
+      });
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+      setIsActionFormOpen(false);
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_CREATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } finally {
+      setIsCreatingUpdatingAction(false);
+    }
   };
 
   const handleUpdateAction = async (actionNode: IAutomationActionNodeInstance, data: TAutomationActionFormData) => {
     const validConfig = validateAndTransformFormData(data);
-    if (!validConfig || !data.handler_name) return; // TODO: Add toast error
+    if (!validConfig || !data.handler_name) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("automations.toasts.action.update.error.title"),
+        message: t("automations.toasts.action.update.error.message"),
+      });
+      return;
+    }
 
     setIsCreatingUpdatingAction(true);
-    await actionNode.update({
-      handler_name: data.handler_name,
-      config: validConfig,
-    });
-    setIsCreatingUpdatingAction(false);
+    try {
+      await actionNode.update({
+        handler_name: data.handler_name,
+        config: validConfig,
+      });
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_UPDATED,
+        payload: { id: automationId, handler_name: data.handler_name },
+      });
+    } finally {
+      setIsCreatingUpdatingAction(false);
+    }
   };
 
   const handleDeleteAction = async () => {
     if (!selectedActionToDelete) return;
-    await automation?.deleteAction(selectedActionToDelete);
-    setSelectedActionToDelete(null);
+    try {
+      await automation?.deleteAction(selectedActionToDelete);
+      captureSuccess({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
+        payload: { id: automationId, action_id: selectedActionToDelete },
+      });
+    } catch {
+      captureError({
+        eventName: AUTOMATION_TRACKER_EVENTS.ACTION_DELETED,
+        payload: { id: automationId, action_id: selectedActionToDelete },
+      });
+    } finally {
+      setSelectedActionToDelete(null);
+    }
   };
 
   if (!projectId || !workspaceId || !workspaceSlug) return null;
@@ -172,6 +222,7 @@ export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((pro
               size="sm"
               variant="neutral-primary"
               onClick={() => {
+                captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.ADD_ACTION_BUTTON });
                 openActionForm(actionFormRef.current);
               }}
               loading={isCreatingUpdatingAction}

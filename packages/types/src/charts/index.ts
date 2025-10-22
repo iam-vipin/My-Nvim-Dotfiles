@@ -21,8 +21,17 @@ export type TChartData<K extends string, T extends string> = {
   [key in K]: string | number;
 } & Record<T, any>;
 
-export type TChartProps<K extends string, T extends string> = {
+export type TBaseChartProps<K extends string, T extends string> = {
   data: TChartData<K, T>[];
+  className?: string;
+  legend?: TChartLegend;
+  margin?: TChartMargin;
+  showTooltip?: boolean;
+  customTooltipContent?: (props: { active?: boolean; label: string; payload: any }) => React.ReactNode;
+};
+
+// Props specific to charts with X and Y axes
+export type TAxisChartProps<K extends string, T extends string> = TBaseChartProps<K, T> & {
   xAxis: {
     key: keyof TChartData<K, T>;
     label?: string;
@@ -38,15 +47,14 @@ export type TChartProps<K extends string, T extends string> = {
     offset?: number;
     dx?: number;
   };
-  className?: string;
-  legend?: TChartLegend;
-  margin?: TChartMargin;
   tickCount?: {
     x?: number;
     y?: number;
   };
-  showTooltip?: boolean;
-  customTooltipContent?: (props: { active?: boolean; label: string; payload: any }) => React.ReactNode;
+  customTicks?: {
+    x?: React.ComponentType<unknown>;
+    y?: React.ComponentType<unknown>;
+  };
 };
 
 // ============================================================
@@ -67,9 +75,13 @@ export type TBarItem<T extends string> = {
   shapeVariant?: TBarChartShapeVariant;
 };
 
-export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+export type TBarChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   bars: TBarItem<T>[];
   barSize?: number;
+  customTicks?: {
+    x?: React.ComponentType<any>;
+    y?: React.ComponentType<any>;
+  };
 };
 
 // ============================================================
@@ -87,7 +99,7 @@ export type TLineItem<T extends string> = {
   style?: Record<string, string | number>;
 };
 
-export type TLineChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+export type TLineChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   lines: TLineItem<T>[];
 };
 
@@ -102,7 +114,7 @@ export type TScatterPointItem<T extends string> = {
   stroke: string;
 };
 
-export type TScatterChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+export type TScatterChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   scatterPoints: TScatterPointItem<T>[];
 };
 
@@ -123,7 +135,7 @@ export type TAreaItem<T extends string> = {
   style?: Record<string, string | number>;
 };
 
-export type TAreaChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+export type TAreaChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   areas: TAreaItem<T>[];
   comparisonLine?: {
     dashedLine: boolean;
@@ -141,7 +153,7 @@ export type TCellItem<T extends string> = {
 };
 
 export type TPieChartProps<K extends string, T extends string> = Pick<
-  TChartProps<K, T>,
+  TBaseChartProps<K, T>,
   "className" | "data" | "showTooltip" | "legend" | "margin"
 > & {
   dataKey: T;
@@ -223,7 +235,7 @@ export type TRadarItem<T extends string> = {
 };
 
 export type TRadarChartProps<K extends string, T extends string> = Pick<
-  TChartProps<K, T>,
+  TBaseChartProps<K, T>,
   "className" | "showTooltip" | "margin" | "data" | "legend"
 > & {
   dataKey: T;

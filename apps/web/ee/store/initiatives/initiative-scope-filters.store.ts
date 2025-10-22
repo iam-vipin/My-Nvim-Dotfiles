@@ -1,6 +1,7 @@
 import { action, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IInitiativeScopeDisplayFiltersOptions, EIssueLayoutTypes } from "@plane/types";
+import type { IInitiativeScopeDisplayFiltersOptions } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 
 export interface IInitiativeScopeStore {
   updateDisplayFilters: (initiativeId: string, displayFilters: IInitiativeScopeDisplayFiltersOptions) => void;

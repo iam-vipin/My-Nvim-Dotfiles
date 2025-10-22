@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // plane web stores
-import { ITemplateHelperStore } from "@/plane-web/store/templates/store/helper.store";
+import type { ITemplateHelperStore } from "@/plane-web/store/templates/store/helper.store";
 
 export const useTemplateHelper = (): ITemplateHelperStore => {
   const context = useContext(StoreContext);

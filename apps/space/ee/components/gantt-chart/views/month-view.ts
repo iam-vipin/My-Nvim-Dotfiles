@@ -1,7 +1,7 @@
 // types
 import { findTotalDaysInRange } from "@/plane-web/helpers/date-time.helper";
 import { weeks, months } from "../data";
-import { ChartDataType, IGanttBlock } from "../types";
+import type { ChartDataType, IGanttBlock } from "../types";
 // data
 // helpers
 import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from "./helpers";

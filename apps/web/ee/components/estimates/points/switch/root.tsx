@@ -1,22 +1,25 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import capitalize from "lodash/capitalize";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useEffect, useState } from "react";
+import { capitalize } from "lodash-es";
 import { observer } from "mobx-react";
 import { ChevronLeft, MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import {
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type {
   IEstimateFormData,
   TEstimatePointsObject,
   TEstimateSystemKeys,
   TEstimateTypeError,
   TEstimateUpdateStageKeys,
 } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useEstimate } from "@/hooks/store/estimates";
 // plane web components
 import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
 // plane web constants
-import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
+import type { EEstimateUpdateStages } from "@/plane-web/constants/estimates";
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TEstimatePointSwitchRoot = {
   setEstimateEditType?: Dispatch<SetStateAction<TEstimateUpdateStageKeys | undefined>>;

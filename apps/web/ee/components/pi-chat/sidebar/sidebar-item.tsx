@@ -3,7 +3,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Pencil, Star, Trash, MoreHorizontal } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CustomMenu, EModalWidth, EModalPosition, ModalCore, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 import { cn, joinUrlPath } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -19,10 +21,20 @@ type TProps = {
   isProjectLevel: boolean;
   isFavorite: boolean;
   optionToExclude?: string[];
+  isFullScreen?: boolean;
 };
 
 export const SidebarItem = observer((props: TProps) => {
-  const { isActive, chatId, title, workspaceSlug, isProjectLevel, isFavorite, optionToExclude = [] } = props;
+  const {
+    isActive,
+    chatId,
+    title,
+    workspaceSlug,
+    isProjectLevel,
+    isFavorite,
+    optionToExclude = [],
+    isFullScreen = false,
+  } = props;
   // state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -30,7 +42,7 @@ export const SidebarItem = observer((props: TProps) => {
   // translation
   const { t } = useTranslation();
   // hooks
-  const { favoriteChat, unfavoriteChat } = usePiChat();
+  const { favoriteChat, unfavoriteChat, initPiChat } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
 
@@ -93,12 +105,18 @@ export const SidebarItem = observer((props: TProps) => {
       </ModalCore>{" "}
       <div className="py-0.5 group/recent-chat">
         <SidebarNavItem isActive={isActive} className="gap-0">
-          <Link
-            href={joinUrlPath(workspaceSlug?.toString() || "", isProjectLevel ? "projects" : "", "pi-chat", chatId)}
-            className="w-full overflow-hidden"
-          >
-            <div className="text-sm leading-5 font-medium truncate capitalize"> {title || "No title"}</div>
-          </Link>
+          {isFullScreen ? (
+            <Link
+              href={joinUrlPath(workspaceSlug?.toString() || "", isProjectLevel ? "projects" : "", "pi-chat", chatId)}
+              className="w-full overflow-hidden"
+            >
+              <div className="text-sm leading-5 font-medium truncate capitalize"> {title || "No title"}</div>
+            </Link>
+          ) : (
+            <button className="w-full overflow-hidden" onClick={() => initPiChat(chatId)}>
+              <div className="text-sm leading-5 font-medium truncate capitalize text-start">{title || "No title"}</div>
+            </button>
+          )}
           <CustomMenu
             customButton={
               <span
@@ -131,9 +149,7 @@ export const SidebarItem = observer((props: TProps) => {
               return (
                 <CustomMenu.MenuItem
                   key={item.key}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                  onClick={() => {
                     item.action();
                   }}
                   className={cn(

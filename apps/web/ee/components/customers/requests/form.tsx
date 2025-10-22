@@ -1,19 +1,24 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { LayersIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
-import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
-import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
+import type { ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";

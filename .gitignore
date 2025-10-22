@@ -16,9 +16,10 @@ node_modules
 /out/
 
 # Production
-/build
 dist/
 out/
+build/
+.react-router/
 
 # Misc
 .DS_Store
@@ -107,4 +108,5 @@ monitor.db
 
 .cursorrules
 .cursor
-CLAUDE.md
+claude.md
+agents.md

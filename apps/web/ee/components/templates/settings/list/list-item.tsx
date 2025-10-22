@@ -4,11 +4,11 @@ import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TBaseTemplateWithData } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TBaseTemplateWithData } from "@plane/types";
 // plane web imports
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { IBaseTemplateStore } from "@/plane-web/store/templates";
+import type { IBaseTemplateStore } from "@/plane-web/store/templates";
 // local imports
 import { TemplateQuickActions } from "./quick-actions";
 

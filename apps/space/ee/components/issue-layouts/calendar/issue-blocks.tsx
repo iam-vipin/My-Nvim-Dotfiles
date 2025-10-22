@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
-import { TPaginationData } from "@plane/types";
+import type { TPaginationData } from "@plane/types";
 // helpers
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 // hooks
 import { useViewIssues } from "@/plane-web/hooks/store";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 //
 import { CalendarIssueBlockRoot } from "./issue-block-root";
 

@@ -67,9 +67,7 @@ def get_issue_id(workspace_slug: str, project_id: str, issue_sequence: str):
 # issues query
 @strawberry.type
 class IssueShortenedMetaInfoQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspacePermission()])])
     async def issue_shortened_meta_info(
         self, info: Info, slug: str, work_item_identifier: str
     ) -> IssueShortenedMetaInfo:
@@ -93,9 +91,7 @@ class IssueShortenedMetaInfoQuery:
 
         project_id = await get_project_id(workspace_slug, project_identifier)
 
-        is_project_member = await project_member_exists(
-            workspace_slug, project_identifier, info.context.user
-        )
+        is_project_member = await project_member_exists(workspace_slug, project_identifier, info.context.user)
         if not is_project_member:
             # validate teamspace membership
             project_teamspace_filter = await project_member_filter_via_teamspaces_async(
@@ -103,18 +99,11 @@ class IssueShortenedMetaInfoQuery:
                 workspace_slug=workspace_slug,
             )
             teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
-            if (
-                not teamspace_project_ids
-                or str(project_id) not in teamspace_project_ids
-            ):
+            if not teamspace_project_ids or str(project_id) not in teamspace_project_ids:
                 message = "User does not have permission to access this project."
                 error_extensions = {"code": "UNAUTHORIZED", "statusCode": 403}
                 raise GraphQLError(message, extensions=error_extensions)
 
-        issue_id, is_epic = await get_issue_id(
-            workspace_slug, project_id, issue_sequence
-        )
+        issue_id, is_epic = await get_issue_id(workspace_slug, project_id, issue_sequence)
 
-        return IssueShortenedMetaInfo(
-            project=str(project_id), work_item=str(issue_id), is_epic=is_epic
-        )
+        return IssueShortenedMetaInfo(project=str(project_id), work_item=str(issue_id), is_epic=is_epic)

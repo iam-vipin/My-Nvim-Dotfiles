@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { Tooltip, PiIcon } from "@plane/ui";
+import { PiIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -33,7 +34,7 @@ export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
         <div className="w-full flex-1">{header}</div>
         {shouldRenderPiChat && (
           <div className="pl-2">
-            <Tooltip tooltipContent="Ask Pi" position="bottom">
+            <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
                   "transition-colors p-2 rounded bg-custom-sidebar-background-80  hover:bg-custom-primary-100/10 hover:text-custom-primary-200  text-custom-text-350 grid place-items-center w-full",

@@ -1,11 +1,11 @@
 "use client";
 
-import { FC, Dispatch, SetStateAction } from "react";
+import type { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // components
 // helpers
 import { cn } from "@plane/utils";
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 import { NotificationItemArchiveOption } from "./archive";
 import { NotificationItemReadOption } from "./read";
 import { NotificationItemSnoozeOption } from "./snooze";

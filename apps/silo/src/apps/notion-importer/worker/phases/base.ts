@@ -1,21 +1,21 @@
 // Base Class
 import { S3Client } from "@aws-sdk/client-s3";
 import { E_JOB_STATUS } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import { Client } from "@plane/sdk";
 import { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { createZipManager, EZipNodeType, TZipFileNode, ZipManager } from "@/lib/zip-manager";
-import { logger } from "@/logger";
-import { getAPIClient } from "@/services/client";
+import { getAPIClientInternal } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { EZipDriverType, ZipDriverFactory } from "../../drivers";
 import { IZipImportDriver } from "../../drivers/types";
-import { ENotionImporterKeyType, TNotionImportConfig, TNotionMigratorData } from "../../types";
+import { ENotionImporterKeyType, TDocImporterJobConfig, TNotionMigratorData } from "../../types";
 import { getKey } from "../../utils";
 
-const apiClient = getAPIClient();
+const apiClient = getAPIClientInternal();
 
 // Context for processing nodes (everything a phase implementation needs)
 export interface PhaseProcessingContext {
@@ -59,7 +59,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @returns The job data
    */
   async getCachedJobData(jobId: string): Promise<TImportJob<unknown> | undefined> {
-    const key = getKey(jobId, ENotionImporterKeyType.JOB);
+    const key = getKey(jobId, jobId, ENotionImporterKeyType.JOB);
     const job = await this.store.get(key);
     if (job) {
       return JSON.parse(job) as TImportJob;
@@ -87,7 +87,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @returns The job credentials
    */
   async getCachesJobCredentials(job: TImportJob): Promise<TWorkspaceCredential | undefined> {
-    const credentialsKey = getKey(job.id, ENotionImporterKeyType.JOB_CREDENTIALS);
+    const credentialsKey = getKey(job.id, job.id, ENotionImporterKeyType.JOB_CREDENTIALS);
     const credentials = await this.store.get(credentialsKey);
 
     if (credentials) {
@@ -117,7 +117,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
         throw new Error(`Job ${jobId} not found`);
       }
 
-      const config = job.config as TNotionImportConfig;
+      const config = job.config as TDocImporterJobConfig;
       if (!config.fileId) {
         throw new Error(`Job ${jobId} has no fileId`);
       }
@@ -139,7 +139,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
           throw new Error(`Current node not found for job ${jobId}`);
         }
         const leafNodeCount = await this.countLeafNodesFromRoot(currentNode);
-        await this.setLeafNodeCounter(fileId, leafNodeCount);
+        await this.setLeafNodeCounter(jobId, fileId, leafNodeCount);
       }
 
       if (!currentNode) {
@@ -247,8 +247,13 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param type - The type of objects to set
    * @param objects - The map of objects to set
    */
-  async setCacheObjects(fileId: string, type: ENotionImporterKeyType, objects: Map<string, string>): Promise<void> {
-    const key = getKey(fileId, type);
+  async setCacheObjects(
+    jobId: string,
+    fileId: string,
+    type: ENotionImporterKeyType,
+    objects: Map<string, string>
+  ): Promise<void> {
+    const key = getKey(jobId, fileId, type);
     const ttl = 60 * 60 * 4; // 4 hours
     await this.store.setMap(key, objects, ttl);
   }
@@ -320,10 +325,10 @@ export abstract class NotionMigratorBase extends TaskHandler {
     ];
     for (const type of types) {
       if (type === ENotionImporterKeyType.JOB || type === ENotionImporterKeyType.JOB_CREDENTIALS) {
-        const key = getKey(jobId, type);
+        const key = getKey(jobId, fileId, type);
         await this.store.del(key);
       } else {
-        const key = getKey(fileId, type);
+        const key = getKey(jobId, fileId, type);
         await this.store.del(key);
       }
     }
@@ -334,8 +339,8 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param fileId - The id of the file
    * @param leafNodeCount - The number of leaf nodes
    */
-  async setLeafNodeCounter(fileId: string, leafNodeCount: number) {
-    const key = getKey(fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
+  async setLeafNodeCounter(jobId: string, fileId: string, leafNodeCount: number) {
+    const key = getKey(jobId, fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
     const ttl = 60 * 60 * 4; // 4 hours
     await this.store.initCounter(key, leafNodeCount, ttl);
   }
@@ -344,8 +349,8 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * Decrements the leaf node counter in the store
    * @param fileId - The id of the file
    */
-  async decrementLeafNodeCounter(fileId: string) {
-    const key = getKey(fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
+  async decrementLeafNodeCounter(jobId: string, fileId: string) {
+    const key = getKey(jobId, fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
     await this.store.decrementCounter(key);
   }
 
@@ -354,8 +359,8 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param fileId - The id of the file
    * @returns The number of leaf nodes
    */
-  async getLeafNodeCounter(fileId: string): Promise<number | null> {
-    const key = getKey(fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
+  async getLeafNodeCounter(jobId: string, fileId: string): Promise<number | null> {
+    const key = getKey(jobId, fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
     return await this.store.getCounter(key);
   }
 
@@ -363,8 +368,8 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * Deletes the leaf node counter from the store
    * @param fileId - The id of the file
    */
-  async deleteLeafNodeCounter(fileId: string) {
-    const key = getKey(fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
+  async deleteLeafNodeCounter(jobId: string, fileId: string) {
+    const key = getKey(jobId, fileId, ENotionImporterKeyType.LEAF_NODE_COUNTER);
     await this.store.del(key);
   }
 
@@ -375,8 +380,13 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param keyType - The type of map to retrieve
    * @returns The map
    */
-  async retrieveMap(store: Store, fileId: string, keyType: ENotionImporterKeyType): Promise<Map<string, string>> {
-    const mapKey = getKey(fileId, keyType);
+  async retrieveMap(
+    store: Store,
+    jobId: string,
+    fileId: string,
+    keyType: ENotionImporterKeyType
+  ): Promise<Map<string, string>> {
+    const mapKey = getKey(jobId, fileId, keyType);
     try {
       const map = await store.getMap(mapKey);
       return map || new Map();

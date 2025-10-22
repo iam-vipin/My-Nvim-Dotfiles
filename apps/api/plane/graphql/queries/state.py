@@ -16,9 +16,7 @@ from plane.graphql.types.state import StateType
 
 @strawberry.type
 class WorkspaceStateQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
+    @strawberry.field(extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])])
     async def workspace_states(self, info: Info, slug: str) -> list[StateType]:
         user = info.context.user
         user_id = str(user.id)
@@ -28,21 +26,15 @@ class WorkspaceStateQuery:
             workspace_slug=slug,
         )
         states = await sync_to_async(list)(
-            State.objects.filter(workspace__slug=slug)
-            .filter(project_teamspace_filter.query)
-            .filter(is_triage=False)
+            State.objects.filter(workspace__slug=slug).filter(project_teamspace_filter.query).filter(is_triage=False)
         )
         return states
 
 
 @strawberry.type
 class StateQuery:
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def states(
-        self, info: Info, slug: str, project: strawberry.ID
-    ) -> list[StateType]:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def states(self, info: Info, slug: str, project: strawberry.ID) -> list[StateType]:
         user = info.context.user
         user_id = str(user.id)
 

@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Tooltip, ControlLink } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ControlLink } from "@plane/ui";
 import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
@@ -21,7 +22,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 //
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { getBlockViewDetails } from "../utils";
-import { GanttStoreType } from "./base-gantt-root";
+import type { GanttStoreType } from "./base-gantt-root";
 
 type Props = {
   issueId: string;
@@ -62,7 +63,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
           <div>{message}</div>
         </div>
       }
-      position="top-left"
+      position="top-start"
       disabled={!message}
     >
       <div

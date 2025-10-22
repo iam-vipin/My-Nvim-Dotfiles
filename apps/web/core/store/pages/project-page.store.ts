@@ -1,19 +1,22 @@
-import set from "lodash/set";
+import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web store
-import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import { PageShareService } from "@/plane-web/services/page/page-share.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
 import type { CoreRootStore } from "../root.store";
-import { ProjectPage, TProjectPage } from "./project-page";
+import type { TProjectPage } from "./project-page";
+import { ProjectPage } from "./project-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -32,6 +35,7 @@ export interface IProjectPageStore {
   data: Record<string, TProjectPage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  pagesSummary: TPagesSummary | undefined;
   // page type arrays
   publicPageIds: string[];
   privatePageIds: string[];
@@ -45,13 +49,13 @@ export interface IProjectPageStore {
   // computed
   isAnyPageAvailable: boolean;
   canCurrentUserCreatePage: boolean;
-  currentContextPageIds: string[] | undefined;
   // helper actions
   getCurrentProjectPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectPageIds: (projectId: string) => string[];
   getCurrentProjectFilteredPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TProjectPage | undefined;
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
+  isCommentsEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   findRootParent: (page: TProjectPage) => TProjectPage | undefined;
@@ -64,7 +68,12 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
+  fetchPagesByType: (
+    workspaceSlug: string,
+    projectId: string,
+    pageType: string,
+    searchQuery?: string
+  ) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
   fetchPageDetails: (
     projectId: string,
@@ -76,6 +85,7 @@ export interface IProjectPageStore {
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
   movePage: (params: {
     workspaceSlug: string;
     newProjectId: string;
@@ -86,9 +96,11 @@ export interface IProjectPageStore {
   getOrFetchPageInstance: ({
     pageId,
     projectId,
+    trackVisit,
   }: {
     pageId: string;
     projectId?: string;
+    trackVisit?: boolean;
   }) => Promise<TProjectPage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
@@ -107,6 +119,7 @@ export class ProjectPageStore implements IProjectPageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  pagesSummary: TPagesSummary | undefined = undefined;
   // page type arrays
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
@@ -133,6 +146,7 @@ export class ProjectPageStore implements IProjectPageStore {
       data: observable,
       error: observable,
       filters: observable,
+      pagesSummary: observable,
       // page type arrays
       publicPageIds: observable,
       privatePageIds: observable,
@@ -146,7 +160,6 @@ export class ProjectPageStore implements IProjectPageStore {
       // computed
       isAnyPageAvailable: computed,
       canCurrentUserCreatePage: computed,
-      currentContextPageIds: computed,
       // helper actions
       updateFilters: action,
       clearAllFilters: action,
@@ -157,6 +170,7 @@ export class ProjectPageStore implements IProjectPageStore {
       fetchPageDetails: action,
       createPage: action,
       removePage: action,
+      movePageInternally: action,
       movePage: action,
       updatePagesInStore: action,
       // page sharing actions
@@ -247,7 +261,14 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   get isAnyPageAvailable() {
     if (this.loader) return true;
-    return Object.keys(this.data).length > 0;
+
+    if (this.pagesSummary) {
+      const totalCount =
+        this.pagesSummary.public_pages + this.pagesSummary.private_pages + this.pagesSummary.archived_pages;
+      return totalCount > 0;
+    }
+
+    return false;
   }
 
   /**
@@ -328,13 +349,13 @@ export class ProjectPageStore implements IProjectPageStore {
   });
 
   /**
-   * @description get the current project page ids for the current context
+   * Returns true if comments in pages feature is enabled
+   * @returns boolean
    */
-  get currentContextPageIds() {
-    const { projectId } = this.store.router;
-    if (!projectId) return undefined;
-    return this.getCurrentProjectPageIds(projectId);
-  }
+  isCommentsEnabled = computedFn((workspaceSlug: string) => {
+    const { getFeatureFlag } = this.store.featureFlags;
+    return getFeatureFlag(workspaceSlug, "PAGE_COMMENTS", false);
+  });
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
@@ -562,14 +583,18 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.service.fetchPagesSummary(workspaceSlug, projectId);
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
+
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
-              const { name, ...otherFields } = page;
+              const { name: _name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {
               // If new page, create a new instance with all data
@@ -593,9 +618,8 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  fetchPagesByType = async (pageType: string, searchQuery?: string) => {
+  fetchPagesByType = async (workspaceSlug: string, projectId: string, pageType: string, searchQuery?: string) => {
     try {
-      const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId) return undefined;
 
       const currentPageIds = this.getCurrentProjectPageIds(projectId);
@@ -604,8 +628,12 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.service.fetchPagesSummary(workspaceSlug, projectId);
       const pages = await this.service.fetchPagesByType(workspaceSlug, projectId, pageType, searchQuery);
+
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);
@@ -676,14 +704,16 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true)];
+      const promises: Promise<TPage | TPage[]>[] = [
+        this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit),
+      ];
 
       if (shouldFetchSubPages) {
         promises.push(this.service.fetchSubPages(workspaceSlug, projectId, pageId));
       }
 
       const results = await Promise.all(promises);
-      const page = results[0] as TPage | undefined;
+      const page = results[0] as TPage;
       const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
 
       runInAction(() => {
@@ -816,6 +846,70 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   /**
+   * @description move a page internally within the project hierarchy
+   * @param {string} pageId - The ID of the page to move
+   * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
+   */
+  movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    try {
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      runInAction(() => {
+        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
+          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
+        }
+
+        // Apply all updates to the page instance
+        Object.keys(updatePayload).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
+        });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        pageInstance.updated_at = new Date();
+      });
+
+      await pageInstance.update(updatePayload);
+    } catch (error) {
+      console.error("Unable to move page internally", error);
+      runInAction(() => {
+        this.error = {
+          title: "Failed",
+          description: "Failed to move page internally, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description Helper method to update sub_pages_count when moving pages between parents
+   * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
+   * @param {string | null} newParentId - The new parent ID (can be null for root pages)
+   * @private
+   */
+  private updateParentSubPageCounts = (oldParentId: string | null, newParentId: string | null) => {
+    // Decrement count for old parent (if it exists)
+    if (oldParentId) {
+      const oldParentPageInstance = this.getPageById(oldParentId);
+      if (oldParentPageInstance) {
+        const newCount = Math.max(0, (oldParentPageInstance.sub_pages_count ?? 1) - 1);
+        oldParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+
+    // Increment count for new parent (if it exists)
+    if (newParentId) {
+      const newParentPageInstance = this.getPageById(newParentId);
+      if (newParentPageInstance) {
+        const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
+        newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+  };
+
+  /**
    * @description move a page to a new project
    * @param {string} workspaceSlug
    * @param {string} projectId
@@ -852,7 +946,15 @@ export class ProjectPageStore implements IProjectPageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId, projectId }: { pageId: string; projectId?: string }) => {
+  getOrFetchPageInstance = async ({
+    pageId,
+    projectId,
+    trackVisit,
+  }: {
+    pageId: string;
+    projectId?: string;
+    trackVisit?: boolean;
+  }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
@@ -864,7 +966,7 @@ export class ProjectPageStore implements IProjectPageStore {
       // Additional type safety check
       if (!actualProjectId || !workspaceSlug) return;
 
-      const page = await this.fetchPageDetails(actualProjectId, pageId);
+      const page = await this.fetchPageDetails(actualProjectId, pageId, { trackVisit });
       if (page) {
         return new ProjectPage(this.store, page);
       }
@@ -965,7 +1067,7 @@ export class ProjectPageStore implements IProjectPageStore {
       if (!workspaceSlug || !projectId || !pageId) return;
 
       const sharedUsers = await this.shareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
-      const finalUsers = sharedUsers.map((user) => ({
+      const finalUsers = sharedUsers.map((user: TPageSharedUser) => ({
         user_id: user.user_id,
         access: user.access,
       }));

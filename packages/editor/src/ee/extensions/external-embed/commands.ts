@@ -2,24 +2,19 @@ import type { RawCommands } from "@tiptap/core";
 import type { NodeType } from "@tiptap/pm/model";
 import tldjs from "tldjs";
 import { v4 as uuidv4 } from "uuid";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-// constants
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@/types";
-import type { InsertExternalEmbedCommandProps } from "./types";
-// hooks
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, TExternalEmbedBlockAttributes } from "@/types";
+// local imports
 import { useModifiedEmbedUrl } from "./utils/url-modify";
 
 export const externalEmbedCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   insertExternalEmbed:
-    (props: InsertExternalEmbedCommandProps) =>
+    (props) =>
     ({ commands, editor }) => {
       const uniqueID = uuidv4();
       const modifiedUrl = useModifiedEmbedUrl({ url: props[EExternalEmbedAttributeNames.SOURCE] || "" });
 
-      const options = {
+      const options: Partial<TExternalEmbedBlockAttributes> = {
         [EExternalEmbedAttributeNames.SOURCE]: modifiedUrl,
         [EExternalEmbedAttributeNames.ID]: uniqueID,
         [EExternalEmbedAttributeNames.IS_RICH_CARD]: props[EExternalEmbedAttributeNames.IS_RICH_CARD],
@@ -37,7 +32,7 @@ export const externalEmbedCommands = (nodeType: NodeType): Partial<RawCommands> 
           options[EExternalEmbedAttributeNames.ENTITY_NAME] = siteName;
         }
       } else {
-        const storage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
+        const storage = editor.storage.externalEmbedComponent;
         if (storage) {
           storage.openInput = true;
         }

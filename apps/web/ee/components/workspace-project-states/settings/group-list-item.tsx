@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // helpers
@@ -13,7 +14,7 @@ import {
   ProjectStateCreate,
 } from "@/plane-web/components/workspace-project-states";
 // plane web types
-import { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
+import type { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
 
 type TGroupItem = {
   workspaceSlug: string;

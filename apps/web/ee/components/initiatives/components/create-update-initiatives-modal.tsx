@@ -3,12 +3,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane
 import { useTranslation } from "@plane/i18n";
-import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // Plane web
+import { DEFAULT_INITIATIVE_STATE } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types";
 // local
 import { CreateUpdateInitiativeForm } from "./form";
 
@@ -26,6 +28,8 @@ const defaultValues: Partial<TInitiative> = {
   lead: null,
   project_ids: [],
   epic_ids: [],
+  label_ids: [],
+  state: DEFAULT_INITIATIVE_STATE,
 };
 
 export const CreateUpdateInitiativeModal = observer((props: Props) => {
@@ -34,7 +38,7 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<TInitiative> | undefined>(undefined);
+  const [formData, setFormData] = useState<Partial<TInitiative> | undefined>();
   // store hooks
   const {
     initiative: { createInitiative, updateInitiative, getInitiativeById },
@@ -59,7 +63,7 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
 
   // handlers
   const handleFormDataChange = <T extends keyof TInitiative>(key: T, value: TInitiative[T] | undefined) =>
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => (prev ? { ...prev, [key]: value } : undefined));
 
   const handleModalClearAndClose = () => {
     setFormData(undefined);

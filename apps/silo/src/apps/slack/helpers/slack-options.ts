@@ -13,7 +13,7 @@ export const removePrefixIfExists = (value: string): string => {
     return parts[parts.length - 1];
   }
   return value;
-}
+};
 
 /**
  * Truncates a name if it exceeds the max length, adding ellipsis as needed
@@ -51,3 +51,11 @@ export const convertToSlackOptions = (
   }>,
   prefix?: string
 ): Array<PlainTextOption> => data.map((point) => convertToSlackOption(point, prefix));
+
+/**
+ * Formats work item display info into Slack hyperlink markdown
+ * @param displayText - Display text
+ * @param url - URL
+ * @returns Slack-formatted hyperlink string
+ */
+export const createSlackHyperlinkMarkdown = (displayText: string, url: string): string => `<${url}|${displayText}>`;

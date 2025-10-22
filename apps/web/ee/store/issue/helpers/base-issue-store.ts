@@ -1,5 +1,5 @@
-import orderBy from "lodash/orderBy";
-import { TIssue } from "@plane/types";
+import { orderBy } from "lodash-es";
+import type { TIssue } from "@plane/types";
 import { getIssueIds } from "@/store/issue/helpers/base-issues-utils";
 
 export const workItemSortWithOrderByExtended = (array: TIssue[], key?: string) => {

@@ -1,13 +1,15 @@
-import uniq from "lodash/uniq";
+import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { CircleMinus, PencilIcon } from "lucide-react";
 // plane imports
-import { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
-import { Avatar, AvatarGroup, CustomMenu, PriorityIcon, StateGroupIcon } from "@plane/ui";
-import { cn, getFileURL, TProjectBlueprintDetails } from "@plane/utils";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type { EWorkItemTypeEntity, IIssueType, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";
+import { Avatar, AvatarGroup, CustomMenu } from "@plane/ui";
+import type { TProjectBlueprintDetails } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 // plane web imports
-import { useMember } from "@/hooks/store/use-member"
-import { useProject } from "@/hooks/store/use-project"
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";

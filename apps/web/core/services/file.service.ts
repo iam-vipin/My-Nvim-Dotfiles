@@ -1,8 +1,10 @@
-import { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import { getAssetIdFromUrl } from "@plane/utils";
+// helpers
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -67,7 +69,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
       ...data,
       ...fileMetaData,
@@ -176,7 +178,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/`, {
       ...data,
       ...fileMetaData,
@@ -206,7 +208,7 @@ export class FileService extends APIService {
   }
 
   async uploadUserAsset(data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/user-assets/`, {
       ...data,
       ...fileMetaData,
@@ -311,6 +313,62 @@ export class FileService extends APIService {
       .then((res) => res?.data?.results ?? res?.data)
       .catch((err) => {
         throw err?.response?.data;
+      });
+  }
+
+  async reuploadWorkspaceAsset(
+    workspaceSlug: string,
+    assetId: string,
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = await getFileMetaDataForUpload(file);
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/reupload/${assetId}/`, {
+      type: fileMetaData.type,
+      size: fileMetaData.size,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        await this.updateWorkspaceAssetUploadStatus(workspaceSlug, signedURLResponse.asset_id);
+        return signedURLResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async reuploadProjectAsset(
+    workspaceSlug: string,
+    projectId: string,
+    assetId: string,
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
+  ): Promise<TFileSignedURLResponse> {
+    const fileMetaData = await getFileMetaDataForUpload(file);
+
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/reupload/${assetId}/`, {
+      type: fileMetaData.type,
+      size: fileMetaData.size,
+    })
+      .then(async (response) => {
+        const signedURLResponse: TFileSignedURLResponse = response?.data;
+        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
+        await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
+        return signedURLResponse;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 

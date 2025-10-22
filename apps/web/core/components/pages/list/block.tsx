@@ -1,12 +1,15 @@
 "use client";
 
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, FileText, Loader } from "lucide-react";
+import { ChevronRight, Loader } from "lucide-react";
 // plane imports
-import { TPageNavigationTabs } from "@plane/types";
-import { Logo, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
+import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TPageNavigationTabs } from "@plane/types";
+import { Logo } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
@@ -15,7 +18,8 @@ import { BlockItemAction } from "@/components/pages/list/block-item-action";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   handleToggleExpanded: () => void;
@@ -149,7 +153,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
                 logo_props?.in_use ? (
                   <Logo logo={logo_props} size={16} type="lucide" />
                 ) : (
-                  <FileText className="size-4 text-custom-text-300" />
+                  <PageIcon className="size-4 text-custom-text-300" />
                 )
               ) : (
                 <RestrictedPageIcon className="size-4 text-custom-text-300 mb-1" />

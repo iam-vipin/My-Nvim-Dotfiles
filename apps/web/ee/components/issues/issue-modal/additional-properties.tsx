@@ -3,7 +3,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EIssueServiceType, EWorkItemTypeEntity, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { DraftIssuePropertyValuesService } from "@/plane-web/services/issue-types/draft-issue-property-values.service";
@@ -45,8 +46,6 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
     getProjectWorkItemPropertiesLoader,
     fetchAllPropertiesAndOptions,
   } = useIssueTypes();
-  // states
-  const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
   // services
   const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
   // derived values
@@ -54,7 +53,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
   const propertiesLoader = getProjectWorkItemPropertiesLoader(projectId, entityType);
 
   // fetch issue property values
-  const { data, isLoading: arePropertyValuesInitializing } = useSWR(
+  const { data: issuePropertyValues, isLoading: arePropertyValuesInitializing } = useSWR(
     workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
       ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${entityType}_${isWorkItemTypeEntityEnabled}`
       : null,
@@ -66,10 +65,6 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
         : null,
     {}
   );
-
-  useEffect(() => {
-    if (data) setIssuePropertyValues(data);
-  }, [data]);
 
   // This has to be on root level because of global level issue update, where we haven't fetch the details yet.
   useEffect(() => {
@@ -83,7 +78,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
       areCustomPropertiesInitializing={propertiesLoader === "init-loader"}
       arePropertyValuesInitializing={arePropertyValuesInitializing}
       getWorkItemTypeById={getIssueTypeById}
-      issuePropertyValues={issuePropertyValues}
+      issuePropertyValues={issuePropertyValues ?? {}}
       isWorkItemTypeEntityEnabled={isWorkItemTypeEntityEnabledForProject}
       shouldLoadDefaultValues={shouldLoadDefaultValues}
       {...props}

@@ -19,7 +19,7 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
-from plane.bgtasks.issue_activities_task import issue_activity
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import FileAsset
 from plane.graphql.helpers import (
@@ -66,9 +66,7 @@ def get_file_size_limit(user_id: str, workspace_slug: str, size: int) -> int:
 
 
 @sync_to_async
-def get_intake_work_item_attachment(
-    workspace_id: str, project_id: str, work_item_id: str, attachment_id: str
-):
+def get_intake_work_item_attachment(workspace_id: str, project_id: str, work_item_id: str, attachment_id: str):
     try:
         return FileAsset.objects.get(
             workspace_id=workspace_id,
@@ -117,13 +115,7 @@ def create_file_asset(
 @strawberry.type
 class IntakeWorkItemAttachmentMutation:
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[
-                    ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])
-                ]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])])]
     )
     async def create_intake_work_item_attachment(
         self,
@@ -194,9 +186,7 @@ class IntakeWorkItemAttachmentMutation:
             raise GraphQLError(message, extensions=error_extensions)
 
         # Checking if the file size is within the limit
-        size_limit = await get_file_size_limit(
-            user_id=user_id, workspace_slug=slug, size=size
-        )
+        size_limit = await get_file_size_limit(user_id=user_id, workspace_slug=slug, size=size)
 
         if type not in settings.ATTACHMENT_MIME_TYPES:
             message = "Invalid file type."
@@ -233,13 +223,7 @@ class IntakeWorkItemAttachmentMutation:
         )
 
     @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[
-                    ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])
-                ]
-            )
-        ]
+        extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER, Roles.GUEST])])]
     )
     async def update_intake_work_item_attachment(
         self,
@@ -333,24 +317,14 @@ class IntakeWorkItemAttachmentMutation:
         if attributes is not None:
             intake_work_item_attachment.attributes = attributes
         else:
-            intake_work_item_attachment.attributes = (
-                intake_work_item_attachment.attributes
-            )
+            intake_work_item_attachment.attributes = intake_work_item_attachment.attributes
 
         # save the file asset
-        await sync_to_async(intake_work_item_attachment.save)(
-            update_fields=["is_uploaded", "created_by", "attributes"]
-        )
+        await sync_to_async(intake_work_item_attachment.save)(update_fields=["is_uploaded", "created_by", "attributes"])
 
         return intake_work_item_attachment
 
-    @strawberry.mutation(
-        extensions=[
-            PermissionExtension(
-                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
-            )
-        ]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])])])
     async def delete_intake_work_item_attachment(
         self,
         info: Info,
@@ -398,9 +372,7 @@ class IntakeWorkItemAttachmentMutation:
         intake_work_item_attachment.deleted_at = timezone.now()
 
         # save the file asset
-        await sync_to_async(intake_work_item_attachment.save)(
-            update_fields=["is_deleted", "deleted_at"]
-        )
+        await sync_to_async(intake_work_item_attachment.save)(update_fields=["is_deleted", "deleted_at"])
 
         issue_activity.delay(
             type="attachment.activity.deleted",

@@ -1,11 +1,13 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { ChevronDown } from "lucide-react";
 // types
-import { TCycleGroups } from "@plane/types";
+import { CycleGroupIcon } from "@plane/propel/icons";
+import type { TCycleGroups } from "@plane/types";
 // icons
-import { Row, CycleGroupIcon } from "@plane/ui";
+import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

@@ -1,12 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
 import type { TDeDupeIssue } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
 import { DeDupeIssueBlockContent } from "../issue-block/block-content";
 import { DeDupeIssueBlockWrapper } from "../issue-block/block-wrapper";

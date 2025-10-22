@@ -1,23 +1,15 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // types
-import { ExternalEmbedNodeViewProps } from "@/types";
-// commands
+import type { ExternalEmbedNodeViewProps } from "@/types";
+// local imports
 import { externalEmbedCommands } from "./commands";
-// components
 import { ExternalEmbedNodeView } from "./components/node-view";
-// config
 import { ExternalEmbedExtensionConfig } from "./extension-config";
-// plugins
 import { createExternalEmbedPastePlugin } from "./plugins";
-// editor types
-import { ExternalEmbedExtensionStorage, ExternalEmbedProps } from "./types";
+import type { ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage, ExternalEmbedProps } from "./types";
 
 export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
-  ExternalEmbedExtensionConfig.extend({
+  ExternalEmbedExtensionConfig.extend<ExternalEmbedExtensionOptions, ExternalEmbedExtensionStorage>({
     selectable: true,
     draggable: true,
 
@@ -35,11 +27,12 @@ export const ExternalEmbedExtension = (props: ExternalEmbedProps) =>
         posToInsert: { from: 0, to: 0 },
         url: "",
         openInput: false,
+        isPasteDialogOpen: false,
       };
     },
 
     addProseMirrorPlugins() {
-      const isTouchDevice = !!getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+      const isTouchDevice = !!this.editor.storage.utility?.isTouchDevice;
       if (isTouchDevice) {
         return [];
       }

@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TProjectActivity } from "@/plane-web/types";
+import type { TProjectActivity } from "@/plane-web/types";
 import { APIService } from "@/services/api.service";
 
 export class ProjectActivityService extends APIService {

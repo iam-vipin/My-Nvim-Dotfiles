@@ -13,13 +13,9 @@ from plane.graphql.types.workspace import WorkspaceInviteType
 
 # Get workspace invite by invite id
 @sync_to_async
-def get_public_user_workspace_invite(
-    invitation_id: str, email: str
-) -> WorkspaceInviteType:
+def get_public_user_workspace_invite(invitation_id: str, email: str) -> WorkspaceInviteType:
     try:
-        workspace_invite = WorkspaceMemberInvite.objects.get(
-            id=invitation_id, email=email
-        )
+        workspace_invite = WorkspaceMemberInvite.objects.get(id=invitation_id, email=email)
         return workspace_invite
     except WorkspaceMemberInvite.DoesNotExist:
         message = "Workspace invitation not found"
@@ -31,10 +27,6 @@ def get_public_user_workspace_invite(
 class PublicWorkspaceInviteQuery:
     # public workspace invite
     @strawberry.field()
-    async def public_user_workspace_invite(
-        self, info: Info, invitation_id: str, email: str
-    ) -> WorkspaceInviteType:
-        workspace_invite = await get_public_user_workspace_invite(
-            invitation_id=invitation_id, email=email
-        )
+    async def public_user_workspace_invite(self, info: Info, invitation_id: str, email: str) -> WorkspaceInviteType:
+        workspace_invite = await get_public_user_workspace_invite(invitation_id=invitation_id, email=email)
         return workspace_invite

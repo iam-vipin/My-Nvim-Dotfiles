@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { Controller, Get, Post } from "@plane/decorators";
 import { SentryCreateFields, SentryData, SentryLinkFields } from "@plane/etl/sentry";
 import { ExIssue } from "@plane/sdk";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Post } from "@/lib";
+import { EnsureEnabled } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../helpers/connection";
-import { getSentryIssueDelinkMessage, getSentryIssueLinkedSuccessMessage, getSentryIssueUrl } from "../helpers/constants";
+import {
+  getSentryIssueDelinkMessage,
+  getSentryIssueLinkedSuccessMessage,
+  getSentryIssueUrl,
+} from "../helpers/constants";
 import { getProjectStateMappings } from "../helpers/state";
 import { ESentryEntityConnectionType } from "../types";
 
@@ -217,7 +222,7 @@ export class SentryAssetsController {
           if (sentryIssue) {
             title = `[SENTRY] ${sentryIssue?.title}`;
           }
-        } catch { }
+        } catch {}
       }
 
       const operations = [];
@@ -285,11 +290,17 @@ export class SentryAssetsController {
       const stateResult = await getProjectStateMappings(planeClient, workspaceConnection, project);
 
       // Make an attempt to post success message in plane
-      const message = getSentryIssueLinkedSuccessMessage(title, webUrl, stateResult ? {
-        resolvedState: stateResult.resolvedState.name,
-        unresolvedState: stateResult.unresolvedState.name,
-        isDefault: stateResult.isDefault,
-      } : undefined);
+      const message = getSentryIssueLinkedSuccessMessage(
+        title,
+        webUrl,
+        stateResult
+          ? {
+              resolvedState: stateResult.resolvedState.name,
+              unresolvedState: stateResult.unresolvedState.name,
+              isDefault: stateResult.isDefault,
+            }
+          : undefined
+      );
 
       const createComment = planeClient.issueComment.create(workspaceConnection.workspace_slug, project, issue, {
         comment_html: message,
@@ -318,7 +329,7 @@ export class SentryAssetsController {
   @Post("/issues/create")
   async createIssue(req: Request, res: Response) {
     try {
-      const store = Store.getInstance()
+      const store = Store.getInstance();
       const data = req.body as SentryData;
       const { installationId, issueId, webUrl } = data;
       const { planeClient, workspaceConnection } = await getSentryConnectionDetails(installationId);
@@ -432,11 +443,17 @@ export class SentryAssetsController {
       const stateResult = await getProjectStateMappings(planeClient, workspaceConnection, fields.project_id);
 
       // Make an attempt to post success message in plane
-      const message = getSentryIssueLinkedSuccessMessage(fields.title, webUrl, stateResult ? {
-        resolvedState: stateResult.resolvedState.name,
-        unresolvedState: stateResult.unresolvedState.name,
-        isDefault: stateResult.isDefault,
-      } : undefined);
+      const message = getSentryIssueLinkedSuccessMessage(
+        fields.title,
+        webUrl,
+        stateResult
+          ? {
+              resolvedState: stateResult.resolvedState.name,
+              unresolvedState: stateResult.unresolvedState.name,
+              isDefault: stateResult.isDefault,
+            }
+          : undefined
+      );
       const createComment = planeClient.issueComment.create(
         workspaceConnection.workspace_slug,
         fields.project_id,

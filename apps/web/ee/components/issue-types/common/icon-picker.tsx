@@ -1,15 +1,16 @@
 import React, { useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TLogoProps } from "@plane/types";
+import type { TLogoProps } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // local components
-import { IssueTypeLogo, TIssueTypeLogoSize } from "./issue-type-logo";
+import type { TIssueTypeLogoSize } from "./issue-type-logo";
+import { IssueTypeLogo } from "./issue-type-logo";
 import { LucideIconsList } from "./lucide-icons-list";
 
 export type TIssueTypeIconPicker = {

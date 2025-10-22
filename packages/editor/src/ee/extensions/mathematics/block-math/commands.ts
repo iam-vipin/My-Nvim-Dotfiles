@@ -1,20 +1,16 @@
-import { RawCommands } from "@tiptap/core";
-import { NodeType } from "@tiptap/pm/model";
+import type { RawCommands } from "@tiptap/core";
+import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
-// plane imports
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import { EMathAttributeNames } from "../types";
-import { TBlockMathSetCommandOptions, TBlockMathUnsetCommandOptions, TBlockMathUpdateCommandOptions } from "./types";
 
 export const blockMathCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   setBlockMath:
-    (options: TBlockMathSetCommandOptions) =>
+    (options) =>
     ({ commands, editor }) => {
       const { latex, pos } = options;
 
-      const mathStorage = getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.MATHEMATICS);
+      const mathStorage = editor.storage.mathematics;
       if (mathStorage) {
         mathStorage.openMathModal = true;
       }
@@ -26,7 +22,7 @@ export const blockMathCommands = (nodeType: NodeType): Partial<RawCommands> => (
     },
 
   unsetBlockMath:
-    (options?: TBlockMathUnsetCommandOptions) =>
+    (options) =>
     ({ editor, tr }) => {
       const pos = options?.pos ?? editor.state.selection.$from.pos;
       const node = editor.state.doc.nodeAt(pos);
@@ -40,7 +36,7 @@ export const blockMathCommands = (nodeType: NodeType): Partial<RawCommands> => (
     },
 
   updateBlockMath:
-    (options?: TBlockMathUpdateCommandOptions) =>
+    (options) =>
     ({ editor, tr }) => {
       const { latex } = options || {};
       let pos = options?.pos;

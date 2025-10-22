@@ -1,6 +1,6 @@
-import { AsanaPATAuthState } from "@plane/etl/asana";
+import type { AsanaPATAuthState } from "@plane/etl/asana";
 // plane web types
-import { TStepperBlock } from "@/plane-web/silo/types/ui";
+import type { TStepperBlock } from "@/plane-web/silo/types/ui";
 
 // authentication PAT form field types
 export type TAsanaPATFormFields = Omit<AsanaPATAuthState, "workspaceId" | "userId" | "apiToken">;

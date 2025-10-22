@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { TEXT_ALIGNMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig, TWidgetTextAlignment } from "@plane/types";
+import type { TDashboardWidget, TDashboardWidgetConfig, TWidgetTextAlignment } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";

@@ -1,16 +1,21 @@
 import axios from "axios";
 import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
+import { logger } from "@plane/logger";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
-import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
 import { refreshLinkback } from "../../helpers/linkback";
-import { createIntakeModal, createWorkItemModal } from "../../helpers/modal";
-import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails, TSlackWorkItemOrIntakeModalParams } from "../../types/types";
+import { createIntakeModal, createWorkItemModal, patchSlackView } from "../../helpers/modal";
+import {
+  E_MESSAGE_ACTION_TYPES,
+  SlackPrivateMetadata,
+  TSlackConnectionDetails,
+  TSlackWorkItemOrIntakeModalParams,
+} from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
-import { createCommentModal } from "../../views/create-comment-modal";
+import { createReplyCommentModal } from "../../views/comments";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
@@ -61,6 +66,8 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return await handleUpdateWorkItemAction(data, details);
       case ACTIONS.ASSIGN_TO_ME:
         return await handleAssignToMeButtonAction(data, details);
+      case ACTIONS.CREATE_REPLY_COMMENT:
+        return await handleCreateReplyCommentAction(data, details);
       case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
         return await handleOverflowActions(data, details);
       case ACTIONS.LINKBACK_CREATE_COMMENT:
@@ -99,6 +106,7 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
   }
 };
 
+/**@deprecated */
 async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
@@ -136,6 +144,7 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TS
   }
 }
 
+/**@deprecated */
 async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type === "static_select") {
     const selection = data.actions[0].selected_option;
@@ -178,7 +187,6 @@ async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSl
   }
 }
 
-
 /**
  * @deprecated
  * With the new UI changes, we don't have overflow actions anymore.
@@ -213,7 +221,7 @@ async function handleCreateCommentAction(data: TBlockActionPayload, details: TSl
   const value = data.actions[0].selected_option.value;
   const values = value.split(".");
   if (values.length === 2) {
-    const modal = createCommentModal({
+    const modal = createReplyCommentModal({
       type: data.type,
       user: data.user,
       response_url: data.response_url,
@@ -257,6 +265,49 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload, details: TSl
   }
 }
 
+async function handleCreateReplyCommentAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+
+  const value = data.actions[0].value;
+  const values = value.split(".");
+  if (values.length === 2) {
+    const { slackService } = details;
+
+    const replyCommentBlocks = data.message?.blocks || [];
+
+    // Remove the actions from the blocks
+    const blocks = replyCommentBlocks
+      .map((block) => {
+        if (block.type === "actions") {
+          return null;
+        }
+        return block;
+      })
+      .filter(Boolean);
+
+    const modal = createReplyCommentModal(
+      {
+        type: data.type,
+        user: data.user,
+        response_url: data.response_url,
+        actions: data.actions,
+        message: {
+          thread_ts: data.message?.thread_ts || data.container.message_ts,
+        },
+        value: data.actions[0].value,
+        channel: data.channel,
+        message_ts: data.container.message_ts,
+      },
+      blocks
+    );
+
+    const response = await slackService.openModal(data.trigger_id, modal);
+    logger.info("Response from create comment modal", { response });
+  } else {
+    logger.error("Invalid values for create comment action", { values });
+  }
+}
+
 async function handleUpdateWorkItemAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "button") return;
 
@@ -297,10 +348,11 @@ async function handleUpdateWorkItemAction(data: TBlockActionPayload, details: TS
       },
       response_url: data.response_url,
     },
-  }
+  };
 
-  const showThreadSync = isUnfurl ? false :
-    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+  const showThreadSync = isUnfurl
+    ? false
+    : metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload;
 
   const params: TSlackWorkItemOrIntakeModalParams = {
     triggerId: data.trigger_id,
@@ -337,14 +389,11 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
   }
 
   // Get project to check if intake is enabled
-  const selectedProject = await planeClient.project.getProject(
-    workspaceConnection.workspace_slug,
-    selection.value
-  );
+  const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
   const isIntakeEnabled = selectedProject.intake_view;
 
   const showThreadSync =
-    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+    metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload;
 
   if (isIntakeEnabled) {
     // Show project selection modal with intake/work item choice
@@ -377,10 +426,7 @@ async function handleCreateWorkItemAction(data: TBlockActionPayload, details: TS
   const value = data.actions[0].value;
   const projectId = value;
   // Get project to check if intake is enabled
-  const selectedProject = await planeClient.project.getProject(
-    workspaceConnection.workspace_slug,
-    projectId
-  );
+  const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, projectId);
   const isIntakeEnabled = selectedProject.intake_view;
 
   if (isIntakeEnabled) {
@@ -415,7 +461,6 @@ async function handleCreateWorkItemAction(data: TBlockActionPayload, details: TS
   }
 }
 
-
 async function handleWorkItemOrIntakeSelectionAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
@@ -428,11 +473,10 @@ async function handleWorkItemOrIntakeSelectionAction(data: TBlockActionModalPayl
   const selectedProjectId = value[0];
   const selectedWorkItemOrIntake = value[1];
 
-  const metadata = JSON.parse(data.view.private_metadata)
+  const metadata = JSON.parse(data.view.private_metadata);
 
   const isWorkItem = selectedWorkItemOrIntake === E_ISSUE_OBJECT_TYPE_SELECTION.WORK_ITEM;
-  const showThreadSync =
-    (metadata?.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+  const showThreadSync = metadata?.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload;
 
   // Common parameters for both modal types
   const modalParams: TSlackWorkItemOrIntakeModalParams = {
@@ -442,13 +486,19 @@ async function handleWorkItemOrIntakeSelectionAction(data: TBlockActionModalPayl
     details,
     showThreadSync,
   };
+  const { slackService } = details;
+
+  let modal: any;
 
   // Delegate to appropriate modal creation
   if (isWorkItem) {
-    await createWorkItemModal(modalParams);
+    modal = await createWorkItemModal(modalParams, false);
   } else {
-    await createIntakeModal(modalParams);
+    modal = await createIntakeModal(modalParams, false);
   }
+
+  const patchedModalWithExistingValues = patchSlackView(modal, data.view.state.values);
+  await slackService.updateModal(data.view.id, patchedModalWithExistingValues);
 }
 
 async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
@@ -467,7 +517,8 @@ async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, detai
     typeof ENTITIES.SHORTCUT_PROJECT_SELECTION
   >;
   const showThreadSync =
-    (metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload)
+    metadata?.entityPayload?.type !== ENTITIES.COMMAND_PROJECT_SELECTION && !!metadata?.entityPayload;
+  const { slackService } = details;
 
   const modalParams: TSlackWorkItemOrIntakeModalParams = {
     viewId: data.view.id,
@@ -478,7 +529,9 @@ async function handleIssueTypeSelectAction(data: TBlockActionModalPayload, detai
     details,
   };
 
-  await createWorkItemModal(modalParams);
+  const modal = await createWorkItemModal(modalParams, false);
+  const patchedModalWithExistingValues = patchSlackView(modal, data.view.state.values);
+  await slackService.updateModal(data.view.id, patchedModalWithExistingValues);
 }
 
 /**
@@ -555,4 +608,3 @@ async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: 
     }
   }
 }
-

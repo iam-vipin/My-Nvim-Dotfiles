@@ -1,24 +1,19 @@
-/* eslint-disable no-useless-catch */
-
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
-import update from "lodash/update";
+import { update, unset, set, orderBy, isEmpty } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-// helpers
 import { convertToEpoch } from "@plane/utils";
 // plane web constants
 import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
 // plane web services
 import worklogService from "@/plane-web/services/workspace-worklog.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { IWorklog, Worklog } from "@/plane-web/store/workspace-worklog";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IWorklog } from "@/plane-web/store/workspace-worklog";
+import { Worklog } from "@/plane-web/store/workspace-worklog";
 // plane web types
-import {
+import type {
   TDefaultPaginatedInfo,
   TWorklog,
   TWorklogFilter,
@@ -26,7 +21,7 @@ import {
   TWorklogIssueTotalCount,
   TWorklogPaginatedInfo,
   TWorklogQueryParams,
-} from "@/plane-web/types/";
+} from "@/plane-web/types";
 
 type TWorklogLoader = EWorklogLoader | undefined;
 type TWorklogQueryParamType = EWorklogQueryParamType;

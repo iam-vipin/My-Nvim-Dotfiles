@@ -2,7 +2,13 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
-import { type AttachmentExtension, EAttachmentBlockAttributeNames, type InsertAttachmentComponentProps } from "./types";
+import {
+  type AttachmentExtension,
+  AttachmentExtensionStorage,
+  EAttachmentBlockAttributeNames,
+  type InsertAttachmentComponentProps,
+  type TAttachmentBlockAttributes,
+} from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES } from "./utils";
 
 declare module "@tiptap/core" {
@@ -10,6 +16,9 @@ declare module "@tiptap/core" {
     [ADDITIONAL_EXTENSIONS.ATTACHMENT]: {
       insertAttachmentComponent: (props: InsertAttachmentComponentProps) => ReturnType;
     };
+  }
+  interface Storage {
+    [ADDITIONAL_EXTENSIONS.ATTACHMENT]: AttachmentExtensionStorage;
   }
 }
 
@@ -20,12 +29,18 @@ export const CustomAttachmentExtensionConfig: AttachmentExtension = Node.create(
 
   addAttributes() {
     const attributes = {
-      ...Object.values(EAttachmentBlockAttributeNames).reduce((acc, value) => {
-        acc[value] = {
-          default: DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES[value],
-        };
-        return acc;
-      }, {}),
+      ...Object.values(EAttachmentBlockAttributeNames).reduce(
+        (acc, value) => {
+          acc[value] = {
+            default: DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES[value],
+          };
+          return acc;
+        },
+        {} as Record<
+          EAttachmentBlockAttributeNames,
+          { default: TAttachmentBlockAttributes[EAttachmentBlockAttributeNames] }
+        >
+      ),
     };
     return attributes;
   },

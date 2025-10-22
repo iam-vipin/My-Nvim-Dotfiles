@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TProjectAppliedDisplayFilterKeys, TProjectFilters, TTeamspace } from "@plane/types";
+import type { TProjectAppliedDisplayFilterKeys, TProjectFilters, TTeamspace } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { ProjectAppliedFiltersList } from "@/components/project/applied-filters";
 // hooks
-import { useProject } from "@/hooks/store/use-project"
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 // local imports
 import { TeamspaceProjectBlocksList } from "./block-list";

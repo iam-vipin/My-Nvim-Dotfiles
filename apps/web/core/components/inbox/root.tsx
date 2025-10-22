@@ -1,10 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { IntakeIcon } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
-import { Intake } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
@@ -61,7 +62,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   if (error && error?.status === "init-error")
     return (
       <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
-        <Intake className="size-[60px]" strokeWidth={1.5} />
+        <IntakeIcon className="size-[60px]" strokeWidth={1.5} />
         <div className="text-custom-text-200">{error?.message}</div>
       </div>
     );

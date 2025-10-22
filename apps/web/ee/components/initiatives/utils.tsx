@@ -1,12 +1,14 @@
-import { ReactElement } from "react";
+import type { ReactElement } from "react";
 // plane
-import { ISearchIssueResponse, IUserLite } from "@plane/types";
+import { EIconSize, INITIATIVE_STATES } from "@plane/constants";
+import { InitiativeStateIcon } from "@plane/propel/icons";
+import type { ISearchIssueResponse, IUserLite, TInitiativeGroupByOptions, TInitiativeStates } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
+
 // PLane-web
 import { rootStore } from "@/lib/store-context";
-import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";
 
 export type TInitiativeGroup = {
   id: string;
@@ -21,8 +23,31 @@ export const getGroupList = (
 ) => {
   const groupList: TInitiativeGroup[] = [];
 
+  let sortedGroupIds = groupIds;
+
+  switch (groupBy) {
+    case "state":
+      sortedGroupIds = sortedGroupIds.sort(
+        (a, b) =>
+          INITIATIVE_STATES[a as TInitiativeStates].sortOrder - INITIATIVE_STATES[b as TInitiativeStates].sortOrder
+      );
+    case "label_ids":
+      // Sort labels alphabetically, but "None" first
+      sortedGroupIds = sortedGroupIds.sort((a, b) => {
+        if (a === "None") return -1;
+        if (b === "None") return 1;
+        return a.localeCompare(b);
+      });
+      break;
+    default:
+      sortedGroupIds = sortedGroupIds.sort((a) => {
+        if (a === "none") return -1;
+        return 1;
+      });
+  }
+
   if (!groupBy) {
-    for (const groupId of groupIds) {
+    for (const groupId of sortedGroupIds) {
       groupList.push({
         id: groupId,
         name: groupId,
@@ -31,7 +56,7 @@ export const getGroupList = (
   }
 
   if (groupBy === "created_by" || groupBy === "lead") {
-    for (const groupId of groupIds) {
+    for (const groupId of sortedGroupIds) {
       if (groupId === "None") {
         groupList.push({
           id: groupId,
@@ -49,6 +74,46 @@ export const getGroupList = (
         id: groupId,
         name: member.display_name,
         icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+      });
+    }
+  }
+
+  if (groupBy === "state") {
+    for (const groupId of sortedGroupIds) {
+      groupList.push({
+        id: groupId,
+        name: INITIATIVE_STATES[groupId as TInitiativeStates].title,
+        icon: <InitiativeStateIcon state={groupId as TInitiativeStates} size={EIconSize.LG} />,
+      });
+    }
+  }
+
+  if (groupBy === "label_ids") {
+    const workspaceSlug = rootStore.router.workspaceSlug;
+    const { getInitiativesLabels } = rootStore.initiativeStore;
+
+    if (!workspaceSlug) return groupList;
+
+    const labelsMap = getInitiativesLabels(workspaceSlug);
+
+    for (const groupId of sortedGroupIds) {
+      if (groupId === "None") {
+        groupList.push({
+          id: groupId,
+          name: "None",
+          icon: <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: "#666" }} />,
+        });
+        continue;
+      }
+
+      const label = labelsMap?.get(groupId);
+
+      if (!label) continue;
+
+      groupList.push({
+        id: groupId,
+        name: label.name,
+        icon: <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: label.color }} />,
       });
     }
   }

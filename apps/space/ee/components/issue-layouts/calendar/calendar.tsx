@@ -12,9 +12,9 @@ import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-H
 import { MONTHS_LIST } from "@/plane-web/constants/calendar";
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";
 import useSize from "@/plane-web/hooks/use-window-size";
-import { ICalendarStore } from "@/plane-web/store/issue_calendar_view.store";
+import type { ICalendarStore } from "@/plane-web/store/issue_calendar_view.store";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 //
 import { CalendarHeader } from "./header";
 import { CalendarIssueBlocks } from "./issue-blocks";

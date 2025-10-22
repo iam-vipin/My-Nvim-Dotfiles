@@ -1,18 +1,19 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Extensions } from "@tiptap/core";
-import Placeholder from "@tiptap/extension-placeholder";
-import { DOMSerializer } from "@tiptap/pm/model";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
-import { SmoothCursorExtension } from "@/extensions";
 import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
+// plane editor imports
+import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 // types
-import { EditorTitleRefApi } from "@/types/editor";
+import type { IEditorPropsExtended } from "@/types";
+import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
 
 type Props = {
   editable?: boolean;
@@ -22,9 +23,9 @@ type Props = {
   initialValue?: string;
   field?: string;
   placeholder?: string;
-  updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
+  updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   id: string;
-  isSmoothCursorEnabled: boolean;
+  extendedEditorProps?: IEditorPropsExtended;
 };
 
 /**
@@ -36,19 +37,19 @@ export const useTitleEditor = (props: Props) => {
     editable = true,
     id,
     initialValue = "",
-    isSmoothCursorEnabled = false,
+    extendedEditorProps,
     extensions,
     provider,
     updatePageProperties,
     titleRef,
   } = props;
 
+  const { isSmoothCursorEnabled } = extendedEditorProps ?? {};
+
   const editor = useEditor(
     {
       onUpdate: () => {
-        if (updatePageProperties) {
-          updatePageProperties(id, "title_updated", { title: editor?.getText() });
-        }
+        updatePageProperties?.(id, "property_updated", { name: editor?.getText() });
       },
       editable,
       immediatelyRender: false,
@@ -82,7 +83,7 @@ export const useTitleEditor = (props: Props) => {
         .run();
     },
     setEditorValue: (content: string) => {
-      editor?.commands.setContent(content);
+      editor?.commands.setContent(content, false);
     },
   }));
 

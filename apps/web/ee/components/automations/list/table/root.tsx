@@ -4,14 +4,17 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
+import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableHead } from "@plane/propel/table";
 import { Avatar } from "@plane/ui";
 import { getFileURL, renderFormattedDate, formatDuration, cn } from "@plane/utils";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
-import { IAutomationInstance } from "@/plane-web/store/automations/automation";
+import type { IAutomationInstance } from "@/plane-web/store/automations/automation";
 // local imports
 import { TableEmptyState } from "./empty-state";
 import { SuccessFailureIndicator } from "./indicator";
@@ -76,7 +79,10 @@ export const AutomationsTable: React.FC<AutomationsTableProps> = observer((props
                   <TableRow
                     key={automation.id}
                     className="group hover:bg-custom-background-90 cursor-pointer border-b border-custom-border-100 transition-colors duration-75"
-                    onClick={() => onAutomationClick?.(automation)}
+                    onClick={() => {
+                      captureClick({ elementName: AUTOMATION_TRACKER_ELEMENTS.LIST_ITEM_ROW });
+                      onAutomationClick?.(automation);
+                    }}
                   >
                     <TableCell className={COMMON_TABLE_TITLE_CELL_CLASSNAME}>
                       <div className="flex items-center gap-2.5 truncate">

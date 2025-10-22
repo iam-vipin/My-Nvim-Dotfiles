@@ -1,14 +1,10 @@
-import orderBy from "lodash/orderBy";
-import remove from "lodash/remove";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { remove, orderBy, uniq, update, set } from "lodash-es";
 import { makeObservable, observable, action, runInAction, computed } from "mobx";
 // plane imports
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CustomerRequestsService, CustomerService } from "@plane/services";
-import {
+import type {
   TCustomer,
   TCustomerRequest,
   TLoader,
@@ -22,7 +18,7 @@ import {
 } from "@plane/types";
 // store
 import { convertToEpoch } from "@plane/utils";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { RequestAttachmentStore } from "./attachment.store";
 import { WorkItemCustomersStore } from "./work-item-customers.store";

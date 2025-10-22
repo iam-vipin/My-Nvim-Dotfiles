@@ -1,4 +1,4 @@
-import { TIssueRelationTypes } from "../types";
+import type { TIssueRelationTypes } from "../types";
 
 export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTypes } = {
   blocked_by: "blocking",
@@ -9,6 +9,8 @@ export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTy
   finish_after: "finish_before",
   relates_to: "relates_to",
   duplicate: "duplicate",
+  implements: "implemented_by",
+  implemented_by: "implements",
 };
 
 export enum ETimelineRelation {

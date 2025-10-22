@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useMemo, useState, Fragment } from "react";
-import { uniq } from "lodash";
-import orderBy from "lodash/orderBy";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
+import { orderBy, uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { EIssueServiceType, TNotification } from "@plane/types";
+import type { TNotification } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { calculateTimeAgo, convertToEpoch, cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";

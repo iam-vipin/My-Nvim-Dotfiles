@@ -1,11 +1,13 @@
 "use client";
 
-import { FC, useState, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Upload, FileText, X } from "lucide-react";
+import { Upload, X } from "lucide-react";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useSelfHostedSubscription } from "@/plane-web/hooks/store";
@@ -113,7 +115,7 @@ export const LicenseFileForm: FC<TLicenseFileFormProps> = observer((props) => {
                 <div className={cn("border border-custom-border-200 rounded-lg p-4", hasError && "border-red-500")}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FileText className="size-5 text-custom-text-300" />
+                      <PageIcon className="size-5 text-custom-text-300" />
                       <p className="text-sm font-medium text-custom-text-200">{selectedFile.name}</p>
                     </div>
                     <Button type="button" variant="link-danger" size="sm" onClick={removeFile}>

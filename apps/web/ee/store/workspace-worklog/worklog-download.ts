@@ -1,11 +1,16 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { computed, makeObservable, observable, runInAction } from "mobx";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // plane web types
-import { TWorklogDownloadFormat, TWorklogDownloadStatus, TWorklogDownload, TWorklogFilter } from "@/plane-web/types";
+import type {
+  TWorklogDownloadFormat,
+  TWorklogDownloadStatus,
+  TWorklogDownload,
+  TWorklogFilter,
+} from "@/plane-web/types";
 
 export interface IWorklogDownload extends TWorklogDownload {
   // computed

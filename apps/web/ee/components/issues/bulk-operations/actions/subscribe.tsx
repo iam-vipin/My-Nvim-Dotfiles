@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
-import { SubscribeIcon, Tooltip } from "@plane/ui";
+// plane imports
+import { SubscribeIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { BulkSubscribeConfirmationModal } from "../modals";
 
 type Props = {

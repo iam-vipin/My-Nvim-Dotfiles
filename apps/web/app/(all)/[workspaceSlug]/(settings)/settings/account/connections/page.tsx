@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { SettingsHeading } from "@/components/settings/heading";

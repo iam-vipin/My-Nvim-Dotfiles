@@ -1,13 +1,9 @@
 "use client";
-import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+// components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useFlag } from "@/plane-web/hooks/store";
 
-const WorkspaceIntegrationsLayout = observer(({ children }: { children: React.ReactNode }) => {
-  const { workspaceSlug } = useParams();
-  const integrationsEnabled = useFlag(workspaceSlug?.toString(), "SILO_INTEGRATIONS");
-  return <SettingsContentWrapper size={integrationsEnabled ? "lg" : "md"}>{children}</SettingsContentWrapper>;
-});
+const IntegrationsLayout = ({ children }: { children: React.ReactNode }) => (
+  <SettingsContentWrapper size="md">{children}</SettingsContentWrapper>
+);
 
-export default WorkspaceIntegrationsLayout;
+export default IntegrationsLayout;

@@ -1,26 +1,29 @@
 # django imports
-from django.db.models import F, Q
 from django.db import models
-
-from plane.db.models import Workspace, Issue, Project
-from plane.ee.models import (
-    Widget,
-    Dashboard,
-    DashboardProject,
-    DashboardQuickFilter,
-    DashboardWidget,
-)
-from plane.ee.serializers import WidgetSerializer
-from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import allow_permission, ROLE
-from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.payment.flags.flag import FeatureFlag
-from plane.ee.utils.widget_graph_plot import build_widget_chart
-from plane.ee.utils.chart_validations import validate_chart_config
+from django.db.models import F, Q
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
+from plane.db.models import Issue, Project, Workspace
+from plane.ee.models import (
+    Dashboard,
+    DashboardProject,
+    # DashboardQuickFilter,
+    DashboardWidget,
+    Widget,
+)
+from plane.ee.permissions import ROLE, allow_permission
+from plane.ee.serializers import WidgetSerializer
+from plane.ee.utils.chart_validations import validate_chart_config
+from plane.ee.utils.widget_graph_plot import build_widget_chart
+from plane.ee.views.base import BaseAPIView
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import (
+    check_feature_flag,
+)
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 
 
 class WidgetEndpoint(BaseAPIView):
@@ -102,26 +105,28 @@ class WidgetEndpoint(BaseAPIView):
 
 
 class WidgetListEndpoint(BaseAPIView):
+    filterset_class = IssueFilterSet
+
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, dashboard_id, widget_id):
-        dashboard = Dashboard.objects.filter(
-            id=dashboard_id, workspace__slug=slug
-        ).first()
+        workspace = Workspace.objects.get(slug=slug)
+
+        dashboard = Dashboard.objects.get(id=dashboard_id, workspace_id=workspace.id)
 
         # get the dashboard projects
         dashboard_project_ids = DashboardProject.objects.filter(
-            dashboard_id=dashboard_id, workspace__slug=slug
+            dashboard_id=dashboard_id, workspace_id=workspace.id
         ).values_list("project_id", flat=True)
 
         dashboard_widget = DashboardWidget.objects.filter(
-            dashboard_id=dashboard_id, widget_id=widget_id, workspace__slug=slug
+            dashboard_id=dashboard_id, widget_id=widget_id, workspace_id=workspace.id
         ).first()
-        widget = Widget.objects.filter(workspace__slug=slug, id=widget_id).first()
+        widget = Widget.objects.filter(workspace_id=workspace.id, id=widget_id).first()
 
         # query params for live update in the chart
         group_by = request.query_params.get("group_by", widget.group_by)
-        quick_filter = request.query_params.get("quick_filter", None)
+        # quick_filter = request.query_params.get("quick_filter", None)
         y_axis_metric = request.query_params.get("y_axis_metric", widget.y_axis_metric)
         x_axis_property = request.query_params.get(
             "x_axis_property", widget.x_axis_property
@@ -143,24 +148,33 @@ class WidgetListEndpoint(BaseAPIView):
                 .values_list("id", flat=True)
             )
 
+        issues = Issue.objects.filter(
+            workspace_id=workspace.id,
+            project_id__in=dashboard_project_ids,
+        )
+
+        # get the widget filter
+        if dashboard_widget.filters:
+            # use the complex filter backend using dashboard widget filters
+            issues = ComplexFilterBackend().filter_queryset(
+                request, issues, self, dashboard_widget.filters
+            )
+
         issues = (
-            Issue.objects.filter(
+            issues.filter(
                 models.Q(issue_intake__status=1)
                 | models.Q(issue_intake__status=-1)
                 | models.Q(issue_intake__status=2)
                 | models.Q(issue_intake__isnull=True)
             )
-            .filter(state__is_triage=False)
-            .exclude(archived_at__isnull=False)
-            .exclude(project__archived_at__isnull=False)
-            .exclude(is_draft=True)
-            .filter(workspace__slug=slug)
-            .filter(project_id__in=dashboard_project_ids)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
+            .filter(
+                state__is_triage=False,
             )
-            .accessible_to(request.user.id, slug)
+            .exclude(
+                archived_at__isnull=False,
+                project__archived_at__isnull=False,
+                is_draft=True,
+            )
         )
 
         if (
@@ -171,20 +185,7 @@ class WidgetListEndpoint(BaseAPIView):
         else:
             issues = issues.filter(Q(type__is_epic=False) | Q(type__isnull=True))
 
-        # get the dashboard filter
-        if dashboard.filters:
-            issues = issues.filter(**dashboard.filters)
-
-        # get the quick filter
-        if quick_filter:
-            quick_filter = DashboardQuickFilter.objects.filter(
-                dashboard_id=dashboard_id, workspace__slug=slug, id=quick_filter
-            ).first()
-            issues = issues.filter(**quick_filter.filters)
-
-        # get the widget filter
-        if dashboard_widget.filters:
-            issues = issues.filter(**dashboard_widget.filters)
+        issues = issues.accessible_to(request.user.id, slug)
 
         if not x_axis_property and widget.chart_type != "NUMBER":
             return Response(

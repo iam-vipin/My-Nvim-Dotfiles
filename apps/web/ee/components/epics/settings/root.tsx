@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
@@ -16,8 +18,8 @@ import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
 import { epicsTrackers } from "../trackers";
-import { EpicPropertiesRoot } from "./epics-properties";
 import { EpicsEmptyState } from "./empty-state";
+import { EpicPropertiesRoot } from "./epics-properties";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -78,10 +80,11 @@ export const EpicsRoot = observer(() => {
   return (
     <div className="container mx-auto h-full pb-8">
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-        <div className="flex justify-between gap-2 border-b border-custom-border-100 pb-3.5 ">
+        <div className="flex justify-between gap-2 pb-3.5 border-b border-custom-border-100">
           <SettingsHeading
             title={t("project_settings.epics.heading")}
             description={t("project_settings.epics.description")}
+            className="border-b-0 pb-0"
           />
           <div className="flex-shrink-0 flex items-center justify-center px-4">
             <Tooltip
@@ -100,6 +103,7 @@ export const EpicsRoot = observer(() => {
             epicId={epicDetails?.id}
             propertiesLoader={getProjectWorkItemPropertiesLoader(projectId?.toString(), EWorkItemTypeEntity.EPIC)}
             getWorkItemTypeById={useIssueType}
+            containerClassName="py-7"
           />
         )}
       </div>

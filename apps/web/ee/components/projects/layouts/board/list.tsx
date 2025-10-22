@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
 import { ProjectBoardListItem } from "@/plane-web/components/projects/layouts/board/list-item";

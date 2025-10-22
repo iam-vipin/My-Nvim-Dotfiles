@@ -1,12 +1,13 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
+import type { IApiToken, IProject, IState, IUser, IWorkspace } from "@plane/types";
 // plane web services
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
 // plane web root store
-import { RootStore } from "@/plane-web/store/root.store";
-import { E_PLANE_PRIORITY, TPlanePriorityData } from "@/plane-web/types/importers";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TPlanePriorityData } from "@/plane-web/types/importers";
+import { E_PLANE_PRIORITY } from "@/plane-web/types/importers";
 
 export type TBaseLoader = "fetch-projects" | "fetch_states" | undefined;
 

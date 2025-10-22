@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";

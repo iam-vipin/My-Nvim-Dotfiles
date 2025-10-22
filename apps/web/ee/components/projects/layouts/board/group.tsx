@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";

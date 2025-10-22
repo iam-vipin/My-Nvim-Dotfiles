@@ -1,6 +1,9 @@
 # Python imports
 from typing import Optional
 
+# Third-Party Imports
+from asgiref.sync import sync_to_async
+
 # Module imports
 from plane.graphql.types.paginator import PaginatorResponse
 
@@ -46,11 +49,11 @@ def paginate(results_object, cursor: Optional[str] = None):
     paginated_data = results_object[start_index:end_index]
 
     # Create the pagination info object
-    prev_cursor = f"{page_size}:{cursor_object.current_page-1}:0"
+    prev_cursor = f"{page_size}:{cursor_object.current_page - 1}:0"
     cursor = f"{page_size}:{cursor_object.current_page}:0"
     next_cursor = None
     if end_index < total_results:
-        next_cursor = f"{page_size}:{cursor_object.current_page+1}:0"
+        next_cursor = f"{page_size}:{cursor_object.current_page + 1}:0"
 
     prev_page_results = False
     if cursor_object.current_page > 0:
@@ -70,3 +73,55 @@ def paginate(results_object, cursor: Optional[str] = None):
         total_count=total_results,
         results=paginated_data,
     )
+
+
+def query_paginate(base_queryset, query_set, cursor: Optional[str] = None):
+    """
+    Paginator Information Results
+    """
+    cursor_object = Cursor.from_string(cursor)
+    if cursor_object is None:
+        cursor_object = Cursor(0, 0, 0)
+
+    total_results = base_queryset.count()
+    page_size = min(cursor_object.page_size, PAGINATOR_MAX_LIMIT)
+
+    # Calculate the start and end index for the paginated data
+    start_index = 0
+    if cursor_object.current_page > 0:
+        start_index = cursor_object.current_page * page_size
+    end_index = min(start_index + page_size, total_results)
+
+    # Get the paginated data
+    paginated_data = query_set[start_index:end_index]
+
+    # Create the pagination info object
+    prev_cursor = f"{page_size}:{cursor_object.current_page - 1}:0"
+    cursor = f"{page_size}:{cursor_object.current_page}:0"
+    next_cursor = None
+    if end_index < total_results:
+        next_cursor = f"{page_size}:{cursor_object.current_page + 1}:0"
+
+    prev_page_results = False
+    if cursor_object.current_page > 0:
+        prev_page_results = True
+
+    next_page_results = False
+    if next_cursor:
+        next_page_results = True
+
+    return PaginatorResponse(
+        prev_cursor=prev_cursor,
+        cursor=cursor,
+        next_cursor=next_cursor,
+        prev_page_results=prev_page_results,
+        next_page_results=next_page_results,
+        count=len(paginated_data),
+        total_count=total_results,
+        results=paginated_data,
+    )
+
+
+@sync_to_async
+def query_paginate_async(base_queryset, query_set, cursor: Optional[str] = None):
+    return query_paginate(base_queryset, query_set, cursor)

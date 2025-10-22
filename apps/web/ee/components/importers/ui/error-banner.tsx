@@ -2,7 +2,7 @@
 
 import React from "react";
 import { X } from "lucide-react";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 export default function ErrorBanner({ message, onClose }: { message: string; onClose: () => void }) {
   return (

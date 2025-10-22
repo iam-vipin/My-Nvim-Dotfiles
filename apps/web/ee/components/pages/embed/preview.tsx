@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
@@ -28,7 +28,10 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging({
+    workspaceSlug: workspaceSlug?.toString() ?? "",
+    storeType,
+  });
 
   const { description_html, id, name, is_description_empty } = page;
 
@@ -166,17 +169,19 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   displayConfig={{
                     fontSize: "small-font",
                   }}
-                  embedHandler={{
-                    page: {
-                      widgetCallback: ({ pageId: pageIdFromNode }) => (
-                        <PageEmbedCardRoot
-                          embedPageId={pageIdFromNode}
-                          previewDisabled
-                          storeType={storeType}
-                          isDroppable={false}
-                        />
-                      ),
-                      workspaceSlug: workspaceSlug.toString(),
+                  extendedEditorProps={{
+                    embedHandler: {
+                      page: {
+                        widgetCallback: ({ pageId: pageIdFromNode }) => (
+                          <PageEmbedCardRoot
+                            embedPageId={pageIdFromNode}
+                            previewDisabled
+                            storeType={storeType}
+                            isDroppable={false}
+                          />
+                        ),
+                        workspaceSlug: workspaceSlug.toString(),
+                      },
                     },
                   }}
                   projectId={projectId?.toString() ?? ""}

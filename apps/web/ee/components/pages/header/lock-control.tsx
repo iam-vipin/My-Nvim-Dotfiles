@@ -5,14 +5,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LockKeyhole, LockKeyholeOpen, FolderLock, FolderOpen } from "lucide-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // utils
 import { cn } from "@plane/utils";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-import { TPageInstance } from "@/store/pages/base-page";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type LockDisplayState = "neutral" | "locked" | "unlocked";
 

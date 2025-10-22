@@ -1,9 +1,9 @@
 "use client";
 
-import { FC } from "react";
-import { Button } from "@plane/ui";
+import type { FC } from "react";
+import { Button } from "@plane/propel/button";
 // plane web types
-import { TDefaultPaginatedInfo } from "@/plane-web/types";
+import type { TDefaultPaginatedInfo } from "@/plane-web/types";
 
 type TPaginationBar = {
   perPage: number;

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { FC } from "react";
-import omit from "lodash/omit";
+import type { FC } from "react";
+import React from "react";
+import { omit } from "lodash-es";
 // constants
 import { STATE_ANALYTICS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { TStateAnalytics } from "@plane/types";
+import type { TStateAnalytics } from "@plane/types";
 // ui
 import { LinearProgressIndicator } from "@plane/ui";
 // utils

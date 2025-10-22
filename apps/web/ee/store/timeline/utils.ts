@@ -1,13 +1,12 @@
-import isNil from "lodash/isNil";
-import set from "lodash/set";
+import { isNil, set } from "lodash-es";
 // plane imports
-import { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types";
+import type { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types";
 // components
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { getItemPositionWidth } from "@/components/gantt-chart/views";
 // Plane-web
 import { EDependencyPosition, ETimelineRelation } from "@/plane-web/constants";
-import { DependencyTree, Relation, TIssueRelationTypes } from "@/plane-web/types";
+import type { DependencyTree, Relation, TIssueRelationTypes } from "@/plane-web/types";
 
 /**
  * Dependency details for each relation ship type, Used while building dependency tree
@@ -116,6 +115,8 @@ const RELATION_IDENTIFIER_MAP: {
   },
   duplicate: undefined,
   relates_to: undefined,
+  implements: undefined,
+  implemented_by: undefined,
 };
 
 /**

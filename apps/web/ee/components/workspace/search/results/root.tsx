@@ -1,17 +1,12 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Search, AlertCircle, Loader as Spinner } from "lucide-react";
 // plane imports
-import {
-  TSearchFilterKeys,
-  TSearchQueryResponse,
-  TSearchResultItem,
-  SEARCH_FILTERS,
-  ESearchFilterKeys,
-} from "@plane/constants";
+import type { TSearchFilterKeys, TSearchQueryResponse, TSearchResultItem } from "@plane/constants";
+import { SEARCH_FILTERS, ESearchFilterKeys } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import { cn } from "@plane/utils";

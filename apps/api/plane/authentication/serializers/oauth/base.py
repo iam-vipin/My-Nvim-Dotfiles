@@ -15,6 +15,16 @@ from plane.db.models import FileAsset
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
 
 
+class ApplicationLinksSerializer(serializers.Serializer):
+    name = serializers.CharField(required=False)
+    url = serializers.URLField(required=False)
+
+    def to_representation(self, instance):
+        return {
+            "name": instance.get("name", ""),
+            "url": instance.get("url", ""),
+        }
+
 class ApplicationSerializer(BaseSerializer):
     is_owned = serializers.BooleanField(read_only=True)
     is_installed = serializers.BooleanField(read_only=True)
@@ -27,6 +37,7 @@ class ApplicationSerializer(BaseSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=ApplicationCategory.objects.all(), many=True, required=False
     )
+    links = ApplicationLinksSerializer(many=True, required=False)
 
     class Meta:
         model = Application

@@ -9,8 +9,9 @@ export const useRealtimeEvents = (props: {
   provider: HocuspocusProvider;
   id: string;
   updatePageProperties: ICollaborativeDocumentEditorProps["updatePageProperties"];
+  setForceCloseReceived: (value: boolean) => void;
 }) => {
-  const { editor, updatePageProperties, provider, id } = props;
+  const { editor, updatePageProperties, provider, id, setForceCloseReceived } = props;
 
   useEffect(() => {
     if (!editor) return;
@@ -19,6 +20,14 @@ export const useRealtimeEvents = (props: {
       try {
         // Parse the payload as our BroadcastPayloadUnion
         const event = JSON.parse(payload.payload as string) as BroadcastedEventUnion;
+
+        // CRITICAL: Check for force_close message FIRST (before other event handling)
+        if ((event as any).type === "force_close") {
+          // Mark this as a forced close for the onClose handler
+          setForceCloseReceived(true);
+
+          return; // Don't process as normal event
+        }
 
         if (!updatePageProperties) return;
 
@@ -48,11 +57,22 @@ export const useRealtimeEvents = (props: {
           return;
         }
 
-        if (event.action === "title_updated") {
+        if (event.action === "property_updated") {
           const currentPage = event.affectedPages.currentPage;
 
-          if (event.data.title != null && currentPage) {
+          if (event.data.name != null && currentPage) {
             updatePageProperties(currentPage, event.action, event.data, true);
+          }
+          return;
+        }
+
+        if (event.action === "error") {
+          const currentPage = event.affectedPages.currentPage;
+          if (currentPage) {
+            updatePageProperties(currentPage, event.action, event.data, false);
+
+            // Backend closes connection when critical error occurs
+            // No need to disconnect from frontend - server handles it
           }
           return;
         }

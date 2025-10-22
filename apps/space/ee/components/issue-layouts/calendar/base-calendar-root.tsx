@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane
 import { EIssueGroupByToServerOptions } from "@plane/constants";
-import { TGroupedIssues } from "@plane/types";
+import type { TGroupedIssues } from "@plane/types";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useCalendarView } from "@/plane-web/hooks/store";

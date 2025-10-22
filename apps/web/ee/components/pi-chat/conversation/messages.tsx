@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { IUser } from "@plane/types";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { IUser } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { TDialogue } from "@/plane-web/types";
 import { scrollIntoViewHelper } from "../helper";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
@@ -27,9 +27,18 @@ export const Messages = observer((props: TProps) => {
     isProjectLevel = false,
     setHasMoreMessages,
   } = props;
-  const { isPiThinking, activeChat } = usePiChat();
+  // store
+  const { activeChat, regenerateAnswer } = usePiChat();
+  // ref
   const containerRef = useRef(null);
-
+  // router
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("message_token");
+  const routerChatId = searchParams.get("chat_id");
+  const { chatId } = useParams();
+  // handlers
   const checkIfHasMore = () => {
     const el: HTMLElement | null = containerRef.current;
     if (!el || activeChat?.dialogue?.length === 0) return;
@@ -39,6 +48,14 @@ export const Messages = observer((props: TProps) => {
       (el as HTMLElement).scrollTop + (el as HTMLElement).clientHeight < (el as HTMLElement).scrollHeight - 1;
 
     setHasMoreMessages(isOverflowing && isNotAtBottom);
+  };
+  const handleRegenerateIfTokenExists = async () => {
+    const chatIdToUse = chatId || routerChatId;
+    if (token && chatIdToUse) {
+      await regenerateAnswer(chatIdToUse.toString(), token, activeChat?.workspace_id);
+      // remove token from url
+      router.push(pathname);
+    }
   };
   useEffect(() => {
     const el: HTMLElement | null = containerRef.current;
@@ -54,6 +71,11 @@ export const Messages = observer((props: TProps) => {
       window.removeEventListener("resize", checkIfHasMore);
     };
   }, []);
+
+  useEffect(() => {
+    if (!activeChat?.dialogue || activeChat?.dialogue.length === 0) return;
+    handleRegenerateIfTokenExists();
+  }, [activeChat?.dialogue]);
 
   useEffect(() => {
     //Always scroll to the latest message
@@ -78,23 +100,19 @@ export const Messages = observer((props: TProps) => {
       ref={containerRef}
       className={cn("flex flex-col gap-8 max-h-full h-full w-full mx-auto overflow-y-scroll pt-8 pb-[230px]")}
     >
-      {activeChat?.dialogue?.map((message: TDialogue, index: number) => (
-        <div key={index} className="space-y-4">
-          <MyMessage message={message.query} currentUser={currentUser} id={index.toString()} />
-          <AiMessage
-            message={message.answer}
-            reasoning={message.reasoning}
-            id={index.toString()}
-            feedback={message.feedback}
-            isPiThinking={isPiThinking}
-            isLatest={index === activeChat?.dialogue.length - 1}
-          />
-        </div>
-      ))}
+      {activeChat?.dialogue?.map((query_id: string, index: number) => {
+        const message = activeChat?.dialogueMap[query_id];
+        return (
+          <div key={index} className="space-y-4">
+            <MyMessage message={message.query} id={index.toString()} attachments={message.attachment_ids} />
+            <AiMessage dialogue={message} id={index.toString()} isLatest={index === activeChat?.dialogue.length - 1} />
+          </div>
+        );
+      })}
 
       {/* Loading */}
-      {isLoading && <AiMessage isLoading={isLoading} id={""} />}
-      {isLoading && <MyMessage isLoading={isLoading} currentUser={currentUser} id={""} />}
+      {isLoading && <AiMessage isLoading={isLoading} />}
+      {isLoading && <MyMessage isLoading={isLoading} />}
       {/* observer element */}
       <div id="observer-element" />
     </div>

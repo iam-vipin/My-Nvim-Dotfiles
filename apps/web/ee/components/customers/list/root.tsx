@@ -1,4 +1,5 @@
-import React, { FC, useCallback } from "react";
+import type { FC } from "react";
+import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // constants
@@ -6,13 +7,13 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web components

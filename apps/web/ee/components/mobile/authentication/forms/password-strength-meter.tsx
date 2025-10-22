@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordStrength } from "@plane/utils";
 

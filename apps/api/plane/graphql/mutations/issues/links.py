@@ -27,12 +27,8 @@ def get_workspace(slug):
 
 
 @sync_to_async
-def issue_link_exists(
-    slug, project, issue, url, exclude_link_id: Optional[strawberry.ID] = None
-):
-    issue_query = IssueLink.objects.filter(
-        workspace__slug=slug, project_id=project, issue_id=issue, url=url
-    )
+def issue_link_exists(slug, project, issue, url, exclude_link_id: Optional[strawberry.ID] = None):
+    issue_query = IssueLink.objects.filter(workspace__slug=slug, project_id=project, issue_id=issue, url=url)
     if exclude_link_id:
         issue_query = issue_query.exclude(pk=exclude_link_id)
     return issue_query.exists()
@@ -40,31 +36,23 @@ def issue_link_exists(
 
 @sync_to_async
 def get_issue_link(workspace, project, issue, link):
-    issue_link = IssueLink.objects.get(
-        workspace=workspace, project_id=project, issue_id=issue, id=link
-    )
+    issue_link = IssueLink.objects.get(workspace=workspace, project_id=project, issue_id=issue, id=link)
     return issue_link
 
 
 @sync_to_async
 def create_issue_link_sync(workspace, project, issue, url, title):
-    return IssueLink.objects.create(
-        workspace=workspace, project_id=project, issue_id=issue, title=title, url=url
-    )
+    return IssueLink.objects.create(workspace=workspace, project_id=project, issue_id=issue, title=title, url=url)
 
 
 @sync_to_async
 def remove_issue_link(slug, project, issue, link):
-    return IssueLink.objects.filter(
-        workspace__slug=slug, project_id=project, issue_id=issue, id=link
-    ).delete()
+    return IssueLink.objects.filter(workspace__slug=slug, project_id=project, issue_id=issue, id=link).delete()
 
 
 @strawberry.type
 class IssueLinkMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def create_issue_link(
         self,
         info: Info,
@@ -83,7 +71,7 @@ class IssueLinkMutation:
         try:
             url_validator = URLValidator()
             url_validator(url)
-        except Exception as e:
+        except Exception:
             raise ValueError("Invalid URL")
 
         workspace = await get_workspace(slug)
@@ -112,9 +100,7 @@ class IssueLinkMutation:
 
         return issue_link
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def update_issue_link(
         self,
         info: Info,
@@ -185,9 +171,7 @@ class IssueLinkMutation:
 
         return current_issue_link
 
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])]
-    )
+    @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectMemberPermission()])])
     async def remove_issue_link(
         self,
         info: Info,

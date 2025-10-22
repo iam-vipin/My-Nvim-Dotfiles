@@ -1,12 +1,11 @@
-import { API_BASE_URL } from "@plane/constants";
-import { EViewAccess, TPublishViewSettings } from "@plane/types";
+import type { EViewAccess, TPublishViewSettings } from "@plane/types";
 // helpers
 // services
 import { ViewService as CoreViewService } from "@/services/view.service";
 
 export class ViewService extends CoreViewService {
   constructor() {
-    super(API_BASE_URL);
+    super();
   }
 
   async updateViewAccess(workspaceSlug: string, projectId: string, viewId: string, access: EViewAccess): Promise<any> {

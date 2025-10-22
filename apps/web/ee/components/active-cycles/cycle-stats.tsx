@@ -1,4 +1,5 @@
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -9,9 +10,12 @@ import { Tab } from "@headlessui/react";
 // plane constants
 // types
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, IActiveCycle } from "@plane/types";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IActiveCycle } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Avatar, Loader, PriorityIcon, Tooltip } from "@plane/ui";
+import { Avatar, Loader } from "@plane/ui";
 // components
 import {
   cn,
@@ -27,8 +31,8 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 // helpers
 // hooks
-import { useIssues } from "@/hooks/store/use-issues"
-import { useProject } from "@/hooks/store/use-project"
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -181,7 +185,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                             {cycle.project_detail?.identifier}-{issue.sequence_id}
                           </span>
                         </Tooltip>
-                        <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                        <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                           <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                         </Tooltip>
                       </div>

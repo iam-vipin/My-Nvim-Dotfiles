@@ -1,19 +1,22 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import Link from "next/link";
 import useSWR from "swr";
-import { Briefcase, Loader, RefreshCcw } from "lucide-react";
+import { Loader, RefreshCcw, ExternalLink } from "lucide-react";
 import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
-import { TJobStatus } from "@plane/etl/core";
+import type { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
-import { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import { EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
 
 export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverType, logo, serviceName }) => {
@@ -97,6 +100,9 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
                     <td className="p-3 whitespace-nowrap">{t("importers.serial_number")}</td>
                     <td className="p-3 whitespace-nowrap">File Name</td>
                     <td className="p-3 whitespace-nowrap text-center">{t("importers.status")}</td>
+                    <td className="p-3 whitespace-nowrap text-center">{t("importers.destination")}</td>
+                    <td className="p-3 whitespace-nowrap text-center">{t("importers.project")}</td>
+                    <td className="p-3 whitespace-nowrap text-center">{t("importers.teamspace")}</td>
                     <td className="p-3 whitespace-nowrap text-center">Total Import Phases</td>
                     <td className="p-3 whitespace-nowrap text-center">Current Import Phase</td>
                     <td className="p-3 whitespace-nowrap text-center">{t("importers.start_time")}</td>
@@ -119,7 +125,31 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
                               : "---"}
                           </td>
                           <td className="p-3 whitespace-nowrap text-center">
-                            <SyncJobStatus status={job?.status as TJobStatus} />
+                            <div className="flex items-center gap-2">
+                              <SyncJobStatus status={job?.status as TJobStatus} />
+                              {job?.config?.metadata?.rootNodeUrl && (
+                                <Link
+                                  href={job?.config?.metadata?.rootNodeUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ExternalLink className="h-3 w-3 flex-shrink-0 text-custom-primary-100" />
+                                </Link>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-3 whitespace-nowrap text-center capitalize">
+                            {job?.config?.destination?.type || "Wiki"}
+                          </td>
+                          <td className="p-3 whitespace-nowrap text-center capitalize">
+                            {job?.config?.destination?.type === EDocImporterDestinationType.PROJECT
+                              ? job?.config?.destination?.project_name
+                              : "-"}
+                          </td>
+                          <td className="p-3 whitespace-nowrap text-center capitalize">
+                            {job?.config?.destination?.type === EDocImporterDestinationType.TEAMSPACE
+                              ? job?.config?.destination?.teamspace_name
+                              : "-"}
                           </td>
                           <td className="p-3 whitespace-nowrap text-center">{job?.report.total_batch_count || "-"}</td>
                           <td className="p-3 whitespace-nowrap text-center">
@@ -141,7 +171,7 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
           <div className="grid h-full place-items-center p-5">
             <div className="flex flex-col items-center gap-4">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
-                <Briefcase className="h-10 w-10 text-custom-text-200" />
+                <ProjectIcon className="h-10 w-10 text-custom-text-200" />
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
                 <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>

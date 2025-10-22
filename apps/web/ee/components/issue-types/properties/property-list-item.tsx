@@ -1,22 +1,21 @@
 import { useState } from "react";
-import cloneDeep from "lodash/cloneDeep";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import omitBy from "lodash/omitBy";
-import uniqBy from "lodash/uniqBy";
+import { isEmpty, cloneDeep, omitBy, uniqBy, isEqual } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EIssuePropertyType,
+import { Button } from "@plane/propel/button";
+import { InfoIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type {
   TIssueProperty,
   TIssuePropertyOption,
   TIssuePropertyOptionCreateUpdateData,
   TIssuePropertyPayload,
   TOperationMode,
 } from "@plane/types";
-import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import { EIssuePropertyType } from "@plane/types";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -31,7 +30,7 @@ import { PropertyTitleDescriptionInput } from "./dropdowns/property-title";
 import { PropertyTypeDropdown } from "./dropdowns/property-type";
 import { PropertyMandatoryFieldCheckbox } from "./mandatory-field";
 import { IssuePropertyQuickActions } from "./quick-actions";
-import { TIssuePropertyCreateList } from "./root";
+import type { TIssuePropertyCreateList } from "./root";
 
 export type TCustomPropertyOperations = {
   getPropertyDetail: (propertyId: string) => TIssueProperty<EIssuePropertyType> | undefined;

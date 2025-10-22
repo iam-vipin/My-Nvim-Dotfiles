@@ -6,9 +6,9 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles, TPage, type TPageNavigationTabs } from "@plane/types";
-// components
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EUserWorkspaceRoles } from "@plane/types";
+import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
@@ -241,6 +241,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           storeType={EPageStoreType.WORKSPACE}
           pageType={pageType}
           paddingLeft={0}
+          sectionType={pageType}
         />
       ))}
     </div>

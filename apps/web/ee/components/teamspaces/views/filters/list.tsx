@@ -5,7 +5,7 @@ import { ListFilter, Search, X } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { TViewFilters } from "@plane/types";
+import type { TViewFilters } from "@plane/types";
 import { cn } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";

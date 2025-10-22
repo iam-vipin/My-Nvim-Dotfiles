@@ -1,12 +1,13 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { TBaseActivityVerbs } from "@plane/types";
+import type { TBaseActivityVerbs } from "@plane/types";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 // helpers
-import { TInitiativeActivity } from "@/plane-web/types/initiative";
-import { getInitiativeActivityKey, INITIATIVE_UPDATES_HELPER_MAP, TInitiativeActivityFields } from "./helper";
+import type { TInitiativeActivity } from "@/plane-web/types/initiative";
+import type { TInitiativeActivityFields } from "./helper";
+import { getInitiativeActivityKey, INITIATIVE_UPDATES_HELPER_MAP } from "./helper";
 
 type Props = {
   activity: TInitiativeActivity;

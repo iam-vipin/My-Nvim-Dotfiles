@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
+import type {
   EIssuePropertyRelationType,
   EIssuePropertyType,
   TIssueProperty,

@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // components
@@ -13,19 +13,20 @@ import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // helpers
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 // local imports
-import { StateDropdown } from "../dropdowns/state-dropdown";
 import { MembersDropdown } from "../dropdowns/members-dropdown";
+import { StateDropdown } from "../dropdowns/state-dropdown";
 
 type Props = {
   workspaceSlug: string;
   currentWorkspace: IWorkspace;
   isProjectGroupingEnabled: boolean;
   data?: Partial<TProject>;
+  handleFormOnChange?: () => void;
 };
 const ProjectAttributes: React.FC<Props> = (props) => {
-  const { workspaceSlug, currentWorkspace, isProjectGroupingEnabled, data } = props;
+  const { workspaceSlug, currentWorkspace, isProjectGroupingEnabled, data, handleFormOnChange } = props;
   // plane imports
   const { t } = useTranslation();
   // react-hook-form
@@ -42,7 +43,10 @@ const ProjectAttributes: React.FC<Props> = (props) => {
           render={({ field: { onChange, value } }) => (
             <StateDropdown
               value={value || data?.state_id || defaultState || ""}
-              onChange={onChange}
+              onChange={(state) => {
+                onChange(state);
+                handleFormOnChange?.();
+              }}
               workspaceSlug={workspaceSlug.toString()}
               workspaceId={currentWorkspace.id}
               buttonClassName="h-7"
@@ -61,7 +65,10 @@ const ProjectAttributes: React.FC<Props> = (props) => {
             <div className="flex-shrink-0 h-7" tabIndex={4}>
               <CustomSelect
                 value={value}
-                onChange={onChange}
+                onChange={(e: number) => {
+                  onChange(e);
+                  handleFormOnChange?.();
+                }}
                 label={
                   <div className="flex items-center gap-1 h-full">
                     {currentNetwork ? (
@@ -114,9 +121,9 @@ const ProjectAttributes: React.FC<Props> = (props) => {
                     to: getDate(endDateValue),
                   }}
                   onSelect={(val) => {
-                    console.log({ val });
                     onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
                     onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                    handleFormOnChange?.();
                   }}
                   placeholder={{
                     from: "Start date",
@@ -142,6 +149,7 @@ const ProjectAttributes: React.FC<Props> = (props) => {
                 value={value || data?.priority}
                 onChange={(priority) => {
                   onChange(priority);
+                  handleFormOnChange?.();
                 }}
                 buttonVariant="border-with-text"
               />
@@ -158,7 +166,10 @@ const ProjectAttributes: React.FC<Props> = (props) => {
               <div className="flex-shrink-0 h-7" tabIndex={5}>
                 <MemberDropdown
                   value={value ?? null}
-                  onChange={(lead) => onChange(lead === value ? null : lead)}
+                  onChange={(lead) => {
+                    onChange(lead === value ? null : lead);
+                    handleFormOnChange?.();
+                  }}
                   placeholder="Lead"
                   multiple={false}
                   buttonVariant="border-with-text"
@@ -174,7 +185,14 @@ const ProjectAttributes: React.FC<Props> = (props) => {
           control={control}
           name="members"
           render={({ field: { value, onChange } }) => (
-            <MembersDropdown value={value as unknown as string[]} onChange={onChange} className="h-7" />
+            <MembersDropdown
+              value={value as unknown as string[]}
+              onChange={(members) => {
+                onChange(members);
+                handleFormOnChange?.();
+              }}
+              className="h-7"
+            />
           )}
         />
       )}

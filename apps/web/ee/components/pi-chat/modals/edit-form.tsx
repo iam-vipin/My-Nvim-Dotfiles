@@ -1,10 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 // types
 import { ETabIndices } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

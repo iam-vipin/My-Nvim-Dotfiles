@@ -3,12 +3,12 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
-import { useMember } from "@/hooks/store/use-member"
+import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { TProjectUpdatesComment } from "@/plane-web/types";
+import type { TProjectUpdatesComment } from "@/plane-web/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";
-import { TActivityOperations } from "./comment-list";
+import type { TActivityOperations } from "./comment-list";
 import { EditComment } from "./edit";
 
 type TProps = {

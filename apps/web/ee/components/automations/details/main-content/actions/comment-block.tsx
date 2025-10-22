@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web imports
-import { TAddCommentActionConfig } from "@plane/types";
+import type { TAddCommentActionConfig } from "@plane/types";
 import { LiteTextEditor } from "@/components/editor/lite-text/editor";
 
 type TProps = {
@@ -35,7 +35,7 @@ export const AutomationDetailsMainContentAddCommentBlock: React.FC<TProps> = obs
           initialValue={config.comment_text ?? "<p></p>"}
           parentClassName="p-0"
           showSubmitButton={false}
-          showToolbar={false}
+          variant="none"
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
         />

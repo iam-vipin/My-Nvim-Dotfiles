@@ -1,8 +1,9 @@
 import type { Editor, Range } from "@tiptap/core";
 // plane editor extensions
 import { type InsertAttachmentComponentProps } from "@/plane-editor/extensions/attachments/types";
-// types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+import { type TCommentMarkAttributes } from "../extensions/comments";
+// types
 
 export const insertAttachment = ({
   editor,
@@ -45,9 +46,26 @@ export const insertExternalEmbed = ({
   range?: Range;
   [EExternalEmbedAttributeNames.IS_RICH_CARD]: boolean;
   src?: string;
-}) =>
-  editor
-    .chain()
-    .focus()
-    .insertExternalEmbed({ [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCard, pos: range, src })
-    .run();
+}) => {
+  if (range) {
+    return editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .insertExternalEmbed({
+        [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCard,
+        pos: range.from,
+        [EExternalEmbedAttributeNames.SOURCE]: src,
+      })
+      .run();
+  } else {
+    return editor
+      .chain()
+      .focus()
+      .insertExternalEmbed({
+        [EExternalEmbedAttributeNames.IS_RICH_CARD]: isRichCard,
+        [EExternalEmbedAttributeNames.SOURCE]: src,
+      })
+      .run();
+  }
+};

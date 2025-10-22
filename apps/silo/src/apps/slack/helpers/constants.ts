@@ -16,6 +16,7 @@ export const ACTIONS = {
   LINKBACK_ADD_WEB_LINK: "add_web_link",
   LINKBACK_OVERFLOW_ACTIONS: "linkback_overflow_actions",
 
+  CREATE_REPLY_COMMENT: "create_reply_comment",
   ENABLE_THREAD_SYNC: "enable_thread_sync",
   ASSIGN_TO_ME: "assign_to_me",
   UPDATE_WORK_ITEM: "update_work_item",
@@ -79,5 +80,11 @@ export const INTAKE_STATUSES = [
   { id: 2, name: "Duplicate", emoji: "🔄" },
 ];
 
-
-export const IGNORED_FIELD_UPDATES = ["description", "attachment", "sort_order", "link"]
+export const IGNORED_FIELD_UPDATES = [
+  "description",
+  "description_html",
+  "attachment",
+  "sort_order",
+  "link",
+  "reaction",
+];

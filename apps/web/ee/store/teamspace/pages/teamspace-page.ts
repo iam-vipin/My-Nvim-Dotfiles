@@ -1,15 +1,18 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EPageAccess, EUserPermissions } from "@plane/constants";
-import { EUserWorkspaceRoles, TPage } from "@plane/types";
+import type { EUserPermissions } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
+import type { TPage } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // plane web services
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
 // store
-import { RootStore } from "@/plane-web/store/root.store";
-import { BasePage, TPageInstance } from "@/store/pages/base-page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TPageInstance } from "@/store/pages/base-page";
+import { BasePage } from "@/store/pages/base-page";
 
 const teamspacePageService = new TeamspacePageService();
 
@@ -68,6 +71,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
+      canCurrentUserCommentOnPage: computed,
       isContentEditable: computed,
       // actions
       fetchSubPages: action,
@@ -87,7 +91,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   }
 
   get subPageIds() {
-    const pages = Object.values(this.rootStore.projectPages.data);
+    const pages = Object.values(this.rootStore.teamspaceRoot.teamspacePage.data);
     const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
 
     // Sort pages alphabetically by name
@@ -99,7 +103,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   }
 
   get subPages() {
-    return this.subPageIds.map((id) => this.rootStore.projectPages.data[id]);
+    return this.subPageIds.map((id) => this.rootStore.teamspaceRoot.teamspacePage.data[id]);
   }
 
   private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {
@@ -186,9 +190,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    return false;
-    // const userRole = this.getUserWorkspaceRole();
-    // return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    const userRole = this.getUserWorkspaceRole();
+    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
@@ -209,9 +212,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    return false;
-    // const userRole = this.getUserWorkspaceRole();
-    // return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    const userRole = this.getUserWorkspaceRole();
+    return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
@@ -219,6 +221,14 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    */
   get canCurrentUserMovePage() {
     return false;
+  }
+
+  /**
+   * @description returns true if the current logged in user can comment on the page/reply to the comments
+   */
+  get canCurrentUserCommentOnPage() {
+    const userRole = this.getUserWorkspaceRole();
+    return this.isCurrentUserOwner || (!!userRole && userRole >= EUserWorkspaceRoles.MEMBER);
   }
 
   /**
@@ -260,7 +270,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
 
       runInAction(() => {
         for (const page of subPages) {
-          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new TeamspacePage(this.rootStore, page));
+          if (page?.id)
+            set(this.rootStore.teamspaceRoot.teamspacePage.data, [page.id], new TeamspacePage(this.rootStore, page));
         }
       });
     } catch (error) {

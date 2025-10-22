@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // local components
 import { SectionWrapper } from "../common/section-wrapper";
 

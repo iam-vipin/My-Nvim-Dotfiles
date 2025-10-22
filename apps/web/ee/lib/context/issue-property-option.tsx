@@ -2,7 +2,7 @@ import React, { useState, createContext, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { v4 } from "uuid";
 // plane imports
-import { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
+import type { TCreationListModes, TIssuePropertyOption, TIssuePropertyOptionCreateUpdateData } from "@plane/types";
 // local imports
 import type { TCustomPropertyOperations } from "@/plane-web/components/issue-types/properties/property-list-item";
 // default values

@@ -1,15 +1,15 @@
 /* eslint-disable no-useless-catch */
 
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_URL } from "@plane/constants";
-import { IApiToken, IProject, IState, IUser, IWebhook, IWorkspace } from "@plane/types";
+import type { IApiToken, IProject, IState, IUser, IWebhook, IWorkspace } from "@plane/types";
 // plane web services
 import externalApiTokenService from "@/plane-web/services/importers/root.service";
 import internalWebhookService from "@/plane-web/services/internal-webhook.service";
 // plane web root store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IIntegrationBaseStore {
   // observables
@@ -134,7 +134,11 @@ export class IntegrationBaseStore implements IIntegrationBaseStore {
     if (!workspaceSlug) return undefined;
 
     try {
-      const projects = await this.store.projectRoot.project.fetchProjects(workspaceSlug);
+      const joinedProjectIds = this.store.projectRoot.project.joinedProjectIds;
+      const getProjectById = this.store.projectRoot.project.getProjectById;
+      const projects = joinedProjectIds
+        .map((projectId) => getProjectById(projectId))
+        .filter((project) => project !== undefined);
       if (projects) {
         runInAction(() => {
           projects.forEach((project) => {

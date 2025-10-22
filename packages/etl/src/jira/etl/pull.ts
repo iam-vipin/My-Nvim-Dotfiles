@@ -9,12 +9,6 @@ import {
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
-import {
-  fetchPaginatedData,
-  formatDateStringForHHMM,
-  OPTION_CUSTOM_FIELD_TYPES,
-  removeArrayObjSpaces,
-} from "../helpers";
 import { JiraService } from "@/jira/services";
 import {
   ImportedJiraUser,
@@ -26,6 +20,12 @@ import {
   JiraIssueFieldOptions,
   JiraCustomFieldKeys,
 } from "@/jira/types";
+import {
+  fetchPaginatedData,
+  formatDateStringForHHMM,
+  OPTION_CUSTOM_FIELD_TYPES,
+  removeArrayObjSpaces,
+} from "../helpers";
 
 export function pullUsers(users: string): ImportedJiraUser[] {
   const jiraUsersObject = CSV.parse(users, { output: "objects" });
@@ -44,11 +44,18 @@ export async function pullLabels(client: JiraService): Promise<string[]> {
 
 export async function pullIssues(client: JiraService, projectKey: string, from?: Date): Promise<IJiraIssue[]> {
   const issues: IJiraIssue[] = [];
-  await fetchPaginatedData(
-    (startAt) => client.getProjectIssues(projectKey, startAt, from ? formatDateStringForHHMM(from) : ""),
-    (values) => issues.push(...(values as IJiraIssue[])),
-    "issues"
-  );
+
+  let nextPageToken = undefined;
+  do {
+    const response = await client.getProjectIssues(
+      projectKey,
+      nextPageToken,
+      from ? formatDateStringForHHMM(from) : ""
+    );
+    issues.push(...(response.issues as IJiraIssue[]));
+    nextPageToken = response.nextPageToken;
+  } while (nextPageToken);
+
   return issues;
 }
 
@@ -89,9 +96,16 @@ export async function pullComponents(client: JiraService, projectKey: string): P
   try {
     const jiraComponentObjects: ComponentWithIssueCount[] = await client.getProjectComponents(projectKey);
     for (const component of jiraComponentObjects) {
-      const issues = await client.getProjectComponentIssues(component.id!);
-      if (issues.issues) {
-        jiraComponents.push({ component, issues: issues.issues });
+      let nextPageToken = undefined;
+      const issues: IJiraIssue[] = [];
+      do {
+        const response = await client.getProjectComponentIssues(component.id!, nextPageToken);
+        issues.push(...(response.issues as IJiraIssue[]));
+        nextPageToken = response.nextPageToken;
+      } while (nextPageToken);
+
+      if (issues) {
+        jiraComponents.push({ component, issues: issues });
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

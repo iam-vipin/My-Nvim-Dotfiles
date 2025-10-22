@@ -14,7 +14,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import Workspace, WorkspaceMember
-from plane.graphql.types.users import UserType
+from plane.graphql.types.user import UserType
 from plane.graphql.utils.timezone import user_timezone_converter
 
 
@@ -57,9 +57,7 @@ class WorkspaceType:
     @strawberry_django.field
     async def role(self, info: Info) -> Optional[int]:
         workspace_member = await sync_to_async(
-            WorkspaceMember.objects.filter(
-                workspace=self.id, member=info.context.user.id
-            ).first
+            WorkspaceMember.objects.filter(workspace=self.id, member=info.context.user.id).first
         )()
         if workspace_member:
             return str(workspace_member.role)

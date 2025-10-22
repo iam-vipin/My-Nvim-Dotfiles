@@ -1,13 +1,15 @@
 "use client";
 
-import { FC, Fragment, useRef, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Info } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-import { EEstimateSystem, TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 // helpers
 import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 

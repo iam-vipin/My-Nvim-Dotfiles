@@ -8,9 +8,10 @@ import { MoreHorizontal } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue } from "@plane/types";
 // ui
-import { Tooltip, ControlLink } from "@plane/ui";
+import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 // hooks
@@ -24,8 +25,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
-import { TRenderQuickActions } from "../list/list-view-types";
-import { CalendarStoreType } from "./base-calendar-root";
+import type { TRenderQuickActions } from "../list/list-view-types";
+import type { CalendarStoreType } from "./base-calendar-root";
 
 type Props = {
   issue: TIssue;

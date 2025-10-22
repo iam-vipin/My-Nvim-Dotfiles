@@ -1,19 +1,14 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
+import { PlaneIcon, PlaneOneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import {
-  EModalWidth,
-  ModalCore,
-  PlaneIcon,
-  PlaneOneIcon,
-  getSubscriptionTextColor,
-  getSuccessModalVariantStyle,
-} from "@plane/ui";
+import { EModalWidth, ModalCore, getSubscriptionTextColor, getSuccessModalVariantStyle } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 // plane web constants
 import {

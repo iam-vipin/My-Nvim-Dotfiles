@@ -63,15 +63,11 @@ class CustomGraphQLView(AsyncGraphQLView):
                     request.user = user
                     return await super().dispatch(request, *args, **kwargs)
                 else:
-                    return JsonResponse(
-                        {"message": "Authentication required"}, status=401
-                    )
+                    return JsonResponse({"message": "Authentication required"}, status=401)
             else:
                 return JsonResponse({"message": "Authentication required"}, status=401)
         except (InvalidToken, TokenError):
-            return JsonResponse(
-                {"message": "Invalid token. Please log in again."}, status=401
-            )
+            return JsonResponse({"message": "Invalid token. Please log in again."}, status=401)
 
     async def process_result(
         self,
@@ -83,8 +79,7 @@ class CustomGraphQLView(AsyncGraphQLView):
 
         if result.errors:
             processed_result["errors"] = [
-                {"message": error.message, "extensions": error.extensions or {}}
-                for error in result.errors
+                {"message": error.message, "extensions": error.extensions or {}} for error in result.errors
             ]
 
         return processed_result

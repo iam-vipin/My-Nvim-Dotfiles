@@ -12,19 +12,16 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { ConfirmationModal } from "./confirmation-modal";
 
 export const LockPageModal = ({
-  editorRef,
   page,
   lockPageModal,
   setLockPageModal,
 }: {
-  editorRef: EditorRefApi | null | undefined;
   page: TPageInstance;
   lockPageModal: boolean;
   setLockPageModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [actionType, setActionType] = useState<boolean>(false);
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
 

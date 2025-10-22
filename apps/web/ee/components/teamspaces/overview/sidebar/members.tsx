@@ -4,7 +4,9 @@ import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
-import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
+import { LeadIcon } from "@plane/propel/icons";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Avatar, CustomMenu } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks
@@ -104,9 +106,7 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
                   <div className="flex-shrink-0">
                     <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
                       <CustomMenu.MenuItem
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                        onClick={() => {
                           captureClick({
                             elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_REMOVE_MEMBER_BUTTON,
                           });

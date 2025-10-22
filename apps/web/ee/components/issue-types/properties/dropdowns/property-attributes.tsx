@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
+import type { TIssueProperty, TOperationMode } from "@plane/types";
+import { EIssuePropertyType } from "@plane/types";
 // local imports
-import { TIssuePropertyFormError } from "../property-list-item";
+import type { TIssuePropertyFormError } from "../property-list-item";
 import { SelectedAttributeProperties } from "./selected-attribute-properties";
 
 type TPropertyAttributesProps = {

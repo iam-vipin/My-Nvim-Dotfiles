@@ -6,12 +6,13 @@ import { useParams } from "next/navigation";
 // plane imports
 import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { TInitiative } from "@/plane-web/types/initiative";
+import type { TInitiative } from "@/plane-web/types/initiative";
 
 interface IInitiativeDelete {
   initiative: TInitiative;

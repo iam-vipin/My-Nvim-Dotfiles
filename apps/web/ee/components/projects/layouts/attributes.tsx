@@ -1,11 +1,14 @@
-import { SyntheticEvent } from "react";
+import type { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, IWorkspace } from "@plane/types";
-import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IWorkspace } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
+import { Avatar } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -14,8 +17,8 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { TProject } from "@/plane-web/types/projects";
-import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
+import type { TProject } from "@/plane-web/types/projects";
+import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // local imports
 import { MembersDropdown } from "../dropdowns/members-dropdown";
 import { PriorityDropdown } from "../dropdowns/priority-dropdown";

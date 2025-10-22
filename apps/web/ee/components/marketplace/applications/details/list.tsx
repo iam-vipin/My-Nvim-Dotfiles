@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { TUserApplication } from "@plane/types";
+import type { TUserApplication } from "@plane/types";
 import { AppTile } from "@/plane-web/components/marketplace";
 
 // list all the applications
@@ -14,13 +14,5 @@ type AppListProps = {
 export const AppList: React.FC<AppListProps> = (props) => {
   const { apps } = props;
 
-  return (
-    <div className="pb-20">
-      {apps.map((app) => (
-        <div key={app.id}>
-          <AppTile app={app} />
-        </div>
-      ))}
-    </div>
-  );
+  return apps.map((app) => <AppTile key={app.id} app={app} />);
 };

@@ -1,18 +1,20 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EPageAccess } from "@plane/constants";
 // types
-import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // services
-import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
+import { PageShareService } from "@/plane-web/services/page/page-share.service";
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
-import { TWorkspacePage, WorkspacePage } from "./workspace-page";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TWorkspacePage } from "./workspace-page";
+import { WorkspacePage } from "./workspace-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -24,6 +26,7 @@ export interface IWorkspacePageStore {
   data: Record<string, TWorkspacePage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  pagesSummary: TPagesSummary | undefined;
   // page type arrays
   publicPageIds: string[];
   privatePageIds: string[];
@@ -42,6 +45,7 @@ export interface IWorkspacePageStore {
   getCurrentWorkspaceFilteredPageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TWorkspacePage | undefined;
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
+  isCommentsEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
   findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
@@ -59,7 +63,14 @@ export interface IWorkspacePageStore {
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
-  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
+  movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
+  getOrFetchPageInstance: ({
+    pageId,
+    trackVisit,
+  }: {
+    pageId: string;
+    trackVisit?: boolean;
+  }) => Promise<TWorkspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
   // page sharing actions
@@ -77,6 +88,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  pagesSummary: TPagesSummary | undefined = undefined;
   // page type arrays
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
@@ -102,6 +114,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       data: observable,
       error: observable,
       filters: observable,
+      pagesSummary: observable,
       // page type arrays
       publicPageIds: observable,
       privatePageIds: observable,
@@ -203,7 +216,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    */
   get isAnyPageAvailable() {
     if (this.loader) return true;
-    return Object.keys(this.data).length > 0;
+
+    if (this.pagesSummary) {
+      const totalCount =
+        this.pagesSummary.public_pages + this.pagesSummary.private_pages + this.pagesSummary.archived_pages;
+      return totalCount > 0;
+    }
+
+    return false;
   }
 
   /**
@@ -273,6 +293,15 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   isNestedPagesEnabled = computedFn((workspaceSlug: string) => {
     const { getFeatureFlag } = this.store.featureFlags;
     return getFeatureFlag(workspaceSlug, "NESTED_PAGES", false);
+  });
+
+  /**
+   * Returns true if comments in pages feature is enabled
+   * @returns boolean
+   */
+  isCommentsEnabled = computedFn((workspaceSlug: string) => {
+    const { getFeatureFlag } = this.store.featureFlags;
+    return getFeatureFlag(workspaceSlug, "PAGE_COMMENTS", false);
   });
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
@@ -348,7 +377,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
     // ---------- PUBLIC PAGES ----------
-    // Unfiltered public pages (sorted alphabetically by name)
+    // Unfiltered public pages
     const publicPages = workspacePages.filter(
       (page) =>
         page.access === EPageAccess.PUBLIC &&
@@ -357,10 +386,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         !page.deleted_at &&
         !page.is_shared
     );
-    const sortedPublicPages = publicPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newPublicPageIds = publicPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered public pages (with all filters applied)
     const filteredPublicPages = publicPages.filter(
@@ -388,10 +417,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
     const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
-    const sortedPrivatePages = combinedPrivatePages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newPrivatePageIds = combinedPrivatePages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered private pages (with all filters applied)
     const filteredPrivatePages = combinedPrivatePages.filter(
@@ -416,10 +445,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       const rootParent = this.findRootParent(page);
       return !rootParent?.archived_at;
     });
-    const sortedArchivedPages = topLevelArchivedPages.sort((a, b) =>
-      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
-    );
-    const newArchivedPageIds = sortedArchivedPages
+    const newArchivedPageIds = topLevelArchivedPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
       .map((page) => page.id)
       .filter((id): id is string => id !== undefined);
 
@@ -451,10 +478,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       const parentPage = this.getPageById(page.parent_id);
       return !parentPage?.is_shared;
     });
-    const sortedSharedPages = sharedPages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
-    );
-    const newSharedPageIds = sortedSharedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newSharedPageIds = sharedPages
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Filtered shared pages (with all filters applied)
     const filteredSharedPages = sharedPages.filter(
@@ -501,8 +528,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.pageService.fetchPagesSummary(workspaceSlug);
+
       const pages = await this.pageService.fetchAll(workspaceSlug);
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages)
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);
@@ -555,7 +586,6 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   /**
    * @description fetch the details of a page
-   * @param {string} pageId
    */
   fetchPageDetails: IWorkspacePageStore["fetchPageDetails"] = async (pageId, options) => {
     const shouldFetchSubPages = options?.shouldFetchSubPages ?? true;
@@ -570,14 +600,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
+      const promises: Promise<TPage | TPage[]>[] = [this.pageService.fetchById(workspaceSlug, pageId, trackVisit)];
 
       if (shouldFetchSubPages) {
         promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));
       }
 
       const results = await Promise.all(promises);
-      const page = results[0] as TPage | undefined;
+      const page = results[0] as TPage;
       const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
 
       runInAction(() => {
@@ -713,12 +743,77 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
+  /**
+   * @description move a page internally within the project hierarchy
+   * @param {string} pageId - The ID of the page to move
+   * @param {Partial<TPage>} updatePayload - The update payload containing parent_id and other properties
+   */
+  movePageInternally = async (pageId: string, updatePayload: Partial<TPage>) => {
+    try {
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      runInAction(() => {
+        // Handle parent_id changes and update sub_pages_count accordingly
+        if (updatePayload.hasOwnProperty("parent_id") && updatePayload.parent_id !== pageInstance.parent_id) {
+          this.updateParentSubPageCounts(pageInstance.parent_id ?? null, updatePayload.parent_id ?? null);
+        }
+
+        // Apply all updates to the page instance
+        Object.keys(updatePayload).forEach((key) => {
+          const currentPageKey = key as keyof TPage;
+          set(pageInstance, key, updatePayload[currentPageKey] || undefined);
+        });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        pageInstance.updated_at = new Date();
+      });
+
+      await pageInstance.update(updatePayload);
+    } catch (error) {
+      console.error("Unable to move page internally", error);
+      runInAction(() => {
+        this.error = {
+          title: "Failed",
+          description: "Failed to move page internally, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description Helper method to update sub_pages_count when moving pages between parents
+   * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
+   * @param {string | null} newParentId - The new parent ID (can be null for root pages)
+   * @private
+   */
+  private updateParentSubPageCounts = (oldParentId: string | null, newParentId: string | null) => {
+    // Decrement count for old parent (if it exists)
+    if (oldParentId) {
+      const oldParentPageInstance = this.getPageById(oldParentId);
+      if (oldParentPageInstance) {
+        const newCount = Math.max(0, (oldParentPageInstance.sub_pages_count ?? 1) - 1);
+        oldParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+
+    // Increment count for new parent (if it exists)
+    if (newParentId) {
+      const newParentPageInstance = this.getPageById(newParentId);
+      if (newParentPageInstance) {
+        const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
+        newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
+      }
+    }
+  };
+
+  getOrFetchPageInstance = async ({ pageId, trackVisit }: { pageId: string; trackVisit?: boolean }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
     } else {
-      const page = await this.fetchPageDetails(pageId);
+      const page = await this.fetchPageDetails(pageId, { trackVisit });
       if (page) {
         return new WorkspacePage(this.store, page);
       }
@@ -740,8 +835,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
+      const pagesSummary = await this.pageService.fetchPagesSummary(workspaceSlug);
+
       const pages = await this.pageService.fetchPagesByType(workspaceSlug, pageType, searchQuery);
       runInAction(() => {
+        this.pagesSummary = pagesSummary;
+
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);

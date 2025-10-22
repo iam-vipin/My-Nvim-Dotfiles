@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { PlaneLockup } from "@plane/ui";
+import { PlaneLockup } from "@plane/propel/icons";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
@@ -33,12 +33,22 @@ const OAuthPage = observer(() => {
     nonce,
     state,
     claims,
+    disable_dropdown,
   } = Object.fromEntries(searchParams.entries());
 
-  const { data: application, isLoading } = useSWR(
-    client_id ? APPLICATION_BY_CLIENT_ID(client_id?.toString() ?? "") : null,
-    client_id ? async () => await applicationService.getApplicationByClientId(client_id?.toString() ?? "") : null
-  );
+  const { data, isLoading } = useSWR(client_id ? APPLICATION_BY_CLIENT_ID(client_id) : null, async () => {
+    const application = await applicationService.getApplicationByClientId(client_id);
+    if (!application?.id) return { application, applicationPermissions: null };
+
+    const applicationPermissions = await applicationService.getApplicationPermissions(application.id.toString());
+    return { application, applicationPermissions };
+  });
+
+  const application = data?.application;
+  const applicationPermissions = data?.applicationPermissions?.reduce((acc: any, curr: any) => {
+    acc[curr.workspace_id] = curr.state;
+    return acc;
+  }, {} as any);
 
   if (isLoading) {
     return <EmailSettingsLoader />;
@@ -72,6 +82,7 @@ const OAuthPage = observer(() => {
                 <AppConsent
                   application={application}
                   workspaceSlug={workspace_slug}
+                  disableDropdown={workspace_slug ? Boolean(disable_dropdown?.toLowerCase() === "true") : false}
                   consentParams={{
                     client_id,
                     redirect_uri,
@@ -83,6 +94,7 @@ const OAuthPage = observer(() => {
                     state,
                     claims,
                   }}
+                  workspacePermissions={applicationPermissions}
                 />
               </div>
             </div>

@@ -24,22 +24,23 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
-const IssueDetailsPage = observer(() => {
+const InitiativeDetailsPage = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, initiativeId } = useParams();
+
   // hooks
+  const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
+
   // store hooks
   const { fetchProjectAnalyticsCount } = useProject();
   const { fetchProjectAttributes } = useProjectAdvanced();
   const {
     initiative: { getInitiativeById, fetchInitiativeDetails },
   } = useInitiatives();
-
-  const { t } = useTranslation();
-
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+
   // fetching issue details
   const { isLoading, error } = useSWR(
     workspaceSlug && initiativeId ? `INITIATIVE_DETAIL_${workspaceSlug}_${initiativeId}` : null,
@@ -47,6 +48,7 @@ const IssueDetailsPage = observer(() => {
       ? () => fetchInitiativeDetails(workspaceSlug.toString(), initiativeId.toString())
       : null
   );
+
   // derived values
   const initiativeDetails = getInitiativeById(initiativeId.toString());
   const loader = !initiativeDetails || isLoading;
@@ -54,6 +56,7 @@ const IssueDetailsPage = observer(() => {
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+
   // fetch initiative project analytics count
   useSWR(
     workspaceSlug && initiativeDetails?.project_ids && initiativeDetails?.project_ids.length > 0
@@ -124,4 +127,4 @@ const IssueDetailsPage = observer(() => {
   );
 });
 
-export default IssueDetailsPage;
+export default InitiativeDetailsPage;

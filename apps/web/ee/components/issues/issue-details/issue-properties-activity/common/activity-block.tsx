@@ -1,8 +1,9 @@
 "use client";
 
-import { FC, ReactNode, useEffect, useRef } from "react";
+import type { FC, ReactNode } from "react";
+import { useEffect, useRef } from "react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";

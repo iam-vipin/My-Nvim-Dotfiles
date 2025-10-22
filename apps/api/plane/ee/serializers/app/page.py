@@ -1,9 +1,19 @@
 # Third party imports
 from rest_framework import serializers
 
+from django.utils import timezone
+
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.db.models import Page, Label, ProjectPage, PageLabel, PageVersion
+from plane.ee.serializers.app.description import DescriptionSerializer
+from plane.db.models import (
+    Page,
+    Label,
+    ProjectPage,
+    PageLabel,
+    PageVersion,
+)
+from plane.ee.models import PageComment, PageCommentReaction
 
 
 class WorkspacePageSerializer(BaseSerializer):
@@ -45,6 +55,7 @@ class WorkspacePageSerializer(BaseSerializer):
             "sub_pages_count",
             "shared_access",
             "is_shared",
+            "sort_order",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor", "shared_access"]
 
@@ -105,23 +116,6 @@ class WorkspacePageSerializer(BaseSerializer):
 
     def update(self, instance, validated_data):
         labels = validated_data.pop("labels", None)
-        projects = validated_data.pop("projects", None)
-
-        if projects is not None:
-            ProjectPage.objects.filter(page=instance).delete()
-            ProjectPage.objects.bulk_create(
-                [
-                    ProjectPage(
-                        workspace_id=instance.workspace_id,
-                        project_id=project,
-                        page_id=instance.id,
-                        created_by_id=instance.created_by_id,
-                        updated_by_id=instance.updated_by_id,
-                    )
-                    for project in projects
-                ],
-                batch_size=10,
-            )
 
         if labels is not None:
             PageLabel.objects.filter(page=instance).delete()
@@ -224,4 +218,73 @@ class WorkspacePageLiteSerializer(BaseSerializer):
             "updated_at",
             "moved_to_page",
             "moved_to_project",
+            "sort_order",
         ]
+
+
+class PageCommentReactionSerializer(BaseSerializer):
+    class Meta:
+        model = PageCommentReaction
+        fields = ["id", "workspace", "comment", "actor", "reaction", "project"]
+        read_only_fields = ["workspace", "comment", "actor"]
+
+
+class PageCommentSerializer(BaseSerializer):
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent",
+        queryset=PageComment.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    project_id = serializers.UUIDField(source="project.id", read_only=True)
+    workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
+    page_id = serializers.UUIDField(source="page.id", read_only=True)
+    page_comment_reactions = PageCommentReactionSerializer(read_only=True, many=True)
+    total_replies = serializers.IntegerField(read_only=True)
+    description = DescriptionSerializer(required=False)
+
+    class Meta:
+        model = PageComment
+        fields = "__all__"
+        read_only_fields = ["workspace", "page"]
+
+    def create(self, validated_data):
+        description_data = validated_data.pop("description", None)
+        workspace_id = self.context.get("workspace_id")
+        project_id = self.context.get("project_id", None)
+
+        if description_data:
+            serializer = DescriptionSerializer(data=description_data)
+            serializer.is_valid(raise_exception=True)
+            description = serializer.save(
+                workspace_id=workspace_id,
+                project_id=project_id,
+            )
+            validated_data["description"] = description
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        description_data = validated_data.pop("description", None)
+
+        if description_data:
+            if instance.description:
+                serializer = DescriptionSerializer(
+                    instance.description, data=description_data, partial=True
+                )
+                serializer.is_valid(raise_exception=True)
+                description = serializer.save()
+            else:
+                serializer = DescriptionSerializer(data=description_data)
+                serializer.is_valid(raise_exception=True)
+                description = serializer.save(
+                    workspace_id=instance.workspace_id,
+                    project_id=instance.project_id,
+                )
+
+            if instance.description_id != description.id:
+                instance.description = description
+
+            validated_data["edited_at"] = timezone.now()
+
+        return super().update(instance, validated_data)

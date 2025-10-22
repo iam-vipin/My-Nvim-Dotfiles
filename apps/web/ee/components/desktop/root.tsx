@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // to desktop
 import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 // mobx

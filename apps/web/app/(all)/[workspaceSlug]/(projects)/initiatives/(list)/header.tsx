@@ -5,16 +5,19 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { InitiativeIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Header, InitiativeIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette"
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
+import { InitiativesFiltersToggle } from "@/plane-web/components/initiatives/components/rich-filters/toggle";
 import { HeaderFilters } from "@/plane-web/components/initiatives/header/filters";
 
 export const InitiativesListHeader = observer(() => {
@@ -46,6 +49,7 @@ export const InitiativesListHeader = observer(() => {
         </Header.LeftItem>
         <Header.RightItem>
           <div className="hidden gap-3 md:flex">
+            <InitiativesFiltersToggle />
             <HeaderFilters workspaceSlug={workspaceSlug.toString()} />
           </div>
           {canUserCreateInitiative ? (

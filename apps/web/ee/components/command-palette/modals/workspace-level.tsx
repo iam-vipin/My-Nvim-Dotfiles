@@ -1,9 +1,7 @@
 import { observer } from "mobx-react";
 // ce components
-import {
-  WorkspaceLevelModals as BaseWorkspaceLevelModals,
-  TWorkspaceLevelModalsProps,
-} from "@/ce/components/command-palette/modals/workspace-level";
+import type { TWorkspaceLevelModalsProps } from "@/ce/components/command-palette/modals/workspace-level";
+import { WorkspaceLevelModals as BaseWorkspaceLevelModals } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components

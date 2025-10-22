@@ -1,10 +1,6 @@
-import { Editor } from "@tiptap/core";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-// plane editor imports
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import type { Editor } from "@tiptap/core";
 // local imports
-import { EAttachmentBlockAttributeNames, TAttachmentBlockAttributes } from "./types";
+import { EAttachmentBlockAttributeNames, type TAttachmentBlockAttributes } from "./types";
 
 export const DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES: TAttachmentBlockAttributes = {
   [EAttachmentBlockAttributeNames.SOURCE]: null,
@@ -14,10 +10,8 @@ export const DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES: TAttachmentBlockAttributes = {
   [EAttachmentBlockAttributeNames.FILE_SIZE]: null,
 };
 
-export const getAttachmentExtensionFileMap = (editor: Editor) =>
-  getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.ATTACHMENT)?.fileMap;
+export const getAttachmentExtensionFileMap = (editor: Editor) => editor.storage.attachmentComponent?.fileMap;
 
-export const getAttachmentExtensionErrorMap = (editor: Editor) =>
-  getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.ATTACHMENT)?.errorMap;
+export const getAttachmentExtensionErrorMap = (editor: Editor) => editor.storage.attachmentComponent?.errorMap;
 
 export const getAttachmentBlockId = (id: string) => `editor-attachment-block-${id}`;

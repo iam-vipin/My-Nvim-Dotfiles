@@ -27,48 +27,30 @@ def filter_valid_uuids(uuid_list):
 
 
 # Get the 2_weeks, 3_months
-def string_date_filter(
-    work_item_filter, duration, subsequent, term, date_filter, offset
-):
+def string_date_filter(work_item_filter, duration, subsequent, term, date_filter, offset):
     now = timezone.now().date()
     if term == "months":
         if subsequent == "after":
             if offset == "fromnow":
-                work_item_filter[f"{date_filter}__gte"] = now + timedelta(
-                    days=duration * 30
-                )
+                work_item_filter[f"{date_filter}__gte"] = now + timedelta(days=duration * 30)
             else:
-                work_item_filter[f"{date_filter}__gte"] = now - timedelta(
-                    days=duration * 30
-                )
+                work_item_filter[f"{date_filter}__gte"] = now - timedelta(days=duration * 30)
         else:
             if offset == "fromnow":
-                work_item_filter[f"{date_filter}__lte"] = now + timedelta(
-                    days=duration * 30
-                )
+                work_item_filter[f"{date_filter}__lte"] = now + timedelta(days=duration * 30)
             else:
-                work_item_filter[f"{date_filter}__lte"] = now - timedelta(
-                    days=duration * 30
-                )
+                work_item_filter[f"{date_filter}__lte"] = now - timedelta(days=duration * 30)
     if term == "weeks":
         if subsequent == "after":
             if offset == "fromnow":
-                work_item_filter[f"{date_filter}__gte"] = now + timedelta(
-                    weeks=duration
-                )
+                work_item_filter[f"{date_filter}__gte"] = now + timedelta(weeks=duration)
             else:
-                work_item_filter[f"{date_filter}__gte"] = now - timedelta(
-                    weeks=duration
-                )
+                work_item_filter[f"{date_filter}__gte"] = now - timedelta(weeks=duration)
         else:
             if offset == "fromnow":
-                work_item_filter[f"{date_filter}__lte"] = now + timedelta(
-                    weeks=duration
-                )
+                work_item_filter[f"{date_filter}__lte"] = now + timedelta(weeks=duration)
             else:
-                work_item_filter[f"{date_filter}__lte"] = now - timedelta(
-                    weeks=duration
-                )
+                work_item_filter[f"{date_filter}__lte"] = now - timedelta(weeks=duration)
 
 
 def date_filter(work_item_filter, date_term, queries):
@@ -298,15 +280,11 @@ def filter_dependencies(param_values, work_item_filter, prefix=""):
     dependency_type = param_values or "all"
 
     if dependency_type == "blocking":
-        issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by"
-        ).values_list("issue_id", flat=True)
+        issue_ids = IssueRelation.objects.filter(relation_type="blocked_by").values_list("issue_id", flat=True)
         work_item_filter[f"{prefix}id__in"] = issue_ids
 
     if dependency_type == "blocked_by":
-        issue_ids = IssueRelation.objects.filter(
-            relation_type="blocked_by"
-        ).values_list("related_issue_id", flat=True)
+        issue_ids = IssueRelation.objects.filter(relation_type="blocked_by").values_list("related_issue_id", flat=True)
         work_item_filter[f"{prefix}id__in"] = issue_ids
 
     return work_item_filter

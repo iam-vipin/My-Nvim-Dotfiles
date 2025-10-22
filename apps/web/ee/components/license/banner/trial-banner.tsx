@@ -1,16 +1,17 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, SUBSCRIPTION_WEBPAGE_URLS } from "@plane/constants";
+import { getButtonStyling } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { getButtonStyling, getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
+import { getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance"
-import { useUserPermissions } from "@/hooks/store/user"
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -56,12 +57,13 @@ export const TrialBanner: FC = observer(() => {
             >
               Upgrade to {subscriptionName}
             </button>
+
             <a
-              href="https://cal.com/plane/"
+              href={SUBSCRIPTION_WEBPAGE_URLS[currentPlan]}
               target="_blank"
               className={cn(getButtonStyling("neutral-primary", "sm"), COMMON_BUTTON_STYLE, "border-custom-border-400")}
             >
-              Get 1:1 help
+              Learn more
             </a>
           </div>
         </div>

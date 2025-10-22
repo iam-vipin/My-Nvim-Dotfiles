@@ -4,10 +4,15 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
-import { EUserProjectRoles, TInboxForm } from "@plane/types";
-import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TInboxForm } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
-import { TProperties } from "@/ce/constants/project";
+// ce imports
+import type { TProperties } from "@/ce/constants/project";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";

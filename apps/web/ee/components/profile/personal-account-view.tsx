@@ -1,6 +1,9 @@
 // plane imports
-import { TPersonalAccountProvider, TUserConnection, USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, GithubIcon, Loader, SlackIcon } from "@plane/ui";
+import type { TPersonalAccountProvider, TUserConnection } from "@plane/constants";
+import { USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { GithubIcon, SlackIcon } from "@plane/propel/icons";
+import { CONFIG_VIEWS } from "./config-views";
 import { ConnectionLoader } from "./loader";
 
 export type TPersonalAccountConnectProps = {
@@ -28,6 +31,16 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
 
   if (isConnectionLoading) return <ConnectionLoader />;
 
+  const getConfigView = () => {
+    if (CONFIG_VIEWS[provider.key]) {
+      const View = CONFIG_VIEWS[provider.key];
+      if (View) {
+        return <View {...props} />;
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
       <div className="flex items-center gap-2">
@@ -35,6 +48,8 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
         <div className="text-lg font-medium">{provider.name}</div>
       </div>
       <div className="text-sm text-gray-500 pt-2 pb-4">{provider.description}</div>
+
+      {getConfigView()}
 
       {connectionSlug ? (
         <div className="rounded p-2 flex justify-between items-center border-[1px] border-custom-border-300">

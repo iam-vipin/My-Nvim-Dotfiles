@@ -1,27 +1,28 @@
 "use client";
 
-import { Fragment, ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// types
-// ui
-import { PriorityIcon, Tooltip } from "@plane/ui";
+// plane imports
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // constants
 // helpers
+import { cn } from "@plane/utils";
 import {
   BACKGROUND_BUTTON_VARIANTS,
   BORDER_BUTTON_VARIANTS,
   BUTTON_VARIANTS_WITHOUT_TEXT,
 } from "@/components/dropdowns/constants";
-import { TDropdownProps } from "@/components/dropdowns/types";
-import { cn } from "@plane/utils";
+import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { PROJECT_PRIORITIES } from "@/plane-web/constants/project";
-import { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
+import type { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // constants
 // types

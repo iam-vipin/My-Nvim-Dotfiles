@@ -1,4 +1,6 @@
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
+import { convertIntegrationKeyToProvider } from "@/services/oauth/helpers";
 
 export const getUserProfileUrl = (workspaceSlug: string, userId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/profile/${userId}`;
@@ -21,14 +23,20 @@ export const getProjectUrl = (workspaceSlug: string, projectId: string) =>
 export const getIntakeUrl = (workspaceSlug: string, projectId: string, issueId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${issueId}`;
 
-export const getPlaneLogoUrl = () =>
-  "https://media.docs.plane.so/logo/favicon-512x512.png";
+export const getPlaneLogoUrl = () => "https://media.docs.plane.so/logo/favicon-512x512.png";
 
-export const getPublishedPageUrl = (pageId: string) =>
-  `${env.SPACE_BASE_URL}/pages/${pageId}`;
+export const getPublishedPageUrl = (pageId: string) => `${env.SPACE_BASE_URL}/pages/${pageId}`;
+
+export const getTeamspacePageUrl = (workspaceSlug: string, teamspaceId: string, pageId: string) =>
+  `${env.APP_BASE_URL}/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
 
 export const getProjectPageUrl = (workspaceSlug: string, projectId: string, pageId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
 
 export const getWorkspacePageUrl = (workspaceSlug: string, pageId: string) =>
   `${env.APP_BASE_URL}/${workspaceSlug}/pages/${pageId}`;
+
+export const getIntegrationPageUrl = (workspaceSlug: string, integrationKey: E_INTEGRATION_KEYS) => {
+  const provider = convertIntegrationKeyToProvider(integrationKey);
+  return `${env.APP_BASE_URL}/${workspaceSlug}/settings/integrations/${provider}`;
+};

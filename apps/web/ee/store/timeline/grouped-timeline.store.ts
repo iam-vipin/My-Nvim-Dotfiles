@@ -1,10 +1,12 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, autorun, makeObservable, observable } from "mobx";
 // Store
 import { computedFn } from "mobx-utils";
-import { EGanttBlockType, TGanttBlockGroup } from "@plane/types";
-import { RootStore } from "@/plane-web/store/root.store";
-import { BaseTimeLineStore, IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
+import type { TGanttBlockGroup } from "@plane/types";
+import { EGanttBlockType } from "@plane/types";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
+import { BaseTimeLineStore } from "@/plane-web/store/timeline/base-timeline.store";
 
 export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTimelineStore {
   blockGroups: EGanttBlockType[] = [];

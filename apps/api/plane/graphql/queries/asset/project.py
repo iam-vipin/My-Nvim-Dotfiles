@@ -21,12 +21,8 @@ def get_asset(slug: str, project: strawberry.ID, asset_id: strawberry.ID):
 @strawberry.type
 class ProjectAssetQuery:
     # asset entity create
-    @strawberry.field(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def project_asset(
-        self, info: Info, slug: str, project: strawberry.ID, asset_id: strawberry.ID
-    ) -> str:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def project_asset(self, info: Info, slug: str, project: strawberry.ID, asset_id: strawberry.ID) -> str:
         # get the asset id
         asset = await get_asset(slug=slug, project=project, asset_id=asset_id)
 

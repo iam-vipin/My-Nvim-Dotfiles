@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { LinearConfig } from "@plane/etl/linear";
+import type { LinearConfig } from "@plane/etl/linear";
 // silo contexts
-import { ImporterSyncJobContext, TImporterCreateContext } from "@/plane-web/silo/contexts";
+import type { TImporterCreateContext } from "@/plane-web/silo/contexts";
+import { ImporterSyncJobContext } from "@/plane-web/silo/contexts";
 
 export function useLinearSyncJobs() {
   const context = useContext<TImporterCreateContext<LinearConfig>>(ImporterSyncJobContext);

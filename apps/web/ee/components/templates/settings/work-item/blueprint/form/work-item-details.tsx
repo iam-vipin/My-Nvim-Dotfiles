@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { Controller, FieldPath, FieldValues, useFormContext } from "react-hook-form";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";

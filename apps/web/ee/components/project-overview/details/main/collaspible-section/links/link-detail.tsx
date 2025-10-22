@@ -1,19 +1,18 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // hooks
-// ui
 import { observer } from "mobx-react";
 import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// icons
-// types
-// helpers
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectLinks } from "@/plane-web/hooks/store";
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TProjectLinkDetail = {
   linkId: string;

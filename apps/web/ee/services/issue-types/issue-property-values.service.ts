@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
-import { EIssueServiceType, TIssueServiceType, TIssuePropertyValues } from "@plane/types";
+import type { TIssueServiceType, TIssuePropertyValues } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

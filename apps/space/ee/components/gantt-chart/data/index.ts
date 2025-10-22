@@ -1,5 +1,5 @@
 // types
-import { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
+import type { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
 
 // constants
 export const weeks: WeekMonthDataType[] = [

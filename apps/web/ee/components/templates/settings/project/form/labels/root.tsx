@@ -4,12 +4,14 @@ import { useFormContext } from "react-hook-form";
 import { Pencil, PlusIcon, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel, TProjectTemplateForm } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { IIssueLabel, TProjectTemplateForm } from "@plane/types";
 import { cn, mockCreateOrUpdateLabel } from "@plane/utils";
 // components
-import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "@/components/labels/create-update-label-inline";
-import { ICustomMenuItem, LabelItemBlock } from "@/components/labels/label-block/label-item-block";
+import type { TLabelOperationsCallbacks } from "@/components/labels/create-update-label-inline";
+import { CreateUpdateLabelInline } from "@/components/labels/create-update-label-inline";
+import type { ICustomMenuItem } from "@/components/labels/label-block/label-item-block";
+import { LabelItemBlock } from "@/components/labels/label-block/label-item-block";
 // plane web imports
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
 

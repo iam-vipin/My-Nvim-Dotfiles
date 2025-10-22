@@ -1,13 +1,17 @@
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 // plane imports
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TCustomerPayload } from "@plane/types";
-import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TCustomerPayload } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import { Tabs } from "@plane/ui";
 // hooks
+import { formatURLForDisplay } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
@@ -170,7 +174,7 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
               rel="noopener noreferrer"
             >
               <ExternalLink className="text-custom-text-300 size-3" />
-              {customer.website_url}
+              {formatURLForDisplay(customer.website_url)}
             </Link>
           )}
         </div>

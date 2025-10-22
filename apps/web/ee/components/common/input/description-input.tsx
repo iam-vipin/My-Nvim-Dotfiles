@@ -1,20 +1,21 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState, useRef } from "react";
-import debounce from "lodash/debounce";
+import type { FC } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
+import type { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
-import { useEditorAsset } from "@/hooks/store/use-editor-asset"
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";

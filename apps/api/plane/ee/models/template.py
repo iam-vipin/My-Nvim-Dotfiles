@@ -35,9 +35,7 @@ class Template(WorkspaceBaseModel):
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
 
-    template_type = models.CharField(
-        max_length=30, verbose_name="Template Type", default=TemplateType.WORKITEM
-    )
+    template_type = models.CharField(max_length=30, verbose_name="Template Type", default=TemplateType.WORKITEM)
     is_published = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     categories = models.ManyToManyField(
@@ -68,13 +66,15 @@ class Template(WorkspaceBaseModel):
     contact_email = models.EmailField(max_length=255, null=True, blank=True)
     support_url = models.URLField(max_length=800, null=True, blank=True)
     video_url = models.URLField(max_length=800, null=True, blank=True)
-    keywords = models.JSONField(default=list)
     website = models.URLField(max_length=800, null=True, blank=True)
 
-    short_id = models.CharField(
-        max_length=255, null=True, blank=True, db_index=True, unique=True
-    )
+    short_id = models.CharField(max_length=255, null=True, blank=True, db_index=True, unique=True)
     slug = models.SlugField(max_length=255, null=True, blank=True)
+
+    is_featured = models.BooleanField(default=False)
+
+    # seo fields
+    metadata = models.JSONField(default=dict, null=True, blank=True)
 
     class Meta:
         db_table = "templates"
@@ -148,16 +148,20 @@ class TemplateAttachment(BaseModel):
 
 
 class TemplateCategory(BaseModel):
+    DEFAULT_SORT_ORDER = 65535.0
+
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
     is_active = models.BooleanField(default=True)
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
+    slug = models.SlugField(max_length=48, db_index=True, unique=True)
 
     class Meta:
         db_table = "template_categories"
         verbose_name = "Template Category"
         verbose_name_plural = "Template Categories"
-        ordering = ("-created_at",)
+        ordering = ("sort_order", "-created_at")
 
 
 class WorkitemTemplate(WorkspaceBaseModel):
@@ -342,9 +346,7 @@ def get_view_props():
 
 
 class PageTemplate(WorkspaceBaseModel):
-    template = models.ForeignKey(
-        Template, on_delete=models.CASCADE, related_name="page_templates"
-    )
+    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name="page_templates")
     name = models.TextField(blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
@@ -387,22 +389,14 @@ class ProjectTemplate(BaseModel):
         HIGH = "high", "High"
         URGENT = "urgent", "Urgent"
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="project_templates"
-    )
-    template = models.ForeignKey(
-        Template, on_delete=models.CASCADE, related_name="project_templates", null=True
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_templates")
+    template = models.ForeignKey(Template, on_delete=models.CASCADE, related_name="project_templates", null=True)
 
     # basics
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
-    description_text = models.JSONField(
-        verbose_name="Project Description RT", blank=True, null=True
-    )
-    description_html = models.JSONField(
-        verbose_name="Project Description HTML", blank=True, null=True
-    )
+    description_text = models.JSONField(verbose_name="Project Description RT", blank=True, null=True)
+    description_html = models.JSONField(verbose_name="Project Description HTML", blank=True, null=True)
     network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
     default_assignee = models.JSONField(default=dict)
     project_lead = models.JSONField(default=dict)
@@ -426,18 +420,12 @@ class ProjectTemplate(BaseModel):
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
     # archives
-    archive_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
-    close_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
+    archive_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
+    close_in = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
 
     # attributes
     states = models.JSONField(default=dict)
-    priority = models.CharField(
-        max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE
-    )
+    priority = models.CharField(max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE)
     project_state = models.JSONField(default=dict)
     # dates
     start_date = models.DateTimeField(null=True, blank=True)

@@ -200,7 +200,6 @@ class TemplateDataSerializer(BaseSerializer):
             "description_binary",
             "is_published",
             "is_verified",
-            "keywords",
             "privacy_policy_url",
             "terms_of_service_url",
             "support_url",

@@ -7,13 +7,14 @@
       "updated_at": "2025-05-15T10:22:30.575Z",
       "name": "Engineering",
       "slug": "engineering",
-      "description": "Engineering Productivity",
+      "description": "Automate builds, track commits, and sync deployments.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "CircuitBoard"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 589815.0
     }
   },
   {
@@ -24,13 +25,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Agents",
       "slug": "agents",
-      "description": "AI Agents and Automation",
+      "description": "Deploy AI teammates to plan, execute, and support work.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "Bot"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 131070.0
     }
   },
   {
@@ -41,13 +43,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Customer Experience",
       "slug": "customer-experience",
-      "description": "Customer Support and Experience",
+      "description": "Turn feedback and tickets into actionable tasks.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "ContactRound"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 393210.0
     }
   },
   {
@@ -58,13 +61,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Communication & Collaboration",
       "slug": "communication-and-collaboration",
-      "description": "Team Communication, Collaboration, and Documentation Tools",
+      "description": "Connect messages, docs, and updates across teams.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "MessagesSquare"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 327675.0
     }
   },
   {
@@ -75,13 +79,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Development & DevOps",
       "slug": "development-and-devops",
-      "description": "Development Tools, DevOps Platforms, and Testing & QA Tools",
+      "description": "Integrate CI/CD, environments, and monitoring tools.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "CodeXml"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 524280.0
     }
   },
   {
@@ -92,13 +97,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Design & Creative",
       "slug": "design-and-creative",
-      "description": "Design and Creative Tools",
+      "description": "Preview and sync design files, assets, and reviews.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "PenTool"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 458745.0
     }
   },
   {
@@ -109,13 +115,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Analytics & Reporting",
       "slug": "analytics-and-reporting",
-      "description": "Data Analytics, Reporting, and Time Tracking Tools",
+      "description": "Build dashboards and insights from Plane data.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "BarChart3"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 196605.0
     }
   },
   {
@@ -126,13 +133,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Security & Compliance",
       "slug": "security-and-compliance",
-      "description": "Security and Compliance Tools",
+      "description": "Link audits, reviews, and security workflows.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "ShieldCheck"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 851955.0
     }
   },
   {
@@ -143,13 +151,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Marketing & Sales",
       "slug": "marketing-and-sales",
-      "description": "Marketing and Sales Tools",
+      "description": "Connect campaigns, content, and CRM workflows.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "Megaphone"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 786420.0
     }
   },
   {
@@ -160,13 +169,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Integrations",
       "slug": "integrations",
-      "description": "Integration Tools",
+      "description": "Connect your favorite tools to Plane.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "Puzzle"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 720885.0
     }
   },
   {
@@ -177,13 +187,14 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Importers",
       "slug": "importers",
-      "description": "Importer Tools",
+      "description": "Import projects, tasks, and data from other tools.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "UploadCloud"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 655350.0
     }
   },
   {
@@ -194,13 +205,51 @@
       "updated_at": "2024-01-09T10:22:30.575Z",
       "name": "Automations",
       "slug": "automations",
-      "description": "Automation Tools",
+      "description": "Create custom workflows, automate migrations and tasks into Plane.",
       "logo_props": {
-        "logo": {
-          "url": "https://media.docs.plane.so/logo/favicon-512x512.png"
+        "icon": {
+          "name": "Workflow"
         },
-        "in_use": "logo"
-      }
+        "in_use": "icon"
+      },
+      "sort_order": 262140.0
+    }
+  },
+
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "c5bb3651-18e3-427b-aee0-3754775e69e7",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Featured",
+      "slug": "featured",
+      "description": "Discover top integrations that enhance your Plane workspace.",
+      "logo_props": {
+        "icon": {
+          "name": "Star"
+        },
+        "in_use": "icon"
+      },
+      "sort_order": 65535.0
+    }
+  },
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "ea837827-d0e1-4516-8b49-f11030d23b37",
+    "fields": {
+      "created_at": "2024-01-09T10:22:30.575Z",
+      "updated_at": "2024-01-09T10:22:30.575Z",
+      "name": "Coming Soon",
+      "slug": "coming-soon",
+      "description": "Integrations that are in the oven right now.",
+      "logo_props": {
+        "icon": {
+          "name": "Timer"
+        },
+        "in_use": "icon"
+      },
+      "sort_order": 917490.0
     }
   }
 ]

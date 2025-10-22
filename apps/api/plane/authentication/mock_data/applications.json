@@ -76,8 +76,7 @@
         "CLOUD",
         "SELF_HOSTED"
       ],
-      "status": "published",
-      "priority": 1
+      "status": "published"
   },
   {
       "id": "62d28614-5745-4abf-919f-6d9144574615",
@@ -151,8 +150,7 @@
         "CLOUD",
         "SELF_HOSTED"
       ],
-      "status": "published",
-      "priority": 1
+      "status": "published"
   },
   {
       "id": "5906d45e-39b9-4211-9a9c-01c41dcad37e",
@@ -228,8 +226,7 @@
       "supported_environments": [
         "CLOUD"
       ],
-      "status": "published",
-      "priority": 1
+      "status": "published"
   },
   {
       "id": "5588a471-22ac-4b15-8ef2-ef1527ee88b8",
@@ -295,8 +292,7 @@
       "supported_environments": [
         "CLOUD"
       ],
-      "status": "published",
-      "priority": 1
+      "status": "published"
   },
   {
       "id": "6dde8b3c-02de-4a10-a56a-74daed39c1d8",
@@ -382,7 +378,6 @@
         "CLOUD",
         "SELF_HOSTED"
       ],
-      "status": "published",
-      "priority": 1
+      "status": "published"
   }
 ]

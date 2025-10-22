@@ -41,6 +41,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         suspended – Blocked due to violation, security issue, or admin action.
         archived – Permanently de-listed (kept for history, not editable).
         """
+
         DRAFT = "draft", "Draft"
         PENDING_REVIEW = "pending_review", "Pending Review"
         APPROVED = "approved", "Approved"
@@ -49,9 +50,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         SUSPENDED = "suspended", "Suspended"
         ARCHIVED = "archived", "Archived"
 
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     slug = models.SlugField(max_length=48, db_index=True, unique=True)
     short_description = models.CharField(max_length=255)
     description_html = models.TextField(blank=True, default="<p></p>")
@@ -100,7 +99,11 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     supported_environments = models.JSONField(default=list, blank=True)
     links = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=255, default=Status.DRAFT.value)
-    priority = models.IntegerField(default=0)
+
+    is_featured = models.BooleanField(default=False)
+
+    # seo fields
+    metadata = models.JSONField(default=dict, null=True, blank=True)
 
     objects = ApplicationManager()
 
@@ -108,6 +111,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         verbose_name = "Application"
         verbose_name_plural = "Applications"
         db_table = "oauth_applications"
+        ordering = ("-published_at",)
 
     @property
     def logo_url(self):
@@ -136,9 +140,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
 
 
 class Grant(AbstractGrant):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     workspace = models.ForeignKey(
         "db.Workspace",
         related_name="oauth_grants",
@@ -161,9 +163,7 @@ class Grant(AbstractGrant):
 
 
 class AccessToken(AbstractAccessToken):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     grant_type = models.CharField(max_length=32)
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -187,9 +187,7 @@ class AccessToken(AbstractAccessToken):
 
 
 class RefreshToken(AbstractRefreshToken):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     workspace = models.ForeignKey(
         "db.Workspace",
         related_name="oauth_refresh_tokens",
@@ -212,9 +210,7 @@ class RefreshToken(AbstractRefreshToken):
 
 
 class IDToken(AbstractIDToken):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
 
     class Meta(AbstractIDToken.Meta):
         verbose_name = "ID token"
@@ -224,17 +220,13 @@ class IDToken(AbstractIDToken):
 
 # supporting models
 class ApplicationOwner(BaseModel):
-    user = models.ForeignKey(
-        "db.User", related_name="application_owners", on_delete=models.CASCADE
-    )
+    user = models.ForeignKey("db.User", related_name="application_owners", on_delete=models.CASCADE)
     application = models.ForeignKey(
         "authentication.Application",
         related_name="application_owners",
         on_delete=models.CASCADE,
     )
-    workspace = models.ForeignKey(
-        "db.Workspace", related_name="application_owners", on_delete=models.CASCADE
-    )
+    workspace = models.ForeignKey("db.Workspace", related_name="application_owners", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Application owner"
@@ -271,9 +263,7 @@ class WorkspaceAppInstallation(BaseModel):
         null=False,
         default=None,
     )
-    app_bot = models.ForeignKey(
-        "db.User", related_name="app_bots", on_delete=models.SET_NULL, null=True
-    )
+    app_bot = models.ForeignKey("db.User", related_name="app_bots", on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=255, default=Status.PENDING)
     webhook = models.ForeignKey(
         "db.Webhook",
@@ -312,11 +302,7 @@ class WorkspaceAppInstallation(BaseModel):
                 self.app_bot = existing_installation.app_bot
             else:
                 # create a new bot user
-                bot_type = (
-                    BotTypeEnum.APP_BOT.value
-                    if self.application.is_mentionable
-                    else None
-                )
+                bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
                 self.app_bot = User.objects.create(
                     username=username,
                     display_name=f"{self.application.name} Bot",
@@ -330,9 +316,7 @@ class WorkspaceAppInstallation(BaseModel):
                 )
 
             # add this user to the workspace members
-            WorkspaceMember.objects.create(
-                member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value
-            )
+            WorkspaceMember.objects.create(member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value)
 
         if self.status == self.Status.INSTALLED:
             # add this user as a project member to all the projects in the workspace using bulk_create
@@ -375,23 +359,23 @@ class WorkspaceAppInstallation(BaseModel):
             # Revoke any refresh token for the bot
             RefreshToken.objects.filter(user=app_bot).update(revoked=timezone.now())
             # Expire any access token and refresh token for any members of the workspace for the application
-            workspace_member_ids = WorkspaceMember.objects.filter(
-                workspace=self.workspace
-            ).values_list("member_id", flat=True)
-            AccessToken.objects.filter(
-                user__in=workspace_member_ids, application=self.application
-            ).update(expires=timezone.now())
-            RefreshToken.objects.filter(
-                user__in=workspace_member_ids, application=self.application
-            ).update(revoked=timezone.now())
+            workspace_member_ids = WorkspaceMember.objects.filter(workspace=self.workspace).values_list(
+                "member_id", flat=True
+            )
+            AccessToken.objects.filter(user__in=workspace_member_ids, application=self.application).update(
+                expires=timezone.now()
+            )
+            RefreshToken.objects.filter(user__in=workspace_member_ids, application=self.application).update(
+                revoked=timezone.now()
+            )
 
             # Remove the bot from project and workspace members
-            ProjectMember.objects.filter(
-                member=app_bot, workspace=self.workspace
-            ).update(deleted_at=timezone.now(), is_active=False)
-            WorkspaceMember.objects.filter(
-                member=app_bot, workspace=self.workspace
-            ).update(deleted_at=timezone.now(), is_active=False)
+            ProjectMember.objects.filter(member=app_bot, workspace=self.workspace).update(
+                deleted_at=timezone.now(), is_active=False
+            )
+            WorkspaceMember.objects.filter(member=app_bot, workspace=self.workspace).update(
+                deleted_at=timezone.now(), is_active=False
+            )
 
             # Mark the app bot user as inactive
             if app_bot:
@@ -455,14 +439,17 @@ class ApplicationAttachment(BaseModel):
 
 
 class ApplicationCategory(BaseModel):
+    DEFAULT_SORT_ORDER = 65535.0
+
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=48, db_index=True, unique=True)
     description = models.TextField(null=True, blank=True)
     logo_props = models.JSONField(default=dict)
     is_active = models.BooleanField(default=True)
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
 
     class Meta:
         db_table = "oauth_application_categories"
         verbose_name = "Application Category"
         verbose_name_plural = "Application Categories"
-        ordering = ("-created_at",)
+        ordering = ("sort_order", "-created_at")

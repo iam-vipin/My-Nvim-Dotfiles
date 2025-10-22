@@ -18,6 +18,7 @@ from django.db.models import (
     Case,
     When,
     IntegerField,
+    Max,
 )
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.fields import ArrayField
@@ -131,6 +132,12 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
             .distinct()
         )
+    
+    def get_largest_sort_order(self, slug, parent_id):
+        largest_sort_order = Page.objects.filter(
+            workspace__slug=slug, parent_id=parent_id
+        ).aggregate(largest=Max("sort_order"))["largest"]
+        return largest_sort_order + 10000 if largest_sort_order else 65535
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk=None):
@@ -222,6 +229,13 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                     slug=slug,
                     user_id=request.user.id,
                 )
+                if request.data.get("parent_id") and request.data.get("sort_order") is None:
+                    largest_sort_order = self.get_largest_sort_order(
+                        slug, request.data.get("parent_id")
+                    )
+                    if largest_sort_order is not None:
+                        request.data["sort_order"] = largest_sort_order
+
             page = self.get_queryset().filter(pk=serializer.data["id"]).first()
             if page.parent_id and page.parent.access == Page.PRIVATE_ACCESS:
                 page.owned_by_id = page.parent.owned_by_id

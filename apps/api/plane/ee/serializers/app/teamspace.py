@@ -251,4 +251,5 @@ class TeamspacePageLiteSerializer(BaseSerializer):
             "moved_to_project",
             "is_shared",
             "team",
+            "sort_order",
         ]

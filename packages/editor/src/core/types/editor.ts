@@ -198,7 +198,7 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   dragDropEnabled?: boolean;
   editable: boolean;
   realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
+  serverHandler: TServerHandler;
   user: TUserDetails;
   updatePageProperties?: <T extends keyof EventToPayloadMap>(
     pageIds: string | string[],
@@ -210,7 +210,6 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
   isFetchingFallbackBinary?: boolean;
-  hasServerConnectionFailed?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
-import type { EditorRefApi } from "@plane/editor";
+import type { CollaborationState, EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
@@ -19,10 +19,10 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
+import { ContentLimitBanner } from "./content-limit-banner";
 import { PageEditorBody } from "./editor-body";
 import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
-import { ContentLimitBanner } from "./content-limit-banner";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
@@ -57,23 +57,21 @@ export const PageRoot = observer((props: TPageRootProps) => {
     workspaceSlug,
     customRealtimeEventHandlers,
   } = props;
-  // states
   const [editorReady, setEditorReady] = useState(false);
-  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
+  const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
-  // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // derived values
+
   const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
     isContentEditable,
     editor: { setEditorRef },
   } = page;
-  // page fallback
+
   const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
-    hasConnectionFailed,
+    collaborationState,
     updatePageDescription: handlers.updateDescription,
   });
 
@@ -156,7 +154,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
   );
 
-  // reset editor ref on unmount
   useEffect(
     () => () => {
       setEditorRef(null);
@@ -186,7 +183,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
           customRealtimeEventHandlers={mergedCustomEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
-          handleConnectionStatus={setHasConnectionFailed}
           handleEditorReady={handleEditorReady}
           handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
@@ -198,7 +194,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
           workspaceSlug={workspaceSlug}
           extendedEditorProps={extendedEditorProps}
           isFetchingFallbackBinary={isFetchingFallbackBinary}
-          hasServerConnectionFailed={hasConnectionFailed}
+          onCollaborationStateChange={setCollaborationState}
         />
       </div>
       <PageNavigationPaneRoot

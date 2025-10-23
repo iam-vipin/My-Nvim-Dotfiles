@@ -1,10 +1,10 @@
-import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type {
+  CollaborationState,
   EditorRefApi,
   EditorTitleRefApi,
   TAIMenuProps,
@@ -57,7 +57,6 @@ type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
   editorForwardRef: React.RefObject<EditorRefApi>;
-  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
@@ -71,14 +70,13 @@ type Props = {
   // Extended editor extensions configuration
   extendedEditorProps: TExtendedEditorExtensionsConfig;
   isFetchingFallbackBinary?: boolean;
-  hasServerConnectionFailed?: boolean;
+  onCollaborationStateChange?: (state: CollaborationState) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
     editorForwardRef,
-    handleConnectionStatus,
     handleEditorReady,
     handleOpenNavigationPane,
     handlers,
@@ -91,7 +89,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     customRealtimeEventHandlers,
     extendedEditorProps,
     isFetchingFallbackBinary,
-    hasServerConnectionFailed,
+    onCollaborationStateChange,
   } = props;
 
   // states
@@ -156,10 +154,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handlers,
   });
 
-  // Set syncing status on initial render
+  // Set syncing status when page changes and reset collaboration state
   useEffect(() => {
     setSyncingStatus("syncing");
-  }, [setSyncingStatus]);
+    onCollaborationStateChange?.({
+      connectionStatus: "connecting",
+      syncStatus: "syncing",
+    });
+  }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -174,26 +176,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     [editorRef, workspaceId, workspaceSlug]
   );
 
-  const handleServerConnect = useCallback(() => {
-    handleConnectionStatus(false);
-  }, [handleConnectionStatus]);
-
-  const handleServerError = useCallback(() => {
-    handleConnectionStatus(true);
-    setSyncingStatus("error");
-  }, [handleConnectionStatus, setSyncingStatus]);
-
-  const handleServerSynced = useCallback(() => {
-    setSyncingStatus("synced");
-  }, [setSyncingStatus]);
-
   const serverHandler: TServerHandler = useMemo(
     () => ({
-      onConnect: handleServerConnect,
-      onServerError: handleServerError,
-      onServerSynced: handleServerSynced,
+      onStateChange: (state) => {
+        // Pass full state to parent
+        onCollaborationStateChange?.(state);
+
+        // Update local syncing status for UI
+        if (state.connectionStatus === "disconnected") {
+          setSyncingStatus("error");
+        } else if (state.connectionStatus === "connected" && state.syncStatus === "synced") {
+          setSyncingStatus("synced");
+        } else {
+          // Handles "connecting", "reconnecting", "connected but not synced", etc.
+          setSyncingStatus("syncing");
+        }
+      },
     }),
-    [handleServerConnect, handleServerError, handleServerSynced]
+    [setSyncingStatus, onCollaborationStateChange]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -320,7 +320,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             }}
             extendedEditorProps={extendedEditorProps}
             isFetchingFallbackBinary={isFetchingFallbackBinary}
-            hasServerConnectionFailed={hasServerConnectionFailed}
           />
         </div>
       </div>

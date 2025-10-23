@@ -55,6 +55,18 @@ export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams, sing
 export const getSupportedDateOperators = (params: TCreateDateFilterParams): TOperatorConfigMap<Date> =>
   new Map([
     createOperatorConfigEntry(EQUALITY_OPERATOR.EXACT, params, (updatedParams) => getDatePickerConfig(updatedParams)),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.LESS_THAN, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.LESS_THAN_OR_EQUAL_TO, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.GREATER_THAN, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
+    createOperatorConfigEntry(COMPARISON_OPERATOR.GREATER_THAN_OR_EQUAL_TO, params, (updatedParams) =>
+      getDatePickerConfig(updatedParams)
+    ),
     createOperatorConfigEntry(COMPARISON_OPERATOR.RANGE, params, (updatedParams) =>
       getDateRangePickerConfig(updatedParams)
     ),

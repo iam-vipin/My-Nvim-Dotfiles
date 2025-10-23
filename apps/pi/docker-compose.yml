@@ -1,0 +1,172 @@
+x-common-env: &common-env
+  DEBUG: ${DEBUG}
+  FOLLOWER_POSTGRES_URI: ${FOLLOWER_POSTGRES_URI}
+  DOCS_GITHUB_API_TOKEN: ${DOCS_GITHUB_API_TOKEN}
+  OPENSEARCH_URL: ${OPENSEARCH_URL}
+  OPENSEARCH_USER: ${OPENSEARCH_USER}
+  OPENSEARCH_PASSWORD: ${OPENSEARCH_PASSWORD}
+  OPENSEARCH_ML_MODEL_ID: ${OPENSEARCH_ML_MODEL_ID}
+  OPENSEARCH_INDEX_PREFIX: ${OPENSEARCH_INDEX_PREFIX}
+  PLANE_PI_INTERNAL_API_URL: ${PLANE_PI_INTERNAL_API_URL}
+  PLANE_PI_INTERNAL_API_SECRET: ${PLANE_PI_INTERNAL_API_SECRET}
+  PLANE_PI_DATABASE_URL: ${PLANE_PI_DATABASE_URL}
+
+x-app-env: &app-env
+  PI_BASE_PATH: ${PI_BASE_PATH}
+  FASTAPI_APP_HOST: ${FASTAPI_APP_HOST}
+  FASTAPI_APP_PORT: ${FASTAPI_APP_PORT}
+  FASTAPI_APP_WORKERS: ${FASTAPI_APP_WORKERS}
+  PLANE_API_HOST: ${PLANE_API_HOST}
+  PLANE_FRONTEND_URL: ${PLANE_FRONTEND_URL}
+  PLANE_OAUTH_CLIENT_ID: ${PLANE_OAUTH_CLIENT_ID}
+  PLANE_OAUTH_CLIENT_SECRET: ${PLANE_OAUTH_CLIENT_SECRET}
+  PLANE_OAUTH_REDIRECT_URI: ${PLANE_OAUTH_REDIRECT_URI}
+  PLANE_OAUTH_STATE_EXPIRY_SECONDS: ${PLANE_OAUTH_STATE_EXPIRY_SECONDS:-82800}
+  PLANE_OAUTH_URL_ENCRYPTION_KEY: ${PLANE_OAUTH_URL_ENCRYPTION_KEY}
+  DOCS_WEBHOOK_SECRET: ${DOCS_WEBHOOK_SECRET}
+  OPENAI_API_KEY: ${OPENAI_API_KEY}
+  CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+  MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+  GROQ_API_KEY: ${GROQ_API_KEY}
+  GEMINI_API_KEY: ${GEMINI_API_KEY}
+  LITE_LLM_HOST: ${LITE_LLM_HOST}
+  LITE_LLM_API_KEY: ${LITE_LLM_API_KEY}
+  SENTRY_DSN: ${SENTRY_DSN}
+  SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+  SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME}
+  PLANE_PI_POSTGRES_USER: ${PLANE_PI_POSTGRES_USER}
+  PLANE_PI_POSTGRES_PASSWORD: ${PLANE_PI_POSTGRES_PASSWORD}
+  PLANE_PI_POSTGRES_HOST: ${PLANE_PI_POSTGRES_HOST}
+  PLANE_PI_POSTGRES_PORT: ${PLANE_PI_POSTGRES_PORT}
+  PLANE_PI_POSTGRES_DB: ${PLANE_PI_POSTGRES_DB}
+  PLANE_PI_DATABASE_URL: ${PLANE_PI_DATABASE_URL}
+  PLANE_PI_INTERNAL_API_SECRET: ${PLANE_PI_INTERNAL_API_SECRET}
+  DEV_WORKSPACE_ID: ${DEV_WORKSPACE_ID}
+  DD_ENABLED: ${DD_ENABLED}
+  DD_ENV: ${DD_ENV}
+  DD_SERVICE: ${DD_SERVICE}
+  DD_AGENT_HOST: ${DD_AGENT_HOST}
+  DD_TRACE_SAMPLE_RATE: ${DD_TRACE_SAMPLE_RATE}
+  DD_LOGS_ENABLED: ${DD_LOGS_ENABLED:-false}
+  DD_TRACE_DEBUG: ${DD_TRACE_DEBUG:-false}
+  PLANE_PI_INTERNAL_API_URL: ${PLANE_PI_INTERNAL_API_URL}
+  FEATURE_FLAG_SERVER_BASE_URL: ${FEATURE_FLAG_SERVER_BASE_URL}
+  FEATURE_FLAG_SERVER_AUTH_TOKEN: ${FEATURE_FLAG_SERVER_AUTH_TOKEN}
+  ASSEMBLYAI_API_KEY: ${ASSEMBLYAI_API_KEY}
+  AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_S3_ENV: ${AWS_S3_ENV}
+  AWS_S3_REGION: ${AWS_S3_REGION}
+  DEEPGRAM_API_KEY: ${DEEPGRAM_API_KEY}
+
+x-feeder-env: &feeder-env
+  DEV_WORKSPACE_ID: ${DEV_WORKSPACE_ID}
+  FEED_ISSUES_DATA: ${FEED_ISSUES_DATA}
+  FEED_PAGES_DATA: ${FEED_PAGES_DATA}
+  FEED_DOCS_DATA: ${FEED_DOCS_DATA}
+  FEED_SLICES: ${FEED_SLICES}
+  BATCH_SIZE: ${BATCH_SIZE}
+  SCROLL_TIMEOUT: ${SCROLL_TIMEOUT}
+
+x-celery-env: &celery-env
+  CELERY_BROKER_URL: ${CELERY_BROKER_URL:-pyamqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASSWORD:-admin123}@rabbitmq:5672//}
+  CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-rpc://}
+  CELERY_VECTOR_SYNC_ENABLED: ${CELERY_VECTOR_SYNC_ENABLED:-1}
+  CELERY_VECTOR_SYNC_INTERVAL: ${CELERY_VECTOR_SYNC_INTERVAL:-30}
+  CELERY_VECTOR_SYNC_MAX_RETRIES: ${CELERY_VECTOR_SYNC_MAX_RETRIES:-3}
+  CELERY_VECTOR_SYNC_RETRY_DELAY: ${CELERY_VECTOR_SYNC_RETRY_DELAY:-60}
+  CELERY_WORKSPACE_PLAN_SYNC_ENABLED: ${CELERY_WORKSPACE_PLAN_SYNC_ENABLED:-1}
+  CELERY_WORKSPACE_PLAN_SYNC_INTERVAL: ${CELERY_WORKSPACE_PLAN_SYNC_INTERVAL:-86400}
+  DEV_WORKSPACE_ID: ${DEV_WORKSPACE_ID}
+  PLANE_PI_INTERNAL_API_URL: ${PLANE_PI_INTERNAL_API_URL}
+  PLANE_PI_INTERNAL_API_SECRET: ${PLANE_PI_INTERNAL_API_SECRET}
+  PLANE_PI_DATABASE_URL: ${PLANE_PI_DATABASE_URL}
+
+services:
+  # RabbitMQ - Message Broker for Celery
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: plane-pi-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin123}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # FastAPI Application
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - ${FASTAPI_APP_PORT}:${FASTAPI_APP_PORT}
+    volumes:
+      - ./pi:/app/pi
+      - ./bin:/app/bin
+    environment:
+      <<: [*app-env, *common-env, *celery-env]
+    depends_on:
+      - rabbitmq
+    command: ["/app/bin/entrypoint-api.sh"]
+
+  # Celery Worker - Processes vector sync tasks
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: plane-pi-celery-worker
+    command: ["/app/bin/entrypoint-celery-worker.sh"]
+    volumes:
+      - ./pi:/app/pi
+      - ./bin:/app/bin
+    environment:
+      <<: [*common-env, *celery-env]
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Celery Beat - Schedules periodic tasks
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: plane-pi-celery-beat
+    command: ["/app/bin/entrypoint-celery-beat.sh"]
+    volumes:
+      - ./pi:/app/pi
+      - ./bin:/app/bin
+      - celery_beat_schedule:/app/celerybeat-schedule
+    environment:
+      <<: [*common-env, *celery-env]
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Vector Database Feeder
+  # vectordb-feeder:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.api
+  #   command: ["/app/bin/start-vectorizer.sh"]
+  #   volumes:
+  #     - ./pi:/app/pi
+  #     - ./bin:/app/bin
+  #   environment:
+  #     <<: [*feeder-env, *common-env]
+
+volumes:
+  rabbitmq_data:
+  celery_beat_schedule:

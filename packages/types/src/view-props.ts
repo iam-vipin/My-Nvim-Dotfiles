@@ -1,6 +1,12 @@
 import { TIssue } from "./issues/issue";
 import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import { CompleteOrEmpty } from "./utils";
+import {
+  IExtendedIssueDisplayProperties,
+  TExtendedIssueOrderByOptions,
+  TExtendedWorkItemFilterProperty,
+  WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
+} from "./view-props-extended";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -47,7 +53,8 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | TExtendedIssueOrderByOptions;
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
@@ -102,8 +109,9 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "project_id",
   "created_at",
   "updated_at",
+  ...WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
 ] as const;
-export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
+export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number] | TExtendedWorkItemFilterProperty;
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
@@ -115,7 +123,15 @@ export type TWorkItemFilterAndGroup = {
   [LOGICAL_OPERATOR.AND]: TWorkItemFilterConditionData[];
 };
 
-export type TWorkItemFilterGroup = TWorkItemFilterAndGroup;
+export type TWorkItemFilterOrGroup = {
+  [LOGICAL_OPERATOR.OR]: TWorkItemFilterConditionData[];
+};
+
+export type TWorkItemFilterNotGroup = {
+  [LOGICAL_OPERATOR.NOT]: TWorkItemFilterConditionData;
+};
+
+export type TWorkItemFilterGroup = TWorkItemFilterAndGroup | TWorkItemFilterOrGroup | TWorkItemFilterNotGroup;
 
 export type TWorkItemFilterExpressionData = TWorkItemFilterConditionData | TWorkItemFilterGroup;
 
@@ -151,7 +167,7 @@ export interface IIssueDisplayFilterOptions {
   show_empty_groups?: boolean;
   sub_issue?: boolean;
 }
-export interface IIssueDisplayProperties {
+export interface IIssueDisplayProperties extends IExtendedIssueDisplayProperties {
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;

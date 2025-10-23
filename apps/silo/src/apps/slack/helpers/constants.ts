@@ -23,6 +23,7 @@ export const ACTIONS = {
 
   LINK_WORK_ITEM: "link_work_item",
   CREATE_WORK_ITEM: "create_work_item",
+  DISABLE_SYNC: "disable_sync",
 };
 
 export enum E_ISSUE_OBJECT_TYPE_SELECTION {

@@ -3,6 +3,7 @@ import { computedFn } from "mobx-utils";
 import type { TIssuePage } from "@plane/types";
 import { getPageName } from "@plane/utils";
 import { IssuePageService } from "@/plane-web/services/issue/issue-page.service";
+import type { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface IWorkItemPagesInterface {
   // observables
@@ -23,8 +24,9 @@ export class WorkItemPagesStore implements IWorkItemPagesInterface {
   pagesMap: Record<string, TIssuePage> = {};
   // services
   issuePageService;
+  rootStore: IIssueRootStore;
 
-  constructor() {
+  constructor(rootStore: IIssueRootStore) {
     makeObservable(this, {
       // observables
       issuePagesMap: observable,
@@ -35,6 +37,7 @@ export class WorkItemPagesStore implements IWorkItemPagesInterface {
       updateIssuePages: action,
       deleteIssuePages: action,
     });
+    this.rootStore = rootStore;
     this.issuePageService = new IssuePageService();
   }
 
@@ -71,6 +74,8 @@ export class WorkItemPagesStore implements IWorkItemPagesInterface {
         });
         this.issuePagesMap[issueId] = result.map((data) => data.page.id) || [];
       });
+      this.rootStore.issueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
+      this.rootStore.epicDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
     } catch (error) {
       console.error(error);
       runInAction(async () => {
@@ -93,6 +98,8 @@ export class WorkItemPagesStore implements IWorkItemPagesInterface {
         this.issuePagesMap[issueId] = this.issuePagesMap[issueId].filter((id) => id !== pageId);
       });
       await this.issuePageService.removeWorkItemPage(workspaceSlug, projectId, issueId, pageId);
+      this.rootStore.issueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
+      this.rootStore.epicDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
     } catch (error) {
       console.error(error);
       runInAction(async () => {

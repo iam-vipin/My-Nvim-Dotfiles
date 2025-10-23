@@ -29,4 +29,4 @@ export type TProjectBaseActivity<K extends string = string, V extends string = s
   project: string;
 };
 
-export type TBaseActivityVerbs = "created" | "updated" | "deleted" | TBaseActivityVerbsExtended;
+export type TBaseActivityVerbs = "created" | "updated" | "deleted" | "added" | TBaseActivityVerbsExtended;

@@ -4,6 +4,7 @@ import {
   ArrowRightLeft,
   Briefcase,
   CalendarDays,
+  FileText,
   Link,
   Paperclip,
   Tag,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/propel/icons";
 import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
+import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
@@ -42,7 +43,8 @@ export type TEpicActivityFields =
   | "attachment"
   | "customer_request"
   | "customer"
-  | "work_item";
+  | "work_item"
+  | "page";
 
 export type TEpicActivityVerbs = TBaseActivityVerbs;
 
@@ -341,6 +343,22 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           className={commonTextClassName}
         >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
         to work item.
+      </>
+    ),
+  }),
+  page_added: (activity: TIssueActivity) => ({
+    icon: <FileText className={commonIconClassName} />,
+    message: (
+      <>
+        added a new page <span className={commonTextClassName}>{getPageName(activity.new_value || "")}</span>.
+      </>
+    ),
+  }),
+  page_deleted: (activity: TIssueActivity) => ({
+    icon: <FileText className={commonIconClassName} />,
+    message: (
+      <>
+        removed the page <span className={commonTextClassName}>{getPageName(activity.old_value || "")}</span>.
       </>
     ),
   }),

@@ -32,7 +32,7 @@ export class IssueDetail extends IssueDetailCore implements IIssueDetail {
     });
     this.workItemService = new IssueService(serviceType);
     this.rootStore = rootStore;
-    this.pages = new WorkItemPagesStore();
+    this.pages = new WorkItemPagesStore(rootStore);
   }
 
   // actions

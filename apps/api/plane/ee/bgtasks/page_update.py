@@ -239,7 +239,11 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
                         updated_by_id=page.updated_by_id,
                     )
 
-                page_transaction.delay({"description_html": page.description_html}, None, page.id)
+                page_transaction.delay(
+                    new_description_html=page.description_html,
+                    old_description_html=None,
+                    page_id=page.id,
+                )
 
                 copy_s3_objects_of_description_and_assets.delay(
                     entity_name="PAGE",

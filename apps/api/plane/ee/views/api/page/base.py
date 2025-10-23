@@ -199,7 +199,11 @@ class ProjectPageAPIEndpoint(BaseAPIView):
         if serializer.is_valid():
             page = serializer.save()
             # capture the page transaction
-            page_transaction.delay(request.data, None, page.id)
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=page.id,
+            )
             if serializer.data.get("parent_id"):
                 nested_page_update.delay(
                     page_id=page.id,
@@ -258,7 +262,11 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
         if serializer.is_valid():
             page = serializer.save(is_global=True)
             # capture the page transaction
-            page_transaction.delay(request.data, None, page.id)
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=page.id,
+            )
             if serializer.data.get("parent_id"):
                 nested_page_update.delay(
                     page_id=page.id,

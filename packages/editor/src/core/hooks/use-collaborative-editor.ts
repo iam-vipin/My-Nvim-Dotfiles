@@ -262,6 +262,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     if (docLength === 0 || docLength === undefined) {
       setIsContentInIndexedDb(false);
       clearIndexedDbForPage(id);
+    } else {
+      setIsContentInIndexedDb(true);
     }
   }, [isIndexedDbSynced, hasServerSynced, localProvider, id]);
 

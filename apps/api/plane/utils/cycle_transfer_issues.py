@@ -483,4 +483,5 @@ def transfer_cycle_issues(
         origin=base_host(request=request, is_app=True),
     )
 
-    return {"success": True}
+    ## EE Code return the issue ids as well
+    return {"success": True, "issue_ids": [ci.issue_id for ci in updated_cycles]}

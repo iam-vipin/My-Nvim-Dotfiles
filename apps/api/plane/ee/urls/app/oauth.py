@@ -21,6 +21,11 @@ urlpatterns = [
         name="application",
     ),
     path(
+        "workspaces/<str:slug>/applications/validations/check-slug/",
+        OAuthApplicationCheckSlugEndpoint.as_view(),
+        name="application-check-slug",
+    ),
+    path(
         "workspaces/<str:slug>/applications/<str:app_slug>/",
         OAuthApplicationEndpoint.as_view(),
         name="app-installation-detail",
@@ -29,11 +34,6 @@ urlpatterns = [
         "workspaces/<str:slug>/applications/<uuid:pk>/regenerate-secret/",
         OAuthApplicationRegenerateSecretEndpoint.as_view(),
         name="application-regenerate-secret",
-    ),
-    path(
-        "workspaces/<str:slug>/applications/check-slug/",
-        OAuthApplicationCheckSlugEndpoint.as_view(),
-        name="application-check-slug",
     ),
     path(
         "workspaces/<str:slug>/applications/<uuid:pk>/install/",

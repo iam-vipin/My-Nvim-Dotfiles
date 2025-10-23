@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { EPillVariant, Pill, EPillSize } from "@plane/propel/pill";
 import { ToggleSwitch } from "@plane/ui";
-import type { TProperties } from "@/plane-web/constants/project/settings/features";
+import type { TProperties } from "@/ce/constants/project/settings/features";
 
 type Props = {
   workspaceSlug: string;

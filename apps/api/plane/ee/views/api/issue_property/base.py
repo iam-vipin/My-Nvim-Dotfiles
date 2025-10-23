@@ -307,8 +307,8 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
         issue_property = self.model.objects.get(
             workspace__slug=self.workspace_slug,
             project_id=self.project_id,
-            issue_type_id=self.type_id,
-            pk=self.property_id,
+            issue_type_id=type_id,
+            pk=property_id,
             issue_type__is_epic=False,
         )
         issue_property.delete()

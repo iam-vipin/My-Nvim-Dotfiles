@@ -501,7 +501,9 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                         external_id=request.data.get("external_id"),
                         external_source=request.data.get("external_source"),
                         workspace__slug=slug,
-                    ).exists()
+                    )
+                    .exclude(id=pk)
+                    .exists()
                 ):
                     return Response(
                         {

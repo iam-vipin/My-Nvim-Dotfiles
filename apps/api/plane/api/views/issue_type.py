@@ -288,7 +288,6 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, type_id):
-        issue_type = self.get_queryset().get(pk=type_id)
         issue_type = self.get_queryset().annotate(
             project_ids=Coalesce(
                 Subquery(
@@ -301,8 +300,8 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
                 ),
                 [],
             )
-        )
-        serializer = self.serializer_class(issue_type, many=True)
+        ).get(pk=type_id)
+        serializer = self.serializer_class(issue_type)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update issue type by id

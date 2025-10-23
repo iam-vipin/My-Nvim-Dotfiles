@@ -51,12 +51,12 @@ old_url_patterns = [
 
 work_item_property_patterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/issue-properties/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/work-item-properties/",
         IssuePropertyListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="external-work-item-property",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/issue-properties/<uuid:property_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-types/<uuid:type_id>/work-item-properties/<uuid:property_id>/",
         IssuePropertyDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="external-work-item-property-detail",
     ),

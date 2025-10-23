@@ -26,7 +26,9 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
-
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 def transfer_cycle_issues(
     slug,
@@ -483,5 +485,25 @@ def transfer_cycle_issues(
         origin=base_host(request=request, is_app=True),
     )
 
-    ## EE Code return the issue ids as well
-    return {"success": True, "issue_ids": [ci.issue_id for ci in updated_cycles]}
+    # Trigger the entity issue state activity task for removal of issues
+    entity_issue_state_activity_task.delay(
+        issue_cycle_data=[
+            {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(cycle_id)} for cycle_issue in updated_cycles
+        ],
+        user_id=str(user_id),
+        slug=slug,
+        action="REMOVED",
+    )
+
+    # trigger the entity issue state activity task for adding issues
+    entity_issue_state_activity_task.delay(
+        issue_cycle_data=[
+            {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(new_cycle_id)} for cycle_issue in updated_cycles
+        ],
+        user_id=str(user_id),
+        slug=slug,
+        action="ADDED",
+    )
+    # EE code end here
+
+    return {"success": True}

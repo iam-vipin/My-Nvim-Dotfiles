@@ -787,30 +787,6 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # EE code start here
-        cycle_issues = result.get("issue_ids", [])
-
-        # Trigger the entity issue state activity task for removal of issues
-        entity_issue_state_activity_task.delay(
-            issue_cycle_data=[
-                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(cycle_id)} for cycle_issue in cycle_issues
-            ],
-            user_id=str(self.request.user.id),
-            slug=slug,
-            action="REMOVED",
-        )
-
-        # trigger the entity issue state activity task for adding issues
-        entity_issue_state_activity_task.delay(
-            issue_cycle_data=[
-                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(new_cycle_id)} for cycle_issue in cycle_issues
-            ],
-            user_id=str(self.request.user.id),
-            slug=slug,
-            action="ADDED",
-        )
-        # EE code end here
-
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
 
 

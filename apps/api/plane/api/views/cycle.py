@@ -1291,41 +1291,6 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             request=request,
             user_id=self.request.user.id,
         )
-
-
-        # EE code
-        # Extract issue IDs from cycle_issues
-        issue_ids = result.get("issue_ids", [])
-
-        # Trigger Celery task for REMOVED
-        entity_issue_state_activity_task.delay(
-            issue_cycle_data=[
-                {
-                    "issue_id": str(issue_id),
-                    "cycle_id": str(cycle_id),
-                }
-                for issue_id in issue_ids
-            ],
-            user_id=str(request.user.id),
-            slug=slug,
-            action="REMOVED",
-        )
-
-        # Trigger Celery task for ADDED
-        entity_issue_state_activity_task.delay(
-            issue_cycle_data=[
-                {
-                    "issue_id": str(issue_id),
-                    "cycle_id": str(new_cycle_id),
-                }
-                for issue_id in issue_ids
-            ],
-            user_id=str(request.user.id),
-            slug=slug,
-            action="ADDED",
-        )
-
-        # EE code end here
     
         # Handle the result
         if result.get("success"):

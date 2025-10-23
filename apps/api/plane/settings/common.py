@@ -312,6 +312,7 @@ CELERY_IMPORTS = (
     "plane.authentication.bgtasks.send_app_uninstall_webhook",
     "plane.ee.bgtasks.batched_search_update_task",
     "plane.ee.bgtasks.recurring_work_item_task",
+    "plane.ee.bgtasks.cycle_automation_task",
     # silo tasks
     "plane.silo.bgtasks.integration_apps_task",
     # event stream tasks

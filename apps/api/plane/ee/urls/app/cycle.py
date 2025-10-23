@@ -5,6 +5,7 @@ from plane.ee.views.app.cycle import (
     CycleUpdatesViewSet,
     CycleStartStopEndpoint,
     CycleIssueStateAnalyticsEndpoint,
+    AutomatedCycleViewSet,
 )
 from plane.ee.views.app.update import UpdatesReactionViewSet
 
@@ -56,5 +57,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-progress/",
         CycleIssueStateAnalyticsEndpoint.as_view(),
         name="project-cycle-progress",
+    ),
+    # Scheduled Cycles
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/automated-cycles/",
+        AutomatedCycleViewSet.as_view({"get": "list", "post": "create", "patch": "partial_update"}),
+        name="automated-cycles",
     ),
 ]

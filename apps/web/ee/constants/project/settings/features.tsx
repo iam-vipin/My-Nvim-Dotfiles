@@ -58,6 +58,10 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
 
 export const PROJECT_BASE_FEATURES_LIST = {
   ...CE_PROJECT_BASE_FEATURES_LIST,
+  cycles: {
+    ...CE_PROJECT_BASE_FEATURES_LIST.cycles,
+    href: "/cycles",
+  },
 };
 
 export const PROJECT_OTHER_FEATURES_LIST = {

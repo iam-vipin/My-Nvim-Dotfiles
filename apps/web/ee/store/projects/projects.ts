@@ -100,6 +100,7 @@ export class ProjectStore implements IProjectStore {
               is_time_tracking_enabled: false,
               is_workflow_enabled: false,
               project_id: projectId,
+              is_automated_cycle_enabled: false,
             };
           }
         }

@@ -246,7 +246,13 @@ const PagesMultiSelectModal = observer(
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onSubmit}
+            loading={isSubmitting}
+            disabled={isSubmitting || selectedPages.length === 0}
+          >
             {isSubmitting ? t("common.confirming") : t("common.confirm")}
           </Button>
         </div>

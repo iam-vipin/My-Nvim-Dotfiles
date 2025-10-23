@@ -151,7 +151,11 @@ class PageViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
             # capture the page transaction
-            page_transaction.delay(request.data, None, serializer.data["id"])
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=serializer.data["id"],
+            )
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -181,11 +185,8 @@ class PageViewSet(BaseViewSet):
                 # capture the page transaction
                 if request.data.get("description_html"):
                     page_transaction.delay(
-                        new_value=request.data,
-                        old_value=json.dumps(
-                            {"description_html": page_description},
-                            cls=DjangoJSONEncoder,
-                        ),
+                        new_description_html=request.data.get("description_html", "<p></p>"),
+                        old_description_html=page_description,
                         page_id=page_id,
                     )
 
@@ -517,7 +518,11 @@ class PagesDescriptionViewSet(BaseViewSet):
         if serializer.is_valid():
             # Capture the page transaction
             if request.data.get("description_html"):
-                page_transaction.delay(new_value=request.data, old_value=existing_instance, page_id=page_id)
+                page_transaction.delay(
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page.description_html,
+                    page_id=page_id,
+                )
 
             # Update the page using serializer
             updated_page = serializer.save()
@@ -563,7 +568,11 @@ class PageDuplicateEndpoint(BaseAPIView):
                 updated_by_id=page.updated_by_id,
             )
 
-        page_transaction.delay({"description_html": page.description_html}, None, page.id)
+        page_transaction.delay(
+            new_description_html=page.description_html,
+            old_description_html=None,
+            page_id=page.id,
+        )
 
         # Copy the s3 objects uploaded in the page
         copy_s3_objects_of_description_and_assets.delay(

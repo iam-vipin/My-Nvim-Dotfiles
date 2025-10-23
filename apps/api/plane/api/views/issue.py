@@ -1857,10 +1857,7 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
         )
 
         if not issue_activity:
-            return Response(
-                {"error": "Activity not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            return Response({"message": "Activity not found.", "code": "NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(
             IssueActivitySerializer(issue_activity, fields=self.fields, expand=self.expand).data,

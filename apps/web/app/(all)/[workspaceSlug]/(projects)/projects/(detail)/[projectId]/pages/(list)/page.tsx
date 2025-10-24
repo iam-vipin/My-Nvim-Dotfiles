@@ -10,15 +10,12 @@ import { EUserProjectRoles } from "@plane/types";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { PagesListRoot } from "@/components/pages/list/root";
-import { PagesListView } from "@/components/pages/pages-list-view";
+import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
 
 const ProjectPagesPage = observer(() => {
   // router
@@ -46,7 +43,7 @@ const ProjectPagesPage = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  // No access to cycle
+  // No access to page
   if (currentProjectDetails?.page_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -67,14 +64,11 @@ const ProjectPagesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <PagesListView
+      <ProjectPagesListView
         pageType={currentPageType()}
         projectId={projectId.toString()}
-        storeType={EPageStoreType.PROJECT}
         workspaceSlug={workspaceSlug.toString()}
-      >
-        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
-      </PagesListView>
+      />
     </>
   );
 });

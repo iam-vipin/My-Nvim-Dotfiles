@@ -83,7 +83,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
                 payload: { id: issueId },
               });
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
               captureError({
                 eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { id: issueId },

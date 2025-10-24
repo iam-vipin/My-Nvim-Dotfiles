@@ -21,7 +21,7 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
-import { ListLayoutIcon } from "@plane/propel/icons";
+import { ISvgIcons, ListLayoutIcon } from "@plane/propel/icons";
 import { TCommandExtraProps, TEditorCommands } from "@/types/editor";
 
 export type TEditorTypes = "lite" | "document";
@@ -35,7 +35,7 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
   itemKey: T;
   renderKey: string;
   name: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   shortcut?: string[];
   editors: TEditorTypes[];
   extraProps?: ExtraPropsForCommand<T>;

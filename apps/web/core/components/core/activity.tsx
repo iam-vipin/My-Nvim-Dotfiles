@@ -655,7 +655,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <DuplicatePropertyIcon size={12} className="text-custom-text-200" />,
+    icon: <DuplicatePropertyIcon height={12} width={12} className="text-custom-text-200" />,
   },
   state: {
     message: (activity, showIssue) => (

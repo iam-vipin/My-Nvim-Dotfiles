@@ -1,10 +1,14 @@
 # Python imports
 import os
+import logging
 from datetime import datetime
 from urllib.parse import urlencode
 
 import pytz
 import requests
+
+# Django imports
+from django.conf import settings
 
 # Module imports
 from plane.authentication.adapter.oauth import OauthAdapter
@@ -14,6 +18,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 
+logger = logging.getLogger("plane.authentication")
+
 
 class GitHubOAuthProvider(OauthAdapter):
     token_url = "https://github.com/login/oauth/access_token"
@@ -22,10 +28,16 @@ class GitHubOAuthProvider(OauthAdapter):
 
     provider = "github"
     scope = "read:user user:email"
-
     organization_scope = "read:org"
 
-    def __init__(self, request, code=None, state=None, callback=None):
+    def __init__(
+        self,
+        request,
+        code=None,
+        state=None,
+        callback=None,
+        redirect_uri=None,
+    ):
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = get_configuration_value(
             [
                 {
@@ -56,7 +68,10 @@ class GitHubOAuthProvider(OauthAdapter):
         if self.organization_id:
             self.scope += f" {self.organization_scope}"
 
-        redirect_uri = f"""{"https" if request.is_secure() else "http"}://{request.get_host()}/auth/github/callback/"""
+        scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+
+        redirect_uri = redirect_uri if redirect_uri else (f"""{scheme}://{request.get_host()}/auth/github/callback/""")
+
         url_params = {
             "client_id": client_id,
             "redirect_uri": redirect_uri,
@@ -112,6 +127,12 @@ class GitHubOAuthProvider(OauthAdapter):
             email = next((email["email"] for email in emails_response if email["primary"]), None)
             return email
         except requests.RequestException:
+            logger.warning(
+                "Error getting email from Github", extra={
+                    "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
+                }
+            )
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",

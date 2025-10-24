@@ -1,10 +1,9 @@
 "use client";
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
+import { DueDatePropertyIcon, EstimatePropertyIcon, InitiativeIcon, LabelPropertyIcon, MembersPropertyIcon, PriorityPropertyIcon, StartDatePropertyIcon, StatePropertyIcon, UserCirclePropertyIcon } from "@plane/propel/icons";
 // types
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // components
@@ -84,7 +83,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
       <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+            <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>State</span>
           </div>
           <StateDropdown
@@ -103,7 +102,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
 
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Users className="h-4 w-4 flex-shrink-0" />
+            <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>Assignees</span>
           </div>
           <MemberDropdown
@@ -125,7 +124,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
 
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Signal className="h-4 w-4 flex-shrink-0" />
+            <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <PriorityDropdown
@@ -142,7 +141,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {createdByDetails && (
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-              <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+              <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>Created by</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
@@ -172,7 +171,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
         </div>
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <CalendarClock className="h-4 w-4 flex-shrink-0" />
+            <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
           <DateDropdown
@@ -196,7 +195,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
 
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+            <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <DateDropdown
@@ -224,7 +223,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {projectId && areEstimateEnabledByProjectId(projectId) && (
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-              <Triangle className="h-4 w-4 flex-shrink-0" />
+              <EstimatePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>Estimate</span>
             </div>
             <EstimateDropdown
@@ -248,7 +247,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
 
         <div className="flex min-h-8 gap-2">
           <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-            <Tag className="h-4 w-4 flex-shrink-0" />
+            <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>Labels</span>
           </div>
           <div className="h-full min-h-8 w-3/5 flex-grow">

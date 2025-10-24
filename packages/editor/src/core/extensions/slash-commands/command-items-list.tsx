@@ -9,7 +9,6 @@ import {
   Heading5,
   Heading6,
   ImageIcon,
-  List,
   ListOrdered,
   ListTodo,
   MessageSquareText,
@@ -18,6 +17,7 @@ import {
   Table,
   TextQuote,
 } from "lucide-react";
+import { ListLayoutIcon } from "@plane/propel/icons";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // helpers
@@ -196,7 +196,7 @@ export const getSlashCommandFilteredSections =
             title: "Bullet list",
             description: "Create a simple bullet list.",
             searchTerms: ["unordered", "point"],
-            icon: <List className="size-3.5" />,
+            icon: <ListLayoutIcon className="size-3.5" />,
             command: ({ editor, range }) => toggleBulletList(editor, range),
           },
           {

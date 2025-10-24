@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
 import type { E_BULK_OPERATION_ERROR_CODES } from "@plane/constants";
 import { BULK_OPERATION_ERROR_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TBulkIssueProperties } from "@plane/types";
 // components
@@ -216,7 +216,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
                 buttonVariant="border-with-text"
                 placeholder="Start date"
-                icon={<CalendarClock className="size-3 flex-shrink-0" />}
+                icon={<StartDatePropertyIcon className="size-3 flex-shrink-0" />}
                 disabled={isUpdateDisabled}
                 maxDate={maxDate ?? undefined}
                 placement="top-start"
@@ -234,7 +234,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 onChange={(val) => onChange(val ? renderFormattedPayloadDate(val) : null)}
                 buttonVariant="border-with-text"
                 placeholder="Due date"
-                icon={<CalendarCheck2 className="size-3 flex-shrink-0" />}
+                icon={<DueDatePropertyIcon className="size-3 flex-shrink-0" />}
                 disabled={isUpdateDisabled}
                 minDate={minDate ?? undefined}
                 placement="top-start"

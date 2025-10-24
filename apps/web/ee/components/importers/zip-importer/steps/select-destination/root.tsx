@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { FolderOpen, Users } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PageIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, PageIcon } from "@plane/propel/icons";
 import type { TProject } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useTeamspaces, useFlag } from "@/plane-web/hooks/store";
@@ -68,7 +68,7 @@ export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }
             value: EDocImporterDestinationType.TEAMSPACE,
             data: {
               type: EDocImporterDestinationType.TEAMSPACE,
-              icon: <Users className="w-4 h-4" />,
+              icon: <MembersPropertyIcon className="w-4 h-4" />,
               label: "Teamspace",
             },
           },

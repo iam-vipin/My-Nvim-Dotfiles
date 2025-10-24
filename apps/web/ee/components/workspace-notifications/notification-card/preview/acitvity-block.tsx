@@ -1,19 +1,21 @@
 "use client";
 
 import type { FC, ReactElement, ReactNode } from "react";
-import {
-  ArrowRightLeft,
-  CalendarDays,
-  LayoutPanelTop,
-  MessageSquare,
-  Paperclip,
-  Signal,
-  Tag,
-  Triangle,
-  Users,
-} from "lucide-react";
+import { ArrowRightLeft, CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 // plane imports
-import { ArchiveIcon, CycleIcon, CustomersIcon, ModuleIcon, DoubleCircleIcon, Intake } from "@plane/propel/icons";
+import {
+  ArchiveIcon,
+  CustomersIcon,
+  CycleIcon,
+  EstimatePropertyIcon,
+  Intake,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  ModuleIcon,
+  ParentPropertyIcon,
+  PriorityPropertyIcon,
+  StatePropertyIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -39,18 +41,18 @@ type TIssueActivityBlock = {
 };
 
 export const activityIconMap: Record<string, ReactElement> = {
-  state: <DoubleCircleIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
+  state: <StatePropertyIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
   name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
-  assignees: <Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
-  priority: <Signal size={14} className="text-custom-text-200" aria-hidden="true" />,
-  estimate_point: <Triangle size={14} className="text-custom-text-200" aria-hidden="true" />,
-  parent: <LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />,
+  assignees: <MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  priority: <PriorityPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  estimate_point: <EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
+  parent: <ParentPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
   start_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
   target_date: <CalendarDays size={14} className="text-custom-text-200" aria-hidden="true" />,
   cycles: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   modules: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  labels: <Tag size={14} className="text-custom-text-200" aria-hidden="true" />,
+  labels: <LabelPropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />,
   link: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   attachment: <Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />,
   archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,

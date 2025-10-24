@@ -1,10 +1,9 @@
 import type { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
-import { Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
@@ -153,7 +152,7 @@ export const Attributes: React.FC<Props> = observer((props) => {
                       { "cursor-not-allowed": !isEditingAllowed }
                     )}
                   >
-                    <Users className="h-3 w-3 flex-shrink-0" />
+                    <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
                     <div>Lead</div>
                   </div>
                 </Tooltip>

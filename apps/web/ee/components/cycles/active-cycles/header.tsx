@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import Link from "next/link";
 // icons
-import { UserCircle2 } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import { CycleGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, UserCirclePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // types
 import type { ICycle, TCycleGroups } from "@plane/types";
@@ -50,7 +49,7 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
         <div className="rounded-sm text-sm">
           <div className="flex gap-2 text-sm whitespace-nowrap text-custom-text-300 font-medium">
             <span className="flex items-center gap-1.5">
-              <UserCircle2 className="h-4 w-4" />
+              <UserCirclePropertyIcon className="h-4 w-4" />
               <span className="text-base leading-5">Lead</span>
             </span>
             <div className="flex items-center gap-1.5">

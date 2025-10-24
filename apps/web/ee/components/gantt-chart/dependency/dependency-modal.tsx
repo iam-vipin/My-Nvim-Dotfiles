@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CalendarCheck2, CalendarClock, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
 import { ControlLink, EModalPosition, EModalWidth, ModalCore, Spinner } from "@plane/ui";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // hooks
@@ -76,7 +77,7 @@ const IssueBlock = observer((props: IssueBlockProps) => {
       <div className="flex items-center text-custom-text-300 flex-shrink-0 pointer-events-none">
         <DateDropdown
           buttonVariant="transparent-with-text"
-          icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+          icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           placeholder="--"
           onChange={() => {}}
           value={issueBlock.start_date ?? null}
@@ -85,7 +86,7 @@ const IssueBlock = observer((props: IssueBlockProps) => {
         -{" "}
         <DateDropdown
           buttonVariant="transparent-with-text"
-          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           placeholder="--"
           onChange={() => {}}
           value={issueBlock.target_date ?? null}

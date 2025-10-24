@@ -1,10 +1,11 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Users, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -25,7 +26,7 @@ export const SharedPagesFallback = observer(() => {
       <div className="flex items-center justify-center h-full px-page-x">
         <div className="flex w-full max-w-md flex-col items-center text-center">
           <div className="w-20 h-20 bg-custom-background-80 rounded-xl flex items-center justify-center mb-6">
-            <Users className="w-10 h-10 text-custom-text-300" />
+            <MembersPropertyIcon className="w-10 h-10 text-custom-text-300" />
           </div>
 
           <h4 className="text-xl font-semibold mb-3">Upgrade for Page Sharing</h4>

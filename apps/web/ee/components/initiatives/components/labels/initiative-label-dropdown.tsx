@@ -3,12 +3,13 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Loader, Plus, Tag } from "lucide-react";
+import { Check, Loader, Plus } from "lucide-react";
 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
+import { LabelPropertyIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -220,7 +221,7 @@ const SelectedLabelsDisplay: FC<{
 
 const PlaceholderDisplay: FC<{ placeholder: string }> = ({ placeholder }) => (
   <div className="text-custom-text-400 flex items-center gap-2">
-    <Tag size={14} />
+    <LabelPropertyIcon size={14} />
     {placeholder}
   </div>
 );

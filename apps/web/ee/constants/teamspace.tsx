@@ -1,4 +1,4 @@
-import { AlignLeft, Type, User2, Users } from "lucide-react";
+import { AlignLeft, Type, User2 } from "lucide-react";
 // plane imports
 import type {
   ERelationType,
@@ -8,7 +8,7 @@ import type {
   EProgressXAxisKeys,
 } from "@plane/constants";
 import { ETeamspaceScope } from "@plane/constants";
-import { PageIcon, ProjectIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, PageIcon, ProjectIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 import type { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
 // helpers
 import { getPageName } from "@plane/utils";
@@ -58,7 +58,7 @@ export const TEAM_UPDATES_HELPER_MAP: Partial<TTeamspaceActivityDetailsHelperMap
     message: <>updated the teamspace&apos;s description.</>,
   }),
   lead_updated: (activity: TTeamspaceActivity) => ({
-    icon: <Users className={commonIconClassName} />,
+    icon: <MembersPropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_identifier && activity.new_identifier ? (

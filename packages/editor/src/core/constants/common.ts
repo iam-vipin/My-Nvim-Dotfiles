@@ -13,7 +13,6 @@ import {
   Heading6,
   Image,
   Italic,
-  List,
   ListOrdered,
   ListTodo,
   LucideIcon,
@@ -22,6 +21,7 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
+import { ListLayoutIcon } from "@plane/propel/icons";
 import { TCommandExtraProps, TEditorCommands } from "@/types/editor";
 
 export type TEditorTypes = "lite" | "document";
@@ -127,7 +127,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListLayoutIcon,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },

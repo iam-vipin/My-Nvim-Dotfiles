@@ -4,12 +4,19 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { DoubleCircleIcon, InitiativeIcon } from "@plane/propel/icons";
+import {
+  DueDatePropertyIcon,
+  InitiativeIcon,
+  MembersPropertyIcon,
+  PriorityPropertyIcon,
+  StartDatePropertyIcon,
+  StatePropertyIcon,
+  UserCirclePropertyIcon,
+} from "@plane/propel/icons";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -91,7 +98,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
           <div className={`mb-2 space-y-2.5 ${!isEditingAllowed ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300 my-auto">
-                <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+                <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
               <StateDropdown
@@ -110,7 +117,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
             </div>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300 my-auto">
-                <Signal className="h-4 w-4 flex-shrink-0" />
+                <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
               <PriorityDropdown
@@ -129,7 +136,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+                <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Lead</span>
               </div>
               {lead ? (
@@ -160,7 +167,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <Users className="h-4 w-4 flex-shrink-0" />
+                <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Members</span>
               </div>
               <MembersDropdown
@@ -201,7 +208,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
             )}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <CalendarClock className="h-4 w-4 flex-shrink-0" />
+                <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Start date</span>
               </div>
               <DateDropdown
@@ -224,7 +231,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
             </div>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown

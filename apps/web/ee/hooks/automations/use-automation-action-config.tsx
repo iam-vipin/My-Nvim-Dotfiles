@@ -1,8 +1,7 @@
 import { useMemo } from "react";
-import { CalendarCheck2, CalendarClock } from "lucide-react";
 // plane imports
 import { ISSUE_PRIORITIES } from "@plane/constants";
-import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { DueDatePropertyIcon, PriorityIcon, StartDatePropertyIcon, StateGroupIcon } from "@plane/propel/icons";
 import { EAutomationChangePropertyType, EAutomationChangeType } from "@plane/types";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -222,7 +221,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       minDate: new Date(),
       getPreviewContent: (value: string[]) => (
         <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
-          <CalendarClock className="shrink-0 size-3.5" />
+          <StartDatePropertyIcon className="shrink-0 size-3.5" />
           <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>
       ),
@@ -237,7 +236,7 @@ export const useAutomationActionConfig = (args: TArgs) => {
       minDate: new Date(),
       getPreviewContent: (value: string[]) => (
         <div className="shrink-0 inline-flex items-center gap-2 bg-custom-background-80 rounded px-1 py-0.5">
-          <CalendarCheck2 className="shrink-0 size-3.5" />
+          <DueDatePropertyIcon className="shrink-0 size-3.5" />
           <span className="flex-grow truncate">{renderFormattedDate(value[0] ?? "")}</span>
         </div>
       ),

@@ -2,11 +2,19 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Calendar, CalendarCheck2, CalendarClock, UserCircle2, Tags } from "lucide-react";
+import { Tags } from "lucide-react";
 // plane imports
 import { EIconSize, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon, InitiativeStateIcon, ProjectIcon } from "@plane/propel/icons";
+import {
+  CalendarLayoutIcon,
+  DueDatePropertyIcon,
+  EpicIcon,
+  InitiativeStateIcon,
+  ProjectIcon,
+  StartDatePropertyIcon,
+  UserCirclePropertyIcon,
+} from "@plane/propel/icons";
 import type { TInitiativeStates } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
@@ -133,7 +141,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {/* Lead Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+            <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("lead")}</span>
           </div>
           <MemberDropdown
@@ -150,7 +158,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {/* Dates Drop down*/}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <CalendarLayoutIcon className="h-4 w-4 flex-shrink-0" />
             <span>Start date</span>
           </div>
           <DateDropdown
@@ -162,7 +170,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
               });
             }}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.start_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
             optionsClassName="z-10"
@@ -172,7 +180,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         </div>
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <CalendarLayoutIcon className="h-4 w-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <DateDropdown
@@ -184,7 +192,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
               });
             }}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.end_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
             optionsClassName="z-10"
@@ -195,7 +203,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
         {createdByDetails && (
           <div className="flex h-8 items-center gap-2">
             <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-              <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+              <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.created_by")}</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Users } from "lucide-react";
 // plane
+import { MembersPropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
@@ -107,7 +107,7 @@ export const BlockProperties = observer((props: Props) => {
                   </>
                 ) : (
                   <>
-                    <Users className="h-3 w-3 flex-shrink-0" />
+                    <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
                     <div>Lead</div>
                   </>
                 )}

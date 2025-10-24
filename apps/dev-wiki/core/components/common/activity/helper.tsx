@@ -1,17 +1,12 @@
 import { ReactNode } from "react";
 import {
-  Signal,
   RotateCcw,
   Network,
   Link as LinkIcon,
-  Calendar,
-  Tag,
   Inbox,
   AlignLeft,
-  Users,
   Paperclip,
   Type,
-  Triangle,
   FileText,
   Globe,
   Hash,
@@ -24,7 +19,19 @@ import {
 } from "lucide-react";
 
 // components
-import { ArchiveIcon, DoubleCircleIcon, CycleIcon, ModuleIcon, Intake, DashboardIcon } from "@plane/propel/icons";
+import {
+  ArchiveIcon,
+  CalendarLayoutIcon,
+  CycleIcon,
+  DashboardIcon,
+  EstimatePropertyIcon,
+  Intake,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  ModuleIcon,
+  PriorityPropertyIcon,
+  StatePropertyIcon,
+} from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
 import { TProjectActivity } from "@/plane-web/types";
 
@@ -32,20 +39,20 @@ type ActivityIconMap = {
   [key: string]: ReactNode;
 };
 export const iconsMap: ActivityIconMap = {
-  priority: <Signal size={14} className="text-custom-text-200" />,
+  priority: <PriorityPropertyIcon height={14} width={14} className="text-custom-text-200" />,
   archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   restored: <RotateCcw className="h-3.5 w-3.5 text-custom-text-200" />,
   link: <LinkIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  start_date: <Calendar className="h-3.5 w-3.5 text-custom-text-200" />,
-  target_date: <Calendar className="h-3.5 w-3.5 text-custom-text-200" />,
-  label: <Tag className="h-3.5 w-3.5 text-custom-text-200" />,
+  start_date: <CalendarLayoutIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  target_date: <CalendarLayoutIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  label: <LabelPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   inbox: <Inbox className="h-3.5 w-3.5 text-custom-text-200" />,
   description: <AlignLeft className="h-3.5 w-3.5 text-custom-text-200" />,
-  assignee: <Users className="h-3.5 w-3.5 text-custom-text-200" />,
+  assignee: <MembersPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   attachment: <Paperclip className="h-3.5 w-3.5 text-custom-text-200" />,
   name: <Type className="h-3.5 w-3.5 text-custom-text-200" />,
-  state: <DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  estimate: <Triangle size={14} className="text-custom-text-200" />,
+  state: <StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  estimate: <EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" />,
   cycle: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   module: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   page: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,

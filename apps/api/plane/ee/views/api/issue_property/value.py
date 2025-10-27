@@ -16,6 +16,8 @@ from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
 from plane.ee.serializers.api import (
     IssuePropertyValueAPISerializer,
     IssuePropertyValueAPIDetailSerializer,
+    WorkItemPropertyValueRequestSerializer,
+    WorkItemPropertyValueResponseSerializer,
 )
 from plane.ee.utils.external_issue_property_validator import (
     externalIssuePropertyValueValidator,
@@ -259,3 +261,433 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
             "property_id", "values"
         )
         return Response(issue_property_values, status=status.HTTP_200_OK)
+
+
+class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
+    """
+    API endpoint for managing a work item's property value(s).
+
+    For single-value properties:
+    - Each work item can have only ONE value per property
+
+    For multi-value properties (is_multi=True):
+    - Each work item can have MULTIPLE values per property
+
+    Supports:
+    - GET: Retrieve the property value(s)
+    - POST: Create or update the property value(s) (upsert/sync)
+    - PATCH: Update the property value(s) (partial update/sync)
+    - DELETE: Remove the property value(s)
+    """
+
+    model = IssuePropertyValue
+    permission_classes = [ProjectEntityPermission]
+    webhook_event = "issue_property_value"
+
+    def get_serializer_class(self):
+        """Return appropriate serializer based on request method."""
+        if self.request.method in ["POST", "PATCH"]:
+            return WorkItemPropertyValueRequestSerializer
+        return WorkItemPropertyValueResponseSerializer
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="get_work_item_property_value",
+        summary="Get work item property value",
+        description=(
+            "Retrieve the property value(s) for a specific work item property. "
+            "Returns a single value for non-multi properties, or a list for multi-value properties."
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Work item property value(s)",
+                response=WorkItemPropertyValueResponseSerializer,
+            ),
+            404: OpenApiResponse(
+                description="Property value not set for this work item"
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, work_item_id, property_id):
+        """
+        Get the property value(s) for a work item's property.
+        Returns a single value or a list of values depending on is_multi.
+        """
+        # Fetch all values for this work item/property combination
+        property_values = self.model.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=work_item_id,
+            property_id=property_id,
+            property__issue_type__is_epic=False,
+        )
+
+        if not property_values.exists():
+            return Response(
+                {"error": "Property value not set for this work item"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if this is a multi-value property
+        first_value = property_values.first()
+        if first_value.property.is_multi:
+            # Return list for multi-value properties
+            serializer = WorkItemPropertyValueResponseSerializer(
+                property_values, many=True
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Return single value for non-multi properties
+            serializer = WorkItemPropertyValueResponseSerializer(first_value)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="create_or_update_work_item_property_value",
+        summary="Create or update work item property value",
+        description=(
+            "Create or update the property value for a work item. Acts as an upsert "
+            "operation since only one value is allowed per work item/property combination."
+        ),
+        request=OpenApiRequest(
+            request=WorkItemPropertyValueRequestSerializer,
+            examples=[
+                OpenApiExample(
+                    "Text Property Value",
+                    value={
+                        "value": "example text value",
+                        "external_id": "ext_123",
+                        "external_source": "github",
+                    },
+                    description="Example for text, URL, email, or file property types (string value)",
+                ),
+                OpenApiExample(
+                    "Number Property Value",
+                    value={
+                        "value": 123.45,
+                    },
+                    description="Example for decimal property type (numeric value)",
+                ),
+                OpenApiExample(
+                    "Boolean Property Value",
+                    value={
+                        "value": True,
+                    },
+                    description="Example for boolean property type (boolean value)",
+                ),
+                OpenApiExample(
+                    "Date Property Value",
+                    value={
+                        "value": "2024-12-31",
+                    },
+                    description="Example for datetime property type (string in YYYY-MM-DD format)",
+                ),
+                OpenApiExample(
+                    "Option/Relation Property Value (Single)",
+                    value={
+                        "value": "550e8400-e29b-41d4-a716-446655440000",
+                    },
+                    description="Example for single-value option or relation property types (UUID string)",
+                ),
+                OpenApiExample(
+                    "Option/Relation Property Value (Multi)",
+                    value={
+                        "value": [
+                            "550e8400-e29b-41d4-a716-446655440000",
+                            "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                            "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
+                        ],
+                    },
+                    description=(
+                        "Example for multi-value option or relation property types "
+                        "(list of UUID strings). Only valid when property has is_multi=True."
+                    ),
+                ),
+            ],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Work item property value updated",
+                response=WorkItemPropertyValueResponseSerializer,
+            ),
+            201: OpenApiResponse(
+                description="Work item property value created",
+                response=WorkItemPropertyValueResponseSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid value"),
+            404: OpenApiResponse(description="Workspace or property not found"),
+        },
+    )
+    def post(self, request, slug, project_id, work_item_id, property_id):
+        """
+        Create or update the property value for a work item.
+        For single-value properties, this acts as an upsert operation.
+        For multi-value properties, this replaces all existing values with the new ones.
+        """
+        # Get workspace and property
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+            issue_property = IssueProperty.objects.get(
+                pk=property_id,
+                workspace__slug=slug,
+                issue_type__is_epic=False,
+            )
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except IssueProperty.DoesNotExist:
+            return Response(
+                {"error": "Property not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if value already exists for this work item/property
+        existing_value = self.model.objects.filter(
+            workspace_id=workspace.id,
+            project_id=project_id,
+            issue_id=work_item_id,
+            property_id=property_id,
+        ).first()
+
+        if existing_value:
+            # Update existing value(s)
+            serializer = WorkItemPropertyValueRequestSerializer(
+                instance=existing_value,
+                data=request.data,
+                partial=True,
+                context={"property": issue_property},
+            )
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            result = serializer.save()
+
+            # Handle multi-value properties (returns list)
+            if isinstance(result, list):
+                # Fetch fresh instances from DB
+                property_value_objs = self.model.objects.filter(
+                    id__in=[obj.id for obj in result]
+                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    property_value_objs, many=True
+                )
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+            else:
+                # Single value property
+                property_value_obj = self.model.objects.get(id=result.id)
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    property_value_obj
+                )
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Create new value(s)
+            serializer = WorkItemPropertyValueRequestSerializer(
+                data=request.data,
+                context={
+                    "property": issue_property,
+                    "workspace_id": workspace.id,
+                    "project_id": project_id,
+                    "issue_id": work_item_id,
+                },
+            )
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            result = serializer.save()
+
+            # Handle multi-value properties (returns list)
+            if isinstance(result, list):
+                # Fetch fresh instances from DB
+                property_value_objs = self.model.objects.filter(
+                    id__in=[obj.id for obj in result]
+                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    property_value_objs, many=True
+                )
+                return Response(
+                    response_serializer.data, status=status.HTTP_201_CREATED
+                )
+            else:
+                # Single value property
+                property_value_obj = self.model.objects.get(id=result.id)
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    property_value_obj
+                )
+                return Response(
+                    response_serializer.data, status=status.HTTP_201_CREATED
+                )
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="update_work_item_property_value",
+        summary="Update work item property value",
+        description="Update an existing property value for a work item (partial update)",
+        request=OpenApiRequest(
+            request=WorkItemPropertyValueRequestSerializer,
+            examples=[
+                OpenApiExample(
+                    "Update Text Property Value",
+                    value={
+                        "value": "updated text value",
+                    },
+                    description="Example for updating text property type (string value)",
+                ),
+                OpenApiExample(
+                    "Update Number Property Value",
+                    value={
+                        "value": 456.78,
+                    },
+                    description="Example for updating decimal property type (numeric value)",
+                ),
+                OpenApiExample(
+                    "Update Boolean Property Value",
+                    value={
+                        "value": False,
+                    },
+                    description="Example for updating boolean property type (boolean value)",
+                ),
+                OpenApiExample(
+                    "Update Multi-Value Option/Relation Property",
+                    value={
+                        "value": [
+                            "550e8400-e29b-41d4-a716-446655440000",
+                            "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                        ],
+                    },
+                    description=(
+                        "Example for updating multi-value option or relation property types "
+                        "(list of UUID strings). Only valid when property has is_multi=True."
+                    ),
+                ),
+            ],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Work item property value updated",
+                response=WorkItemPropertyValueResponseSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid value"),
+            404: OpenApiResponse(
+                description="Workspace, property, or property value not found"
+            ),
+        },
+    )
+    def patch(self, request, slug, project_id, work_item_id, property_id):
+        """
+        Update an existing property value (partial update).
+        For multi-value properties, this replaces all existing values with the new ones.
+        """
+        try:
+            # Get property
+            issue_property = IssueProperty.objects.get(
+                pk=property_id,
+                workspace__slug=slug,
+                issue_type__is_epic=False,
+            )
+
+            # Get the existing property value(s)
+            property_values = self.model.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=work_item_id,
+                property_id=property_id,
+                property__issue_type__is_epic=False,
+            )
+
+            if not property_values.exists():
+                return Response(
+                    {"error": "Property value not set for this work item"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            # Get first value to pass as instance (for serializer validation)
+            first_value = property_values.first()
+
+            # Validate and update using serializer
+            serializer = WorkItemPropertyValueRequestSerializer(
+                instance=first_value,
+                data=request.data,
+                partial=True,
+                context={"property": issue_property},
+            )
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update the property value(s)
+            result = serializer.save()
+
+            # Handle multi-value properties (returns list)
+            if isinstance(result, list):
+                # Fetch fresh instances from DB
+                property_value_objs = self.model.objects.filter(
+                    id__in=[obj.id for obj in result]
+                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    property_value_objs, many=True
+                )
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+            else:
+                # Single value property
+                updated_property_value = self.model.objects.get(id=result.id)
+                response_serializer = WorkItemPropertyValueResponseSerializer(
+                    updated_property_value
+                )
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except IssueProperty.DoesNotExist:
+            return Response(
+                {"error": "Property not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="delete_work_item_property_value",
+        summary="Delete work item property value",
+        description=(
+            "Delete the property value(s) for a work item. "
+            "For multi-value properties, deletes all values."
+        ),
+        responses={
+            204: OpenApiResponse(description="Property value(s) deleted successfully"),
+            404: OpenApiResponse(description="Property value not found"),
+        },
+    )
+    def delete(self, request, slug, project_id, work_item_id, property_id):
+        """
+        Delete the property value(s) for a work item.
+        For multi-value properties, deletes all values.
+        """
+        # Fetch all values for this work item/property combination
+        property_values = self.model.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=work_item_id,
+            property_id=property_id,
+            property__issue_type__is_epic=False,
+        )
+
+        if not property_values.exists():
+            return Response(
+                {"error": "Property value not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Delete all values (handles both single and multi-value properties)
+        deleted_count = property_values.count()
+        property_values.delete()
+
+        return Response(
+            {
+                "message": "Property value(s) deleted successfully",
+                "deleted_count": deleted_count,
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )

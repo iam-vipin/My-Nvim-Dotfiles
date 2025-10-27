@@ -11,6 +11,7 @@ from langchain_core.messages import ToolMessage
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.services.actions.tools.entity_search import get_entity_search_tools
 from pi.services.chat.chat import PlaneChatBot
 
 from .batch_execution_context import BatchExecutionContext
@@ -139,6 +140,9 @@ class BatchActionOrchestrator:
 
             if tool_name and "_" in tool_name:
                 category = tool_name.split("_")[0]
+                # Map epics to workitems category since epics tools are part of workitems
+                if category == "epics":
+                    category = "workitems"
                 categories.add(category)
 
         log.info(f"🔧 Building execution tools for categories: {categories}")
@@ -164,11 +168,14 @@ class BatchActionOrchestrator:
 
         # Add entity search tools for placeholder resolution (only if not already included)
         try:
-            entity_search_tools = self.chatbot._build_method_tools("entity_search", method_executor, tool_context)
+            entity_search_tools = get_entity_search_tools(method_executor, tool_context)
             for tool in entity_search_tools:
                 if tool.name not in tool_names_seen:
                     combined_tools.append(tool)
                     tool_names_seen.add(tool.name)
+            log.info(
+                f"🔧 Added {len([t for t in entity_search_tools if t.name not in tool_names_seen])} entity search tools for placeholder resolution"
+            )
         except Exception as e:
             log.warning(f"Failed to build entity search tools: {e}")
 
@@ -188,6 +195,11 @@ class BatchActionOrchestrator:
 
         # Bind tools to LLM
         llm_with_tools = self.chatbot.tool_llm.bind_tools(combined_tools)
+
+        # Set tracking context for action execution LLM calls
+        from pi.app.models.enums import MessageMetaStepType
+
+        llm_with_tools.set_tracking_context(context.message_id, self.db, MessageMetaStepType.ACTION_EXECUTION, chat_id=str(context.chat_id))
 
         # Track which actions have been executed
         executed_tool_names = set()
@@ -309,7 +321,10 @@ class BatchActionOrchestrator:
                             error_msg = f"Failed to resolve placeholders in {tool_name} arguments: {tool_args}"
                             artifact_id = planned_action.get("artifact_id") if planned_action else None
                             planned_sequence = planned_action.get("step_order") if planned_action else None
-                            context.add_execution_failure(step_id, tool_name, error_msg, artifact_id, sequence=planned_sequence)
+                            artifact_type = planned_action.get("artifact_type") if planned_action else None
+                            context.add_execution_failure(
+                                step_id, tool_name, error_msg, artifact_id, sequence=planned_sequence, artifact_type=artifact_type
+                            )
                             execution_failed = True
                             continue
                     else:
@@ -324,26 +339,44 @@ class BatchActionOrchestrator:
                     if is_success:
                         # Extract entity information
                         entity_info = extract_entity_info(str(result), tool_name)
+                        # Coerce to a single entity dict for downstream consumers (type-safe for mypy)
+                        single_entity_info: Optional[Dict[str, Any]]
+                        if isinstance(entity_info, list):
+                            single_entity_info = entity_info[0] if entity_info else None
+                        elif isinstance(entity_info, dict):
+                            single_entity_info = entity_info
+                        else:
+                            single_entity_info = None
 
                         # Record successful execution
                         artifact_id = planned_action.get("artifact_id") if planned_action else None
                         planned_sequence = planned_action.get("step_order") if planned_action else None
-                        context.add_execution_result(step_id, tool_name, result, entity_info, artifact_id, sequence=planned_sequence)
+                        artifact_type = planned_action.get("artifact_type") if planned_action else None
+                        context.add_execution_result(
+                            step_id, tool_name, result, single_entity_info, artifact_id, sequence=planned_sequence, artifact_type=artifact_type
+                        )
                         executed_tool_names.add(tool_name)
 
                         # Update flow step in database
                         if planned_action and planned_action.get("step_id"):
-                            await update_flow_step_execution_status(step_id, str(result), entity_info, True, self.db)
+                            # For manual edits, pass the version_id through
+                            version_id = planned_action.get("version_id")
+                            await update_flow_step_execution_status(step_id, str(result), entity_info, True, self.db, version_id)
                     else:
                         # Record failed execution
                         error_msg = f"Tool execution failed: {result}"
                         artifact_id = planned_action.get("artifact_id") if planned_action else None
                         planned_sequence = planned_action.get("step_order") if planned_action else None
-                        context.add_execution_failure(step_id, tool_name, error_msg, artifact_id, sequence=planned_sequence)
+                        artifact_type = planned_action.get("artifact_type") if planned_action else None
+                        context.add_execution_failure(
+                            step_id, tool_name, error_msg, artifact_id, sequence=planned_sequence, artifact_type=artifact_type
+                        )
 
                         # Update flow step in database
                         if planned_action and planned_action.get("step_id"):
-                            await update_flow_step_execution_status(step_id, str(result), None, False, self.db)
+                            # For manual edits, pass the version_id through (for failed cases too)
+                            version_id = planned_action.get("version_id")
+                            await update_flow_step_execution_status(step_id, str(result), None, False, self.db, version_id)
 
                         # Mark execution as failed but continue to create tool message
                         execution_failed = True
@@ -358,7 +391,10 @@ class BatchActionOrchestrator:
                     error_step_id = step_id if "step_id" in locals() and step_id is not None else f"unknown_{context.current_step}"
                     artifact_id = planned_action.get("artifact_id") if planned_action else None
                     planned_sequence = planned_action.get("step_order") if planned_action else None
-                    context.add_execution_failure(error_step_id, tool_name, str(e), artifact_id, sequence=planned_sequence)
+                    artifact_type = planned_action.get("artifact_type") if planned_action else None
+                    context.add_execution_failure(
+                        error_step_id, tool_name, str(e), artifact_id, sequence=planned_sequence, artifact_type=artifact_type
+                    )
 
                     # Create error tool message
                     tool_message = ToolMessage(content=f"Error executing {tool_name}: {str(e)}", tool_call_id=tool_id)
@@ -420,32 +456,70 @@ class BatchActionOrchestrator:
         # First try to match by tool name and key arguments for better accuracy
         if tool_args:
             for action in planned_actions:
-                step_id = action.get("step_id")
-                if action.get("tool_name") == tool_name and step_id not in used_step_ids:
+                artifact_id = action.get("artifact_id")
+
+                if action.get("tool_name") == tool_name and artifact_id not in used_step_ids:
                     # Check if key arguments match (for better matching when there are multiple identical tool calls)
                     planned_args = action.get("args", {})
 
                     # For workitem operations, match on issue_id
                     if tool_name.startswith("workitems_") and "issue_id" in tool_args and "issue_id" in planned_args:
                         if tool_args["issue_id"] == planned_args["issue_id"]:
-                            if step_id:  # Only add if step_id is valid
-                                used_step_ids.add(step_id)
+                            if artifact_id:  # Use artifact_id for tracking instead of step_id
+                                used_step_ids.add(artifact_id)
                             return action
+                    # For create operations with identical tool names, match on core identifying fields
+                    elif tool_name.endswith("_create") and self._create_args_match(tool_args, planned_args):
+                        if artifact_id:  # Use artifact_id for tracking instead of step_id
+                            used_step_ids.add(artifact_id)
+                        return action
                     # For other operations, can add more specific matching logic as needed
                     elif self._args_match(tool_args, planned_args):
-                        if step_id:  # Only add if step_id is valid
-                            used_step_ids.add(step_id)
+                        if artifact_id:  # Use artifact_id for tracking instead of step_id
+                            used_step_ids.add(artifact_id)
                         return action
 
         # Fallback: match by tool name only, but skip already used actions
         for action in planned_actions:
-            step_id = action.get("step_id")
-            if action.get("tool_name") == tool_name and step_id not in used_step_ids:
-                if step_id:  # Only add if step_id is valid
-                    used_step_ids.add(step_id)
+            artifact_id = action.get("artifact_id")
+            if action.get("tool_name") == tool_name and artifact_id not in used_step_ids:
+                if artifact_id:  # Use artifact_id for tracking
+                    used_step_ids.add(artifact_id)
                 return action
 
         return None
+
+    def _create_args_match(self, tool_args: Dict[str, Any], planned_args: Dict[str, Any]) -> bool:
+        """Check if tool arguments match for create operations (where unique identifying fields like name are key)."""
+        if not tool_args and not planned_args:
+            return True
+
+        # For create operations, the 'name' field is usually the most distinctive identifier
+        # If both have name fields, they must match exactly for create operations
+        if "name" in tool_args and "name" in planned_args:
+            if str(tool_args["name"]) != str(planned_args["name"]):
+                return False
+            # If names match, check other fields for additional validation
+            other_fields = ["project_id", "priority", "state_id", "type_id"]
+            for field in other_fields:
+                if field in tool_args and field in planned_args:
+                    if str(tool_args[field]) != str(planned_args[field]):
+                        return False
+            return True
+
+        # If no name field, fall back to matching on other distinctive fields
+        key_fields = ["project_id", "priority", "state_id", "type_id"]
+        matches = 0
+        total_fields = 0
+
+        for field in key_fields:
+            if field in tool_args and field in planned_args:
+                total_fields += 1
+                if str(tool_args[field]) == str(planned_args[field]):
+                    matches += 1
+
+        # Require high match ratio for create operations
+        return total_fields > 0 and (matches / total_fields) >= 0.8
 
     def _args_match(self, tool_args: Dict[str, Any], planned_args: Dict[str, Any]) -> bool:
         """Check if tool arguments substantially match planned arguments."""
@@ -502,17 +576,17 @@ class BatchActionOrchestrator:
         """Check if a tool execution was successful based on the result."""
         result_str = str(result).lower()
 
-        # Check for common failure indicators
-        failure_indicators = ["❌", "failed", "error", "bad request", "not found", "invalid"]
-        for indicator in failure_indicators:
-            if indicator in result_str:
-                return False
-
-        # Check for success indicators
+        # First check for explicit success indicators (higher priority)
         success_indicators = ["✅", "successfully", "created", "updated", "added"]
         for indicator in success_indicators:
             if indicator in result_str:
                 return True
+
+        # Then check for failure indicators (but be more specific to avoid false positives)
+        failure_indicators = ["❌", "failed", "error:", "bad request", "not found", "invalid"]
+        for indicator in failure_indicators:
+            if indicator in result_str:
+                return False
 
         # Default to success if no clear indicators
         return True

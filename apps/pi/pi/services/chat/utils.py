@@ -125,10 +125,34 @@ class StandardAgentResponse:
         return urls is not None and len(urls) > 0
 
     @staticmethod
+    def has_retrieval_error(response: Union[str, Dict[str, Any]]) -> bool:
+        """Check if response contains a retrieval error that should not be rewritten by LLM"""
+        response_text = StandardAgentResponse.extract_results(response)
+        if not response_text:
+            return False
+
+        # Common error patterns that indicate retrieval failure
+        error_patterns = [
+            "Failed to retrieve data from the DB due to an error",
+            "Unable to generate SQL query due to processing limitations",
+            "Error: Unable to",
+            "Failed to retrieve",
+            "An error occurred while",
+            "Could not retrieve",
+            "Database query failed",
+            "Table selection failed",
+            "SQL generation failed",
+        ]
+
+        response_lower = response_text.lower()
+        return any(pattern.lower() in response_lower for pattern in error_patterns)
+
+    @staticmethod
     def format_responses(responses, chat_id, query_flow_store):
         formatted_responses = []
         formatted_responses_str = ""
         extracted_urls = []
+        has_errors = False
 
         for response_item in responses:
             if not isinstance(response_item, tuple) or len(response_item) < 3:
@@ -136,6 +160,12 @@ class StandardAgentResponse:
 
             agent, sub_query, response, *_ = response_item
             query_flow_store["tool_response"] += f"Agent: {agent};\nQuery: {sub_query};\nResponse: {response}\n\n"  # noqa: E501
+
+            # Check if this response contains a retrieval error
+            if StandardAgentResponse.has_retrieval_error(response):
+                has_errors = True
+                log.warning(f"ChatID: {chat_id} - Detected retrieval error in {agent} response, will not allow LLM to rewrite")
+
             # Extract URLs using standardized method
             urls = StandardAgentResponse.extract_entity_urls(response)
             if urls:
@@ -159,7 +189,8 @@ class StandardAgentResponse:
                         url_info += f"Issue Unique Key: {url.get("issue_identifier")}\n"
             formatted_responses_str += url_info
 
-        return formatted_responses_str
+        # Mark if responses contain errors (used by caller to skip LLM rewriting)
+        return {"formatted": formatted_responses_str, "has_errors": has_errors}
 
 
 def format_conversation_history(conversation_history):
@@ -176,7 +207,7 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
     if len(recent_conv_history) < len(conv_history):
         log.info(f"Truncating the conversation history to MAX_CHAT_LENGTH: {MAX_CHAT_LENGTH} messages, based on configured limit")
 
-    for qa_pair in recent_conv_history:
+    for idx, qa_pair in enumerate(recent_conv_history):
         # Process user message with potential attachments
         user_content = qa_pair.get("parsed_query", "") or qa_pair.get("query", "")
 
@@ -248,12 +279,57 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
             if hasattr(qa_pair, "planning_context") or "planning_context" in str(qa_pair):
                 action_context += "**Planning was informed by:** Previous retrieval and search results\n"
 
-        conv_history_enhanced += (
-            f"{qa_pair.get("internal_reasoning", "")}\n"
-            f"User Query{attachment_info}: {user_content}\n"
-            f"Plane Intelligence (Pi) Response: {qa_pair.get("answer", "")}"
-            f"{action_context}\n"
-        )
+        # Format internal reasoning with better structure
+        internal_reasoning = qa_pair.get("internal_reasoning", "").strip()
+        internal_selected = qa_pair.get("internal_selected", "").strip()
+        internal_executed = qa_pair.get("internal_executed", "").strip()
+
+        # Determine if this is the last QA and if it is a placeholder response (to avoid duplication)
+        is_last = idx == len(recent_conv_history) - 1
+        ans_text = (qa_pair.get("answer", "") or "").strip()
+        is_placeholder_answer = ans_text.startswith("⏳") or "Processing your request" in ans_text or ans_text == ""
+
+        # Decide whether to include this QA in enhanced history
+        skip_in_enhanced = bool(is_last and is_placeholder_answer)
+
+        if skip_in_enhanced:
+            continue
+
+        conv_history_enhanced += f"{"=" * 60}\n"
+
+        # Add user query first
+        conv_history_enhanced += f"User Query{attachment_info}: {user_content}\n\n"
+
+        # If this QA includes executed actions, place assistant response before execution details for cohesion
+        has_executed_actions = False
+        try:
+            actions = execution_status.get("actions", [])
+            has_executed_actions = any(bool(a.get("success")) for a in actions)
+        except Exception:
+            has_executed_actions = False
+
+        if has_executed_actions and (internal_selected or internal_executed):
+            # Keep selected tools first
+            if internal_selected:
+                conv_history_enhanced += f"{internal_selected}\n"
+
+            # Then the assistant's planned message
+            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get("answer", "")}\n"
+
+            # Finally, the executed summaries with entity info
+            if internal_executed:
+                conv_history_enhanced += f"{internal_executed}\n"
+        else:
+            # Retrieval-only or no split sections available → keep original order
+            if internal_reasoning:
+                conv_history_enhanced += f"{internal_reasoning}\n"
+            conv_history_enhanced += f"Plane AI (formerly, Plane Intelligence (Pi)) Response: {qa_pair.get("answer", "")}\n"
+
+        # Add action context if present
+        if action_context:
+            conv_history_enhanced += f"{action_context}\n"
+
+        conv_history_enhanced += f"{"=" * 60}\n\n"
 
     return {"langchain_conv_history": conv_history_lc, "enhanced_conv_history": conv_history_enhanced}
 
@@ -585,7 +661,7 @@ async def auto_populate_disambiguation_options(
         elif "cycles" in hints or "cycle" in hints or any("cycle" in str(f).lower() for f in fields):
             if project_id:
                 query = """
-                SELECT c.id, c.name, c.start_date, c.end_date
+                SELECT c.id, c.name, c.start_date, c.end_date, c.project_id
                 FROM cycles c
                 WHERE c.project_id = $1
                 AND c.deleted_at IS NULL
@@ -595,7 +671,7 @@ async def auto_populate_disambiguation_options(
                 """
                 results = await PlaneDBPool.fetch(query, (project_id,))
                 for row in results:
-                    opt = {"id": str(row["id"]), "name": row["name"], "type": "cycle"}
+                    opt = {"id": str(row["id"]), "name": row["name"], "type": "cycle", "project_id": str(row["project_id"])}
                     if row["start_date"]:
                         opt["start_date"] = str(row["start_date"])
                     if row["end_date"]:

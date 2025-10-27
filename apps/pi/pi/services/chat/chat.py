@@ -64,7 +64,7 @@ PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
 
 
 class PlaneChatBot(ChatKit):
-    def __init__(self, llm: str = "gpt-4o"):
+    def __init__(self, llm: str = "gpt-4.1"):
         """Initializes PlaneChatBot with specified LLM model."""
         super().__init__(switch_llm=llm)
         self.chat_title = None
@@ -88,7 +88,6 @@ class PlaneChatBot(ChatKit):
         is_focus_enabled = data.workspace_in_context
         focus_project_id = data.project_id or None
         focus_workspace_id = data.workspace_id or None
-
         if is_new:
             # For new chats, the chat record should already exist from initialize-chat endpoint
             # but if not, create it (backward compatibility)
@@ -259,6 +258,7 @@ class PlaneChatBot(ChatKit):
         workspace_slug,
         project_id,
         conversation_history,
+        enhanced_conversation_history,
         user_id,
         chat_id,
         query_flow_store,
@@ -268,6 +268,7 @@ class PlaneChatBot(ChatKit):
         db,
         original_query,
         reasoning_container=None,
+        workspace_in_context: bool | None = None,
     ) -> AsyncIterator[str]:
         """Execute multiple agents using LangChain tool calling for orchestration with real-time streaming."""
         async for chunk in agent_executor.execute_multi_agents(
@@ -278,6 +279,7 @@ class PlaneChatBot(ChatKit):
             workspace_slug,
             project_id,
             conversation_history,
+            enhanced_conversation_history,
             user_id,
             chat_id,
             query_flow_store,
@@ -287,6 +289,7 @@ class PlaneChatBot(ChatKit):
             db,
             original_query,
             reasoning_container,
+            workspace_in_context=workspace_in_context,
         ):
             yield chunk
 
@@ -527,6 +530,21 @@ class PlaneChatBot(ChatKit):
         if data.attachment_ids:
             await link_attachments_to_message(attachment_ids=data.attachment_ids, message_id=query_id, chat_id=data.chat_id, user_id=user_id, db=db)
 
+        # log input and other important info:
+        log.info(f"ChatID: {chat_id} - Input query: {query}")
+        log.info(f"ChatID: {chat_id} - Enhanced query: {enhanced_query_for_processing}")
+        log.info(f"ChatID: {chat_id} - Attachment context: {attachment_context}")
+        log.info(f"ChatID: {chat_id} - User meta: {user_meta}")
+        log.info(f"ChatID: {chat_id} - Workspace in context: {workspace_in_context}")
+        log.info(f"ChatID: {chat_id} - Workspace slug: {workspace_slug}")
+        log.info(f"ChatID: {chat_id} - Workspace ID: {workspace_id}")
+        log.info(f"ChatID: {chat_id} - Is New Chat: {data.is_new}")
+        log.info(f"ChatID: {chat_id} - Source: {data.source}")
+        log.info(f"ChatID: {chat_id} - Is Project Chat: {data.is_project_chat}")
+        log.info(f"ChatID: {chat_id} - User ID: {user_id}")
+        log.info(f"ChatID: {chat_id} - Project ID: {project_id}")
+        log.info(f"ChatID: {chat_id} - LLM: {switch_llm}")
+
         # Handle case where conversation_history_dict might be None or a list
         if conversation_history_dict is None or isinstance(conversation_history_dict, list):
             conversation_history = []
@@ -535,54 +553,55 @@ class PlaneChatBot(ChatKit):
             conversation_history = conversation_history_dict["langchain_conv_history"]
             enhanced_conversation_history = conversation_history_dict["enhanced_conv_history"]
 
-        # NEW: If a clarification is pending, enrich user_meta with context from message_clarifications
-        try:
-            from pi.services.retrievers.pg_store.clarifications import get_latest_pending_for_chat as _get_pending_clar
+        if not data.is_new:
+            try:
+                # If a clarification is pending, enrich user_meta with context from message_clarifications
+                from pi.services.retrievers.pg_store.clarifications import get_latest_pending_for_chat as _get_pending_clar
 
-            log.info(f"ChatID: {chat_id} - Checking for pending clarifications...")
-            clar_row = await _get_pending_clar(db=db, chat_id=uuid.UUID(str(chat_id)))
-            if clar_row:
-                clar_payload = clar_row.payload or {}
-                log.info(
-                    f"ChatID: {chat_id} - Found pending clarification, enriching user_meta. Kind: {clar_row.kind}, Categories: {clar_row.categories}"
-                )
-                user_meta["clarification_context"] = {
-                    "reason": clar_payload.get("reason"),
-                    "missing_fields": clar_payload.get("missing_fields") or [],
-                    "disambiguation_options": clar_payload.get("disambiguation_options") or [],
-                    "category_hints": clar_payload.get("category_hints") or [],
-                    "answer_text": parsed_query,
-                    "original_query": clar_row.original_query,  # CRITICAL: Include original query for full context
-                    "clarifies_message_id": str(clar_row.message_id),
-                }
-                log.info(f"ChatID: {chat_id} - Enriched user_meta with clarification_context")
-                # Record a clarification_response flow step for traceability (not marking resolved yet)
-                try:
-                    await upsert_message_flow_steps(
-                        message_id=query_id,
-                        chat_id=chat_id,
-                        flow_steps=[
-                            {
-                                "step_order": step_order + 1,
-                                "step_type": FlowStepType.TOOL.value,
-                                "tool_name": "clarification_response",
-                                "content": standardize_flow_step_content(user_meta.get("clarification_context", {}), FlowStepType.TOOL),
-                                "execution_data": {
-                                    "clarifies_message_id": str(clar_row.message_id),
-                                    "clarification_resolved": False,
-                                },
-                            }
-                        ],
-                        db=db,
+                log.info(f"ChatID: {chat_id} - Checking for pending clarifications...")
+                clar_row = await _get_pending_clar(db=db, chat_id=uuid.UUID(str(chat_id)))
+                if clar_row:
+                    clar_payload = clar_row.payload or {}
+                    log.info(
+                        f"ChatID: {chat_id} - Found pending clarification, enriching user_meta. Kind: {clar_row.kind}, Categories: {clar_row.categories}"  # noqa: E501
                     )
-                    # Push subsequent steps by +1
-                    step_order = step_order + 2
-                except Exception:
-                    pass
-            else:
-                log.info(f"ChatID: {chat_id} - No pending clarification found")
-        except Exception as _e:
-            log.warning(f"ChatID: {chat_id} - Clarification table check failed: {_e}")
+                    user_meta["clarification_context"] = {
+                        "reason": clar_payload.get("reason"),
+                        "missing_fields": clar_payload.get("missing_fields") or [],
+                        "disambiguation_options": clar_payload.get("disambiguation_options") or [],
+                        "category_hints": clar_payload.get("category_hints") or [],
+                        "answer_text": parsed_query,
+                        "original_query": clar_row.original_query,  # CRITICAL: Include original query for full context
+                        "clarifies_message_id": str(clar_row.message_id),
+                    }
+                    log.info(f"ChatID: {chat_id} - Enriched user_meta with clarification_context")
+                    # Record a clarification_response flow step for traceability (not marking resolved yet)
+                    try:
+                        await upsert_message_flow_steps(
+                            message_id=query_id,
+                            chat_id=chat_id,
+                            flow_steps=[
+                                {
+                                    "step_order": step_order + 1,
+                                    "step_type": FlowStepType.TOOL.value,
+                                    "tool_name": "clarification_response",
+                                    "content": standardize_flow_step_content(user_meta.get("clarification_context", {}), FlowStepType.TOOL),
+                                    "execution_data": {
+                                        "clarifies_message_id": str(clar_row.message_id),
+                                        "clarification_resolved": False,
+                                    },
+                                }
+                            ],
+                            db=db,
+                        )
+                        # Push subsequent steps by +1
+                        step_order = step_order + 2
+                    except Exception:
+                        pass
+                else:
+                    log.info(f"ChatID: {chat_id} - No pending clarification found")
+            except Exception as _e:
+                log.warning(f"ChatID: {chat_id} - Clarification table check failed: {_e}")
 
         # Check if the query is a preset question
         preset_query_steps = preset_question_flow(query)
@@ -592,7 +611,7 @@ class PlaneChatBot(ChatKit):
 
         try:
             # Set token tracking context for this query
-            self.set_token_tracking_context(query_id, db)
+            self.set_token_tracking_context(query_id, db, chat_id=str(chat_id))
 
             # Set attachment blocks context for tool execution
             self._current_attachment_blocks = attachment_blocks
@@ -648,10 +667,33 @@ class PlaneChatBot(ChatKit):
                         db=db,
                     )
 
+                    # Ensure routing flow step insert cannot stall the stream
+                    try:
+                        flow_step_result = await asyncio.wait_for(
+                            upsert_message_flow_steps(
+                                message_id=query_id,
+                                chat_id=chat_id,
+                                flow_steps=[
+                                    {
+                                        "step_order": step_order,
+                                        "step_type": FlowStepType.ROUTING.value,
+                                        "tool_name": None,
+                                        "content": standardize_flow_step_content(routing_content, FlowStepType.ROUTING),
+                                        "execution_data": {},
+                                    }
+                                ],
+                                db=db,
+                            ),
+                            timeout=2.0,
+                        )
+                    except asyncio.TimeoutError:
+                        log.warning("Timed out recording RAG routing flow step; continuing")
+                        flow_step_result = {"message": "error", "error": "timeout"}
+
                     if flow_step_result["message"] != "success":
-                        final_response = "An unexpected error occurred. Please try again"  # Set final_response for title generation
-                        yield final_response
-                        return
+                        # Log the error but continue - flow step logging is not critical for user experience
+                        log.warning(f"Failed to record RAG routing flow step: {flow_step_result.get("error", "Unknown error")}")
+                        # Continue with response generation - user should still get their answer
 
                     step_order += 1
                 error = None
@@ -1053,6 +1095,7 @@ class PlaneChatBot(ChatKit):
                     workspace_slug,
                     project_id,
                     conversation_history,
+                    enhanced_conversation_history,
                     str(user_id),
                     str(chat_id),
                     query_flow_store,
@@ -1062,6 +1105,7 @@ class PlaneChatBot(ChatKit):
                     db,
                     parsed_query,
                     reasoning_container=reasoning_container,
+                    workspace_in_context=workspace_in_context,
                 ):
                     # Persist clarification as assistant message when encountered
                     if not clarification_saved_multi and chunk.startswith("πspecial clarification blockπ: "):
@@ -1090,6 +1134,12 @@ class PlaneChatBot(ChatKit):
                             pass
                         finally:
                             clarification_saved_multi = True
+
+                    # Handle explicit final response marker (defensive)
+                    if chunk.startswith("__FINAL_RESPONSE__"):
+                        final_response = chunk[len("__FINAL_RESPONSE__") :]
+                        # Do not yield marker chunks to the client
+                        continue
 
                     # Check if this chunk indicates we're starting the final response
                     if chunk == "πspecial reasoning blockπ: 📝 Generating final response...\n\n":
@@ -1136,6 +1186,28 @@ class PlaneChatBot(ChatKit):
 
             # Set rewritten_query equal to parsed_query for backward compatibility
             query_flow_store["rewritten_query"] = parsed_query
+
+        except asyncio.CancelledError:
+            # Client disconnected - save a timeout message before propagating
+            log.warning(f"ChatID: {chat_id} - Stream cancelled by client, persisting timeout message")
+            final_response = "Your request timed out. Please try again."
+            try:
+                await asyncio.shield(
+                    upsert_message(
+                        message_id=response_id,
+                        chat_id=chat_id,
+                        content=final_response,
+                        user_type=UserTypeChoices.ASSISTANT,
+                        parent_id=query_id,
+                        llm_model=switch_llm,
+                        reasoning=reasoning,
+                        db=db,
+                    )
+                )
+            except Exception as e:
+                log.error(f"ChatID: {chat_id} - Failed to persist timeout message: {e}")
+            # Re-raise so the endpoint handler can log and clean up
+            raise
 
         except Exception as e:
             log.error(f"Error processing query: {str(e)}")
@@ -1187,6 +1259,7 @@ class PlaneChatBot(ChatKit):
                             or final_response == "TOOL_ORCHESTRATION_FAILURE"
                             or final_response.startswith("Action execution is not available")
                             or final_response.startswith("Chat ID is required")
+                            or final_response.startswith("Your request timed out")
                         )
 
                         if is_error_response:
@@ -1196,19 +1269,25 @@ class PlaneChatBot(ChatKit):
                             if len(title) > 60:
                                 title = title[:57] + "..."
                             await self.set_chat_title_directly(chat_id, title, db)
-                            # Chat title search index upserted via Celery background task
                         elif final_response:
                             # For successful responses, generate title using LLM
                             chat_history = [parsed_query if parsed_query is not None else query, final_response]
                             # Ensure both elements are strings
                             chat_history = [str(item) for item in chat_history if item is not None]
                             if len(chat_history) >= 2:  # Make sure we have both query and response
-                                await self.generate_title(chat_id, chat_history, db)
+                                title = await self.generate_title(chat_id, chat_history, db)
                                 # Generated chat title search index upserted via Celery background task
                             else:
                                 log.warning(f"ChatID: {chat_id} - Not enough valid content to generate title")
+                                title = (parsed_query if parsed_query is not None else query).strip()
+                                # Truncate if too long (keeping it under ~60 characters for readability)
+                                if len(title) > 60:
+                                    title = title[:57] + "..."
+                                await self.set_chat_title_directly(chat_id, title, db)
                         else:
                             log.warning(f"ChatID: {chat_id} - No final_response available for title generation")
+                        if title:
+                            log.info(f"ChatID: {chat_id} - Generated title: {title}")
                     except Exception as e:
                         log.error(f"Error generating title: {str(e)}")
 

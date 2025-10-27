@@ -112,14 +112,6 @@ def get_table_schemas(tables: List[str]) -> Dict[str, str]:
     return {table: schemas.get(table, f"Schema not found for table: {table}") for table in tables}
 
 
-def get_table_rows(tables: List[str]) -> dict[str, dict[Any, Any]]:
-    """Return sample rows (JSON) for *tables*."""
-
-    table_rows_json = read_text("pi.agents.sql_agent.store", "table-sample-rows.json")
-    rows: dict = json.loads(table_rows_json)
-    return {table: rows.get(table, {}) for table in tables}
-
-
 def format_table_rows(rows: dict[str, dict[Any, Any]]) -> str:
     """Nicely format sample rows for prompt inclusion."""
 
@@ -218,6 +210,9 @@ def generate_cte_query(
     tables_related_to_issues = json.loads(read_text("pi.agents.sql_agent.store.cte", "tables-for-issue-id.json"))
     tables_related_to_pages = json.loads(read_text("pi.agents.sql_agent.store.cte", "tables-for-page-id.json"))
 
+    if not is_valid_uuid(project_id) and not is_valid_uuid(workspace_id):
+        return ""
+
     # Tables requiring seperate queries based on presence of project_id or workspace_id
 
     tables_with_only_workspace_id = {
@@ -227,6 +222,11 @@ def generate_cte_query(
         "initiatives",
         "initiative_comments",
         "initiative_epics",
+        "team_spaces",
+        "team_space_pages",
+        "team_space_members",
+        "team_space_labels",
+        "team_space_comments",
     }
     tables_with_special_handling = {"projects", "users", "workspace_members", "workspaces", "project_states"}
 
@@ -243,11 +243,6 @@ def generate_cte_query(
 
     # Joining tables for certain tables to obtain project_id
     tables_join_for_project_id = {
-        "pages": {
-            "join_table": "project_pages",
-            "join_condition": "pages.id = project_pages.page_id",
-            "project_id_column": "project_pages.project_id",
-        },
         "page_labels": {
             "join_table": "project_pages",
             "join_condition": "page_labels.page_id = project_pages.page_id",
@@ -470,6 +465,46 @@ def generate_cte_query(
     # Handle regular tables (those not requiring special handling)
     for table in regular_tables:
         cte = ""
+        if table == "pages":
+            if is_valid_uuid(project_id):
+                cte = f"""pages AS (
+    SELECT pages.*
+    FROM pages
+    LEFT JOIN project_pages 
+        ON pages.id = project_pages.page_id
+    WHERE (
+        project_pages.project_id = '{project_id}'
+        OR (pages.is_global IS TRUE AND pages.workspace_id = (
+            SELECT workspace_id FROM projects WHERE id = '{project_id}'
+        ))
+    )
+    AND (pages.access = 0 OR (pages.access = 1 AND pages.owned_by_id = '{member_id}'))
+    AND pages.deleted_at IS NULL
+)"""
+            elif is_valid_uuid(workspace_id):
+                cte = f"""pages AS (
+    SELECT pages.*
+    FROM pages
+    LEFT JOIN project_pages 
+        ON pages.id = project_pages.page_id
+    WHERE (
+        pages.is_global IS TRUE
+        OR (
+            project_pages.project_id IN (
+                SELECT project_id
+                FROM project_members
+                WHERE member_id = '{member_id}'
+                AND project_members.is_active IS TRUE
+                AND project_members.deleted_at IS NULL
+            )
+        )
+    )
+    AND pages.workspace_id = '{workspace_id}'
+    AND (pages.access = 0 OR (pages.access = 1 AND pages.owned_by_id = '{member_id}'))
+    AND pages.deleted_at IS NULL
+)"""
+            cte_list.append(cte)
+            continue
 
         if table in tables_join_for_project_id:
             # Tables that require joining to obtain project_id
@@ -825,7 +860,7 @@ def extract_entity_from_api_response(result: Any, entity_type: str) -> Optional[
         }
 
         # Extract type-specific fields
-        if entity_type == "workitem":
+        if entity_type in ["workitem", "epic"]:
             entity_data["project_identifier"] = data.get("project_identifier")
             entity_data["sequence_id"] = data.get("sequence_id")
         elif entity_type == "page":
@@ -886,7 +921,7 @@ async def construct_action_entity_url(
         entity_name = entity_data.get("name", "")
 
         # Construct URLs based on entity type
-        if entity_type == "workitem":
+        if entity_type in ("workitem", "epic"):  # Support epics as workitems for URL construction
             # For workitems: /workspace_slug/browse/PROJECT_IDENTIFIER-SEQUENCE_ID/
             project_identifier = entity_data.get("project_identifier")
             sequence_id = entity_data.get("sequence_id")
@@ -896,7 +931,7 @@ async def construct_action_entity_url(
                 return {
                     "entity_url": url,
                     "entity_name": entity_name,
-                    "entity_type": "workitem",
+                    "entity_type": entity_type,
                     "entity_id": entity_id,
                     "issue_identifier": issue_identifier,
                 }
@@ -916,7 +951,7 @@ async def construct_action_entity_url(
                                 return {
                                     "entity_url": url,
                                     "entity_name": entity_name,
-                                    "entity_type": "workitem",
+                                    "entity_type": entity_type,
                                     "entity_id": entity_id,
                                     "issue_identifier": identifier,
                                 }
@@ -927,7 +962,7 @@ async def construct_action_entity_url(
                 # Fallback to generic format if identifiers not available
                 project_id = entity_data.get("project")
                 url = f"{api_base_url}/{workspace_slug}/projects/{project_id}/issues/{entity_id}/"
-                return {"entity_url": url, "entity_name": entity_name, "entity_type": "workitem", "entity_id": entity_id}
+                return {"entity_url": url, "entity_name": entity_name, "entity_type": entity_type, "entity_id": entity_id}
 
         elif entity_type == "page":
             # For pages: project pages vs workspace pages

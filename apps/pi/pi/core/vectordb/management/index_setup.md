@@ -15,7 +15,7 @@ PUT /_ingest/pipeline/issue-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "name"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"name_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.name != null && ctx.name.trim().length() >= 3"
       }
@@ -25,7 +25,7 @@ PUT /_ingest/pipeline/issue-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "description"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"description_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.description != null && ctx.description.trim().length() >= 3"
       }
@@ -42,7 +42,7 @@ PUT /_ingest/pipeline/issue-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "content"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"content_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.content != null && ctx.content.trim().length() > 0"
       }
@@ -62,7 +62,7 @@ PUT /_ingest/pipeline/pages-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "name"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"name_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.name != null && ctx.name != '' && ctx.name.trim() != ''"
       }
@@ -71,7 +71,7 @@ PUT /_ingest/pipeline/pages-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "description"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"description_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.description != null && ctx.description != '' && ctx.description.trim() != ''"
       }
@@ -91,7 +91,7 @@ PUT /_ingest/pipeline/docs-embedding-pipeline
       "ml_inference": {
         "model_id": "YOUR_ML_MODEL_ID",
         "input_map": [{"input": "content"}],
-        "model_input": "{ \"parameters\": { \"input\": [ \"${input_map.input}\" ] } }",
+        "model_input": "{ \"parameters\": { \"texts\": [ \"${input_map.input}\" ] } }",
         "output_map": [{"content_semantic": "$.inference_results[0].output[0].data"}],
         "if": "ctx.content != null && ctx.content != '' && ctx.content.trim() != ''"
       }

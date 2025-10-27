@@ -1,6 +1,11 @@
 # pi/app/api/v1/endpoints/mobile/chat.py
+import asyncio
+import contextlib
+import json
 import uuid
+from typing import Coroutine
 from typing import Optional
+from typing import cast
 
 from fastapi import APIRouter
 from fastapi import Depends
@@ -33,6 +38,7 @@ from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
 from pi.services.chat.chat import PlaneChatBot
+from pi.services.chat.helpers.tool_utils import format_clarification_as_text
 from pi.services.chat.search import ChatSearchService
 from pi.services.chat.templates import tiles_factory
 from pi.services.retrievers.pg_store import favorite_chat
@@ -80,38 +86,89 @@ async def get_answer(
         token_id = None
         try:
             async with get_streaming_db_session() as stream_db:
-                async for chunk in chatbot.process_query_stream(data, stream_db):
-                    if chunk.startswith("πspecial reasoning blockπ: "):
-                        # Format reasoning as proper SSE
-                        reasoning_content = chunk.replace("πspecial reasoning blockπ: ", "")
-                        yield f"event: reasoning\ndata: {reasoning_content}\n\n"
-                    elif chunk.startswith("πspecial actions blockπ: "):
-                        # Extract the actions data and send as separate actions event
-                        actions_content = chunk.replace("πspecial actions blockπ: ", "")
-                        try:
-                            # Parse the JSON content to validate it
-                            import json
+                # Heartbeat mechanism that only emits after 10s of inactivity
+                heartbeat_stop = asyncio.Event()
+                heartbeat_task: Optional[asyncio.Task[None]] = None
 
-                            actions_data = json.loads(actions_content)
-                            yield f"event: actions\ndata: {json.dumps(actions_data)}\n\n"
-                        except json.JSONDecodeError:
-                            # If JSON parsing fails, fall back to delta event
-                            log.warning(f"Failed to parse actions JSON: {actions_content}")
-                            yield f"event: delta\ndata: {chunk}\n\n"
-                    else:
-                        yield f"event: delta\ndata: {chunk}\n\n"
+                async def heartbeat_emitter() -> None:
+                    """Sleep for 10s, then complete (heartbeat fires)."""
+                    with contextlib.suppress(asyncio.CancelledError):
+                        await asyncio.sleep(10)
 
-            # Extract token_id from data.context if available for background task
-            if hasattr(data, "context") and isinstance(data.context, dict):
-                token_id = data.context.get("token_id")
+                base_iter = chatbot.process_query_stream(data, stream_db)
+                next_chunk_task: asyncio.Task[str] = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
 
-            # Extract token_id from data.context if available for background task
+                # Start initial heartbeat timer
+                heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                try:
+                    while True:
+                        # Race the next chunk against the heartbeat timer
+                        done, _pending = await asyncio.wait({next_chunk_task, heartbeat_task}, return_when=asyncio.FIRST_COMPLETED)
+
+                        # If heartbeat timer completed first, emit heartbeat and restart timer
+                        if heartbeat_task in done and not heartbeat_stop.is_set():
+                            yield "event: reasoning\ndata: ⏳ Still working...\n\n"
+                            # Restart heartbeat timer
+                            heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                        if next_chunk_task in done:
+                            try:
+                                chunk = next_chunk_task.result()
+                            except StopAsyncIteration:
+                                break
+                            except Exception as _e:
+                                log.error(f"Error reading mobile stream chunk: {_e!s}")
+                                break
+
+                            # Cancel and restart heartbeat timer since we got a chunk (activity detected)
+                            if heartbeat_task and not heartbeat_task.done():
+                                heartbeat_task.cancel()
+                                with contextlib.suppress(asyncio.CancelledError):
+                                    await heartbeat_task
+                            heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                            if chunk.startswith("πspecial reasoning blockπ: "):
+                                reasoning_content = chunk.replace("πspecial reasoning blockπ: ", "")
+                                yield f"event: reasoning\ndata: {reasoning_content}\n\n"
+                            elif chunk.startswith("πspecial clarification blockπ: "):
+                                clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
+                                try:
+                                    clarification_data = json.loads(clarification_content)
+                                    formatted_text = format_clarification_as_text(clarification_data)
+                                    yield f"event: delta\ndata: {formatted_text}\n\n"
+                                except json.JSONDecodeError:
+                                    log.warning(f"Failed to parse clarification JSON: {clarification_content}")
+                                    formatted_text = "I'm sorry, I can't understand your request in your workspace context. Can you be more specific?"
+                                    yield f"event: delta\ndata: {formatted_text}\n\n"
+                            elif chunk.startswith("πspecial actions blockπ: "):
+                                actions_content = chunk.replace("πspecial actions blockπ: ", "")
+                                try:
+                                    actions_data = json.loads(actions_content)
+                                    yield f"event: actions\ndata: {json.dumps(actions_data)}\n\n"
+                                except json.JSONDecodeError:
+                                    log.warning(f"Failed to parse actions JSON: {actions_content}")
+                                    yield f"event: delta\ndata: {chunk}\n\n"
+                            else:
+                                yield f"event: delta\ndata: {chunk}\n\n"
+
+                            # Prepare next iteration
+                            next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                finally:
+                    heartbeat_stop.set()
+                    if heartbeat_task and not heartbeat_task.done():
+                        heartbeat_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError):
+                            await heartbeat_task
+
+            # Extract token_id from data.context if available for background task (Fix #2: Remove duplicate)
             if hasattr(data, "context") and isinstance(data.context, dict):
                 token_id = data.context.get("token_id")
 
         except Exception as e:
             log.error(f"Error processing chat request: {e!s}")
-            yield "event: error\ndata: An unexpected error occurred. Please try again"
+            # Fix #3: Add missing double newline for SSE spec compliance
+            yield "event: error\ndata: An unexpected error occurred. Please try again\n\n"
         finally:
             # Schedule Celery task to upsert chat search index after streaming completes
             if token_id:

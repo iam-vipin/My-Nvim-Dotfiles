@@ -43,6 +43,20 @@ PRICING_DATA = [
         "cached_text_input_price": 0.025,
     },
     {
+        "id": "f1e2d3c4-b5a6-9780-1234-567890abcdef",
+        "llm_model_id": llm_id_map["gpt-5-standard"],
+        "text_input_price": 10.00,
+        "text_output_price": 30.00,
+        "cached_text_input_price": 5.00,
+    },
+    {
+        "id": "a2b3c4d5-e6f7-8901-2345-6789abcdef01",
+        "llm_model_id": llm_id_map["gpt-5-fast"],
+        "text_input_price": 8.00,
+        "text_output_price": 24.00,
+        "cached_text_input_price": 4.00,
+    },
+    {
         "id": "7d9e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
         "llm_model_id": llm_id_map["claude-sonnet-4"],
         "text_input_price": 3.00,

@@ -97,6 +97,33 @@ Plane Context:
             - "Created by me" = Issues where created_by_id matches the user
             - When both creation and ownership appear ("my issues that I created"), use BOTH
             - JOIN with issue_assignees for ownership AND check created_by_id for creation
+   - **State Buckets and Default Incomplete Filter:**
+      - States are configurable but map to five buckets: backlog, unstarted, started, completed, cancelled.
+      - When the user's intent implies items that should be worked on now (e.g., "to add to the current cycle", "missed to add", "should be in this cycle", "to pick up", "pending", "open", "to-do"), and the user has not explicitly asked for completed/closed items, you MUST default to filtering for uncompleted states only.
+      - Default uncompleted filter:
+         - Include states where the bucket/group is in (backlog, unstarted, started)
+         - Exclude states where the bucket/group is in (completed, cancelled)
+      - Implementation guidance:
+         - Prefer joining the states table and filtering by its canonical bucket/group column if present in the provided schema (e.g., states.group IN ('backlog','unstarted','started')).
+         - If the schema does not expose a bucket/group column, fall back to case-insensitive name matching using the same buckets (e.g., states.name ILIKE 'backlog%'). Use only columns that exist in the provided schema.
+   - **Priority Canonicalization and Ordering:**
+      - Canonical priority values: urgent, high, medium, low (case-insensitive). Do NOT invent values like "highest".
+      - Synonym mapping for user phrasing:
+         - "highest", "critical", "blocker", "p0" → urgent
+         - "very high", "p1" → high
+         - "normal", "standard" → medium
+         - "lowest" → low
+      - Normalize comparisons to these canonical values when filtering or ordering by priority.
+      - Preferred order (most → least important): urgent, high, medium, low. Implement with CASE on lower(priority) or use a canonical priority field if present in the provided schema.
+      - Example ordering pattern (adapt column names to the provided schema):
+        CASE lower(issues.priority)
+          WHEN 'urgent' THEN 1
+          WHEN 'high' THEN 2
+          WHEN 'medium' THEN 3
+          WHEN 'low' THEN 4
+          ELSE 5
+        END ASC
+      - Interpreting "highest/top priority": If the user asks for the "highest" or "top" priority item and does NOT explicitly say "urgent", do NOT filter to urgent. Instead, order by the canonical priority ranking and return the top result(s). Only add an equality filter when the user explicitly requests a specific priority (e.g., "urgent").
    - **Date and Time:**
       - All datetime columns in the database are stored as timestamps.
       - Use CURRENT_TIMESTAMP instead of CURRENT_DATE when retrieving the current date and time.
@@ -177,6 +204,16 @@ Additional Instructions Related to Issue Ownership:
    - "My backlog" = Issues in backlog state where user is an assignee. Use issue_assignees for this.
    - "Created by me" = Issues where created_by_id matches the user. Use issues table for this.
    - When both creation and ownership appear ("my issues that I created"), use BOTH issue_assignees and issues.
+
+Additional Instructions Related to Incomplete/Active Work:
+- For queries that imply items that should be worked on (e.g., "to add to the current cycle", "missed to add", "to pick up", "open", "pending", "not done"), prioritize uncompleted states.
+- Treat the states table as Highly Relevant and include it in selections when the query does not specify states but implies active/to-do/pending items.
+- Default uncompleted buckets/groups: backlog, unstarted, started. Exclude completed/cancelled unless explicitly requested by the user.
+
+Additional Instructions Related to Priority Canonicalization:
+- Canonical priority values are: urgent, high, medium, low (case-insensitive). No other priority names should be assumed.
+- Map common synonyms to canonical values for interpretation: "highest"/"critical"/"blocker"/"p0" → urgent; "very high"/"p1" → high; "normal"/"standard" → medium; "lowest" → low.
+- Consider the priority attribute on the issues table the canonical source when selecting tables for priority-driven queries.
 
 Important requirements:
 - Include ONLY tables that exist in the provided table_descriptions.

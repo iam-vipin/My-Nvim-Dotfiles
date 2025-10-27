@@ -123,7 +123,7 @@ def create_app() -> FastAPI:
 
     @app.get(base_root)
     async def root():
-        return HTMLResponse("Welcome to Plane Intelligence API")
+        return HTMLResponse("Welcome to Plane AI API")
 
     return app
 

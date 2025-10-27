@@ -1,3 +1,5 @@
+import time
+
 from langchain.schema import HumanMessage
 from langchain.schema import SystemMessage
 
@@ -74,14 +76,14 @@ def distill_result(resp_sem: list, resp_text: list):
     max_retries=1,
     log_context="[DUPES]",
 )
-async def identify_duplicates_with_llm(query_title: str, query_description: str, candidates: list) -> list:
+async def identify_duplicates_with_llm(query_title: str, query_description: str, candidates: list) -> tuple[list, dict]:
     """Use GPT-4.1 nano to identify actual duplicates from similarity candidates."""
     if not candidates:
-        return []
+        return [], {}
 
-    # Create the dupes LLM with structured output
+    # Create the dupes LLM with structured output (include_raw=True to preserve token usage)
     dupes_llm = get_dupes_llm()
-    dupes_structured_llm = dupes_llm.with_structured_output(DuplicateIdentificationResponse)  # type: ignore[arg-type]
+    dupes_structured_llm = dupes_llm.with_structured_output(DuplicateIdentificationResponse, include_raw=True)  # type: ignore[arg-type]
 
     # Format candidates for LLM input as a clean numbered list
     candidates_text = ""
@@ -99,22 +101,28 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
     messages = [SystemMessage(content=dupes_system_prompt), HumanMessage(content=human_prompt)]
 
     # Get LLM response
+    dupes_llm_start = time.time()
+    log.info("Starting dupes LLM call")
     response = dupes_structured_llm.invoke(messages)
+    dupes_llm_elapsed = time.time() - dupes_llm_start
+    log.info(f"Dupes LLM call completed in {dupes_llm_elapsed:.2f}s (DUPES)")
 
     if not response:
         log.warning("No response from LLM for duplicate detection")
-        return []
+        return [], {"llm_response": None, "llm_duration_ms": dupes_llm_elapsed * 1000}
 
-    # Handle response as either dict or DuplicateIdentificationResponse object
-    if isinstance(response, dict):
-        duplicate_serial_numbers = response.get("duplicates", [])
+    # With include_raw=True, response is dict with "raw" (has tokens) and "parsed" (structured data)
+    raw_response = response.get("raw") if isinstance(response, dict) else None
+    parsed_response = response.get("parsed") if isinstance(response, dict) else response
+
+    # Handle parsed response as either dict or DuplicateIdentificationResponse object
+    if isinstance(parsed_response, dict):
+        duplicate_serial_numbers = parsed_response.get("duplicates", [])
     else:
-        duplicate_serial_numbers = getattr(response, "duplicates", [])
+        duplicate_serial_numbers = getattr(parsed_response, "duplicates", [])
 
     if not duplicate_serial_numbers:
-        return []
-
-    log.info(f"LLM identified {len(duplicate_serial_numbers)} duplicates from {len(candidates)} candidates")
+        return [], {"llm_response": raw_response, "llm_duration_ms": dupes_llm_elapsed * 1000}
 
     # Map serial numbers back to actual candidates
     filtered_duplicates = []
@@ -126,12 +134,37 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
         else:
             log.warning(f"Invalid serial number {serial_num} returned by LLM (out of range)")
 
-    return filtered_duplicates
+    return filtered_duplicates, {"llm_response": raw_response, "llm_duration_ms": dupes_llm_elapsed * 1000}
 
 
 async def get_dupes(data: DupeSearchRequest):
     """Searches for potential duplicate issues based on title and description similarity."""
     dupe_output_fields = ["id", "type_id", "project_id", "sequence_id", "name", "priority", "state_id", "created_by_id", "is_epic"]
+
+    # Initialize tracking data (convert UUIDs to strings for Celery JSON serialization)
+    total_start = time.time()
+    tracking_data = {
+        "workspace_id": str(data.workspace_id),  # Convert UUID to string
+        "project_id": str(data.project_id) if data.project_id else None,  # Convert UUID to string
+        "issue_id": str(data.issue_id) if data.issue_id else None,  # Convert UUID to string
+        "user_id": str(data.user_id) if data.user_id else None,  # Convert UUID to string
+        "workspace_slug": getattr(data, "workspace_slug", None),
+        "query_title": data.title,
+        "query_description_length": len(data.description_stripped) if data.description_stripped else None,
+        "input_workitems": None,  # Will be populated with candidates_for_llm
+        "output_duplicates": None,  # Will be populated with final results
+        "vector_candidates_count": 0,
+        "vector_search_duration_ms": 0.0,
+        "llm_candidates_count": 0,
+        "llm_identified_dupes_count": 0,
+        "llm_duration_ms": 0.0,
+        "llm_success": True,
+        "llm_error": None,
+        "token_usage": None,  # Will be populated with extracted token usage
+        "model_key": None,
+        "total_duration_ms": 0.0,
+    }
+
     try:
         workspace_id = str(data.workspace_id)
         project_id = str(data.project_id) if data.project_id else None
@@ -142,6 +175,7 @@ async def get_dupes(data: DupeSearchRequest):
         query_description = data.description_stripped
 
         # Get initial candidates from vector similarity search
+        vector_start = time.time()
         resp_sem = await vector_db.async_issue_search_semantic(
             query_title,
             query_description,
@@ -152,29 +186,90 @@ async def get_dupes(data: DupeSearchRequest):
             threshold=semantic_cutoff,
             output_fields=dupe_output_fields,
         )
+        vector_duration = time.time() - vector_start
+        tracking_data["vector_search_duration_ms"] = vector_duration * 1000
 
         # Process initial results
         initial_candidates = distill_result(resp_sem, [])
+        tracking_data["vector_candidates_count"] = len(initial_candidates)
+
+        # Guard: exclude the queried work-item itself if issue_id is provided
+        if issue_id:
+            initial_candidates = [c for c in initial_candidates if str(c.get("id")) != issue_id]
 
         # Limit to top 10 candidates for LLM processing as per user requirements
         candidates_for_llm = initial_candidates[:10]
+        tracking_data["llm_candidates_count"] = len(candidates_for_llm)
+        tracking_data["input_workitems"] = candidates_for_llm  # Store input work items
 
         if not candidates_for_llm:
+            tracking_data["total_duration_ms"] = (time.time() - total_start) * 1000
+            tracking_data["output_duplicates"] = []  # Empty result
+            # Schedule background tracking
+            from pi.celery_app import track_dupes_operation
+
+            track_dupes_operation.delay(tracking_data)
             return {"dupes": []}
 
         # Use LLM to identify actual duplicates from candidates
-        llm_identified_dupes = await identify_duplicates_with_llm(query_title, query_description or "", candidates_for_llm)
+        llm_identified_dupes, llm_metadata = await identify_duplicates_with_llm(query_title, query_description or "", candidates_for_llm)
+
+        # Update tracking data with LLM results
+        tracking_data["llm_duration_ms"] = llm_metadata.get("llm_duration_ms", 0.0)
+        tracking_data["llm_identified_dupes_count"] = len(llm_identified_dupes)
+
+        # Extract token usage in-process (before Celery) to avoid serialization issues
+        llm_response = llm_metadata.get("llm_response")
+        token_usage = None
+        if llm_response:
+            try:
+                # Import DupesTracker just for token extraction
+                from pi.services.dupes.dupes_tracker import DupesTracker
+
+                # Create a temporary tracker to use its extraction method
+                temp_tracker = type("TempTracker", (), {"extract_token_usage": DupesTracker.extract_token_usage})()
+                token_usage = temp_tracker.extract_token_usage(llm_response)
+                log.info(f"Extracted token usage: {token_usage}")
+            except Exception as e:
+                log.warning(f"Failed to extract token usage from LLM response: {e}")
+
+        tracking_data["token_usage"] = token_usage  # Pass extracted tokens, not the full response
+
+        # Get model key for token tracking
+        dupes_llm = get_dupes_llm()
+        tracking_data["model_key"] = getattr(dupes_llm, "model_name", "gpt-4o-mini")
 
         log.info(f"LLM identified {len(llm_identified_dupes)} duplicates from {len(candidates_for_llm)} candidates")
 
         # Handle error case where decorator returns failure marker
         if llm_identified_dupes == "LLM_FAILURE":
             llm_identified_dupes = candidates_for_llm  # Fall back to all candidates as before
+            tracking_data["llm_success"] = False
+            tracking_data["llm_error"] = "LLM_FAILURE fallback triggered"
+            tracking_data["llm_identified_dupes_count"] = len(llm_identified_dupes)
+
+        tracking_data["output_duplicates"] = llm_identified_dupes  # Store final output
+        tracking_data["total_duration_ms"] = (time.time() - total_start) * 1000
+
+        # Schedule background tracking
+        from pi.celery_app import track_dupes_operation
+
+        track_dupes_operation.delay(tracking_data)
 
         return {"dupes": llm_identified_dupes}
 
     except Exception as e:
         log.error(f"Unexpected error: {e!s}")
+        tracking_data["llm_success"] = False
+        tracking_data["llm_error"] = str(e)
+        tracking_data["output_duplicates"] = []  # Empty result on error
+        tracking_data["total_duration_ms"] = (time.time() - total_start) * 1000
+
+        # Schedule background tracking even on error
+        from pi.celery_app import track_dupes_operation
+
+        track_dupes_operation.delay(tracking_data)
+
         # Return empty results on error instead of raising
         return {"dupes": []}
 

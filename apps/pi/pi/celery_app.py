@@ -1,5 +1,5 @@
 """
-Celery application configuration and task definitions for Plane Intelligence.
+Celery application configuration and task definitions for Plane AI.
 
 Database Connection Management:
 - Uses shared async engine per worker process to eliminate connection churn
@@ -19,6 +19,7 @@ from typing import Dict
 from uuid import UUID
 
 from celery import Celery
+from celery import states
 from celery.signals import worker_process_init
 from celery.signals import worker_process_shutdown
 from celery.signals import worker_ready
@@ -35,6 +36,7 @@ from sqlmodel import select
 from pi import logger
 from pi.app.models.chat import Chat
 from pi.app.models.message import Message
+from pi.vectorizer.docs import process_repo_contents
 
 log = logger.getChild(__name__)
 
@@ -45,6 +47,7 @@ from pi import settings
 from pi.app.models.workspace_vectorization import VectorizationStatus
 from pi.app.models.workspace_vectorization import WorkspaceVectorization
 from pi.core.vectordb.client import VectorStore
+from pi.services.dupes.dupes_tracker import DupesTracker
 from pi.services.retrievers.vdb_store.chat_search import mark_chat_deleted
 from pi.services.retrievers.vdb_store.chat_search import process_chat_and_messages_from_token
 from pi.services.retrievers.vdb_store.chat_search import update_chat_title_and_propagate
@@ -431,21 +434,22 @@ async def get_pro_business_workspaces_needing_feed() -> list[str]:
         return []
 
 
-async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int]:
+async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int | list[str] | str | None]:
     """
-    Disable live sync for workspaces that are no longer Pro/Business.
+    Disable live sync and remove vector data for workspaces that are no longer Pro/Business.
 
     Approach: Start from our DB (workspaces with live_sync_enabled=True)
-    and check if they're now FREE plan.
+    and check if they're now FREE plan. For downgraded workspaces, queue
+    a removal task to clear their vector embeddings.
 
     Returns:
-        Dictionary with counts of processed workspaces
+        Dictionary with counts of processed workspaces and task info
     """
     try:
         from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_plans_batch
 
-        disabled_count = 0
         checked_count = 0
+        downgraded_workspaces = []
 
         with db_session() as session:
             # Get all workspaces that currently have live sync enabled (latest records only)
@@ -472,7 +476,7 @@ async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int]:
 
             if not workspaces_with_live_sync:
                 log.debug("No workspaces with live sync enabled found")
-                return {"checked": 0, "disabled": 0}
+                return {"checked": 0, "downgraded": 0, "task_id": None}
 
             log.debug("Found %d workspaces with live sync enabled", len(workspaces_with_live_sync))
 
@@ -485,24 +489,32 @@ async def disable_live_sync_for_non_pro_workspaces() -> dict[str, int]:
                 checked_count += 1
                 current_plan = workspace_plans.get(workspace.workspace_id)
 
-                # If workspace is now FREE (or plan not found), disable live sync
+                # If workspace is now FREE (or plan not found), mark for removal
                 if current_plan == "FREE" or current_plan is None:
-                    workspace.live_sync_enabled = False
-                    disabled_count += 1
-                    log.info("Disabled live sync for workspace %s (current plan: %s)", workspace.workspace_id, current_plan or "UNKNOWN")
+                    downgraded_workspaces.append(workspace.workspace_id)
+                    log.info("Workspace %s downgraded to FREE - will remove vector data", workspace.workspace_id)
 
-            if disabled_count > 0:
-                session.commit()
-                log.info("Disabled live sync for %d workspaces that are no longer Pro/Business", disabled_count)
+        # Queue removal task for downgraded workspaces
+        task_id = None
+        if downgraded_workspaces:
+            log.info("Queueing vector data removal for %d downgraded workspaces", len(downgraded_workspaces))
+            task = celery_app.send_task(
+                "pi.celery_app.remove_vector_data_task",
+                args=[downgraded_workspaces, None],  # None = remove from both issues and pages
+            )
+            task_id = task.id
+            log.info("Queued removal task %s for %d downgraded workspaces", task_id, len(downgraded_workspaces))
 
         return {
             "checked": checked_count,
-            "disabled": disabled_count,
+            "downgraded": len(downgraded_workspaces),
+            "downgraded_workspaces": downgraded_workspaces,
+            "task_id": task_id,
         }
 
     except Exception as exc:
-        log.error("Failed to disable live sync for non-Pro workspaces: %s", exc)
-        return {"checked": 0, "disabled": 0}
+        log.error("Failed to handle non-Pro workspaces: %s", exc)
+        return {"checked": 0, "downgraded": 0, "task_id": None}
 
 
 async def find_stale_workspaces_needing_initial_feed() -> list[str]:
@@ -778,7 +790,7 @@ async def log_pool_stats() -> None:
 
     try:
         # Log basic info about the engine and pool configuration
-        log.info(
+        log.debug(
             "Connection pool status - configured_size: %d, max_overflow: %d, timeout: %d",
             settings.database.CELERY_POOL_SIZE,
             settings.database.CELERY_POOL_MAX_OVERFLOW,
@@ -866,15 +878,15 @@ def workspace_plan_sync(self):
     incomplete vectorizations that get stuck in the system.
 
     This task performs three operations:
-    1. Disables live sync for workspaces downgraded from Pro/Business to FREE
+    1. Removes vector data and disables live sync for workspaces downgraded from Pro/Business to FREE
     2. Re-feeds stale workspaces that have >50 missing vectors (stuck incomplete jobs)
     3. Creates initial vectorization jobs for new Pro/Business workspaces
 
     Environment variable: CELERY_WORKSPACE_PLAN_SYNC_ENABLED (default: enabled)
     """
     try:
-        # Step 1: Handle non-Pro workspaces (disable live sync)
-        cancellation_result = asyncio.run(disable_live_sync_for_non_pro_workspaces())
+        # Step 1: Handle non-Pro workspaces (remove vector data and disable live sync)
+        downgrade_result = asyncio.run(disable_live_sync_for_non_pro_workspaces())
 
         # Step 2: Handle stale workspaces (re-feed those with >50 missing vectors)
         stale_result = asyncio.run(handle_stale_workspaces())
@@ -891,12 +903,14 @@ def workspace_plan_sync(self):
                     "skipped": 0,
                     "errors": [],
                 },
-                "cancellation_processing": cancellation_result,
+                "downgrade_processing": downgrade_result,
                 "stale_processing": stale_result,
             }
 
             # Log if any significant activity happened
-            if cancellation_result.get("disabled", 0) > 0 or stale_result.get("re_fed", 0) > 0:
+            downgraded_count = downgrade_result.get("downgraded", 0)
+            re_fed_count = stale_result.get("re_fed", 0)
+            if (isinstance(downgraded_count, int) and downgraded_count > 0) or (isinstance(re_fed_count, int) and re_fed_count > 0):
                 log.info("Workspace plan sync completed: %s", result)
             else:
                 log.debug("Workspace plan sync completed: %s", result)
@@ -970,12 +984,14 @@ def workspace_plan_sync(self):
                 "skipped": skipped,
                 "errors": errors,
             },
-            "cancellation_processing": cancellation_result,
+            "downgrade_processing": downgrade_result,
             "stale_processing": stale_result,
         }
 
         # Log if any significant activity happened
-        if dispatched > 0 or cancellation_result.get("disabled", 0) > 0 or stale_result.get("re_fed", 0) > 0:
+        downgraded_count = downgrade_result.get("downgraded", 0)
+        re_fed_count = stale_result.get("re_fed", 0)
+        if dispatched > 0 or (isinstance(downgraded_count, int) and downgraded_count > 0) or (isinstance(re_fed_count, int) and re_fed_count > 0):
             log.info("Workspace plan sync completed: %s", result)
         else:
             log.debug("Workspace plan sync completed: %s", result)
@@ -1529,6 +1545,44 @@ def upsert_chat_search_index_task(self, token_id: str):
         raise
 
 
+@celery_app.task(bind=True, name="pi.celery_app.track_dupes_operation")
+def track_dupes_operation(self, tracking_data: dict):
+    """
+    Celery task to track dupes operations and LLM token usage in the background.
+
+    Args:
+        tracking_data: Dictionary containing all tracking information:
+            - workspace_id: UUID string of the workspace
+            - project_id: Optional UUID string of the project
+            - issue_id: Optional UUID string of the issue
+            - user_id: Optional UUID string of the user
+            - workspace_slug: Optional workspace slug
+            - query_title: Optional query title
+            - query_description_length: Optional description length
+            - input_workitems: List of work items sent to LLM (id, title, description)
+            - output_duplicates: List of identified duplicates
+            - vector_candidates_count: Number of vector search candidates
+            - vector_search_duration_ms: Vector search duration
+            - llm_candidates_count: Number of candidates sent to LLM
+            - llm_identified_dupes_count: Number of duplicates identified by LLM
+            - llm_duration_ms: LLM processing duration
+            - llm_success: Whether LLM call was successful
+            - llm_error: Optional error message
+            - token_usage: Pre-extracted token usage dict (input_tokens, output_tokens, cached_input_tokens)
+            - model_key: Optional model key for token tracking
+            - total_duration_ms: Total operation duration
+    """
+    try:
+        # Use synchronous db_session (no async needed)
+        with db_session() as session:
+            tracker = DupesTracker(session)
+            tracker.track_dupes_operation(**tracking_data)
+            # Note: Success logging happens inside tracker.track_dupes_operation()
+    except Exception as e:
+        log.error(f"Failed to track dupes operation: {e}", exc_info=True)
+        # Don't re-raise to avoid failing the main dupes operation
+
+
 @celery_app.task(bind=True, name="pi.celery_app.upsert_chat_search_index_deletion_task")
 def upsert_chat_search_index_deletion_task(self, chat_id: str):
     """
@@ -1571,6 +1625,460 @@ def upsert_chat_search_index_title_task(self, chat_id: str, title: str):
         return result
     except Exception as exc:
         log.error(f"Chat title update task failed for chat_id {chat_id}: {exc}")
+        raise
+
+
+@celery_app.task(bind=True, name="pi.celery_app.vectorize_docs_task")
+def vectorize_docs_task(self, repo_names: list[str] | None = None):
+    """
+    Background task to vectorize documentation repositories.
+
+    Tracks detailed progress at both repository and document levels with
+    real-time updates during processing.
+
+    Args:
+        repo_names: Optional list of repository names.
+                    If None, defaults to settings.vector_db.DOCS_REPO_NAME
+
+    Returns:
+        Dictionary summary with vectorization results
+    """
+    log.info("Starting docs vectorization task for repositories: %s", repo_names or "default repos")
+
+    async def _vectorize_docs():
+        # Determine repositories to process
+        if repo_names:
+            repos = [repo.strip() for repo in repo_names if repo.strip()]
+        else:
+            repos = [repo.strip() for repo in settings.vector_db.DOCS_REPO_NAME.split(",") if repo.strip()]
+
+        if not repos:
+            log.error("No repositories specified for docs vectorization")
+            self.update_state(state="FAILURE", meta={"error": "No repositories specified"})
+            return {"status": "error", "message": "No repositories specified"}
+
+        log.info("Processing %d documentation repositories: %s", len(repos), repos)
+
+        # Initialize counters
+        total_ok = 0
+        total_failed = 0
+        results = []
+
+        async with VectorStore() as vdb:
+            # Process each repository
+            for i, repo in enumerate(repos, 1):
+                repo_result: dict[str, str | int] = {"repo": repo, "ok": 0, "failed": 0}
+
+                # Calculate overall progress percentage
+                overall_progress = int(((i - 1) / len(repos)) * 100)
+
+                try:
+                    # Update: Starting repository
+                    self.update_state(
+                        state="PROGRESS",
+                        meta={
+                            "current_repo_index": i,
+                            "total_repos": len(repos),
+                            "overall_progress_percent": overall_progress,
+                            "current_repo": repo,
+                            "status": f"Starting repository {i}/{len(repos)}: {repo}",
+                            "phase": "fetching_docs",
+                            "aggregate": {
+                                "total_ok": total_ok,
+                                "total_failed": total_failed,
+                            },
+                        },
+                    )
+
+                    log.info("Repo %d/%d: Fetching documents from %s", i, len(repos), repo)
+                    docs = process_repo_contents(repo)
+
+                    if not docs:
+                        log.warning("No documents found in repository: %s", repo)
+
+                        # Update: Empty repository
+                        self.update_state(
+                            state="PROGRESS",
+                            meta={
+                                "current_repo_index": i,
+                                "total_repos": len(repos),
+                                "overall_progress_percent": overall_progress,
+                                "current_repo": repo,
+                                "status": f"Repository {i}/{len(repos)}: {repo} (no documents found)",
+                                "phase": "skipped",
+                                "aggregate": {
+                                    "total_ok": total_ok,
+                                    "total_failed": total_failed,
+                                },
+                            },
+                        )
+
+                        results.append(repo_result)
+                        continue
+
+                    total_docs = len(docs)
+                    log.info("Repo %s: Found %d documents to vectorize", repo, total_docs)
+
+                    # Update: Starting vectorization
+                    self.update_state(
+                        state="PROGRESS",
+                        meta={
+                            "current_repo_index": i,
+                            "total_repos": len(repos),
+                            "overall_progress_percent": overall_progress,
+                            "current_repo": repo,
+                            "status": f"Repository {i}/{len(repos)}: Vectorizing {total_docs} documents from {repo}",
+                            "phase": "vectorizing",
+                            "repo_progress": {
+                                "current_docs": 0,
+                                "total_docs": total_docs,
+                                "repo_percent": 0,
+                            },
+                            "aggregate": {
+                                "total_ok": total_ok,
+                                "total_failed": total_failed,
+                            },
+                        },
+                    )
+
+                    # Process documents in batches
+                    batch_size = 10
+                    for j in range(0, total_docs, batch_size):
+                        batch = docs[j : j + batch_size]
+
+                        # Vectorize batch
+                        ok, failed_docs = await vdb.async_feed(settings.vector_db.DOCS_INDEX, batch)
+
+                        # Update counters
+                        repo_result["ok"] = int(repo_result["ok"]) + ok
+                        repo_result["failed"] = int(repo_result["failed"]) + len(failed_docs)
+                        total_ok += ok
+                        total_failed += len(failed_docs)
+
+                        # Calculate progress
+                        docs_processed = min(j + len(batch), total_docs)
+                        repo_percent = int((docs_processed / total_docs) * 100)
+
+                        # Calculate granular overall progress
+                        _ = 1 / len(repos)
+                        repo_completion = docs_processed / total_docs
+                        granular_progress = int(((i - 1 + repo_completion) / len(repos)) * 100)
+
+                        # Update: Batch progress
+                        self.update_state(
+                            state="PROGRESS",
+                            meta={
+                                "current_repo_index": i,
+                                "total_repos": len(repos),
+                                "overall_progress_percent": granular_progress,
+                                "current_repo": repo,
+                                "status": f"Repository {i}/{len(repos)} ({repo}): {repo_percent}% complete ({docs_processed}/{total_docs} docs)",
+                                "phase": "vectorizing",
+                                "repo_progress": {
+                                    "current_docs": docs_processed,
+                                    "total_docs": total_docs,
+                                    "repo_percent": repo_percent,
+                                },
+                                "aggregate": {
+                                    "total_ok": total_ok,
+                                    "total_failed": total_failed,
+                                },
+                            },
+                        )
+
+                        log.info(
+                            "Repo %s: %d/%d docs vectorized | Batch: %d ok, %d failed | Total: %d ok, %d failed",
+                            repo,
+                            docs_processed,
+                            total_docs,
+                            ok,
+                            len(failed_docs),
+                            repo_result["ok"],
+                            repo_result["failed"],
+                        )
+
+                    log.info(
+                        "Repo %s completed: %d/%d successful, %d/%d failed", repo, repo_result["ok"], total_docs, repo_result["failed"], total_docs
+                    )
+
+                except Exception as exc:
+                    log.error("Error processing repo %s: %s", repo, exc, exc_info=True)
+                    repo_result["failed"] = int(repo_result.get("failed", 0)) + 1
+                    total_failed += 1
+
+                    # Update: Error state
+                    self.update_state(
+                        state="PROGRESS",
+                        meta={
+                            "current_repo_index": i,
+                            "total_repos": len(repos),
+                            "overall_progress_percent": overall_progress,
+                            "current_repo": repo,
+                            "status": f"Repository {i}/{len(repos)}: Error processing {repo}",
+                            "phase": "error",
+                            "error": str(exc),
+                            "aggregate": {
+                                "total_ok": total_ok,
+                                "total_failed": total_failed,
+                            },
+                        },
+                    )
+
+                results.append(repo_result)
+
+        # All repos completed - final update
+        log.info("Docs vectorization complete — %d ok, %d failed across %d repos", total_ok, total_failed, len(repos))
+
+        self.update_state(
+            state="PROGRESS",
+            meta={
+                "current_repo_index": len(repos),
+                "total_repos": len(repos),
+                "overall_progress_percent": 100,
+                "status": f"Completed all {len(repos)} repositories",
+                "phase": "completed",
+                "aggregate": {
+                    "total_ok": total_ok,
+                    "total_failed": total_failed,
+                },
+            },
+        )
+
+        return {
+            "status": "completed",
+            "total_ok": total_ok,
+            "total_failed": total_failed,
+            "total_docs": total_ok + total_failed,
+            "repositories_processed": len(repos),
+            "results": results,
+            "message": f"Successfully processed {len(repos)} repositories: {total_ok} docs vectorized, {total_failed} failed",
+        }
+
+    # Run the async process
+    try:
+        result = asyncio.run(_vectorize_docs())
+        log.info("Docs vectorization task completed successfully")
+        return result
+
+    except Exception as exc:
+        self.update_state(
+            state=states.FAILURE,
+            meta={
+                "error": str(exc),
+                "error_type": type(exc).__name__,
+            },
+        )
+        log.error("Docs vectorization task failed: %s", exc, exc_info=True)
+        raise
+
+
+@celery_app.task(bind=True, name="pi.celery_app.remove_vector_data_task")
+def remove_vector_data_task(self, workspace_ids: list[str], entities: list[str] | None = None):
+    """
+    Background task to remove vector embeddings from specified indices.
+
+    This operation can take several minutes for large workspaces, so it runs
+    asynchronously to avoid HTTP timeouts.
+
+    Args:
+        workspace_ids: List of workspace IDs to remove vector data for
+        entities: Optional list of entity types ["issues", "pages"]. If None, removes from both.
+
+    Returns:
+        Dictionary with processing results
+    """
+    log.info("Starting vector data removal task for %d workspaces", len(workspace_ids))
+
+    async def _remove_vectors():
+        # Determine which entities to process
+        entities_to_process = entities or ["issues", "pages"]
+
+        results: dict[str, list[str] | dict[str, int] | int] = {
+            "workspaces_processed": [],
+            "workspaces_failed": [],
+            "indices_updated": {},
+            "total_documents_updated": 0,
+        }
+
+        # Process workspaces in batches for better performance
+        batch_size = 5  # Process 5 workspaces in parallel
+
+        async def _process_single_workspace(workspace_id: str, vdb: VectorStore) -> tuple[str, int, dict[str, int]]:
+            """Process a single workspace and return results."""
+            workspace_total = 0
+            workspace_indices = {}
+
+            # Process issues index if requested
+            if "issues" in entities_to_process:
+                try:
+                    issues_index = settings.vector_db.ISSUE_INDEX
+                    # Remove content_semantic, description_semantic, name_semantic
+                    update_body = {
+                        "query": {"term": {"workspace_id": workspace_id}},
+                        "script": {
+                            "source": """
+                                ctx._source.remove('content_semantic');
+                                ctx._source.remove('description_semantic');
+                                ctx._source.remove('name_semantic');
+                            """,
+                            "lang": "painless",
+                        },
+                    }
+
+                    response = await vdb.async_os.update_by_query(
+                        index=issues_index,
+                        body=update_body,
+                        wait_for_completion=True,
+                        refresh=False,  # Don't refresh immediately for better performance
+                    )
+
+                    updated_count = response.get("updated", 0)
+                    workspace_total += updated_count
+                    workspace_indices["issues"] = updated_count
+                    log.info("Removed vector data from %d issues for workspace %s", updated_count, workspace_id)
+
+                except Exception as exc:
+                    log.error("Failed to remove vector data from issues index for workspace %s: %s", workspace_id, exc)
+
+            # Process pages index if requested
+            if "pages" in entities_to_process:
+                try:
+                    pages_index = settings.vector_db.PAGES_INDEX
+                    # Remove name_semantic, description_semantic
+                    update_body = {
+                        "query": {"term": {"workspace_id": workspace_id}},
+                        "script": {
+                            "source": """
+                                ctx._source.remove('name_semantic');
+                                ctx._source.remove('description_semantic');
+                            """,
+                            "lang": "painless",
+                        },
+                    }
+
+                    response = await vdb.async_os.update_by_query(
+                        index=pages_index,
+                        body=update_body,
+                        wait_for_completion=True,
+                        refresh=False,  # Don't refresh immediately for better performance
+                    )
+
+                    updated_count = response.get("updated", 0)
+                    workspace_total += updated_count
+                    workspace_indices["pages"] = updated_count
+                    log.info("Removed vector data from %d pages for workspace %s", updated_count, workspace_id)
+
+                except Exception as exc:
+                    log.error("Failed to remove vector data from pages index for workspace %s: %s", workspace_id, exc)
+
+            return workspace_id, workspace_total, workspace_indices
+
+        try:
+            async with VectorStore() as vdb:
+                # Process workspaces in batches
+                for batch_start in range(0, len(workspace_ids), batch_size):
+                    batch_end = min(batch_start + batch_size, len(workspace_ids))
+                    batch = workspace_ids[batch_start:batch_end]
+
+                    log.debug("Processing batch %d-%d of %d workspaces", batch_start + 1, batch_end, len(workspace_ids))
+
+                    # Update task progress
+                    progress_pct = int((batch_start / len(workspace_ids)) * 100)
+                    self.update_state(
+                        state="PROGRESS",
+                        meta={
+                            "current": batch_start,
+                            "total": len(workspace_ids),
+                            "progress_percent": progress_pct,
+                            "status": f"Processing batch {batch_start + 1}-{batch_end} of {len(workspace_ids)}",
+                        },
+                    )
+
+                    # Process batch in parallel using asyncio.gather
+                    batch_tasks = [_process_single_workspace(ws_id, vdb) for ws_id in batch]
+                    batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+
+                    # Collect results from batch
+                    for result in batch_results:
+                        if isinstance(result, BaseException):
+                            log.error("Batch processing error: %s", result)
+                            workspaces_failed = results["workspaces_failed"]
+                            assert isinstance(workspaces_failed, list)
+                            workspaces_failed.append("unknown")
+                        elif isinstance(result, tuple):
+                            workspace_id, workspace_total, workspace_indices = result
+                            workspaces_processed = results["workspaces_processed"]
+                            assert isinstance(workspaces_processed, list)
+                            workspaces_processed.append(workspace_id)
+
+                            total_docs = results["total_documents_updated"]
+                            assert isinstance(total_docs, int)
+                            results["total_documents_updated"] = total_docs + workspace_total
+
+                            # Aggregate index counts
+                            indices_updated = results["indices_updated"]
+                            assert isinstance(indices_updated, dict)
+                            for index_name, count in workspace_indices.items():
+                                indices_updated.setdefault(index_name, 0)
+                                indices_updated[index_name] += count
+
+                            log.info("Completed workspace %s: %d documents updated", workspace_id, workspace_total)
+
+            # Disable live sync for all successfully processed workspaces in a single optimized query
+            workspaces_processed = results["workspaces_processed"]
+            assert isinstance(workspaces_processed, list)
+            if workspaces_processed:
+                try:
+                    with db_session() as session:
+                        from sqlalchemy import update as sa_update
+
+                        # Use SQLAlchemy core update for synchronous execution
+                        stmt = (
+                            sa_update(WorkspaceVectorization)  # type: ignore[call-overload]
+                            .where(WorkspaceVectorization.workspace_id.in_(workspaces_processed))  # type: ignore[attr-defined]
+                            .values(live_sync_enabled=False)
+                        )
+
+                        result = session.execute(stmt)
+                        session.commit()
+
+                        updated_records = result.rowcount or 0  # type: ignore[union-attr]
+                        log.info(
+                            "Disabled live sync for %d workspaces (%d records updated)",
+                            len(workspaces_processed),
+                            updated_records,
+                        )
+                except Exception as exc:
+                    log.error("Failed to disable live sync for workspaces: %s", exc)
+
+            workspaces_processed_final = results["workspaces_processed"]
+            workspaces_failed_final = results["workspaces_failed"]
+            total_docs_final = results["total_documents_updated"]
+            assert isinstance(workspaces_processed_final, list)
+            assert isinstance(workspaces_failed_final, list)
+            assert isinstance(total_docs_final, int)
+
+            log.info(
+                "Vector data removal complete. Processed: %d, Failed: %d, Total documents updated: %d",
+                len(workspaces_processed_final),
+                len(workspaces_failed_final),
+                total_docs_final,
+            )
+
+            return results
+
+        except Exception as exc:
+            log.error("Error during vector data removal: %s", exc)
+            raise
+
+    # Run the async operation
+    try:
+        result = asyncio.run(_remove_vectors())
+        log.info("Vector data removal task completed successfully")
+        return {"status": "completed", **result}
+
+    except Exception as exc:
+        log.error("Vector data removal task failed: %s", exc)
         raise
 
 

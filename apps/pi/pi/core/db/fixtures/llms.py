@@ -16,6 +16,8 @@ llm_id_map = {
     "gpt-4o-mini": "059fdc71-75b5-4897-93d5-b61e0ed11b7e",
     "gpt-4.1": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     "gpt-4.1-nano": "fa8e33df-7130-4d3d-b4d8-ca627d3208af",
+    "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
+    "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
 }
 
@@ -52,6 +54,22 @@ LLMS_DATA = [
         "provider": "OpenAI",
         "model_key": "gpt-4.1-nano",
         "max_tokens": 1000000,
+    },
+    {
+        "id": llm_id_map["gpt-5-standard"],
+        "name": "GPT-5 Standard",
+        "description": "OpenAI's GPT-5 model with medium reasoning capabilities - balanced performance and speed.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-standard",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["gpt-5-fast"],
+        "name": "GPT-5 Fast",
+        "description": "OpenAI's GPT-5 model with low reasoning capabilities - optimized for speed and cost efficiency.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-fast",
+        "max_tokens": 200000,
     },
     {
         "id": llm_id_map["claude-sonnet-4"],

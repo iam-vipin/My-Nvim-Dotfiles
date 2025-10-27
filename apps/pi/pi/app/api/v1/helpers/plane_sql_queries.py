@@ -121,7 +121,7 @@ async def get_issue_identifier_for_artifact(issue_id: str) -> Optional[Dict[str,
 
 async def get_issue_assignees(issue_id: str) -> List[Dict[str, Any]]:
     query = """
-    SELECT u.id, u.username, u.email
+    SELECT u.id, u.first_name, u.last_name, u.email
     FROM issue_assignees ia
     JOIN users u ON ia.assignee_id = u.id
     WHERE ia.issue_id = $1 AND ia.deleted_at IS NULL
@@ -137,10 +137,9 @@ async def get_issue_assignees(issue_id: str) -> List[Dict[str, Any]]:
 async def get_mentioned_users(user_ids: List[str]) -> List[Dict[str, Any]]:
     if not user_ids:
         return []
-
     placeholders = ", ".join([f"${i + 1}" for i in range(len(user_ids))])
     query = f"""
-    SELECT id, username, email
+    SELECT id, first_name, last_name, email
     FROM users
     WHERE id IN ({placeholders})
     """
@@ -149,6 +148,99 @@ async def get_mentioned_users(user_ids: List[str]) -> List[Dict[str, Any]]:
         return await PlaneDBPool.fetch(query, tuple(user_ids))
     except Exception as e:
         log.error(f"Error fetching mentioned users {user_ids}: {e}")
+        return []
+
+
+async def list_recent_cycles(
+    project_id: Optional[str] = None,
+    workspace_id: Optional[str] = None,
+    limit: int = 3,
+    status: Optional[str] = "completed",
+) -> List[Dict[str, Any]]:
+    """Return recent cycles for a given project or workspace.
+
+    Args:
+        project_id: Scope to this project if provided
+        workspace_id: Scope to this workspace if provided (used when project_id is absent)
+        limit: Max number of cycles to return (default 3)
+        status: Optional filter - one of ['completed', 'active', 'upcoming'] (case-insensitive). If None, no status filter
+
+    Returns:
+        List of cycles with id, name, project_id, workspace_id, workspace_slug, start_date, end_date, status
+    """
+    if not project_id and not workspace_id:
+        return []
+
+    filters: List[str] = [
+        "c.deleted_at IS NULL",
+        "c.archived_at IS NULL",
+    ]
+
+    params: List[Any] = []
+    param_index = 1
+
+    if project_id:
+        filters.append(f"c.project_id = ${param_index}")
+        params.append(project_id)
+        param_index += 1
+    if workspace_id:
+        filters.append(f"c.workspace_id = ${param_index}")
+        params.append(workspace_id)
+        param_index += 1
+
+    status_clause = ""
+    if isinstance(status, str) and status:
+        s = status.lower().strip()
+        if s in {"completed", "complete", "closed", "past", "previous", "last"}:
+            status_clause = " AND c.end_date::date < CURRENT_DATE"
+        elif s in {"active", "current", "ongoing"}:
+            status_clause = " AND CURRENT_DATE BETWEEN c.start_date::date AND c.end_date::date"
+        elif s in {"upcoming", "future", "next"}:
+            status_clause = " AND c.start_date::date > CURRENT_DATE"
+
+    query = f"""
+        SELECT
+            c.id,
+            c.name,
+            c.project_id,
+            c.workspace_id,
+            w.slug AS workspace_slug,
+            c.start_date::date AS start_date,
+            c.end_date::date AS end_date,
+            CASE
+                WHEN CURRENT_DATE BETWEEN c.start_date::date AND c.end_date::date THEN 'active'
+                WHEN c.end_date::date < CURRENT_DATE THEN 'completed'
+                ELSE 'upcoming'
+            END AS status
+        FROM cycles c
+        LEFT JOIN workspaces w ON w.id = c.workspace_id AND w.deleted_at IS NULL
+        WHERE {" AND ".join(filters)}{status_clause}
+        ORDER BY c.end_date::date DESC NULLS LAST, c.start_date::date DESC NULLS LAST
+        LIMIT ${param_index}
+    """
+
+    try:
+        params.append(int(limit or 3))
+        rows = await PlaneDBPool.fetch(query, tuple(params))
+        result: List[Dict[str, Any]] = []
+        for r in rows:
+            try:
+                result.append({
+                    "id": str(r["id"]),
+                    "name": r["name"],
+                    "project_id": str(r["project_id"]) if r.get("project_id") else None,
+                    "workspace_id": str(r["workspace_id"]) if r.get("workspace_id") else None,
+                    "workspace_slug": r.get("workspace_slug"),
+                    "start_date": str(r["start_date"]) if r.get("start_date") else None,
+                    "end_date": str(r["end_date"]) if r.get("end_date") else None,
+                    "status": r.get("status"),
+                })
+            except Exception:
+                # Best-effort row mapping; skip malformed rows
+                continue
+        return result
+    except Exception as e:
+        log.error(f"Error listing recent cycles (project_id={project_id}, workspace_id={workspace_id}): {e}")
         return []
 
 
@@ -390,6 +482,42 @@ async def get_project_id_from_identifier(identifier: str, workspace_id: str) -> 
         return None
 
 
+async def get_epic_type_id_for_project(project_id: str) -> Optional[str]:
+    """
+    Get the epic issue type ID for a specific project.
+
+    Args:
+        project_id: Project UUID
+
+    Returns:
+        Epic issue type ID (UUID string) or None if not found
+    """
+    query = """
+    SELECT it.id
+    FROM issue_types it
+    JOIN project_issue_types pit ON it.id = pit.issue_type_id
+    WHERE pit.project_id = $1
+    AND it.is_epic = true
+    AND it.is_active = true
+    AND it.deleted_at IS NULL
+    AND pit.deleted_at IS NULL
+    ORDER BY it.created_at ASC
+    LIMIT 1
+    """
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, (project_id,))
+        if result:
+            return str(result["id"])  # Convert UUID object to string
+
+        else:
+            return None
+
+    except Exception as e:
+        log.error(f"Error fetching epic type ID for project {project_id}: {e}")
+        return None
+
+
 async def resolve_id_to_name(entity_type: str, entity_id: str) -> Optional[str]:
     """
     Generic function to resolve any entity ID to its name.
@@ -465,34 +593,57 @@ async def search_module_by_name(name: str, project_id: Optional[str] = None, wor
         return None
 
 
-async def search_project_by_name(name: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
-    """Search for a project by name and return its details."""
+async def search_project_by_name(
+    name: str,
+    workspace_slug: Optional[str] = None,
+    member_id: Optional[str] = None,
+) -> Optional[List[Dict[str, Any]]]:
+    """Search for projects by name and return a list of matching projects.
+
+    Returns a list of up to 20 matches so upstream tools/LLM can disambiguate when needed.
+    """
     query = """
     SELECT p.id, p.name, p.workspace_id, p.identifier
     FROM projects p
     JOIN workspaces w ON p.workspace_id = w.id
     WHERE p.name ILIKE $1
     AND p.deleted_at IS NULL
+    AND p.archived_at IS NULL
     """
 
     params = [f"%{name}%"]
+    param_index = 2
 
     if workspace_slug:
-        query += " AND w.slug = $2"
+        query += f" AND w.slug = ${param_index}"
         params.append(workspace_slug)
+        param_index += 1
+
+    if member_id:
+        # Only include projects where the user is an active member
+        query += (
+            f" AND EXISTS (SELECT 1 FROM project_members pm "
+            f"WHERE pm.project_id = p.id AND pm.member_id = ${param_index} "
+            f"AND pm.is_active IS TRUE AND pm.deleted_at IS NULL)"
+        )
+        params.append(member_id)
+        param_index += 1
 
     query += " LIMIT 20"
 
     try:
-        result = await PlaneDBPool.fetchrow(query, tuple(params))
-        if result:
-            return {
-                "id": str(result["id"]),
-                "name": result["name"],
-                "workspace_id": str(result["workspace_id"]),
-                "identifier": result["identifier"],
-            }
-        return None
+        rows = await PlaneDBPool.fetch(query, tuple(params))
+        if rows:
+            return [
+                {
+                    "id": str(r["id"]),
+                    "name": r["name"],
+                    "workspace_id": str(r["workspace_id"]),
+                    "identifier": r["identifier"],
+                }
+                for r in rows
+            ]
+        return []
     except Exception as e:
         log.error(f"Error searching for project '{name}': {e}, query: {query}, workspace_slug: {workspace_slug}")
         return None
@@ -501,7 +652,7 @@ async def search_project_by_name(name: str, workspace_slug: Optional[str] = None
 async def search_cycle_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Search for a cycle by name and return its details."""
     query = """
-    SELECT c.id, c.name, c.project_id
+    SELECT c.id, c.name, c.project_id, c.start_date, c.end_date
     FROM cycles c
     JOIN projects p ON c.project_id = p.id
     JOIN workspaces w ON p.workspace_id = w.id
@@ -527,10 +678,68 @@ async def search_cycle_by_name(name: str, project_id: Optional[str] = None, work
     try:
         result = await PlaneDBPool.fetchrow(query, tuple(params))
         if result:
-            return {"id": str(result["id"]), "name": result["name"], "project_id": str(result["project_id"])}
+            return {
+                "id": str(result["id"]),
+                "name": result["name"],
+                "project_id": str(result["project_id"]),
+                "start_date": str(result["start_date"]) if result["start_date"] else None,
+                "end_date": str(result["end_date"]) if result["end_date"] else None,
+            }
         return None
     except Exception as e:
         log.error(f"Error searching for cycle '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
+        return None
+
+
+async def search_current_cycle(project_id: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Search for the current active cycle in a project (where today's date falls within start_date and end_date).
+
+    Args:
+        project_id: Project ID to search within (required)
+        workspace_slug: Workspace slug (optional filter)
+
+    Returns:
+        Dictionary with cycle details if found, None otherwise
+    """
+    query = """
+    SELECT c.id, c.name, c.project_id, c.workspace_id, c.start_date, c.end_date, w.slug AS workspace_slug
+    FROM cycles c
+    JOIN projects p ON c.project_id = p.id
+    JOIN workspaces w ON p.workspace_id = w.id
+    WHERE c.project_id = $1
+    AND c.deleted_at IS NULL
+    AND c.archived_at IS NULL
+    AND c.start_date <= CURRENT_DATE
+    AND c.end_date >= CURRENT_DATE
+    """
+
+    params = [project_id]
+    param_index = 2
+
+    if workspace_slug:
+        query += f" AND w.slug = ${param_index}"
+        params.append(workspace_slug)
+        param_index += 1
+
+    query += " ORDER BY c.start_date DESC LIMIT 1"
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, tuple(params))
+        if result:
+            return {
+                "id": str(result["id"]),
+                "name": result["name"],
+                "project_id": str(result["project_id"]),
+                "workspace_id": str(result["workspace_id"]) if result.get("workspace_id") else None,
+                "workspace_slug": result.get("workspace_slug"),
+                "start_date": str(result["start_date"]) if result["start_date"] else None,
+                "end_date": str(result["end_date"]) if result["end_date"] else None,
+            }
+        return None
+    except Exception as e:
+        log.error(
+            f"Error searching for current cycle in project '{project_id}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}"  # noqa E501
+        )  # noqa: E501
         return None
 
 
@@ -600,28 +809,88 @@ async def search_state_by_name(name: str, project_id: Optional[str] = None, work
         return None
 
 
-async def search_user_by_name(display_name: str, workspace_slug: Optional[str] = None) -> List[Dict[str, Any]]:
-    """Search for users by display name and return their details (up to 20)."""
-    query = """
+async def search_user_by_name(
+    display_name: Optional[str] = None,
+    workspace_slug: Optional[str] = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    """Search for users by display, first, or last name and return details (up to 20).
+
+    - Matches are case-insensitive and partial via ILIKE.
+    - At least one of display_name, first_name, last_name should be provided.
+    """
+    # Build dynamic WHERE conditions (prefer AND when both first and last are provided)
+    params: list[Any] = []
+    param_index = 1
+
+    log.info(f"Searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}')")
+
+    clauses: list[str] = []
+
+    if display_name:
+        clauses.append(f"u.display_name ILIKE ${param_index}")
+        params.append(f"%{display_name}%")
+        param_index += 1
+
+    if first_name and last_name:
+        # Strict match: both first and last should match their respective columns
+        clauses.append(f"(u.first_name ILIKE ${param_index} AND u.last_name ILIKE ${param_index + 1})")
+        params.append(f"%{first_name}%")
+        params.append(f"%{last_name}%")
+        param_index += 2
+
+        # Forgiving variants to handle profiles where the full name is stored entirely in first_name
+        # or last_name is empty. These are OR'ed with the overall where clause.
+        # 1) Combined full-name match across first_name + last_name
+        clauses.append(f"CONCAT_WS(' ', u.first_name, u.last_name) ILIKE ${param_index}")
+        params.append(f"%{first_name} {last_name}%")
+        param_index += 1
+
+        # 2) Either field may match independently (helps when last_name is empty)
+        clauses.append(f"u.first_name ILIKE ${param_index}")
+        params.append(f"%{first_name}%")
+        param_index += 1
+
+        clauses.append(f"u.last_name ILIKE ${param_index}")
+        params.append(f"%{last_name}%")
+        param_index += 1
+    else:
+        if first_name:
+            clauses.append(f"u.first_name ILIKE ${param_index}")
+            params.append(f"%{first_name}%")
+            param_index += 1
+        if last_name:
+            clauses.append(f"u.last_name ILIKE ${param_index}")
+            params.append(f"%{last_name}%")
+            param_index += 1
+
+    # If no name filters provided, return empty list (avoid full scan)
+    if not clauses:
+        return []
+
+    where_name = " OR ".join(clauses)
+
+    query = f"""
     SELECT u.id, u.display_name, u.first_name, u.last_name, u.email
     FROM users u
     JOIN workspace_members wm ON u.id = wm.member_id
     JOIN workspaces w ON wm.workspace_id = w.id
-    WHERE (u.display_name ILIKE $1 OR u.first_name ILIKE $1)
+    WHERE ({where_name})
       AND wm.deleted_at IS NULL
+      AND u.is_active IS TRUE
     """
 
-    params = [f"%{display_name}%"]
-
     if workspace_slug:
-        query += " AND w.slug = $2"
+        query += f" AND w.slug = ${param_index}"
         params.append(workspace_slug)
+        param_index += 1
 
     query += " LIMIT 20"
-
+    log.info(f"Searching for user by name query: {query}, params: {params}")
     try:
-        rows = await PlaneDBPool.fetch(query, tuple(params))  # returns List[Dict[str,Any]]
-        # Convert UUIDs to strings and leave other values as-is
+        rows = await PlaneDBPool.fetch(query, tuple(params))
+        log.info(f"Searching for user by name rows: {rows}")
         return [
             {
                 "id": str(r["id"]),
@@ -633,17 +902,20 @@ async def search_user_by_name(display_name: str, workspace_slug: Optional[str] =
             for r in rows
         ]
     except Exception as e:
-        log.error(f"Error searching for user '{display_name}': {e}, query: {query}, workspace_slug: {workspace_slug}")
+        log.error(
+            f"Error searching for user by name filters (display='{display_name}', first='{first_name}', last='{last_name}'): {e}, workspace_slug: {workspace_slug}"  # noqa: E501
+        )
         return []
 
 
 async def search_workitem_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Search for a work item by name and return its details."""
     query = """
-    SELECT i.id, i.name, i.project_id
+    SELECT i.id, i.name, i.project_id, it.id as type_id, it.name as type_name, it.is_epic as is_epic
     FROM issues i
     JOIN projects p ON i.project_id = p.id
     JOIN workspaces w ON p.workspace_id = w.id
+    LEFT JOIN issue_types it ON i.type_id = it.id
     WHERE i.name ILIKE $1
     AND i.deleted_at IS NULL
     """
@@ -666,7 +938,14 @@ async def search_workitem_by_name(name: str, project_id: Optional[str] = None, w
     try:
         result = await PlaneDBPool.fetchrow(query, tuple(params))
         if result:
-            return {"id": str(result["id"]), "name": result["name"], "project_id": str(result["project_id"])}
+            return {
+                "id": str(result["id"]),
+                "name": result["name"],
+                "project_id": str(result["project_id"]),
+                "type_id": str(result["type_id"]),
+                "type_name": result["type_name"],
+                "is_epic": result["is_epic"],
+            }
         return None
     except Exception as e:
         log.error(f"Error searching for work item '{name}': {e}, query: {query}, project_id: {project_id}, workspace_slug: {workspace_slug}")
@@ -803,10 +1082,14 @@ async def search_workitem_by_identifier(identifier: str, workspace_slug: Optiona
             i.completed_at,
             i.point,
             i.is_draft,
-            i.archived_at
+            i.archived_at,
+            i.type_id,
+            it.name as type_name,
+            it.is_epic as is_epic
         FROM issues i
         JOIN projects p ON i.project_id = p.id
         JOIN workspaces w ON i.workspace_id = w.id
+        LEFT JOIN issue_types it ON i.type_id = it.id
         WHERE p.identifier = $1
         AND i.sequence_id = $2
         AND i.deleted_at IS NULL
@@ -851,6 +1134,7 @@ async def get_workitem_details_for_artifact(workitem_id: str) -> Optional[Dict[s
         p.name AS project_name,
         p.identifier || '-' || i.sequence_id::text AS identifier,
         ist.name AS state,
+        ist.group AS state_group,
         i.state_id,
         COALESCE(
         (
@@ -916,14 +1200,6 @@ async def get_workitem_details_for_artifact(workitem_id: str) -> Optional[Dict[s
             WHERE il.issue_id = i.id AND il.deleted_at IS NULL
         ), ARRAY[]::text[]
         ) AS labels,
-        COALESCE(
-        (
-            SELECT array_remove(array_agg(DISTINCT l.color ORDER BY l.color), NULL::text)
-            FROM issue_labels il
-            JOIN labels l ON il.label_id = l.id AND l.deleted_at IS NULL
-            WHERE il.issue_id = i.id AND il.deleted_at IS NULL
-        ), ARRAY[]::text[]
-        ) AS label_colors,
         parent_i.name AS parent,
         i.parent_id
     FROM issues i
@@ -1011,7 +1287,8 @@ async def get_cycle_details_for_artifact(cycle_id: str) -> Optional[Dict[str, An
         c.start_date,
         c.end_date,
         c.project_id,
-        p.name AS project
+        p.name AS project,
+        p.identifier AS project_identifier
     FROM cycles c
     LEFT JOIN projects p ON c.project_id = p.id AND p.deleted_at IS NULL
     WHERE
@@ -1025,6 +1302,596 @@ async def get_cycle_details_for_artifact(cycle_id: str) -> Optional[Dict[str, An
     except Exception as e:
         log.error(f"Error fetching cycle details for {cycle_id}: {e}")
         return None
+
+
+# ---------------------------------------------------------------------------
+# Cycle analytics helpers (summary, breakdowns, burndown, scope, issues)
+# ---------------------------------------------------------------------------
+
+
+async def get_cycle_core(cycle_id: str) -> Optional[Dict[str, Any]]:
+    """Return core cycle details for a given cycle_id."""
+    query = """
+    SELECT c.id, c.name, c.description, c.project_id, c.workspace_id, c.owned_by_id,
+           c.start_date::date AS start_date, c.end_date::date AS end_date, c.timezone,
+           u.display_name AS owner_name, w.slug AS workspace_slug
+    FROM cycles c
+    LEFT JOIN users u ON u.id = c.owned_by_id AND u.is_active = TRUE AND u.is_bot = FALSE
+    LEFT JOIN workspaces w ON w.id = c.workspace_id AND w.deleted_at IS NULL
+    WHERE c.id = $1 AND c.deleted_at IS NULL AND c.archived_at IS NULL
+    """
+    try:
+        row = await PlaneDBPool.fetchrow(query, (cycle_id,))
+        if not row:
+            return None
+        return {
+            "id": str(row["id"]),
+            "name": row["name"],
+            "description": row.get("description"),
+            "project_id": str(row["project_id"]) if row["project_id"] else None,
+            "workspace_id": str(row["workspace_id"]) if row.get("workspace_id") else None,
+            "workspace_slug": row.get("workspace_slug"),
+            "owned_by_id": str(row["owned_by_id"]) if row.get("owned_by_id") else None,
+            "owner_name": row.get("owner_name"),
+            "start_date": str(row["start_date"]) if row["start_date"] else None,
+            "end_date": str(row["end_date"]) if row["end_date"] else None,
+            "timezone": row.get("timezone"),
+        }
+    except Exception as e:
+        log.error(f"Error fetching core cycle details for {cycle_id}: {e}")
+        return None
+
+
+async def get_cycle_summary_metrics(cycle_id: str) -> Optional[Dict[str, Any]]:
+    """Return summary metrics for a cycle based on current membership (non-removed items)."""
+    query = """
+    WITH c AS (
+        SELECT id, start_date::date AS start_date, end_date::date AS end_date
+        FROM cycles
+        WHERE id = $1 AND deleted_at IS NULL
+    )
+    SELECT
+        COUNT(i.id)                                  AS total_issues,
+        COALESCE(SUM(COALESCE(i.point, 0)), 0)      AS total_points,
+        COUNT(*) FILTER (
+            WHERE i.completed_at IS NOT NULL AND i.completed_at::date <= (SELECT end_date FROM c)
+        )                                            AS completed_issues,
+        COALESCE(SUM(CASE WHEN i.completed_at IS NOT NULL AND i.completed_at::date <= (SELECT end_date FROM c)
+                          THEN COALESCE(i.point, 0) ELSE 0 END), 0) AS completed_points,
+        COUNT(*) FILTER (
+            WHERE i.completed_at IS NULL OR i.completed_at::date > (SELECT end_date FROM c)
+        )                                            AS open_issues
+    FROM cycle_issues ci
+    JOIN c ON ci.cycle_id = c.id
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    WHERE ci.deleted_at IS NULL
+    """
+    try:
+        row = await PlaneDBPool.fetchrow(query, (cycle_id,))
+        if not row:
+            return None
+
+        # Compute duration and throughput in Python for simplicity
+        core = await get_cycle_core(cycle_id)
+        duration_days: Optional[int] = None
+        throughput_per_day: Optional[float] = None
+        if core and core.get("start_date") and core.get("end_date"):
+            try:
+                start_date = datetime.fromisoformat(str(core["start_date"]))
+                end_date = datetime.fromisoformat(str(core["end_date"]))
+                duration_days = (end_date - start_date).days + 1
+                if duration_days > 0:
+                    throughput_per_day = (row["completed_issues"] or 0) / duration_days
+            except Exception:
+                pass
+
+        # Determine is_current
+        is_current = False
+        try:
+            if core and core.get("start_date") and core.get("end_date"):
+                from datetime import date
+
+                today = date.today()
+                start_date_obj = date.fromisoformat(str(core["start_date"]))
+                end_date_obj = date.fromisoformat(str(core["end_date"]))
+                is_current = start_date_obj <= today <= end_date_obj
+        except Exception:
+            is_current = False
+
+        return {
+            "total_issues": int(row["total_issues"] or 0),
+            "completed_issues": int(row["completed_issues"] or 0),
+            "open_issues": int(row["open_issues"] or 0),
+            "total_points": int(row["total_points"] or 0),
+            "completed_points": int(row["completed_points"] or 0),
+            "duration_days": duration_days,
+            "throughput_per_day": throughput_per_day,
+            "is_current": is_current,
+        }
+    except Exception as e:
+        log.error(f"Error computing cycle summary for {cycle_id}: {e}")
+        return None
+
+
+async def get_cycle_breakdown_by_state(cycle_id: str) -> List[Dict[str, Any]]:
+    query = """
+    SELECT s."group" AS state_group,
+           COUNT(i.id) AS issues,
+           COALESCE(SUM(COALESCE(i.point, 0)), 0) AS points
+    FROM cycle_issues ci
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    LEFT JOIN states s ON s.id = i.state_id AND s.deleted_at IS NULL
+    WHERE ci.cycle_id = $1 AND ci.deleted_at IS NULL
+    GROUP BY s."group"
+    ORDER BY s."group" NULLS LAST
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        return [
+            {
+                "state_group": r["state_group"],
+                "issues": int(r["issues"] or 0),
+                "points": int(r["points"] or 0),
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        log.error(f"Error computing breakdown by state for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_breakdown_by_priority(cycle_id: str) -> List[Dict[str, Any]]:
+    query = """
+    SELECT i.priority, COUNT(i.id) AS issues, COALESCE(SUM(COALESCE(i.point, 0)), 0) AS points
+    FROM cycle_issues ci
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    WHERE ci.cycle_id = $1 AND ci.deleted_at IS NULL
+    GROUP BY i.priority
+    ORDER BY CASE i.priority
+        WHEN 'urgent' THEN 1
+        WHEN 'high' THEN 2
+        WHEN 'medium' THEN 3
+        WHEN 'low' THEN 4
+        ELSE 5
+    END
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        return [
+            {
+                "priority": r["priority"],
+                "issues": int(r["issues"] or 0),
+                "points": int(r["points"] or 0),
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        log.error(f"Error computing breakdown by priority for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_breakdown_by_assignee(cycle_id: str) -> List[Dict[str, Any]]:
+    query = """
+    SELECT u.id AS assignee_id, u.display_name AS assignee_name,
+           COUNT(i.id) AS issues,
+           COALESCE(SUM(COALESCE(i.point, 0)), 0) AS points
+    FROM cycle_issues ci
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    JOIN issue_assignees ia ON ia.issue_id = i.id AND ia.deleted_at IS NULL
+    JOIN users u ON u.id = ia.assignee_id AND u.is_active = TRUE AND u.is_bot = FALSE
+    WHERE ci.cycle_id = $1 AND ci.deleted_at IS NULL
+    GROUP BY u.id, u.display_name
+    ORDER BY assignee_name
+    LIMIT 100
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        result = [
+            {
+                "assignee_id": str(r["assignee_id"]),
+                "assignee_name": r["assignee_name"],
+                "issues": int(r["issues"] or 0),
+                "points": int(r["points"] or 0),
+            }
+            for r in rows
+        ]
+        log.info(f"get_cycle_breakdown_by_assignee for cycle {cycle_id}: returned {len(result)} assignees")
+        return result
+    except Exception as e:
+        log.error(f"Error computing breakdown by assignee for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_breakdown_by_label(cycle_id: str) -> List[Dict[str, Any]]:
+    query = """
+    SELECT l.id AS label_id, l.name AS label_name,
+           COUNT(DISTINCT i.id) AS issues,
+           COALESCE(SUM(COALESCE(i.point, 0)), 0) AS points
+    FROM cycle_issues ci
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    JOIN issue_labels il ON il.issue_id = i.id AND il.deleted_at IS NULL
+    JOIN labels l ON l.id = il.label_id AND l.deleted_at IS NULL
+    WHERE ci.cycle_id = $1 AND ci.deleted_at IS NULL
+    GROUP BY l.id, l.name
+    ORDER BY label_name
+    LIMIT 100
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        return [
+            {
+                "label_id": str(r["label_id"]),
+                "label_name": r["label_name"],
+                "issues": int(r["issues"] or 0),
+                "points": int(r["points"] or 0),
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        log.error(f"Error computing breakdown by label for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_breakdown_by_type(cycle_id: str) -> List[Dict[str, Any]]:
+    """Return breakdown of issues by issue type (epic vs task vs bug, etc)."""
+    query = """
+    SELECT it.id AS type_id, it.name AS type_name, it.is_epic,
+           COUNT(i.id) AS issues,
+           COALESCE(SUM(COALESCE(i.point, 0)), 0) AS points
+    FROM cycle_issues ci
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    LEFT JOIN issue_types it ON it.id = i.type_id AND it.deleted_at IS NULL
+    WHERE ci.cycle_id = $1 AND ci.deleted_at IS NULL
+    GROUP BY it.id, it.name, it.is_epic
+    ORDER BY it.is_epic DESC, it.name
+    LIMIT 100
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        return [
+            {
+                "type_id": str(r["type_id"]) if r.get("type_id") else None,
+                "type_name": r.get("type_name"),
+                "is_epic": bool(r.get("is_epic", False)),
+                "issues": int(r["issues"] or 0),
+                "points": int(r["points"] or 0),
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        log.error(f"Error computing breakdown by type for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_burndown(cycle_id: str, bucket: str = "day") -> List[Dict[str, Any]]:
+    """Return a simple burndown timeseries per day or week."""
+    date_trunc_unit = "day" if bucket not in {"day", "week"} else bucket
+    query = f"""
+    WITH c AS (
+        SELECT id, start_date::date AS start_date, end_date::date AS end_date
+        FROM cycles
+        WHERE id = $1 AND deleted_at IS NULL AND archived_at IS NULL
+    ), series AS (
+        SELECT generate_series((SELECT start_date FROM c), (SELECT end_date FROM c), INTERVAL '1 day')::date AS d
+    ), facts AS (
+        SELECT i.id AS issue_id,
+               COALESCE(i.point, 0) AS points,
+               i.completed_at::date AS completed_date,
+               ci.created_at::date AS added_date,
+               ci.deleted_at::date AS removed_date
+        FROM cycle_issues ci
+        JOIN c ON c.id = ci.cycle_id
+        JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    )
+    SELECT date_trunc('{date_trunc_unit}', s.d)::date AS bucket_date,
+           -- Daily events
+           COUNT(DISTINCT f.issue_id) FILTER (WHERE f.added_date = s.d) AS added,
+           COUNT(DISTINCT f.issue_id) FILTER (WHERE f.removed_date = s.d) AS removed,
+           COUNT(DISTINCT f.issue_id) FILTER (WHERE f.completed_date = s.d) AS completed_issues,
+           COALESCE(SUM(f.points) FILTER (WHERE f.completed_date = s.d), 0) AS completed_points,
+           -- Remaining at end of bucket_date (in scope, not removed, not completed)
+           COUNT(DISTINCT f.issue_id) FILTER (
+               WHERE f.added_date <= s.d
+                 AND (f.removed_date IS NULL OR f.removed_date > s.d)
+                 AND (f.completed_date IS NULL OR f.completed_date > s.d)
+           ) AS remaining_issues,
+           COALESCE(SUM(f.points) FILTER (
+               WHERE f.added_date <= s.d
+                 AND (f.removed_date IS NULL OR f.removed_date > s.d)
+                 AND (f.completed_date IS NULL OR f.completed_date > s.d)
+           ), 0) AS remaining_points
+    FROM series s
+    LEFT JOIN facts f ON TRUE
+    GROUP BY bucket_date
+    ORDER BY bucket_date
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id,))
+        return [
+            {
+                "date": str(r["bucket_date"]),
+                "remaining_issues": int(r["remaining_issues"] or 0),
+                "remaining_points": int(r["remaining_points"] or 0),
+                "added": int(r["added"] or 0),
+                "removed": int(r["removed"] or 0),
+                "completed_issues": int(r["completed_issues"] or 0),
+                "completed_points": int(r["completed_points"] or 0),
+            }
+            for r in rows
+        ]
+    except Exception as e:
+        log.error(f"Error computing burndown for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_scope_change(cycle_id: str) -> Optional[Dict[str, Any]]:
+    query = """
+    WITH c AS (
+        SELECT id, start_date::date AS start_date, end_date::date AS end_date
+        FROM cycles
+        WHERE id = $1 AND deleted_at IS NULL
+    )
+    SELECT
+        -- Baseline: in cycle at start (added on/before start AND not removed before start)
+        (SELECT COUNT(*)
+         FROM cycle_issues ci
+         JOIN c ON c.id = ci.cycle_id
+         WHERE (ci.created_at::date IS NULL OR ci.created_at::date <= c.start_date)
+           AND (ci.deleted_at::date IS NULL OR ci.deleted_at::date > c.start_date))  AS baseline_issues,
+        (SELECT COUNT(*)
+         FROM cycle_issues ci
+         JOIN c ON c.id = ci.cycle_id
+         WHERE ci.created_at::date BETWEEN c.start_date AND c.end_date) AS added_during_cycle,
+        (SELECT COUNT(*)
+         FROM cycle_issues ci
+         JOIN c ON c.id = ci.cycle_id
+         WHERE ci.deleted_at::date BETWEEN c.start_date AND c.end_date) AS removed_during_cycle
+    """
+    try:
+        row = await PlaneDBPool.fetchrow(query, (cycle_id,))
+        if not row:
+            return None
+        return {
+            "baseline_issues": int(row["baseline_issues"] or 0),
+            "added_during_cycle": int(row["added_during_cycle"] or 0),
+            "removed_during_cycle": int(row["removed_during_cycle"] or 0),
+            "net_scope_change": int(row["added_during_cycle"] or 0) - int(row["removed_during_cycle"] or 0),
+        }
+    except Exception as e:
+        log.error(f"Error computing scope change for cycle {cycle_id}: {e}")
+        return None
+
+
+async def list_scope_added_issues(cycle_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+    """List work-items added to the cycle AFTER it started (cycle_issues.created_at between start and end).
+
+    Returns list of issues with id, name, identifier, state_group, priority, created_at (when added to cycle).
+    """
+    query = """
+    SELECT
+        i.id,
+        i.name,
+        i.sequence_id,
+        p.identifier AS project_identifier,
+        i.priority,
+        i.state_id,
+        s."group" AS state_group,
+        ci.created_at
+    FROM cycle_issues ci
+    JOIN cycles c ON c.id = ci.cycle_id AND c.deleted_at IS NULL AND c.archived_at IS NULL
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    JOIN projects p ON p.id = i.project_id AND p.deleted_at IS NULL
+    LEFT JOIN states s ON s.id = i.state_id AND s.deleted_at IS NULL
+    WHERE ci.cycle_id = $1
+      AND ci.deleted_at IS NULL
+      AND ci.created_at::date BETWEEN c.start_date::date AND c.end_date::date
+    ORDER BY ci.created_at DESC
+    LIMIT $2
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id, limit))
+        results: List[Dict[str, Any]] = []
+        for r in rows:
+            identifier = None
+            if r.get("project_identifier") and r.get("sequence_id"):
+                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+            results.append({
+                "id": str(r["id"]),
+                "name": r["name"],
+                "identifier": identifier,
+                "priority": r.get("priority"),
+                "state_group": r.get("state_group"),
+                "added_at": str(r["created_at"]) if r.get("created_at") else None,
+            })
+        return results
+    except Exception as e:
+        log.error(f"Error listing scope-added issues for cycle {cycle_id}: {e}")
+        return []
+
+
+async def list_scope_removed_issues(cycle_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+    """List work-items removed from the cycle DURING the cycle (cycle_issues.deleted_at between start and end).
+
+    Returns list of issues with id, name, identifier, state_group, priority, removed_at (when removed from cycle).
+    """
+    query = """
+    SELECT
+        i.id,
+        i.name,
+        i.sequence_id,
+        p.identifier AS project_identifier,
+        i.priority,
+        i.state_id,
+        s."group" AS state_group,
+        ci.deleted_at
+    FROM cycle_issues ci
+    JOIN cycles c ON c.id = ci.cycle_id AND c.deleted_at IS NULL AND c.archived_at IS NULL
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    JOIN projects p ON p.id = i.project_id AND p.deleted_at IS NULL
+    LEFT JOIN states s ON s.id = i.state_id AND s.deleted_at IS NULL
+    WHERE ci.cycle_id = $1
+      AND ci.deleted_at IS NOT NULL
+      AND ci.deleted_at::date BETWEEN c.start_date::date AND c.end_date::date
+    ORDER BY ci.deleted_at DESC
+    LIMIT $2
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (cycle_id, limit))
+        results: List[Dict[str, Any]] = []
+        for r in rows:
+            identifier = None
+            if r.get("project_identifier") and r.get("sequence_id"):
+                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+            results.append({
+                "id": str(r["id"]),
+                "name": r["name"],
+                "identifier": identifier,
+                "priority": r.get("priority"),
+                "state_group": r.get("state_group"),
+                "removed_at": str(r["deleted_at"]) if r.get("deleted_at") else None,
+            })
+        return results
+    except Exception as e:
+        log.error(f"Error listing scope-removed issues for cycle {cycle_id}: {e}")
+        return []
+
+
+async def get_cycle_carryover(cycle_id: str) -> Optional[Dict[str, Any]]:
+    query = """
+    WITH c AS (
+        SELECT id, end_date::date AS end_date
+        FROM cycles
+        WHERE id = $1 AND deleted_at IS NULL
+    )
+    SELECT
+        COUNT(i.id) AS open_issues,
+        COALESCE(SUM(COALESCE(i.point, 0)), 0) AS open_points
+    FROM cycle_issues ci
+    JOIN c ON c.id = ci.cycle_id
+    JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL
+    WHERE ci.deleted_at IS NULL
+      AND (i.completed_at IS NULL OR i.completed_at::date > c.end_date)
+    """
+    try:
+        row = await PlaneDBPool.fetchrow(query, (cycle_id,))
+        if not row:
+            return None
+        return {
+            "open_issues": int(row["open_issues"] or 0),
+            "open_points": int(row["open_points"] or 0),
+        }
+    except Exception as e:
+        log.error(f"Error computing carryover for cycle {cycle_id}: {e}")
+        return None
+
+
+async def list_cycle_issues_filtered(
+    cycle_id: str,
+    filters: Optional[Dict[str, Any]] = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> List[Dict[str, Any]]:
+    """List issues currently in the cycle with optional filters and pagination.
+
+    Supported filters: include_completed(bool), state_groups(list[str]), priority_in(list[str]),
+    assignee_ids(list[str]), label_ids(list[str]), search_text(str), created_within_cycle_only(bool)
+    """
+    filters = filters or {}
+
+    base = [
+        'SELECT i.id, i.name, i.priority, i.point, i.state_id, s."group" AS state_group, i.completed_at, i.created_at, i.updated_at, '
+        "i.sequence_id, p.identifier AS project_identifier",
+        "FROM cycle_issues ci",
+        "JOIN issues i ON i.id = ci.issue_id AND i.deleted_at IS NULL",
+        "JOIN projects p ON p.id = i.project_id AND p.deleted_at IS NULL",
+        "LEFT JOIN states s ON s.id = i.state_id AND s.deleted_at IS NULL",
+    ]
+    joins: List[str] = []
+    where: List[str] = ["ci.cycle_id = $1", "ci.deleted_at IS NULL"]
+    params: List[Any] = [cycle_id]
+    param_index = 2
+
+    # Optional filter for states group (states already joined in base)
+    state_groups = filters.get("state_groups")
+    if state_groups:
+        placeholders = ", ".join([f"${param_index + idx}" for idx in range(len(state_groups))])
+        where.append(f's."group" IN ({placeholders})')
+        params.extend(state_groups)
+        param_index += len(state_groups)
+
+    # Optional join for assignee filter
+    assignee_ids = filters.get("assignee_ids")
+    if assignee_ids:
+        joins.append("JOIN issue_assignees ia ON ia.issue_id = i.id AND ia.deleted_at IS NULL")
+        placeholders = ", ".join([f"${param_index + idx}" for idx in range(len(assignee_ids))])
+        where.append(f"ia.assignee_id IN ({placeholders})")
+        params.extend(assignee_ids)
+        param_index += len(assignee_ids)
+
+    # Optional join for label filter
+    label_ids = filters.get("label_ids")
+    if label_ids:
+        joins.append("JOIN issue_labels il ON il.issue_id = i.id AND il.deleted_at IS NULL")
+        placeholders = ", ".join([f"${param_index + idx}" for idx in range(len(label_ids))])
+        where.append(f"il.label_id IN ({placeholders})")
+        params.extend(label_ids)
+        param_index += len(label_ids)
+
+    # Priority filter
+    priority_in = filters.get("priority_in")
+    if priority_in:
+        placeholders = ", ".join([f"${param_index + idx}" for idx in range(len(priority_in))])
+        where.append(f"i.priority IN ({placeholders})")
+        params.extend(priority_in)
+        param_index += len(priority_in)
+
+    # Include/exclude completed
+    include_completed = bool(filters.get("include_completed", False))
+    if not include_completed:
+        where.append("(i.completed_at IS NULL)")
+
+    # Created within cycle only
+    created_within_cycle_only = bool(filters.get("created_within_cycle_only", False))
+    if created_within_cycle_only:
+        joins.append("JOIN cycles c ON c.id = ci.cycle_id")
+        where.append("i.created_at::date BETWEEN c.start_date::date AND c.end_date::date")
+
+    # Search text
+    search_text = filters.get("search_text")
+    if search_text:
+        where.append(f"i.name ILIKE ${param_index}")
+        params.append(f"%{search_text}%")
+        param_index += 1
+
+    sql = "\n".join(
+        base + joins + ["WHERE " + " AND ".join(where), "ORDER BY i.created_at DESC", f"LIMIT ${param_index}", f"OFFSET ${param_index + 1}"]
+    )
+    params.extend([limit, offset])
+
+    try:
+        rows = await PlaneDBPool.fetch(sql, tuple(params))
+        results: List[Dict[str, Any]] = []
+        for r in rows:
+            # Build unique identifier (e.g., SOLO-123)
+            identifier = None
+            if r.get("project_identifier") and r.get("sequence_id"):
+                identifier = f"{r["project_identifier"]}-{r["sequence_id"]}"
+            results.append({
+                "id": str(r["id"]),
+                "name": r["name"],
+                "identifier": identifier,
+                "priority": r.get("priority"),
+                "points": int(r.get("point") or 0),
+                "state_id": str(r["state_id"]) if r.get("state_id") else None,
+                "state_group": r.get("state_group"),
+                "completed_at": str(r["completed_at"]) if r.get("completed_at") else None,
+                "created_at": str(r.get("created_at")) if r.get("created_at") else None,
+                "updated_at": str(r.get("updated_at")) if r.get("updated_at") else None,
+            })
+        return results
+    except Exception as e:
+        log.error(f"Error listing cycle issues for {cycle_id}: {e}. SQL: {sql}")
+        return []
 
 
 async def get_module_details_for_artifact(module_id: str) -> Optional[Dict[str, Any]]:
@@ -1047,6 +1914,7 @@ async def get_module_details_for_artifact(module_id: str) -> Optional[Dict[str, 
         m.status,
         m.project_id,
         p.name AS project,
+        p.identifier AS project_identifier,
         u.display_name AS lead,
         array_remove(array_agg(DISTINCT u2.id) FILTER (WHERE u2.id IS NOT NULL), NULL) AS member_ids,
         array_remove(array_agg(DISTINCT u2.display_name) FILTER (WHERE u2.display_name IS NOT NULL), NULL) AS members
@@ -1059,7 +1927,7 @@ async def get_module_details_for_artifact(module_id: str) -> Optional[Dict[str, 
         m.id = $1
         AND m.deleted_at IS NULL
     GROUP BY
-        m.id, m.name, m.description, m.start_date, m.target_date, m.status, m.project_id, p.name, u.display_name;
+        m.id, m.name, m.description, m.start_date, m.target_date, m.status, m.project_id, p.name, p.identifier, u.display_name;
     """
 
     try:
@@ -1092,6 +1960,7 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
         p.name AS project_name,
         p.identifier || '-' || i.sequence_id::text AS identifier,
         ist.name AS state,
+        ist.group AS state_group,
         i.state_id,
         COALESCE(
         (
@@ -1157,14 +2026,6 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
             WHERE il.issue_id = i.id AND il.deleted_at IS NULL
         ), ARRAY[]::text[]
         ) AS labels,
-        COALESCE(
-        (
-            SELECT array_remove(array_agg(DISTINCT l.color ORDER BY l.color), NULL::text)
-            FROM issue_labels il
-            JOIN labels l ON il.label_id = l.id AND l.deleted_at IS NULL
-            WHERE il.issue_id = i.id AND il.deleted_at IS NULL
-        ), ARRAY[]::text[]
-        ) AS label_colors,
         parent_i.name AS parent,
         i.parent_id,
         (
@@ -1199,12 +2060,12 @@ async def get_comment_details_for_artifact(comment_id: str) -> Optional[Dict[str
         return None
 
 
-async def get_page_details_for_artifact(label_id: str) -> Optional[Dict[str, Any]]:
+async def get_page_details_for_artifact(page_id: str) -> Optional[Dict[str, Any]]:
     """
     Get page details for artifact generation.
 
     Args:
-        label_id: The ID of the page to fetch details for
+        page_id: The ID of the page to fetch details for
 
     Returns:
         Dictionary with page details or None if not found
@@ -1213,19 +2074,26 @@ async def get_page_details_for_artifact(label_id: str) -> Optional[Dict[str, Any
     SELECT
         p.id,
         p.name,
-        p.description_stripped
-    FROM
-        pages p
+        p.description_stripped AS description,
+        p.access,
+        p.workspace_id,
+        p.owned_by_id,
+        p.parent_id,
+        p.is_global,
+        p.is_locked,
+        u.display_name AS owned_by
+    FROM pages p
+    LEFT JOIN users u ON p.owned_by_id = u.id AND u.is_active = true AND u.is_bot = false
     WHERE
         p.id = $1
         AND p.deleted_at IS NULL
     """
 
     try:
-        result = await PlaneDBPool.fetchrow(query, (label_id,))
+        result = await PlaneDBPool.fetchrow(query, (page_id,))
         return dict(result) if result else None
     except Exception as e:
-        log.error(f"Error fetching page details for {label_id}: {e}")
+        log.error(f"Error fetching page details for {page_id}: {e}")
         return None
 
 
@@ -1243,10 +2111,15 @@ async def get_state_details_for_artifact(state_id: str) -> Optional[Dict[str, An
     SELECT
         s.id,
         s.name,
-        s.color,
+        s.description,
         s.project_id,
-        s.group
+        s.group,
+        s.sequence,
+        s.default,
+        s.is_triage,
+        p.identifier AS project_identifier
     FROM states s
+    LEFT JOIN projects p ON s.project_id = p.id AND p.deleted_at IS NULL
     WHERE s.id = $1 AND s.deleted_at IS NULL
     """
     try:
@@ -1271,11 +2144,13 @@ async def get_label_details_for_artifact(label_id: str) -> Optional[Dict[str, An
     SELECT
         l.id,
         l.name,
-        l.color,
         l.project_id,
         l.description,
-        l.workspace_id
+        l.workspace_id,
+        l.parent_id,
+        p.identifier AS project_identifier
     FROM labels l
+    LEFT JOIN projects p ON l.project_id = p.id AND p.deleted_at IS NULL
     WHERE l.id = $1 AND l.deleted_at IS NULL
     """
     try:

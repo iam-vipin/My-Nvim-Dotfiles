@@ -124,8 +124,8 @@ def get_entity_search_tools(method_executor, context):
             return PlaneToolBase.format_error_response("Failed to list member projects", str(e))
 
     @tool
-    async def search_project_by_name(name: str, workspace_slug: Optional[str] = None) -> str:
-        """Search for a project by name and return its ID and identifier.
+    async def search_project_by_name(name: str, workspace_slug: Optional[str] = None, user_id: Optional[str] = None) -> str:
+        """Search for a project by name.
 
         Args:
             name: Project name to search for (required)
@@ -134,17 +134,40 @@ def get_entity_search_tools(method_executor, context):
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
+        if user_id is None and "user_id" in context:
+            user_id = context["user_id"]
 
         try:
             from pi.app.api.v1.helpers.plane_sql_queries import search_project_by_name
 
-            result = await search_project_by_name(name, workspace_slug)
+            results = await search_project_by_name(name, workspace_slug, member_id=user_id)
 
-            if result:
-                return PlaneToolBase.format_success_response(
-                    f"Found project '{name}'",
-                    {"id": result["id"], "name": result["name"], "workspace_id": result["workspace_id"], "identifier": result.get("identifier")},
-                )
+            if results:
+                # Normalize to list
+                projects = list(results)
+                data = {
+                    "total_matches": len(projects),
+                    "projects": [
+                        {
+                            "id": p["id"],
+                            "name": p["name"],
+                            "identifier": p.get("identifier"),
+                            "workspace_id": p.get("workspace_id"),
+                            "type": "project",
+                        }
+                        for p in projects
+                    ],
+                }
+
+                # If multiple matches, make it explicit to trigger clarification per prompt
+                if len(projects) > 1:
+                    message = (
+                        f"MULTIPLE MATCHES: Found {len(projects)} projects matching '{name}'. Clarification needed to select the correct project."
+                    )
+                else:
+                    message = f"Found 1 project matching '{name}'"
+
+                return PlaneToolBase.format_success_response(message, data)
             else:
                 return PlaneToolBase.format_error_response(f"No project found with name '{name}'", "Not found")
 
@@ -227,14 +250,147 @@ def get_entity_search_tools(method_executor, context):
             result = await search_cycle_by_name(name, project_id, workspace_slug)
 
             if result:
-                return PlaneToolBase.format_success_response(
-                    f"Found cycle '{name}'", {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
-                )
+                response_data = {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
+                if result.get("start_date"):
+                    response_data["start_date"] = result["start_date"]
+                if result.get("end_date"):
+                    response_data["end_date"] = result["end_date"]
+                return PlaneToolBase.format_success_response(f"Found cycle '{name}'", response_data)
             else:
                 return PlaneToolBase.format_error_response(f"No cycle found with name '{name}'", "Not found")
 
         except Exception as e:
             return PlaneToolBase.format_error_response(f"Error searching for cycle '{name}': {str(e)}", str(e))
+
+    @tool
+    async def search_current_cycle(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+        """Search for the current active cycle in a project (where today's date falls within the cycle's start and end dates).
+
+        IMPORTANT: Use this tool when the user asks about the "current cycle", "active cycle", "ongoing cycle", or "this cycle".
+        This searches for cycles where today's date is between start_date and end_date.
+
+        Args:
+            project_id: Project ID to search within (optional, auto-filled from context)
+            workspace_slug: Workspace slug (optional, auto-filled from context)
+        """
+        # Auto-fill from context if not provided
+        if "workspace_slug" in context and context.get("workspace_slug"):
+            workspace_slug = context["workspace_slug"]
+        if project_id is None and "project_id" in context:
+            project_id = str(context["project_id"]) if context["project_id"] else None
+
+        try:
+            if not project_id:
+                return PlaneToolBase.format_error_response(
+                    "Failed to search for current cycle",
+                    "project_id is required to search for current cycle",
+                )
+
+            # Normalize project_id if an identifier like 'OGX' was passed
+            normalized_project_id = await _normalize_project_id(project_id, workspace_slug)
+            if not normalized_project_id:
+                return PlaneToolBase.format_error_response(
+                    "Failed to search for current cycle",
+                    "project_id is required to search for current cycle",
+                )
+
+            from pi.app.api.v1.helpers.plane_sql_queries import search_current_cycle
+
+            result = await search_current_cycle(normalized_project_id, workspace_slug)
+
+            if result:
+                response_data = {
+                    "id": result["id"],
+                    "name": result["name"],
+                    "project_id": result["project_id"],
+                    "start_date": result.get("start_date"),
+                    "end_date": result.get("end_date"),
+                    "is_current": True,
+                }
+
+                # Build cycle URL and include in response message
+                cycle_url = None
+                try:
+                    from pi import settings
+
+                    ws_slug = result.get("workspace_slug") or workspace_slug
+                    if ws_slug and result.get("project_id") and result.get("id"):
+                        api_base_url = settings.plane_api.FRONTEND_URL
+                        cycle_url = f"{api_base_url}/{ws_slug}/projects/{result["project_id"]}/cycles/{result["id"]}/"
+                        response_data["url"] = cycle_url
+                except Exception:
+                    pass
+
+                # Include URL in the message text so LLM sees it even without entity_urls
+                message = f"Found current active cycle: '{result["name"]}'"
+                if cycle_url:
+                    message += f"\nCycle URL: {cycle_url}"
+
+                return PlaneToolBase.format_success_response(message, response_data)
+            else:
+                return PlaneToolBase.format_error_response(
+                    "No current active cycle found",
+                    "No cycle is active today (no cycle where today falls between start_date and end_date)",
+                )
+
+        except Exception as e:
+            return PlaneToolBase.format_error_response(f"Error searching for current cycle: {str(e)}", str(e))
+
+    @tool
+    async def list_recent_cycles(
+        count: Optional[int] = 3,
+        status: Optional[str] = "completed",
+        project_id: Optional[str] = None,
+        workspace_slug: Optional[str] = None,
+    ) -> str:
+        """List recent cycles in the current project/workspace context.
+
+        Use this to resolve "last cycle" or "previous cycle" in project chats.
+
+        Args:
+            count: How many cycles to return (default 3)
+            status: Filter by 'completed' | 'active' | 'upcoming' (default 'completed')
+            project_id: Project scope (auto-filled from context; identifier will be resolved)
+            workspace_slug: Workspace scope (auto-filled from context)
+        """
+        # Auto-fill from context if not provided
+        if workspace_slug is None and "workspace_slug" in context:
+            workspace_slug = context["workspace_slug"]
+        if project_id is None and "project_id" in context:
+            project_id = str(context["project_id"]) if context["project_id"] else None
+
+        try:
+            # Normalize project_id if identifier was provided
+            project_id = await _normalize_project_id(project_id, workspace_slug)
+
+            workspace_id: Optional[str] = None
+            if not project_id and workspace_slug:
+                # Resolve workspace_id from slug
+                row = await PlaneDBPool.fetchrow("SELECT id FROM workspaces WHERE slug = $1", (workspace_slug,))
+                workspace_id = str(row["id"]) if row else None
+
+            if not project_id and not workspace_id:
+                return PlaneToolBase.format_error_response(
+                    "Failed to list recent cycles",
+                    "Missing project context; provide project_id or ensure project chat context",
+                )
+
+            from pi.app.api.v1.helpers.plane_sql_queries import list_recent_cycles as _list_recent_cycles
+
+            rows = await _list_recent_cycles(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                limit=int(count or 3),
+                status=status or "completed",
+            )
+
+            data = {"cycles": rows, "count": len(rows)}
+            if rows:
+                data["last_cycle_id"] = rows[0]["id"]
+
+            return PlaneToolBase.format_success_response("Successfully retrieved recent cycles", data)
+        except Exception as e:
+            return PlaneToolBase.format_error_response("Failed to list recent cycles", str(e))
 
     @tool
     async def search_label_by_name(name: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
@@ -301,8 +457,13 @@ def get_entity_search_tools(method_executor, context):
             return PlaneToolBase.format_error_response(f"Error searching for state '{name}': {str(e)}", str(e))
 
     @tool
-    async def search_user_by_name(display_name: str, workspace_slug: Optional[str] = None) -> str:
-        """Search for a user by display name and return their ID.
+    async def search_user_by_name(
+        display_name: Optional[str] = None,
+        workspace_slug: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+    ) -> str:
+        """Search for a user by display, first, or last name and return matches.
 
         Args:
             display_name: User display name to search for (required)
@@ -315,7 +476,40 @@ def get_entity_search_tools(method_executor, context):
         try:
             from pi.app.api.v1.helpers.plane_sql_queries import search_user_by_name
 
-            result = await search_user_by_name(display_name, workspace_slug)
+            # Ensure at least one name parameter is present
+            if not any([display_name, first_name, last_name]):
+                return PlaneToolBase.format_error_response(
+                    "At least one of display_name, first_name, or last_name must be provided",
+                    "missing_parameters",
+                )
+
+            # Fallback broadening with smart splitting: if only display_name is provided
+            # - If it looks like a full name (contains space or comma), split into first/last
+            # - Else (single token like 'sunder'), search in first_name and last_name as well
+            if display_name and not first_name and not last_name:
+                dn = str(display_name).strip()
+                if "," in dn:
+                    parts = [p.strip() for p in dn.split(",", 1)]
+                    # Format: Last, First
+                    if len(parts) == 2 and parts[0] and parts[1]:
+                        last_name = parts[0]
+                        first_name = parts[1]
+                else:
+                    tokens = [t for t in dn.split() if t]
+                    if len(tokens) >= 2:
+                        first_name = tokens[0]
+                        last_name = " ".join(tokens[1:])
+                    else:
+                        # Single token: broaden to both first and last
+                        first_name = dn
+                        last_name = dn
+
+            result = await search_user_by_name(
+                display_name=display_name,
+                workspace_slug=workspace_slug,
+                first_name=first_name,
+                last_name=last_name,
+            )
 
             if result:
                 # Return all matching users with clear structure for LLM
@@ -372,7 +566,15 @@ def get_entity_search_tools(method_executor, context):
 
             if result:
                 return PlaneToolBase.format_success_response(
-                    f"Found work item '{name}'", {"id": result["id"], "name": result["name"], "project_id": result["project_id"]}
+                    f"Found work item '{name}'",
+                    {
+                        "id": result["id"],
+                        "name": result["name"],
+                        "project_id": result["project_id"],
+                        "is_epic": result["is_epic"],
+                        "type_id": result["type_id"],
+                        "type_name": result["type_name"],
+                    },
                 )
             else:
                 return PlaneToolBase.format_error_response(f"No work item found with name '{name}'", "Not found")
@@ -411,6 +613,9 @@ def get_entity_search_tools(method_executor, context):
                         "state_id": result.get("state_id"),
                         "priority": result.get("priority"),
                         "workspace_id": result["workspace_id"],
+                        "is_epic": result["is_epic"],
+                        "type_id": result["type_id"],
+                        "type_name": result["type_name"],
                     },
                 )
             else:
@@ -425,6 +630,8 @@ def get_entity_search_tools(method_executor, context):
         search_project_by_name,
         search_project_by_identifier,
         search_cycle_by_name,
+        search_current_cycle,
+        list_recent_cycles,
         search_label_by_name,
         search_state_by_name,
         search_user_by_name,

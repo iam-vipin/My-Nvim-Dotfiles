@@ -95,7 +95,7 @@ async def _batched_predict(
         log.debug("Slice %s: Acquired rate limit tokens for batch of %d texts", slice_id, len(texts))
 
         # First, try the normal approach without sanitization
-        body = {"parameters": {"input": list(texts)}}
+        body = {"parameters": {"texts": list(texts)}}
 
         try:
             resp = await vdb.async_os.transport.perform_request(
@@ -160,6 +160,7 @@ async def _batched_predict(
                 or "illegal_state_exception" in error_str.lower()
                 or "illegal_argument_exception" in error_str.lower()
                 or "Some parameter placeholder not filled in payload: input" in error_str.lower()
+                or "Some parameter placeholder not filled in payload: texts" in error_str.lower()
             ):
                 log.warning(
                     "Slice %s: Property interpolation error detected in batch of %d texts. Attempting sanitization and retry...", slice_id, len(texts)
@@ -180,7 +181,7 @@ async def _batched_predict(
                     log.warning("Slice %s: No obvious problematic content found during sanitization. Error may be from other causes.", slice_id)
 
                 # Retry with sanitized content
-                sanitized_body = {"parameters": {"input": sanitized_texts}}
+                sanitized_body = {"parameters": {"texts": sanitized_texts}}
 
                 try:
                     resp = await vdb.async_os.transport.perform_request(

@@ -76,10 +76,12 @@ def get_project_tools(method_executor, context):
         payload: Dict[str, Any] = {
             "name": name,
             "identifier": base_identifier,
-            "description": description,
             "workspace_slug": workspace_slug,
         }
-        # Optional fields
+
+        # Only add description if it's not None
+        if description is not None:
+            payload["description"] = description
         if project_lead is not None:
             payload["project_lead"] = project_lead
         if default_assignee is not None:

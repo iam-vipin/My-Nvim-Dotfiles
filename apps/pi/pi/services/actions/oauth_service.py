@@ -49,6 +49,7 @@ class PlaneOAuthService:
             "response_type": "code",
             "redirect_uri": self.redirect_uri,
             "state": state,
+            "disable_dropdown": True,
         }
 
         # Add workspace_slug if provided

@@ -56,7 +56,8 @@ class ChatKit(AttachmentMixin):
         from pi.services.llm.llms import create_openai_llm
 
         # Store original switch_llm value to determine if custom model was requested
-        use_custom_model = switch_llm is not None
+        # GPT-5 variants are handled separately, not as custom models
+        use_custom_model = switch_llm is not None and not switch_llm.startswith("gpt-5")
 
         # Model name mapping for user-friendly names to actual LiteLLM model names
         model_name_mapping = {
@@ -81,6 +82,24 @@ class ChatKit(AttachmentMixin):
                     base_url=settings.llm_config.LITE_LLM_HOST,
                     api_key=settings.llm_config.LITE_LLM_API_KEY,
                 )
+            elif switch_llm == "gpt-5-standard":
+                # This is GPT-5 Standard with medium reasoning
+                TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
+                tool_config = LLMConfig(
+                    model=TOOL_LLM,
+                    streaming=False,
+                    reasoning_effort="medium",
+                    use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+                )
+            elif switch_llm == "gpt-5-fast":
+                # This is GPT-5 Fast with low reasoning
+                TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API
+                tool_config = LLMConfig(
+                    model=TOOL_LLM,
+                    streaming=False,
+                    reasoning_effort="low",
+                    use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
+                )
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
@@ -94,14 +113,36 @@ class ChatKit(AttachmentMixin):
             self.decomposer_llm = llms.LLMFactory.get_decomposer_llm(f"{switch_llm}-decomposer")
             self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name=f"{switch_llm}-fast")
         else:
-            # Use default global instances
-            self.llm = llms.llm
-            self.stream_llm = llms.stream_llm
-            self.decomposer_llm = llms.decomposer_llm
-            self.fast_llm = llms.fast_llm
+            # Use default global instances, but for GPT-5 variants create dynamic instances
+            if switch_llm == "gpt-5-standard":
+                self.llm = llms.LLMFactory.get_default_llm("gpt5_standard_default")
+                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_standard_stream")
+                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_standard_default")
+                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_standard_default")
+            elif switch_llm == "gpt-5-fast":
+                self.llm = llms.LLMFactory.get_default_llm("gpt5_fast_default")
+                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_fast_stream")
+                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_fast_default")
+                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_fast_default")
+            else:
+                # Use default global instances
+                self.llm = llms.llm
+                self.stream_llm = llms.stream_llm
+                self.decomposer_llm = llms.decomposer_llm
+                self.fast_llm = llms.fast_llm
 
         self.switch_llm = switch_llm
+        # Get chat LLM - reasoning effort is now determined by model name
         self.chat_llm = llms.get_chat_llm(switch_llm)
+
+        # Log key model info
+        chat_model = getattr(self.chat_llm, "model_name", "unknown")
+        reasoning_effort = "N/A"
+        if switch_llm == "gpt-5-standard":
+            reasoning_effort = "medium"
+        elif switch_llm == "gpt-5-fast":
+            reasoning_effort = "low"
+        log.info(f"Using model: {chat_model} (reasoning_effort: {reasoning_effort}), switch_llm: {switch_llm}")
 
         self.tool_llm = create_openai_llm(tool_config)
         self.issue_retriever = IssueRetriever(
@@ -136,9 +177,9 @@ class ChatKit(AttachmentMixin):
         """Get stored agent response"""
         return self.agent_responses.get(tool_name)
 
-    def set_token_tracking_context(self, message_id: UUID4, db: AsyncSession) -> None:
+    def set_token_tracking_context(self, message_id: UUID4, db: AsyncSession, chat_id: Optional[str] = None) -> None:
         """Set token tracking context for this chat session"""
-        self._token_tracking_context = {"message_id": message_id, "db": db}
+        self._token_tracking_context = {"message_id": message_id, "db": db, "chat_id": chat_id}
 
     def clear_token_tracking_context(self) -> None:
         """Clear token tracking context"""
@@ -352,6 +393,7 @@ Provide concise, relevant context from the attachment(s):"""
         oauth_params = {
             "user_id": user_id,
             "workspace_id": workspace_id,
+            "disable_dropdown": True,
         }
 
         # Add optional context parameters
@@ -385,8 +427,8 @@ Provide concise, relevant context from the attachment(s):"""
                 "🔐 **Plane authorization required**\n\n"
                 f"I need your permission to perform actions in Plane for your request:\n"
                 f'**"{user_intent}"**\n\n'
-                "Please authorize PiChat by clicking the link below:\n"
-                f"[Authorize PiChat]({clean_url})\n\n"
+                "Please authorize Plane AI by clicking the link below:\n"
+                f"[Authorize Plane AI]({clean_url})\n\n"
                 "After authorizing, come back and repeat your request."
             )
 
@@ -404,8 +446,8 @@ Provide concise, relevant context from the attachment(s):"""
                 f"There was an issue with your Plane workspace authorization:\n"
                 f"`{error_message}`\n\n"
                 f"**To resolve this:**\n"
-                f"1. Check your workspace connection in PiChat settings\n"
-                f"2. Re-authorize PiChat if needed\n"
+                f"1. Check your workspace connection in Plane AI settings\n"
+                f"2. Re-authorize Plane AI if needed\n"
                 f"3. Try your request again\n\n"
                 f"If the problem persists, please contact support."
             )
@@ -536,6 +578,14 @@ Provide concise, relevant context from the attachment(s):"""
                         # Project overview URL
                         opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("id")}/overview/"
                         opt2["type"] = "project"
+                    elif opt_type == "cycle" and opt.get("id") and opt.get("project_id"):
+                        # Cycle URL requires project_id
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("project_id")}/cycles/{opt.get("id")}/"
+                        opt2["type"] = "cycle"
+                    elif opt_type == "module" and opt.get("id") and opt.get("project_id"):
+                        # Module URL requires project_id
+                        opt2["url"] = f"{base_url}/{ws_slug}/projects/{opt.get("project_id")}/modules/{opt.get("id")}/"
+                        opt2["type"] = "module"
                     elif (opt_type == "workitem" and opt.get("identifier")) or (
                         not opt_type and opt.get("identifier") and "-" in str(opt.get("identifier"))
                     ):
@@ -555,14 +605,43 @@ Provide concise, relevant context from the attachment(s):"""
                 "disambiguation_options": enhanced_options,
                 "category_hints": category_hints or [],
             }
-            # Log outgoing clarification payload built by the tool
-            try:
-                import json as _json
+            # # Log outgoing clarification payload built by the tool
+            # try:
+            #     import json as _json
 
-                log.info(f"ChatID: {chat_id} - ASK_FOR_CLARIFICATION tool payload (outgoing): {_json.dumps(payload, default=str)}")
-            except Exception:
-                pass
+            #     log.info(f"ChatID: {chat_id} - ASK_FOR_CLARIFICATION tool payload (outgoing): {_json.dumps(payload, default=str)}")
+            # except Exception:
+            #     pass
             # The action executor intercepts this tool call and streams a dedicated clarification event.
+            return json.dumps(payload)
+
+        @tool
+        async def no_actions_planned(
+            reason: str,
+            explanation: Optional[str] = None,
+        ) -> str:
+            """Use this when you determine that no actions need to be planned for the user's request.
+
+            This should be used when:
+            - The request is asking for information only (no data modification needed)
+            - The request is for unsupported features (analytics, external integrations, etc.)
+            - The request cannot be fulfilled with available tools
+            - All necessary information has been retrieved and no further actions are needed
+
+            Args:
+                reason: Short description of why no actions are needed (e.g., "Request is for information only").
+                explanation: Optional detailed explanation for the user about why no actions were planned.
+
+            Returns:
+                JSON string with the reasoning for downstream handling.
+            """
+            payload: Dict[str, Any] = {
+                "reason": reason,
+                "explanation": explanation or "",
+                "token": "NO_ACTIONS_PLANNED",
+            }
+
+            # The action executor will intercept this and handle the no-actions flow
             return json.dumps(payload)
 
         @tool
@@ -626,6 +705,377 @@ Provide concise, relevant context from the attachment(s):"""
                 return f"Error querying database: {str(e)}"
 
         @tool
+        async def fetch_cycle_details(
+            cycle_id: str,
+            tool_project_id: Optional[str] = None,
+            tool_workspace_slug: Optional[str] = None,
+            facets: Optional[List[str]] = None,
+            filters: Optional[Dict[str, Any]] = None,
+            detail_level: Optional[str] = "summary",
+            time_bucket: Optional[str] = "day",
+            limit: Optional[int] = 50,
+            offset: Optional[int] = 0,
+            include_urls: Optional[bool] = True,
+        ) -> str:
+            """Fetch cycle insights and details without LLM SQL generation.
+
+            Use this when the question is about a specific cycle's metrics: summary, breakdowns, burndown, scope and (optionally) issue list.
+
+            Args:
+                cycle_id: Target cycle ID (required)
+                tool_project_id: Optional project ID override (auto-filled from conversation context if not provided)
+                tool_workspace_slug: Optional workspace slug override (auto-resolved if needed)
+                facets: Sections to include - ["summary", "by_state", "by_assignee", "by_priority", "by_label", "by_type",
+                    "burndown", "scope_change", "scope_added", "scope_removed", "carryover", "issues"]
+                    - "scope_change": counts (baseline, added, removed)
+                    - "scope_added": list items added during cycle
+                    - "scope_removed": list items removed during cycle
+                filters: For issues facet - {include_completed, state_groups, priority_in, assignee_ids, label_ids,
+                    search_text, created_within_cycle_only}
+                detail_level: "summary" | "metrics" | "detailed"
+                time_bucket: "day" | "week" (for burndown)
+                limit/offset: Pagination for issues facet (also applies to scope_added/scope_removed)
+                include_urls: Whether to include entity URLs
+            """
+            try:
+                if not cycle_id:
+                    return "Failed to retrieve cycle details: cycle_id is required"
+
+                # Log what facets were requested
+                log.info(
+                    f"ChatID: {chat_id} - fetch_cycle_details called with cycle_id={cycle_id}, "
+                    f"facets={facets}, filters={filters}, detail_level={detail_level}"
+                )
+
+                # Pull core details and compute requested facets
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_breakdown_by_assignee
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_breakdown_by_label
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_breakdown_by_priority
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_breakdown_by_state
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_breakdown_by_type
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_burndown
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_carryover
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_core
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_scope_change
+                from pi.app.api.v1.helpers.plane_sql_queries import get_cycle_summary_metrics
+                from pi.app.api.v1.helpers.plane_sql_queries import list_cycle_issues_filtered
+
+                facets = facets or ["summary", "by_state", "by_priority", "by_assignee"]
+                filters = filters or {}
+
+                data: Dict[str, Any] = {"cycle": None}
+
+                # Always include core cycle
+                core = await get_cycle_core(cycle_id)
+                if not core:
+                    return "Failed to retrieve cycle details: cycle not found"
+
+                # Validate user has access to the cycle's project
+                cycle_project_id = core.get("project_id")
+                if cycle_project_id:
+                    # Check if user is an active member of this project
+                    access_query = """
+                    SELECT 1 FROM project_members pm
+                    WHERE pm.project_id = $1 AND pm.member_id = $2
+                      AND pm.is_active = TRUE AND pm.deleted_at IS NULL
+                    LIMIT 1
+                    """
+                    try:
+                        from pi.core.db import PlaneDBPool
+
+                        access_check = await PlaneDBPool.fetchrow(access_query, (cycle_project_id, user_id))
+                        if not access_check:
+                            return "Failed to retrieve cycle details: You don't have access to this cycle's project"
+                    except Exception as access_err:
+                        log.error(f"Error checking cycle access for user {user_id}, cycle {cycle_id}: {access_err}")
+                        # Continue anyway - don't block on permission check failure
+
+                data["cycle"] = core
+
+                # Always compute summary metrics so counts are available for LLM
+                data["summary"] = await get_cycle_summary_metrics(cycle_id)
+                try:
+                    _s = data.get("summary") or {}
+                    log.info(
+                        f"ChatID: {chat_id} - fetch_cycle_details: summary totals: total={_s.get("total_issues")}, "
+                        f"completed={_s.get("completed_issues")}, open={_s.get("open_issues")}"
+                    )
+                except Exception:
+                    pass
+
+                if "by_state" in facets:
+                    data.setdefault("breakdowns", {})["by_state"] = await get_cycle_breakdown_by_state(cycle_id)
+
+                if "by_assignee" in facets:
+                    assignee_breakdown = await get_cycle_breakdown_by_assignee(cycle_id)
+                    data.setdefault("breakdowns", {})["by_assignee"] = assignee_breakdown
+                    log.info(f"ChatID: {chat_id} - fetch_cycle_details: by_assignee breakdown returned {len(assignee_breakdown)} rows")
+
+                if "by_priority" in facets:
+                    data.setdefault("breakdowns", {})["by_priority"] = await get_cycle_breakdown_by_priority(cycle_id)
+
+                if "by_label" in facets:
+                    data.setdefault("breakdowns", {})["by_label"] = await get_cycle_breakdown_by_label(cycle_id)
+
+                if "by_type" in facets:
+                    data.setdefault("breakdowns", {})["by_type"] = await get_cycle_breakdown_by_type(cycle_id)
+
+                if "burndown" in facets:
+                    data["burndown"] = await get_cycle_burndown(cycle_id, bucket=time_bucket or "day")
+
+                if "scope_change" in facets:
+                    data["scope_change"] = await get_cycle_scope_change(cycle_id)
+
+                if "carryover" in facets:
+                    data["carryover"] = await get_cycle_carryover(cycle_id)
+
+                if "scope_added" in facets:
+                    from pi.app.api.v1.helpers.plane_sql_queries import list_scope_added_issues
+
+                    data["scope_added_items"] = await list_scope_added_issues(cycle_id, limit=limit or 50)
+
+                if "scope_removed" in facets:
+                    from pi.app.api.v1.helpers.plane_sql_queries import list_scope_removed_issues
+
+                    data["scope_removed_items"] = await list_scope_removed_issues(cycle_id, limit=limit or 50)
+
+                if "issues" in facets:
+                    data["issues"] = await list_cycle_issues_filtered(cycle_id=cycle_id, filters=filters, limit=limit or 50, offset=offset or 0)
+                    log.info(
+                        f"ChatID: {chat_id} - fetch_cycle_details: Retrieved {len(data.get("issues", []))} issues "
+                        f"with filters={filters}, limit={limit or 50}"
+                    )
+
+                # If a breakdown facet is requested but detail_level is 'summary', elevate to 'metrics'
+                try:
+                    requested_breakdown_facets = {"by_state", "by_assignee", "by_priority", "by_label", "by_type", "scope_change", "burndown"}
+                    if (detail_level or "summary") == "summary" and any(f in (facets or []) for f in requested_breakdown_facets):
+                        log.info(f"ChatID: {chat_id} - fetch_cycle_details: elevating detail_level to 'metrics' due to requested facets {facets}")
+                        detail_level = "metrics"
+                except Exception:
+                    pass
+
+                # Build concise text result according to detail_level
+                def _format_summary_text(d: Dict[str, Any]) -> str:
+                    s = d.get("summary") or {}
+                    parts: List[str] = []
+                    parts.append(f"Cycle: {core.get("name")} ({core.get("id")})")
+                    if s:
+                        parts.append(
+                            f"Issues: total={s.get("total_issues", 0)}, completed={s.get("completed_issues", 0)}, open={s.get("open_issues", 0)}"
+                        )
+                        points = f"Points: total={s.get("total_points", 0)}, completed={s.get("completed_points", 0)}"
+                        parts.append(points)
+                    return "\n".join(parts)
+
+                def _format_metrics_text(d: Dict[str, Any]) -> str:
+                    lines: List[str] = [_format_summary_text(d)]
+                    br = d.get("breakdowns", {})
+                    if br.get("by_state"):
+                        lines.append("State breakdown:")
+                        for row in br["by_state"]:
+                            lines.append(f"- {row.get("state_group")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
+                    if br.get("by_priority"):
+                        lines.append("Priority breakdown:")
+                        for row in br["by_priority"]:
+                            lines.append(f"- {row.get("priority")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)")
+                    if br.get("by_assignee"):
+                        lines.append("Assignee breakdown:")
+                        for row in br["by_assignee"]:
+                            lines.append(
+                                f"- {row.get("assignee_name") or row.get("assignee_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                            )
+                    if br.get("by_label"):
+                        lines.append("Label breakdown:")
+                        for row in br["by_label"]:
+                            lines.append(
+                                f"- {row.get("label_name") or row.get("label_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                            )
+                    if br.get("by_type"):
+                        lines.append("Type breakdown:")
+                        for row in br["by_type"]:
+                            lines.append(
+                                f"- {row.get("type_name") or row.get("type_id")}: {row.get("issues", 0)} issues ({row.get("points", 0)} pts)"
+                            )
+                    # Include scope change metrics if present
+                    scope = d.get("scope_change")
+                    if scope:
+                        lines.append("Scope change:")
+                        lines.append(f"- Baseline (at start): {scope.get("baseline_issues", 0)} issues")
+                        lines.append(f"- Added during cycle: {scope.get("added_during_cycle", 0)} issues")
+                        lines.append(f"- Removed during cycle: {scope.get("removed_during_cycle", 0)} issues")
+                        lines.append(f"- Net change: {scope.get("net_scope_change", 0)} issues")
+                    return "\n".join(lines)
+
+                if (detail_level or "summary") == "summary":
+                    results_text = _format_summary_text(data)
+                    # If issues facet was requested, include details (count + sample items)
+                    if "issues" in (facets or []):
+                        try:
+                            _issues = data.get("issues")
+                            items_list: List[Dict[str, Any]] = []
+                            if isinstance(_issues, list):
+                                items_list = _issues
+                            elif isinstance(_issues, dict) and isinstance(_issues.get("items"), list):
+                                items_list = _issues.get("items") or []
+                            _cnt = len(items_list)
+
+                            # Personalize when assignee filter targets current user
+                            you_scope = False
+                            if isinstance(filters, dict):
+                                assignee_ids = filters.get("assignee_ids") or []
+                                if isinstance(assignee_ids, list) and len(assignee_ids) == 1 and str(assignee_ids[0]) == str(user_id):
+                                    you_scope = True
+
+                            if _cnt:
+                                summary_line = f"You have {_cnt} pending work-items in this cycle:" if you_scope else f"Filtered issues ({_cnt}):"
+                                results_text = (results_text + "\n" + summary_line) if results_text else summary_line
+
+                                # List each item with name, state, priority, and unique key
+                                for item in items_list[: limit or 50]:
+                                    item_name = item.get("name", "Unnamed")
+                                    item_id = item.get("id", "")
+                                    identifier = item.get("identifier")  # e.g., SOLO-123
+                                    state_group = item.get("state_group", "unknown")
+                                    priority = item.get("priority", "none")
+                                    # Build a clean display line with unique key if available
+                                    results_text += f"\n- {item_name} ({state_group}, {priority})"
+                                    if identifier:
+                                        results_text += f" [{identifier}]"
+                                    # Include full UUID for router context (hidden from user by combination LLM)
+                                    results_text += f" {{id: {item_id}}}"
+                            else:
+                                # Count is zero - explicitly say no items matched
+                                no_items_line = (
+                                    "You have no pending work-items in this cycle matching the filters."
+                                    if you_scope
+                                    else "No issues matched the specified filters."
+                                )
+                                results_text = (results_text + "\n" + no_items_line) if results_text else no_items_line
+                        except Exception as ex:
+                            log.error(f"ChatID: {chat_id} - Error formatting issues in summary mode: {ex}")
+                            pass
+                elif detail_level == "metrics":
+                    results_text = _format_metrics_text(data)
+                    # Also include item details when issues facet is present
+                    if "issues" in (facets or []):
+                        try:
+                            _issues = data.get("issues")
+                            items_list_metrics: List[Dict[str, Any]] = []
+                            if isinstance(_issues, list):
+                                items_list_metrics = _issues
+                            elif isinstance(_issues, dict) and isinstance(_issues.get("items"), list):
+                                items_list_metrics = _issues.get("items") or []
+                            _cnt_metrics = len(items_list_metrics)
+                            if _cnt_metrics:
+                                results_text += f"\n\nFiltered issues ({_cnt_metrics}):"
+                                for item in items_list_metrics[: limit or 50]:
+                                    item_name = item.get("name", "Unnamed")
+                                    item_id = item.get("id", "")
+                                    identifier = item.get("identifier")
+                                    state_group = item.get("state_group", "unknown")
+                                    priority = item.get("priority", "none")
+                                    results_text += f"\n- {item_name} ({state_group}, {priority})"
+                                    if identifier:
+                                        results_text += f" [{identifier}]"
+                                    results_text += f" {{id: {item_id}}}"
+                        except Exception:
+                            pass
+                else:
+                    # detailed -> include metrics + full issue listing if requested
+                    results_text = _format_metrics_text(data)
+                    if data.get("burndown"):
+                        results_text += "\nIncludes burndown timeseries."
+                    if data.get("scope_change"):
+                        results_text += "\nIncludes scope change metrics."
+
+                    # List scope-added items if requested
+                    if "scope_added" in (facets or []):
+                        added = data.get("scope_added_items") or []
+                        if added:
+                            results_text += f"\n\nScope added during cycle ({len(added)} items):"
+                            for item in added:
+                                item_name = item.get("name", "Unnamed")
+                                identifier = item.get("identifier")
+                                item_id = item.get("id", "")
+                                state_group = item.get("state_group", "unknown")
+                                priority = item.get("priority", "none")
+                                results_text += f"\n- {item_name} ({state_group}, {priority})"
+                                if identifier:
+                                    results_text += f" [{identifier}]"
+                                results_text += f" {{id: {item_id}}}"
+
+                    # List scope-removed items if requested
+                    if "scope_removed" in (facets or []):
+                        removed = data.get("scope_removed_items") or []
+                        if removed:
+                            results_text += f"\n\nScope removed during cycle ({len(removed)} items):"
+                            for item in removed:
+                                item_name = item.get("name", "Unnamed")
+                                identifier = item.get("identifier")
+                                item_id = item.get("id", "")
+                                state_group = item.get("state_group", "unknown")
+                                priority = item.get("priority", "none")
+                                results_text += f"\n- {item_name} ({state_group}, {priority})"
+                                if identifier:
+                                    results_text += f" [{identifier}]"
+                                results_text += f" {{id: {item_id}}}"
+
+                    if "issues" in (facets or []):
+                        try:
+                            _issues = data.get("issues")
+                            items_list_detailed: List[Dict[str, Any]] = []
+                            if isinstance(_issues, list):
+                                items_list_detailed = _issues
+                            elif isinstance(_issues, dict) and isinstance(_issues.get("items"), list):
+                                items_list_detailed = _issues.get("items") or []
+                            _cnt_detailed = len(items_list_detailed)
+                            if _cnt_detailed:
+                                results_text += f"\n\nDetailed issues ({_cnt_detailed}):"
+                                for item in items_list_detailed[: limit or 50]:
+                                    item_name = item.get("name", "Unnamed")
+                                    item_id = item.get("id", "")
+                                    identifier = item.get("identifier")
+                                    state_group = item.get("state_group", "unknown")
+                                    priority = item.get("priority", "none")
+                                    results_text += f"\n- {item_name} ({state_group}, {priority})"
+                                    if identifier:
+                                        results_text += f" [{identifier}]"
+                                    results_text += f" {{id: {item_id}}}"
+                        except Exception:
+                            pass
+
+                # Build entity URLs (cycle URL only to keep it lightweight)
+                entity_urls: Optional[List[Dict[str, str]]] = None
+                if include_urls:
+                    try:
+                        # Get workspace_slug and project_id from core (already in cycles table!)
+                        ws_slug = core.get("workspace_slug")
+                        pid = core.get("project_id")
+
+                        if ws_slug and pid:
+                            api_base_url = settings.plane_api.FRONTEND_URL
+                            entity_urls = [
+                                {
+                                    "type": "cycle",
+                                    "id": str(core.get("id")),
+                                    "name": core.get("name", ""),
+                                    "url": f"{api_base_url}/{ws_slug}/projects/{pid}/cycles/{core.get("id")}/",
+                                }
+                            ]
+                    except Exception as _e:  # noqa: F841
+                        entity_urls = None
+
+                # Standardize and store
+                response_obj = {"results": results_text, "data": data, "entity_urls": entity_urls}
+                self._store_agent_response("fetch_cycle_details", response_obj)
+                return StandardAgentResponse.extract_results(response_obj)
+
+            except Exception as e:
+                log.error(f"Error in fetch_cycle_details: {str(e)}")
+                return "Failed to retrieve data from the DB due to an error. Please try again later."
+
+        @tool
         async def pages_search_tool(query: str) -> str:
             """Search for pages using semantic vector search. Use this when looking for documentation pages or wiki content not for page metadata."""
             try:
@@ -671,6 +1121,9 @@ Provide concise, relevant context from the attachment(s):"""
             except Exception as e:
                 log.error(f"Error in generic_query_tool: {str(e)}")
                 return f"Error handling generic query: {str(e)}"
+
+        # Store fetch_cycle_details in self for later access by _get_selected_tools
+        self._fetch_cycle_details_tool = fetch_cycle_details
 
         return [ask_for_clarification, vector_search_tool, structured_db_tool, pages_search_tool, docs_search_tool, generic_query_tool]
 
@@ -809,20 +1262,37 @@ Provide concise, relevant context from the attachment(s):"""
         selected_tool_names = [agent_to_tool_map.get(agent_query.agent) for agent_query in selected_agents]
         tools = [tool for tool in all_tools if tool.name in selected_tool_names]
 
-        # Inject entity search tools so retrieval-only flows can disambiguate entities
+        # Inject entity search tools and fetch_cycle_details so retrieval-only flows can disambiguate entities
+        # and get cycle details without SQL generation
         try:
             from pi.services.actions.tools.entity_search import get_entity_search_tools
 
-            # Build minimal context for entity search
-            search_ctx = {"workspace_slug": workspace_slug, "project_id": project_id}
+            # Build minimal context for entity search and cycle details tool
+            search_ctx = {
+                "workspace_id": workspace_id,
+                "workspace_slug": workspace_slug,
+                "project_id": project_id,
+                "user_id": user_id,
+            }
             entity_tools = get_entity_search_tools(method_executor=None, context=search_ctx) or []
+            log.info(f"ChatID: {chat_id} - Got {len(entity_tools)} entity search tools")
+
+            # Add fetch_cycle_details tool (stored in self during _create_tools)
+            if hasattr(self, "_fetch_cycle_details_tool"):
+                entity_tools.append(self._fetch_cycle_details_tool)
+                log.info(f"ChatID: {chat_id} - Added fetch_cycle_details to multi-agent tools")
+            else:
+                log.warning(f"ChatID: {chat_id} - fetch_cycle_details tool not available (was _create_tools called?)")
+
             # Merge while avoiding duplicates by name
             existing = {getattr(t, "name", "") for t in tools}
             for t in entity_tools:
                 if getattr(t, "name", "") not in existing:
                     tools.append(t)
-        except Exception:
+            log.info(f"ChatID: {chat_id} - After adding entity tools, total tools: {len(tools)}, names: {[t.name for t in tools]}")
+        except Exception as e:
             # Best-effort only; skip if unavailable
+            log.error(f"ChatID: {chat_id} - Error adding entity tools: {e}")
             pass
         # Always include clarification tool for retrieval flows so LLM can resolve ambiguity
         try:
@@ -845,10 +1315,50 @@ Provide concise, relevant context from the attachment(s):"""
         """
         # Get the category tools (which now include entity search tools)
         tools = get_tools_for_category(category, method_executor, context) or []
+
+        # Universally include a minimal set of entity search tools needed across most actions
+        # This prevents cases where the router selects a non-project category (e.g., workitems)
+        # but project resolution is still required (e.g., "in OG project").
+        try:
+            from pi.services.actions.tools.entity_search import get_entity_search_tools
+
+            search_ctx = {
+                "workspace_slug": context.get("workspace_slug"),
+                "project_id": context.get("project_id"),
+                # Pass through ids so tools like list_member_projects can auto-fill
+                "workspace_id": context.get("workspace_id"),
+                "user_id": context.get("user_id"),
+            }
+            entity_tools = get_entity_search_tools(method_executor, search_ctx) or []
+
+            universal_tool_names = {
+                "search_project_by_identifier",
+                "search_project_by_name",
+                "list_member_projects",
+                "search_user_by_name",
+                "search_workitem_by_identifier",
+                # Add cycle helpers for planning flows
+                "search_current_cycle",
+                "search_cycle_by_name",
+                "list_recent_cycles",
+            }
+
+            existing = {getattr(t, "name", "") for t in tools}
+            for t in entity_tools:
+                t_name = getattr(t, "name", "")
+                if t_name in universal_tool_names and t_name not in existing:
+                    tools.append(t)
+                    existing.add(t_name)
+        except Exception:
+            # Best-effort only; do not block planning if entity tools fail to load
+            pass
+
         return tools
 
     @llm_error_handler(fallback_message="New Conversation", max_retries=1, log_context="[TITLE_GENERATION]")
     async def title_generation(self, chat_history: list[str]) -> str:
+        import time
+
         title_prompt = title_generation_prompt
 
         # Convert the chat history to a string format
@@ -857,12 +1367,19 @@ Provide concise, relevant context from the attachment(s):"""
         # Set tracking context for title generation
         if self._token_tracking_context:
             self.fast_llm.set_tracking_context(
-                self._token_tracking_context["message_id"], self._token_tracking_context["db"], MessageMetaStepType.TITLE_GENERATION
+                self._token_tracking_context["message_id"],
+                self._token_tracking_context["db"],
+                MessageMetaStepType.TITLE_GENERATION,
+                chat_id=self._token_tracking_context.get("chat_id"),
             )
 
         # Get title from LLM
         title_llm_chain = title_prompt | self.fast_llm
+        title_gen_start = time.time()
+        log.info("Starting title generation LLM call")
         llm_response = await title_llm_chain.ainvoke({"chat_history": history_str})
+        title_gen_elapsed = time.time() - title_gen_start
+        log.info(f"Title generation LLM call completed in {title_gen_elapsed:.2f}s")
         title = llm_response.content if hasattr(llm_response, "content") else str(llm_response)
 
         return title
@@ -877,6 +1394,7 @@ Provide concise, relevant context from the attachment(s):"""
         conversation_history: list[BaseMessage],
         user_meta: Optional[dict[str, Any]] = None,
         attachment_blocks: Optional[List[Dict[str, Any]]] = None,
+        include_user_context_on_followup: bool = False,
     ) -> Dict[str, Any]:
         """
         Handle generic queries using LLM without database or vector search.
@@ -890,7 +1408,7 @@ Provide concise, relevant context from the attachment(s):"""
         last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
 
         # Compose user context for possible use in system prompt
-        time_user_context = f"{date_time_context}\n\n**User's Firstname**: {first_name} and Lastname: {last_name}"
+        user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
 
         # Compose message content with attachments if present
         time_context_query = f"{query}\n\n**Context**: {date_time_context}"
@@ -900,9 +1418,13 @@ Provide concise, relevant context from the attachment(s):"""
         system_prompt = GENERIC_PROMPT
 
         if conversation_history:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\nSkip greetings and get straight to the point."
+            system_prompt = f"{system_prompt}\n\n{date_time_context}"
+            if include_user_context_on_followup:
+                log.debug("[GENERIC_QUERY] Adding user context on follow-up (include_user_context_on_followup=True)")
+                system_prompt = f"{system_prompt}\n\n{user_only_context}"
+            system_prompt = f"{system_prompt}\n\nSkip greetings and get straight to the point."
         else:
-            system_prompt = f"{system_prompt}\n\n{time_user_context}"
+            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
 
         recent_history = [(m.type, m.content) for m in conversation_history]
 
@@ -915,7 +1437,10 @@ Provide concise, relevant context from the attachment(s):"""
         # Set tracking context for generic query
         if self._token_tracking_context:
             self.chat_llm.set_tracking_context(
-                self._token_tracking_context["message_id"], self._token_tracking_context["db"], MessageMetaStepType.COMBINATION
+                self._token_tracking_context["message_id"],
+                self._token_tracking_context["db"],
+                MessageMetaStepType.COMBINATION,
+                chat_id=self._token_tracking_context.get("chat_id"),
             )
 
         # Use LLM chain
@@ -932,13 +1457,14 @@ Provide concise, relevant context from the attachment(s):"""
         conv_history: list[BaseMessage],
         user_meta: dict[str, Any],
         non_plane: bool = False,
+        include_user_context_on_followup: bool = False,
         attachment_blocks: Optional[List[Dict[str, Any]]] = None,
     ) -> AsyncIterator[str]:
         date_time_context = await get_current_timestamp_context(user_id)
         first_name = user_meta.get("first_name") or user_meta.get("firstName", "")
         last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
 
-        time_user_context = f"{date_time_context}\n\n**User's Firstname**: {first_name} and Lastname: {last_name}"
+        user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
 
         if non_plane:
             system_prompt = generic_prompt_non_plane
@@ -946,9 +1472,13 @@ Provide concise, relevant context from the attachment(s):"""
             system_prompt = GENERIC_PROMPT
 
         if conv_history:
-            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\nSkip greetings and get straight to the point."
+            system_prompt = f"{system_prompt}\n\n{date_time_context}"
+            if include_user_context_on_followup:
+                log.debug("[GENERIC_QUERY_STREAM] Adding user context on follow-up (include_user_context_on_followup=True)")
+                system_prompt = f"{system_prompt}\n\n{user_only_context}"
+            system_prompt = f"{system_prompt}\n\nSkip greetings and get straight to the point."
         else:
-            system_prompt = f"{system_prompt}\n\n{time_user_context}"
+            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
 
         recent_history = [(m.type, m.content) for m in conv_history]
 
@@ -964,7 +1494,10 @@ Provide concise, relevant context from the attachment(s):"""
         # Set tracking context for generic query
         if self._token_tracking_context:
             self.chat_llm.set_tracking_context(
-                self._token_tracking_context["message_id"], self._token_tracking_context["db"], MessageMetaStepType.COMBINATION
+                self._token_tracking_context["message_id"],
+                self._token_tracking_context["db"],
+                MessageMetaStepType.COMBINATION,
+                chat_id=self._token_tracking_context.get("chat_id"),
             )
 
         # Use LLM chain for streaming
@@ -1017,6 +1550,7 @@ Provide concise, relevant context from the attachment(s):"""
         else:
             user_meta = {"time_context": timestamp_context}
 
+        log.info(f"Processing structured DB query: {query}")
         intermediate_results, response_data = await text2sql(
             db,
             query,
@@ -1123,7 +1657,6 @@ Provide concise, relevant context from the attachment(s):"""
         except ValueError as e:
             log.error(f"Error retrieving docs during vector search: {e}")
             return StandardAgentResponse.create_response("Sorry, I couldn't retrieve the docs at this time. Please try again later.")
-
         # Format the retrieved results
         formatted_results = self.format_retrieved_results(retrieved_docs, "docs")
 
@@ -1140,8 +1673,19 @@ Provide concise, relevant context from the attachment(s):"""
 
         return StandardAgentResponse.create_response(formatted_results, entity_urls, execution_metadata=execution_metadata)
 
+    async def _create_simple_stream(self, message: str) -> AsyncIterator[str]:
+        """Create a simple async stream that yields a single message"""
+        yield message
+
     async def combined_response_stream(
-        self, query, responses, conversation_history, user_meta, user_id, attachment_blocks: Optional[List[Dict[str, Any]]] = None
+        self,
+        query,
+        responses,
+        conversation_history,
+        user_meta,
+        user_id,
+        attachment_blocks: Optional[List[Dict[str, Any]]] = None,
+        workspace_in_context: Optional[bool] = None,
     ) -> AsyncIterator[str]:
         """Combines the response from the LLM and the rewritten query into a single stream."""
         system_prompt = combination_system_prompt
@@ -1151,12 +1695,16 @@ Provide concise, relevant context from the attachment(s):"""
         first_name = user_meta.get("first_name") or user_meta.get("firstName", "")
         last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
 
-        time_user_context = f"{date_time_context}\n\n**User's Firstname**: {first_name} and Lastname: {last_name}"
+        user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
         if conversation_history:
             # to avoid LLM addressing with 'hi' in the follow-ups
-            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\nSkip greetings and get straight to the point."
+            system_prompt = f"{system_prompt}\n\n{date_time_context}"
+            if workspace_in_context is False:
+                log.debug("[COMBINED_RESPONSE] Adding user context on follow-up due to focus OFF (workspace_in_context=False)")
+                system_prompt = f"{system_prompt}\n\n{user_only_context}"
+            system_prompt = f"{system_prompt}\n\nSkip greetings and get straight to the point."
         else:
-            system_prompt = f"{system_prompt}\n\n{time_user_context}"
+            system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
 
         # Format responses and extract URLs using standardized methods
         formatted_responses_str = f"**Response**: {responses}"
@@ -1173,7 +1721,10 @@ Provide concise, relevant context from the attachment(s):"""
         # Set tracking context for combination streaming
         if self._token_tracking_context:
             self.stream_llm.set_tracking_context(
-                self._token_tracking_context["message_id"], self._token_tracking_context["db"], MessageMetaStepType.COMBINATION
+                self._token_tracking_context["message_id"],
+                self._token_tracking_context["db"],
+                MessageMetaStepType.COMBINATION,
+                chat_id=self._token_tracking_context.get("chat_id"),
             )
 
         # Use LLM chain for streaming

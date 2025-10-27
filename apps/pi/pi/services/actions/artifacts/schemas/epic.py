@@ -1,4 +1,4 @@
-"""Workitem artifact schema and field definitions."""
+"""Epic artifact schema and field definitions."""
 
 from typing import Dict
 from typing import List
@@ -6,8 +6,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-# Field list for workitems
-WORKITEM_FIELDS = [
+# Field list for epics
+EPIC_FIELDS = [
     "name",
     "description",
     "state",
@@ -18,17 +18,14 @@ WORKITEM_FIELDS = [
     "labels",
     "start_date",
     "target_date",
-    "cycle_ids",
-    "cycles",
-    "module_ids",
-    "modules",
     "parent_id",
     "parent",
+    # Note: Epics don't have cycle_ids/module_ids typically
 ]
 
 
-class WorkitemProperties(BaseModel):
-    """Properties specific to workitem artifacts."""
+class EpicProperties(BaseModel):
+    """Properties specific to epic artifacts."""
 
     state: Optional[Dict[str, str]] = None  # {"id": "...", "name": "Done", "group": "completed"}
     priority: Optional[Dict[str, str]] = None  # {"name": "high"}
@@ -36,22 +33,16 @@ class WorkitemProperties(BaseModel):
     labels: Optional[List[Dict[str, str]]] = None  # [{"id": "...", "name": "bug"}]
     start_date: Optional[Dict[str, str]] = None  # {"name": "2025-10-15"}
     target_date: Optional[Dict[str, str]] = None  # {"name": "2025-10-16"}
-    cycles: Optional[List[Dict[str, str]]] = None  # [{"id": "...", "name": "Sprint 1"}]
-    modules: Optional[List[Dict[str, str]]] = None  # [{"id": "...", "name": "Auth"}]
-    parent: Optional[Dict[str, str]] = None  # {"id": "...", "name": "Parent Issue"}
 
     # ID fields (for backward compatibility)
     assignee_ids: Optional[List[str]] = None
     label_ids: Optional[List[str]] = None
-    cycle_ids: Optional[List[str]] = None
-    module_ids: Optional[List[str]] = None
-    parent_id: Optional[str] = None
 
 
-class WorkitemArtifact(BaseModel):
-    """Complete workitem artifact schema."""
+class EpicArtifact(BaseModel):
+    """Complete epic artifact schema."""
 
     name: str
     description: Optional[str] = None
     project: Optional[Dict[str, str]] = None  # {"id": "...", "identifier": "..."}
-    properties: Optional[WorkitemProperties] = None
+    properties: Optional[EpicProperties] = None

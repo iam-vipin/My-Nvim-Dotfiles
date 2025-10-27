@@ -11,6 +11,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi.app.models import ActionArtifact
+from pi.app.models.action_artifact import ActionArtifactVersion
+from pi.app.models.enums import FlowStepType
+from pi.app.models.message import MessageFlowStep
 
 log = logger.getChild(__name__)
 
@@ -236,3 +239,405 @@ async def delete_action_artifact(
         await db.rollback()
         log.error(f"Database delete_action_artifact failed for artifact {artifact_id}: {str(e)}")
         return {"message": "error", "error": str(e)}
+
+
+async def get_latest_artifact_data(db: AsyncSession, artifact_id: UUID4) -> Dict[str, Any]:
+    """
+    Get the latest artifact data to use for manual edits or prompt follow-ups.
+
+    Logic:
+    1. Get latest version (executed or not) from ActionArtifactVersion table
+    2. If no versions exist, fallback to parent artifact data
+
+    Args:
+        db: Database session
+        artifact_id: Parent artifact ID
+
+    Returns:
+        Latest artifact data dictionary
+    """
+    try:
+        # Get the latest version regardless of execution status
+        version_query = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id == artifact_id)  # type: ignore[arg-type]
+            .order_by(desc(ActionArtifactVersion.version_number))  # type: ignore[arg-type]
+            .limit(1)
+        )
+
+        result = await db.execute(version_query)
+        latest_version = result.scalar_one_or_none()
+
+        if latest_version:
+            log.info(f"Using latest version {latest_version.version_number} (executed={latest_version.is_executed}) for artifact {artifact_id}")
+            return _extract_tool_args_from_data(latest_version.data)
+
+        # Fallback to parent artifact data
+        artifact_query = select(ActionArtifact).where(ActionArtifact.id == artifact_id)  # type: ignore[arg-type]
+        result = await db.execute(artifact_query)
+        parent_artifact = result.scalar_one_or_none()
+
+        if not parent_artifact:
+            log.error(f"Artifact {artifact_id} not found")
+            return {}
+
+        log.info(f"Using parent artifact data for artifact {artifact_id} (no executed versions)")
+        return _extract_tool_args_from_data(parent_artifact.data)
+
+    except Exception as e:
+        log.error(f"Error getting latest artifact data for {artifact_id}: {str(e)}")
+        return {}
+
+
+def _extract_tool_args_from_data(data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extract tool_args from the nested artifact data structure.
+
+    Expected format:
+    {
+        "tool_args": {"name": "Task", "description": "..."},  # Direct tool arguments
+        "planning_data": { ... },
+        "planning_context": { ... }
+    }
+
+    Returns the tool_args for API calls.
+    """
+    if not data or not isinstance(data, dict):
+        return {}
+
+    # Extract tool_args directly (this is what the API expects)
+    tool_args = data.get("tool_args", {})
+    if tool_args and isinstance(tool_args, dict):
+        log.debug(f"Extracted tool_args: {tool_args}")
+        return tool_args
+
+    # Fallback: extract from planning_data.raw_args if tool_args is missing
+    planning_data = data.get("planning_data", {})
+    if isinstance(planning_data, dict):
+        raw_args = planning_data.get("raw_args", {})
+        if raw_args and isinstance(raw_args, dict):
+            log.debug(f"Fallback to planning_data.raw_args: {raw_args}")
+            return raw_args
+
+    log.warning(f"Could not extract tool_args from data structure: {data}")
+    return {}
+
+
+async def _mark_all_versions_as_not_latest(db: AsyncSession, artifact_id: UUID4) -> None:
+    """Helper function to mark all versions of an artifact as not latest using bulk update."""
+    try:
+        # Use bulk update for better performance instead of individual updates
+        from sqlalchemy import update
+
+        stmt = (
+            update(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id == artifact_id)  # type: ignore[arg-type]
+            .where(ActionArtifactVersion.is_latest)  # type: ignore[arg-type] # Only update records that are currently latest
+            .values(is_latest=False)
+        )
+        await db.execute(stmt)
+
+        log.debug(f"Bulk updated is_latest=False for artifact {artifact_id}")
+
+    except Exception as e:
+        log.error(f"Error in bulk update for artifact {artifact_id}: {e}")
+        # Fallback to individual updates if bulk update fails
+        select_stmt = select(ActionArtifactVersion).where(ActionArtifactVersion.artifact_id == artifact_id)  # type: ignore[union-attr,arg-type]
+        result = await db.execute(select_stmt)
+        versions = result.scalars().all()
+
+        for version in versions:
+            if version.is_latest:
+                version.is_latest = False
+                db.add(version)
+
+
+async def create_action_artifact_version(
+    db: AsyncSession,
+    artifact_id: UUID4,
+    data: Dict[str, Any],
+    change_type: str,
+    chat_id: UUID4,
+    message_id: Optional[UUID4] = None,
+    user_id: Optional[str] = None,
+) -> Optional[ActionArtifactVersion]:
+    """Create a new ActionArtifactVersion with auto-incremented version."""
+    try:
+        # Get next version number
+        stmt = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id == artifact_id)  # type: ignore[arg-type]
+            .order_by(desc(ActionArtifactVersion.version_number))  # type: ignore[arg-type]
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        latest_version_record = result.scalar_one_or_none()
+        next_version = (latest_version_record.version_number if latest_version_record else 0) + 1
+
+        # Mark previous versions as not latest
+        await _mark_all_versions_as_not_latest(db, artifact_id)
+
+        # Create new version
+        version = ActionArtifactVersion(
+            artifact_id=artifact_id,
+            chat_id=chat_id,
+            message_id=message_id,
+            version_number=next_version,
+            data=data,
+            change_type=change_type,
+            is_latest=True,
+            is_executed=False,  # Will be set to True when execution succeeds
+            success=False,
+        )
+
+        db.add(version)
+        await db.commit()
+        await db.refresh(version)
+
+        log.info(f"Created ActionArtifactVersion {version.id} v{next_version} for artifact {artifact_id}")
+        return version
+
+    except Exception as e:
+        log.error(f"Failed to create ActionArtifactVersion: {e}")
+        await db.rollback()
+        return None
+
+
+async def get_action_artifact_versions_by_artifact_id(
+    db: AsyncSession,
+    artifact_id: UUID4,
+) -> List[ActionArtifactVersion]:
+    """
+    Retrieves all versions for a specific artifact.
+    """
+    try:
+        stmt = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id == artifact_id)  # type: ignore[union-attr,arg-type]
+            .where(ActionArtifactVersion.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .order_by(ActionArtifactVersion.version_number)  # type: ignore[union-attr,arg-type]
+        )
+
+        result = await db.execute(stmt)
+        versions = list(result.scalars().all())
+
+        return versions
+
+    except Exception as e:
+        log.error(f"Error retrieving artifact versions for artifact {artifact_id}: {str(e)}")
+        return []
+
+
+async def update_action_artifact_version_execution_status(
+    db: AsyncSession,
+    version_id: UUID4,
+    is_executed: bool,
+    success: bool,
+    entity_info: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """
+    Updates the execution status of an ActionArtifactVersion.
+
+    Args:
+        db: Database session
+        version_id: ID of the version to update
+        is_executed: New execution status
+        success: Whether execution was successful
+
+    Returns:
+        True if update was successful, False otherwise
+    """
+    try:
+        # Get the version
+        stmt = select(ActionArtifactVersion).where(ActionArtifactVersion.id == version_id)  # type: ignore[arg-type]
+        result = await db.execute(stmt)
+        version = result.scalar_one_or_none()
+
+        if not version:
+            log.error(f"ActionArtifactVersion {version_id} not found")
+            return False
+
+        # Update execution status
+        version.is_executed = is_executed
+        version.success = success
+
+        # Persist entity_info if provided
+        if entity_info and isinstance(entity_info, dict):
+            try:
+                current_data: Dict[str, Any] = version.data or {}
+                current_data["entity_info"] = entity_info
+                version.data = current_data
+                # Mark JSONB column as modified so SQLAlchemy persists changes
+                from sqlalchemy.orm import attributes
+
+                attributes.flag_modified(version, "data")
+            except Exception as e:
+                log.warning(f"Failed to persist entity_info to version {version_id}: {e}")
+
+        # If this version is now successfully executed, mark it as latest
+        if is_executed and success:
+            # Mark all other versions for this artifact as not latest
+            await _mark_all_versions_as_not_latest(db, version.artifact_id)
+            # Mark this version as latest
+            version.is_latest = True
+
+        db.add(version)
+        await db.commit()
+
+        log.info(f"Updated ActionArtifactVersion {version_id} execution status: success={success}")
+        return True
+
+    except Exception as e:
+        log.error(f"Failed to update ActionArtifactVersion {version_id} execution status: {e}")
+        await db.rollback()
+        return False
+
+
+async def get_action_artifact_versions_by_message_ids(
+    db: AsyncSession,
+    message_ids: List[UUID4],
+) -> List[ActionArtifactVersion]:
+    """
+    Retrieves artifact versions created by specific messages.
+    """
+    try:
+        if not message_ids:
+            return []
+
+        stmt = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.message_id.in_(message_ids))  # type: ignore[union-attr,arg-type]
+            .where(ActionArtifactVersion.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .order_by(ActionArtifactVersion.artifact_id, ActionArtifactVersion.version_number)  # type: ignore[union-attr,arg-type] # Better ordering for grouping
+        )
+
+        result = await db.execute(stmt)
+        versions = list(result.scalars().all())
+
+        return versions
+
+    except Exception as e:
+        log.error(f"Error retrieving artifact versions for messages {message_ids}: {str(e)}")
+        return []
+
+
+async def add_query_to_artifact(db: AsyncSession, artifact_id: UUID4, message_id: UUID4, new_query: str, chat_id: UUID4):
+    try:
+        # Step 1: Find the latest flow step for this artifact+message
+        stmt = (
+            select(MessageFlowStep)
+            .where(
+                MessageFlowStep.step_type == "ARTIFACT_CHAT",  # type: ignore[union-attr,arg-type]
+                MessageFlowStep.execution_data.op("->>")('"artifact_id"') == str(artifact_id),  # type: ignore[union-attr,arg-type]
+                MessageFlowStep.message_id == message_id,  # type: ignore[union-attr,arg-type]
+            )
+            .order_by(desc(MessageFlowStep.created_at))  # type: ignore[union-attr,arg-type]
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        step = result.scalar_one_or_none()
+
+        if step:
+            # Step 2: Append new query into followup_queries list
+            if not step.execution_data:
+                step.execution_data = {"artifact_id": str(artifact_id), "followup_queries": []}
+
+            followup_queries = step.execution_data.get("followup_queries", [])
+            if not isinstance(followup_queries, list):
+                followup_queries = [followup_queries]
+
+            followup_queries.append(new_query)
+            step.execution_data["followup_queries"] = followup_queries
+            db.add(step)
+        else:
+            # Step 3: If no row exists, create new with first query
+            step = MessageFlowStep(
+                step_type="ARTIFACT_CHAT",
+                execution_data={
+                    "artifact_id": str(artifact_id),
+                    "followup_queries": [new_query],
+                },
+                message_id=message_id,
+                chat_id=chat_id,
+            )
+            db.add(step)
+
+        await db.commit()
+    except Exception as e:
+        log.error(f"Error adding query to artifact: {e}")
+        await db.rollback()
+        return False
+
+
+async def get_artifact_prompt_history_from_flow_steps(db: AsyncSession, artifact_id: UUID4, message_id: UUID4) -> List[str]:
+    """
+    Get previous follow-up queries for an artifact from MessageFlowStep.
+    """
+    try:
+        conditions = [
+            MessageFlowStep.step_type == FlowStepType.ARTIFACT_CHAT,  # type: ignore[union-attr,arg-type]
+            MessageFlowStep.execution_data.op("->>")('"artifact_id"') == str(artifact_id),  # type: ignore[union-attr,arg-type]
+            MessageFlowStep.message_id != message_id,  # type: ignore[union-attr,arg-type]
+        ]
+
+        stmt = (
+            select(MessageFlowStep)
+            .where(*conditions)  # type: ignore[union-attr,arg-type]
+            .order_by(desc(MessageFlowStep.created_at))  # type: ignore[union-attr,arg-type]
+        )
+
+        result = await db.execute(stmt)
+        flow_steps = result.scalars().all()
+
+        followup_queries: List[str] = []
+        for step in flow_steps:
+            if step.execution_data and "followup_queries" in step.execution_data:
+                val = step.execution_data["followup_queries"]
+                if isinstance(val, list):
+                    followup_queries.extend(val)
+                elif isinstance(val, str):
+                    followup_queries.append(val)
+
+        return followup_queries
+
+    except Exception as e:
+        await db.rollback()
+        log.error(f"Error getting artifact prompt history: {e}")
+        return []
+
+
+async def get_latest_artifact_data_for_display(db: AsyncSession, artifact) -> tuple[dict, bool, bool, bool]:
+    """
+    Get the latest artifact data for display - either from executed versions or original artifact.
+
+    Priority:
+    1. Latest executed version (is_executed=True)
+    2. Original artifact data
+
+    Returns: (data, is_edited, is_executed, success)
+    """
+    try:
+        version_stmt = (
+            select(ActionArtifactVersion)
+            .where(ActionArtifactVersion.artifact_id == artifact.id)
+            .where(ActionArtifactVersion.is_executed)  # type: ignore[arg-type] # Use explicit True for index optimization
+            .where(ActionArtifactVersion.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .order_by(desc(ActionArtifactVersion.version_number))  # type: ignore[arg-type]
+            .limit(1)
+        )
+
+        result = await db.execute(version_stmt)
+        latest_executed_version = result.scalar_one_or_none()
+
+        if latest_executed_version and latest_executed_version.data:
+            log.debug(f"Using latest executed version data for artifact {artifact.id} (version {latest_executed_version.version_number})")
+            return latest_executed_version.data, True, latest_executed_version.is_executed, latest_executed_version.success
+        else:
+            # No executed versions, use original artifact data
+            log.debug(f"Using original artifact data for artifact {artifact.id} (no executed versions)")
+            return artifact.data, False, artifact.is_executed, artifact.success
+
+    except Exception as e:
+        log.error(f"Error getting latest artifact data for {artifact.id}: {e}")
+        # Fallback to original artifact data
+        return artifact.data, False, artifact.is_executed, artifact.success

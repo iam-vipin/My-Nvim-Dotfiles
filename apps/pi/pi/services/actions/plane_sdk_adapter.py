@@ -28,6 +28,7 @@ from plane import IssueLinkCreateRequest  # type: ignore[attr-defined]
 from plane import IssuePropertyAPIRequest  # type: ignore[attr-defined]
 from plane import IssuePropertyOptionAPIRequest  # type: ignore[attr-defined]
 from plane import IssuePropertyValueAPIRequest  # type: ignore[attr-defined]
+from plane import IssueRelationCreateRequest  # type: ignore[attr-defined]
 from plane import IssueRequest  # type: ignore[attr-defined]
 from plane import IssueTypeAPIRequest  # type: ignore[attr-defined]
 from plane import IssueWorkLogAPIRequest  # type: ignore[attr-defined]
@@ -356,6 +357,54 @@ class PlaneSDKAdapter:
 
         except Exception as e:
             log.error(f"Failed to update work item: {str(e)}")
+            raise
+
+    def create_work_item_relation(
+        self,
+        workspace_slug: str,
+        project_id: str,
+        issue_id: str,
+        relation_type: str,
+        issues: List[str],
+    ) -> Dict[str, Any]:
+        """
+        Create relationships between work items.
+
+        Args:
+            workspace_slug: Workspace slug
+            project_id: Project ID
+            issue_id: Source issue ID to create relations from
+            relation_type: Type of relationship (blocking, blocked_by, duplicate, etc.)
+            issues: List of issue IDs to create relations with
+
+        Returns:
+            Dict with relation data, safely converted from v1 model
+        """
+        try:
+            # Create the relation request object with proper parameters
+            # Note: SDK expects enum but accepts string at runtime
+            relation_request = IssueRelationCreateRequest(
+                relation_type=relation_type,  # type: ignore[arg-type]
+                issues=issues,
+            )
+
+            # Call SDK method (note: parameter order is issue_id, project_id, slug, relation_request)
+            relations = self.work_items.create_work_item_relation(
+                issue_id=issue_id, project_id=project_id, slug=workspace_slug, issue_relation_create_request=relation_request
+            )
+
+            # Convert to dict before returning
+            # SDK always returns a list of relations
+            if isinstance(relations, list):
+                result = [self._model_to_dict(relation) for relation in relations]
+                return {"relations": result, "count": len(result)}
+
+            # Fallback case (though SDK typically returns list)
+            fallback_result = self._model_to_dict(relations)  # type: ignore[unreachable]
+            return {"data": fallback_result}
+
+        except Exception as e:
+            log.error(f"Failed to create work item relation: {str(e)}")
             raise
 
     def get_current_user(self) -> Dict[str, Any]:

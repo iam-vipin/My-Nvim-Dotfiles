@@ -15,6 +15,7 @@ from pi import logger
 from pi.app.models.enums import ExecutionStatus
 from pi.app.models.message import Message
 from pi.app.models.message import MessageFlowStep
+from pi.services.retrievers.pg_store.json_serializer import sanitize_execution_data
 
 log = logger.getChild(__name__)
 
@@ -127,8 +128,11 @@ IMPORTANT: Start executing the actions now. Use the exact tool names and argumen
     return execution_prompt
 
 
-def extract_entity_info(result: str, tool_name: str) -> Optional[Dict[str, Any]]:
-    """Extract entity information from tool execution result."""
+def extract_entity_info(result: str, tool_name: str) -> Optional[Dict[str, Any] | List[Dict[str, Any]]]:
+    """Extract entity information from tool execution result.
+
+    Returns either a single entity_info dict or a list of entity_info dicts for bulk operations.
+    """
     try:
         result_str = str(result)
         entity_info = {}
@@ -147,10 +151,50 @@ def extract_entity_info(result: str, tool_name: str) -> Optional[Dict[str, Any]]
 
         # Method 2: Check if the result contains entity URL information (legacy text format)
         if "Entity URL:" in result_str:
-            lines = result_str.split("\n")
+            lines = [ln.strip() for ln in result_str.split("\n")]
 
+            # Fast path: multiple URL lines → build list of entities
+            url_lines = [ln.replace("Entity URL:", "").strip() for ln in lines if ln.startswith("Entity URL:")]
+            if len(url_lines) > 1:
+                name_lines = [ln.replace("Entity Name:", "").strip() for ln in lines if ln.startswith("Entity Name:")]
+                type_lines = [ln.replace("Entity Type:", "").strip() for ln in lines if ln.startswith("Entity Type:")]
+                id_lines = [ln.replace("Entity ID:", "").strip() for ln in lines if ln.startswith("Entity ID:")]
+                ident_lines = [ln.replace("Entity Identifier:", "").strip() for ln in lines if ln.startswith("Entity Identifier:")]
+
+                entities: List[Dict[str, Any]] = []
+                max_len = len(url_lines)
+                for i in range(max_len):
+                    e: Dict[str, Any] = {"entity_url": url_lines[i]}
+                    if i < len(name_lines) and name_lines[i]:
+                        e["entity_name"] = name_lines[i]
+                    if i < len(type_lines) and type_lines[i]:
+                        e["entity_type"] = type_lines[i]
+                    if i < len(id_lines) and id_lines[i]:
+                        e["entity_id"] = id_lines[i]
+                    if i < len(ident_lines) and ident_lines[i]:
+                        e["entity_identifier"] = ident_lines[i]
+                        if e.get("entity_type") == "workitem":
+                            e["issue_identifier"] = ident_lines[i]
+                    entities.append(e)
+
+                # Normalize identifiers from URLs if possible
+                for e in entities:
+                    try:
+                        url = e.get("entity_url")
+                        if isinstance(url, str) and "/browse/" in url:
+                            after = url.split("/browse/", 1)[1]
+                            identifier = after.split("/", 1)[0]
+                            if "-" in identifier:
+                                parts = identifier.split("-", 1)
+                                if len(parts) == 2 and parts[1].isdigit():
+                                    e["issue_identifier"] = identifier
+                    except Exception:
+                        pass
+
+                return entities
+
+            # Single-entity path
             for line in lines:
-                line = line.strip()
                 if line.startswith("Entity URL:"):
                     entity_info["entity_url"] = line.replace("Entity URL:", "").strip()
                 elif line.startswith("Entity Name:"):
@@ -196,6 +240,37 @@ def extract_entity_info(result: str, tool_name: str) -> Optional[Dict[str, Any]]
                 entity_info["raw_result"] = result_str[:200]  # Store first 200 chars
                 return entity_info
 
+        # Method 4: Extract entity_id from Result JSON section (fallback for when URL construction fails)
+        if tool_name and isinstance(tool_name, str) and "_create" in tool_name:
+            try:
+                # Look for "Result: {json_data}" pattern
+                if "Result: {" in result_str:
+                    # Extract JSON from Result section
+                    result_start = result_str.find("Result: {")
+                    if result_start != -1:
+                        json_start = result_start + len("Result: ")
+                        # Find the end of the JSON object
+                        json_str = result_str[json_start:]
+
+                        # Try to parse the JSON
+                        result_data = json.loads(json_str)
+                        if isinstance(result_data, dict) and result_data.get("id"):
+                            # Extract entity information from the API response
+                            entity_info = {
+                                "entity_id": str(result_data["id"]),
+                                "entity_type": "epic" if "epics_create" in tool_name or "workitems_create" in tool_name else "unknown",
+                                "tool_name": tool_name,
+                            }
+
+                            # Add entity name if available
+                            if result_data.get("name"):
+                                entity_info["entity_name"] = result_data["name"]
+
+                            return entity_info
+            except (json.JSONDecodeError, ValueError, KeyError):
+                # JSON parsing failed, continue to fallback
+                pass
+
         return None
 
     except Exception as e:
@@ -204,14 +279,54 @@ def extract_entity_info(result: str, tool_name: str) -> Optional[Dict[str, Any]]
 
 
 async def update_flow_step_execution_status(
-    step_id: str, execution_result: str, entity_info: Optional[Dict[str, Any]], success: bool, db: AsyncSession
+    step_id: str,
+    execution_result: str,
+    entity_info: Optional[Dict[str, Any] | List[Dict[str, Any]]],
+    success: bool,
+    db: AsyncSession,
+    version_id: Optional[str] = None,
 ) -> None:
-    """Update a flow step to mark it as executed."""
+    """Update a flow step or artifact version to mark it as executed."""
     try:
-        # Get the flow step
-        stmt = select(MessageFlowStep).where(MessageFlowStep.id == UUID(step_id))  # type: ignore[arg-type]
-        result = await db.execute(stmt)
-        flow_step = result.scalar_one_or_none()
+        # Validate that step_id is a valid UUID
+        try:
+            step_uuid = UUID(step_id)
+        except ValueError as uuid_error:
+            log.error(f"Invalid UUID format for step_id '{step_id}': {uuid_error}")
+            return
+
+        # If version_id is provided, this is an edited artifact - update the ActionArtifactVersion
+        if version_id:
+            try:
+                from pi.services.retrievers.pg_store.action_artifact import update_action_artifact_version_execution_status
+
+                # Persist only first entity for version rows for compatibility
+                _single_entity: Optional[Dict[str, Any]]
+                if isinstance(entity_info, list):
+                    _single_entity = entity_info[0] if entity_info else None
+                else:
+                    _single_entity = entity_info
+
+                result = await update_action_artifact_version_execution_status(
+                    db=db,
+                    version_id=UUID(version_id),
+                    is_executed=True,
+                    success=success,
+                    entity_info=_single_entity,
+                )
+                if result:
+                    log.info(f"✅ Successfully updated ActionArtifactVersion {version_id} for step {step_id}: success={success}")
+                else:
+                    log.error(f"❌ Failed to update ActionArtifactVersion {version_id} for step {step_id}")
+
+            except Exception as version_error:
+                log.error(f"❌ Error updating ActionArtifactVersion {version_id} for step {step_id}: {version_error}")
+            return
+
+        # For normal artifacts, update the MessageFlowStep
+        stmt = select(MessageFlowStep).where(MessageFlowStep.id == step_uuid)  # type: ignore[arg-type]
+        query_result = await db.execute(stmt)
+        flow_step: Optional[MessageFlowStep] = query_result.scalars().first()
 
         if not flow_step:
             log.error(f"Flow step {step_id} not found")
@@ -238,26 +353,42 @@ async def update_flow_step_execution_status(
         }
 
         if entity_info:
-            updated_execution_data["entity_info"] = entity_info
+            if isinstance(entity_info, list):
+                updated_execution_data["entities"] = entity_info
+                if entity_info:
+                    updated_execution_data["entity_info"] = entity_info[0]
+            else:
+                updated_execution_data["entity_info"] = entity_info
+
+        # Sanitize execution_data to ensure JSON serializability before saving
+        sanitized_execution_data = sanitize_execution_data(updated_execution_data)
 
         # Assign NEW dictionary to trigger SQLModel change detection
-        flow_step.execution_data = updated_execution_data
+        flow_step.execution_data = sanitized_execution_data
 
         # Force SQLModel to mark the field as changed
         from sqlalchemy.orm import attributes
 
         attributes.flag_modified(flow_step, "execution_data")
 
-        # Update corresponding artifact if exists
+        # Update corresponding artifact if exists (for normal flow)
         artifact_id = current_execution_data.get("artifact_id")
         if artifact_id:
             try:
                 from pi.services.retrievers.pg_store.action_artifact import update_action_artifact_execution_status
 
-                # Extract entity_id from entity_info if available
+                # Extract single-entity info and entity_id from entity_info if available
+                _entity_info: Optional[Dict[str, Any]]
+                if isinstance(entity_info, list):
+                    _entity_info = entity_info[0] if entity_info else None
+                elif isinstance(entity_info, dict):
+                    _entity_info = entity_info
+                else:
+                    _entity_info = None
+
                 entity_id = None
-                if entity_info and "entity_id" in entity_info:
-                    entity_id = UUID(entity_info["entity_id"])
+                if isinstance(_entity_info, dict) and "entity_id" in _entity_info:
+                    entity_id = UUID(str(_entity_info["entity_id"]))
 
                 # Update artifact execution status and persist entity_info for parity (includes entity_url)
                 await update_action_artifact_execution_status(
@@ -266,7 +397,7 @@ async def update_flow_step_execution_status(
                     is_executed=True,
                     success=success,
                     entity_id=entity_id,
-                    entity_info=entity_info,
+                    entity_info=_entity_info,
                 )
 
                 # log.info(f"Updated artifact {artifact_id} execution status: success={success}")

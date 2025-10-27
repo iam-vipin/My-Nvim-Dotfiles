@@ -19,10 +19,14 @@ class ActionSummaryGenerator:
         # Work Items
         "workitems_create": "Create work-item",
         "workitems_update": "Update work-item",
+        "workitems_create_relation": "Update work-item relations",
         "workitems_list": "List work-items",
         "workitems_retrieve": "Get work-item details",
         "workitems_search": "Search work-items",
         "workitems_get_workspace": "Get workspace work-item",
+        # Epics
+        "epics_create": "Create epic",
+        "epics_update": "Update epic",
         # Projects
         "projects_create": "Create project",
         "projects_update": "Update project",
@@ -289,8 +293,14 @@ class ActionSummaryGenerator:
         # Get user-friendly action name
         action_name = cls.TOOL_ACTION_MAPPING.get(tool_name, tool_name.replace("_", " ").title())
 
-        # Format parameters for display with entity resolution
-        formatted_params = await cls._format_parameters(tool_args, db, context, tool_name)
+        # Format parameters for display with entity resolution - use unified normalizer
+        from pi.services.actions.artifacts.utils import normalize_parameters_structure
+
+        # First normalize the structure for consistency with entity flattening
+        normalized_params = normalize_parameters_structure(tool_args, flatten_entities=True)
+
+        # Then apply entity resolution for display purposes
+        formatted_params = await cls._resolve_entities_for_display(normalized_params, db, context, tool_name)
 
         return {
             "action": action_name,
@@ -300,86 +310,82 @@ class ActionSummaryGenerator:
         }
 
     @classmethod
-    async def _format_parameters(
-        cls, params: Dict[str, Any], db: Optional[Any] = None, context: Optional[Dict[str, Any]] = None, tool_name: Optional[str] = None
+    async def _resolve_entities_for_display(
+        cls, parameters: Dict[str, Any], db: Optional[Any] = None, context: Optional[Dict[str, Any]] = None, tool_name: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Format parameters with entity-based keys and enhanced entity information.
+        Resolve entity IDs to names for better display, while maintaining consistent structure.
 
-        Args:
-            params: Raw parameter dictionary
-            db: Optional database session for resolving IDs to names
-            context: Optional context with workspace_slug, project_id etc.
-            tool_name: Optional tool name for context-aware parameter grouping
-
-        Returns:
-            Formatted parameter dictionary with entity-based keys
+        This replaces the complex _format_parameters logic with a simpler approach
+        that works on the already-normalized parameter structure.
         """
-        formatted: Dict[str, Any] = {}
 
-        # Extract context info for entity resolution
-        workspace_slug = context.get("workspace_slug") if isinstance(context, dict) else None
-        project_id = context.get("project_id") if isinstance(context, dict) else None
+        resolved = parameters.copy()
 
-        # Group parameters by their parent entity
-        grouped_params = cls._group_parameters_by_entity(params, tool_name)
+        # Extract context for entity resolution
+        context.get("workspace_slug") if isinstance(context, dict) else None
+        context.get("project_id") if isinstance(context, dict) else None
 
-        # Determine the primary entity type from the tool name (e.g., modules_create -> module)
-        primary_entity_type: Optional[str] = None
-        if tool_name:
-            primary_entity_type = cls._extract_entity_type_from_tool_name(tool_name)
+        # Resolve entities in properties section
+        if "properties" in resolved and isinstance(resolved["properties"], dict):
+            properties = resolved["properties"]
+            resolved_properties: Dict[str, Any] = {}
 
-        for entity_key, entity_params in grouped_params.items():
-            if entity_key == "workitem":
-                # Handle workitem with its properties
-                formatted[entity_key] = await cls._format_workitem_with_properties(entity_params, workspace_slug, project_id, db)
-            elif primary_entity_type and entity_key == primary_entity_type:
-                # Handle primary entity (e.g., module/state/label) with a properties sub-dict similar to workitem
-                primary_entity = await cls._format_primary_entity_with_properties(entity_params, workspace_slug, project_id, db, tool_name)
+            for key, value in properties.items():
+                if key.endswith("_id") and isinstance(value, str) and cls._is_uuid_like(value):
+                    # Try to resolve ID to name
+                    resolved_name = await cls._resolve_id_to_name(key, value, db)
+                    if resolved_name:
+                        resolved_properties[key.replace("_id", "")] = {"id": value, "name": resolved_name}
+                    else:
+                        resolved_properties[key] = value
+                elif key == "state" and isinstance(value, dict) and "name" in value and "id" not in value:
+                    # Handle state field that only has name - check if it's a UUID or actual name
+                    state_identifier = value["name"]
+                    try:
+                        if cls._is_uuid_like(state_identifier):
+                            # It's a UUID, resolve by ID
+                            from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_by_id
 
-                # Special case: For project creation/update, the frontend expects properties as a direct child of parameters
-                if (
-                    tool_name
-                    and tool_name.startswith("projects_")
-                    and (tool_name.endswith("_create") or tool_name.endswith("_update"))
-                    and entity_key == "project"
-                ):
-                    # Promote properties to top-level and keep only minimal identity under project
-                    properties_block = primary_entity.get("properties") if isinstance(primary_entity, dict) else None
-                    project_block = {}
-                    # Preserve name/title if present
-                    for k in ("name", "title"):
-                        if isinstance(primary_entity, dict) and k in primary_entity:
-                            project_block[k] = primary_entity[k]
-                    # Preserve identifier if present
-                    if isinstance(primary_entity, dict) and "identifier" in primary_entity:
-                        project_block["identifier"] = primary_entity["identifier"]
-                    if project_block:
-                        formatted[entity_key] = project_block
-                    if properties_block and isinstance(properties_block, dict):
-                        # Merge into top-level properties; if it already exists, update it
-                        if "properties" not in formatted or not isinstance(formatted["properties"], dict):
-                            formatted["properties"] = {}
-                        formatted["properties"].update(properties_block)
+                            state_result = await get_state_details_by_id(state_identifier)
+                            if state_result:
+                                resolved_properties[key] = {"id": state_identifier, "name": state_result["name"], "group": state_result["group"]}
+                            else:
+                                resolved_properties[key] = value
+                        else:
+                            # It's a name, resolve by name
+                            from pi.app.api.v1.helpers.plane_sql_queries import search_state_by_name
+
+                            workspace_slug = context.get("workspace_slug") if isinstance(context, dict) else None
+                            project_id = context.get("project_id") if isinstance(context, dict) else None
+
+                            state_result = await search_state_by_name(state_identifier, project_id, workspace_slug)
+                            if state_result:
+                                resolved_properties[key] = {"id": state_result["id"], "name": state_result["name"], "group": state_result["group"]}
+                            else:
+                                resolved_properties[key] = value
+                    except Exception as e:
+                        log.warning(f"Error resolving state '{state_identifier}': {e}")
+                        resolved_properties[key] = value
+                elif key in ["assignees", "labels", "modules"] and isinstance(value, list):
+                    # Resolve lists of entities
+                    resolved_list = []
+                    for item in value:
+                        if isinstance(item, str) and cls._is_uuid_like(item):
+                            resolved_name = await cls._resolve_id_to_name(f"{key[:-1]}_id", item, db)
+                            if resolved_name:
+                                resolved_list.append({"id": item, "name": resolved_name})
+                            else:
+                                resolved_list.append({"id": item})
+                        else:
+                            resolved_list.append(item)
+                    resolved_properties[key] = resolved_list
                 else:
-                    formatted[entity_key] = primary_entity
-            else:
-                # Handle other entities normally
-                for param_key, value in entity_params.items():
-                    formatted_value = await cls._format_single_parameter(param_key, value, workspace_slug, project_id, db, tool_name)
-                    if formatted_value is None:
-                        continue
-                    # Special unwrapping for project entity: avoid nested project_id key
-                    if entity_key == "project" and param_key in ("project_id", "project") and isinstance(formatted_value, dict):
-                        formatted[entity_key] = formatted_value
-                        continue
+                    resolved_properties[key] = value
 
-                    if entity_key not in formatted or not isinstance(formatted[entity_key], dict):
-                        formatted[entity_key] = {}
-                    # Assign per-parameter to avoid overwriting other keys (e.g., name)
-                    formatted[entity_key][param_key] = formatted_value
+            resolved["properties"] = resolved_properties
 
-        return formatted
+        return resolved
 
     @classmethod
     async def _format_primary_entity_with_properties(
@@ -506,6 +512,8 @@ class ActionSummaryGenerator:
         # Handle special cases first
         if tool_name.startswith("workitems_"):
             return "workitem"
+        elif tool_name.startswith("epics_"):
+            return "workitem"  # Epics are a type of work item
         elif tool_name.startswith("projects_"):
             return "project"
         elif tool_name.startswith("cycles_"):
@@ -1090,13 +1098,39 @@ class ActionSummaryGenerator:
 
     @classmethod
     async def _resolve_project(cls, name: str, workspace_slug: Optional[str], project_id: Optional[str]) -> Optional[Dict[str, Any]]:
-        """Resolve project by name."""
+        """Resolve project by name.
+
+        Preference order:
+        1) Exact (case-insensitive) name match if unique
+        2) Single result
+        3) Otherwise, return None to allow upstream disambiguation via ask_for_clarification
+        """
         try:
             from pi.app.api.v1.helpers.plane_sql_queries import search_project_by_name
 
-            result = await search_project_by_name(name, workspace_slug)
-            if result:
-                return {"id": result["id"], "name": result["name"], "workspace_id": result.get("workspace_id"), "type": "project"}
+            results = await search_project_by_name(name, workspace_slug)
+            if not results:
+                return None
+
+            # If list, prefer exact case-insensitive match
+            try:
+                matches = [p for p in results if isinstance(p.get("name"), str) and p["name"].lower() == str(name).lower()]
+            except Exception:
+                matches = []
+
+            chosen = None
+            if len(matches) == 1:
+                chosen = matches[0]
+            elif len(results) == 1:
+                chosen = results[0]
+
+            if chosen:
+                return {
+                    "id": chosen["id"],
+                    "name": chosen["name"],
+                    "workspace_id": chosen.get("workspace_id"),
+                    "type": "project",
+                }
             return None
         except Exception as e:
             log.error(f"Error resolving project '{name}': {e}")
@@ -1262,9 +1296,22 @@ class ActionSummaryGenerator:
             parameters = action_summary.get("parameters", {})
             artifact_id = cls._extract_artifact_id(parameters, artifact_type)
 
-        # Flatten parameters structure
+        # Get parameters from action_summary
         parameters = action_summary.get("parameters", {})
-        flattened_params = cls._flatten_parameters(parameters, artifact_type, artifact_sub_type)
+
+        # Use the unified normalizer for consistent structure across all pipelines
+        from pi.services.actions.artifacts.utils import normalize_parameters_structure
+
+        flattened_params = normalize_parameters_structure(parameters, flatten_entities=True)
+
+        # Handle sub-type for add/remove operations
+        if artifact_sub_type:
+            flattened_params["artifact_sub_type"] = artifact_sub_type
+            # Check if we need to rename "issues" key
+            if "properties" in flattened_params:
+                properties = flattened_params["properties"]
+                if isinstance(properties, dict) and "issues" in properties:
+                    properties[artifact_sub_type] = properties.pop("issues")
 
         # Include pk only if it was present in the original tool args
         try:
@@ -1328,6 +1375,15 @@ class ActionSummaryGenerator:
         if not tool_name or "_" not in tool_name:
             return "unknown", "unknown", None
 
+        # Special case: relation operations are updates, not creates
+        if "_create_relation" in tool_name:
+            parts = tool_name.split("_")
+            artifact_type = parts[0] if parts else "unknown"
+            # Convert artifact type to singular form
+            if artifact_type.endswith("s") and len(artifact_type) > 1:
+                artifact_type = artifact_type[:-1]  # "workitems" -> "workitem"
+            return "update", artifact_type, None
+
         parts = tool_name.split("_")
         if len(parts) >= 2:
             artifact_type = parts[0]  # e.g., "workitems_create" -> "workitems"
@@ -1359,39 +1415,3 @@ class ActionSummaryGenerator:
         import uuid
 
         return str(uuid.uuid4())
-
-    @classmethod
-    def _flatten_parameters(cls, parameters: Dict[str, Any], artifact_type: str, artifact_sub_type: Optional[str] = None) -> Dict[str, Any]:
-        """Flatten parameters structure for frontend format."""
-        flattened = {}
-
-        # Extract main entity fields to top level
-        if artifact_type in parameters:
-            entity_data = parameters[artifact_type]
-            if isinstance(entity_data, dict):
-                # Move main entity fields to top level
-                for key, value in entity_data.items():
-                    if key != "id":  # Skip ID as it's handled separately
-                        flattened[key] = value
-                # Preserve entity identity explicitly
-                if "id" in entity_data:
-                    flattened[artifact_type] = {"id": entity_data["id"]}
-
-        # Handle sub-type for add/remove operations
-        if artifact_sub_type:
-            # Add artifact_sub_type to parameters
-            flattened["artifact_sub_type"] = artifact_sub_type
-
-            # Check if we need to rename "issues" key in the already flattened properties
-            if "properties" in flattened:
-                properties = flattened["properties"]
-                if isinstance(properties, dict) and "issues" in properties:
-                    # Move issues to the artifact_sub_type key
-                    properties[artifact_sub_type] = properties.pop("issues")
-
-        # Add other parameters
-        for key, value in parameters.items():
-            if key != artifact_type:  # Skip main entity as it's already processed
-                flattened[key] = value
-
-        return flattened

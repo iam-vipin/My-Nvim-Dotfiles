@@ -352,7 +352,9 @@ def get_cycle_tools(method_executor, context):
 
     entity_search_tools = get_entity_search_tools(method_executor, context)
     cycle_entity_search_tools = [
-        t for t in entity_search_tools if getattr(t, "name", "").find("cycle") != -1 or getattr(t, "name", "").find("user") != -1
+        t
+        for t in entity_search_tools
+        if getattr(t, "name", "").find("cycle") != -1 or getattr(t, "name", "").find("user") != -1 or getattr(t, "name", "") == "search_current_cycle"
     ]
 
     return cycle_entity_search_tools + [

@@ -19,8 +19,7 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.app.models.enums import UserTypeChoices
 
 if TYPE_CHECKING:
-    from pi.app.models.chat import Chat
-    from pi.app.models.message_attachment import MessageAttachment
+    pass
 
 
 # Message table
@@ -61,11 +60,6 @@ class Message(BaseModel, table=True):
 
     # Relationships
     message_feedbacks: List["MessageFeedback"] = Relationship(back_populates="message", sa_relationship_kwargs={"lazy": "selectin"})
-    message_flowsteps: List["MessageFlowStep"] = Relationship(back_populates="message", sa_relationship_kwargs={"lazy": "selectin"})
-    message_attachments: List["MessageAttachment"] = Relationship(
-        sa_relationship_kwargs={"lazy": "selectin", "foreign_keys": "MessageAttachment.message_id"}
-    )
-    chat: "Chat" = Relationship(back_populates="messages", sa_relationship_kwargs={"lazy": "selectin"})
 
 
 # Message flow steps for tracking the internal flow of the message
@@ -120,11 +114,8 @@ class MessageFlowStep(BaseModel, table=True):
     )
     chat_id: uuid.UUID = Field(sa_column=Column(UUID(as_uuid=True), ForeignKey("chats.id", name="fk_message_flow_steps_chat_id"), nullable=False))
 
-    # Relationships
-    message: "Message" = Relationship(back_populates="message_flowsteps", sa_relationship_kwargs={"lazy": "selectin"})
 
-
-# Message meta for token/cost trackingclass MessageMeta(BaseModel, table=True):
+# Message meta for token/cost tracking
 class MessageMeta(BaseModel, table=True):
     __tablename__ = "message_meta"  # type: ignore[assignment]
 

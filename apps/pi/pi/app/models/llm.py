@@ -1,6 +1,5 @@
 # python imports
 import uuid
-from typing import List
 from typing import Optional
 
 # Third-party imports
@@ -8,7 +7,6 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlmodel import Field
-from sqlmodel import Relationship
 
 # Module imports
 from pi.app.models.base import BaseModel
@@ -27,12 +25,6 @@ class LlmModel(BaseModel, table=True):
     max_tokens: int = Field(nullable=False)
     is_active: bool = Field(default=True)
 
-    # Relationships
-    llm_model_pricing: List["LlmModelPricing"] = Relationship(
-        back_populates="llm_model",
-        sa_relationship_kwargs={"lazy": "selectin"},
-    )
-
 
 class LlmModelPricing(BaseModel, table=True):
     __tablename__ = "llm_model_pricing"
@@ -42,6 +34,3 @@ class LlmModelPricing(BaseModel, table=True):
     text_input_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
     text_output_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
     cached_text_input_price: Optional[float] = Field(nullable=True, default=None, description="In USD per 1M tokens")
-
-    # Relationships
-    llm_model: "LlmModel" = Relationship(back_populates="llm_model_pricing", sa_relationship_kwargs={"lazy": "selectin"})

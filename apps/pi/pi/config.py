@@ -1,4 +1,4 @@
-"""Setting for the Plane Intelligence project."""
+"""Setting for the Plane AI project."""
 
 import logging
 import os
@@ -159,6 +159,8 @@ class LLMModels:
     GPT_4_1_NANO: str = "gpt-4.1-nano"
     GPT_4O_MINI: str = "gpt-4o-mini"
     LITE_LLM_CLAUDE_SONNET_4: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"
+    GPT_5_STANDARD: str = "gpt-5-standard"
+    GPT_5_FAST: str = "gpt-5-fast"
     DEFAULT: str = GPT_4_1
 
 
@@ -169,7 +171,9 @@ class LLMConfig:
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     R1_URL_HOST: str = field(default_factory=lambda: os.getenv("R1_URL_HOST", "http://35.239.241.155:8000/v1"))
     R1_MODEL_NAME: str = field(default_factory=lambda: os.getenv("R1_MODEL_NAME", "deepseek-ai/DeepSeek-R1-Distill-Llama-8B"))
-    TESTED_FOR_WORKSPACE: list = field(default_factory=lambda: [LLMModels.GPT_4_1, LLMModels.LITE_LLM_CLAUDE_SONNET_4])
+    TESTED_FOR_WORKSPACE: list = field(
+        default_factory=lambda: [LLMModels.GPT_4_1, LLMModels.GPT_5_STANDARD, LLMModels.GPT_5_FAST, LLMModels.LITE_LLM_CLAUDE_SONNET_4]
+    )
     CONTEXT_OFF_TEMPERATURE: float = 0.6
     OPENAI_RANDOM_SEED: int = 314
     LITE_LLM_HOST: str = field(default_factory=lambda: os.getenv("LITE_LLM_HOST", "https://litellm.plane.town"))
@@ -177,6 +181,13 @@ class LLMConfig:
     ENABLE_MODEL_VERIFICATION_LOGGING: bool = (
         False  # field(default_factory=lambda: os.getenv("ENABLE_MODEL_VERIFICATION_LOGGING", "false").lower() == "true")
     )
+    # GPT-5 specific configuration
+    GPT5_USE_RESPONSES_API: bool = field(default_factory=lambda: os.getenv("GPT5_USE_RESPONSES_API", "false").lower() == "true")
+
+    # SQL Agent timeout configuration
+    # Timeout in seconds for SQL table selection LLM calls
+    # If a call exceeds this time, it will retry with a fallback model (GPT-4o)
+    SQL_TABLE_SELECTION_TIMEOUT: float = 5.0
 
 
 @dataclass
@@ -192,6 +203,15 @@ class Chat:
             "pages": "page",
             "cycles": "cycle",
             "modules": "module",
+            "projects": "project",
+            "users": "user",
+            "workitems": "workitem",
+            "epics": "epic",
+            "labels": "label",
+            "states": "state",
+            "issue_views": "issue_view",
+            "teams": "teamspace",
+            "initiatives": "initiative",
         },
     )
     MAX_TOOL_CALLS_PER_AGENT_RUN: int = 5
@@ -302,9 +322,9 @@ class Celery:
 
 @dataclass
 class Settings:
-    """Main configuration class for the Plane Intelligence project."""
+    """Main configuration class for the Plane AI project."""
 
-    PROJECT_NAME: str = "Plane Intelligence"
+    PROJECT_NAME: str = "Plane AI"
     PROJECT_VERSION: str = "1.0.3"
     DEBUG: bool = get_env_bool("DEBUG")
 
@@ -412,6 +432,11 @@ class Settings:
         root_logger.setLevel(log_level)
         root_logger.addHandler(handler)
         root_logger.propagate = True
+
+        # Suppress noisy Celery internal loggers
+        colorlog.getLogger("celery.utils.functional").setLevel(colorlog.WARNING)
+        colorlog.getLogger("celery.worker.strategy").setLevel(colorlog.INFO)
+        colorlog.getLogger("celery.app.trace").setLevel(colorlog.INFO)
 
         # Store the configured logger for consistent access
         cls._configured_logger = root_logger

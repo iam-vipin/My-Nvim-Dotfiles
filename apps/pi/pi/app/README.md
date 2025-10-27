@@ -1,8 +1,8 @@
 # NOTE: PRODUCTION SERVER. TRY AVOIDING EXPERIMENTAL CHANGES.
 
-# Pi API Server
+# Plane AI API Server
 
-Pi API Server serving Pi to Plane's World (Pi ~ Plane Intelligence)
+Plane AI API Server serving AI to Plane's World (Previously, Pi ~ Plane Intelligence)
 
 ```
 python main.py

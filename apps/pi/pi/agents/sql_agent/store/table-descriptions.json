@@ -1087,10 +1087,12 @@
         }
     },
     "initiatives": {
-        "about": "The 'initiatives' table stores high-level strategic objectives that group multiple projects in Plane.",
+        "about": "The 'initiatives' table stores high-level strategic objectives and metadata for initiatives in Plane.",
         "contains": [
-            "Initiative details including name, description, and timeline.",
-            "References to the lead and workspace."
+            "Initiative details including name, descriptions (plain text, HTML, stripped, and binary).",
+            "Timeline information such as start and end dates.",
+            "State of the initiative and logo properties stored as JSON.",
+            "References to the lead, creator, updater, and workspace."
         ],
         "does_not_contain": [
             "Associated projects (see 'initiative_projects').",
@@ -1146,20 +1148,18 @@
         }
     },
     "initiative_labels": {
-        "about": "The 'initiative_labels' table links labels to initiatives in Plane.",
+        "about": "The 'initiative_labels' table stores label definitions used for initiatives in Plane.",
         "contains": [
-            "Links between labels and initiatives.",
-            "References to the label and initiative."
+            "Label details including name, color, and description.",
+            "References to the workspace and users who created or updated the label."
         ],
         "does_not_contain": [
-            "Label definitions.",
-            "Initiative details."
+            "Links between initiatives and labels (this relationship no longer exists here).",
+            "Label usage mapping across initiatives."
         ],
         "relationships": {
             "foreign_keys": {
                 "created_by_id": "users(id)",
-                "initiative_id": "initiatives(id)",
-                "label_id": "labels(id)",
                 "updated_by_id": "users(id)",
                 "workspace_id": "workspaces(id)"
             }
@@ -1187,7 +1187,8 @@
     "initiative_comments": {
         "about": "The 'initiative_comments' table stores comments related to initiatives in Plane.",
         "contains": [
-            "Comment content in various formats (plain text, HTML, JSON).",
+            "Comment content in multiple formats (plain text, HTML, JSON).",
+            "Metadata such as access level, external source, and edit timestamps.",
             "References to the initiative and comment author."
         ],
         "does_not_contain": [
@@ -1207,8 +1208,8 @@
     "initiative_activities": {
         "about": "The 'initiative_activities' table records changes and actions performed on initiatives in Plane.",
         "contains": [
-            "Activity details including verb, field changes, and comments.",
-            "References to the initiative and actor."
+            "Activity details such as verb, field changes, old/new values, and comments.",
+            "References to the initiative, actor, and related comment (if any)."
         ],
         "does_not_contain": [
             "Initiative details.",

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Celery worker startup script for Plane Intelligence.
+Celery worker startup script for Plane AI.
 """
 
 import os

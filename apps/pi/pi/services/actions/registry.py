@@ -34,6 +34,7 @@ API_METHODS: Dict[str, Dict[str, str]] = {
     "workitems": {
         "create": "Create a new work item/issue",
         "update": "Update an existing work item/issue",
+        "create_relation": "Create relationships between work items (blocking, blocked_by, duplicate, etc.)",
         # "list": "List work items with filtering",
         # "retrieve": "Get a single work item by ID",
         "delete": "Delete a work item",
@@ -194,6 +195,7 @@ METHOD_NAME_MAP: Dict[str, Dict[str, str]] = {
     "workitems": {
         "create": "create_work_item",
         "update": "update_work_item",
+        "create_relation": "create_work_item_relation",
         "list": "list_work_items",
         "retrieve": "retrieve_work_item",
         "search": "search_work_items",

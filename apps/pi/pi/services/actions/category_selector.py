@@ -57,5 +57,5 @@ class CategorySelector:
         if any(keyword in intent_lower for keyword in ["page", "note", "wiki", "notepad"]):
             return "pages"
 
-        # Default to workitems for ambiguous cases
-        return "workitems"
+        # No default fallback - let the LLM handle ambiguous cases with NO_ACTIONS_PLANNED
+        return ""

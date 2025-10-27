@@ -6,13 +6,12 @@ import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { Tabs } from "@plane/ui";
 import type { TabItem } from "@plane/ui";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -100,22 +99,20 @@ const AnalyticsPage = observer((props: Props) => {
               />
             </div>
           ) : (
-            <DetailedEmptyState
-              title={t("workspace_analytics.empty_state.general.title")}
-              description={t("workspace_analytics.empty_state.general.description")}
-              assetPath={resolvedPath}
-              customPrimaryButton={
-                <ComicBoxButton
-                  label={t("workspace_analytics.empty_state.general.primary_button.text")}
-                  title={t("workspace_analytics.empty_state.general.primary_button.comic.title")}
-                  description={t("workspace_analytics.empty_state.general.primary_button.comic.description")}
-                  onClick={() => {
+            <EmptyStateDetailed
+              assetKey="project"
+              title="You don't have any projects"
+              description="Create a project to get started"
+              actions={[
+                {
+                  label: "Create a project",
+                  onClick: () => {
                     toggleCreateProjectModal(true);
                     captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-                  }}
-                  disabled={!canPerformEmptyStateActions}
-                />
-              }
+                  },
+                  disabled: !canPerformEmptyStateActions,
+                },
+              ]}
             />
           )}
         </>

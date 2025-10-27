@@ -7,15 +7,14 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import SettingsHeading from "@/components/settings/heading";
 
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 // local imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -45,7 +44,6 @@ export const InitiativeLabelList: React.FC = observer(() => {
 
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
 
   const handleError = (error: unknown) => {
     const errorObj = error as { name?: string[] };
@@ -135,21 +133,20 @@ export const InitiativeLabelList: React.FC = observer(() => {
         )}
         {initiativeLabels ? (
           initiativeLabels.size === 0 && !showLabelForm ? (
-            <div className="flex items-center justify-center h-full w-full p-6">
-              <DetailedEmptyState
-                title={""}
-                description={""}
-                primaryButton={{
-                  text: "Create your first label",
-                  onClick: () => {
-                    newLabel();
-                  },
-                }}
-                assetPath={resolvedPath}
-                className="w-full !px-0 !py-0"
-                size="md"
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title={t("settings.labels.title")}
+              description={t("settings.labels.description")}
+              actions={[
+                {
+                  label: t("settings.labels.cta_primary"),
+                  onClick: () => newLabel(),
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           ) : (
             initiativeLabels.size > 0 &&
             Array.from(initiativeLabels.values())

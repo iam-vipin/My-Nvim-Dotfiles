@@ -48,8 +48,8 @@ export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) =>
       <SectionWrapper>
         <EmptyStateCompact
           assetKey="work-item"
-          title={t("common.progress.title")}
-          description={t("common.progress.description")}
+          title={t("common_empty_state.progress.title")}
+          description={t("common_empty_state.progress.description")}
         />
       </SectionWrapper>
     );

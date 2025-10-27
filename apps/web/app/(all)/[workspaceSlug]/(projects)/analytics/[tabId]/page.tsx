@@ -101,8 +101,8 @@ const AnalyticsPage = observer((props: Props) => {
           ) : (
             <EmptyStateDetailed
               assetKey="project"
-              title="You don't have any projects"
-              description="Create a project to get started"
+              title={t("workspace_projects.empty_state.no_projects.title")}
+              description={t("workspace_projects.empty_state.no_projects.description")}
               actions={[
                 {
                   label: "Create a project",

@@ -258,8 +258,8 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
       ) : (
         <EmptyStateCompact
           assetKey="update"
-          title={t("common.updates.title")}
-          description={t("common.updates.description")}
+          title={t("common_empty_state.updates.title")}
+          description={t("common_empty_state.updates.description")}
           customButton={
             <Link href={`/${workspaceSlug}/settings/project-states`} className="mt-4 mx-auto">
               <Button variant="primary"> Enable project grouping</Button>

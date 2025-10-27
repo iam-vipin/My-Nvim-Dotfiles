@@ -1,4 +1,5 @@
 # Python imports
+import json
 import logging
 
 # Django imports
@@ -33,8 +34,68 @@ COMPONENT_MAP = {
     },
 }
 
+EE_COMPONENT_MAP = {
+    "attachment-component": {
+        "attributes": ["id", "src", "data-file-type"],
+        "extract": lambda m: {
+            "entity_name": "attachment",
+            "entity_type": m.get("data-file-type"),
+            "entity_identifier": m.get("src"),
+        },
+    },
+    "external-embed-component": {
+        "attributes": ["id", "data-entity-name"],
+        "extract": lambda m: {
+            "entity_name": "external-embed",
+            "entity_type": m.get("data-entity-name"),
+            "entity_identifier": None,
+        },
+    },
+    "issue-embed-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "page-embed-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "page-link-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "block-math-component": {
+        "attributes": ["id"],
+        "extract": lambda m: {
+            "entity_name": "block-math",
+            "entity_type": None,
+            "entity_identifier": None,
+        },
+    },
+    "inline-math-component": {
+        "attributes": ["id"],
+        "extract": lambda m: {
+            "entity_name": "inline-math",
+            "entity_type": None,
+            "entity_identifier": None,
+        },
+    },
+}
+
 component_map = {
     **COMPONENT_MAP,
+    **EE_COMPONENT_MAP,
 }
 
 
@@ -67,14 +128,14 @@ def extract_all_components(description_html):
         return {component: [] for component in component_map.keys()}
 
 
-def get_entity_details(component: str, mention: dict):
+def get_entity_details(component: str, component_data: dict):
     """
-    Normalizes mention attributes into entity_name, entity_type, entity_identifier.
+    Normalizes component attributes into entity_name, entity_type, entity_identifier.
     """
     config = component_map.get(component)
     if not config:
         return {"entity_name": None, "entity_type": None, "entity_identifier": None}
-    return config["extract"](mention)
+    return config["extract"](component_data)
 
 
 @shared_task
@@ -87,7 +148,6 @@ def page_transaction(new_description_html, old_description_html, page_id):
         page = Page.objects.get(pk=page_id)
 
         has_existing_logs = PageLog.objects.filter(page_id=page_id).exists()
-
 
         # Extract all components in a single pass (optimized)
         old_components = extract_all_components(old_description_html)
@@ -125,12 +185,9 @@ def page_transaction(new_description_html, old_description_html, page_id):
                     )
                 )
 
-
         # Bulk insert and cleanup
         if new_transactions:
-            PageLog.objects.bulk_create(
-                new_transactions, batch_size=50, ignore_conflicts=True
-            )
+            PageLog.objects.bulk_create(new_transactions, batch_size=50, ignore_conflicts=True)
 
         if deleted_transaction_ids:
             PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()

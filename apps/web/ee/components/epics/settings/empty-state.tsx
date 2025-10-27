@@ -3,14 +3,12 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
-// helpers
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web hooks
 import { SettingsHeading } from "@/components/settings/heading";
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -25,8 +23,6 @@ type TIssueTypeEmptyState = {
 export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // props
   const { workspaceSlug, projectId, redirect = false } = props;
-  // theme
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   const { enableEpics } = useIssueTypes();
@@ -37,7 +33,6 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
     subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
   // derived values
   const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS");
-  const resolvedEmptyStatePath = `/empty-state/epics/epics-${resolvedTheme === "light" ? "light" : "dark"}.webp`;
 
   // trackers
   const trackers = epicsTrackers({ workspaceSlug, projectId });
@@ -103,12 +98,19 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
       />
       <div className="w-full py-2">
         <div className="flex items-center justify-center h-full w-full">
-          <DetailedEmptyState
-            size="md"
-            title={""}
-            assetPath={resolvedEmptyStatePath}
-            className="w-full !px-0 !py-0"
-            customPrimaryButton={cta}
+          <EmptyStateCompact
+            assetKey="epic"
+            title={t("settings.epic_setting.title")}
+            description={t("settings.epic_setting.description")}
+            actions={[
+              {
+                label: t("settings.epic_setting.cta_primary"),
+                onClick: () => handleEnableEpic(),
+                variant: "primary",
+              },
+            ]}
+            align="start"
+            rootClassName="py-20"
           />
         </div>
       </div>

@@ -12,11 +12,11 @@ import {
   PROJECT_PAGE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 import type { TPage, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // helpers
@@ -215,18 +215,6 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     movePageInternally,
   ]);
 
-  const generalPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/pages",
-  });
-  const publicPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/public",
-  });
-  const privatePageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/private",
-  });
-  const archivedPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/archived",
-  });
   const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
   const resolvedNameFilterImage = useResolvedAssetPath({
     basePath: "/empty-state/pages/name-filter",
@@ -239,58 +227,67 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
   if (pageIds.length === 0) {
     if (pageType === "public")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("project_page.empty_state.public.title")}
           description={t("project_page.empty_state.public.description")}
-          assetPath={publicPageResolvedPath}
-          primaryButton={{
-            text: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
-            onClick: () => {
-              handleCreatePage();
-              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+          actions={[
+            {
+              label: isCreatingPage ? t("creating") : t("project_page.empty_state.public.primary_button.text"),
+              onClick: () => {
+                handleCreatePage();
+                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+              },
+              disabled: !canPerformEmptyStateActions || isCreatingPage,
+              variant: "primary",
             },
-            disabled: !canPerformEmptyStateActions || isCreatingPage,
-          }}
+          ]}
         />
       );
     if (pageType === "private")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("project_page.empty_state.private.title")}
           description={t("project_page.empty_state.private.description")}
-          assetPath={privatePageResolvedPath}
-          primaryButton={{
-            text: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
-            onClick: () => {
-              handleCreatePage();
-              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+          actions={[
+            {
+              label: isCreatingPage ? t("creating") : t("project_page.empty_state.private.primary_button.text"),
+              onClick: () => {
+                handleCreatePage();
+                captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+              },
+              disabled: !canPerformEmptyStateActions || isCreatingPage,
+              variant: "primary",
             },
-            disabled: !canPerformEmptyStateActions || isCreatingPage,
-          }}
+          ]}
         />
       );
     if (pageType === "archived")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("project_page.empty_state.archived.title")}
           description={t("project_page.empty_state.archived.description")}
-          assetPath={archivedPageResolvedPath}
         />
       );
     // General empty state when no pages are found
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
+        assetKey="page"
         title={t("project_page.empty_state.general.title")}
         description={t("project_page.empty_state.general.description")}
-        assetPath={generalPageResolvedPath}
-        primaryButton={{
-          text: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
-          onClick: () => {
-            handleCreatePage();
-            captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+        actions={[
+          {
+            label: isCreatingPage ? t("creating") : t("project_page.empty_state.general.primary_button.text"),
+            onClick: () => {
+              handleCreatePage();
+              captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+            },
+            disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
+            variant: "primary",
           },
-          disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
-        }}
+        ]}
       />
     );
   }

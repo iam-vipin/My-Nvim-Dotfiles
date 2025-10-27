@@ -5,16 +5,15 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/propel/icons";
 import type { ICycleProgressData, IChartResponse, TChartData, TCycleGroups } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
-import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { AnalyticsService } from "@/services/analytics.service";
 // local components
@@ -28,7 +27,6 @@ const CycleProgress = observer(() => {
   const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-radar" });
 
   const { data: cycleInsightsData, isLoading: isLoadingCycleInsight } = useSWR(
     `radar-chart-cycle-progress-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
@@ -147,11 +145,11 @@ const CycleProgress = observer(() => {
           </div>
         </div>
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.cycle_progress.title")}
-          description={t("workspace_analytics.empty_state.cycle_progress.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace.analytics_no_cycle.title")}
         />
       )}
     </AnalyticsSectionWrapper>

@@ -140,6 +140,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     title={t("common.search.title")}
                     description={t("common.search.description")}
                     assetClassName="size-20"
+                    className="px-10"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed

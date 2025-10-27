@@ -7,10 +7,10 @@ import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -23,10 +23,6 @@ import { useCustomers } from "@/plane-web/hooks/store";
 
 export const CustomersListRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
-  const resolvedPathList = useResolvedAssetPath({
-    basePath: "/empty-state/customers/customers-disabled",
-    extension: "webp",
-  });
   const resolvedPathSearch = useResolvedAssetPath({
     basePath: "/empty-state/customers/search-empty",
     extension: "svg",
@@ -97,15 +93,17 @@ export const CustomersListRoot: FC = observer(() => {
   if (customerIds.length === 0)
     return (
       <>
-        <DetailedEmptyState
-          title={t("customers.empty_state.list.title")}
-          description={t("customers.empty_state.list.description")}
-          assetPath={resolvedPathList}
-          primaryButton={{
-            text: t("customers.empty_state.list.primary_button"),
-            disabled: !hasWorkspaceAdminLevelPermissions,
-            onClick: () => toggleCreateCustomerModal({ isOpen: true, customerId: undefined }),
-          }}
+        <EmptyStateDetailed
+          assetKey="customer"
+          title={t("workspace.customers.title")}
+          description={t("workspace.customers.description")}
+          actions={[
+            {
+              label: t("workspace.customers.cta_primary"),
+              onClick: () => toggleCreateCustomerModal({ isOpen: true, customerId: undefined }),
+              disabled: !hasWorkspaceAdminLevelPermissions,
+            },
+          ]}
         />
       </>
     );

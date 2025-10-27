@@ -7,16 +7,15 @@ import useSWR from "swr";
 import { CHART_COLOR_PALETTES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IChartResponse, TBarItem, TChartData } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
-import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
 import { generateExtendedColors } from "@/components/chart/utils";
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 
@@ -28,7 +27,6 @@ const ProjectsByStatus = observer(() => {
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   const workspaceSlug = params.workspaceSlug.toString();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-area" });
   const { data: projectsByStatusData, isLoading: isProjectsByStatusLoading } = useSWR(
     `projects-by-status-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
@@ -100,11 +98,11 @@ const ProjectsByStatus = observer(() => {
           }}
         />
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.created_vs_resolved.title")}
-          description={t("workspace_analytics.empty_state.created_vs_resolved.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace.analytics_projects.title")}
         />
       )}
     </AnalyticsSectionWrapper>

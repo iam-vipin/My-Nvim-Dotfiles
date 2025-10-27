@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
@@ -31,7 +31,6 @@ export const InitiativesRoot = observer(() => {
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
   const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
-  const generalResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/initiatives" });
   const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -59,15 +58,17 @@ export const InitiativesRoot = observer(() => {
 
   if (isEmptyInitiatives) {
     return (
-      <DetailedEmptyState
-        title={t("initiatives.empty_state.general.title")}
-        description={t("initiatives.empty_state.general.description")}
-        assetPath={generalResolvedPath}
-        primaryButton={{
-          text: t("initiatives.empty_state.general.primary_button.text"),
-          onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
-          disabled: !hasWorkspaceMemberLevelPermissions,
-        }}
+      <EmptyStateDetailed
+        assetKey="initiative"
+        title={t("workspace.initiatives.title")}
+        description={t("workspace.initiatives.description")}
+        actions={[
+          {
+            label: t("workspace.initiatives.cta_primary"),
+            onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
+            disabled: !hasWorkspaceMemberLevelPermissions,
+          },
+        ]}
       />
     );
   }

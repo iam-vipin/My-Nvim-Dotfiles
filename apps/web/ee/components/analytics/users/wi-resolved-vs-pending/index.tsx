@@ -5,17 +5,16 @@ import { observer } from "mobx-react";
  */
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TChartData, UserInsightColumns } from "@plane/types";
 
 /**
  * Local imports
  */
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
-import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
 
 import { useMember } from "@/hooks/store/use-member";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { UserAvatarName } from "../../user-avatar-name";
 import { CustomTooltip } from "./tooltip";
 
@@ -32,7 +31,6 @@ const WiResolvedVsPending = observer(
     selectedDurationLabel,
   }: WiResolvedVsPendingProps) => {
     const { t } = useTranslation();
-    const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-area" });
     const { getUserDetails } = useMember();
 
     /**
@@ -124,11 +122,11 @@ const WiResolvedVsPending = observer(
             )}
           />
         ) : (
-          <AnalyticsEmptyState
-            title={t("workspace_analytics.empty_state.created_vs_resolved.title")}
-            description={t("workspace_analytics.empty_state.created_vs_resolved.description")}
-            className="h-[350px]"
-            assetPath={resolvedPath}
+          <EmptyStateCompact
+            assetKey="unknown"
+            assetClassName="size-20"
+            rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+            title={t("workspace.analytics_work_items.title")}
           />
         )}
       </AnalyticsSectionWrapper>

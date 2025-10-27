@@ -8,16 +8,15 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { ICycle } from "@plane/types";
 import { ContentWrapper, Loader } from "@plane/ui";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web components
 import { WORKSPACE_ACTIVE_CYCLES_LIST } from "@/constants/fetch-keys";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { CycleService } from "@/services/cycle.service";
 import { WorkspaceActiveCycleRoot } from "./workspace-active-cycle-root";
 
@@ -38,8 +37,6 @@ export const WorkspaceActiveCyclesList = observer(() => {
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
   // plane hooks
   const { t } = useTranslation();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/workspace-active-cycles" });
 
   // fetching active cycles in workspace
   const { data: workspaceActiveCycles, isLoading } = useSWR(
@@ -111,10 +108,10 @@ export const WorkspaceActiveCyclesList = observer(() => {
       )}
 
       {!isLoading && cycles.length === 0 && (
-        <DetailedEmptyState
-          title={t("workspace_cycles.empty_state.active.title")}
-          description={t("workspace_cycles.empty_state.active.description")}
-          assetPath={resolvedPath}
+        <EmptyStateDetailed
+          assetKey="cycle"
+          title={t("workspace.active_cycles.title")}
+          description={t("workspace.active_cycles.description")}
         />
       )}
     </ContentWrapper>

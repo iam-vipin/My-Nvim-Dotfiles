@@ -2,8 +2,7 @@ import type { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // assets
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 type TCustomerSettingsDisabled = {
   toggleCustomersFeature: () => void;
@@ -13,18 +12,14 @@ export const CustomerSettingsDisabled: FC<TCustomerSettingsDisabled> = (props) =
   // hooks
   const { t } = useTranslation();
 
-  // derived values
-  const resolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/customers/customers-disabled",
-    extension: "webp",
-  });
-
   return (
-    <DetailedEmptyState
-      title=""
-      assetPath={resolvedPath}
-      primaryButton={{ text: t("customers.settings.enable"), onClick: () => toggleCustomersFeature() }}
-      className="h-fit min-h-full items-start !p-0"
+    <EmptyStateCompact
+      assetKey="customer"
+      title={t("settings.customers.title")}
+      description={t("settings.customers.description")}
+      actions={[{ label: t("settings.customers.cta_primary"), onClick: () => toggleCustomersFeature() }]}
+      align="start"
+      rootClassName="py-20"
     />
   );
 };

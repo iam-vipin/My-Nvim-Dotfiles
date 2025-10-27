@@ -3,10 +3,10 @@ import Image from "next/image";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list/list-root";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -37,7 +37,6 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/teams" });
   const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
   const resolvedNameFilterImage = useResolvedAssetPath({
     basePath: "/empty-state/project/name-filter",
@@ -48,20 +47,20 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
 
   if (allTeamSpaceIds?.length === 0)
     return (
-      <DetailedEmptyState
-        title={t("teamspaces.empty_state.general.title")}
-        description={t("teamspaces.empty_state.general.description")}
-        assetPath={resolvedPath}
-        primaryButton={{
-          text: t("teamspaces.empty_state.general.primary_button.text"),
-          onClick: () => {
-            captureClick({
-              elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
-            });
-            toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
+      <EmptyStateDetailed
+        assetKey="teamspace"
+        title={t("workspace.teamspaces.title")}
+        description={t("workspace.teamspaces.description")}
+        actions={[
+          {
+            label: t("workspace.teamspaces.cta_primary"),
+            onClick: () => {
+              captureClick({ elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON });
+              toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
+            },
+            disabled: !hasWorkspaceAdminLevelPermissions,
           },
-          disabled: !hasWorkspaceAdminLevelPermissions,
-        }}
+        ]}
       />
     );
 

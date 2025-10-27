@@ -6,10 +6,10 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
@@ -93,22 +93,6 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     [allowPermissions]
   );
 
-  const generalPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/pages",
-  });
-  const privatePageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/private",
-  });
-  const publicPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/public",
-  });
-  const archivedPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/archived",
-  });
-  const sharedPageResolvedPath = useResolvedAssetPath({
-    // todo - remove this and add a new asset for shared
-    basePath: "/empty-state/pages/public",
-  });
   const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
   const resolvedNameFilterImage = useResolvedAssetPath({
     basePath: "/empty-state/pages/name-filter",
@@ -156,58 +140,71 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   if (!pageIds || pageIds.length === 0) {
     if (pageType === "public")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("workspace_pages.empty_state.public.title")}
           description={t("workspace_pages.empty_state.public.description")}
-          assetPath={publicPageResolvedPath}
-          primaryButton={{
-            text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.public.primary_button.text"),
-            onClick: handleCreatePage,
-            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
-          }}
+          actions={[
+            {
+              label: isCreatingPage
+                ? t("common.creating")
+                : t("workspace_pages.empty_state.public.primary_button.text"),
+              onClick: handleCreatePage,
+              disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+              variant: "primary",
+            },
+          ]}
         />
       );
     if (pageType === "private")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("workspace_pages.empty_state.private.title")}
           description={t("workspace_pages.empty_state.private.description")}
-          assetPath={privatePageResolvedPath}
-          primaryButton={{
-            text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.private.primary_button.text"),
-            onClick: handleCreatePage,
-            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
-          }}
+          actions={[
+            {
+              label: isCreatingPage
+                ? t("common.creating")
+                : t("workspace_pages.empty_state.private.primary_button.text"),
+              onClick: handleCreatePage,
+              disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+              variant: "primary",
+            },
+          ]}
         />
       );
     if (pageType === "archived")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title={t("workspace_pages.empty_state.archived.title")}
           description={t("workspace_pages.empty_state.archived.description")}
-          assetPath={archivedPageResolvedPath}
         />
       );
     if (pageType === "shared")
       return (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="page"
           title="No shared pages"
           description="Pages shared with you will appear here when someone shares them."
-          assetPath={sharedPageResolvedPath}
         />
       );
 
     // General empty state when no pages are found
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
+        assetKey="page"
         title={t("workspace_pages.empty_state.general.title")}
         description={t("workspace_pages.empty_state.general.description")}
-        assetPath={generalPageResolvedPath}
-        primaryButton={{
-          text: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.general.primary_button.text"),
-          onClick: handleCreatePage,
-          disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
-        }}
+        actions={[
+          {
+            label: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.general.primary_button.text"),
+            onClick: handleCreatePage,
+            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+            variant: "primary",
+          },
+        ]}
       />
     );
   }

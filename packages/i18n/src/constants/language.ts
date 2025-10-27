@@ -32,9 +32,10 @@ export enum ETranslationFiles {
   TRANSLATIONS = "translations",
   ACCESSIBILITY = "accessibility",
   EDITOR = "editor",
-  EMPTY_STATE = "emptyState",
+  EMPTY_STATE = "empty-state",
   TRANSLATIONS_EXTENDED = "translations-extended",
   EDITOR_EXTENDED = "editor-extended",
+  EMPTY_STATE_EXTENDED = "empty-state-extended",
 }
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";

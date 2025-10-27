@@ -5,13 +5,13 @@ import React from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // ui
-import { LayersIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 // types
 import type { TStateAnalytics } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
 import { ProgressSection } from "@/plane-web/components/common/layout/main/sections/progress-root";
 import projectService from "@/plane-web/services/project/project.service";
@@ -25,6 +25,7 @@ export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) =>
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();
+  const { t } = useTranslation();
   // derived values
   const project = getProjectById(projectId);
 
@@ -45,10 +46,10 @@ export const ProjectOverviewProgressSectionRoot: FC<Props> = observer((props) =>
   if (isEmpty) {
     return (
       <SectionWrapper>
-        <SectionEmptyState
-          heading="No work items yet"
-          subHeading="Start adding work items manage and track the progress."
-          icon={<LayersIcon className="size-4" />}
+        <EmptyStateCompact
+          assetKey="work-item"
+          title={t("common.progress.title")}
+          description={t("common.progress.description")}
         />
       </SectionWrapper>
     );

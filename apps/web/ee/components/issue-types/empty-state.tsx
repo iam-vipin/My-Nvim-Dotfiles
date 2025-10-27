@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
@@ -76,21 +77,24 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   const getEmptyStateContent = () => {
     if (isIssueTypeSettingsEnabled) {
       return (
-        <DetailedEmptyState
-          className="!p-0 w-full"
-          title=""
-          description=""
-          assetPath={resolvedPath}
-          primaryButton={{
-            text: t("work_item_types.empty_state.enable.primary_button.text"),
-            onClick: () => {
-              captureClick({
-                elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON,
-              });
-              setEnableIssueTypeConfirmation(true);
+        <EmptyStateCompact
+          assetKey="work-item"
+          title={t("settings.work_item_types.title")}
+          description={t("settings.work_item_types.description")}
+          actions={[
+            {
+              label: t("settings.work_item_types.cta_primary"),
+              onClick: () => {
+                captureClick({
+                  elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON,
+                });
+                setEnableIssueTypeConfirmation(true);
+              },
+              variant: "primary",
             },
-          }}
-          size="md"
+          ]}
+          align="start"
+          rootClassName="py-20"
         />
       );
     }

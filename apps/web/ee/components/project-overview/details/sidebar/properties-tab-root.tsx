@@ -2,12 +2,12 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
-import Link from "next/link";
 // plane imports
+import Link from "next/link";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import {
   DueDatePropertyIcon,
   InitiativeIcon,
@@ -40,7 +40,6 @@ import type { TProject } from "@/plane-web/types";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import type { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // assets
-import ImagelLight from "@/public/empty-state/empty-updates-light.png";
 
 type Props = {
   workspaceSlug: string;
@@ -257,18 +256,17 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
           </div>
         </SidebarContentWrapper>
       ) : (
-        <div className="flex h-full">
-          <div className="m-auto mt-[50%]">
-            <Image src={ImagelLight} alt="No updates" className="w-[161px] m-auto" />
-            <div className="w-fit m-auto text-lg font-medium items-center">Project Properties</div>
-            <div className="w-fit m-auto font-medium text-base text-custom-text-350 text-center my-2">
-              Enable project grouping to access this feature
-            </div>
+        <EmptyStateCompact
+          assetKey="update"
+          title={t("common.updates.title")}
+          description={t("common.updates.description")}
+          customButton={
             <Link href={`/${workspaceSlug}/settings/project-states`} className="mt-4 mx-auto">
-              <Button className="mx-auto"> Enable project grouping</Button>
+              <Button variant="primary"> Enable project grouping</Button>
             </Link>
-          </div>
-        </div>
+          }
+          className="px-10"
+        />
       )}
     </>
   );

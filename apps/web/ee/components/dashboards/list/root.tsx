@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -22,7 +22,6 @@ export const DashboardsListLayoutRoot = observer(() => {
   // translation
   const { t } = useTranslation();
   // derived values
-  const listEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list" });
   const searchEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list-search" });
 
   if (!currentWorkspaceFetchStatus) {
@@ -33,10 +32,10 @@ export const DashboardsListLayoutRoot = observer(() => {
   if (!isAnyDashboardAvailable) {
     return (
       <div className="size-full grid place-items-center">
-        <DetailedEmptyState
-          title={t("dashboards.empty_state.dashboards_list.title")}
-          description={t("dashboards.empty_state.dashboards_list.description")}
-          assetPath={listEmptyStateResolvedPath}
+        <EmptyStateDetailed
+          assetKey="dashboard"
+          title={t("workspace.dashboard.title")}
+          description={t("workspace.dashboard.description")}
         />
       </div>
     );

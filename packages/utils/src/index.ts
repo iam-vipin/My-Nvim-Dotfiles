@@ -42,3 +42,4 @@ export * from "./work-item-properties";
 export * from "./work-item-types";
 export * from "./workflow";
 export * from "./workspace";
+export * from "./form";

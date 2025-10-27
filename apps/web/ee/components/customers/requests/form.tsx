@@ -50,7 +50,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
   // states
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
-  const [selectedWorkItems, setSelectedWorkItems] = useState<ISearchIssueResponse[]>([]);
+  const [selectedWorkItemIds, setSelectedWorkItemIds] = useState<string[]>([]);
   const [link, setLink] = useState<string | undefined>();
   // TODO: workspace uploads
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
@@ -71,13 +71,13 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
   const workItemsCount = useMemo(() => {
-    const _count = selectedWorkItems.length;
+    const _count = selectedWorkItemIds.length;
     if (data) {
       return (data.work_item_ids?.length || 0) + _count;
     } else {
       return _count;
     }
-  }, [selectedWorkItems, data]);
+  }, [selectedWorkItemIds, data]);
 
   const {
     control,
@@ -94,11 +94,11 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
   const resetData = () => {
     reset(defaultValues);
     setLink(undefined);
-    setSelectedWorkItems([]);
+    setSelectedWorkItemIds([]);
   };
 
   const handleWorkItemsSubmit = async (searchData: ISearchIssueResponse[]) => {
-    setSelectedWorkItems(searchData);
+    setSelectedWorkItemIds(searchData.map((item) => item.id));
   };
 
   const onAssetUpload = (id: string) => {
@@ -106,7 +106,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
   };
 
   const onSubmit = async (data: Partial<TCustomerRequest>) => {
-    const workItemIds = selectedWorkItems.map((item) => item.id).filter((id) => id !== null);
+    const workItemIds = selectedWorkItemIds.filter((id) => id !== null);
     // get changed fields
     let payload = {
       ...data,
@@ -234,7 +234,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
           handleClose={() => setWorkItemsModal(false)}
           searchParams={{}}
           handleOnSubmit={handleWorkItemsSubmit}
-          selectedWorkItemIds={selectedWorkItems.map((item) => item.id).filter((id) => id !== null)}
+          selectedWorkItemIds={selectedWorkItemIds}
           workItemSearchServiceCallback={workItemSearchCallBack}
         />
         <SourceCreateUpdateModal id={customerId} setLinkData={setLink} preloadedData={{ url: link }} />

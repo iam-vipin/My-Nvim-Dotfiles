@@ -913,6 +913,16 @@ class IssueSerializer(DynamicBaseSerializer):
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Gate milestone_id behind MILESTONES feature flag. Omit key entirely when disabled.
+        slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
+        if slug and user_id and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id
+        ):
+            self.fields.pop("milestone_id", None)
+
     class Meta:
         model = Issue
         fields = [
@@ -1003,6 +1013,14 @@ class IssueListDetailSerializer(serializers.Serializer):
                 instance.link_count if hasattr(instance, "link_count") else None
             ),
         }
+
+        # Gate milestone_id behind MILESTONES feature flag. Omit key entirely when disabled.
+        slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
+        if slug and user_id and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id
+        ):
+            data.pop("milestone_id", None)
 
         # Handle expanded fields only when requested - using direct field access
         if self.expand:

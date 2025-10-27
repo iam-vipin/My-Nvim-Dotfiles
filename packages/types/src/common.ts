@@ -43,3 +43,9 @@ export type ICustomSearchSelectOption = {
   disabled?: boolean;
   tooltip?: string | React.ReactNode;
 };
+
+export type TDescription = {
+  description_html: string;
+  description_stripped: string;
+  description_binary: string;
+};

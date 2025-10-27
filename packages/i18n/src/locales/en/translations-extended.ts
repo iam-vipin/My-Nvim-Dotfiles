@@ -3,6 +3,8 @@ export default {
   pi_chat: "Plane AI",
   in_app: "In-app",
   forms: "Forms",
+  milestones: "Milestones",
+  milestones_description: "Milestones provide a layer to align work items toward shared completion dates.",
   common: {
     worklogs: "Worklogs",
     live: "Live",

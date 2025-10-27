@@ -368,6 +368,10 @@ class InitiativeEpicIssueViewSet(BaseViewSet):
             order_by=order_by_param,
             queryset=(epics),
             on_results=lambda epics: IssueListDetailSerializer(
-                epics, many=True, fields=self.fields, expand=self.expand
+                epics,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"slug": slug, "user_id": str(request.user.id)},
             ).data,
         )

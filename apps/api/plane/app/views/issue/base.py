@@ -60,7 +60,7 @@ from plane.db.models import (
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject
+from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject, MilestoneIssue
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -117,6 +117,13 @@ class IssueListEndpoint(BaseAPIView):
             issue_queryset.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("milestone_id")[:1]
                 )
             )
             .annotate(
@@ -179,6 +186,7 @@ class IssueListEndpoint(BaseAPIView):
                 "project_id",
                 "parent_id",
                 "cycle_id",
+                "milestone_id",
                 "module_ids",
                 "label_ids",
                 "assignee_ids",
@@ -271,6 +279,13 @@ class IssueViewSet(BaseViewSet):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("milestone_id")[:1]
                 )
             )
             .annotate(
@@ -611,6 +626,13 @@ class IssueViewSet(BaseViewSet):
             .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .select_related("state")
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
+            .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("milestone_id")[:1]
+                )
+            )
             .annotate(
                 link_count=Subquery(
                     IssueLink.objects.filter(issue=OuterRef("id"))
@@ -1018,6 +1040,13 @@ class IssuePaginatedViewSet(BaseViewSet):
                 )
             )
             .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("milestone_id")[:1]
+                )
+            )
+            .annotate(
                 link_count=Subquery(
                     IssueLink.objects.filter(issue=OuterRef("id"))
                     .values("issue")
@@ -1105,6 +1134,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "project_id",
             "parent_id",
             "cycle_id",
+            "milestone_id",
             "created_at",
             "updated_at",
             "created_by",
@@ -1210,6 +1240,13 @@ class IssueDetailEndpoint(BaseAPIView):
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("milestone_id")[:1]
                 )
             )
             .annotate(
@@ -1392,7 +1429,11 @@ class IssueDetailEndpoint(BaseAPIView):
             queryset=(issue),
             total_count_queryset=total_issue_queryset,
             on_results=lambda issue: IssueListDetailSerializer(
-                issue, many=True, fields=self.fields, expand=self.expand
+                issue,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"slug": slug, "user_id": str(request.user.id)},
             ).data,
         )
 
@@ -1519,6 +1560,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(Prefetch("parent", queryset=Issue.objects.select_related("type")))
             .annotate(cycle_id=Subquery(CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[:1]))
+            .annotate(milestone_id=Subquery(MilestoneIssue.objects.filter(issue=OuterRef("id")).values("milestone_id")[:1]))
             .prefetch_related(Prefetch("customer_request_issues__customer"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))

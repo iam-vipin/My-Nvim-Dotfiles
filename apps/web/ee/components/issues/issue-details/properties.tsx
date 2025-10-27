@@ -11,7 +11,7 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import type { TCustomerWorkItemOperations } from "./helper";
+import type { TCustomerWorkItemOperations } from "../../customers/work-items/helper";
 
 type Props = {
   workspaceSlug: string;
@@ -21,7 +21,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const CustomerWorkItemProperties: FC<Props> = observer((props) => {
+export const WorkItemPropertiesLite: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
     workItemId,

@@ -7,7 +7,12 @@ from plane.utils.content_validator import validate_html_content
 class DescriptionSerializer(BaseSerializer):
     class Meta:
         model = Description
-        fields = "__all__"
+        fields = [
+            "description_html",
+            "description_binary",
+            "description_stripped",
+            "description_json",
+        ]
         read_only_fields = [
             "workspace",
             "project",

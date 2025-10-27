@@ -91,6 +91,7 @@ export type TProjectFeaturesList = {
   is_issue_type_enabled: boolean;
   is_time_tracking_enabled: boolean;
   is_workflow_enabled: boolean;
+  is_milestone_enabled: boolean;
   is_automated_cycle_enabled: boolean;
 };
 

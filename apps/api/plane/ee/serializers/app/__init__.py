@@ -8,3 +8,10 @@ from .mobile import (
     MobileWorkspaceLiteSerializer,
     MobileInvitationDetailsSerializer,
 )
+
+from .milestone import (
+    MilestoneSerializer,
+    MilestoneWriteSerializer,
+    MilestoneWorkItemResponseSerializer,
+    MilestoneWorkItemSerializer,
+)

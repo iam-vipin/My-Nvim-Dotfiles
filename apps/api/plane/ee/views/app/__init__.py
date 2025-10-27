@@ -62,3 +62,9 @@ from plane.ee.views.app.page import (
     ProjectPageCommentReactionViewSet,
     WorkspacePageLiveServerEndpoint,
 )
+
+from plane.ee.views.app.milestone import (
+    MilestoneViewSet,
+    MilestoneWorkItemsEndpoint,
+    MilestoneWorkItemsSearchEndpoint
+)

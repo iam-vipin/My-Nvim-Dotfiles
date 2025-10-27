@@ -10,7 +10,6 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, TProjectFeaturesList } from "@plane/types";
 // components
-import type { TProperties } from "@/ce/constants/project";
 import { ProjectFeatureToggle } from "@/components/project/settings/helper";
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers
@@ -41,11 +40,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   // Feature flag mapping per project feature property
   const FEATURE_FLAG_BY_PROPERTY: Record<string, keyof typeof E_FEATURE_FLAGS | undefined> = {
     is_time_tracking_enabled: "ISSUE_WORKLOG",
+    is_milestone_enabled: "MILESTONES",
     // Add more property-to-flag mappings here as needed
   };
   // Precompute known flags once
   const flagsByKey: Partial<Record<keyof typeof E_FEATURE_FLAGS, boolean>> = {
     ISSUE_WORKLOG: useFlag(workspaceSlug, "ISSUE_WORKLOG"),
+    MILESTONES: useFlag(workspaceSlug, "MILESTONES"),
   };
   // derived values
   const currentProjectDetails = getProjectById(projectId);
@@ -57,10 +58,22 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
     const settingsPayload = {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
-    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
-    // Optimistically update features in store for any feature toggle
-    toggleProjectFeatures(workspaceSlug, projectId, settingsPayload, false);
-    setPromiseToast(updateProjectPromise, {
+    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {
+      captureSuccess({
+        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
+        payload: {
+          feature_key: featureKey,
+        },
+      });
+    });
+    const updatePromises = [updateProjectPromise];
+    if (["is_milestone_enabled", "is_time_tracking_enabled"].includes(featureProperty)) {
+      const toggleProjectFeaturesPromise = toggleProjectFeatures(workspaceSlug, projectId, settingsPayload);
+      updatePromises.push(toggleProjectFeaturesPromise);
+    }
+
+    const promises = Promise.all(updatePromises);
+    setPromiseToast(promises, {
       loading: "Updating project feature...",
       success: {
         title: "Success!",
@@ -71,21 +84,11 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
     });
-
-    updateProjectPromise.then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
-    });
   };
 
-  const isFeatureEnabled = (featureItem: TProperties): boolean =>
-    Boolean(currentProjectDetails?.[featureItem.property as keyof IProject]) ||
-    isProjectFeatureEnabled(projectId, featureItem.property as keyof TProjectFeaturesList);
-
+  const isFeatureEnabled = (property: string): boolean =>
+    Boolean(currentProjectDetails?.[property as keyof IProject]) ||
+    isProjectFeatureEnabled(projectId, property as keyof TProjectFeaturesList);
   if (!currentUser) return <></>;
 
   return (
@@ -125,7 +128,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     featureItem={featureItem}
-                    value={isFeatureEnabled(featureItem)}
+                    value={isFeatureEnabled(featureItem.property)}
                     handleSubmit={handleSubmit}
                     disabled={!isFeatureFlagEnabled || !isAdmin}
                   />

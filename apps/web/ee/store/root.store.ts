@@ -79,8 +79,10 @@ import { EpicAnalytics } from "./issue/epic/analytic.store";
 import type { IEpicBaseStore } from "./issue/epic/base.store";
 import { EpicBaseStore } from "./issue/epic/base.store";
 // marketplace
-import type { IApplicationStore } from "./marketplace/application.store";
 import { ApplicationStore } from "./marketplace/application.store";
+import type { IApplicationStore } from "./marketplace/application.store";
+import { MilestoneStore } from "./milestones/milestone.store";
+import type { IMilestoneStore } from "./milestones/milestone.store";
 // Plane AI
 import type { IPiChatStore } from "./pi-chat/pi-chat";
 import { PiChatStore } from "./pi-chat/pi-chat";
@@ -156,6 +158,8 @@ export class RootStore extends CoreRootStore {
   recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
   // automations
   automationsRoot: IAutomationsRootStore;
+  // milestones
+  milestone: IMilestoneStore;
 
   constructor() {
     super();
@@ -215,6 +219,8 @@ export class RootStore extends CoreRootStore {
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
     // automations
     this.automationsRoot = new AutomationsRootStore(this);
+    // milestones
+    this.milestone = new MilestoneStore(this);
   }
 
   resetOnSignOut() {
@@ -271,5 +277,7 @@ export class RootStore extends CoreRootStore {
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this);
     // automations
     this.automationsRoot = new AutomationsRootStore(this);
+    // milestones
+    this.milestone = new MilestoneStore(this);
   }
 }

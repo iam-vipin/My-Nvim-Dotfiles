@@ -186,7 +186,11 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
             order_by=order_by_param,
             queryset=(issue_queryset),
             on_results=lambda issue_queryset: IssueListDetailSerializer(
-                issue_queryset, many=True, fields=self.fields, expand=self.expand
+                issue_queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"slug": slug, "user_id": str(request.user.id)},
             ).data,
         )
 

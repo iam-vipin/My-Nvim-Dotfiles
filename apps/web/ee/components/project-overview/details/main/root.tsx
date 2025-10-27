@@ -8,6 +8,7 @@ import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { ProjectOverviewCollapsibleSectionRoot } from "./collapsible-section-root";
 import { useLinks } from "./collaspible-section/links/use-links";
 import { ProjectOverviewInfoSectionRoot } from "./info-section-root";
@@ -27,6 +28,7 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   const { projectOverviewSidebarCollapsed } = useAppTheme();
   // helper hooks
   const { fetchLinks } = useLinks(workspaceSlug.toString(), projectId.toString());
+  const { fetchMilestones } = useMilestones();
 
   useSWR(
     projectId && workspaceSlug ? `PROJECT_LINKS_${projectId}` : null,
@@ -40,6 +42,16 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   useSWR(
     projectId && workspaceSlug ? `PROJECT_ATTACHMENTS_${projectId}` : null,
     projectId && workspaceSlug ? () => fetchAttachments(workspaceSlug.toString(), projectId.toString()) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  useSWR(
+    projectId && workspaceSlug ? `PROJECT_MILESTONES_${projectId}` : null,
+    projectId && workspaceSlug ? () => fetchMilestones(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

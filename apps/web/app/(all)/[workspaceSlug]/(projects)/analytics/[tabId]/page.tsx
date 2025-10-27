@@ -18,7 +18,6 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 import { useFlag } from "@/plane-web/hooks/store";
 
@@ -45,9 +44,6 @@ const AnalyticsPage = observer((props: Props) => {
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
-
-  // helper hooks
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/analytics" });
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(

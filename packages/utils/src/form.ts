@@ -1,4 +1,4 @@
-import set from "lodash-es/set";
+import { set } from "lodash-es";
 
 export function getChangedFields<T extends Record<string, unknown>>(
   formData: Partial<T>,

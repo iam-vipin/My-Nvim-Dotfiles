@@ -31,7 +31,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.ee.models import EpicUserProperties, ProjectFeature, InitiativeEpic
+from plane.ee.models import EpicUserProperties, ProjectFeature, InitiativeEpic, MilestoneIssue
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -54,7 +54,7 @@ from plane.ee.serializers import (
     EpicUserPropertySerializer,
     IssueTypeSerializer,
 )
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
@@ -79,7 +79,7 @@ class EpicViewSet(BaseViewSet):
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
-        return (
+        queryset = (
             issues.annotate(
                 cycle_id=Case(
                     When(
@@ -193,6 +193,17 @@ class EpicViewSet(BaseViewSet):
             )
             .prefetch_related("assignees", "labels")
         )
+
+        # Annotate milestone_id if the MILESTONES feature flag is enabled
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)):
+            queryset = queryset.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+        return queryset
 
     def get_queryset(self):
         return (

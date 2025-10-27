@@ -117,7 +117,6 @@ def issue_on_results(
         "project_id",
         "parent_id",
         "cycle_id",
-        "milestone_id",
         "sub_issues_count",
         "created_at",
         "updated_at",
@@ -134,6 +133,8 @@ def issue_on_results(
     if slug:
         if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id):
             required_fields.extend(["customer_ids", "customer_request_ids"])
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id):
+            required_fields.extend(["milestone_id"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])

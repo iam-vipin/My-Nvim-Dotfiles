@@ -21,6 +21,7 @@ class Command(BaseCommand):
             if not os.environ.get(item):
                 raise CommandError(f"{item} env variable is required.")
 
+        # TODO: refactor this list to accommodate both community and enterprise changes
         config_keys = [
             # Authentication Settings
             {
@@ -392,33 +393,23 @@ class Command(BaseCommand):
                     )
                     self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
                 if key == "IS_GITEA_ENABLED":
-                    GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = (
-                        get_configuration_value(
-                            [
-                                {
-                                    "key": "GITEA_HOST",
-                                    "default": os.environ.get(
-                                        "GITEA_HOST", ""
-                                    ),
-                                },
-                                {
-                                    "key": "GITEA_CLIENT_ID",
-                                    "default": os.environ.get("GITEA_CLIENT_ID", ""),
-                                },
-                                {
-                                    "key": "GITEA_CLIENT_SECRET",
-                                    "default": os.environ.get(
-                                        "GITEA_CLIENT_SECRET", ""
-                                    ),
-                                },
-                            ]
-                        )
+                    GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = get_configuration_value(
+                        [
+                            {
+                                "key": "GITEA_HOST",
+                                "default": os.environ.get("GITEA_HOST", ""),
+                            },
+                            {
+                                "key": "GITEA_CLIENT_ID",
+                                "default": os.environ.get("GITEA_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "GITEA_CLIENT_SECRET",
+                                "default": os.environ.get("GITEA_CLIENT_SECRET", ""),
+                            },
+                        ]
                     )
-                    if (
-                        bool(GITEA_HOST)
-                        and bool(GITEA_CLIENT_ID)
-                        and bool(GITEA_CLIENT_SECRET)
-                    ):
+                    if bool(GITEA_HOST) and bool(GITEA_CLIENT_ID) and bool(GITEA_CLIENT_SECRET):
                         value = "1"
                     else:
                         value = "0"
@@ -428,11 +419,7 @@ class Command(BaseCommand):
                         category="AUTHENTICATION",
                         is_encrypted=False,
                     )
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{key} loaded with value from environment variable."
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
         else:
             for key in keys:
                 self.stdout.write(self.style.WARNING(f"{key} configuration already exists"))

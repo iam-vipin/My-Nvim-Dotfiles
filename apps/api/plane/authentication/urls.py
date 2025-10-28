@@ -212,9 +212,7 @@ urlpatterns = [
         MobileSessionTokenCheckEndpoint.as_view(),
         name="mobile-token-check",
     ),
-    path(
-        "mobile/sign-out/", MobileSignOutAuthEndpoint.as_view(), name="mobile-sign-out"
-    ),
+    path("mobile/sign-out/", MobileSignOutAuthEndpoint.as_view(), name="mobile-sign-out"),
     path(
         "mobile/session-token/",
         MobileSessionTokenEndpoint.as_view(),

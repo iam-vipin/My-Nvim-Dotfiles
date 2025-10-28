@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Verwandeln Sie komplexe Projekte in strukturierte Epics.",
       description: "Ein Epic hilft Ihnen, große Ziele in kleinere, nachverfolgbare Aufgaben zu organisieren.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Arbeitselemente hinzufügen",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Notieren Sie eine Idee, erfassen Sie einen Aha-Moment oder halten Sie einen Geistesblitz fest. Fügen Sie einen Haftnotiz hinzu, um zu beginnen.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Erstellen Sie Ihre Seite",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Noch kein Teamspace",
       description: "Bringen Sie Ihre Mitglieder in einem Teamspace zusammen, um Fortschritt, Arbeitslast und Aktivität mühelos zu verfolgen. Mehr erfahren",

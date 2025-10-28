@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Přeměňte složité projekty na strukturované epiky.",
       description: "Epik vám pomůže organizovat velké cíle do menších, sledovatelných úkolů.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Přidat pracovní položky",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Poznamenejte si nápad, zachyťte aha moment nebo zaznamenejte náhlý nápad. Přidejte poznámku a začněte.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Vytvořte svou stránku",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Zatím žádný týmový prostor",
       description: "Spojte své členy v týmovém prostoru pro sledování pokroku, pracovní zátěže a aktivity - bez námahy. Zjistit více",

@@ -79,11 +79,11 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
       return (
         <EmptyStateCompact
           assetKey="work-item"
-          title={t("settings.work_item_types.title")}
-          description={t("settings.work_item_types.description")}
+          title={t("settings_empty_state.work_item_types.title")}
+          description={t("settings_empty_state.work_item_types.description")}
           actions={[
             {
-              label: t("settings.work_item_types.cta_primary"),
+              label: t("settings_empty_state.work_item_types.cta_primary"),
               onClick: () => {
                 captureClick({
                   elementName: WORK_ITEM_TYPE_TRACKER_ELEMENTS.HEADER_ENABLE_WORK_ITEM_TYPES_BUTTON,

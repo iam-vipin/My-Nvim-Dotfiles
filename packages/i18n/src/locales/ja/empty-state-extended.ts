@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "複雑なプロジェクトを構造化されたエピックに変換します。",
       description: "エピックは、大きな目標を小さく追跡可能なタスクに整理するのに役立ちます。",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "作業項目を追加",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "アイデアをメモしたり、ひらめきを記録したり、思考を記録します。付箋を追加して始めましょう。",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "ページを作成",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "まだチームスペースはありません",
       description: "チームスペースにメンバーを集めて、進捗、作業負荷、アクティビティを簡単に追跡します。詳細を見る",

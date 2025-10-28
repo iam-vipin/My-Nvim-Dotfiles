@@ -27,8 +27,8 @@ export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProp
         <div className="flex items-center justify-center h-full w-full">
           <EmptyStateCompact
             assetKey="template"
-            title={t("settings.templates.title")}
-            description={t("settings.templates.description")}
+            title={t("settings_empty_state.templates.title")}
+            description={t("settings_empty_state.templates.description")}
             customButton={
               <CreateTemplatesButton
                 {...props}

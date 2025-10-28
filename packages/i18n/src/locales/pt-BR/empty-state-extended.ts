@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Transforme projetos complexos em épicos estruturados.",
       description: "Um épico ajuda você a organizar grandes objetivos em tarefas menores e rastreáveis.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Adicionar itens de trabalho",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Anote uma ideia, capture um momento de inspiração ou registre um lampejo. Adicione um adesivo para começar.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Criar sua página",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Ainda não há espaço de equipe",
       description: "Reúna seus membros em um espaço de equipe para rastrear progresso, carga de trabalho e atividade - sem esforço. Saiba mais",

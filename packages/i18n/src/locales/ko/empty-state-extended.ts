@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "복잡한 프로젝트를 구조화된 에픽으로 전환하세요.",
       description: "에픽은 큰 목표를 더 작고 추적 가능한 작업으로 구성하는 데 도움이 됩니다.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "작업 항목 추가",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "아이디어를 적고, 영감을 포착하거나, 번뜩이는 생각을 기록하세요. 스티커를 추가하여 시작하세요.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "페이지 생성",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "아직 팀스페이스가 없습니다",
       description: "팀스페이스에 멤버를 모아 진행 상황, 작업량 및 활동을 손쉽게 추적하세요. 자세히 알아보기",

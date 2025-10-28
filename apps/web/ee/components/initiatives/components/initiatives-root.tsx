@@ -60,11 +60,11 @@ export const InitiativesRoot = observer(() => {
     return (
       <EmptyStateDetailed
         assetKey="initiative"
-        title={t("workspace.initiatives.title")}
-        description={t("workspace.initiatives.description")}
+        title={t("workspace_empty_state.initiatives.title")}
+        description={t("workspace_empty_state.initiatives.description")}
         actions={[
           {
-            label: t("workspace.initiatives.cta_primary"),
+            label: t("workspace_empty_state.initiatives.cta_primary"),
             onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
             disabled: !hasWorkspaceMemberLevelPermissions,
           },

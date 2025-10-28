@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Biến các dự án phức tạp thành các câu chuyện sử thi có cấu trúc.",
       description: "Một câu chuyện sử thi giúp bạn tổ chức các mục tiêu lớn thành các nhiệm vụ nhỏ hơn, có thể theo dõi.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Thêm mục công việc",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Ghi lại một ý tưởng, ghi lại khoảnh khắc sáng tạo hoặc ghi lại ý nghĩ. Thêm ghi chú dán để bắt đầu.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Tạo trang của bạn",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Chưa có không gian nhóm",
       description: "Tập hợp các thành viên của bạn trong một không gian nhóm để theo dõi tiến độ, khối lượng công việc và hoạt động - một cách dễ dàng. Tìm hiểu thêm",

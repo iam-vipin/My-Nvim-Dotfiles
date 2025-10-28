@@ -100,11 +100,11 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
         <div className="flex items-center justify-center h-full w-full">
           <EmptyStateCompact
             assetKey="epic"
-            title={t("settings.epic_setting.title")}
-            description={t("settings.epic_setting.description")}
+            title={t("settings_empty_state.epic_setting.title")}
+            description={t("settings_empty_state.epic_setting.description")}
             actions={[
               {
-                label: t("settings.epic_setting.cta_primary"),
+                label: t("settings_empty_state.epic_setting.cta_primary"),
                 onClick: () => handleEnableEpic(),
                 variant: "primary",
               },

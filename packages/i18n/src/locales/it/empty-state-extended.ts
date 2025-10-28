@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Trasforma progetti complessi in epiche strutturate.",
       description: "Un'epica ti aiuta a organizzare grandi obiettivi in attività più piccole e tracciabili.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Aggiungi elementi di lavoro",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Annota un'idea, cattura un'illuminazione o registra un'intuizione. Aggiungi un adesivo per iniziare.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Crea la tua pagina",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Nessun teamspace ancora",
       description: "Riunisci i tuoi membri in un teamspace per tracciare progressi, carico di lavoro e attività - senza sforzo. Scopri di più",

@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Turn complex projects into structured epics.",
       description: "An epic helps you organize big goals into smaller, trackable tasks.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Add work items",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Create your page",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "No teamspace yet",
       description: "Bring together your members in a teamspace to track progress, workload, and activity - effortlessly.. Learn more",

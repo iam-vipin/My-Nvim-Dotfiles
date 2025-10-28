@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "將複雜專案轉化為結構化史詩。",
       description: "史詩幫助您將大目標組織成更小的可追蹤任務。",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "新增工作項",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "記下想法、捕捉靈光一現或記錄思維火花。新增便籤開始。",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "建立您的頁面",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "暫無團隊空間",
       description: "在團隊空間中聚集成員,輕鬆追蹤進度、工作量和活動。瞭解更多",

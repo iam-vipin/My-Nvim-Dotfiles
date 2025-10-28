@@ -110,8 +110,8 @@ export const WorkspaceActiveCyclesList = observer(() => {
       {!isLoading && cycles.length === 0 && (
         <EmptyStateDetailed
           assetKey="cycle"
-          title={t("workspace.active_cycles.title")}
-          description={t("workspace.active_cycles.description")}
+          title={t("workspace_empty_state.active_cycles.title")}
+          description={t("workspace_empty_state.active_cycles.description")}
         />
       )}
     </ContentWrapper>

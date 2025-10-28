@@ -95,11 +95,11 @@ export const CustomersListRoot: FC = observer(() => {
       <>
         <EmptyStateDetailed
           assetKey="customer"
-          title={t("workspace.customers.title")}
-          description={t("workspace.customers.description")}
+          title={t("workspace_empty_state.customers.title")}
+          description={t("workspace_empty_state.customers.description")}
           actions={[
             {
-              label: t("workspace.customers.cta_primary"),
+              label: t("workspace_empty_state.customers.cta_primary"),
               onClick: () => toggleCreateCustomerModal({ isOpen: true, customerId: undefined }),
               disabled: !hasWorkspaceAdminLevelPermissions,
             },

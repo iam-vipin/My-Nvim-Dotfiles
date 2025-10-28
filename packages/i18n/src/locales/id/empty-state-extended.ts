@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Ubah proyek kompleks menjadi epik terstruktur.",
       description: "Epik membantu Anda mengorganisir tujuan besar menjadi tugas yang lebih kecil dan dapat dilacak.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Tambahkan item kerja",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Catat ide, tangkap inspirasi, atau rekam pemikiran. Tambahkan catatan untuk memulai.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Buat halaman Anda",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Belum ada ruang tim",
       description: "Kumpulkan anggota Anda dalam ruang tim untuk melacak kemajuan, beban kerja, dan aktivitas - dengan mudah. Pelajari lebih lanjut",

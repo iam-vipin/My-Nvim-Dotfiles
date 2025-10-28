@@ -49,11 +49,11 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     return (
       <EmptyStateDetailed
         assetKey="teamspace"
-        title={t("workspace.teamspaces.title")}
-        description={t("workspace.teamspaces.description")}
+        title={t("workspace_empty_state.teamspaces.title")}
+        description={t("workspace_empty_state.teamspaces.description")}
         actions={[
           {
-            label: t("workspace.teamspaces.cta_primary"),
+            label: t("workspace_empty_state.teamspaces.cta_primary"),
             onClick: () => {
               captureClick({ elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON });
               toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });

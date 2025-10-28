@@ -16,7 +16,7 @@ export const RecurringWorkItemsEmptyState = observer((props: TRecurringWorkItems
       <div className="flex items-center justify-center h-full w-full">
         <EmptyStateCompact
           assetKey="work-item"
-          title={t("settings.recurring_work_items.title")}
+          title={t("settings_empty_state.recurring_work_items.title")}
           description={t("recurring_work_items.settings.description")}
           customButton={
             <CreateRecurringWorkItemsButton

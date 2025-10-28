@@ -62,8 +62,8 @@ export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) 
               ) : (workspaceWorklogIds || []).length <= 0 ? (
                 <EmptyStateCompact
                   assetKey="worklog"
-                  title={t("settings.worklogs.title")}
-                  description={t("settings.worklogs.description")}
+                  title={t("settings_empty_state.worklogs.title")}
+                  description={t("settings_empty_state.worklogs.description")}
                   align="start"
                   rootClassName="py-20"
                 />

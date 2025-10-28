@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Transformați proiecte complexe în epopei structurate.",
       description: "O epopeie vă ajută să organizați obiective mari în sarcini mai mici, urmăribile.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Adăugați elemente de lucru",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Notați o idee, capturați un moment de inspirație sau înregistrați o idee genială. Adăugați un notă pentru a începe.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Creați pagina dvs.",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Încă nu există spațiu de echipă",
       description: "Adunați-vă membrii într-un spațiu de echipă pentru a urmări progresul, volumul de lucru și activitatea - fără efort. Aflați mai multe",

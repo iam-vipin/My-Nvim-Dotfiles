@@ -41,11 +41,11 @@ export const ProjectEpicsEmptyState: React.FC = observer(() => {
       />
       <EmptyStateDetailed
         assetKey="epic"
-        title={t("project.epics.title")}
-        description={t("project.epics.description")}
+        title={t("project_empty_state.epics.title")}
+        description={t("project_empty_state.epics.description")}
         actions={[
           {
-            label: t("project.epics.cta_primary"),
+            label: t("project_empty_state.epics.cta_primary"),
             onClick: () => setIsCreateIssueModalOpen(true),
             disabled: !hasProjectMemberLevelPermissions,
           },

@@ -166,8 +166,8 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     return (
       <EmptyStateCompact
         assetKey="work-item"
-        title={t("project.epic_work_items.title")}
-        description={t("project.epic_work_items.description")}
+        title={t("project_empty_state.epic_work_items.title")}
+        description={t("project_empty_state.epic_work_items.description")}
         customButton={
           <SubIssuesActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
         }

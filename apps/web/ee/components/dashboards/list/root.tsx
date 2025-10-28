@@ -34,8 +34,8 @@ export const DashboardsListLayoutRoot = observer(() => {
       <div className="size-full grid place-items-center">
         <EmptyStateDetailed
           assetKey="dashboard"
-          title={t("workspace.dashboard.title")}
-          description={t("workspace.dashboard.description")}
+          title={t("workspace_empty_state.dashboard.title")}
+          description={t("workspace_empty_state.dashboard.description")}
         />
       </div>
     );

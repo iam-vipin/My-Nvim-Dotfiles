@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Przekształć złożone projekty w uporządkowane epiki.",
       description: "Epik pomaga organizować duże cele w mniejsze, śledzone zadania.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "Dodaj elementy robocze",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Utwórz swoją stronę",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Brak przestrzeni zespołowej",
       description: "Zgromadź swoich członków w przestrzeni zespołowej, aby śledzić postępy, obciążenie pracą i aktywność - bez wysiłku. Dowiedz się więcej",

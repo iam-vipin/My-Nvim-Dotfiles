@@ -43,10 +43,21 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
     is_milestone_enabled: "MILESTONES",
     // Add more property-to-flag mappings here as needed
   };
+  // Call hooks at top level
+  const isWorklogEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
+  const isMilestonesEnabled = useFlag(workspaceSlug, "MILESTONES");
   // Precompute known flags once
-  const flagsByKey: Partial<Record<keyof typeof E_FEATURE_FLAGS, boolean>> = {
-    ISSUE_WORKLOG: useFlag(workspaceSlug, "ISSUE_WORKLOG"),
-    MILESTONES: useFlag(workspaceSlug, "MILESTONES"),
+  const featureStatusByFlagKey: Partial<
+    Record<keyof typeof E_FEATURE_FLAGS, { isEnabled: boolean; shouldHideIfDisabled: boolean }>
+  > = {
+    ISSUE_WORKLOG: {
+      isEnabled: isWorklogEnabled,
+      shouldHideIfDisabled: false,
+    },
+    MILESTONES: {
+      isEnabled: isMilestonesEnabled,
+      shouldHideIfDisabled: true,
+    },
   };
   // derived values
   const currentProjectDetails = getProjectById(projectId);
@@ -98,7 +109,15 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
           <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
           {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => {
             const flagKey = FEATURE_FLAG_BY_PROPERTY[featureItem.property];
-            const isFeatureFlagEnabled = flagKey ? Boolean(flagsByKey[flagKey]) : true;
+
+            const featureStatus = flagKey ? featureStatusByFlagKey[flagKey] : undefined;
+
+            if (featureStatus && featureStatus.shouldHideIfDisabled && !featureStatus.isEnabled) {
+              return null;
+            }
+
+            const isEnabled = featureStatus ? Boolean(featureStatus.isEnabled) : true;
+
             return (
               <div
                 key={featureItemKey}
@@ -130,7 +149,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     featureItem={featureItem}
                     value={isFeatureEnabled(featureItem.property)}
                     handleSubmit={handleSubmit}
-                    disabled={!isFeatureFlagEnabled || !isAdmin}
+                    disabled={!isEnabled || !isAdmin}
                   />
                 </div>
                 <div className="pl-14">

@@ -1,5 +1,5 @@
 export default {
-  project: {
+  project_empty_state: {
     epics: {
       title: "Karmaşık projeleri yapılandırılmış destanlara dönüştürün.",
       description: "Bir destan, büyük hedefleri daha küçük, takip edilebilir görevlere organize etmenize yardımcı olur.",
@@ -12,7 +12,7 @@ export default {
       cta_secondary: "İş öğeleri ekle",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     home_widget_stickies: {
       title: "Bir fikir yazın, bir aha anını yakalayın veya bir beyin dalgasını kaydedin. Başlamak için yapışkan not ekleyin.",
     },
@@ -50,7 +50,7 @@ export default {
       cta_primary: "Sayfanızı oluşturun",
     },
   },
-  settings: {
+  settings_empty_state: {
     teamspace: {
       title: "Henüz ekip alanı yok",
       description: "İlerlemeyi, iş yükünü ve etkinliği zahmetsizce takip etmek için üyelerinizi bir ekip alanında bir araya getirin. Daha fazla bilgi edinin",

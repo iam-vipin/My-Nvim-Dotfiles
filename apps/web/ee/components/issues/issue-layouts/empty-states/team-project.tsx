@@ -7,18 +7,14 @@ import {
   TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-// components
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // helpers
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   // router
@@ -34,25 +30,15 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { issuesFilter } = useIssues(EIssuesStoreType.TEAM);
   const { allowPermissions } = useUserPermissions();
   // derived values
   const teamspaceProjectWorkItemFilter = projectId
     ? useWorkItemFilterInstance(EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, projectId)
     : undefined;
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-  const additionalPath = teamspaceProjectWorkItemFilter?.hasActiveFilters ? (activeLayout ?? "list") : undefined;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const emptyFilterResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/empty-filters/",
-    additionalPath: additionalPath,
-  });
-  const teamIssuesResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/teams/issues",
-  });
 
   const handleClearAllFilters = () => {
     if (!teamspaceProjectWorkItemFilter || !teamspaceId || !projectId) return;
@@ -83,40 +69,42 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   return (
     <div className="relative h-full w-full overflow-y-auto">
       {teamspaceProjectWorkItemFilter?.hasActiveFilters ? (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="search"
           title={t("teamspace_work_items.empty_state.work_items_empty_filter.title")}
           description={t("teamspace_work_items.empty_state.work_items_empty_filter.description")}
-          assetPath={emptyFilterResolvedPath}
-          secondaryButton={{
-            text: t("teamspace_work_items.empty_state.work_items_empty_filter.secondary_button.text"),
-            onClick: () => {
-              captureClick({
-                elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_FILTERS_BUTTON,
-              });
-              handleClearAllFilters();
+          actions={[
+            {
+              label: t("teamspace_work_items.empty_state.work_items_empty_filter.secondary_button.text"),
+              onClick: () => {
+                captureClick({
+                  elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_FILTERS_BUTTON,
+                });
+                handleClearAllFilters();
+              },
+              disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceProjectWorkItemFilter,
+              variant: "outline-primary",
             },
-            disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceProjectWorkItemFilter,
-          }}
+          ]}
         />
       ) : (
-        <DetailedEmptyState
+        <EmptyStateDetailed
+          assetKey="work-item"
           title={t("teamspace_work_items.empty_state.no_work_items.title")}
           description={t("teamspace_work_items.empty_state.no_work_items.description")}
-          assetPath={teamIssuesResolvedPath}
-          customPrimaryButton={
-            <ComicBoxButton
-              label={t("teamspace_work_items.empty_state.no_work_items.primary_button.text")}
-              title={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.title")}
-              description={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.description")}
-              onClick={() => {
+          actions={[
+            {
+              label: t("teamspace_work_items.empty_state.no_work_items.primary_button.text"),
+              onClick: () => {
                 captureClick({
                   elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
                 });
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);
-              }}
-              disabled={!hasWorkspaceMemberLevelPermissions}
-            />
-          }
+              },
+              disabled: !hasWorkspaceMemberLevelPermissions,
+              variant: "primary",
+            },
+          ]}
         />
       )}
     </div>

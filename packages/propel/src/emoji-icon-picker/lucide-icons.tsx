@@ -153,7 +153,7 @@ import {
   Search,
   User,
 } from "lucide-react";
-import { CalendarLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
+import { CalendarLayoutIcon, ListLayoutIcon } from "../icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },

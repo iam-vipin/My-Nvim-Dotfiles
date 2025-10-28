@@ -21,6 +21,7 @@ class Command(BaseCommand):
             if not os.environ.get(item):
                 raise CommandError(f"{item} env variable is required.")
 
+        # TODO: refactor this list to accommodate both community and enterprise changes
         config_keys = [
             # Authentication Settings
             {
@@ -185,6 +186,91 @@ class Command(BaseCommand):
                 "key": "INTERCOM_APP_ID",
                 "value": os.environ.get("INTERCOM_APP_ID", ""),
                 "category": "INTERCOM",
+            },
+            ## OIDC
+            {
+                "key": "OIDC_CLIENT_ID",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_CLIENT_SECRET",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": True,
+            },
+            {
+                "key": "OIDC_TOKEN_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_USERINFO_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_AUTHORIZE_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "IS_OIDC_ENABLED",
+                "value": "0",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_LOGOUT_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "OIDC_PROVIDER_NAME",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            ## SAML
+            {
+                "key": "SAML_ENTITY_ID",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_SSO_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_CERTIFICATE",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": True,
+            },
+            {
+                "key": "SAML_LOGOUT_URL",
+                "value": "",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "IS_SAML_ENABLED",
+                "value": "0",
+                "category": "AUTHENTICATION",
+                "is_encrypted": False,
+            },
+            {
+                "key": "SAML_PROVIDER_NAME",
+                "value": "",
+                "category": "AUTHENTICATION",
                 "is_encrypted": False,
             },
             {
@@ -307,33 +393,23 @@ class Command(BaseCommand):
                     )
                     self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
                 if key == "IS_GITEA_ENABLED":
-                    GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = (
-                        get_configuration_value(
-                            [
-                                {
-                                    "key": "GITEA_HOST",
-                                    "default": os.environ.get(
-                                        "GITEA_HOST", ""
-                                    ),
-                                },
-                                {
-                                    "key": "GITEA_CLIENT_ID",
-                                    "default": os.environ.get("GITEA_CLIENT_ID", ""),
-                                },
-                                {
-                                    "key": "GITEA_CLIENT_SECRET",
-                                    "default": os.environ.get(
-                                        "GITEA_CLIENT_SECRET", ""
-                                    ),
-                                },
-                            ]
-                        )
+                    GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = get_configuration_value(
+                        [
+                            {
+                                "key": "GITEA_HOST",
+                                "default": os.environ.get("GITEA_HOST", ""),
+                            },
+                            {
+                                "key": "GITEA_CLIENT_ID",
+                                "default": os.environ.get("GITEA_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "GITEA_CLIENT_SECRET",
+                                "default": os.environ.get("GITEA_CLIENT_SECRET", ""),
+                            },
+                        ]
                     )
-                    if (
-                        bool(GITEA_HOST)
-                        and bool(GITEA_CLIENT_ID)
-                        and bool(GITEA_CLIENT_SECRET)
-                    ):
+                    if bool(GITEA_HOST) and bool(GITEA_CLIENT_ID) and bool(GITEA_CLIENT_SECRET):
                         value = "1"
                     else:
                         value = "0"
@@ -343,11 +419,7 @@ class Command(BaseCommand):
                         category="AUTHENTICATION",
                         is_encrypted=False,
                     )
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{key} loaded with value from environment variable."
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
         else:
             for key in keys:
                 self.stdout.write(self.style.WARNING(f"{key} configuration already exists"))

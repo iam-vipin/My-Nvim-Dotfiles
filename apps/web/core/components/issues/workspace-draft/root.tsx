@@ -12,9 +12,6 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
-// constants
-
-// helpers
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";

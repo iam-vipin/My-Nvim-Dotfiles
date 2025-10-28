@@ -19,6 +19,13 @@ from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
 
+# Integrations URLS
+from .importer import urlpatterns as importer_urls
+from .integration import urlpatterns as integration_urls
+
+# url patterns
+from plane.ee.urls.app import urlpatterns as ee_urls
+
 urlpatterns = [
     *analytic_urls,
     *asset_urls,
@@ -29,7 +36,6 @@ urlpatterns = [
     *issue_urls,
     *module_urls,
     *notification_urls,
-    *page_urls,
     *project_urls,
     *search_urls,
     *state_urls,
@@ -40,4 +46,9 @@ urlpatterns = [
     *webhook_urls,
     *timezone_urls,
     *exporter_urls,
+    # ee
+    *integration_urls,
+    *importer_urls,
+    *ee_urls,
+    *page_urls,
 ]

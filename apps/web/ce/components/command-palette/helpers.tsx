@@ -1,8 +1,7 @@
 "use client";
 
-import { LayoutGrid } from "lucide-react";
 // plane imports
-import { CycleIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import { CycleIcon, GridLayoutIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -93,7 +92,7 @@ export const commandGroups: TCommandGroups = {
       if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
       return redirectProjectId
         ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
-        : `/${page?.workspace__slug}/pages/${page?.id}`;
+        : `/${page?.workspace__slug}/wiki/${page?.id}`;
     },
     title: "Pages",
   },
@@ -104,7 +103,7 @@ export const commandGroups: TCommandGroups = {
     title: "Projects",
   },
   workspace: {
-    icon: <LayoutGrid className="h-3 w-3" />,
+    icon: <GridLayoutIcon className="h-3 w-3" />,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",

@@ -1,5 +1,5 @@
 import { EPageAccess } from "@plane/constants";
-import { TPage } from "@plane/types";
+import { EPageSharedUserAccess, TCollaborator, TPage } from "@plane/types";
 import { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.
@@ -12,11 +12,31 @@ export type MadePrivatePayload = CreatePayload<{ access: EPageAccess }>;
 export type DeletedPayload = CreatePayload<{ deleted_at: Date | null }>;
 export type DuplicatedPayload = CreatePayload<{ new_page_id: string }>;
 export type PropertyUpdatedPayload = CreatePayload<Partial<TPage>>;
+export type MovedInternallyPayload = CreatePayload<{
+  parent_id?: string | null;
+  sub_pages_count?: number;
+  old_parent_id?: string;
+  new_parent_id?: string;
+}>;
+export type PublishedPayload = CreatePayload<{
+  published_pages: { page_id: string; anchor: string }[];
+}>;
+export type UnpublishedPayload = CreatePayload<{
+  pages_to_unpublish: { page_id: string }[];
+}>;
 export type MovedPayload = CreatePayload<{
   new_project_id: string;
   new_page_id: string;
 }>;
+export type CollaboratorsUpdatedPayload = CreatePayload<{ users: TCollaborator[] }>;
+export type SharedPayload = CreatePayload<{
+  users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
+}>;
+export type UnsharedPayload = CreatePayload<{
+  users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
+}>;
 export type RestoredPayload = CreatePayload<{ deleted_page_ids?: string[] }>;
+export type SubPagePayload = BaseActionPayload;
 export type ErrorPayload = CreatePayload<{
   error_message: string;
   error_type: "fetch" | "store";
@@ -58,6 +78,16 @@ export const DocumentCollaborativeEvents = {
     server: "make-private",
     payloadType: {} as MadePrivatePayload,
   },
+  publish: {
+    client: "published",
+    server: "publish",
+    payloadType: {} as PublishedPayload,
+  },
+  unpublish: {
+    client: "unpublished",
+    server: "unpublish",
+    payloadType: {} as UnpublishedPayload,
+  },
   delete: {
     client: "deleted",
     server: "delete",
@@ -78,10 +108,35 @@ export const DocumentCollaborativeEvents = {
     server: "property_update",
     payloadType: {} as PropertyUpdatedPayload,
   },
+  move_internally: {
+    client: "moved_internally",
+    server: "move_internally",
+    payloadType: {} as MovedInternallyPayload,
+  },
+  "collaborators-updated": {
+    client: "collaborators-updated",
+    server: "collaborators-updated",
+    payloadType: {} as CollaboratorsUpdatedPayload,
+  },
   restore: {
     client: "restored",
     server: "restore",
     payloadType: {} as RestoredPayload,
+  },
+  sub_page: {
+    client: "sub_page",
+    server: "sub_page",
+    payloadType: {} as SubPagePayload,
+  },
+  shared: {
+    client: "shared",
+    server: "shared",
+    payloadType: {} as SharedPayload,
+  },
+  unshared: {
+    client: "unshared",
+    server: "unshared",
+    payloadType: {} as UnsharedPayload,
   },
   error: {
     client: "error",

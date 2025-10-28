@@ -645,7 +645,7 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         this.models = response.models;
         response.models.forEach((model) => {
-          if (model.is_default) {
+          if (model.is_default && !this.activeModel) {
             this.activeModel = model;
           }
         });

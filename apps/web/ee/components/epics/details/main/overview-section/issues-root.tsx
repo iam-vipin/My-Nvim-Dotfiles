@@ -10,7 +10,6 @@ import type { TIssue, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
-import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -168,9 +167,6 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
         assetKey="work-item"
         title={t("project_empty_state.epic_work_items.title")}
         description={t("project_empty_state.epic_work_items.description")}
-        customButton={
-          <SubIssuesActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
-        }
         rootClassName="py-20"
       />
     );

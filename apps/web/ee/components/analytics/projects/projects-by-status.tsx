@@ -102,7 +102,7 @@ const ProjectsByStatus = observer(() => {
           assetKey="unknown"
           assetClassName="size-20"
           rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
-          title={t("workspace.analytics_projects.title")}
+          title={t("workspace_empty_state.analytics_projects.title")}
         />
       )}
     </AnalyticsSectionWrapper>

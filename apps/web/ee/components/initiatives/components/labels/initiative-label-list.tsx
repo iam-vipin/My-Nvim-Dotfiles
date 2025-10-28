@@ -17,7 +17,9 @@ import SettingsHeading from "@/components/settings/heading";
 import { useUserPermissions } from "@/hooks/store/user";
 
 // local imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
@@ -40,10 +42,12 @@ export const InitiativeLabelList: React.FC = observer(() => {
     initiative: { createInitiativeLabel, updateInitiativeLabel, updateInitiativeLabelPosition, getInitiativesLabels },
   } = useInitiatives();
   const { allowPermissions } = useUserPermissions();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const initiativeLabels = getInitiativesLabels(workspaceSlug?.toString());
 
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
 
   const handleError = (error: unknown) => {
     const errorObj = error as { name?: string[] };
@@ -131,16 +135,27 @@ export const InitiativeLabelList: React.FC = observer(() => {
             />
           </div>
         )}
-        {initiativeLabels ? (
+        {!isInitiativesFeatureEnabled ? (
+          !showLabelForm && (
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title="Enable initiatives to manage labels"
+              description="Toggle initiatives on to organize and track your initiative labels."
+              align="start"
+              rootClassName="py-20"
+            />
+          )
+        ) : initiativeLabels ? (
           initiativeLabels.size === 0 && !showLabelForm ? (
             <EmptyStateCompact
               assetKey="label"
               assetClassName="size-20"
-              title={t("settings.labels.title")}
-              description={t("settings.labels.description")}
+              title={t("settings_empty_state.labels.title")}
+              description={t("settings_empty_state.labels.description")}
               actions={[
                 {
-                  label: t("settings.labels.cta_primary"),
+                  label: t("settings_empty_state.labels.cta_primary"),
                   onClick: () => newLabel(),
                 },
               ]}

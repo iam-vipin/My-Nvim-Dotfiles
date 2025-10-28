@@ -11,6 +11,16 @@ import {
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
 
+// EE : Extended filters
+
+import {
+  ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
+  ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
+  EActivityFilterTypeEE,
+  shouldRenderActivity,
+} from "./filter-extended";
+
 import { TIssueLayout } from "./layout";
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
@@ -108,7 +118,7 @@ export type TIssueFiltersToDisplayByPageType = {
 
 export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   profile_issues: {
-    filters: ["priority", "state_group", "label_id", "start_date", "target_date"],
+    filters: ["priority", "state_group", "label_id", "start_date", "target_date", ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS],
     layoutOptions: {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -148,6 +158,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "label_id",
       "start_date",
       "target_date",
+      "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
@@ -175,6 +187,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "project_id",
       "start_date",
       "target_date",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       spreadsheet: {
@@ -198,6 +211,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
           values: [],
         },
       },
+      ...ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
     },
   },
   issues: {
@@ -213,6 +227,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       "label_id",
       "start_date",
       "target_date",
+      "type_id",
+      ...ADDITIONAL_WORK_ITEM_FILTERS_KEYS,
     ],
     layoutOptions: {
       list: {
@@ -275,7 +291,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
     },
   },
   sub_work_items: {
-    filters: ["priority", "state_id", "assignee_id", "start_date", "target_date"],
+    filters: ["priority", "state_id", "assignee_id", "start_date", "target_date", "type_id"],
     layoutOptions: {
       list: {
         display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
@@ -290,10 +306,12 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE, // EE: Additional issue display filters by page.
 };
 
 export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilterPropertiesByPageType>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
+  [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
 };
 
 export const SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE: (keyof IIssueFilterOptions)[] = [
@@ -313,7 +331,7 @@ export enum EActivityFilterType {
   DEFAULT = "DEFAULT",
 }
 
-export type TActivityFilters = EActivityFilterType;
+export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
 
 export type TActivityFilterOptionsKey = Exclude<TActivityFilters, EActivityFilterType.DEFAULT>;
 
@@ -330,6 +348,9 @@ export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilterOptionsKey, { l
   [EActivityFilterType.ASSIGNEE]: {
     labelTranslationKey: "common.assignee",
   },
+  [EActivityFilterTypeEE.WORKLOG]: {
+    labelTranslationKey: "common.worklogs",
+  }, // EE: Worklog filter.
 };
 
 export type TActivityFilterOption = {
@@ -344,6 +365,7 @@ export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.COMMENT,
   EActivityFilterType.STATE,
   EActivityFilterType.ASSIGNEE,
+  EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
 ];
 
 export const filterActivityOnSelectedFilters = (
@@ -352,7 +374,7 @@ export const filterActivityOnSelectedFilters = (
 ): TIssueActivityComment[] =>
   activity.filter((activity) => {
     if (activity.activity_type === EActivityFilterType.DEFAULT) return true;
-    return filters.includes(activity.activity_type as TActivityFilters);
+    return filters.some((filter) => shouldRenderActivity(activity, filter));
   });
 
-export const ENABLE_ISSUE_DEPENDENCIES = false;
+export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

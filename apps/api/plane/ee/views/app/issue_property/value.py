@@ -77,14 +77,14 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
-    def get(self, request, slug, project_id, issue_id, issue_property_id=None):
+    def get(self, request, slug, project_id, issue_id, property_id=None):
         # Get a single issue property value
-        if issue_property_id:
+        if property_id:
             issue_property_value = IssuePropertyValue.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_id=issue_id,
-                property_id=issue_property_id,
+                property_id=property_id,
                 property__issue_type__is_epic=False,
             )
 

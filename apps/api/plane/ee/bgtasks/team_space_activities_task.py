@@ -54,14 +54,8 @@ def track_description(
     team_space_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get(
-        "description_html"
-    ):
-        last_activity = (
-            TeamspaceActivity.objects.filter(team_space_id=team_space_id)
-            .order_by("-created_at")
-            .first()
-        )
+    if current_instance.get("description_html") != requested_data.get("description_html"):
+        last_activity = TeamspaceActivity.objects.filter(team_space_id=team_space_id).order_by("-created_at").first()
         if (
             last_activity is not None
             and last_activity.field == "description"
@@ -96,18 +90,10 @@ def track_lead(
 ):
     if current_instance.get("lead_id") != requested_data.get("lead_id"):
         # Get the current user
-        current_user = (
-            User.objects.get(pk=current_instance.get("lead_id"))
-            if current_instance.get("lead_id")
-            else None
-        )
+        current_user = User.objects.get(pk=current_instance.get("lead_id")) if current_instance.get("lead_id") else None
 
         # Get the requested user
-        requested_user = (
-            User.objects.get(pk=requested_data.get("lead_id"))
-            if requested_data.get("lead_id")
-            else None
-        )
+        requested_user = User.objects.get(pk=requested_data.get("lead_id")) if requested_data.get("lead_id") else None
 
         # create team activity
         team_space_activities.append(
@@ -193,14 +179,10 @@ def track_projects(
     epoch,
 ):
     requested_projects = (
-        set([str(proj) for proj in requested_data.get("project_ids", [])])
-        if requested_data is not None
-        else set()
+        set([str(proj) for proj in requested_data.get("project_ids", [])]) if requested_data is not None else set()
     )
     current_projects = (
-        set([str(proj) for proj in current_instance.get("project_ids", [])])
-        if current_instance is not None
-        else set()
+        set([str(proj) for proj in current_instance.get("project_ids", [])]) if current_instance is not None else set()
     )
 
     added_projects = requested_projects - current_projects
@@ -339,9 +321,7 @@ def update_team_space_activity(
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for key in requested_data:
         func = TEAM_SPACE_ACTIVITY_MAPPER.get(key)
@@ -389,9 +369,7 @@ def create_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     team_space_activities.append(
         TeamspaceActivity(
@@ -418,9 +396,7 @@ def update_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         team_space_activities.append(
@@ -482,14 +458,8 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
-        comment = TeamspaceComment.objects.get(
-            pk=comment_id, team_space_id=team_space_id
-        )
-        if (
-            comment is not None
-            and comment_reaction_id is not None
-            and comment_id is not None
-        ):
+        comment = TeamspaceComment.objects.get(pk=comment_id, team_space_id=team_space_id)
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
             team_space_activities.append(
                 TeamspaceActivity(
                     team_space_id=comment.team_space_id,
@@ -516,14 +486,10 @@ def delete_comment_reaction_activity(
     team_space_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         team_space_id = (
-            TeamspaceComment.objects.filter(
-                pk=current_instance.get("comment_id"), team_space_id=team_space_id
-            )
+            TeamspaceComment.objects.filter(pk=current_instance.get("comment_id"), team_space_id=team_space_id)
             .values_list("team_space_id", flat=True)
             .first()
         )
@@ -621,18 +587,14 @@ def create_view_activity(
 
 
 def delete_view_activity(
-    requested_data,
-    current_instance,
-    team_space_id,
-    workspace_id,
-    actor_id,
-    team_space_activities,
-    epoch,
+    requested_data: dict,
+    current_instance: dict,
+    team_space_id: str,
+    workspace_id: str,
+    actor_id: str,
+    team_space_activities: list,
+    epoch: int,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
-
     team_space_activities.append(
         TeamspaceActivity(
             team_space_id=team_space_id,
@@ -649,17 +611,13 @@ def delete_view_activity(
 
 
 @shared_task
-def team_space_activity(
-    type, requested_data, team_space_id, actor_id, slug, current_instance, epoch
-):
+def team_space_activity(type, requested_data, team_space_id, actor_id, slug, current_instance, epoch):
     try:
         # Get workspace
         workspace = Workspace.objects.get(slug=slug)
         workspace_id = workspace.id
         # Get team space
-        team_space = Teamspace.objects.filter(
-            workspace_id=workspace_id, pk=team_space_id
-        ).first()
+        team_space = Teamspace.objects.filter(workspace_id=workspace_id, pk=team_space_id).first()
         if team_space is None:
             return
         # Update team space timestamp
@@ -696,9 +654,7 @@ def team_space_activity(
             )
 
         # Save all the values to database
-        _ = TeamspaceActivity.objects.bulk_create(
-            team_space_activities, batch_size=100, ignore_conflicts=True
-        )
+        _ = TeamspaceActivity.objects.bulk_create(team_space_activities, batch_size=100, ignore_conflicts=True)
         return
 
     except Exception as e:

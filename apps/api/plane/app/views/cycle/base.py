@@ -390,16 +390,19 @@ class CycleViewSet(BaseViewSet):
 
         serializer = CycleWriteSerializer(cycle, data=request.data, partial=True, context={"project_id": project_id})
 
+        # EE starts
         if cycle.start_date and cycle.end_date:
             cycle_start_date = cycle.start_date.date()
             cycle_end_date = cycle.end_date.date()
         else:
             cycle_start_date = None
             cycle_end_date = None
+        # EE ends
 
         if serializer.is_valid():
             serializer.save()
 
+            # EE starts
             # Create EntityProgress for updation of the start_date only for active cycle
             if (
                 request_data.get("start_date", None)
@@ -516,7 +519,7 @@ class CycleViewSet(BaseViewSet):
 
                         if new_progress_entities:
                             EntityProgress.objects.bulk_create(new_progress_entities)
-
+            # EE Ends
             cycle = queryset.values(
                 # necessary fields
                 "id",

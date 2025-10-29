@@ -38,9 +38,21 @@ export const getGroupList = (
     state: (a, b) =>
       INITIATIVE_STATES[a as TInitiativeStates].sortOrder - INITIATIVE_STATES[b as TInitiativeStates].sortOrder,
     label_ids: () => 0,
-    lead: (a) => (a === "None" ? 1 : -1),
-    created_by: (a) => (a === "None" ? 1 : -1),
-    default: (a) => (a === "None" ? 1 : -1),
+    lead: (a, b) => {
+      if (a === "None") return 1;
+      if (b === "None") return -1;
+      return a.localeCompare(b);
+    },
+    created_by: (a, b) => {
+      if (a === "None") return 1;
+      if (b === "None") return -1;
+      return a.localeCompare(b);
+    },
+    default: (a, b) => {
+      if (a === "None") return 1;
+      if (b === "None") return -1;
+      return a.localeCompare(b);
+    },
   };
 
   const sorter = sorters[groupBy ?? "default"] ?? sorters.default;

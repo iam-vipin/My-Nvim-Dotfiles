@@ -30,7 +30,7 @@ export const InitiativeKanbanLayout = observer(() => {
   const { t } = useTranslation();
 
   const {
-    initiative: { initiativesMap, currentGroupedInitiativeIds, updateInitiative, getInitiativesLabels },
+    initiative: { filteredInitiativesMap, currentGroupedFilteredInitiativeIds, updateInitiative, getInitiativesLabels },
     initiativeFilters,
   } = useInitiatives();
 
@@ -50,9 +50,9 @@ export const InitiativeKanbanLayout = observer(() => {
 
   // Generate groups
   const groups: IBaseLayoutsBaseGroup[] = useMemo(() => {
-    if (!currentGroupedInitiativeIds) return [];
+    if (!currentGroupedFilteredInitiativeIds) return [];
 
-    let groupIds = Object.keys(currentGroupedInitiativeIds);
+    let groupIds = Object.keys(currentGroupedFilteredInitiativeIds);
     if (!workspaceSlug) return [];
 
     const expandGroups = (extra: string[] = [], includeNone = true) => {
@@ -90,7 +90,7 @@ export const InitiativeKanbanLayout = observer(() => {
       icon,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGroupedInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
+  }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
   // Render each initiative card
   const renderItem = useCallback(
@@ -103,7 +103,7 @@ export const InitiativeKanbanLayout = observer(() => {
   // Handle drag and drop
   const handleDrop = useCallback(
     async (sourceId: string, destinationId: string | null, sourceGroupId: string, destinationGroupId: string) => {
-      if (!workspaceSlug || !groupBy || !initiativesMap) return;
+      if (!workspaceSlug || !groupBy || !filteredInitiativesMap) return;
 
       try {
         const updatePayload = getInitiativeUpdatePayload(
@@ -111,7 +111,7 @@ export const InitiativeKanbanLayout = observer(() => {
           sourceId,
           sourceGroupId,
           destinationGroupId,
-          initiativesMap
+          filteredInitiativesMap
         );
         if (!updatePayload) return;
         await updateInitiative(workspaceSlug.toString(), sourceId, updatePayload);
@@ -125,15 +125,15 @@ export const InitiativeKanbanLayout = observer(() => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workspaceSlug, groupBy, updateInitiative, initiativesMap]
+    [workspaceSlug, groupBy, updateInitiative, filteredInitiativesMap]
   );
 
-  if (!initiativesMap || !currentGroupedInitiativeIds) return null;
+  if (!filteredInitiativesMap || !currentGroupedFilteredInitiativeIds) return null;
 
   return (
     <BaseKanbanLayout
-      items={initiativesMap}
-      groupedItemIds={currentGroupedInitiativeIds}
+      items={filteredInitiativesMap}
+      groupedItemIds={currentGroupedFilteredInitiativeIds}
       groups={groups}
       renderItem={renderItem}
       enableDragDrop={isEditable}

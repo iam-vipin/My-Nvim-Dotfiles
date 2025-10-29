@@ -23,21 +23,18 @@ export const InitiativesListLayout = observer(() => {
   const { workspaceSlug } = useParams();
 
   const {
-    initiative: { initiativesMap, currentGroupedFilteredInitiativeIds, updateInitiative, getInitiativesLabels },
+    initiative: { filteredInitiativesMap, currentGroupedFilteredInitiativeIds, updateInitiative, getInitiativesLabels },
     initiativeFilters,
   } = useInitiatives();
 
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
-  const groupedInitiativeIds = currentGroupedFilteredInitiativeIds;
-
-  const groupedItemIds = useMemo(() => groupedInitiativeIds || {}, [groupedInitiativeIds]);
 
   // Generate groups
   const groups: IBaseLayoutsBaseGroup[] = useMemo(() => {
-    if (!groupedItemIds) return [];
+    if (!currentGroupedFilteredInitiativeIds) return [];
 
-    let groupIds = Object.keys(groupedItemIds);
+    let groupIds = Object.keys(currentGroupedFilteredInitiativeIds);
     if (!workspaceSlug) return [];
 
     const expandGroups = (extra: string[] = [], includeNone = true) => {
@@ -75,7 +72,7 @@ export const InitiativesListLayout = observer(() => {
       icon,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupedItemIds, groupBy, getUserDetails, workspaceSlug]);
+  }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
   const isEditable = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -95,7 +92,7 @@ export const InitiativesListLayout = observer(() => {
   // Handle drag and drop
   const handleDrop = useCallback(
     async (sourceId: string, destinationId: string | null, sourceGroupId: string, destinationGroupId: string) => {
-      if (!workspaceSlug || !groupBy || !initiativesMap) return;
+      if (!workspaceSlug || !groupBy || !filteredInitiativesMap) return;
 
       if (sourceGroupId === destinationGroupId) return;
 
@@ -105,7 +102,7 @@ export const InitiativesListLayout = observer(() => {
           sourceId,
           sourceGroupId,
           destinationGroupId,
-          initiativesMap
+          filteredInitiativesMap
         );
         if (!updatePayload) return;
         await updateInitiative(workspaceSlug.toString(), sourceId, updatePayload);
@@ -118,15 +115,15 @@ export const InitiativesListLayout = observer(() => {
         });
       }
     },
-    [workspaceSlug, groupBy, updateInitiative, initiativesMap, t]
+    [workspaceSlug, groupBy, updateInitiative, filteredInitiativesMap, t]
   );
 
-  if (!initiativesMap || !groupedItemIds) return null;
+  if (!filteredInitiativesMap || !currentGroupedFilteredInitiativeIds) return null;
 
   return (
     <BaseListLayout
-      items={initiativesMap}
-      groupedItemIds={groupedItemIds}
+      items={filteredInitiativesMap}
+      groupedItemIds={currentGroupedFilteredInitiativeIds}
       groups={groups}
       renderItem={renderItem}
       enableDragDrop={isEditable}

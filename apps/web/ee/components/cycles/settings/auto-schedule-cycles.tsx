@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { InfoIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TCycleConfig } from "@plane/types";
+import type { TCycleConfig } from "@plane/types";
 import { Input, ToggleSwitch, CustomSelect, Button } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // components

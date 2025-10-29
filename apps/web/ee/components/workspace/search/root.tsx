@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 // ui
 import type { TSearchResultItem } from "@plane/constants";
@@ -10,10 +11,18 @@ import { cn } from "@plane/utils";
 import { SearchResults } from "@/plane-web/components/workspace/search";
 
 export const AppSearchRoot = observer(() => {
-  // use state
+  // navigation
+  const searchParams = useSearchParams();
+  // states
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q === null) return;
+    setSearchQuery(q);
+  }, [searchParams]);
 
   return (
     <div

@@ -3255,4 +3255,47 @@ export default {
       },
     },
   },
+  power_k: {
+    contextual_actions: {
+      initiative: {
+        title: "Initiative actions",
+        indicator: "Initiative",
+        change_state: "Change state",
+        change_lead: "Change lead",
+        copy_url: "Copy URL",
+        copy_url_toast_success: "Initiative URL copied to clipboard.",
+        copy_url_toast_error: "Some error occurred while copying the initiative URL to clipboard.",
+      },
+    },
+    creation_actions: {
+      create_teamspace: "New teamspace",
+      create_teamspace_view: "New teamspace view",
+      create_initiative: "New initiative",
+      create_workspace_dashboard: "New dashboard",
+      create_customer: "New customer",
+      create_project_automation: "New automation",
+    },
+    navigation_actions: {
+      nav_workspace_active_cycle: "Go to all active cycles",
+      open_teamspace: "Open a teamspace",
+      nav_teamspaces_list: "Go to teamspaces",
+      open_initiative: "Open an initiative",
+      nav_initiatives_list: "Go to initiatives",
+      open_customer: "Open a customer record",
+      nav_customers_list: "Go to customer records",
+      nav_workspace_dashboards: "Go to dashboards",
+      nav_project_overview: "Go to project overview",
+      nav_project_epics: "Go to epics",
+    },
+    page_placeholders: {
+      open_teamspace: "Open a teamspace",
+      open_initiative: "Open an initiative",
+      open_customer: "Open a customer record",
+      change_initiative_state: "Change initiative state",
+      change_initiative_lead: "Change initiative lead",
+    },
+    search_menu: {
+      go_to_advanced_search: "Go to advanced search",
+    },
+  },
 };

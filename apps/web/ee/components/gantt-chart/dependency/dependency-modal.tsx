@@ -4,11 +4,11 @@ import { useParams } from "next/navigation";
 import { Trash2Icon } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
 import { ControlLink, EModalPosition, EModalWidth, ModalCore, Spinner } from "@plane/ui";
-import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
 // hooks
@@ -20,7 +20,7 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import type { EDependencyPosition } from "@/plane-web/constants";
 import { getRelationType } from "@/plane-web/store/timeline/utils";
 import type { Relation } from "@/plane-web/types";
-//
+// local imports
 import { IssueIdentifier } from "../../issues/issue-details/issue-identifier";
 import { useTimeLineRelationOptions } from "../../relations";
 import { DependencyLineSVG } from "./dependency-line-svg";
@@ -143,7 +143,7 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
       });
 
       handleClose();
-    } catch (e) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

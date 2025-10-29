@@ -42,6 +42,13 @@ async def select_agents(
         else:
             custom_prompt = f"Here is the user query: {parsed_query}"
 
+        if target:
+            # Append note about resolved entity ID to existing prompt
+            note = f"""Please note that the user has mentioned a specific entity of type {target} using the 'mentions'(@entity_name) syntax in their query.
+I resolved the UUID of this entity and enhanced the user query with it above.
+Since this is a UUID, please always include the structured DB agent in the selected agents list."""  # noqa: E501
+            custom_prompt = f"{custom_prompt}\n\n{note}"
+
         log.info("************************************************")
         log.info(f"ChatID: {chat_id} - Router custom prompt: {custom_prompt}")
         log.info("************************************************")

@@ -319,12 +319,13 @@ export class PiChatStore implements IPiChatStore {
     workspaceSlug: string,
     workspaceId: string | undefined,
     callbackUrl: string | undefined,
-    attachmentIds: string[]
+    attachmentIds: string[],
+    isNewChat: boolean
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
       query,
-      is_new: this.chatMap[chatId]?.dialogue.length === 0,
+      is_new: isNewChat,
       is_temp: false,
       workspace_in_context: focus.isInWorkspaceContext,
       source: ESource.WEB,
@@ -483,7 +484,8 @@ export class PiChatStore implements IPiChatStore {
       workspaceSlug,
       workspaceId,
       callbackUrl,
-      attachmentIds
+      attachmentIds,
+      isNewChat
     );
     const token = await this.piChatService.retrieveToken(payload);
     runInAction(() => {

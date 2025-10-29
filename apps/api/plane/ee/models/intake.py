@@ -1,6 +1,7 @@
 # Django imports
 from django.db import models
 from django.db.models import Q
+from django.conf import settings
 
 # Module imports
 from plane.db.models import ProjectBaseModel
@@ -63,3 +64,38 @@ class IntakeFormField(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.work_item_property.name}"
+
+
+class IntakeResponsibilityTypeChoices(models.TextChoices):
+    ASSIGNEE = "ASSIGNEE", "Assignee"
+    SUBSCRIBER = "SUBSCRIBER", "Subscriber"
+
+
+class IntakeResponsibility(ProjectBaseModel):
+    intake = models.ForeignKey("db.Intake", on_delete=models.CASCADE, related_name="intake_responsibilities")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="intake_responsibilities")
+    type = models.CharField(
+        max_length=255,
+        choices=IntakeResponsibilityTypeChoices.choices,
+        default=IntakeResponsibilityTypeChoices.ASSIGNEE,
+        db_index=True,
+        verbose_name="Intake Responsibility Type",
+        help_text="The type of responsibility for the intake",
+    )
+
+    class Meta:
+        verbose_name = "Intake Responsibility"
+        verbose_name_plural = "Intake Responsibilities"
+        db_table = "intake_responsibilities"
+        ordering = ("-created_at",)
+        unique_together = ("intake", "user", "type")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["intake", "user", "type"],
+                condition=Q(deleted_at__isnull=True),
+                name="intake_responsibility_unique_intake_user_when_deleted_at_null",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.intake.name} {self.user.email}"

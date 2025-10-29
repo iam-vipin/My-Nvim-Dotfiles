@@ -37,6 +37,7 @@ export type TInitiativeLabelDropdownProps = {
   labels?: Map<string, TInitiativeLabel>;
   onAddLabel?: (labelName: string) => Promise<TInitiativeLabel>;
   workspaceSlug?: string;
+  size?: "xs" | "sm" | "md" | "lg";
 };
 
 export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observer((props) => {
@@ -51,6 +52,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
     labels = new Map(),
     onAddLabel,
     workspaceSlug,
+    size = "sm",
   } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -77,6 +79,35 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
       </div>
     ),
   }));
+
+  const sizeConfig = {
+    xs: {
+      button: "h-6 px-1.5 py-0.5 text-xs gap-1",
+      icon: "h-3 w-3",
+      dropdown: "w-40 text-xs",
+      optionPadding: "px-1 py-1",
+    },
+    sm: {
+      button: "h-7 px-2 py-1 text-xs gap-1",
+      icon: "h-4 w-4",
+      dropdown: "w-48 text-xs",
+      optionPadding: "px-1 py-1.5",
+    },
+    md: {
+      button: "h-8 px-2.5 py-1.5 text-sm gap-2",
+      icon: "h-4 w-4",
+      dropdown: "w-56 text-sm",
+      optionPadding: "px-2 py-2",
+    },
+    lg: {
+      button: "h-10 px-3 py-2 text-sm gap-2",
+      icon: "h-5 w-5",
+      dropdown: "w-64 text-sm",
+      optionPadding: "px-2 py-2.5",
+    },
+  };
+
+  const currentSize = sizeConfig[size];
 
   const canCreateLabel = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
@@ -114,7 +145,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
   };
 
   return (
-    <div className={className}>
+    <div className={cn("contain-layout", className)}>
       <Combobox
         value={value || []}
         onValueChange={handleValueChange}
@@ -126,6 +157,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
         <Combobox.Button
           className={cn(
             "flex h-full w-full items-center justify-between gap-1 border border-custom-border-300 rounded px-2 py-1 text-xs hover:bg-custom-background-80",
+            currentSize.button,
             buttonClassName
           )}
           disabled={disabled || readonly}
@@ -143,7 +175,10 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
           searchPlaceholder={t("common.search.label")}
           emptyMessage=""
           maxHeight="md"
-          className="w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className={cn(
+            "rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg",
+            currentSize.dropdown
+          )}
           positionerClassName="z-50"
           searchQuery={query}
           onSearchQueryChange={setQuery}
@@ -163,10 +198,13 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 text-custom-text-200"
+                  className={cn(
+                    "w-full truncate flex items-center justify-between gap-2 rounded cursor-pointer select-none hover:bg-custom-background-80 text-custom-text-200",
+                    currentSize.optionPadding
+                  )}
                 >
                   <span className="flex-grow truncate">{option.content}</span>
-                  {value.includes(option.value) && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                  {value.includes(option.value) && <Check className={cn(currentSize.icon, "flex-shrink-0")} />}
                 </Combobox.Option>
               ))
             ) : canCreateLabel && query ? (
@@ -176,7 +214,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
                   query.length ? "cursor-pointer" : "cursor-default"
                 }`}
               >
-                <Plus className="h-3.5 w-3.5 flex-shrink-0" />
+                <Plus className={cn(currentSize.icon, "flex-shrink-0")} />
                 {query.length ? (
                   <>
                     Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels

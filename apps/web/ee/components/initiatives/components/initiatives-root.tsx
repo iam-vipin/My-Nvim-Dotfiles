@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
@@ -7,37 +8,45 @@ import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
+import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
-import { getGroupList } from "../utils";
-import { InitiativeGroup } from "./initiatives-group";
+import InitiativeLayoutLoader from "./initiative-layout-loader";
+import { InitiativeKanbanLayout } from "./layouts/kanban";
+import { InitiativesListLayout } from "./layouts/list";
 
 export const InitiativesRoot = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { initiative, initiativeFilters } = useInitiatives();
-  const { getUserDetails } = useMember();
   const { toggleCreateInitiativeModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
-  const groupBy = displayFilters?.group_by;
   const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
+  const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
+  const activeLayout = displayFilters.layout;
+
   const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
-  if (initiative.fetchingFilteredInitiatives) return <ListLayoutLoader />;
+  const INITIATIVE_ACTIVE_LAYOUTS = useMemo(
+    () => ({
+      list: <InitiativesListLayout />,
+      kanban: <InitiativeKanbanLayout />,
+    }),
+    []
+  );
+
+  if (initiative.fetchingFilteredInitiatives) return <InitiativeLayoutLoader layout={activeLayout} />;
 
   const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
@@ -55,7 +64,6 @@ export const InitiativesRoot = observer(() => {
       </div>
     );
   }
-
   if (isEmptyInitiatives) {
     return (
       <EmptyStateDetailed
@@ -73,24 +81,5 @@ export const InitiativesRoot = observer(() => {
     );
   }
 
-  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
-
-  return (
-    <div className={`relative size-full bg-custom-background-90`}>
-      <div className="relative size-full flex flex-col">
-        {groupList && (
-          <div className="size-full vertical-scrollbar scrollbar-lg overflow-auto relative vertical-scrollbar-margin-top-md">
-            {groupList.map((group) => (
-              <InitiativeGroup
-                key={group.id}
-                group={group}
-                initiativesIds={groupedInitiativeIds[group.id]}
-                groupBy={groupBy}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return INITIATIVE_ACTIVE_LAYOUTS[activeLayout || DEFAULT_INITIATIVE_LAYOUT];
 });

@@ -6,7 +6,6 @@ import type { TInitiativeDisplayFilters } from "@plane/types";
 // Plane-web
 import { InitiativeService } from "@/plane-web/services/initiative.service";
 import type { TExternalInitiativeFilterExpression } from "@/plane-web/types/initiative";
-//
 import type { RootStore } from "../root.store";
 
 export interface IInitiativeFilterStore {
@@ -53,12 +52,14 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
   get currentInitiativeDisplayFilters() {
     const workspaceSlug = this.rootStore.router.workspaceSlug;
 
-    if (!workspaceSlug) return {};
+    if (!workspaceSlug) return INITIATIVE_DEFAULT_DISPLAY_FILTERS;
 
     return this.getInitiativeDisplayFilters(workspaceSlug);
   }
 
-  getInitiativeDisplayFilters = computedFn((workspaceSlug: string) => this.displayFilters[workspaceSlug]);
+  getInitiativeDisplayFilters = computedFn(
+    (workspaceSlug: string) => this.displayFilters[workspaceSlug] ?? INITIATIVE_DEFAULT_DISPLAY_FILTERS
+  );
 
   getInitiativeFilters = computedFn((workspaceSlug: string) => this.filters[workspaceSlug]);
 
@@ -80,7 +81,7 @@ export class InitiativeFilterStore implements IInitiativeFilterStore {
 
     try {
       await this.initiativeService.updateInitiativeUserProperties(workspaceSlug, {
-        display_filters: displayFilters,
+        display_filters: this.displayFilters[workspaceSlug],
       });
     } catch (error) {
       console.error("Failed to save initiative display filters to user properties:", error);

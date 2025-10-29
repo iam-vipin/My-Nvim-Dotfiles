@@ -1,14 +1,22 @@
 import type { ReactElement } from "react";
+import { uniq } from "lodash-es";
 // plane
 import { EIconSize, INITIATIVE_STATES } from "@plane/constants";
 import { InitiativeStateIcon } from "@plane/propel/icons";
-import type { ISearchIssueResponse, IUserLite, TInitiativeGroupByOptions, TInitiativeStates } from "@plane/types";
+import type {
+  ISearchIssueResponse,
+  IUserLite,
+  TInitiativeGroupByOptions,
+  TInitiativeLabel,
+  TInitiativeStates,
+} from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 
 // PLane-web
 import { rootStore } from "@/lib/store-context";
+import type { TInitiative } from "@/plane-web/types";
 
 export type TInitiativeGroup = {
   id: string;
@@ -20,102 +28,104 @@ export const getGroupList = (
   groupIds: string[],
   groupBy: TInitiativeGroupByOptions,
   getUserDetails: (userId: string) => IUserLite | undefined
-) => {
+): TInitiativeGroup[] => {
+  if (!groupIds?.length) return [];
+
+  const workspaceSlug = rootStore.router.workspaceSlug;
+  const { getInitiativesLabels } = rootStore.initiativeStore;
+
+  const sorters: Record<string, (a: string, b: string) => number> = {
+    state: (a, b) =>
+      INITIATIVE_STATES[a as TInitiativeStates].sortOrder - INITIATIVE_STATES[b as TInitiativeStates].sortOrder,
+    label_ids: () => 0,
+    lead: (a) => (a === "None" ? 1 : -1),
+    created_by: (a) => (a === "None" ? 1 : -1),
+    default: (a) => (a === "None" ? 1 : -1),
+  };
+
+  const sorter = sorters[groupBy ?? "default"] ?? sorters.default;
+
+  const sortedGroupIds =
+    groupBy === "state"
+      ? (Object.keys(INITIATIVE_STATES) as TInitiativeStates[]).sort(sorters.state)
+      : [...groupIds].sort(sorter);
+
+  const buildNoneItem = (icon: ReactElement): TInitiativeGroup => ({
+    id: "None",
+    name: "None",
+    icon: icon || undefined,
+  });
+
   const groupList: TInitiativeGroup[] = [];
 
-  let sortedGroupIds = groupIds;
-
   switch (groupBy) {
-    case "state":
-      sortedGroupIds = sortedGroupIds.sort(
-        (a, b) =>
-          INITIATIVE_STATES[a as TInitiativeStates].sortOrder - INITIATIVE_STATES[b as TInitiativeStates].sortOrder
-      );
-    case "label_ids":
-      // Sort labels alphabetically, but "None" first
-      sortedGroupIds = sortedGroupIds.sort((a, b) => {
-        if (a === "None") return -1;
-        if (b === "None") return 1;
-        return a.localeCompare(b);
-      });
+    case undefined: {
+      return sortedGroupIds.map((id) => ({ id, name: id }));
+    }
+
+    case "created_by":
+    case "lead": {
+      for (const id of sortedGroupIds) {
+        if (id === "None") {
+          groupList.push(buildNoneItem(<Avatar size="md" />));
+          continue;
+        }
+
+        const member = getUserDetails(id);
+        if (!member) continue;
+
+        groupList.push({
+          id,
+          name: member.display_name,
+          icon: <Avatar name={member.display_name} src={getFileURL(member.avatar_url ?? "")} size="md" />,
+        });
+      }
       break;
+    }
+
+    case "state": {
+      for (const id of sortedGroupIds) {
+        const state = INITIATIVE_STATES[id as TInitiativeStates];
+        groupList.push({
+          id,
+          name: state.title,
+          icon: <InitiativeStateIcon state={id as TInitiativeStates} size={EIconSize.LG} />,
+        });
+      }
+      break;
+    }
+
+    case "label_ids": {
+      if (!workspaceSlug) return [];
+      const labelsMap = getInitiativesLabels(workspaceSlug);
+
+      const labelGroups = sortedGroupIds
+        .filter((id) => id !== "None")
+        .map((id) => {
+          const label = labelsMap?.get(id);
+          return label ? { id, label } : null;
+        })
+        .filter((x): x is { id: string; label: TInitiativeLabel } => x !== null)
+        .sort((a, b) => (a.label.sort_order ?? 0) - (b.label.sort_order ?? 0));
+
+      for (const { id, label } of labelGroups) {
+        groupList.push({
+          id,
+          name: label.name,
+          icon: <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: label.color }} />,
+        });
+      }
+
+      if (sortedGroupIds.includes("None")) {
+        groupList.push(
+          buildNoneItem(<div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: "#666" }} />)
+        );
+      }
+      break;
+    }
+
     default:
-      sortedGroupIds = sortedGroupIds.sort((a) => {
-        if (a === "none") return -1;
-        return 1;
-      });
-  }
-
-  if (!groupBy) {
-    for (const groupId of sortedGroupIds) {
-      groupList.push({
-        id: groupId,
-        name: groupId,
-      });
-    }
-  }
-
-  if (groupBy === "created_by" || groupBy === "lead") {
-    for (const groupId of sortedGroupIds) {
-      if (groupId === "None") {
-        groupList.push({
-          id: groupId,
-          name: "None",
-          icon: <Avatar size="md" />,
-        });
-        continue;
-      }
-
-      const member = getUserDetails(groupId);
-
-      if (!member) continue;
-
-      groupList.push({
-        id: groupId,
-        name: member.display_name,
-        icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
-      });
-    }
-  }
-
-  if (groupBy === "state") {
-    for (const groupId of sortedGroupIds) {
-      groupList.push({
-        id: groupId,
-        name: INITIATIVE_STATES[groupId as TInitiativeStates].title,
-        icon: <InitiativeStateIcon state={groupId as TInitiativeStates} size={EIconSize.LG} />,
-      });
-    }
-  }
-
-  if (groupBy === "label_ids") {
-    const workspaceSlug = rootStore.router.workspaceSlug;
-    const { getInitiativesLabels } = rootStore.initiativeStore;
-
-    if (!workspaceSlug) return groupList;
-
-    const labelsMap = getInitiativesLabels(workspaceSlug);
-
-    for (const groupId of sortedGroupIds) {
-      if (groupId === "None") {
-        groupList.push({
-          id: groupId,
-          name: "None",
-          icon: <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: "#666" }} />,
-        });
-        continue;
-      }
-
-      const label = labelsMap?.get(groupId);
-
-      if (!label) continue;
-
-      groupList.push({
-        id: groupId,
-        name: label.name,
-        icon: <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: label.color }} />,
-      });
-    }
+      return sortedGroupIds.map((id) => ({ id, name: id }));
   }
 
   return groupList;
@@ -163,4 +173,47 @@ export const getSelectedEpicDetails = (selectedEpicIds: string[], workspaceSlug:
   });
 
   return selectedEpicDetails;
+};
+
+/**
+ * Retrieves the update payload for an initiative based on the group by option
+ * @param groupBy - The group by option
+ * @param sourceId - The source initiative ID
+ * @param sourceGroupId - The source group ID
+ * @param destinationGroupId - The destination group ID
+ * @param initiativesMap - The initiatives map
+ * @returns The update payload
+ */
+export const getInitiativeUpdatePayload = (
+  groupBy: TInitiativeGroupByOptions,
+  sourceId: string,
+  sourceGroupId: string,
+  destinationGroupId: string,
+  initiativesMap: Record<string, TInitiative>
+): Partial<TInitiative> | null => {
+  switch (groupBy) {
+    case "state":
+      return { state: destinationGroupId as TInitiativeStates };
+
+    case "label_ids": {
+      if (!initiativesMap[sourceId]) return null;
+      const currentLabels = initiativesMap[sourceId].label_ids || [];
+
+      let updatedLabels = [...currentLabels];
+
+      updatedLabels = updatedLabels.filter((id) => id !== sourceGroupId);
+
+      if (destinationGroupId !== "None") {
+        updatedLabels = uniq([...updatedLabels, destinationGroupId]);
+      }
+
+      return { label_ids: updatedLabels };
+    }
+
+    case "lead":
+      return { lead: destinationGroupId === "None" ? null : destinationGroupId };
+
+    default:
+      return null;
+  }
 };

@@ -6,6 +6,7 @@ export enum EInitiativeNavigationItem {
 }
 
 export const INITIATIVE_DEFAULT_DISPLAY_FILTERS: TInitiativeDisplayFilters = {
+  layout: "list",
   group_by: "lead",
   order_by: "-created_at",
 };

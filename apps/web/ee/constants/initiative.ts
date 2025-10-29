@@ -1,5 +1,10 @@
 import { INITIATIVE_STATES } from "@plane/constants";
-import type { TCreateUpdateInitiativeModal, TInitiativeGroupByOptions, TInitiativeOrderByOptions } from "@plane/types";
+import type {
+  TCreateUpdateInitiativeModal,
+  TBaseLayoutType,
+  TInitiativeGroupByOptions,
+  TInitiativeOrderByOptions,
+} from "@plane/types";
 
 export const DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA: TCreateUpdateInitiativeModal = {
   isOpen: false,
@@ -27,3 +32,4 @@ export const INITIATIVE_ORDER_BY_OPTIONS: {
 ];
 
 export const DEFAULT_INITIATIVE_STATE = INITIATIVE_STATES.DRAFT.key;
+export const DEFAULT_INITIATIVE_LAYOUT: TBaseLayoutType = "list";

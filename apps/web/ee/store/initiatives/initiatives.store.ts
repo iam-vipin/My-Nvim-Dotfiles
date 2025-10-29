@@ -220,7 +220,7 @@ export class InitiativeStore implements IInitiativeStore {
 
     if (!workspaceSlug) return;
 
-    return this.getGroupedInitiativeIds(workspaceSlug);
+    return this.getGroupedInitiativeIds(workspaceSlug, false);
   }
 
   get currentGroupedFilteredInitiativeIds() {

@@ -1,4 +1,5 @@
 import { TFileSignedURLResponse } from "../file";
+import { TBaseLayoutType } from "../base-layouts";
 import { EIssueLayoutTypes } from "../issues/base";
 
 export enum EInitiativeNavigationItem {
@@ -52,6 +53,7 @@ export interface IInitiativeScopeDisplayFiltersOptions {
 export type TInitiativeStates = "DRAFT" | "PLANNED" | "ACTIVE" | "COMPLETED" | "CLOSED";
 
 export type TInitiativeDisplayFilters = {
+  layout?: TBaseLayoutType;
   group_by?: TInitiativeGroupByOptions;
   order_by?: TInitiativeOrderByOptions;
 };

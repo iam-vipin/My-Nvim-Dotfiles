@@ -4,9 +4,9 @@ import { CalendarDays } from "lucide-react";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
 import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
-import { Avatar } from "@plane/ui";
-import { getDate, getFileURL } from "@plane/utils";
+import { getDate } from "@plane/utils";
 // core components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -33,13 +33,18 @@ export const InitiativesBlockProperties = observer((props: Props) => {
   } = useInitiatives();
 
   // derived values
-  const lead = getUserDetails(initiative.lead ?? "");
   const startDate = getDate(initiative.start_date);
   const endDate = getDate(initiative.end_date);
   const initiativeLabels = getInitiativesLabels(workspaceSlug);
 
   const handleLabelChange = (labelIds: string[]) => {
     updateInitiative?.(workspaceSlug, initiative.id, { label_ids: labelIds });
+  };
+
+  const handleLeadChange = (leadId: string | null) => {
+    if (updateInitiative) {
+      updateInitiative(workspaceSlug, initiative.id, { lead: leadId });
+    }
   };
 
   const createLabel = async (labelName: string) => {
@@ -50,6 +55,9 @@ export const InitiativesBlockProperties = observer((props: Props) => {
   return (
     <div
       className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+      // Prevent click events from bubbling to parent initiative block.
+      // This is necessary to avoid triggering parent click handlers (e.g., for closing or selecting the block)
+      onClick={(e) => e.stopPropagation()}
     >
       {/* dates */}
       {startDate && endDate && (
@@ -59,19 +67,6 @@ export const InitiativesBlockProperties = observer((props: Props) => {
         </PropertyBlockWrapper>
       )}
 
-      {/*  lead */}
-      {lead && (
-        <PropertyBlockWrapper>
-          <Avatar
-            key={lead.id}
-            name={lead.display_name}
-            src={getFileURL(lead.avatar_url)}
-            size={16}
-            className="text-[9px]"
-          />
-          <div>{lead.first_name}</div>
-        </PropertyBlockWrapper>
-      )}
       {/* projects */}
       {initiative.project_ids && initiative.project_ids.length > 0 && (
         <PropertyBlockWrapper>
@@ -86,13 +81,25 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           <span className="flex-grow truncate max-w-40">{initiative.epic_ids.length}</span>
         </PropertyBlockWrapper>
       )}
+      {/*  lead */}
+      <PropertyBlockWrapper>
+        <MemberDropdown
+          value={initiative.lead ?? null}
+          onChange={handleLeadChange}
+          multiple={false}
+          buttonVariant="border-with-text"
+          placeholder="Lead"
+          showUserDetails
+          optionsClassName="z-10"
+        />
+      </PropertyBlockWrapper>
       {/* state */}
       {initiative.state && (
         <PropertyBlockWrapper>
           <InitiativeStateDropdown
             value={initiative.state}
             placeholder="State"
-            buttonClassName="h-full"
+            size="xs"
             onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
           />
         </PropertyBlockWrapper>
@@ -105,6 +112,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           onChange={handleLabelChange}
           onAddLabel={createLabel}
           placeholder=""
+          size="xs"
         />
       </PropertyBlockWrapper>
     </div>

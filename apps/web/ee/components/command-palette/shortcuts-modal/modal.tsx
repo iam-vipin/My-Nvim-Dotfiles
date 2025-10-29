@@ -2,12 +2,10 @@ import type { FC } from "react";
 import { useState, Fragment } from "react";
 import { Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// plane imports
+// ui
 import { Input } from "@plane/ui";
-// components
-import { ShortcutRenderer } from "@/components/power-k/ui/renderer/shortcut";
-// hooks
-import { usePowerK } from "@/hooks/store/use-power-k";
+// plane web components
+import { PagesAppShortcutCommandsList } from "@/plane-web/components/command-palette";
 
 type Props = {
   isOpen: boolean;
@@ -18,11 +16,6 @@ export const PagesAppShortcutsModal: FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");
-  // store hooks
-  const { commandRegistry } = usePowerK();
-
-  // Get all commands from registry
-  const allCommandsWithShortcuts = commandRegistry.getAllCommandsWithShortcuts();
 
   const handleClose = () => {
     onClose();
@@ -77,7 +70,7 @@ export const PagesAppShortcutsModal: FC<Props> = (props) => {
                       tabIndex={1}
                     />
                   </div>
-                  <ShortcutRenderer searchQuery={query} commands={allCommandsWithShortcuts} />
+                  <PagesAppShortcutCommandsList searchQuery={query} />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

@@ -81,6 +81,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
                 projects__archived_at__isnull=True,
+                project_pages__deleted_at__isnull=True,
             )
             .filter(moved_to_page__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))

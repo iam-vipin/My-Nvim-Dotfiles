@@ -25,9 +25,7 @@ class IssuePageViewSet(BaseAPIView):
     permission_classes = [ProjectLitePermission]
 
     def filter_work_item_pages(self, slug, project_id, issue_id):
-        return WorkItemPage.objects.filter(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id
-        )
+        return WorkItemPage.objects.filter(workspace__slug=slug, project_id=project_id, issue_id=issue_id)
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
     def post(self, request, slug, project_id, issue_id):
@@ -37,7 +35,8 @@ class IssuePageViewSet(BaseAPIView):
         # Filtering pages that are in the workspace and the user is part of
         valid_page_ids = Page.objects.filter(
             Q(
-                projects__id=project_id,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
             )
             | Q(is_global=True),
             workspace_id=workspace.id,
@@ -47,10 +46,7 @@ class IssuePageViewSet(BaseAPIView):
         # Bulk create only the given pages
         linked_pages = self.filter_work_item_pages(slug, project_id, issue_id)
 
-        existing_pages = [
-            str(page_id)
-            for page_id in list(linked_pages.values_list("page_id", flat=True))
-        ]
+        existing_pages = [str(page_id) for page_id in list(linked_pages.values_list("page_id", flat=True))]
 
         linked_pages.delete()
 
@@ -100,9 +96,7 @@ class IssuePageViewSet(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
     def delete(self, request, slug, project_id, issue_id, page_id):
-        work_item_page = self.filter_work_item_pages(slug, project_id, issue_id).get(
-            page_id=page_id
-        )
+        work_item_page = self.filter_work_item_pages(slug, project_id, issue_id).get(page_id=page_id)
 
         work_item_page.delete()
 
@@ -138,9 +132,11 @@ class PageSearchViewSet(BaseAPIView):
         )
 
         if is_global == "true":
-            pages = pages.filter(Q(is_global=True) | Q(projects__id=project_id))
+            pages = pages.filter(
+                Q(is_global=True) | Q(project_pages__project_id=project_id, project_pages__deleted_at__isnull=True)
+            )
         else:
-            pages = pages.filter(projects__id=project_id)
+            pages = pages.filter(project_pages__project_id=project_id, project_pages__deleted_at__isnull=True)
         # Add search functionality
         if search:
             pages = pages.filter(name__icontains=search)

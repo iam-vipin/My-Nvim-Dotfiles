@@ -115,7 +115,9 @@ class PageViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg(
+                        "project_pages__project_id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)
+                    ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
@@ -124,9 +126,9 @@ class PageViewSet(BaseViewSet):
         )
 
     def get_largest_sort_order(self, slug, parent_id):
-        largest_sort_order = Page.objects.filter(
-            workspace__slug=slug, parent_id=parent_id
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        largest_sort_order = Page.objects.filter(workspace__slug=slug, parent_id=parent_id).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
         return largest_sort_order + 10000 if largest_sort_order else 65535
 
     def create(self, request, slug, project_id):
@@ -142,9 +144,7 @@ class PageViewSet(BaseViewSet):
         )
 
         if request.data.get("parent_id") and request.data.get("sort_order") is None:
-            largest_sort_order = self.get_largest_sort_order(
-                slug, request.data.get("parent_id")
-            )
+            largest_sort_order = self.get_largest_sort_order(slug, request.data.get("parent_id"))
             if largest_sort_order is not None:
                 request.data["sort_order"] = largest_sort_order
 
@@ -163,14 +163,24 @@ class PageViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, page_id):
         try:
-            page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+            page = Page.objects.get(
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
 
             if page.is_locked:
                 return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             parent = request.data.get("parent", None)
             if parent:
-                _ = Page.objects.get(pk=parent, workspace__slug=slug, projects__id=project_id)
+                _ = Page.objects.get(
+                    pk=parent,
+                    workspace__slug=slug,
+                    project_pages__project_id=project_id,
+                    project_pages__deleted_at__isnull=True,
+                )
 
             # Only update access if the page owner is the requesting  user
             if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -243,14 +253,24 @@ class PageViewSet(BaseViewSet):
             return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.filter(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        ).first()
 
         page.is_locked = True
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.filter(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        ).first()
 
         page.is_locked = False
         page.save()
@@ -259,7 +279,12 @@ class PageViewSet(BaseViewSet):
 
     def access(self, request, slug, project_id, page_id):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.filter(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        ).first()
 
         # Only update access if the page owner is the requesting user
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -290,7 +315,12 @@ class PageViewSet(BaseViewSet):
         return Response(pages, status=status.HTTP_200_OK)
 
     def archive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # only the owner or admin can archive the page
         if (
@@ -316,7 +346,12 @@ class PageViewSet(BaseViewSet):
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         # only the owner or admin can un archive the page
         if (
@@ -340,7 +375,12 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, projects__id=project_id)
+        page = Page.objects.get(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        )
 
         if page.archived_at is None:
             return Response(
@@ -363,7 +403,12 @@ class PageViewSet(BaseViewSet):
             )
 
         # remove parent from all the children
-        _ = Page.objects.filter(parent_id=page_id, projects__id=project_id, workspace__slug=slug).update(parent=None)
+        _ = Page.objects.filter(
+            parent_id=page_id,
+            project_pages__project_id=project_id,
+            workspace__slug=slug,
+            project_pages__deleted_at__isnull=True,
+        ).update(parent=None)
 
         page.delete()
         # Delete the user favorite page
@@ -394,7 +439,11 @@ class PageViewSet(BaseViewSet):
             .filter(Q(owned_by=request.user) | Q(access=0))
             .annotate(
                 project=Exists(
-                    ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
+                    ProjectPage.objects.filter(
+                        page_id=OuterRef("id"),
+                        project_id=self.kwargs.get("project_id"),
+                        deleted_at__isnull=True,
+                    )
                 )
             )
             .filter(project=True)
@@ -464,7 +513,12 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, page_id):
         page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id)
+            Page.objects.filter(
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .first()
         )
@@ -484,7 +538,12 @@ class PagesDescriptionViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, page_id):
         page = (
-            Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id)
+            Page.objects.filter(
+                pk=page_id,
+                workspace__slug=slug,
+                project_pages__project_id=project_id,
+                project_pages__deleted_at__isnull=True,
+            )
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .first()
         )
@@ -542,14 +601,21 @@ class PageDuplicateEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug, projects__id=project_id).first()
+        page = Page.objects.filter(
+            pk=page_id,
+            workspace__slug=slug,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
+        ).first()
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
         # get all the project ids where page is present
-        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list("project_id", flat=True)
+        project_ids = ProjectPage.objects.filter(page_id=page_id, deleted_at__isnull=True).values_list(
+            "project_id", flat=True
+        )
 
         page.pk = None
         page.name = f"{page.name} (Copy)"
@@ -587,7 +653,7 @@ class PageDuplicateEndpoint(BaseAPIView):
             Page.objects.filter(pk=page.id)
             .annotate(
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg("projects__id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )

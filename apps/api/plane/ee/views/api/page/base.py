@@ -37,7 +37,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
 
     def get_queryset(self):
         return Page.objects.filter(
-            workspace__slug=self.kwargs["slug"], projects__id=self.kwargs["project_id"]
+            workspace__slug=self.kwargs["slug"], projects__id=self.kwargs["project_id"], project_pages__deleted_at__isnull=True
         )
 
     @page_docs(

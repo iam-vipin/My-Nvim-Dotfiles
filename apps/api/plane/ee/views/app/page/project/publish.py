@@ -16,7 +16,6 @@ from plane.ee.utils.page_events import PageAction
 
 
 class ProjectPagePublishEndpoint(BaseAPIView):
-
     permission_classes = [ProjectPagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
@@ -24,7 +23,11 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the page
         page = Page.objects.get(
-            pk=page_id, workspace=workspace, projects__id=project_id, is_global=False
+            pk=page_id,
+            workspace=workspace,
+            project_pages__project_id=project_id,
+            is_global=False,
+            project_pages__deleted_at__isnull=True,
         )
 
         if page.archived_at:
@@ -76,21 +79,13 @@ class ProjectPagePublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def patch(self, request, slug, project_id, page_id):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         # Get the deploy board attributes
         data = {
-            "is_comments_enabled": request.data.get(
-                "is_comments_enabled", deploy_board.is_comments_enabled
-            ),
-            "is_reactions_enabled": request.data.get(
-                "is_reactions_enabled", deploy_board.is_reactions_enabled
-            ),
+            "is_comments_enabled": request.data.get("is_comments_enabled", deploy_board.is_comments_enabled),
+            "is_reactions_enabled": request.data.get("is_reactions_enabled", deploy_board.is_reactions_enabled),
             "intake": request.data.get("intake", deploy_board.intake),
-            "is_votes_enabled": request.data.get(
-                "is_votes_enabled", deploy_board.is_votes_enabled
-            ),
+            "is_votes_enabled": request.data.get("is_votes_enabled", deploy_board.is_votes_enabled),
             "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 
@@ -107,9 +102,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def get(self, request, slug, project_id, page_id):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         # Return the deploy board
         serializer = DeployBoardSerializer(deploy_board)
         # Return the deploy board
@@ -118,9 +111,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def delete(self, request, slug, project_id, page_id):
         # Get the deploy board and un publish all the sub page as well.
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         # Delete the deploy board
         deploy_board.delete()
 

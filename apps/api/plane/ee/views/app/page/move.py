@@ -179,19 +179,24 @@ class MovePageEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        if page.parent_id:
+            # while moving the page just null the parent id
+            page.parent_id = None
+            page.save()
+
         # transfer all the remaining entities to the new entities.
         if move_type in [
             MoveActionEnum.PROJECT_TO_PROJECT.value,
             MoveActionEnum.WORKSPACE_TO_PROJECT.value,
             MoveActionEnum.TEAMSPACE_TO_PROJECT.value,
         ]:
-            if move_type == MoveActionEnum.TEAMSPACE_TO_PROJECT:
+            if move_type == MoveActionEnum.TEAMSPACE_TO_PROJECT.value:
                 unlink_pages_from_teamspace([page_id], workspace_id)
 
             if move_type == MoveActionEnum.WORKSPACE_TO_PROJECT.value:
                 remove_pages_from_workspace_level([page_id], workspace_id, user_id)
 
-            if move_type == MoveActionEnum.PROJECT_TO_PROJECT:
+            if move_type == MoveActionEnum.PROJECT_TO_PROJECT.value:
                 unlink_pages_from_project([page_id], workspace_id)
 
             link_pages_to_project([page_id], target_identifier, workspace_id, user_id)

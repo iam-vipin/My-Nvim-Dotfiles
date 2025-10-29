@@ -89,15 +89,11 @@ def update_job_batch_completion(
         # Update counters atomically at database level
         ReportModel.objects.filter(id=job.report.id).update(
             # Coalesce handles NULL values by replacing them with 0 before adding
-            imported_batch_count=Coalesce(F("imported_batch_count"), 0)
-            + imported_batch_count,
+            imported_batch_count=Coalesce(F("imported_batch_count"), 0) + imported_batch_count,
             total_issue_count=Coalesce(F("total_issue_count"), 0) + total_issues,
-            imported_issue_count=Coalesce(F("imported_issue_count"), 0)
-            + imported_issues,
-            errored_issue_count=Coalesce(F("errored_issue_count"), 0)
-            + (total_issues - imported_issues),
-            completed_batch_count=Coalesce(F("completed_batch_count"), 0)
-            + (1 if imported_batch_count > 0 else 0),
+            imported_issue_count=Coalesce(F("imported_issue_count"), 0) + imported_issues,
+            errored_issue_count=Coalesce(F("errored_issue_count"), 0) + (total_issues - imported_issues),
+            completed_batch_count=Coalesce(F("completed_batch_count"), 0) + (1 if imported_batch_count > 0 else 0),
             updated_at=timezone.now(),
         )
 
@@ -119,10 +115,7 @@ def update_job_batch_completion(
         )
 
         # Check if all batches are processed and update job status
-        if (
-            job.report.completed_batch_count >= job.report.total_batch_count
-            or is_last_batch
-        ):
+        if job.report.completed_batch_count >= job.report.total_batch_count or is_last_batch:
             """
             We'll make an api call to silo, such that silo can perform
             any additional processing along with marking the job as finished
@@ -157,9 +150,7 @@ def process_single_issue(slug, project, user_id, issue_data):
     try:
         with transaction.atomic():
             with connection.cursor() as cur:
-                cur.execute(
-                    "SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)"
-                )
+                cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
             # Process the main issue
             issue_data = sanitize_issue_data(issue_data)
             serializer = IssueSerializer(
@@ -208,9 +199,7 @@ def process_single_issue(slug, project, user_id, issue_data):
             process_issue_links(issue, issue_data.get("links", []))
 
             # Process comments
-            process_issue_comments(
-                user_id=user_id, issue=issue, comments=issue_data.get("comments", [])
-            )
+            process_issue_comments(user_id=user_id, issue=issue, comments=issue_data.get("comments", []))
 
             # Process cycles
             process_issue_cycles(issue, issue_data.get("cycles", []))
@@ -222,9 +211,7 @@ def process_single_issue(slug, project, user_id, issue_data):
             process_issue_file_assets(issue, issue_data.get("file_assets", []))
 
             # Process issue property values
-            process_issue_property_values(
-                issue, issue_data.get("issue_property_values", [])
-            )
+            process_issue_property_values(issue, issue_data.get("issue_property_values", []))
 
             return issue
     except Exception as e:
@@ -241,9 +228,9 @@ def process_issue_links(issue, links):
 
     # Get existing links
     existing_links = list(
-        IssueLink.objects.filter(
-            issue=issue, project_id=issue.project_id, workspace_id=issue.workspace_id
-        ).values_list("url", flat=True)
+        IssueLink.objects.filter(issue=issue, project_id=issue.project_id, workspace_id=issue.workspace_id).values_list(
+            "url", flat=True
+        )
     )
 
     for link_data in links:
@@ -260,9 +247,7 @@ def process_issue_links(issue, links):
                 )
             )
 
-    IssueLink.objects.bulk_create(
-        bulk_create_links, batch_size=100, ignore_conflicts=True
-    )
+    IssueLink.objects.bulk_create(bulk_create_links, batch_size=100, ignore_conflicts=True)
     return
 
 
@@ -280,26 +265,18 @@ def process_issue_comments(user_id, issue, comments):
             issue=issue,
             project_id=issue.project_id,
             workspace_id=issue.workspace_id,
-            external_id__in=[
-                str(c.get("external_id")) for c in comments if c.get("external_id")
-            ],
+            external_id__in=[str(c.get("external_id")) for c in comments if c.get("external_id")],
         )
     }
 
     for comment_data in comments:
-        external_id = (
-            str(comment_data.get("external_id"))
-            if comment_data.get("external_id")
-            else None
-        )
+        external_id = str(comment_data.get("external_id")) if comment_data.get("external_id") else None
 
         # Skip if no external_id
         if not external_id:
             continue
 
-        comment_actor = (
-            comment_data.get("actor") if comment_data.get("actor") else user_id
-        )
+        comment_actor = comment_data.get("actor") if comment_data.get("actor") else user_id
         if external_id in existing_comments_map:
             # Update case
             existing_comment = existing_comments_map[external_id]
@@ -325,9 +302,7 @@ def process_issue_comments(user_id, issue, comments):
             bulk_create_comments.append(comment)
 
     # Bulk create new comments
-    created_comments = IssueComment.objects.bulk_create(
-        bulk_create_comments, batch_size=100, ignore_conflicts=True
-    )
+    created_comments = IssueComment.objects.bulk_create(bulk_create_comments, batch_size=100, ignore_conflicts=True)
 
     # Bulk update existing comments
     if bulk_update_comments:
@@ -340,11 +315,7 @@ def process_issue_comments(user_id, issue, comments):
     # Process file assets for each comment
     for comment in created_comments:
         comment_data = next(
-            (
-                c
-                for c in comments
-                if str(c.get("external_id")) == str(comment.external_id)
-            ),
+            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
             None,
         )
         if comment_data and comment_data.get("file_assets"):
@@ -352,11 +323,7 @@ def process_issue_comments(user_id, issue, comments):
 
     for comment in bulk_update_comments:
         comment_data = next(
-            (
-                c
-                for c in comments
-                if str(c.get("external_id")) == str(comment.external_id)
-            ),
+            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
             None,
         )
         if comment_data and comment_data.get("file_assets"):
@@ -470,9 +437,7 @@ def process_issue_property_values(issue, issue_property_values):
             property_value = value.get("value", None)
 
             if property_value:
-                externalIssuePropertyValueValidator(
-                    issue_property=issue_property, value=property_value
-                )
+                externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
 
                 # check if issue property with the same external id and external source already exists
                 property_external_id = value.get("external_id", None)
@@ -498,9 +463,7 @@ def process_issue_property_values(issue, issue_property_values):
         existing_issue_property_values.delete()
 
         # Bulk create the issue property values
-        IssuePropertyValue.objects.bulk_create(
-            bulk_external_issue_property_values, batch_size=10
-        )
+        IssuePropertyValue.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
 
 
 def process_issues(slug, project, user_id, issue_list):
@@ -545,9 +508,7 @@ def process_issues(slug, project, user_id, issue_list):
                         external_id=parent_external_id,
                         external_source=issue_data.get("external_source"),
                     ).first()
-                    issue_data["parent"] = (
-                        str(parent_issue.id) if parent_issue else None
-                    )
+                    issue_data["parent"] = str(parent_issue.id) if parent_issue else None
 
                 issue = process_single_issue(slug, project, user_id, issue_data)
                 if issue:
@@ -593,15 +554,14 @@ def process_pages(slug, project_id, user_id, page_list):
     if external_ids_map:
         existing_pages = Page.objects.filter(
             workspace__id=workspace.id,
-            projects__id=project_id,
+            project_pages__project_id=project_id,
+            project_pages__deleted_at__isnull=True,
             external_id__in=[key[0] for key in external_ids_map.keys()],
             external_source__in=list(set(key[1] for key in external_ids_map.keys())),
         )
 
         # Create lookup map for existing pages
-        existing_pages_map = {
-            (page.external_id, page.external_source): page for page in existing_pages
-        }
+        existing_pages_map = {(page.external_id, page.external_source): page for page in existing_pages}
     else:
         existing_pages_map = {}
 
@@ -641,11 +601,7 @@ def process_pages(slug, project_id, user_id, page_list):
                 pages_to_create.append(new_page)
 
         # For pages without external ids
-        for page_data in [
-            p
-            for p in page_list
-            if not (p.get("external_id") and p.get("external_source"))
-        ]:
+        for page_data in [p for p in page_list if not (p.get("external_id") and p.get("external_source"))]:
             new_page = Page(
                 workspace_id=workspace.id,
                 name=page_data.get("name", "Untitled Page"),
@@ -679,12 +635,7 @@ def process_pages(slug, project_id, user_id, page_list):
             imported_pages += len(created_pages)
 
             ProjectPage.objects.bulk_create(
-                [
-                    ProjectPage(
-                        page=page, project_id=project_id, workspace_id=workspace.id
-                    )
-                    for page in created_pages
-                ],
+                [ProjectPage(page=page, project_id=project_id, workspace_id=workspace.id) for page in created_pages],
                 batch_size=1000,
             )
 
@@ -725,12 +676,8 @@ def import_data(slug, project_id, user_id, job_id, payload):
         )
 
         if issue_list:
-            imported_issues, total_issues, external_id_map = process_issues(
-                slug, project, user_id, issue_list
-            )
-            update_job_batch_completion(
-                job_id, 1, total_issues, imported_issues, job_phase, is_last_batch
-            )
+            imported_issues, total_issues, external_id_map = process_issues(slug, project, user_id, issue_list)
+            update_job_batch_completion(job_id, 1, total_issues, imported_issues, job_phase, is_last_batch)
 
         # Handle edge-case where a batch contains no issues.
         # Without this, completed_batch_count never increments for such batches,
@@ -741,19 +688,13 @@ def import_data(slug, project_id, user_id, job_id, payload):
         # Process pages
         page_list = payload.get("pages")
         if page_list:
-            imported_pages, total_pages = process_pages(
-                slug, project_id, user_id, page_list
-            )
-            update_job_batch_completion(
-                job_id, 1, total_pages, imported_pages, "pages", is_last_batch
-            )
+            imported_pages, total_pages = process_pages(slug, project_id, user_id, page_list)
+            update_job_batch_completion(job_id, 1, total_pages, imported_pages, "pages", is_last_batch)
 
         if not page_list:
             update_job_batch_completion(job_id, 0, 0, 0, "pages", is_last_batch)
 
-        logger.info(
-            f"Processed {imported_issues}/{total_issues} issues and {imported_pages}/{total_pages} pages."
-        )
+        logger.info(f"Processed {imported_issues}/{total_issues} issues and {imported_pages}/{total_pages} pages.")
         return True
     except Exception as e:
         # Assuming there's error handling in the calling code

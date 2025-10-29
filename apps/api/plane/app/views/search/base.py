@@ -170,16 +170,18 @@ class GlobalSearchEndpoint(BaseAPIView):
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .annotate(
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg(
+                        "project_pages__project_id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)
+                    ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
             .annotate(
                 project_identifiers=Coalesce(
                     ArrayAgg(
-                        "projects__identifier",
+                        "project_pages__project__identifier",
                         distinct=True,
-                        filter=~Q(projects__id=True),
+                        filter=Q(project_pages__deleted_at__isnull=True),
                     ),
                     Value([], output_field=ArrayField(CharField())),
                 )
@@ -187,9 +189,10 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
         if workspace_search == "false" and project_id:
-            project_subquery = ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=project_id).values_list(
-                "project_id", flat=True
-            )[:1]
+            project_subquery = ProjectPage.objects.filter(
+                page_id=OuterRef("id"),
+                project_id=project_id,
+            ).values_list("project_id", flat=True)[:1]
 
             pages = pages.annotate(project_id=Subquery(project_subquery)).filter(project_id=project_id)
 
@@ -748,7 +751,7 @@ class SearchEndpoint(BaseAPIView):
                             q,
                             projects__project_projectmember__member=self.request.user,
                             projects__project_projectmember__is_active=True,
-                            projects__id=project_id,
+                            project_pages__project_id=project_id,
                             workspace__slug=slug,
                             access=0,
                         )

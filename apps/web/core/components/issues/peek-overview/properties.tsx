@@ -190,7 +190,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.due_date")}</span>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <DateDropdown
               value={issue.target_date}
               onChange={(val) =>

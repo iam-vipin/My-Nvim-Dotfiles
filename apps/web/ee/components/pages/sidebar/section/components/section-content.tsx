@@ -156,7 +156,9 @@ const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = observ
             })}
           </div>
         ) : (
-          <p className="text-custom-text-400 text-xs text-center font-medium ml-1 mt-2">No {sectionType} pages</p>
+          <p className="text-custom-text-400 text-xs text-center font-medium ml-1 mt-2">
+            No {sectionType === "public" ? "workspace" : sectionType} pages
+          </p>
         )}
       </Disclosure.Panel>
     );

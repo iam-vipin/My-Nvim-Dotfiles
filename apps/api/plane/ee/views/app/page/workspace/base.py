@@ -81,6 +81,7 @@ class WorkspacePageViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_global=True)
+            .filter(moved_to_page__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .select_related("workspace")
             .select_related("owned_by")

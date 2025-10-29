@@ -28,3 +28,13 @@ export type TPageExtended = {
   sharedUsers: TPageSharedUser[]; // Users the page is shared with
   sort_order: number | undefined;
 };
+
+export type TMovePageEntity = "workspace" | "project" | "teamspace";
+
+export type TMovePageActions = Exclude<`${TMovePageEntity}_to_${TMovePageEntity}`, "workspace_to_workspace">;
+
+export type TMovePagePayload = {
+  move_type: TMovePageActions;
+  source_identifier: string;
+  target_identifier: string;
+};

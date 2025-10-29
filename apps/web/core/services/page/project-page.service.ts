@@ -1,6 +1,6 @@
-// types
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TDocumentPayload, TPage, TPagesSummary } from "@plane/types";
+import type { TDocumentPayload, TMovePagePayload, TPage, TPagesSummary } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -190,10 +190,8 @@ export class ProjectPageService extends APIService {
       });
   }
 
-  async move(workspaceSlug: string, projectId: string, pageId: string, newProjectId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/move/`, {
-      new_project_id: newProjectId,
-    })
+  async move(workspaceSlug: string, pageId: string, data: TMovePagePayload): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/move/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

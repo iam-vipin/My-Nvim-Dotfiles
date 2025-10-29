@@ -1,7 +1,9 @@
-// types
 import type { Editor } from "@tiptap/react";
+// plane imports
 import type { TPage } from "@plane/types";
-import { ExternalEmbedNodeViewProps, TEmbedItem } from "@/types";
+// types
+import type { ExternalEmbedNodeViewProps, TEmbedItem } from "@/types";
+// local imports
 import type { PageEmbedExtensionAttributes } from "../extensions/page-embed/extension-config";
 import type { TPageNodesInfo } from "../extensions/page-embed/plugins/order-tracker-plugin";
 

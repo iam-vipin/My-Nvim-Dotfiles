@@ -3,7 +3,7 @@ import { makeObservable, observable, runInAction, action, computed, reaction } f
 import { computedFn } from "mobx-utils";
 import { EPageAccess } from "@plane/constants";
 // types
-import type { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
+import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
@@ -64,6 +64,15 @@ export interface IWorkspacePageStore {
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
+  movePage: ({
+    pageId,
+    data,
+    shouldSync,
+  }: {
+    pageId: string;
+    data: TMovePagePayload;
+    shouldSync?: boolean;
+  }) => Promise<void>;
   getOrFetchPageInstance: ({
     pageId,
     trackVisit,
@@ -776,6 +785,30 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = {
           title: "Failed",
           description: "Failed to move page internally, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description move a page to a project/teamspace
+   */
+  movePage: IWorkspacePageStore["movePage"] = async ({ pageId, data, shouldSync = true }) => {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    try {
+      if (shouldSync) {
+        await this.pageService.move(workspaceSlug, pageId, data);
+      }
+    } catch (error) {
+      console.error("Unable to move page", error);
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to move the page. Please try again later.",
         };
       });
       throw error;

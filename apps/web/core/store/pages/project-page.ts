@@ -266,7 +266,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
   get canCurrentUserMovePage() {
     // Shared access users cannot move pages
     if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
+      return this.isCurrentUserOwner || this.canEditWithSharedAccess;
     }
 
     // Fallback to regular access control

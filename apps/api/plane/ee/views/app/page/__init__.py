@@ -1,4 +1,5 @@
 from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet
+from .move import MovePageEndpoint
 
 # workspace level
 from .workspace.publish import WorkspacePagePublishEndpoint
@@ -24,7 +25,6 @@ from .project.base import (
     PagesDescriptionExtendedViewSet,
     PageDuplicateExtendedEndpoint,
 )
-from .project.move import MovePageEndpoint
 from .project.share import ProjectPageUserViewSet
 from .project.publish import ProjectPagePublishEndpoint
 from .project.restore import ProjectPageRestoreEndpoint

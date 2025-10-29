@@ -3229,4 +3229,30 @@ export default {
       },
     },
   },
+  pages: {
+    move_page: {
+      submit_button: {
+        default: "Move",
+        loading: "Moving",
+      },
+      cannot_move_to_teamspace: "Private and shared pages cannot be moved to a teamspace.",
+      placeholders: {
+        workspace_to_all: "Search for projects and teamspaces",
+        workspace_to_project: "Search for projects",
+        project_to_all: "Search for projects and teamspaces",
+        project_to_project: "Search for projects",
+        teamspace_to_all: "Search for projects and teamspaces",
+      },
+      toasts: {
+        success: {
+          title: "Success!",
+          message: "Page moved successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Page could not be moved. Please try again later.",
+        },
+      },
+    },
+  },
 };

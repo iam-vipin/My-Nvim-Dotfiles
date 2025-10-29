@@ -1,17 +1,13 @@
 "use client";
 
 import { FC } from "react";
-import { Emoji } from "emoji-picker-react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
 // eslint-disable-next-line import/order
 import useFontFaceObserver from "use-font-face-observer";
-// types
+// plane imports
+import { getEmojiSize, LUCIDE_ICONS_LIST, stringToEmoji } from "@plane/propel/emoji-icon-picker";
 import { TLogoProps } from "@plane/types";
-// ui
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
-// helpers
-import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
 
 type Props = {
   logo: TLogoProps;
@@ -55,7 +51,19 @@ export const Logo: FC<Props> = (props) => {
 
   // emoji
   if (in_use === "emoji") {
-    return <Emoji unified={emojiCodeToUnicode(value)} size={size} />;
+    return (
+      <span
+        className="flex items-center justify-center"
+        style={{
+          fontSize: `${getEmojiSize(size)}rem`,
+          lineHeight: `${getEmojiSize(size)}rem`,
+          height: size,
+          width: size,
+        }}
+      >
+        {stringToEmoji(emoji?.value || "")}
+      </span>
+    );
   }
 
   // icon

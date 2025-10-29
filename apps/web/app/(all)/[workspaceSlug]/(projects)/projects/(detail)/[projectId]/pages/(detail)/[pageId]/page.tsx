@@ -23,7 +23,6 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web imports
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -42,8 +41,7 @@ const PageDetailsPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails, getOrFetchPageInstance, removePageInstance, isNestedPagesEnabled } =
-    usePageStore(storeType);
+  const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -150,29 +148,6 @@ const PageDetailsPage = observer(() => {
     [projectId, workspaceSlug]
   );
 
-  const customRealtimeEventHandlers: TCustomEventHandlers = useMemo(
-    () => ({
-      moved: async ({ pageIds, data }) => {
-        if (data.new_project_id && data.new_page_id) {
-          // For project pages, handle the move to a different project
-          const newProjectId = data.new_project_id;
-          const newPageId = data.new_page_id;
-
-          // remove the old page instance from the store
-          if (pageIds.includes(page?.id ?? "")) {
-            removePageInstance(page?.id ?? "");
-          }
-
-          // get the new page instance from the store
-          await getOrFetchPageInstance({ pageId: newPageId, projectId: newProjectId });
-
-          router.replace(`/${workspaceSlug}/projects/${newProjectId}/pages/${newPageId}`);
-        }
-      },
-    }),
-    [workspaceSlug, router, getOrFetchPageInstance, removePageInstance, page?.id]
-  );
-
   useEffect(() => {
     if (page?.deleted_at && page?.id) {
       router.push(pageRootHandlers.getRedirectionLink());
@@ -233,7 +208,6 @@ const PageDetailsPage = observer(() => {
             webhookConnectionParams={webhookConnectionParams}
             projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}
-            customRealtimeEventHandlers={customRealtimeEventHandlers}
           />
           <IssuePeekOverview />
           <EpicPeekOverview />

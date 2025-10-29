@@ -1,6 +1,7 @@
+// plane imports
 import { EPageAccess } from "@plane/constants";
-import { EPageSharedUserAccess, TCollaborator, TPage } from "@plane/types";
-import { CreatePayload, BaseActionPayload } from "@/types";
+import { EPageSharedUserAccess, type TCollaborator, type TMovePageActions, type TPage } from "@plane/types";
+import type { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.
 export type ArchivedPayload = CreatePayload<{ archived_at: string | null }>;
@@ -25,8 +26,8 @@ export type UnpublishedPayload = CreatePayload<{
   pages_to_unpublish: { page_id: string }[];
 }>;
 export type MovedPayload = CreatePayload<{
-  new_project_id: string;
-  new_page_id: string;
+  new_entity_identifier: string;
+  move_type: TMovePageActions;
 }>;
 export type CollaboratorsUpdatedPayload = CreatePayload<{ users: TCollaborator[] }>;
 export type SharedPayload = CreatePayload<{

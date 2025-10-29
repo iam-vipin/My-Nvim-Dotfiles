@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from "react";
+import { useParams } from "next/navigation";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // types
 import type { IUserLite, TCollaborator } from "@plane/types";
+import { getMoveSourceAndTargetFromMoveType } from "@plane/utils";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
@@ -41,9 +43,11 @@ export const useRealtimePageEvents = ({
   customRealtimeEventHandlers,
   handlers,
 }: UsePageEventsProps) => {
+  // navigation
   const router = useAppRouter();
-  const { removePage, getPageById, getOrFetchPageInstance } = usePageStore(storeType);
-
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { removePage, getPageById, getOrFetchPageInstance, removePageInstance } = usePageStore(storeType);
   const { data: currentUser } = useUser();
   // derived values
   const { editorRef } = page.editor;
@@ -317,6 +321,27 @@ export const useRealtimePageEvents = ({
           });
         }
       },
+      moved: async ({ pageIds, data }) => {
+        const moveType = data.move_type;
+        const newEntityIdentifier = data.new_entity_identifier;
+
+        if (moveType && newEntityIdentifier && page.id) {
+          const { target: moveTarget } = getMoveSourceAndTargetFromMoveType(moveType);
+
+          // remove the old page instance from the store
+          if (pageIds.includes(page.id)) {
+            removePageInstance(page.id);
+
+            if (moveTarget === "workspace") {
+              router.replace(`/${workspaceSlug}/wiki/${page.id}`);
+            } else if (moveTarget === "project") {
+              router.replace(`/${workspaceSlug}/projects/${newEntityIdentifier}/pages/${page.id}`);
+            } else {
+              router.replace(`/${workspaceSlug}/teamspaces/${newEntityIdentifier}/pages/${page.id}`);
+            }
+          }
+        }
+      },
       ...customRealtimeEventHandlers,
     }),
     [
@@ -330,6 +355,8 @@ export const useRealtimePageEvents = ({
       currentUser,
       customRealtimeEventHandlers,
       handlers,
+      removePageInstance,
+      workspaceSlug,
     ]
   );
 

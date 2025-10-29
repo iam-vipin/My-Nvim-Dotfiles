@@ -3,7 +3,7 @@ import { observable, action, makeObservable, runInAction, computed, reaction } f
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import type { TPageFilters, TPage, TPageNavigationTabs, TPagesSummary } from "@plane/types";
+import type { TMovePagePayload, TPageFilters, TPage, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import type { TPageSharedUser } from "@/plane-web/services/page/page-share.service";
@@ -72,11 +72,13 @@ export interface ITeamspacePageStore {
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
-  movePageBetweenTeamspaces: (params: {
-    workspaceSlug: string;
+  movePage: ({
+    pageId,
+    data,
+    shouldSync,
+  }: {
     pageId: string;
-    newTeamspaceId: string;
-    teamspaceId: string;
+    data: TMovePagePayload;
     shouldSync?: boolean;
   }) => Promise<void>;
   getOrFetchPageInstance: ({
@@ -148,7 +150,6 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       createPage: action,
       removePage: action,
       movePageInternally: action,
-      movePageBetweenTeamspaces: action,
       updatePagesInStore: action,
       // page sharing actions
       fetchPageSharedUsers: action,
@@ -654,40 +655,6 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   };
 
   /**
-   * @description move a page between teamspaces
-   */
-  movePageBetweenTeamspaces = async ({
-    workspaceSlug,
-    pageId,
-    newTeamspaceId,
-    teamspaceId,
-    shouldSync = true,
-  }: {
-    workspaceSlug: string;
-    pageId: string;
-    newTeamspaceId: string;
-    teamspaceId: string;
-    shouldSync?: boolean;
-  }) => {
-    try {
-      if (shouldSync) {
-        // Note: TeamspacePageService may need move method added
-        await this.teamspacePageService.move?.(workspaceSlug, teamspaceId, pageId, newTeamspaceId);
-      }
-    } catch (error) {
-      console.error("Unable to move page", error);
-      runInAction(() => {
-        this.loader = undefined;
-        this.error = {
-          title: "Failed",
-          description: "Failed to move a page, Please try again later.",
-        };
-      });
-      throw error;
-    }
-  };
-
-  /**
    * @description fetch the details of a page
    * @param {string} pageId
    */
@@ -865,6 +832,30 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       await pageInstance.update(updatePayload);
     } catch (error) {
       console.error("Unable to move page internally", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description move a page to a project/teamspace
+   */
+  movePage: ITeamspacePageStore["movePage"] = async ({ pageId, data, shouldSync = true }) => {
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug) return;
+
+    try {
+      if (shouldSync) {
+        await this.teamspacePageService.move(workspaceSlug, pageId, data);
+      }
+    } catch (error) {
+      console.error("Unable to move page", error);
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to move the page. Please try again later.",
+        };
+      });
       throw error;
     }
   };

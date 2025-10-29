@@ -2,31 +2,18 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { FolderOutput } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 // core imports
-import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
-// plane web hooks
-import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
+import { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
 // local imports
-import { MovePageModal } from "../modals/move";
+import { MovePageModal } from "../modals/move-page-modal";
 
 export const PageMoveControl = observer((props: TPageMoveControlProps) => {
   const { page } = props;
   // states
   const [isMovePageModalOpen, setIsMovePageModalOpen] = useState(false);
-  // navigation
-  const { workspaceSlug } = useParams();
-  // derived values
-  const { canCurrentUserMovePage } = page;
-  // page flag
-  const { isMovePageEnabled } = usePageFlag({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-  });
-
-  if (!isMovePageEnabled || !canCurrentUserMovePage) return null;
 
   return (
     <>

@@ -17,19 +17,30 @@ from plane.db.models import (
     UserFavorite,
     Workspace,
     ProjectPage,
-    FileAsset,
     PageVersion,
     UserRecentVisit,
-    ProjectMember,
 )
 from plane.utils.exception_logger import log_exception
 from plane.ee.bgtasks.move_page import move_page
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
-from plane.ee.utils.page_events import PageAction
+from plane.ee.utils.page_events import PageAction, MoveActionEnum
 from plane.utils.url import normalize_url_path
-from plane.ee.models import PageUser, WorkItemPage
+from plane.ee.models import (
+    PageUser,
+)
+from plane.ee.utils.page_operations import (
+    unlink_pages_from_project,
+    unlink_pages_from_teamspace,
+    make_pages_workspace_level,
+    link_pages_to_project,
+    link_pages_to_teamspace,
+    remove_pages_from_workspace_level,
+    move_entities_to_workspace,
+    move_entities_to_teamspace,
+    move_entities_to_project,
+)
 
 
 @shared_task
@@ -275,79 +286,62 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
             data = {"new_page_id": str(old_to_new_page_mapping[page_id].id)}
 
         elif action == PageAction.MOVED:
-            new_project_id = extra["new_project_id"]
-            parent_id = extra["parent_id"]
-            new_page_id = extra["new_page_id"]
-            data = {"new_project_id": new_project_id, "new_page_id": str(new_page_id)}
+            old_page_parent_id = extra["old_page_parent_id"]
+            move_type = extra["move_type"]
+            new_entity_identifier = extra["new_entity_identifier"]
+            data = {
+                "new_entity_identifier": new_entity_identifier,
+                "move_type": move_type,
+                "old_page_parent_id": str(old_page_parent_id),
+            }
 
-            # update the sub pages with the new page id of the duplicated page
-            Page.objects.filter(parent_id=page_id, workspace__slug=slug).update(
-                parent_id=new_page_id, updated_at=timezone.now(), updated_by=user_id
-            )
+            # Handle page association changes based on move type
+            if move_type in [
+                MoveActionEnum.PROJECT_TO_WORKSPACE.value,
+                MoveActionEnum.TEAMSPACE_TO_WORKSPACE.value,
+            ]:
+                if move_type == MoveActionEnum.PROJECT_TO_WORKSPACE.value:
+                    unlink_pages_from_project(descendants_ids, workspace_id)
 
-            if new_project_id:
-                # Update the project id for the project pages
-                ProjectPage.objects.filter(page_id__in=descendants_ids).update(
-                    project_id=new_project_id,
-                    updated_at=timezone.now(),
-                    updated_by=user_id,
-                )
+                if move_type == MoveActionEnum.TEAMSPACE_TO_WORKSPACE.value:
+                    unlink_pages_from_teamspace(descendants_ids, workspace_id)
 
-                # Update the project id for the work item pages
-                WorkItemPage.objects.filter(
-                    page_id__in=descendants_ids,
-                    project_id=project_id,
-                    workspace__slug=slug,
-                ).delete()
+                make_pages_workspace_level(descendants_ids, workspace_id, user_id)
+                move_entities_to_workspace(descendants_ids, slug, user_id)
 
-                # Update the project id for the file assets
-                FileAsset.objects.filter(page_id__in=descendants_ids, project_id=project_id).update(
-                    project_id=new_project_id,
-                    updated_at=timezone.now(),
-                    updated_by=user_id,
-                )
+            elif move_type in [
+                MoveActionEnum.PROJECT_TO_TEAMSPACE.value,
+                MoveActionEnum.TEAMSPACE_TO_TEAMSPACE.value,
+                MoveActionEnum.WORKSPACE_TO_TEAMSPACE.value,
+            ]:
+                if move_type == MoveActionEnum.PROJECT_TO_TEAMSPACE.value:
+                    unlink_pages_from_project(descendants_ids, workspace_id)
 
-                # Update the project id for the deploy board
-                DeployBoard.objects.filter(
-                    entity_identifier__in=descendants_ids,
-                    entity_name="page",
-                    project_id=project_id,
-                ).update(
-                    project_id=new_project_id,
-                    updated_at=timezone.now(),
-                    updated_by=user_id,
-                )
+                elif move_type == MoveActionEnum.TEAMSPACE_TO_TEAMSPACE.value:
+                    unlink_pages_from_teamspace(descendants_ids, workspace_id)
 
-                # Step 1: Get users the page is currently shared with in the old project
-                shared_users = PageUser.objects.filter(page_id__in=descendants_ids, project_id=project_id).values_list(
-                    "user_id", flat=True
-                )
+                elif move_type == MoveActionEnum.WORKSPACE_TO_TEAMSPACE.value:
+                    remove_pages_from_workspace_level(descendants_ids, workspace_id, user_id)
 
-                # Step 2: Get users who are NOT in the new project (i.e., remove them)
-                removed_user_ids = (
-                    ProjectMember.objects.filter(project_id=new_project_id, is_active=True)
-                    .exclude(member_id__in=shared_users)
-                    .values_list("member_id", flat=True)
-                )
+                link_pages_to_teamspace(descendants_ids, new_entity_identifier, workspace_id, user_id)
+                move_entities_to_teamspace(descendants_ids, slug, user_id, new_entity_identifier)
 
-                # Step 3: Delete PageUser records for removed users in the new project
-                PageUser.objects.filter(
-                    page_id__in=descendants_ids,
-                    project_id=new_project_id,
-                    user_id__in=removed_user_ids,
-                    workspace__slug=slug,
-                ).delete()
+            elif move_type in [
+                MoveActionEnum.PROJECT_TO_PROJECT.value,
+                MoveActionEnum.WORKSPACE_TO_PROJECT.value,
+                MoveActionEnum.TEAMSPACE_TO_PROJECT.value,
+            ]:
+                if move_type == MoveActionEnum.PROJECT_TO_PROJECT.value:
+                    unlink_pages_from_project(descendants_ids, workspace_id)
 
-                # Step 4: Move PageUser entries from old project to new project
-                PageUser.objects.filter(page_id__in=descendants_ids, project_id=project_id).update(
-                    project_id=new_project_id,
-                    updated_at=timezone.now(),
-                    updated_by=user_id,
-                )
+                elif move_type == MoveActionEnum.WORKSPACE_TO_PROJECT.value:
+                    remove_pages_from_workspace_level(descendants_ids, workspace_id, user_id)
 
-                # Background job to handle favorites
-                for descendant_id in descendants_ids:
-                    move_page.delay(descendant_id, project_id, new_project_id)
+                elif move_type == MoveActionEnum.TEAMSPACE_TO_PROJECT.value:
+                    unlink_pages_from_teamspace(descendants_ids, workspace_id)
+
+                link_pages_to_project(descendants_ids, new_entity_identifier, workspace_id, user_id)
+                move_entities_to_project(descendants_ids, slug, user_id, new_entity_identifier)
 
         elif action == PageAction.MOVED_INTERNALLY:
             new_parent_id = extra["new_parent_id"]

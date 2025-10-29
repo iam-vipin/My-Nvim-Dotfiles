@@ -220,7 +220,14 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
-    return false;
+    // Shared access users cannot move pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner || this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const userRole = this.getUserWorkspaceRole();
+    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**

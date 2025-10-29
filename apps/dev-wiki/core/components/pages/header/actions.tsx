@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
+import { PageOptionsDropdown } from "@/components/pages";
 // plane web components
 import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
 // plane web components
@@ -16,6 +16,7 @@ import { TPageInstance } from "@/store/pages/base-page";
 import { PageArchivedBadge } from "./archived-badge";
 import { PageCopyLinkControl } from "./copy-link-control";
 import { PageFavoriteControl } from "./favorite-control";
+import { PageMoveControl } from "./move-control";
 import { PageOfflineBadge } from "./offline-badge";
 
 type Props = {
@@ -31,7 +32,7 @@ export const PageHeaderActions: React.FC<Props> = observer((props) => {
       <PageArchivedBadge page={page} />
       <PageOfflineBadge />
       <PageLockControl page={page} storeType={storeType} />
-      <PageInfoPopover page={page} />
+      <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />
       <PageFavoriteControl page={page} />
       <PageCommentControl page={page} storeType={storeType} />

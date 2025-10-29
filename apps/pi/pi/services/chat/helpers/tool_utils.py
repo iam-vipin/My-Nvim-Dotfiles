@@ -241,7 +241,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - Treat retrieval results as candidates, not ground truth.
 - Use results ONLY if they directly match the user's current intent and entities; otherwise ignore them.
 - Never copy retrieval text verbatim into parameters like description_html unless the user explicitly asked for it.
-- Prefer a concise description synthesized from the user's request when uncertain.
+- When the user provides guidance about what should be in a description (e.g., "with details about X"), generate intelligent, informative content based on that topic - do NOT just copy the user's instruction text verbatim into the description.
+- If the user's request doesn't refer to any specific topic to fill in the description, or is vague or unclear, provide a concise description synthesized from the user's request when uncertain.
 - Always scope retrieval to the current project_id when available; do not use workspace-wide results if a project is set.
 
 **PLURAL GENERATION POLICY (CRITICAL):**

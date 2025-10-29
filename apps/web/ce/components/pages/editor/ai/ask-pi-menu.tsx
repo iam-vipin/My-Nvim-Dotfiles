@@ -88,7 +88,7 @@ export const AskPiMenu: React.FC<Props> = (props) => {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-custom-text-200">Pi is answering...</p>
+          <p className="text-sm text-custom-text-200">AI is answering...</p>
         )}
       </div>
       <div className="py-3 px-4">
@@ -101,7 +101,7 @@ export const AskPiMenu: React.FC<Props> = (props) => {
             className="w-full bg-transparent border-none outline-none placeholder:text-custom-text-400 text-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tell Pi what to do..."
+            placeholder="Tell AI what to do..."
           />
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <CircleArrowUp className="size-4 text-custom-text-200" />

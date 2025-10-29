@@ -9,7 +9,7 @@ import { mutate } from "swr";
 // icons
 import { ArrowLeft, Check, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { MembersPropertyIcon } from "@plane/propel/icons";
+import { ListLayoutIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
 // ui
@@ -38,7 +38,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Import Data",
     key: "display-import-data",
-    icon: List,
+    icon: ListLayoutIcon,
   },
   {
     title: "Users",

@@ -28,7 +28,6 @@ import {
   BookOpen,
   Box,
   Briefcase,
-  Calendar,
   Camera,
   CameraOff,
   Cast,
@@ -124,7 +123,6 @@ import {
   Link,
   Link2,
   Linkedin,
-  List,
   Loader,
   Lock,
   LogIn,
@@ -151,7 +149,14 @@ import {
   Search,
   User,
 } from "lucide-react";
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
+import {
+  CalendarLayoutIcon,
+  ListLayoutIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@plane/propel/icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },
@@ -183,7 +188,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "BookOpen", element: BookOpen },
   { name: "Box", element: Box },
   { name: "Briefcase", element: Briefcase },
-  { name: "Calendar", element: Calendar },
+  { name: "CalendarLayoutIcon", element: CalendarLayoutIcon },
   { name: "Camera", element: Camera },
   { name: "CameraOff", element: CameraOff },
   { name: "Cast", element: Cast },
@@ -284,7 +289,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Link", element: Link },
   { name: "Link2", element: Link2 },
   { name: "Linkedin", element: Linkedin },
-  { name: "List", element: List },
+  { name: "ListLayoutIcon", element: ListLayoutIcon },
   { name: "Loader", element: Loader },
   { name: "Lock", element: Lock },
   { name: "LogIn", element: LogIn },

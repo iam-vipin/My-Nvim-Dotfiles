@@ -604,14 +604,10 @@ class SearchEndpoint(BaseAPIView):
                         .order_by("-created_at")
                     )
 
-                    users = (
-                        users
-                        .distinct()
-                        .values(
-                            "member__avatar_url",
-                            "member__display_name",
-                            "member__id",
-                        )
+                    users = users.distinct().values(
+                        "member__avatar_url",
+                        "member__display_name",
+                        "member__id",
                     )
 
                     response_data["user_mention"] = list(users[:count])

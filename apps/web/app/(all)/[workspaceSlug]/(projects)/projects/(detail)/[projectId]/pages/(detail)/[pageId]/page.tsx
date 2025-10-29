@@ -23,12 +23,13 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
+// plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
@@ -40,7 +41,7 @@ const PageDetailsPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails } = usePageStore(storeType);
+  const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -64,9 +65,7 @@ const PageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && projectId && pageId
-      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
-      : null,
+    workspaceSlug && projectId && pageId ? () => fetchPageDetails(projectId?.toString(), pageId.toString()) : null,
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -128,8 +127,8 @@ const PageDetailsPage = observer(() => {
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
             file,
-            projectId: projectId?.toString() ?? "",
             workspaceSlug: workspaceSlug?.toString() ?? "",
+            projectId: projectId?.toString() ?? "",
           });
           return asset_id;
         },
@@ -162,9 +161,25 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
+  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
+    return (
+      <div className="size-full flex flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold text-center">Please upgrade your plan to view this nested page</h3>
+        <p className="text-sm text-custom-text-200 text-center mt-3">
+          Please upgrade your plan to view this nested page
+        </p>
+        <Link
+          href={`/${workspaceSlug}/projects/${projectId}/pages`}
+          className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}
+        >
+          View other Pages
+        </Link>
+      </div>
+    );
+
   if (pageDetailsError || !canCurrentUserAccessPage)
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center">
+      <div className="size-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Page not found</h3>
         <p className="text-sm text-custom-text-200 text-center mt-3">
           The page you are trying to access doesn{"'"}t exist or you don{"'"}t have permission to view it.
@@ -184,17 +199,18 @@ const PageDetailsPage = observer(() => {
     <>
       <PageHead title={name} />
       <div className="flex h-full flex-col justify-between">
-        <div className="relative h-full w-full flex-shrink-0 flex flex-col overflow-hidden">
+        <div className="relative size-full flex-shrink-0 flex flex-col overflow-hidden">
           <PageRoot
             config={pageRootConfig}
             handlers={pageRootHandlers}
             storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
+            projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId?.toString()}
           />
           <IssuePeekOverview />
+          <EpicPeekOverview />
         </div>
       </div>
     </>

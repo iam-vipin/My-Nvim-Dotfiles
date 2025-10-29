@@ -1,0 +1,85 @@
+import { useMemo } from "react";
+import { isEmpty, size } from "lodash-es";
+import { observer } from "mobx-react";
+// plane imports
+import { EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { EUserWorkspaceRoles } from "@plane/types";
+// components
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+// hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// local imports
+import InitiativeLayoutLoader from "./initiative-layout-loader";
+import { InitiativeKanbanLayout } from "./layouts/kanban";
+import { InitiativesListLayout } from "./layouts/list";
+
+export const InitiativesRoot = observer(() => {
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { initiative, initiativeFilters } = useInitiatives();
+  const { toggleCreateInitiativeModal } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
+  const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
+  const activeLayout = displayFilters.layout;
+
+  const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
+  const hasWorkspaceMemberLevelPermissions = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+
+  const INITIATIVE_ACTIVE_LAYOUTS = useMemo(
+    () => ({
+      list: <InitiativesListLayout />,
+      kanban: <InitiativeKanbanLayout />,
+    }),
+    []
+  );
+
+  if (initiative.fetchingFilteredInitiatives) return <InitiativeLayoutLoader layout={activeLayout} />;
+
+  const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
+    (arr) => Array.isArray(arr) && arr.length === 0
+  );
+  const isEmptyInitiatives = isEmpty(groupedInitiativeIds) || emptyGroupedInitiativeIds;
+
+  if (emptyGroupedInitiativeIds && size(initiative.initiativesMap) > 0) {
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <SimpleEmptyState
+          title={t("initiatives.empty_state.search.title")}
+          description={t("initiatives.empty_state.search.description")}
+          assetPath={searchedResolvedPath}
+        />
+      </div>
+    );
+  }
+  if (isEmptyInitiatives) {
+    return (
+      <EmptyStateDetailed
+        assetKey="initiative"
+        title={t("workspace_empty_state.initiatives.title")}
+        description={t("workspace_empty_state.initiatives.description")}
+        actions={[
+          {
+            label: t("workspace_empty_state.initiatives.cta_primary"),
+            onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
+            disabled: !hasWorkspaceMemberLevelPermissions,
+          },
+        ]}
+      />
+    );
+  }
+
+  return INITIATIVE_ACTIVE_LAYOUTS[activeLayout || DEFAULT_INITIATIVE_LAYOUT];
+});

@@ -1,0 +1,124 @@
+# Python imports
+import asyncio
+
+import typer
+
+# Third-party imports
+from sqlmodel import select
+
+from pi.app.models import LlmModel
+
+# Module imports
+from pi.core.db.plane_pi.lifecycle import get_async_session
+
+llm_id_map = {
+    "gpt-4o": "46812713-ca2d-4411-ac21-838b553501f0",
+    "gpt-4o-mini": "059fdc71-75b5-4897-93d5-b61e0ed11b7e",
+    "gpt-4.1": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "gpt-4.1-nano": "fa8e33df-7130-4d3d-b4d8-ca627d3208af",
+    "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
+    "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
+    "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
+}
+
+# Data for sync.
+LLMS_DATA = [
+    {
+        "id": llm_id_map["gpt-4o"],
+        "name": "GPT-4o",
+        "description": "OpenAI's GPT-4o model.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4o",
+        "max_tokens": 128000,
+    },
+    {
+        "id": llm_id_map["gpt-4o-mini"],
+        "name": "GPT-4o mini",
+        "description": "OpenAI's GPT-4o mini model.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4o-mini",
+        "max_tokens": 128000,
+    },
+    {
+        "id": llm_id_map["gpt-4.1"],
+        "name": "GPT-4.1",
+        "description": "OpenAI's GPT-4.1 model.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4.1",
+        "max_tokens": 128000,
+    },
+    {
+        "id": llm_id_map["gpt-4.1-nano"],
+        "name": "GPT-4.1 nano",
+        "description": "OpenAI's GPT-4.1 nano model - ultra-fast and cost-efficient.",
+        "provider": "OpenAI",
+        "model_key": "gpt-4.1-nano",
+        "max_tokens": 1000000,
+    },
+    {
+        "id": llm_id_map["gpt-5-standard"],
+        "name": "GPT-5 Standard",
+        "description": "OpenAI's GPT-5 model with medium reasoning capabilities - balanced performance and speed.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-standard",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["gpt-5-fast"],
+        "name": "GPT-5 Fast",
+        "description": "OpenAI's GPT-5 model with low reasoning capabilities - optimized for speed and cost efficiency.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5-fast",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["claude-sonnet-4"],
+        "name": "Claude Sonnet 4",
+        "description": "Anthropic's Claude Sonnet 4 model - powerful reasoning and analysis.",
+        "provider": "Anthropic",
+        "model_key": "claude-sonnet-4",
+        "max_tokens": 200000,
+    },
+]
+
+tracked_fields = ["name", "description", "provider", "model_key", "max_tokens"]
+
+
+async def sync_llms():
+    async for session in get_async_session():
+        try:
+            for llm_data in LLMS_DATA:
+                llm_id = llm_data.get("id")
+
+                statement = select(LlmModel).where(LlmModel.id == llm_id)  # type: ignore[var-annotated]
+                execution = await session.exec(statement)
+                llm = execution.first()
+
+                if llm:
+                    updated = False
+                    for key in tracked_fields:
+                        old_val = getattr(llm, key)
+                        new_val = llm_data.get(key)
+
+                        if old_val != new_val:
+                            setattr(llm, key, new_val)
+                            updated = True
+
+                    if updated:
+                        typer.echo(f"Updated LLM: {llm.name}")
+                    else:
+                        typer.echo(f"Unchanged LLM: {llm.name}")
+                else:
+                    new_llm_model = LlmModel(**llm_data)
+                    session.add(new_llm_model)
+                    typer.echo(f"Created LLM: {llm_data["name"]}")
+
+            await session.commit()
+            typer.echo("LLMs synced successfully.")
+        except Exception as e:
+            await session.rollback()
+            typer.echo(f"An error occurred during sync: {e}")
+
+
+if __name__ == "__main__":
+    asyncio.run(sync_llms())

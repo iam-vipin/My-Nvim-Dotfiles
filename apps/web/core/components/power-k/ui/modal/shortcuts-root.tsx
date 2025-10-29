@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, Fragment } from "react";
 import { Search, X } from "lucide-react";
@@ -16,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ShortcutsModal: FC<Props> = (props) => {
+export const PagesAppShortcutsModal: FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");
@@ -58,7 +56,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex h-full items-center justify-center">
-                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
+                <div className="flex w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>

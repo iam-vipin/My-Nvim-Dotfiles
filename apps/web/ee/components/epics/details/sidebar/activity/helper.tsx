@@ -1,6 +1,13 @@
 import type { ReactNode } from "react";
 import { AlignLeft, ArrowRightLeft, Briefcase, CalendarDays, FileText, Link, Paperclip, Type } from "lucide-react";
-import { CustomersIcon, EpicIcon, EstimatePropertyIcon, LabelPropertyIcon, MembersPropertyIcon, StatePropertyIcon } from "@plane/propel/icons";
+import {
+  CustomersIcon,
+  EpicIcon,
+  EstimatePropertyIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  StatePropertyIcon,
+} from "@plane/propel/icons";
 import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
 import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";

@@ -62,11 +62,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
+  const FEATURES_LIST: (keyof TProjectFeaturesList)[] = ["is_milestone_enabled", "is_time_tracking_enabled"];
+
   const handleSubmit = async (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
     // making the request to update the project feature
-    const settingsPayload = {
+    let settingsPayload = {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {
@@ -77,14 +79,18 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         },
       });
     });
-    const updatePromises = [updateProjectPromise];
-    if (["is_milestone_enabled", "is_time_tracking_enabled"].includes(featureProperty)) {
+
+    let updatePromise = updateProjectPromise;
+
+    if (FEATURES_LIST.includes(featureProperty as keyof TProjectFeaturesList)) {
+      settingsPayload = {
+        [featureProperty]: !isProjectFeatureEnabled(projectId, featureProperty as keyof TProjectFeaturesList),
+      };
       const toggleProjectFeaturesPromise = toggleProjectFeatures(workspaceSlug, projectId, settingsPayload);
-      updatePromises.push(toggleProjectFeaturesPromise);
+      updatePromise = toggleProjectFeaturesPromise;
     }
 
-    const promises = Promise.all(updatePromises);
-    setPromiseToast(promises, {
+    setPromiseToast(updatePromise, {
       loading: "Updating project feature...",
       success: {
         title: "Success!",
@@ -97,9 +103,12 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
     });
   };
 
-  const isFeatureEnabled = (property: string): boolean =>
-    Boolean(currentProjectDetails?.[property as keyof IProject]) ||
-    isProjectFeatureEnabled(projectId, property as keyof TProjectFeaturesList);
+  const isFeatureEnabled = (property: string): boolean => {
+    if (FEATURES_LIST.includes(property as keyof TProjectFeaturesList)) {
+      return isProjectFeatureEnabled(projectId, property as keyof TProjectFeaturesList);
+    }
+    return Boolean(currentProjectDetails?.[property as keyof IProject]);
+  };
   if (!currentUser) return <></>;
 
   return (

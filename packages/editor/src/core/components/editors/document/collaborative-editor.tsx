@@ -57,7 +57,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     titleEditor,
     isEditorContentReady,
     isContentInIndexedDb,
-    hasServerConnectionFailed: connectionFailed
+    hasServerConnectionFailed: connectionFailed,
   } = useCollaborativeEditor({
     disabledExtensions,
     editable,

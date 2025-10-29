@@ -1,3 +1,4 @@
+import type { FC} from "react";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
@@ -10,14 +11,15 @@ type Props = {
   customButton?: React.ReactNode;
   handleSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   selectedWorkItemIds?: string[];
+  milestoneId?: string;
 };
-export const MilestoneWorkItemActionButton = (props: Props) => {
-  const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds } = props;
+export const MilestoneWorkItemActionButton: FC<Props> = (props) => {
+  const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds, milestoneId } = props;
 
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
 
   const workItemSearchCallBack = async (params: TProjectIssuesSearchParams) =>
-    milestoneService.workItemsSearch(workspaceSlug, projectId, params.search);
+    milestoneService.workItemsSearch(workspaceSlug, projectId, params);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement, MouseEvent>) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export const MilestoneWorkItemActionButton = (props: Props) => {
         workspaceSlug={workspaceSlug}
         isOpen={workItemsModal}
         handleClose={() => setWorkItemsModal(false)}
-        searchParams={{}}
+        searchParams={{ milestone_id: milestoneId }}
         selectedWorkItemIds={selectedWorkItemIds}
         handleOnSubmit={handleSubmit}
         workItemSearchServiceCallback={workItemSearchCallBack}

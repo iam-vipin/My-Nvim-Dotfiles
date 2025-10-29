@@ -5,12 +5,13 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse, TMilestone } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, ModalCore } from "@plane/ui";
+import { Button, EModalPosition, Input, Loader, ModalCore } from "@plane/ui";
 import { cn, getChangedFields, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import useKeypress from "@/hooks/use-keypress";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { WorkspaceService } from "@/plane-web/services";
 import { MilestoneWorkItemActionButton } from "./quick-action-button";
@@ -50,6 +51,9 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
     fetchMilestoneWorkItems,
   } = useMilestones();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
+
+  // states
+  const [isWorkItemsLoading, setIsWorkItemsLoading] = useState(false);
 
   // derived values
   const data = milestoneId ? getMilestoneById(projectId, milestoneId) : undefined;
@@ -102,7 +106,6 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
       : createMilestone(workspaceSlug, projectId, payload);
     await promise
       .then((response) => {
-        onClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -110,6 +113,8 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
         });
 
         if (response?.id) handleAddWorkItems(selectedWorkItemIds, response.id);
+
+        onClose();
       })
       .catch(() => {
         setToast({
@@ -129,12 +134,23 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
 
   // fetch work items when modal is open
   useEffect(() => {
-    (async () => {
-      if (isOpen && milestoneId) {
-        const workItemIds = await fetchMilestoneWorkItems(workspaceSlug, projectId, milestoneId);
-        setSelectedWorkItemIds(workItemIds);
-      }
-    })();
+    if (isOpen && milestoneId) {
+      setIsWorkItemsLoading(true);
+      fetchMilestoneWorkItems(workspaceSlug, projectId, milestoneId)
+        .then((workItemIds) => {
+          setSelectedWorkItemIds(workItemIds);
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Failed to fetch work items. Please try again.",
+          });
+        })
+        .finally(() => {
+          setIsWorkItemsLoading(false);
+        });
+    }
   }, [isOpen, milestoneId, fetchMilestoneWorkItems, workspaceSlug, projectId]);
 
   // ensure data populates the form when available; fallback to defaultValues
@@ -147,8 +163,12 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
     }
   }, [isOpen, data, reset]);
 
+  useKeypress("Escape", () => {
+    if (isOpen) onClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP}>
       <div className="p-4">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
@@ -224,17 +244,24 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
                 projectId={projectId}
                 workspaceSlug={workspaceSlug}
                 customButton={
-                  <Button variant="neutral-primary" size="sm" className="text-custom-text-200 text-xs">
-                    <LayersIcon className="size-3" />
-                    {selectedWorkItemIds.length > 0 ? (
-                      <span className="text-xs">{selectedWorkItemIds.length}</span>
-                    ) : (
-                      "Link work items"
-                    )}
-                  </Button>
+                  isWorkItemsLoading ? (
+                    <Loader>
+                      <Loader.Item height="28px" width="48px" />
+                    </Loader>
+                  ) : (
+                    <Button variant="neutral-primary" size="sm" className="text-xs text-custom-text-100">
+                      <LayersIcon className="size-3" />
+                      {selectedWorkItemIds.length > 0 ? (
+                        <span className="text-xs">{selectedWorkItemIds.length}</span>
+                      ) : (
+                        "Link work items"
+                      )}
+                    </Button>
+                  )
                 }
                 handleSubmit={handleWorkItemsSubmit}
                 selectedWorkItemIds={selectedWorkItemIds}
+                milestoneId={milestoneId}
               />
               <div className="space-y-1 flex gap-2">
                 <Controller

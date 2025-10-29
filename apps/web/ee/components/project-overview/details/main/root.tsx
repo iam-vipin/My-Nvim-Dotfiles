@@ -28,7 +28,6 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   const { projectOverviewSidebarCollapsed } = useAppTheme();
   // helper hooks
   const { fetchLinks } = useLinks(workspaceSlug.toString(), projectId.toString());
-  const { fetchMilestones } = useMilestones();
 
   useSWR(
     projectId && workspaceSlug ? `PROJECT_LINKS_${projectId}` : null,
@@ -42,16 +41,6 @@ export const ProjectOverviewMainContentRoot: FC<Props> = (props) => {
   useSWR(
     projectId && workspaceSlug ? `PROJECT_ATTACHMENTS_${projectId}` : null,
     projectId && workspaceSlug ? () => fetchAttachments(workspaceSlug.toString(), projectId.toString()) : null,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
-
-  useSWR(
-    projectId && workspaceSlug ? `PROJECT_MILESTONES_${projectId}` : null,
-    projectId && workspaceSlug ? () => fetchMilestones(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

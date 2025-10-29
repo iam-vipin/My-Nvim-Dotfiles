@@ -1,7 +1,7 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { MilestoneInstance } from "@plane/shared-state";
-import type { ISearchIssueResponse, TMilestone } from "@plane/types";
+import type { TMilestone } from "@plane/types";
 // services
 import milestoneService from "@/plane-web/services/milestone.service";
 // stores
@@ -31,12 +31,11 @@ export interface IMilestoneStore {
     projectId: string,
     milestoneId: string,
     data: Partial<TMilestone>
-  ) => Promise<void>;
+  ) => Promise<TMilestone>;
   deleteMilestone: (workspaceSlug: string, projectId: string, milestoneId: string) => Promise<void>;
 
   // work item actions
   fetchMilestoneWorkItems: (workspaceSlug: string, projectId: string, milestoneId: string) => Promise<string[]>;
-  searchWorkItems: (workspaceSlug: string, projectId: string, query: string) => Promise<ISearchIssueResponse[]>;
   removeWorkItemFromMilestone: (
     workspaceSlug: string,
     projectId: string,
@@ -74,7 +73,6 @@ export class MilestoneStore implements IMilestoneStore {
       updateMilestone: action,
       deleteMilestone: action,
       fetchMilestoneWorkItems: action,
-      searchWorkItems: action,
       removeWorkItemFromMilestone: action,
       addWorkItemsToMilestone: action,
     });
@@ -156,7 +154,7 @@ export class MilestoneStore implements IMilestoneStore {
     projectId: string,
     milestoneId: string,
     data: Partial<TMilestone>
-  ): Promise<void> => {
+  ): Promise<TMilestone> => {
     try {
       const instance = this.getMilestoneById(projectId, milestoneId);
       if (!instance) throw new Error("Milestone not found");
@@ -166,6 +164,8 @@ export class MilestoneStore implements IMilestoneStore {
       runInAction(() => {
         instance.update(updatedMilestone);
       });
+
+      return updatedMilestone;
     } catch (error) {
       console.error("Failed to update milestone", error);
       throw error;
@@ -241,9 +241,6 @@ export class MilestoneStore implements IMilestoneStore {
       throw error;
     }
   };
-
-  searchWorkItems = async (workspaceSlug: string, projectId: string, query: string): Promise<ISearchIssueResponse[]> =>
-    await milestoneService.workItemsSearch(workspaceSlug, projectId, query);
 
   removeWorkItemFromMilestone = async (
     workspaceSlug: string,

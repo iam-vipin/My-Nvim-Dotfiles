@@ -38,9 +38,13 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
         ).values_list("issue_id", flat=True)
 
         # Base queryset with basic filters
-        issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-        ).prefetch_related("labels", "assignees")
+        issue_queryset = (
+            Issue.issue_and_epics_objects.filter(
+                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
+            )
+            .select_related("type")
+            .prefetch_related("labels", "assignees")
+        )
         serializer = MilestoneWorkItemResponseSerializer(issue_queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -105,8 +109,12 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
         ).values_list("issue_id", flat=True)
 
         # Base queryset with basic filters
-        issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-        ).prefetch_related("labels", "assignees")
+        issue_queryset = (
+            Issue.issue_and_epics_objects.filter(
+                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
+            )
+            .select_related("type")
+            .prefetch_related("labels", "assignees")
+        )
         serializer = MilestoneWorkItemResponseSerializer(issue_queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

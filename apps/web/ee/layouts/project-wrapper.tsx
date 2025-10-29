@@ -9,6 +9,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useFlag, useIssueTypes } from "@/plane-web/hooks/store";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // props
@@ -21,11 +22,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     fetchAllEpicPropertiesAndOptions,
   } = useIssueTypes();
   const { fetchWorkflowStates } = useProjectState();
+  const { fetchMilestones, isMilestonesEnabled } = useMilestones();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
   const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
   const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
-
+  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug?.toString(), projectId?.toString());
   // fetching all work item types and properties
   useSWR(
     workspaceSlug && projectId && isWorkItemTypeEnabled
@@ -57,6 +59,17 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching project level milestones
+  useSWR(
+    projectId && workspaceSlug && isMilestonesFeatureEnabled ? `PROJECT_MILESTONES_${projectId}` : null,
+    projectId && workspaceSlug && isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   return (

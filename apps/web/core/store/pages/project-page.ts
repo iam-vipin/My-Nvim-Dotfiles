@@ -193,9 +193,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       return this.isCurrentUserOwner;
     }
 
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+    return this.isCurrentUserOwner;
   }
 
   /**

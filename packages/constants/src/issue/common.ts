@@ -11,6 +11,7 @@ import {
   ADDITIONAL_SPREADSHEET_PROPERTY_LIST,
   ISSUE_ADDITIONAL_DISPLAY_PROPERTIES,
   ISSUE_ADDITIONAL_DISPLAY_PROPERTIES_KEYS,
+  ISSUE_GROUP_BY_OPTIONS_EXTENDED,
 } from "./common-extended";
 
 export const ALL_ISSUES = "All Issues";
@@ -37,6 +38,7 @@ export enum EIssueGroupByToServerOptions {
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "team_project" = "project_id",
+  "milestone" = "milestone_id",
 }
 
 export enum EIssueGroupBYServerToProperty {
@@ -50,6 +52,7 @@ export enum EIssueGroupBYServerToProperty {
   "target_date" = "target_date",
   "project_id" = "project_id",
   "created_by" = "created_by",
+  "milestone_id" = "milestone_id",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -124,6 +127,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "labels", titleTranslationKey: "common.labels" },
   { key: "assignees", titleTranslationKey: "common.assignees" },
   { key: "created_by", titleTranslationKey: "common.created_by" },
+  ...ISSUE_GROUP_BY_OPTIONS_EXTENDED,
   { key: null, titleTranslationKey: "common.none" },
 ];
 

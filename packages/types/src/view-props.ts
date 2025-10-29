@@ -1,8 +1,9 @@
-import { TIssue } from "./issues/issue";
+import { EIssueLayoutTypes, TIssue } from "./issues/issue";
 import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import { CompleteOrEmpty } from "./utils";
 import {
   IExtendedIssueDisplayProperties,
+  TExtendedIssueGroupByOptions,
   TExtendedIssueOrderByOptions,
   TExtendedWorkItemFilterProperty,
   WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
@@ -22,6 +23,7 @@ export type TIssueGroupByOptions =
   | "module"
   | "target_date"
   | "team_project"
+  | TExtendedIssueGroupByOptions
   | null;
 
 export type TIssueOrderByOptions =
@@ -86,7 +88,8 @@ export type TIssueParams =
   | "issue_type"
   | "layout"
   | "expand"
-  | "filters";
+  | "filters"
+  | "milestone";
 
 export type TCalendarLayouts = "month" | "week";
 

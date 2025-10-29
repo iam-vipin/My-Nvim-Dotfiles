@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { CalendarLayoutIcon } from "@plane/propel/icons";
-import { cn, renderFormattedDate } from "@plane/utils"
+import { cn, renderFormattedDate } from "@plane/utils";
 
 export const DisplayDates = (props: {
   startDate: string | null | undefined;

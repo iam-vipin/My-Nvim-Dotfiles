@@ -3,6 +3,7 @@
 import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
+import { computedFn } from "mobx-utils";
 import { ProjectService } from "@/plane-web/services";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type {
@@ -116,10 +117,10 @@ export class ProjectStore implements IProjectStore {
    * @param { keyof TProjectFeatures } featureKey
    * @returns { boolean }
    */
-  isProjectFeatureEnabled = (projectId: string, featureKey: keyof TProjectFeaturesList): boolean => {
+  isProjectFeatureEnabled = computedFn((projectId: string, featureKey: keyof TProjectFeaturesList): boolean => {
     const projectFeatures = this.features[projectId];
     return projectFeatures?.[featureKey] ?? false;
-  };
+  });
 
   // helpers
   /**

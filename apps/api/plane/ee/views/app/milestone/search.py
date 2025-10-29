@@ -1,4 +1,6 @@
 # Python imports
+import re
+
 # Django imports
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -12,7 +14,6 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.db.models import Issue
-from plane.utils.issue_search import search_issues
 
 
 class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
@@ -20,22 +21,31 @@ class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.MILESTONES)
     def get(self, request, slug, project_id):
-        """Return issues in the project that are not linked to any active milestone.
+        """Return work in the project that are not linked to any active milestone.
 
         Optional query params:
-        - search: string to filter issues by name/sequence/project identifier
+        - search: string to filter work items by name/sequence/project identifier
+        - milestone_id: if milestone_id is provided, include work items that are linked to the milestone
         """
-        query = request.query_params.get("search", None)
+        milestone_id = request.query_params.get("milestone_id", None)
+        search = request.query_params.get("search", None)
+        fields = ["name", "sequence_id", "project__identifier"]
 
-        issues = (
-            Issue.objects.filter(
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                sequences = re.findall(r"\b\d+\b", search)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": search})
+
+        work_items = (
+            Issue.issue_and_epics_objects.filter(
+                q,
                 workspace__slug=slug,
                 project_id=project_id,
-                deleted_at__isnull=True,
-                archived_at__isnull=True,
-                is_draft=False,
             )
-            .filter(Q(state__is_triage=False) | Q(state__isnull=True))
             .annotate(
                 active_milestones=Count(
                     "issue_milestone",
@@ -46,16 +56,17 @@ class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
                     distinct=True,
                 )
             )
-            .filter(active_milestones=0)
+            .filter(
+                Q(issue_milestone__milestone_id=milestone_id)
+                if milestone_id
+                else Q(active_milestones=0)
+            )
             .select_related("state")
-            .accessible_to(self.request.user.id, slug)
+            .accessible_to(request.user.id, slug)
             .distinct()
         )
 
-        if query:
-            issues = search_issues(query, issues)
-
-        results = issues.values(
+        results = work_items.values(
             "name",
             "id",
             "start_date",
@@ -68,5 +79,5 @@ class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
             "state__group",
             "state__color",
             "type_id",
-        )
+        )[:20]
         return Response(list(results), status=status.HTTP_200_OK)

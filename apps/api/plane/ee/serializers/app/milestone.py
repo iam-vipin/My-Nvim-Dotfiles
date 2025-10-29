@@ -15,12 +15,19 @@ class MilestoneWorkItemResponseSerializer(BaseSerializer):
     label_ids = serializers.SerializerMethodField()
     assignee_ids = serializers.SerializerMethodField()
     type_id = serializers.UUIDField(source="type.id", read_only=True)
+    is_epic = serializers.SerializerMethodField()
 
     def get_label_ids(self, obj):
         return [label.label_id for label in obj.label_issue.all()]
 
     def get_assignee_ids(self, obj):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
+
+    def get_is_epic(self, obj):
+        """Return True if the work item is an epic based on its type."""
+        if hasattr(obj, "type") and obj.type:
+            return obj.type.is_epic
+        return False
 
     class Meta:
         model = Issue
@@ -36,6 +43,7 @@ class MilestoneWorkItemResponseSerializer(BaseSerializer):
             "label_ids",
             "assignee_ids",
             "type_id",
+            "is_epic",
         ]
         read_only_fields = fields
 

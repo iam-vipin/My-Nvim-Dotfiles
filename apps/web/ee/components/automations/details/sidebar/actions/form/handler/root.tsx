@@ -1,7 +1,8 @@
-import { ChevronDown, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 // plane imports
 import { AUTOMATION_ACTION_HANDLER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TActionNodeHandlerName } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -43,7 +44,7 @@ export const AutomationActionHandlerDropdown: React.FC<TProps> = (props) => {
             <span className="flex-grow">
               {selectedValue ? t(selectedValue.labelI18nKey) : t("automations.action.input_placeholder")}
             </span>
-            <ChevronDown className="flex-shrink-0 size-3" />
+            <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>
         }
         customButtonClassName="w-full"

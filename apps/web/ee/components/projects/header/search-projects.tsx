@@ -3,7 +3,8 @@
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // plane web hooks
@@ -64,7 +65,7 @@ export const ProjectSearch: FC = observer(() => {
               setIsSearchOpen(false);
             }}
           >
-            <X className="h-3 w-3" />
+            <CloseIcon className="h-3 w-3" />
           </button>
         )}
       </div>

@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { ToggleSwitch } from "@plane/ui";
 // components
@@ -59,7 +59,7 @@ const CyclesFeatureSettingsPage = observer(() => {
           className="text-sm text-custom-text-300 hover:text-custom-text-200"
         >
           <div className="flex items-center gap-2">
-            <ChevronLeft className="h-4 w-4 text-custom-text-300" />
+            <ChevronLeftIcon className="h-4 w-4 text-custom-text-300" />
             <span className="text-sm text-custom-text-300 font-bold">Back to features</span>
           </div>
         </Link>

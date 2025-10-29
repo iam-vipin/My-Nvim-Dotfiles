@@ -2,9 +2,10 @@ import type { Dispatch, FC, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { capitalize } from "lodash-es";
 import { observer } from "mobx-react";
-import { ChevronLeft, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type {
   IEstimateFormData,
@@ -211,7 +212,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
             onClick={() => setEstimateEditType && setEstimateEditType(undefined)}
             className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeftIcon className="w-4 h-4" />
           </div>
           <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.switch")}</div>
         </div>

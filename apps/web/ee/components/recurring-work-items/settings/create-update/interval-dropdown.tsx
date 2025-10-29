@@ -2,8 +2,9 @@
 
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import { ERecurringWorkItemIntervalType } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -95,7 +96,7 @@ export const IntervalDropdown: React.FC<TIntervalDropdownProps> = (props) => {
               )}
             >
               <span className="flex-grow truncate">{currentOption?.label || "Select interval"}</span>
-              {!disabled && <ChevronDown className="size-2.5 flex-shrink-0" aria-hidden="true" />}
+              {!disabled && <ChevronDownIcon className="size-2.5 flex-shrink-0" aria-hidden="true" />}
             </div>
           </button>
         </Combobox.Button>

@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings } from "lucide-react";
+import { ArrowLeft, Check, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { ListLayoutIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types

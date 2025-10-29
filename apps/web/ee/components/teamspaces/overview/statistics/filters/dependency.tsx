@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import type { ERelationType } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -26,7 +26,7 @@ export const StatisticsDependencyFilter: React.FC<TStatisticsFilterProps<"depend
       buttonContent={(isOpen, val) => (
         <span className="flex items-center gap-1">
           {val && typeof val === "string" ? TEAM_STATISTICS_DEPENDENCY_MAP[val as ERelationType] : "Dependency"}
-          <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
+          <ChevronDownIcon className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>
       )}
       disableSearch

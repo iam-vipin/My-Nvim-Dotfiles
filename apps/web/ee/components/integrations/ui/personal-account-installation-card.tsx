@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Unplug, ChevronRight } from "lucide-react";
+import { Unplug } from "lucide-react";
 // ui
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { CustomMenu, Loader } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -51,7 +52,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
                 data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU}
               >
                 {isLoading ? t("common.disconnecting") : t("common.connected")}
-                <ChevronDown size={12} />
+                <ChevronDownIcon height={12} width={12} />
               </Button>
             }
           >
@@ -73,7 +74,7 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
         ) : (
           <Button size="sm" variant="link-neutral" onClick={handleConnectDisconnect} loading={isLoading}>
             {isLoading ? t("common.connecting") : t("common.connect")}
-            <ChevronRight size={12} />
+            <ChevronRightIcon height={12} width={12} />
           </Button>
         )}
       </div>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { ChevronDown, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 // plane imports
 import {
   AUTOMATION_TRIGGER_SELECT_OPTIONS,
@@ -10,6 +10,7 @@ import {
   AUTOMATION_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // helpers
 import type {
   ICustomSearchSelectOption,
@@ -213,7 +214,7 @@ export const AutomationDetailsSidebarTriggerRoot: React.FC<Props> = observer((pr
                   t("automations.trigger.input_placeholder")
                 )}
               </span>
-              <ChevronDown className="flex-shrink-0 size-3" />
+              <ChevronDownIcon className="flex-shrink-0 size-3" />
             </span>
           }
         />

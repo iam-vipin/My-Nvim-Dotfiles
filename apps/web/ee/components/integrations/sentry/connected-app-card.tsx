@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Unplug } from "lucide-react";
+import { Unplug } from "lucide-react";
 import type { TSentryConfig, TSentryConnectionData } from "@plane/etl/sentry";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TWorkspaceConnection } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // helpers
@@ -42,7 +43,7 @@ export const ConnectedAppCard = observer((props: TConnectedAppCardProps) => {
           customButton={
             <Button size="sm" variant="link-neutral" loading={isLoading}>
               {isLoading ? t("common.disconnecting") : t("common.connected")}
-              <ChevronDown size={12} />
+              <ChevronDownIcon height={12} width={12} />
             </Button>
           }
         >

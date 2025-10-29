@@ -4,9 +4,9 @@ import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
 import type { TClickUpFolder } from "@plane/etl/clickup";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Loader, MultiSelectDropdown } from "@plane/ui";
 // plane web components
 import { cn } from "@plane/utils";
@@ -101,7 +101,11 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
               {val && val.length > 0
                 ? `${val.length} ${t("clickup_importer.selected")}`
                 : `${t("clickup_importer.select_service_folder", { serviceName: "ClickUp" })}`}
-              <ChevronDown size={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
+              <ChevronDownIcon
+                height={16}
+                width={16}
+                className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")}
+              />
             </span>
           )}
           disableSearch

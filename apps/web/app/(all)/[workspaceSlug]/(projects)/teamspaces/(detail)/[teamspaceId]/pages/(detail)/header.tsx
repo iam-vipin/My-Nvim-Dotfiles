@@ -3,9 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ChevronRight } from "lucide-react";
 // plane imports
-import { PageIcon, TeamsIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, PageIcon, TeamsIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, CustomMenu } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -59,7 +58,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
 
   const BreadcrumbSeparator = () => (
     <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRight className="size-3" />
+      <ChevronRightIcon className="size-3" />
     </div>
   );
 

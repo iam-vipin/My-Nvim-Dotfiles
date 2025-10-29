@@ -3,10 +3,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ChevronRight } from "lucide-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { PageIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
 // types
 import type { ICustomSearchSelectOption } from "@plane/types";
 // ui
@@ -65,7 +64,7 @@ export const PageDetailsHeader = observer(() => {
 
   const BreadcrumbSeparator = () => (
     <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRight className="size-3" />
+      <ChevronRightIcon className="size-3" />
     </div>
   );
 

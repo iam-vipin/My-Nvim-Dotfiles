@@ -6,14 +6,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
-import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
+import { CirclePlus, LogOut, Mails, Settings } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
-import { Avatar, Loader } from "@plane/ui";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { IWorkspace } from "@plane/types";
+import { Avatar, Loader } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // helpers
 import { GOD_MODE_URL, cn } from "@/helpers/common.helper";
@@ -97,7 +98,7 @@ export const SidebarDropdown = observer(() => {
                 )}
               </div>
               {!sidebarCollapsed && (
-                <ChevronDown
+                <ChevronDownIcon
                   className={cn(
                     "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
                     { "rotate-180": open }

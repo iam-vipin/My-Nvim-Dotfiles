@@ -2,11 +2,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import { Rocket, Search, X } from "lucide-react";
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EpicIcon } from "@plane/propel/icons";
+import { CloseIcon, EpicIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
@@ -164,7 +164,7 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                               className="group p-1"
                               onClick={() => setSelectedEpics((prevData) => prevData.filter((i) => i.id !== epic.id))}
                             >
-                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <CloseIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
                           </div>
                         ))}

@@ -1,9 +1,8 @@
 "use client";
 
 import type { FC } from "react";
-import { ChevronRight } from "lucide-react";
 // plane imports
-import { PlaneAIIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, PlaneAIIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {
@@ -28,7 +27,7 @@ export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) 
       <span className="flex items-baseline">
         <p className="text-sm text-custom-text-200">{buttonLabel}</p>
       </span>
-      <ChevronRight className="size-4 text-custom-text-400" />
+      <ChevronRightIcon className="size-4 text-custom-text-400" />
     </div>
   );
 };

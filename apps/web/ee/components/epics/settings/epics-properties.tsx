@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import type { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // helpers
@@ -52,7 +52,7 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
             <div className={cn("flex items-center w-full px-2 gap-2 cursor-pointer")}>
               <div className={cn("flex w-full gap-2 items-center truncate")}>
                 <div className="flex-shrink-0">
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("flex-shrink-0 size-4 transition-all", {
                       "rotate-90 text-custom-text-100": isOpen,
                       "text-custom-text-300": !isOpen,

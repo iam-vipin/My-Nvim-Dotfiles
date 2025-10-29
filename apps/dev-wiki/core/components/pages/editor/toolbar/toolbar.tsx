@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 // editor
 import { EditorRefApi } from "@plane/editor";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -105,7 +106,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
         customButton={
           <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
-            <ChevronDown className="flex-shrink-0 size-3" />
+            <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>
         }
         className="pr-2"

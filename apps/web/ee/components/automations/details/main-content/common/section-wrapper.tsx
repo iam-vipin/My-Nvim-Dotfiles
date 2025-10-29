@@ -1,6 +1,6 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -27,7 +27,7 @@ export const AutomationDetailsMainContentSectionWrapper: React.FC<TProps> = (pro
             <h3 className="flex-shrink-0 text-sm font-medium uppercase text-custom-text-200">{title}</h3>
             <div className="flex-grow h-px bg-custom-border-300" />
             <div className="flex-shrink-0 size-4 rounded grid place-items-center outline-none border-none">
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("size-3.5 transition-transform", {
                   "rotate-90": open,
                 })}

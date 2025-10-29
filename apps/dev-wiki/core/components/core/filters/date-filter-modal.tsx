@@ -2,11 +2,11 @@
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { Button } from "@plane/propel/button";
 import { Calendar } from "@plane/propel/calendar";
+import { CloseIcon } from "@plane/propel/icons";
 
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 import { DateFilterSelect } from "./date-filter-select";
@@ -84,7 +84,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         <DateFilterSelect title={title} value={value} onChange={onChange} />
                       )}
                     />
-                    <X className="h-4 w-4 cursor-pointer" onClick={handleClose} />
+                    <CloseIcon className="h-4 w-4 cursor-pointer" onClick={handleClose} />
                   </div>
                   <div className="flex w-full justify-between gap-4">
                     <Controller

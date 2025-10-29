@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
 
 type Props = {
@@ -26,7 +26,7 @@ export const FormSection = ({ collapsible, title, children }: Props) => {
         <h3 className="text-lg font-medium">{title}</h3>
         {collapsible && (
           <div className="flex items-center gap-2">
-            <ChevronDown
+            <ChevronDownIcon
               className={cn(`size-4 transition-transform duration-200 `, {
                 "rotate-180": collapsibleOpen,
               })}

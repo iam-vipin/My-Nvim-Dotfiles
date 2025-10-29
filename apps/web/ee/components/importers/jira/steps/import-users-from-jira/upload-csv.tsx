@@ -5,9 +5,10 @@ import { Fragment, useState } from "react";
 import Papa from "papaparse";
 import type { Accept } from "react-dropzone";
 import Dropzone from "react-dropzone";
-import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
+import { TriangleAlert, CircleCheck, Loader } from "lucide-react";
 // helpers
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TImportUsersFromJiraUploader = {
@@ -144,7 +145,7 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
             className="absolute top-1 right-1 w-5 h-5 rounded-sm transition-all flex justify-center items-center bg-custom-background-100 hover:bg-custom-background-90 cursor-pointer"
             onClick={handleClearFile}
           >
-            <X className="flex-shrink-0 w-3.5 h-3.5" />
+            <CloseIcon className="flex-shrink-0 w-3.5 h-3.5" />
           </div>
         )}
       </div>

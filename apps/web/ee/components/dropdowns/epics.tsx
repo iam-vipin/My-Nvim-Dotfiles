@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import useSWR from "swr";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
-import { EpicIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, EpicIcon } from "@plane/propel/icons";
 import type { TWorkspaceEpicsSearchParams } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -166,7 +166,7 @@ export const EpicsDropdown: React.FC<Props> = observer((props) => {
               <span className="flex-grow truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

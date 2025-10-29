@@ -3,7 +3,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { MoveRight, Trash2, X } from "lucide-react";
+import { MoveRight, Trash2 } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TEstimatePointsObject } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
@@ -135,7 +136,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
         className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
         onClick={handleClose}
       >
-        <X size={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-custom-text-200" />
       </div>
     </div>
   );

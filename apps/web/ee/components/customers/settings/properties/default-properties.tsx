@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { AlignLeft, ChevronRight, Hash, CircleChevronDown } from "lucide-react";
+import { AlignLeft, Hash, CircleChevronDown } from "lucide-react";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
 import { Collapsible } from "@plane/ui";
 // helpers
@@ -59,7 +60,7 @@ export const CustomerDefaultProperties = () => {
         title={
           <div className="flex w-full gap-2 cursor-pointer items-center">
             <div className="flex-shrink-0">
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("flex-shrink-0 size-4 transition-all text-custom-text-300", {
                   "rotate-90": isOpen,
                 })}

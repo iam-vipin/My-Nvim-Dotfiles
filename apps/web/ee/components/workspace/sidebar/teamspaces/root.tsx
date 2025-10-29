@@ -3,12 +3,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
@@ -83,7 +84,7 @@ export const SidebarTeamsList = observer(() => {
               onClick={() => toggleTeamMenu(!isTeamspaceListItemOpen)}
             >
               <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                     "rotate-90": isTeamspaceListItemOpen,
                   })}

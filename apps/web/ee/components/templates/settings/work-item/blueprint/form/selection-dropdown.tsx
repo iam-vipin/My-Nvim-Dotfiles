@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 import type { FieldPath, FieldValues } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
-import { ChevronRight } from "lucide-react";
 import type { IIssueType } from "@plane/types";
 import type { TProjectBlueprintDetails } from "@plane/utils";
 import { cn } from "@plane/utils";
@@ -116,7 +116,7 @@ export const SelectionDropdown = observer(<T extends FieldValues>(props: TSelect
         <>
           {allowProjectSelection && (
             <div className="flex items-center gap-2">
-              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
             </div>
           )}
           <div className="space-y-1">

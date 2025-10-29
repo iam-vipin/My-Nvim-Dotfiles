@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronDown, CircleAlert } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
+import { ChevronDownIcon, PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspace, TUserApplication } from "@plane/types";
 import { cn, CustomMenu } from "@plane/ui";
@@ -146,7 +146,7 @@ export const AppConsent = observer(
             customButton={
               <div className="flex flex-grow gap-1.5 justify-between items-center text-sm text-custom-text-200 w-full overflow-hidden">
                 <WorkspaceDetails workspace={selectedWorkspace} />
-                <ChevronDown className="ml-auto h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
               </div>
             }
             customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-custom-background-100 text-custom-text-200 text-sm w-40"

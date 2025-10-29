@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web constants
@@ -39,11 +39,11 @@ export const ProjectScopeDropdown: FC<TProjectScopeDropdown> = observer((props) 
             {selectedScopeCount}
           </div>
         </div>
-        <ChevronDown className="h-3 w-3" strokeWidth={2} />
+        <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
       </div>
       <div className="flex md:hidden text-sm items-center gap-2 neutral-primary text-custom-text-200 justify-center w-full">
         <span>{(PROJECT_SCOPES || []).find((scope) => selectedScope === scope.key)?.label}</span>
-        <ChevronDown className="h-3 w-3 hidden md:flex" strokeWidth={2} />
+        <ChevronDownIcon className="h-3 w-3 hidden md:flex" strokeWidth={2} />
       </div>
     </>
   );

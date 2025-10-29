@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Search, SquarePen, X } from "lucide-react";
+import { Search, SquarePen } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 import { SidebarSearchButton } from "@/components/sidebar/search-button";
@@ -86,7 +87,7 @@ export const Toolbar: FC<Props> = observer((props) => {
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

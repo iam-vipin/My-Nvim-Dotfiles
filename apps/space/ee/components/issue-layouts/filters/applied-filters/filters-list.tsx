@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueFilterOptions } from "@plane/types";
 // helpers
@@ -72,7 +72,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemoveFilter(filterKey, null)}
               >
-                <X size={12} strokeWidth={2} />
+                <CloseIcon height={12} width={12} strokeWidth={2} />
               </button>
             </div>
           </div>
@@ -84,7 +84,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
         className="flex items-center gap-2 flex-shrink-0 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
       >
         Clear all
-        <X size={12} strokeWidth={2} />
+        <CloseIcon height={12} width={12} strokeWidth={2} />
       </button>
     </div>
   );

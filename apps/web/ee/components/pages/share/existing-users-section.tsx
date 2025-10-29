@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 import type { EPageSharedUserAccess } from "@plane/types";
 import { Avatar, Collapsible } from "@plane/ui";
@@ -76,7 +76,7 @@ export const ExistingUsersSection = ({
               <span className="text-xs text-custom-text-400">
                 {existingUsers.length} {existingUsers.length === 1 ? "member" : "members"}
               </span>
-              <ChevronDown
+              <ChevronDownIcon
                 className={`h-3 w-3 text-custom-text-400 transition-transform duration-200 ${isAccordionOpen ? "rotate-180" : ""}`}
               />
             </div>

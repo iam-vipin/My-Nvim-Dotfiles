@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
@@ -25,7 +25,7 @@ export const ProjectsListMobileHeader = observer(() => {
   const customButton = (label: string) => (
     <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
       {label}
-      <ChevronDown className="h-3 w-3" strokeWidth={2} />
+      <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
     </div>
   );
   if (!workspaceId || !workspaceSlug) return null;

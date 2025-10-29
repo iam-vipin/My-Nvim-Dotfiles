@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import type { Accept } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { ImageUp, Plus, Loader as Spinner, Upload, X } from "lucide-react";
+import { ImageUp, Plus, Loader as Spinner, Upload } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EFileAssetType } from "@plane/types";
 import { cn, checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
@@ -266,7 +267,7 @@ const ImagePreview: React.FC<TImagePreviewProps> = (props) => {
         {isLoading ? (
           <Spinner className="flex-shrink-0 animate-spin size-3 text-custom-text-100" />
         ) : (
-          <X className="flex-shrink-0 size-3 text-custom-text-100" onClick={onRemove} />
+          <CloseIcon className="flex-shrink-0 size-3 text-custom-text-100" onClick={onRemove} />
         )}
       </div>
       <img loading="lazy" src={imageSrc} alt="Uploaded preview" className="h-full w-full object-cover rounded-md" />

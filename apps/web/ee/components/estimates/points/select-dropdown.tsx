@@ -3,10 +3,11 @@
 import type { FC } from "react";
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
 import { EEstimateSystem } from "@plane/types";
@@ -78,7 +79,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
               ? convertMinutesToHoursMinutesString(Number(selectedValue?.value))
               : selectedValue?.value || "Select an estimate point"}
           </div>
-          <ChevronDown className={`size-3 ${true ? "stroke-onboarding-text-400" : "stroke-onboarding-text-100"}`} />
+          <ChevronDownIcon className={`size-3 ${true ? "stroke-onboarding-text-400" : "stroke-onboarding-text-100"}`} />
           {error && (
             <>
               <Tooltip tooltipContent={error} position="bottom">

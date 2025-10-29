@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 // ui
 import type { TSearchResultItem } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -66,7 +67,7 @@ export const AppSearchRoot = observer(() => {
           </div>
           {searchQuery && (
             <div className="absolute right-2.5">
-              <X
+              <CloseIcon
                 className="w-4 h-4 text-custom-text-400 hover:text-custom-text-100 cursor-pointer transition-colors duration-200"
                 onClick={() => {
                   setSearchQuery("");

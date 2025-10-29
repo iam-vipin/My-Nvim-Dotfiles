@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // plane web components
@@ -62,7 +62,11 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
           onClick={() => setDisclosureState(!disclosureState)}
         >
           <div className="flex-shrink-0 w-5 h-5 rounded group-hover:bg-custom-background-90 text-custom-text-200 hover:text-custom-text-100 flex justify-center items-center">
-            <ChevronDown size={16} className={cn("duration-300", { "-rotate-90": !disclosureState })} />
+            <ChevronDownIcon
+              height={16}
+              width={16}
+              className={cn("duration-300", { "-rotate-90": !disclosureState })}
+            />
           </div>
           <div className="text-lg font-medium w-full py-0.5">Previous Downloads</div>
           {disclosureState && (workspaceWorklogDownloadIds || [])?.length > 0 && (

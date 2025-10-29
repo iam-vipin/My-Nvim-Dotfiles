@@ -2,8 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
 import { Logo } from "@plane/ui";
 import { cn, joinUrlPath } from "@plane/utils";
@@ -60,7 +60,7 @@ export const TeamspaceSidebarListItem = observer((props: Props) => {
           className="flex-shrink-0 size-4 text-custom-sidebar-text-400 transition-all opacity-0 group-hover/teamspace-item:opacity-100"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <ChevronRight
+          <ChevronRightIcon
             className={cn("flex-shrink-0 size-4 text-custom-sidebar-text-400 transition-transform", {
               "rotate-90": isExpanded,
             })}

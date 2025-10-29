@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
+import { Download, ExternalLink, Minus, Plus } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -211,7 +212,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <X className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
         </button>
         <img
           ref={setImageRef}

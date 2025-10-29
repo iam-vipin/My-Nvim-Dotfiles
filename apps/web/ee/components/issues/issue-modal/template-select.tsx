@@ -3,9 +3,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Loader as Spinner } from "lucide-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETemplateLevel, EUserPermissionsLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
@@ -54,7 +55,7 @@ export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) 
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">
-              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
             </div>
           )}
           <div className={cn("h-7", dropDownContainerClassName)}>

@@ -1,7 +1,7 @@
 import React from "react";
-import { ChevronLeft } from "lucide-react";
-// plane imports
 import { Button } from "@plane/propel/button";
+import { ChevronLeftIcon } from "@plane/propel/icons";
+// plane imports
 import { cn } from "@plane/utils";
 
 type TModalFooterProps = {
@@ -24,7 +24,7 @@ export const ModalFooter: React.FC<TModalFooterProps> = (props) => {
     >
       {onPreviousStep && (
         <Button variant="link-neutral" size="sm" className="flex gap-1" onClick={onPreviousStep}>
-          <ChevronLeft className="size-3.5" />
+          <ChevronLeftIcon className="size-3.5" />
           Go back
         </Button>
       )}

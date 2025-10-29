@@ -16,7 +16,6 @@ import {
 } from "@plane/propel/icons";
 import type {
   IGroupByColumn,
-  IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TGetColumns,
   TIssueGroupByOptions,

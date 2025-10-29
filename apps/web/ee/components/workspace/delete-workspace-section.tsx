@@ -3,9 +3,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronDown, ChevronUp, CircleAlert } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -92,7 +93,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
             title={
               <>
                 <span className="text-lg tracking-tight">Delete this workspace</span>
-                {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
               </>
             }
           >

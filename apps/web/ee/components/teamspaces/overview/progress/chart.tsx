@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Loader as Spinner } from "lucide-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
 import type { EProgressXAxisKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
 import { EProgressDataKeys, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
@@ -93,7 +94,7 @@ export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = ob
               {value && typeof value === "string"
                 ? TEAM_WORKLOAD_X_AXIS_LABEL_MAP[value as EProgressXAxisKeys]
                 : TEAM_WORKLOAD_X_AXIS_LABEL_MAP[xAxisKey]}
-              <ChevronDown className={cn(COMMON_CHEVRON_CLASSNAME, isOpen ? "rotate-180" : "rotate-0")} />
+              <ChevronDownIcon className={cn(COMMON_CHEVRON_CLASSNAME, isOpen ? "rotate-180" : "rotate-0")} />
             </span>
           )}
           disableSearch

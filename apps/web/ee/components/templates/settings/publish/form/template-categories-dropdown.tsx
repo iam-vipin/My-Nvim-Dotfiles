@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn, joinWithConjunction } from "@plane/utils";
 // plane web imports
@@ -48,8 +48,9 @@ export const TemplateCategoriesDropdown: React.FC<TSelectCategoriesProps> = obse
               ? joinWithConjunction(selectedCategoriesNames)
               : t("templates.settings.form.publish.category.placeholder")}
           </span>
-          <ChevronDown
-            size={16}
+          <ChevronDownIcon
+            height={16}
+            width={16}
             className={cn("transition-all duration-300 flex-shrink-0", isOpen ? "rotate-180" : "rotate-0")}
           />
         </span>

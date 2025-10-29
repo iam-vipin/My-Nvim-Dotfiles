@@ -3,14 +3,14 @@
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 // plane imports
-import { PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
-import { TPageNavigationTabs } from "@plane/types";
+import { ChevronRightIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
-import { ListItem } from "@/components/core/list";
 import { Logo } from "@/components/common";
+import { ListItem } from "@/components/core/list";
 // components
 import { BlockItemAction } from "@/components/pages/list";
 // helpers
@@ -118,7 +118,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
                 {isFetchingSubPages ? (
                   <Loader className="size-4 animate-spin" />
                 ) : (
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("size-4", {
                       "rotate-90": isExpanded,
                     })}

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
@@ -44,7 +44,7 @@ export const AppliedDateFilters: React.FC<Props> = observer((props) => {
             className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
             onClick={() => handleRemove(date)}
           >
-            <X size={10} strokeWidth={2} />
+            <CloseIcon height={10} width={10} strokeWidth={2} />
           </button>
         </div>
       ))}

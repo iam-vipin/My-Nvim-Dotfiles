@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import type { Accept } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { ImageUp, Upload, X } from "lucide-react";
+import { ImageUp, Upload } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { checkURLValidity, cn, getAssetIdFromUrl, getFileURL } from "@plane/utils";
@@ -192,7 +193,7 @@ export const TemplateCoverImageUpload: React.FC<Props> = observer((props) => {
                           className="absolute -top-1.5 -right-1.5 border-[0.5px] border-custom-border-200 bg-custom-background-90 opacity-80 hover:opacity-100 transition-opacity duration-200 rounded-full p-[1px] shadow-sm"
                           onClick={() => setNewImage(null)}
                         >
-                          <X className="flex-shrink-0 size-3 text-custom-text-100" />
+                          <CloseIcon className="flex-shrink-0 size-3 text-custom-text-100" />
                         </button>
                       </div>
                     ) : (

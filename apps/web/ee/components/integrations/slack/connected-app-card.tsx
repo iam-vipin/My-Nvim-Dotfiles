@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Unplug } from "lucide-react";
+import { Unplug } from "lucide-react";
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import type { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TWorkspaceConnection } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // helpers
@@ -48,7 +49,7 @@ export const ConnectedAppCard = observer((props: TConnectedAppCardProps) => {
               data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_WORKSPACE_CONTEXT_MENU}
             >
               {isLoading ? t("common.disconnecting") : t("common.connected")}
-              <ChevronDown size={12} />
+              <ChevronDownIcon height={12} width={12} />
             </Button>
           }
         >

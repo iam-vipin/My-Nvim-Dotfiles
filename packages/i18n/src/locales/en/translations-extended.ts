@@ -16,6 +16,7 @@ export default {
     business: "Business",
     members_and_teamspaces: "Members & Teamspaces",
     recurring_work_items: "Recurring work items",
+    milestones: "Milestones",
   },
   issue: {
     relation: {

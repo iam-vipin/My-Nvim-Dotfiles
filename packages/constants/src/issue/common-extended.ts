@@ -1,4 +1,4 @@
-import { IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
+import { IIssueDisplayProperties, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 
 export const ISSUE_ADDITIONAL_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
   "customer_request_count",
@@ -45,3 +45,8 @@ export const ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS: {
     icon: "CustomersIcon",
   },
 };
+
+export const ISSUE_GROUP_BY_OPTIONS_EXTENDED: {
+  key: TIssueGroupByOptions;
+  titleTranslationKey: string;
+}[] = [{ key: "milestone", titleTranslationKey: "common.milestones" }];

@@ -26,7 +26,7 @@ export const ProjectMilestoneRoot: FC<Props> = observer((props) => {
   if (milestoneLoader) {
     return (
       <div className="mt-3">
-        <Loader>
+        <Loader className="space-y-4">
           <Loader.Item height="120px" />
           <Loader.Item height="120px" />
         </Loader>
@@ -47,7 +47,7 @@ export const ProjectMilestoneRoot: FC<Props> = observer((props) => {
     );
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {milestoneIds.map((milestoneId) => (
         <MilestoneCard
           key={milestoneId}

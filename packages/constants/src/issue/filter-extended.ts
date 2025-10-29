@@ -11,7 +11,9 @@ import {
   TIssueFiltersToDisplayByPageType,
 } from "./filter";
 
-export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name"] as const;
+export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone"] as const;
+
+export const ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS = ["milestone"] as const;
 
 export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   team_issues: {
@@ -175,7 +177,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByP
       list: {
         display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+          group_by: ["state", "priority", "labels", "assignees", "created_by", "milestone", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
           type: ["active", "backlog"],
         },
@@ -187,7 +189,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByP
       kanban: {
         display_properties: EPICS_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "labels", "assignees", "created_by"],
+          group_by: ["state", "priority", "labels", "assignees", "created_by", "milestone"],
           sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],

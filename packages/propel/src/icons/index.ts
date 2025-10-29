@@ -82,6 +82,7 @@ export * from "./subscribe-icon";
 export * from "./suspended-user";
 export * from "./teams";
 export * from "./transfer-icon";
+export * from "./triangle-alert";
 export * from "./tree-map-icon";
 export * from "./updates-icon";
 export * from "./user-activity-icon";

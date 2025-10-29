@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import type { ISearchIssueResponse, TIssue, TMilestone } from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TMilestone, TProjectIssuesSearchParams } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -45,9 +45,13 @@ export class MilestoneService extends APIService {
       });
   }
 
-  async workItemsSearch(workspaceSlug: string, projectId: string, query: string): Promise<ISearchIssueResponse[]> {
+  async workItemsSearch(
+    workspaceSlug: string,
+    projectId: string,
+    params: TProjectIssuesSearchParams
+  ): Promise<ISearchIssueResponse[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/milestones/work-items/search/`, {
-      params: { query },
+      params,
     })
       .then((res) => res?.data)
       .catch((err) => {

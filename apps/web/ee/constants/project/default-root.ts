@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { ISvgIcons} from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { BoardLayoutIcon, CardLayoutIcon, ListLayoutIcon, TimelineLayoutIcon } from "@plane/propel/icons";
 // plane web types
 import type { TProjectGroupBy, TProjectSortBy, TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";

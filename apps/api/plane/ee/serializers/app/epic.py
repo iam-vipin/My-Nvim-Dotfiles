@@ -447,6 +447,7 @@ class EpicDetailSerializer(EpicSerializer):
         child=serializers.UUIDField(), required=False
     )
     initiative_ids = serializers.ListField(read_only=True)
+    milestone_id = serializers.UUIDField(read_only=True)
 
     class Meta(EpicSerializer.Meta):
         fields = EpicSerializer.Meta.fields + [
@@ -455,6 +456,7 @@ class EpicDetailSerializer(EpicSerializer):
             "customer_ids",
             "customer_request_ids",
             "initiative_ids",
+            "milestone_id",
         ]
         read_only_fields = fields
 

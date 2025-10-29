@@ -1,13 +1,6 @@
-export type ConnectionStatus =
-  | "initial"
-  | "connecting"
-  | "connected"
-  | "reconnecting"
-  | "disconnected";
+export type ConnectionStatus = "initial" | "connecting" | "connected" | "reconnecting" | "disconnected";
 
-export type SyncStatus =
-  | "syncing"
-  | "synced";
+export type SyncStatus = "syncing" | "synced";
 
 export type CollaborationError =
   | { type: "auth-failed"; message: string }

@@ -101,6 +101,7 @@ export type TProjectFeatures = {
 } & TProjectFeaturesList;
 
 export type TProjectIssuesSearchParamsExtended = {
+  milestone_id?: string;
   customer_request_id?: string;
   convert?: boolean;
 };

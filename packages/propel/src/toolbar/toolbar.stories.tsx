@@ -16,7 +16,7 @@ import {
   Globe2,
   Lock,
 } from "lucide-react";
-import { ListLayoutIcon } from "@plane/propel/icons";
+import { ListLayoutIcon } from "../icons";
 import { Toolbar } from "./toolbar";
 
 const meta = {

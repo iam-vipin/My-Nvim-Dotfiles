@@ -1,5 +1,7 @@
 # Python imports
+import logging
 import requests
+import os
 
 # Django imports
 from django.utils import timezone
@@ -14,6 +16,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger("plane.authentication")
 
 
 class OauthAdapter(Adapter):
@@ -50,6 +54,8 @@ class OauthAdapter(Adapter):
             return "GITLAB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitea":
             return "GITEA_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "oidc":
+            return "OIDC_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 
@@ -70,21 +76,44 @@ class OauthAdapter(Adapter):
     def get_user_token(self, data, headers=None):
         try:
             headers = headers or {}
-            response = requests.post(self.get_token_url(), data=data, headers=headers)
+            response = requests.post(
+                self.get_token_url(),
+                data=data,
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
+            logger.warning(
+                "Error getting user token",
+                extra={
+                    "error_code": code,
+                    "error_message": str(code),
+                },
+            )
             raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def get_user_response(self):
         try:
             headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
-            response = requests.get(self.get_user_info_url(), headers=headers)
+            response = requests.get(
+                self.get_user_info_url(),
+                headers=headers,
+                verify=os.environ.get("SSL_VERIFY", "1") == "1",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
+            logger.warning(
+                "Error getting user response",
+                extra={
+                    "error_code": code,
+                    "error_message": str(code),
+                },
+            )
             raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def set_user_data(self, data):

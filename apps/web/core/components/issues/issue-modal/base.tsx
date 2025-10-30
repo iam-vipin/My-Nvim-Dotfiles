@@ -8,7 +8,7 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TBaseIssue, TIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -21,6 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // local imports
@@ -45,6 +46,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     modalTitle,
     primaryButtonText,
     isProjectSelectionDisabled = false,
+    isConversionOperation = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -70,9 +72,16 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
-  const { fetchIssue } = useIssueDetail();
-  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
+  const {
+    issue: { getIssueById },
+    fetchIssue,
+    removeSubIssue,
+  } = useIssueDetail();
+  const { removeSubIssue: removeEpicSubIssue } = useIssueDetail(EIssueServiceType.EPICS);
+  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleConvert, handleCreateSubWorkItem } =
+    useIssueModal();
   const { getProjectByIdentifier } = useProject();
+  const { getIssueTypeById } = useIssueTypes();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -265,10 +274,22 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     }
   };
 
-  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+  const handleUpdateIssue = async (
+    payload: Partial<TIssue>,
+    showToast: boolean = true
+  ): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
+      // check for parent change
+      if (data?.parent_id && payload?.parent_id && payload?.parent_id !== data?.parent_id) {
+        const oldParentIssue = getIssueById(data?.parent_id);
+        const isOldParentEpic = getIssueTypeById(oldParentIssue?.type_id || "")?.is_epic;
+        if (isOldParentEpic)
+          await removeEpicSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
+        else await removeSubIssue(workspaceSlug?.toString(), payload.project_id, data.parent_id, data.id);
+      }
+
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
@@ -297,11 +318,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         isDraft: isDraft,
       });
 
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("success"),
-        message: t("issue_updated_successfully"),
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("success"),
+          message: t("issue_updated_successfully"),
+        });
+      }
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { id: data.id },
@@ -309,11 +332,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       handleClose();
     } catch (error: any) {
       console.error(error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: error?.error ?? t("issue_could_not_be_updated"),
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: error?.error ?? t("issue_could_not_be_updated"),
+        });
+      }
       captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { id: data.id },
@@ -332,7 +357,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     try {
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
-      else response = await handleUpdateIssue(payload);
+      else {
+        // if the issue is being converted, handle the conversion
+        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        response = await handleUpdateIssue(payload, !isConversionOperation);
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       if (response != undefined && onSubmit) await onSubmit(response);
     }
@@ -357,17 +389,18 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     },
     onAssetUpload: handleUpdateUploadedAssetIds,
     onClose: handleClose,
-    onSubmit: (payload) => handleFormSubmit(payload, isDraft),
+    onSubmit: (payload, is_draft_issue = false) => handleFormSubmit(payload, is_draft_issue),
     projectId: activeProjectId,
     isCreateMoreToggleEnabled: createMore,
     onCreateMoreToggleChange: handleCreateMoreToggleChange,
     isDraft: isDraft,
     moveToIssue: moveToIssue,
-    modalTitle: modalTitle,
+    modalTitle: isConversionOperation ? "Turn this epic into a work item" : modalTitle,
     primaryButtonText: primaryButtonText,
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
+    convertToWorkItem: isConversionOperation,
   };
 
   return (

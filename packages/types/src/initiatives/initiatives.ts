@@ -59,4 +59,4 @@ export type TInitiativeDisplayFilters = {
 };
 
 export type TInitiativeGroupByOptions = "lead" | "created_by" | "state" | "label_ids" | undefined;
-export type TInitiativeOrderByOptions = "-updated_at" | "-created_at" | "sort_order";
+export type TInitiativeOrderByOptions = "-updated_at" | "-created_at";

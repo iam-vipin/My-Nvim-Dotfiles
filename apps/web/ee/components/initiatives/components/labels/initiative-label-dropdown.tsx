@@ -258,7 +258,7 @@ const SelectedLabelsDisplay: FC<{
 };
 
 const PlaceholderDisplay: FC<{ placeholder: string }> = ({ placeholder }) => (
-  <div className="text-custom-text-400 flex items-center gap-2">
+  <div className="flex items-center gap-2">
     <LabelPropertyIcon height={14} width={14} />
     {placeholder}
   </div>

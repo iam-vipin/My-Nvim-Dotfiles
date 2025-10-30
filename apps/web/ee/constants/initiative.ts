@@ -26,7 +26,6 @@ export const INITIATIVE_ORDER_BY_OPTIONS: {
   key: TInitiativeOrderByOptions;
   title: string;
 }[] = [
-  { key: "sort_order", title: "Manual" },
   { key: "-created_at", title: "Last Created" },
   { key: "-updated_at", title: "Last Updated" },
 ];

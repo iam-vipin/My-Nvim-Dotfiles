@@ -10,6 +10,7 @@ import { CloseIcon, InitiativeIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
@@ -104,7 +105,11 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
                     handleSelectedInitiativeChange(selectedInitiativeIds.filter((id) => id !== initiativeDetails.id));
                   }}
                 >
-                  <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                  {initiativeDetails?.logo_props?.in_use ? (
+                    <Logo logo={initiativeDetails?.logo_props} size={16} type="lucide" />
+                  ) : (
+                    <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                  )}
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {initiativeDetails.name}
                   </p>
@@ -150,7 +155,11 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
                       <span className="flex-shrink-0 flex items-center gap-2.5">
                         <Checkbox checked={isInitiativeSelected} />
                       </span>
-                      <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                      {initiativeDetails?.logo_props?.in_use ? (
+                        <Logo logo={initiativeDetails?.logo_props} size={16} type="lucide" />
+                      ) : (
+                        <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                      )}
                       <p className="text-sm truncate">{initiativeDetails.name}</p>
                     </div>
                   </Combobox.Option>

@@ -526,6 +526,7 @@ export class InitiativeStore implements IInitiativeStore {
 
       runInAction(() => {
         delete this.initiativesMap?.[initiativeId];
+        delete this.filteredInitiativesMap?.[initiativeId];
       });
       await this.initiativeService.deleteInitiative(workspaceSlug, initiativeId);
     } catch (error) {
@@ -737,8 +738,6 @@ const sortInitiativesWithOrderBy = (
   const array = orderBy(initiatives, (initiative) => convertToISODateString(initiative["created_at"]), ["desc"]);
 
   switch (key) {
-    case "sort_order":
-      return orderBy(array, "sort_order");
     case "-created_at":
       return orderBy(array, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
     case "-updated_at":

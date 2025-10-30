@@ -2,6 +2,7 @@ import asyncio
 import uuid
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 
 from pi import logger
@@ -12,6 +13,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_label_details_for_artifa
 from pi.app.api.v1.helpers.plane_sql_queries import get_label_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_module_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_module_name
+from pi.app.api.v1.helpers.plane_sql_queries import get_page_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_project_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_by_id
 from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_for_artifact
@@ -20,6 +22,244 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_workitem_details_for_art
 from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_data_for_display
 
 log = logger.getChild(__name__)
+
+
+class FieldType:
+    """Constants for different field categories."""
+
+    LIST_RELATIONSHIP = "list_relationship"  # Fields like assignees, labels (list of objects with id/name)
+    SINGLE_RELATIONSHIP = "single_relationship"  # Fields like state, priority (single object with id/name)
+    DATE_FIELD = "date"  # Date fields (start_date, target_date)
+    STRUCTURED_VALUE = "structured"  # Fields with special structure (state, priority)
+    SIMPLE_STRING = "simple_string"  # Plain string fields
+    ID_ARRAY = "id_array"  # Arrays of IDs (assignee_ids, label_ids)
+
+
+# Constants for field lists used throughout the module
+TOP_LEVEL_FIELDS_CONSTANT = ["name", "description", "project", "project_id", "id"]
+SPECIAL_FIELDS_CONSTANT = ["state", "priority"]
+
+
+# Field configuration mapping - defines how each field should be processed
+FIELD_CONFIGS: Dict[str, Dict[str, str]] = {
+    # List relationships (arrays of objects with id/name)
+    "assignees": {"type": FieldType.LIST_RELATIONSHIP},
+    "labels": {"type": FieldType.LIST_RELATIONSHIP},
+    "modules": {"type": FieldType.LIST_RELATIONSHIP},
+    "cycles": {"type": FieldType.LIST_RELATIONSHIP},
+    "members": {"type": FieldType.LIST_RELATIONSHIP},
+    # Single relationships (single object with id/name)
+    "state": {"type": FieldType.STRUCTURED_VALUE},
+    "priority": {"type": FieldType.STRUCTURED_VALUE},
+    "parent": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "cycle": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "module": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "owned_by": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "lead": {"type": FieldType.SINGLE_RELATIONSHIP},
+    # Date fields
+    "start_date": {"type": FieldType.DATE_FIELD},
+    "target_date": {"type": FieldType.DATE_FIELD},
+    "end_date": {"type": FieldType.DATE_FIELD},
+    "created_at": {"type": FieldType.DATE_FIELD},
+    "updated_at": {"type": FieldType.DATE_FIELD},
+    # ID arrays
+    "assignee_ids": {"type": FieldType.ID_ARRAY},
+    "label_ids": {"type": FieldType.ID_ARRAY},
+    "module_ids": {"type": FieldType.ID_ARRAY},
+    "cycle_ids": {"type": FieldType.ID_ARRAY},
+    "member_ids": {"type": FieldType.ID_ARRAY},
+    # Single ID fields (FIXED: Changed from ID_ARRAY to SINGLE_RELATIONSHIP)
+    "parent_id": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "project_lead_id": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "issue_id": {"type": FieldType.SINGLE_RELATIONSHIP},
+    "actor_id": {"type": FieldType.SINGLE_RELATIONSHIP},
+    # Simple strings
+    "name": {"type": FieldType.SIMPLE_STRING},
+    "description": {"type": FieldType.SIMPLE_STRING},
+    "description_html": {"type": FieldType.SIMPLE_STRING},
+}
+
+
+class FieldProcessor:
+    """Utility class for processing field values based on their type."""
+
+    @staticmethod
+    def _is_valid_list_relationship(llm_value: Any) -> bool:
+        """Helper to validate list relationship items."""
+        if not isinstance(llm_value, list) or len(llm_value) == 0:
+            return False
+        return all(isinstance(item, dict) and item.get("id") for item in llm_value)
+
+    @staticmethod
+    def has_meaningful_update(field: str, llm_value: Any) -> bool:
+        """Check if LLM provided a meaningful update for a field."""
+        config: Dict[str, Any] = FIELD_CONFIGS.get(field, {})
+        field_type = config.get("type")
+
+        if field_type == FieldType.LIST_RELATIONSHIP:
+            return FieldProcessor._is_valid_list_relationship(llm_value)
+
+        elif field_type == FieldType.ID_ARRAY:
+            return isinstance(llm_value, list) and len(llm_value) > 0
+
+        elif field_type == FieldType.SINGLE_RELATIONSHIP:
+            if not isinstance(llm_value, dict):
+                return False
+            name = llm_value.get("name")
+            return bool(name and name not in ["", "None", None])
+
+        elif field_type == FieldType.STRUCTURED_VALUE:
+            if field == "state":
+                if not isinstance(llm_value, dict):
+                    return False
+                name = llm_value.get("name")
+                return bool(name and name != "Unknown" and llm_value.get("id"))
+            elif field == "priority":
+                if not isinstance(llm_value, dict):
+                    return False
+                name = llm_value.get("name")
+                return bool(name and name not in ["none", "None", ""])
+
+        # Default check for other field types
+        return llm_value is not None and llm_value != "" and llm_value != [] and llm_value != {}
+
+    @staticmethod
+    def transform_existing_value(field: str, value: Any, existing_data: dict) -> Any:
+        """Transform existing database value to the expected format."""
+        config: Dict[str, Any] = FIELD_CONFIGS.get(field, {})
+        field_type = config.get("type")
+
+        if field_type == FieldType.LIST_RELATIONSHIP:
+            # Transform to list of {id, name} objects
+            id_field = f"{field[:-1]}_ids" if field.endswith("s") else f"{field}_ids"
+            if id_field in existing_data and existing_data[id_field]:
+                ids = existing_data[id_field]
+                names = existing_data.get(field, [])
+                return [{"id": str(ids[i]), "name": names[i] if i < len(names) else "Unknown"} for i in range(len(ids))]
+            return []
+
+        elif field_type == FieldType.ID_ARRAY:
+            # Return array of ID strings
+            return [str(item_id) for item_id in value] if isinstance(value, list) else []
+
+        elif field_type == FieldType.STRUCTURED_VALUE:
+            if field == "state":
+                return {
+                    "id": str(existing_data.get("state_id", "")),
+                    "name": existing_data.get("state", "Unknown"),
+                    "group": existing_data.get("state_group", "unknown"),
+                }
+            elif field == "priority":
+                return {"name": value} if isinstance(value, str) else value
+
+        elif field_type == FieldType.DATE_FIELD:
+            return {"name": str(value)} if value else None
+
+        elif field_type == FieldType.SINGLE_RELATIONSHIP:
+            # For single relationships, return the value as-is if it's already structured
+            if isinstance(value, dict):
+                return value
+            # Otherwise, convert to string (for IDs)
+            return str(value) if value else None
+
+        # Default: return as-is
+        return value
+
+
+class EntityDataFetcher:
+    """Centralized entity data fetching."""
+
+    @staticmethod
+    async def fetch_existing_data(entity_type: str, entity_id: str) -> Optional[dict]:
+        """Fetch existing entity data from database."""
+        if entity_type in ["workitem", "epic"]:
+            return await get_workitem_details_for_artifact(entity_id)
+        elif entity_type == "project":
+            return await get_project_details_for_artifact(entity_id)
+        elif entity_type == "cycle":
+            return await get_cycle_details_for_artifact(entity_id)
+        elif entity_type == "module":
+            return await get_module_details_for_artifact(entity_id)
+        return None
+
+
+# ============================================================================
+# HELPER FUNCTIONS FOR MERGE LOGIC
+# ============================================================================
+
+
+def _merge_top_level_fields(merged_data: dict, existing_data: dict) -> None:
+    """Merge top-level fields (name, description) from existing data if not in LLM updates."""
+    for field in ["name", "description"]:
+        if field not in merged_data and field in existing_data:
+            merged_data[field] = existing_data[field]
+
+
+async def _merge_properties_fields(properties: dict, existing_data: dict, required_fields: List[str]) -> None:
+    """Merge properties fields, handling special cases and transformations."""
+    # Process all required fields
+    for field in required_fields:
+        if field in TOP_LEVEL_FIELDS_CONSTANT:
+            continue  # Top-level fields
+
+        if field in SPECIAL_FIELDS_CONSTANT:
+            await _handle_special_fields(properties, existing_data, field)
+            continue
+
+        # Skip if LLM already provided this field
+        if field in properties:
+            # Check if it's a meaningful update
+            if not FieldProcessor.has_meaningful_update(field, properties[field]):
+                # LLM provided empty/default value, use existing data instead
+                if field in existing_data and existing_data[field] is not None:
+                    properties[field] = FieldProcessor.transform_existing_value(field, existing_data[field], existing_data)
+            continue
+
+        # Add from existing data if available
+        if field in existing_data and existing_data[field] is not None:
+            properties[field] = FieldProcessor.transform_existing_value(field, existing_data[field], existing_data)
+
+
+async def _handle_special_fields(properties: dict, existing_data: dict, field: str) -> None:
+    """Handle special fields like state and priority."""
+    if field == "state" and "state" not in properties:
+        if "state_id" in existing_data:
+            properties["state"] = {
+                "id": str(existing_data["state_id"]),
+                "name": existing_data.get("state", "Unknown"),
+                "group": existing_data.get("state_group", "unknown"),
+            }
+    elif field == "priority" and "priority" not in properties:
+        if "priority" in existing_data:
+            properties["priority"] = {"name": existing_data["priority"]}
+
+
+def _fix_parent_field_format(properties: dict) -> None:
+    """Fix parent field format - convert to parent_id as plain UUID string."""
+    if "parent" in properties:
+        parent_value = properties.pop("parent")
+        if isinstance(parent_value, dict):
+            parent_id = parent_value.get("id") or parent_value.get("name")
+        elif isinstance(parent_value, str):
+            parent_id = parent_value
+        else:
+            parent_id = None
+
+        if parent_id:
+            properties["parent_id"] = str(parent_id)
+            log.info(f"Converted parent to parent_id: {parent_id}")
+
+
+async def _ensure_project_info(merged_data: dict, existing_data: dict) -> None:
+    """Ensure project information is included in merged data."""
+    if "project" not in merged_data and "project_id" in existing_data:
+        project_details = await get_project_details_for_artifact(str(existing_data["project_id"]))
+        if project_details:
+            merged_data["project"] = {
+                "id": str(existing_data["project_id"]),
+                "identifier": project_details.get("identifier", ""),
+                "name": project_details.get("name", ""),
+            }
 
 
 async def merge_llm_updates_with_existing_data(entity_type: str, entity_id: str, llm_updates: dict) -> dict:
@@ -42,16 +282,8 @@ async def merge_llm_updates_with_existing_data(entity_type: str, entity_id: str,
         # Import schemas for field definitions
         from pi.services.actions.artifacts.schemas import get_base_fields_for_entity
 
-        # Get existing entity data from database
-        existing_data = None
-        if entity_type in ["workitem", "epic"]:
-            existing_data = await get_workitem_details_for_artifact(entity_id)
-        elif entity_type == "project":
-            existing_data = await get_project_details_for_artifact(entity_id)
-        elif entity_type == "cycle":
-            existing_data = await get_cycle_details_for_artifact(entity_id)
-        elif entity_type == "module":
-            existing_data = await get_module_details_for_artifact(entity_id)
+        # Get existing entity data from database using centralized fetcher
+        existing_data = await EntityDataFetcher.fetch_existing_data(entity_type, entity_id)
 
         if not existing_data:
             log.warning(f"Could not fetch existing data for {entity_type} {entity_id}")
@@ -67,119 +299,23 @@ async def merge_llm_updates_with_existing_data(entity_type: str, entity_id: str,
         if "properties" not in merged_data:
             merged_data["properties"] = {}
 
-        # Merge top-level fields
-        for field in ["name", "description"]:
-            if field not in merged_data and field in existing_data:
-                merged_data[field] = existing_data[field]
+        # Merge top-level fields using helper
+        _merge_top_level_fields(merged_data, existing_data)
 
-        # Merge properties - preserve LLM updates but add missing required fields
+        # Merge properties using helper
         properties = merged_data.get("properties", {})
 
-        # Handle special field mappings and formatting
-        if "state_id" in existing_data and "state" not in properties:
-            properties["state"] = {
-                "id": str(existing_data["state_id"]),  # Convert UUID to string
-                "name": existing_data.get("state", "Unknown"),
-                "group": existing_data.get("state_group", "unknown"),
-            }
+        # Use refactored helper to merge properties fields
+        await _merge_properties_fields(properties, existing_data, required_fields)
 
-        if "priority" in existing_data and "priority" not in properties:
-            properties["priority"] = {"name": existing_data["priority"]}
+        # Fix parent field format if present
+        _fix_parent_field_format(properties)
 
-        # Handle assignees, labels, and parent FIRST to ensure they get structured format
-        for field in ["assignees", "labels"]:
-            if field not in properties and field in existing_data and existing_data[field]:
-                id_field = f"{field[:-1]}_ids"  # assignees -> assignee_ids, labels -> label_ids
-                if id_field in existing_data and existing_data[id_field]:
-                    ids = existing_data[id_field]
-                    names = existing_data[field]
-                    structured_items = []
-                    for i, item_id in enumerate(ids):
-                        item_name = names[i] if i < len(names) else "Unknown"
-                        structured_items.append({"id": str(item_id), "name": item_name})
-                    properties[field] = structured_items
-                    # Don't include separate ID arrays - they're redundant
-
-        # Handle parent separately (single item, not a list)
-        # Check if LLM provided parent (either as new assignment or update)
-        if "parent" in properties:
-            existing_parent = properties["parent"]
-            # If it's in wrong format (e.g., {"name": "uuid"}), fix it
-            if isinstance(existing_parent, dict) and "id" not in existing_parent:
-                # Extract the UUID from the wrong format
-                parent_id = existing_parent.get("name")
-                if parent_id:
-                    # Fetch parent name from database
-                    parent_details = await get_workitem_details_for_artifact(parent_id)
-                    parent_name = parent_details.get("name", "Unknown") if parent_details else "Unknown"
-                    properties["parent"] = {"id": str(parent_id), "name": parent_name}
-        elif "parent_id" in existing_data and existing_data["parent_id"]:
-            # No parent in LLM updates, but exists in database - add it
-            parent_name = existing_data.get("parent", "Unknown")
-            properties["parent"] = {"id": str(existing_data["parent_id"]), "name": parent_name}
-
-        # Add missing required fields from existing data (but don't override LLM updates)
-        for field in required_fields:
-            if field in ["name", "description", "project", "project_id"]:
-                continue  # These are handled at top level
-
-            # Skip assignees/labels/parent (already handled above) and their ID fields
-            if field in ["assignees", "labels", "assignee_ids", "label_ids", "parent_id"]:
-                continue
-
-            # Skip parent too, but with special handling if it's in wrong format
-            if field == "parent":
-                continue
-
-            # Skip if LLM already provided this field (preserve LLM updates)
-            if field in properties:
-                continue
-
-            # Add from existing data if available
-            if field in existing_data and existing_data[field] is not None:
-                value = existing_data[field]
-
-                # Transform certain fields to structured format
-                if field == "priority" and isinstance(value, str):
-                    properties[field] = {"name": value}
-                elif field in ["start_date", "target_date"] and value:
-                    properties[field] = {"name": str(value)}
-                elif field == "state" and isinstance(value, str):
-                    # For state, we need both name and id
-                    properties[field] = {"name": value}
-                    if "state_id" in existing_data and existing_data["state_id"]:
-                        properties["state"]["id"] = str(existing_data["state_id"])
-                    if "state_group" in existing_data and existing_data["state_group"]:
-                        properties["state"]["group"] = existing_data["state_group"]
-                elif field in ["cycles", "modules"] and isinstance(value, list):
-                    # For cycles and modules, only keep IDs (no name arrays)
-                    id_field = field.replace("s", "_ids")
-                    if id_field in existing_data and existing_data[id_field]:
-                        properties[id_field] = [str(item_id) for item_id in existing_data[id_field]]
-                elif field in ["cycle_ids", "module_ids"] and isinstance(value, list):
-                    # Add ID arrays if the named versions don't exist
-                    named_field = field.replace("_ids", "s")
-                    if named_field not in existing_data:
-                        properties[field] = [str(item_id) for item_id in value]
-                else:
-                    # Convert UUID objects to strings for JSON serialization
-                    if hasattr(value, "hex"):  # UUID objects have a 'hex' attribute
-                        properties[field] = str(value)
-                    else:
-                        properties[field] = value
-
+        # Update merged_data with processed properties
         merged_data["properties"] = properties
 
-        # Ensure project information is included
-        if "project" not in merged_data:
-            if "project_id" in existing_data:
-                project_details = await get_project_details_for_artifact(str(existing_data["project_id"]))
-                if project_details:
-                    merged_data["project"] = {
-                        "id": str(existing_data["project_id"]),
-                        "identifier": project_details.get("identifier", ""),
-                        "name": project_details.get("name", ""),
-                    }
+        # Ensure project information is included using helper
+        await _ensure_project_info(merged_data, existing_data)
 
         log.info(f"Successfully merged LLM updates with existing data for {entity_type} {entity_id}")
         return merged_data
@@ -305,8 +441,17 @@ async def populate_entity_info_from_artifact(
             if entity_details:
                 entity_name = f"Comment on {entity_details.get("workitem_name", "work item")}"
 
-        # Construct URL using unified function
-        if entity_details:
+        elif artifact.entity == "page":
+            entity_details = await get_page_details_for_artifact(entity_id)
+            if entity_details:
+                entity_name = entity_details.get("name")
+                # For pages, construct a simple URL (pages don't have project-specific URLs in the same way)
+                workspace_id = entity_details.get("workspace_id")
+                if workspace_id:
+                    entity_url = f"/pages/{entity_id}"
+
+        # Construct URL using unified function (if not already set by page handling)
+        if entity_details and not entity_url:
             entity_url = construct_entity_url(artifact.entity, entity_id, entity_details)
 
     except Exception as e:
@@ -408,6 +553,7 @@ async def prepare_artifact_data(entity_type: str, artifact_data: dict, action: O
         "project": prepare_project_artifact_data,
         "cycle": prepare_cycle_artifact_data,
         "module": prepare_module_artifact_data,
+        "page": prepare_page_artifact_data,
         "comment": prepare_comment_artifact_data,
         "state": prepare_state_artifact_data,
         "label": prepare_label_artifact_data,
@@ -551,7 +697,8 @@ async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:
             if labels:
                 properties["labels"] = labels
             if parent:
-                properties["parent"] = parent
+                # Only store parent_id as plain UUID string (no parent object)
+                properties["parent_id"] = parent.get("id") if isinstance(parent, dict) else str(parent)
             if state_obj:
                 properties["state"] = state_obj
             if type_obj:
@@ -593,6 +740,7 @@ async def prepare_artifact_data_with_entity_info(entity_type: str, artifact_data
         "project": prepare_project_artifact_data,
         "cycle": prepare_cycle_artifact_data,
         "module": prepare_module_artifact_data,
+        "page": prepare_page_artifact_data,
         "comment": prepare_comment_artifact_data,
         "state": prepare_state_artifact_data,
         "label": prepare_label_artifact_data,
@@ -685,12 +833,53 @@ async def prepare_label_artifact_data(label_data: dict):
 async def prepare_page_artifact_data(page_data: dict):
     """Prepare page artifact data for enhanced UI display."""
     try:
+        # Determine if we have planning_data or if page_data IS the planning data
         if "planning_data" in page_data:
             planning_data = page_data["planning_data"]
+        elif "parameters" in page_data:
+            # page_data IS the planning data (artifact.data stored directly)
+            planning_data = page_data
+        else:
+            planning_data = None
+
+        # For create operations, use the planning data
+        if planning_data:
             parameters = planning_data.get("parameters", {})
-            return normalize_parameters_structure(parameters, flatten_entities=False)
+            # normalize_parameters_structure now handles description_html -> description conversion
+            result = normalize_parameters_structure(parameters, flatten_entities=False)
+            return result
+
+        # For update operations, fetch existing page details
+        elif "entity_id" in page_data and page_data["entity_id"]:
+            entity_id = str(page_data["entity_id"])
+            page_details = await get_page_details_for_artifact(entity_id)
+
+            if page_details:
+                result = {
+                    "name": page_details.get("name", ""),
+                    "description": page_details.get("description_stripped", ""),
+                    "project": {"id": str(page_details.get("project_id", "")), "identifier": page_details.get("project_identifier", "")},
+                    "properties": {
+                        "access": page_details.get("access"),
+                        "is_locked": page_details.get("is_locked"),
+                        "is_global": page_details.get("is_global"),
+                        "owned_by": {"id": str(page_details.get("owned_by_id", "")), "name": page_details.get("owned_by", "")}
+                        if page_details.get("owned_by_id")
+                        else None,
+                        "logo_props": page_details.get("logo_props"),
+                        "view_props": page_details.get("view_props"),
+                    },
+                }
+
+                # Add parent_id if present
+                if page_details.get("parent_id"):
+                    result["properties"]["parent_id"] = str(page_details["parent_id"])
+
+                return result
+
         return page_data
-    except Exception:
+    except Exception as e:
+        log.error(f"Error preparing page artifact data: {e}")
         return page_data
 
 
@@ -712,15 +901,7 @@ async def prepare_epic_artifact_data(epic_data: dict):
             # Use same normalization as workitems - epics just have fewer fields
             result = normalize_parameters_structure(parameters, flatten_entities=True)
 
-            # Resolve parent field if present (convert from {"name": "uuid"} to {"id": "uuid", "name": "Parent Name"})
-            if "properties" in result and "parent" in result["properties"]:
-                parent_data = result["properties"]["parent"]
-                if isinstance(parent_data, dict) and "id" not in parent_data and "name" in parent_data:
-                    parent_id = parent_data["name"]
-                    # Fetch parent name from database (epics are also workitems)
-                    parent_details = await get_workitem_details_for_artifact(parent_id)
-                    if parent_details:
-                        result["properties"]["parent"] = {"id": str(parent_id), "name": parent_details.get("name", "Unknown")}
+            # Note: Epics don't have parent_id field, so no parent resolution needed
 
         # For update operations, fetch existing epic details and merge with any updates
         elif "entity_id" in epic_data and epic_data["entity_id"]:
@@ -764,15 +945,19 @@ async def prepare_workitem_artifact_data(workitem_data: dict):
             # Use unified normalizer with entity flattening to merge project details
             result = normalize_parameters_structure(parameters, flatten_entities=True)
 
-            # Resolve parent field if present (convert from {"name": "uuid"} to {"id": "uuid", "name": "Parent Name"})
+            # Resolve parent field if present (convert from {"name": "uuid"} or parent object to plain parent_id string)
             if "properties" in result and "parent" in result["properties"]:
-                parent_data = result["properties"]["parent"]
-                if isinstance(parent_data, dict) and "id" not in parent_data and "name" in parent_data:
-                    parent_id = parent_data["name"]
-                    # Fetch parent name from database
-                    parent_details = await get_workitem_details_for_artifact(parent_id)
-                    if parent_details:
-                        result["properties"]["parent"] = {"id": str(parent_id), "name": parent_details.get("name", "Unknown")}
+                parent_data = result["properties"].pop("parent")  # Remove parent object
+                if isinstance(parent_data, dict):
+                    parent_id = parent_data.get("id") or parent_data.get("name")
+                elif isinstance(parent_data, str):
+                    parent_id = parent_data
+                else:
+                    parent_id = None
+
+                if parent_id:
+                    # Store only parent_id as plain UUID string
+                    result["properties"]["parent_id"] = str(parent_id)
 
         # For update operations, fetch existing workitem details and merge with any updates
         elif "entity_id" in workitem_data and workitem_data["entity_id"]:
@@ -915,31 +1100,32 @@ async def prepare_unknown_artifact_data(artifact_data: dict):
         return artifact_data
 
 
-def normalize_parameters_structure(parameters: dict, flatten_entities: bool = True) -> Dict[str, Any]:
-    """
-    Unified function to normalize parameter structure for consistent frontend format.
+class ParameterNormalizer:
+    """Encapsulates parameter normalization logic for consistent frontend format."""
 
-    This ensures ALL pipelines (streaming, action planning, artifact responses)
-    produce the same consistent structure with description at top level.
+    # Fields that should always stay at top level (FIXED: Added project_id)
+    TOP_LEVEL_FIELDS = {"name", "description", "project", "identifier", "id", "project_id"}
 
-    Args:
-        parameters: Input parameters dictionary
-        flatten_entities: Whether to flatten entity blocks and merge related fields
+    # Fields that should be converted to description at top level
+    DESCRIPTION_FIELDS = {"description_html", "description_stripped"}
 
-    Returns:
-        Normalized parameters with consistent structure
-    """
+    @staticmethod
+    def _extract_string_value(value: Any) -> str:
+        """Extract string value from various formats."""
+        if isinstance(value, dict):
+            if "name" in value and isinstance(value["name"], str):
+                return value["name"]
+            elif "description" in value and isinstance(value["description"], str):
+                return value["description"]
+            elif "value" in value and isinstance(value["value"], str):
+                return value["value"]
+        elif isinstance(value, str):
+            return value
+        return str(value) if value is not None else ""
 
-    normalized: Dict[str, Any] = {}
-    properties: Dict[str, Any] = {}
-
-    # Fields that should always stay at top level
-    top_level_fields = {"name", "description", "project", "identifier"}
-
-    # First pass: handle entity flattening if requested
-    working_params = parameters.copy()
-    if flatten_entities:
-        # Look for entity blocks to flatten and merge with related ID fields
+    @staticmethod
+    def _flatten_entity_blocks(working_params: dict) -> None:
+        """Flatten entity blocks and merge with related ID fields."""
         entity_keys = ["project", "workitem", "module", "cycle", "state", "label", "comment", "page"]
         for entity_key in entity_keys:
             if entity_key in working_params and isinstance(working_params[entity_key], dict):
@@ -961,60 +1147,134 @@ def normalize_parameters_structure(parameters: dict, flatten_entities: bool = Tr
                 # Create entity object with just the ID
                 working_params[entity_key] = {"id": entity_id}
 
-    for key, value in working_params.items():
-        # Handle HTML field mappings to their base equivalents (these are not in top_level_fields)
+    @staticmethod
+    def _handle_description_conversion(working_params: dict) -> None:
+        """Convert description_html/description_stripped to description."""
+        for desc_field in ParameterNormalizer.DESCRIPTION_FIELDS:
+            if desc_field in working_params:
+                desc_value = working_params.pop(desc_field)
+                # Only set description if not already present
+                if "description" not in working_params:
+                    if isinstance(desc_value, dict) and "name" in desc_value:
+                        working_params["description"] = desc_value["name"]
+                    elif isinstance(desc_value, str):
+                        working_params["description"] = desc_value
+
+    @staticmethod
+    def _process_field(key: str, value: Any, normalized: Dict[str, Any], properties: Dict[str, Any], flatten_entities: bool) -> None:
+        """Process a single field and place it in the correct location."""
+        # Handle HTML field mappings to their base equivalents
         if key == "description_html":
-            # Map description_html to description at top level (for workitems, epics, etc.)
-            if isinstance(value, dict) and "name" in value:
-                normalized["description"] = value["name"]
-            elif isinstance(value, str):
-                normalized["description"] = value
-            else:
-                normalized["description"] = str(value) if value is not None else ""
-        elif key in top_level_fields:
+            normalized["description"] = ParameterNormalizer._extract_string_value(value)
+        elif key in ParameterNormalizer.TOP_LEVEL_FIELDS:
             # Handle nested description objects - extract string value
             if key == "description" and isinstance(value, dict):
-                if "name" in value and isinstance(value["name"], str):
-                    normalized[key] = value["name"]
-                elif "description" in value and isinstance(value["description"], str):
-                    normalized[key] = value["description"]
-                elif "value" in value and isinstance(value["value"], str):
-                    normalized[key] = value["value"]
+                extracted = ParameterNormalizer._extract_string_value(value)
+                if extracted:
+                    normalized[key] = extracted
                 else:
                     # Can't extract string, put in properties
                     properties[key] = value
             else:
                 normalized[key] = value
-        elif key.endswith("_id") and key != "entity_id":
+        elif key.endswith("_id") and key not in ["entity_id", "parent_id"]:
             # Skip standalone ID fields that should be merged with entities
-            # These are handled in the entity flattening pass above
-            continue
+            # Exception: parent_id is a legitimate property field that should be preserved
+            pass
         elif key == "properties":
-            # Merge existing properties and convert plain strings to structured objects
-            if isinstance(value, dict):
-                for prop_key, prop_value in value.items():
-                    # Skip ID fields that should be merged with entities
-                    if prop_key.endswith("_id") and flatten_entities:
-                        continue
-                    # Convert plain string values to structured objects with "name" field
-                    # (parent field will be resolved later in prepare_*_artifact_data functions)
-                    if isinstance(prop_value, str):
-                        properties[prop_key] = {"name": prop_value}
-                    else:
-                        properties[prop_key] = prop_value
+            # Merge existing properties
+            ParameterNormalizer._merge_existing_properties(value, normalized, properties, flatten_entities)
         else:
-            # All other fields go to properties, convert strings to structured objects
-            # (parent field will be resolved later in prepare_*_artifact_data functions)
-            if isinstance(value, str):
-                properties[key] = {"name": value}
-            else:
+            # All other fields go to properties
+            ParameterNormalizer._add_to_properties(key, value, properties)
+
+    @staticmethod
+    def _merge_existing_properties(value: Any, normalized: Dict[str, Any], properties: Dict[str, Any], flatten_entities: bool) -> None:
+        """Merge existing properties dict into the properties being built."""
+        if isinstance(value, dict):
+            for prop_key, prop_value in value.items():
+                # Handle description fields in properties - move to top level
+                if prop_key in ParameterNormalizer.DESCRIPTION_FIELDS:
+                    if "description" not in normalized:
+                        normalized["description"] = ParameterNormalizer._extract_string_value(prop_value)
+                    continue
+
+                # Skip ID fields that should be merged with entities
+                # Exception: parent_id is a legitimate property field
+                if prop_key.endswith("_id") and prop_key != "parent_id" and flatten_entities:
+                    continue
+
+                # Add to properties
+                ParameterNormalizer._add_to_properties(prop_key, prop_value, properties)
+
+    @staticmethod
+    def _add_to_properties(key: str, value: Any, properties: Dict[str, Any]) -> None:
+        """Add a field to properties, converting strings to structured objects."""
+        # Convert plain string values to structured objects with "name" field
+        # EXCEPTION: parent_id must remain as plain UUID string
+        if isinstance(value, str):
+            if key == "parent_id":
+                # Keep parent_id as plain string UUID
                 properties[key] = value
+            else:
+                # Convert other strings to {"name": value} format
+                properties[key] = {"name": value}
+        else:
+            properties[key] = value
 
-    # Add properties if any exist
-    if properties:
-        normalized["properties"] = properties
+    @staticmethod
+    def normalize_parameters_structure(parameters: dict, flatten_entities: bool = True) -> Dict[str, Any]:
+        """
+        Unified function to normalize parameter structure for consistent frontend format.
 
-    return normalized
+        This ensures ALL pipelines (streaming, action planning, artifact responses)
+        produce the same consistent structure with description at top level.
+
+        Args:
+            parameters: Input parameters dictionary
+            flatten_entities: Whether to flatten entity blocks and merge related fields
+
+        Returns:
+            Normalized parameters with consistent structure
+        """
+        normalized: Dict[str, Any] = {}
+        properties: Dict[str, Any] = {}
+
+        # First pass: handle entity flattening if requested
+        working_params = parameters.copy()
+
+        # Handle description_html -> description conversion
+        ParameterNormalizer._handle_description_conversion(working_params)
+
+        if flatten_entities:
+            # Flatten entity blocks
+            ParameterNormalizer._flatten_entity_blocks(working_params)
+
+        # Process each field
+        for key, value in working_params.items():
+            ParameterNormalizer._process_field(key, value, normalized, properties, flatten_entities)
+
+        # Add properties if any exist
+        if properties:
+            normalized["properties"] = properties
+
+        return normalized
+
+
+def normalize_parameters_structure(parameters: dict, flatten_entities: bool = True) -> Dict[str, Any]:
+    """
+    Unified function to normalize parameter structure for consistent frontend format.
+
+    This is a backward-compatible wrapper around ParameterNormalizer.normalize_parameters_structure.
+
+    Args:
+        parameters: Input parameters dictionary
+        flatten_entities: Whether to flatten entity blocks and merge related fields
+
+    Returns:
+        Normalized parameters with consistent structure
+    """
+    return ParameterNormalizer.normalize_parameters_structure(parameters, flatten_entities)
 
 
 def restructure_parameters_for_frontend(parameters: dict) -> dict:

@@ -22,6 +22,7 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 // local components
 import { useFlag } from "@/plane-web/hooks/store";
 import IntakeTooltip from "../intake-tooltip";
+import { IntakeHeaderQuickActions } from "./quick-actions";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -137,6 +138,7 @@ export const ProjectInboxHeader: FC = observer(() => {
         ) : (
           <></>
         )}
+        <IntakeHeaderQuickActions workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       </Header.RightItem>
     </Header>
   );

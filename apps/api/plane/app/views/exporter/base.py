@@ -66,7 +66,7 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_exports").select_related(
+        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug).exclude(type="issue_worklogs").select_related(
             "workspace", "initiated_by"
         )
 

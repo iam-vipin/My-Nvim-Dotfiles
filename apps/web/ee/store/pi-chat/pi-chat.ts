@@ -424,9 +424,19 @@ export class PiChatStore implements IPiChatStore {
       }
     });
 
+    eventSource.addEventListener("error", async (event: MessageEvent) => {
+      console.error("SSE error:", event);
+      newDialogue.isPiThinking = false;
+      this.isPiTypingMap[chatId] = false;
+      newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+      this.updateDialogue(chatId, token, newDialogue);
+      eventSource.close();
+    });
+
     eventSource.onerror = (err) => {
       console.error("SSE error:", err);
       newDialogue.isPiThinking = false;
+      this.isPiTypingMap[chatId] = false;
       newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
       this.updateDialogue(chatId, token, newDialogue);
       eventSource.close();
@@ -487,26 +497,38 @@ export class PiChatStore implements IPiChatStore {
       attachmentIds,
       isNewChat
     );
-    const token = await this.piChatService.retrieveToken(payload);
-    runInAction(() => {
-      update(this.chatMap, chatId, (chat) => {
-        chat.dialogue = [...dialogueHistory, token];
-        newDialogue.query_id = token;
-        chat.dialogueMap[token] = newDialogue;
-        return chat;
+    this.piChatService
+      .retrieveToken(payload)
+      .then((token) => {
+        runInAction(() => {
+          update(this.chatMap, chatId, (chat) => {
+            chat.dialogue = [...dialogueHistory, token];
+            newDialogue.query_id = token;
+            chat.dialogueMap[token] = newDialogue;
+            return chat;
+          });
+        });
+        try {
+          this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
+        } catch (e) {
+          console.log(e);
+          runInAction(() => {
+            newDialogue.isPiThinking = false;
+            newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+            this.updateDialogue(chatId, token, newDialogue);
+            this.isPiTypingMap[chatId] = false;
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        runInAction(() => {
+          newDialogue.isPiThinking = false;
+          newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+          this.updateDialogue(chatId, "latest", newDialogue);
+          this.isPiTypingMap[chatId] = false;
+        });
       });
-    });
-    try {
-      this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
-    } catch (e) {
-      console.log(e);
-      runInAction(() => {
-        newDialogue.isPiThinking = false;
-        newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        this.updateDialogue(chatId, token, newDialogue);
-        this.isPiTypingMap[chatId] = false;
-      });
-    }
   };
 
   regenerateAnswer = async (chatId: string, token: string, workspaceId: string | undefined) => {

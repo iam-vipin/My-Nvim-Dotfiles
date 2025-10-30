@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, EpicIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import type { TArtifact } from "@/plane-web/types";
 
@@ -18,6 +18,8 @@ export const getIcon = (type: string, color?: string, defaultRender: "text" | "i
       return <ModuleIcon width={16} height={16} />;
     case "view":
       return <ViewsIcon width={16} height={16} />;
+    case "epic":
+      return <EpicIcon width={16} height={16} className="text-custom-text-200" />;
     default:
       return defaultRender === "icon" ? (
         <div

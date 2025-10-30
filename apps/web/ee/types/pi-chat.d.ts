@@ -252,4 +252,4 @@ export type TPiAttachmentIdMap = {
 };
 
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem"];
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic"];

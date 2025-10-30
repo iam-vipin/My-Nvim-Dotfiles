@@ -347,11 +347,14 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     (anchorElement: HTMLAnchorElement | null) => {
       if (!anchorElement || !anchorElement.href) return;
 
+      // Extract relative path instead of absolute URL
+      const relativePath = anchorElement.pathname + anchorElement.search + anchorElement.hash;
+
       if (isDirtyRef.current) {
         setIsDiscardModalOpen(true);
-        setBubbledHref(anchorElement.href);
+        setBubbledHref(relativePath);
       } else {
-        router.push(anchorElement.href);
+        router.push(relativePath);
       }
     },
     ["discard-modal-button"]

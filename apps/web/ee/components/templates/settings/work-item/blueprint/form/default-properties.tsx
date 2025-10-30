@@ -1,6 +1,5 @@
-import { useState } from "react";
 import type { FieldPath, FieldValues } from "react-hook-form";
-import { Controller, PathValue, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IModule, IIssueLabel, IState, IUserLite, TWorkItemBlueprintFormData } from "@plane/types";

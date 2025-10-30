@@ -75,6 +75,7 @@ export interface IPiChatStore {
   ) => Promise<void>;
   executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<TExecuteActionResponse | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
+  abortStream: (chatId: string) => void;
   setActiveModel: (model: TAiModels) => void;
   createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
   renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
@@ -120,6 +121,7 @@ export class PiChatStore implements IPiChatStore {
   favoriteChats: string[] = [];
   isPiChatDrawerOpen: boolean = false;
   isPiArtifactsDrawerOpen: string | undefined = undefined;
+  eventSources: Record<string, EventSource> = {};
   //services
   userStore;
   rootStore;
@@ -146,6 +148,7 @@ export class PiChatStore implements IPiChatStore {
       favoriteChats: observable,
       isPiChatDrawerOpen: observable.ref,
       isPiArtifactsDrawerOpen: observable.ref,
+      eventSources: observable,
       // computed
       activeChat: computed,
       isPiTyping: computed,
@@ -170,6 +173,7 @@ export class PiChatStore implements IPiChatStore {
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
+      abortStream: action,
     });
 
     //services
@@ -368,6 +372,7 @@ export class PiChatStore implements IPiChatStore {
     const eventSource = new EventSource(url, {
       withCredentials: true,
     });
+    this.eventSources[chatId] = eventSource;
 
     // 🔹 Handles `delta` chunks
     eventSource.addEventListener("delta", (event: MessageEvent) => {
@@ -408,6 +413,7 @@ export class PiChatStore implements IPiChatStore {
     // 🔹 Handles done event
     eventSource.addEventListener("done", async () => {
       eventSource.close();
+      delete this.eventSources[chatId];
       if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
       this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
@@ -440,6 +446,7 @@ export class PiChatStore implements IPiChatStore {
       newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
       this.updateDialogue(chatId, token, newDialogue);
       eventSource.close();
+      delete this.eventSources[chatId];
     };
   };
 
@@ -529,6 +536,20 @@ export class PiChatStore implements IPiChatStore {
           this.isPiTypingMap[chatId] = false;
         });
       });
+  };
+
+  abortStream = (chatId: string) => {
+    const eventSource = this.eventSources[chatId];
+    const dialogues = this.chatMap[chatId]?.dialogue;
+    if (eventSource && dialogues?.length > 0) {
+      eventSource.close();
+      delete this.eventSources[chatId];
+      console.warn(`SSE stream for chat ${chatId} aborted`);
+      runInAction(() => {
+        this.isPiTypingMap[chatId] = false;
+        this.chatMap[chatId].dialogueMap[dialogues[dialogues.length - 1]].isPiThinking = false;
+      });
+    }
   };
 
   regenerateAnswer = async (chatId: string, token: string, workspaceId: string | undefined) => {

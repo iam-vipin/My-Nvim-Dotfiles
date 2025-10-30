@@ -88,7 +88,7 @@ class IntakeResponsibility(ProjectBaseModel):
         verbose_name_plural = "Intake Responsibilities"
         db_table = "intake_responsibilities"
         ordering = ("-created_at",)
-        unique_together = ("intake", "user", "type")
+        unique_together = ("intake", "user", "type", "deleted_at")
         constraints = [
             models.UniqueConstraint(
                 fields=["intake", "user", "type"],

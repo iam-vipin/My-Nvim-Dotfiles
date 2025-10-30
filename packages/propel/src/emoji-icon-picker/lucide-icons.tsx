@@ -156,7 +156,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-} from "@plane/propel/icons";
+} from "../icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },

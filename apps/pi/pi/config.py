@@ -118,25 +118,26 @@ class VectorDB:
     EMBEDDING_DIMENSION: int = 1536  # unused
     EMBEDDING_MODEL_API_VERSION: str = "2024-05-01-preview"  # unused
 
+    def generate_index_name(suffix: str) -> str:
+        prefix = os.getenv("OPENSEARCH_INDEX_PREFIX", "")
+        if prefix:
+            # Remove trailing underscores from prefix to avoid double underscores
+            prefix = prefix.rstrip("_")
+            return f"{prefix}_{suffix}"
+        else:
+            return suffix
+
     # Index Configuration
-    ISSUE_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "issues"
-    PAGES_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "pages"
-    MODULES_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "modules"
-    CYCLES_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "cycles"
-    PROJECTS_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "projects"
-    COMMENTS_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "issue_comments"
-    DOCS_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "docs_semantic"
-    CHAT_SEARCH_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "pi_chat_messages"
-    CACHE_INDEX: str = os.getenv("OPENSEARCH_INDEX_PREFIX", "") + "rewritten_query_cache"
+    ISSUE_INDEX: str = generate_index_name("issues")
+    PAGES_INDEX: str = generate_index_name("pages")
+    MODULES_INDEX: str = generate_index_name("modules")
+    CYCLES_INDEX: str = generate_index_name("cycles")
+    PROJECTS_INDEX: str = generate_index_name("projects")
+    COMMENTS_INDEX: str = generate_index_name("issue_comments")
+    DOCS_INDEX: str = generate_index_name("docs_semantic")
+    CHAT_SEARCH_INDEX: str = generate_index_name("pi_chat_messages")
+    CACHE_INDEX: str = generate_index_name("rewritten_query_cache")
     CACHE_THRESHOLD: float = float(os.getenv("CACHE_THRESHOLD", "0.9"))
-
-    # Pipeline Configuration
-    ISSUE_PIPELINE_NAME: str = "issue-embedding-pipeline"  # unused
-    PAGES_PIPELINE_NAME: str = "pages-embedding-pipeline"  # unused
-    DOCS_PIPELINE_NAME: str = "docs-embedding-pipeline"
-
-    # Duplicate Detection Configuration
-    DUPES_EMBED_CUTOFF: float = 0.75
 
     # Vector Search Configuration
     ISSUE_VECTOR_SEARCH_CUTOFF: float = 0.75

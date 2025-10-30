@@ -139,6 +139,12 @@ class VectorDB:
     CACHE_INDEX: str = generate_index_name("rewritten_query_cache")
     CACHE_THRESHOLD: float = float(os.getenv("CACHE_THRESHOLD", "0.9"))
 
+    # Ingest Pipeline Configuration
+    DOCS_PIPELINE_NAME: str = "docs-embedding-pipeline"
+
+    # Duplicate Detection Configuration
+    DUPES_EMBED_CUTOFF: float = 0.75
+
     # Vector Search Configuration
     ISSUE_VECTOR_SEARCH_CUTOFF: float = 0.75
     PAGE_VECTOR_SEARCH_CUTOFF: float = 0.69

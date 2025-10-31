@@ -51,11 +51,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   const isNotSupported = app.is_not_supported || false;
   const isSelfManaged = subscriptionDetail?.is_self_managed || false;
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
+  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
   const isFeatureFlagEnabled = useFlag(
     workspaceSlug?.toString() || "",
     E_FEATURE_FLAGS[`${convertAppSlugToIntegrationKey(app.slug)}_INTEGRATION` as keyof typeof E_FEATURE_FLAGS]
   );
-  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
 
   const handleConfigure = () => {
     if (isAppDefault) {

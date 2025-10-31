@@ -33,7 +33,7 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
 
         # Visible models for users (extendable via feature flags later)
         # NOTE: Hide gpt-5-standard from user selection to reduce latency
-        user_visible_models = ["gpt-4.1", "gpt-5-fast", "claude-sonnet-4"]
+        user_visible_models = ["gpt-4.1", "gpt-5-fast"]
 
         default_found = False
         for db_model in db_models:

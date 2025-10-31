@@ -1,8 +1,11 @@
 import amqp from "amqplib";
 import { logger } from "@plane/logger";
 import { env } from "@/env";
+import { shutdown } from "@/helpers/shutdown";
 import { captureException } from "@/logger";
 import { TMQEntityOptions } from "./types";
+
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 export class MQActorBase {
   private connection!: amqp.Connection;
@@ -11,10 +14,10 @@ export class MQActorBase {
   routingKey: string;
   channel!: amqp.Channel;
   amqpUrl = env.AMQP_URL || "amqp://localhost";
+  protected consumerCallback?: (data: any) => void;
   private reconnecting = false;
   private readonly RECONNECT_INTERVAL = 5000;
   private isConnected = false;
-  private consumerCallback?: (data: any) => void;
 
   constructor(options: TMQEntityOptions, amqpUrl?: string) {
     this.exchange = "migration_exchange";
@@ -36,10 +39,6 @@ export class MQActorBase {
         this.routingKey = "silo-api";
       }
     }
-  }
-
-  setConsumerCallback(callback: (data: any) => void) {
-    this.consumerCallback = callback;
   }
 
   async healthCheck() {
@@ -65,13 +64,13 @@ export class MQActorBase {
     this.connection.on("error", (error) => {
       this.isConnected = false;
       logger.error("[RabbitMQ] Connection error:", error);
-      this.handleReconnection();
+      this.connect();
     });
 
     this.connection.on("close", (error) => {
       this.isConnected = false;
       logger.error("[RabbitMQ] Connection closed:", error);
-      this.handleReconnection();
+      this.connect();
     });
 
     this.connection.on("blocked", (reason) => {
@@ -83,23 +82,24 @@ export class MQActorBase {
     });
 
     this.channel.on("close", () => {
-      logger.error("[RabbitMQ] Channel closed");
-      this.handleReconnection();
+      logger.warn("[RabbitMQ] Channel closed");
+      // Note: Connection-level handlers will handle reconnection
     });
 
     this.channel.on("error", (error) => {
       logger.error("[RabbitMQ] Channel error:", error);
-      this.handleReconnection();
+      // Note: Connection-level handlers will handle reconnection
     });
   }
 
-  private async handleReconnection() {
+  async connect() {
     if (this.reconnecting) return;
 
     this.reconnecting = true;
     let attemptCount = 0;
+    logger.info(`[RabbitMQ] Attempting to reconnect to RabbitMQ`);
 
-    while (true) {
+    while (attemptCount < MAX_RECONNECT_ATTEMPTS) {
       try {
         attemptCount++;
         await this.initializeConnection();
@@ -109,18 +109,16 @@ export class MQActorBase {
         }
 
         this.reconnecting = false;
-        logger.info("[RabbitMQ] Successfully reconnected and re-registered consumer");
+        logger.info("[RabbitMQ] Successfully connected and registered consumer");
         return true;
       } catch (error) {
-        if (attemptCount % 10 === 0) {
-          logger.error(`[MQ] RabbitMQ reconnection attempt ${attemptCount} failed`, { error });
-          captureException(new Error(`[MQ] RabbitMQ reconnection attempt ${attemptCount} failed`));
-          process.exit(1);
-        }
+        captureException(new Error(`[RabbitMQ] Failed to connect at attempt ${attemptCount}`, { cause: error }));
+        logger.error(`[RabbitMQ] Failed to connect at attempt ${attemptCount}`, error);
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
-        logger.info(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
       }
     }
+
+    shutdown("Failed to connect to RabbitMQ after " + MAX_RECONNECT_ATTEMPTS + " attempts");
   }
 
   private async reRegisterConsumer() {
@@ -170,24 +168,6 @@ export class MQActorBase {
       this.isConnected = false;
       logger.error("[RabbitMQ] Failed to initialize connection:", error);
       throw error;
-    }
-  }
-
-  async connect() {
-    let attemptCount = 0;
-    while (true) {
-      try {
-        attemptCount++;
-        await this.initializeConnection();
-        return;
-      } catch {
-        if (attemptCount % 10 === 0) {
-          logger.info(`[MQ] RabbitMQ initial connection attempt ${attemptCount} failed`);
-          captureException(new Error(`[MQ] RabbitMQ initial connection attempt ${attemptCount} failed`));
-        }
-        await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
-        logger.info(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
-      }
     }
   }
 

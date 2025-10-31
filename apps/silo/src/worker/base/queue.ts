@@ -8,7 +8,6 @@ import { TMQEntityOptions } from "./types";
 export class MQ {
   private producer: MQProducer;
   private consumer: MQConsumer;
-  private consumerCallback?: (data: any) => void;
 
   constructor(options: TMQEntityOptions, amqpUrl?: string) {
     this.producer = new MQProducer(options, amqpUrl);
@@ -37,7 +36,6 @@ export class MQ {
 
   async startConsuming(callback: (data: any) => void) {
     try {
-      this.consumerCallback = callback;
       const prefetchCount = Number(env.MQ_PREFETCH_COUNT) ?? 5;
       this.consumer.channel.prefetch(prefetchCount);
       await this.consumer.startConsuming(callback);

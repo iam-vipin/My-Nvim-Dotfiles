@@ -40,7 +40,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
 
   // derived values
   const showConfigureButton = app.is_default;
-  const showInstallButton = !app.is_installed || !app.is_default;
+  const showInstallButton = app.setup_url && (!app.is_installed || !app.is_default);
   const showOptionsButton =
     (app.is_default &&
       app.is_owned &&
@@ -97,11 +97,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   };
 
   // for default apps, if the feature flag is not enabled, don't show the tile, or
-  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not default
+  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not owned or is not default
   if (
     (isAppDefault && !isFeatureFlagEnabled) ||
     importersSlug.includes(app.slug) ||
-    (!app.setup_url && !isAppDefault)
+    (!app.setup_url && !isAppDefault && !app.is_owned)
   ) {
     return null;
   }

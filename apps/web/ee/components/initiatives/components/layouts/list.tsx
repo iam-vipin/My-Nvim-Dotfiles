@@ -19,7 +19,7 @@ import { InitiativeBlock } from "../initiative-block";
 export const InitiativesListLayout = observer(() => {
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
-  const { getUserDetails, workspace } = useMember();
+  const { getUserDetails } = useMember();
   const { workspaceSlug } = useParams();
 
   const {
@@ -50,8 +50,8 @@ export const InitiativesListLayout = observer(() => {
       }
 
       case "lead": {
-        const memberIds = workspace.workspaceMemberIds || [];
-        expandGroups(memberIds);
+        // Only show groups for members who are actually leads of initiatives
+        expandGroups([]);
         break;
       }
 

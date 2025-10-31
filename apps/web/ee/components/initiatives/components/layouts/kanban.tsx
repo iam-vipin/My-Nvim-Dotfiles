@@ -35,7 +35,7 @@ export const InitiativeKanbanLayout = observer(() => {
   } = useInitiatives();
 
   const { allowPermissions } = useUserPermissions();
-  const { getUserDetails, workspace } = useMember();
+  const { getUserDetails } = useMember();
 
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
@@ -68,8 +68,7 @@ export const InitiativeKanbanLayout = observer(() => {
       }
 
       case "lead": {
-        const memberIds = workspace.workspaceMemberIds || [];
-        expandGroups(memberIds);
+        expandGroups([]);
         break;
       }
 

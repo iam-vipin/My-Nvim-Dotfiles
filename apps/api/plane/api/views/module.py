@@ -1039,7 +1039,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ],
         request={},
         responses={
-            204: ARCHIVED_RESPONSE,
+            204: None,
             400: CANNOT_ARCHIVE_RESPONSE,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
@@ -1074,7 +1074,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             MODULE_PK_PARAMETER,
         ],
         responses={
-            204: UNARCHIVED_RESPONSE,
+            204: None,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )

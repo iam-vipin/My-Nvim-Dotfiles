@@ -49,6 +49,18 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             "in_use": "icon",
             "icon": {"name": "UsersRound", "color": "#6d7b8a"},
         },
+        PropertyTypeEnum.URL: {
+            "in_use": "icon",
+            "icon": {"name": "Link", "color": "#6d7b8a"},
+        },
+        PropertyTypeEnum.EMAIL: {
+            "in_use": "icon",
+            "icon": {"name": "Envelope", "color": "#6d7b8a"},
+        },
+        PropertyTypeEnum.FILE: {
+            "in_use": "icon",
+            "icon": {"name": "File", "color": "#6d7b8a"},
+        },
     }
 
     def get_logo_props(self, property_type, relation_type=None):

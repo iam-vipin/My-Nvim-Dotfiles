@@ -1,5 +1,6 @@
 "use client";
 
+import { existsSync } from "fs";
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
@@ -106,6 +107,23 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
     return null;
   }
 
+  /**
+   * For the apps that don't have a logo, we will try to get the logo file from the app slug
+   * logo should be in the public/services folder and should be a png file
+   * @param appSlug
+   * @returns
+   */
+  const getLogoFromAppSlug = (appSlug: string) => {
+    const normalizedSlug = appSlug.toLowerCase();
+    const logoFile = `${normalizedSlug}.png`;
+
+    if (existsSync(`public/services/${logoFile}`)) {
+      return `/services/${logoFile}`;
+    }
+
+    return null;
+  };
+
   return (
     <div className="flex flex-col items-start justify-between border border-custom-border-100 p-4 rounded-md gap-2 h-full">
       <div className="flex flex-col space-y-1 flex-1 w-full">
@@ -119,6 +137,8 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
                     alt={app.name}
                     className="h-full w-full"
                   />
+                ) : getLogoFromAppSlug(app.slug) ? (
+                  <img src={getLogoFromAppSlug(app.slug) || ""} alt={app.name} className="h-full w-full" />
                 ) : (
                   <div className=" bg-custom-background-80 flex items-center justify-center h-full w-full">
                     <div className="text-lg font-medium">{app.name.charAt(0)}</div>

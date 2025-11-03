@@ -93,7 +93,7 @@ export const getTransformedIssueFields = (
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
   return entities.issueFields
     .map((issueField) => transformIssueFields(resourceId, job.project_id, issueField))
-    .filter(Boolean) as Partial<ExIssueProperty>[];
+    .filter((field) => field && field.property_type) as Partial<ExIssueProperty>[];
 };
 
 export const getTransformedIssueFieldOptions = (
@@ -114,15 +114,20 @@ export const getTransformedIssueFieldOptions = (
 };
 
 export const getTransformedIssuePropertyValues = (
-  _job: TImportJob<JiraConfig>,
+  job: TImportJob<JiraConfig>,
   entities: JiraEntity,
   planeIssueProperties: Partial<ExIssueProperty>[]
 ): TIssuePropertyValuesPayload => {
+  const resourceId = job.config.resource ? job.config.resource.id : uuid();
+  const projectId = job.project_id;
   // Get the plane issue properties map to only transform values for the properties that are present in the plane
   const planeIssuePropertiesMap = new Map<string, Partial<ExIssueProperty>>(
     planeIssueProperties
       .filter((property) => property.external_id)
-      .map((property) => [property.external_id as string, property])
+      .map((property) => {
+        const customFieldKey = property.external_id?.split("_").pop();
+        return [`customfield_${customFieldKey}`, property];
+      })
   );
   // Get the jira custom field map to get the type of the custom field
   const jiraCustomFieldMap = new Map<string, string>(
@@ -134,7 +139,9 @@ export const getTransformedIssuePropertyValues = (
   const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
   entities.issues.forEach((issue: IJiraIssue) => {
     if (issue.id && issue.fields) {
-      transformedIssuePropertyValues[issue.id] = transformIssuePropertyValues(
+      transformedIssuePropertyValues[`${projectId}_${resourceId}_${issue.id}`] = transformIssuePropertyValues(
+        resourceId,
+        projectId,
         issue,
         planeIssuePropertiesMap,
         jiraCustomFieldMap

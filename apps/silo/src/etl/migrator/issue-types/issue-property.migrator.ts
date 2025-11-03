@@ -43,6 +43,8 @@ export const createOrUpdateIssueProperties = async (
         return undefined;
       }
 
+      issueProperty.type_id = issueType.id;
+
       let createdUpdatedIssueProperty: ExIssueProperty | undefined;
 
       if (method === "create") {
@@ -70,7 +72,11 @@ export const createOrUpdateIssueProperties = async (
         `Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
         {
           jobId: jobId,
-          error: error,
+          error: {
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            name: error instanceof Error ? error.name : undefined,
+          },
         }
       );
       return undefined;
@@ -126,7 +132,11 @@ export const createOrUpdateIssuePropertiesOptions = async (
         `Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`,
         {
           jobId: jobId,
-          error: error,
+          error: {
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            name: error instanceof Error ? error.name : undefined,
+          },
         }
       );
       return undefined;

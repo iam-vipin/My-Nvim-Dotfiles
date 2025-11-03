@@ -53,7 +53,7 @@ export async function pullIssues(client: JiraV2Service, projectKey: string, from
   );
 }
 
-export async function pullComments(issues: IJiraIssue[], client: JiraV2Service): Promise<any[]> {
+export async function pullComments(issues: IJiraIssue[], client: JiraV2Service): Promise<JiraComment[]> {
   return await pullCommentsInBatches(issues, 20, client);
 }
 

@@ -47,7 +47,6 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             property_id=property_id,
-            property__issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -101,20 +100,14 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
                 property_id=property_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
-                property__issue_type__is_epic=False,
             )
-            if (
-                external_id
-                and request.data.get("external_source")
-                and external_existing_property_option.exists()
-            ):
+            if external_id and request.data.get("external_source") and external_existing_property_option.exists():
                 issue_property_option = self.model.objects.filter(
                     workspace__slug=slug,
                     project_id=project_id,
                     property_id=property_id,
                     external_source=request.data.get("external_source"),
                     external_id=external_id,
-                    property__issue_type__is_epic=False,
                 ).first()
                 return Response(
                     {
@@ -130,13 +123,8 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 property_id=property_id,
                 is_default=True,
-                property__issue_type__is_epic=False,
             )
-            if (
-                default_option_exists.exists()
-                and "is_default" in request.data
-                and request.data["is_default"]
-            ):
+            if default_option_exists.exists() and "is_default" in request.data and request.data["is_default"]:
                 return Response(
                     {"error": "Default option already exists"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -146,7 +134,6 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
             last_sort_order = self.model.objects.filter(
                 project=project,
                 property=issue_property,
-                property__issue_type__is_epic=False,
             ).aggregate(largest=models.Max("sort_order"))["largest"]
 
             # Set the sort order for the new option
@@ -170,7 +157,6 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 property_id=property_id,
                 pk=property_option_serializer.data["id"],
-                property__issue_type__is_epic=False,
             )
             serializer = self.serializer_class(property_option)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -213,7 +199,6 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=property_id,
             pk=option_id,
-            property__issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -257,13 +242,8 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=property_id,
             is_default=True,
-            property__issue_type__is_epic=False,
         )
-        if (
-            default_option_exists.exists()
-            and "is_default" in request.data
-            and request.data["is_default"]
-        ):
+        if default_option_exists.exists() and "is_default" in request.data and request.data["is_default"]:
             return Response(
                 {"error": "Default option already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -274,13 +254,10 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=property_id,
             pk=option_id,
-            property__issue_type__is_epic=False,
         )
 
         data = request.data
-        property_option_serializer = self.serializer_class(
-            property_option, data=data, partial=True
-        )
+        property_option_serializer = self.serializer_class(property_option, data=data, partial=True)
         property_option_serializer.is_valid(raise_exception=True)
         property_option_serializer.save()
 
@@ -303,7 +280,6 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             property_id=property_id,
             pk=option_id,
-            property__issue_type__is_epic=False,
         )
         property_option.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

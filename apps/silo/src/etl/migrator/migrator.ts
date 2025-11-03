@@ -22,10 +22,8 @@ import {
   IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY,
 } from "@/helpers/cache-keys";
 import { IMPORT_JOB_KEYS_TTL_IN_SECONDS } from "@/helpers/constants";
-import { updateJobWithReport } from "@/helpers/job";
 import { getPlaneAPIClient, getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { protect } from "@/lib";
-import { getAPIClient } from "@/services/client";
 import { celeryProducer } from "@/worker";
 import { Store } from "@/worker/base";
 import { createAllCycles } from "./cycles.migrator";
@@ -60,6 +58,7 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     let planeIssueProperties: ExIssueProperty[] = [];
     let planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
     let defaultIssueType: ExIssueType | undefined = undefined;
+    let epicIssueType: ExIssueType | undefined = undefined;
 
     // Get the labels and issues from the Plane API
     try {
@@ -176,6 +175,9 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
             if (issueType.is_default) {
               defaultIssueType = issueType;
             }
+            if (issueType.is_epic) {
+              epicIssueType = issueType;
+            }
           });
         } catch (error) {
           logger.error("Error while fetching the issue types from the Plane API", {
@@ -185,7 +187,21 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
         }
 
         // Create the issue types that are not present in Plane
-        const issueTypesToCreate = issue_types?.filter((issueType) => !existingIssueTypes.has(issueType.external_id));
+        const issueTypesToCreate = issue_types?.filter((issueType) => {
+          const isEpic = issueType.is_epic;
+
+          if (isEpic) {
+            // We need to update the existing epic issue type in order to add the external_id and external_source
+            if (epicIssueType) {
+              epicIssueType.external_id = issueType.external_id || "";
+              epicIssueType.external_source = issueType.external_source || "";
+            }
+
+            return false;
+          }
+
+          return !existingIssueTypes.has(issueType.external_id);
+        });
         // Update the issue types that are present in Plane
         const issueTypesToUpdate = issue_types
           ?.filter((issueType) => existingIssueTypes.has(issueType.external_id))
@@ -222,6 +238,16 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
               method: "update",
             }))
           );
+        }
+
+        // Process Epic Issue Types
+        /*
+         * We are going to find the issue type that represent the epic in plane,
+         * and we are going to alter that issue types in order to add the extenal_id and external_source
+         * of the jira epic issue type.
+         */
+        if (epicIssueType) {
+          planeIssueTypes.push(epicIssueType);
         }
         // --------------------------- Issue Type Creation End ---------------------------
 

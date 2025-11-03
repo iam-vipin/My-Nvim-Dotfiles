@@ -74,11 +74,11 @@ export const transformIssue = (
     created_at: issue.fields.created,
     attachments: attachments,
     state: targetState?.id ?? "",
-    external_source_state_id: targetState?.external_id ?? "",
+    external_source_state_id: targetState?.external_id ? `${projectId}_${resourceId}_${targetState.external_id}` : null,
     priority: targetPriority ?? "none",
     labels: issue.fields.labels,
-    parent: `${projectId}_${resourceId}_${issue.fields.parent?.id}`,
-    type_id: issue.fields.issuetype?.id,
+    parent: issue.fields.parent?.id ? `${projectId}_${resourceId}_${issue.fields.parent?.id}` : null,
+    type_id: issue.fields.issuetype?.id ? `${projectId}_${resourceId}_${issue.fields.issuetype?.id}` : null,
   } as unknown as PlaneIssue;
 };
 
@@ -98,7 +98,7 @@ export const transformComment = (
   created_by: comment.author?.name,
   comment_html: comment.renderedBody ?? "<p></p>",
   actor: comment.author?.name,
-  issue: comment.issue_id,
+  issue: `${projectId}_${resourceId}_${comment.issue_id}`
 });
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
@@ -122,7 +122,7 @@ export const transformSprint = (resourceId: string, projectId: string, sprint: J
   start_date: getFormattedDate(sprint.sprint.startDate),
   end_date: getFormattedDate(sprint.sprint.endDate),
   created_at: getFormattedDate(sprint.sprint.createdDate),
-  issues: sprint.issues.map((issue) => issue.id),
+  issues: sprint.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
 });
 
 export const transformComponent = (
@@ -133,20 +133,25 @@ export const transformComponent = (
   external_id: `${projectId}_${resourceId}_${component.component.id}`,
   external_source: E_IMPORTER_KEYS.JIRA_SERVER,
   name: component.component.name,
-  issues: component.issues.map((issue) => issue.id),
+  issues: component.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
 });
 
 export const transformIssueType = (
   resourceId: string,
   projectId: string,
   issueType: JiraIssueTypeDetails
-): Partial<ExIssueType> => ({
-  name: issueType.name,
-  description: issueType.description,
-  is_active: true,
-  external_id: `${projectId}_${resourceId}_${issueType.id}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-});
+): Partial<ExIssueType> => {
+  const isEpic = issueType.name?.toLowerCase().includes("epic");
+
+  return {
+    name: issueType.name,
+    description: issueType.description,
+    is_active: true,
+    is_epic: isEpic,
+    external_id: `${projectId}_${resourceId}_${issueType.id}`,
+    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+  }
+};
 
 export const transformIssueFields = (
   resourceId: string,
@@ -155,18 +160,20 @@ export const transformIssueFields = (
 ): Partial<ExIssueProperty> | undefined => {
   if (
     !issueField.schema ||
-    !issueField.schema.custom ||
     !issueField.scope?.type ||
+    !issueField.schema.custom ||
     !SUPPORTED_CUSTOM_FIELD_ATTRIBUTES[issueField.schema.custom as JiraCustomFieldKeys]
   ) {
     return undefined;
   }
 
+  const fieldId = issueField.id?.startsWith("customfield_") ? issueField.id.split("_").pop() : issueField.id;
+
   return {
-    external_id: `${projectId}_${resourceId}_${issueField.id}`,
+    external_id: `${projectId}_${resourceId}_${fieldId}`,
     external_source: E_IMPORTER_KEYS.JIRA_SERVER,
     display_name: issueField.name,
-    type_id: issueField.scope?.type,
+    type_id: issueField.scope?.type ? `${projectId}_${resourceId}_${issueField.scope?.type}` : undefined,
     is_required: false,
     is_active: true,
     ...getPropertyAttributes(issueField),
@@ -182,10 +189,12 @@ export const transformIssueFieldOptions = (
   external_source: E_IMPORTER_KEYS.JIRA_SERVER,
   name: issueFieldOption.value,
   is_active: issueFieldOption.disabled ? false : true,
-  property_id: issueFieldOption.fieldId,
+  property_id: `${projectId}_${resourceId}_${issueFieldOption.fieldId}`,
 });
 
 export const transformIssuePropertyValues = (
+  resourceId: string,
+  projectId: string,
   issue: IJiraIssue,
   // eslint-disable-next-line no-undef
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: replace Map with Record<string, Partial<ExIssueProperty>> in the future
@@ -202,6 +211,8 @@ export const transformIssuePropertyValues = (
     const property = planeIssueProperties.get(key);
     if (property && property.external_id && jiraCustomFieldMap.has(key)) {
       propertyValuesPayload[property.external_id] = getPropertyValues(
+        resourceId,
+        projectId,
         jiraCustomFieldMap.get(key) as JiraCustomFieldKeys,
         issue.fields[key],
         (issue.renderedFields as any)?.[key]

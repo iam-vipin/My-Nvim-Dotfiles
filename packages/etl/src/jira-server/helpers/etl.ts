@@ -127,7 +127,6 @@ export const fetchPaginatedDataByKey = async <T>(
     }
 
     const values = response[listPropertyName] as T[];
-
     // Process values if they exist
     if (values && values.length > 0) {
       results.push(...values);
@@ -161,6 +160,8 @@ export const getPropertyAttributes = (jiraIssueField: JiraIssueField): Partial<E
 };
 
 export const getPropertyValues = (
+  resourceId: string,
+  projectId: string,
   customFieldType: JiraCustomFieldKeys,
   value: any,
   renderedValue: any
@@ -202,8 +203,8 @@ export const getPropertyValues = (
       // Handle single select
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: value.id,
-        value: value.id,
+        external_id: `${projectId}_${resourceId}_${value.id}`,
+        value: `${projectId}_${resourceId}_${value.id}`,
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:float":
@@ -228,8 +229,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: val.id,
-            value: val.id,
+            external_id: `${projectId}_${resourceId}_${val.id}`,
+            value: `${projectId}_${resourceId}_${val.id}`,
           });
         });
       }
@@ -249,8 +250,8 @@ export const getPropertyValues = (
       // Handle radiobuttons
       propertyValues.push({
         ...commonPropertyProp,
-        external_id: value.id,
-        value: value.id,
+        external_id: `${projectId}_${resourceId}_${value.id}`,
+        value: `${projectId}_${resourceId}_${value.id}`,
       });
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:multiselect":
@@ -259,8 +260,8 @@ export const getPropertyValues = (
         value.forEach((val) => {
           propertyValues.push({
             ...commonPropertyProp,
-            external_id: val.id,
-            value: val.id,
+            external_id: `${projectId}_${resourceId}_${val.id}`,
+            value: `${projectId}_${resourceId}_${val.id}`,
           });
         });
       }

@@ -70,6 +70,7 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
 
   const resetForm = () => {
     reset(defaultValues);
+    setSelectedWorkItemIds([]);
   };
 
   const onClose = () => {
@@ -274,15 +275,10 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
                         onChange={(date) => onChange(date ? renderFormattedPayloadDate(date) : null)}
                         buttonVariant="border-with-text"
                         placeholder="Target date"
-                        buttonClassName={`${errors.target_date ? "border-red-500" : ""}`}
                       />
                     </div>
                   )}
-                  rules={{
-                    required: "Target date is required",
-                  }}
                 />
-                {errors.target_date && <p className="text-xs text-red-500">{errors.target_date.message}</p>}
               </div>
             </div>
           </div>

@@ -66,5 +66,6 @@ from plane.ee.views.app.page import (
 from plane.ee.views.app.milestone import (
     MilestoneViewSet,
     MilestoneWorkItemsEndpoint,
-    MilestoneWorkItemsSearchEndpoint
+    MilestoneWorkItemsSearchEndpoint,
+    WorkItemMilestoneEndpoint,
 )

@@ -199,6 +199,7 @@ class PlaneOAuthService {
    */
   getPlaneOAuthRedirectUrl(clientId: string, redirectUri: string, state: string): string {
     try {
+      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL
       const data = new URLSearchParams({
         client_id: clientId,
         response_type: "code",
@@ -206,7 +207,7 @@ class PlaneOAuthService {
         state: state,
       });
 
-      return `${this.baseURL}/authorize-app/?${data.toString()}`;
+      return `${baseUrl}/auth/o/authorize-app/?${data.toString()}`;
     } catch (error) {
       logger.error("Failed to generate OAuth redirect URL:", error);
       throw error;

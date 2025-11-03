@@ -106,6 +106,34 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
     return null;
   }
 
+  /**
+   * Get the logo url for the app
+   * If the app has a logo url, return the file url
+   * If the app is a service app, return the service logo url
+   * If the app is not a service app, return undefined
+   * @param app
+   * @returns
+   */
+  const getLogoUrl = (app: TUserApplication): string | undefined => {
+    if (app.logo_url) {
+      if (app.is_hardcoded) {
+        return app.logo_url;
+      }
+      return getFileURL(app.logo_url);
+    }
+
+    // TODO: Remove this once we have normalized logos for internal apps
+    const serviceLogoMap: Record<string, string> = {
+      drawio: "drawio.png",
+    };
+    if (serviceLogoMap[app.slug]) {
+      return `/services/${serviceLogoMap[app.slug]}`;
+    }
+    return undefined;
+  };
+
+  const logoUrl = getLogoUrl(app);
+
   return (
     <div className="flex flex-col items-start justify-between border border-custom-border-100 p-4 rounded-md gap-2 h-full">
       <div className="flex flex-col space-y-1 flex-1 w-full">
@@ -113,15 +141,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-1 justify-between">
               <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-custom-border-100">
-                {app?.logo_url ? (
-                  <img
-                    src={app.is_hardcoded ? app.logo_url : getFileURL(app.logo_url)}
-                    alt={app.name}
-                    className="h-full w-full"
-                  />
+                {logoUrl ? (
+                  <img src={logoUrl} alt={app.name} className="h-full w-full" />
                 ) : (
                   <div className=" bg-custom-background-80 flex items-center justify-center h-full w-full">
-                    <div className="text-lg font-medium">{app.name.charAt(0)}</div>
+                    <div className="text-lg font-medium">{app.name?.charAt(0)}</div>
                   </div>
                 )}
               </div>

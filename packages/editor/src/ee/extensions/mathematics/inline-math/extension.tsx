@@ -14,8 +14,6 @@ import { inlineMathCommands } from "./commands";
 import { InlineMathNodeView, type InlineMathNodeViewProps } from "./components/node-view";
 // input rules
 import { inlineMathInputRules } from "./input-rules";
-// paste rules
-import { inlineMathPasteRules } from "./paste-rules";
 // types
 import {
   TInlineMathSetCommandOptions,
@@ -84,10 +82,6 @@ export const InlineMathExtension: InlineMathExtensionType = Node.create({
 
   addInputRules() {
     return inlineMathInputRules(this.type, this.options.isFlagged);
-  },
-
-  addPasteRules() {
-    return inlineMathPasteRules(this.type, this.options.isFlagged);
   },
 
   addNodeView() {

@@ -259,33 +259,28 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
             deleted_at__isnull=True,
         ).first()
 
-        if not milestone_work_item:
-            return Response(
-                {"error": "Milestone work item not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        if milestone_work_item:
+            milestone_work_item.delete()
 
-        milestone = Milestone.objects.filter(
-            id=milestone_work_item.milestone_id,
-            project_id=project_id,
-            workspace_id=workspace.id,
-            deleted_at__isnull=True,
-        ).first()
+            milestone = Milestone.objects.filter(
+                id=milestone_work_item.milestone_id,
+                project_id=project_id,
+                workspace_id=workspace.id,
+                deleted_at__isnull=True,
+            ).first()
 
-        milestone_work_item.delete()
-
-        # Only log activity if milestone still exists
-        if milestone:
-            issue_activity.delay(
-                type="milestone_issue.activity.deleted",
-                requested_data=json.dumps({"milestone_id": str(milestone.id)}),
-                actor_id=str(request.user.id),
-                issue_id=str(work_item_id),
-                project_id=str(project_id),
-                current_instance=json.dumps({"milestone_name": milestone.title}),
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=base_host(request=request, is_app=True),
-            )
+            # Only log activity if milestone still exists
+            if milestone:
+                issue_activity.delay(
+                    type="milestone_issue.activity.deleted",
+                    requested_data=json.dumps({"milestone_id": str(milestone.id)}),
+                    actor_id=str(request.user.id),
+                    issue_id=str(work_item_id),
+                    project_id=str(project_id),
+                    current_instance=json.dumps({"milestone_name": milestone.title}),
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=base_host(request=request, is_app=True),
+                )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

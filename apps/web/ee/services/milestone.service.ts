@@ -81,6 +81,29 @@ export class MilestoneService extends APIService {
         throw err?.response?.data;
       });
   }
+
+  async updateWorkItemMilestone(
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    milestoneId: string
+  ): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/milestone/`, {
+      milestone_id: milestoneId,
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async removeWorkItemFromMilestone(workspaceSlug: string, projectId: string, workItemId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${workItemId}/milestone/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
 }
 
 const milestoneService = new MilestoneService();

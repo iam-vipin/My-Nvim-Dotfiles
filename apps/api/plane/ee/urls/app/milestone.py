@@ -4,6 +4,7 @@ from plane.ee.views.app import (
     MilestoneViewSet,
     MilestoneWorkItemsEndpoint,
     MilestoneWorkItemsSearchEndpoint,
+    WorkItemMilestoneEndpoint,
 )
 
 urlpatterns = [
@@ -21,6 +22,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/milestones/work-items/search/",
         MilestoneWorkItemsSearchEndpoint.as_view(),
         name="project-milestone-work-items-search",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/milestone/",
+        WorkItemMilestoneEndpoint.as_view(),
+        name="project-milestone-update-work-item-milestone",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/milestones/<uuid:pk>/",

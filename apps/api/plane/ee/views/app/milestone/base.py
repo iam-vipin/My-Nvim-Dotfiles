@@ -140,13 +140,19 @@ class MilestoneViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         milestone = self.get_object()
 
-        milestone_work_item_ids = list(
-            MilestoneIssue.objects.filter(milestone_id=pk).values_list(
-                "issue_id", flat=True
-            )
+        # Get all milestone issues to delete them explicitly
+        milestone_issues = MilestoneIssue.objects.filter(
+            milestone_id=pk, workspace__slug=slug, project_id=project_id
         )
 
-        for work_item_id in milestone_work_item_ids:
+        # Collect work item IDs before deletion for activity logging
+        work_item_ids = list(milestone_issues.values_list("issue_id", flat=True))
+
+        # Bulk soft delete all milestone issues using Django's delete method
+        milestone_issues.delete()
+
+        # Create activity logs for each work item
+        for work_item_id in work_item_ids:
             issue_activity.delay(
                 type="milestone_issue.activity.deleted",
                 requested_data=json.dumps({"milestone_id": str(pk)}),

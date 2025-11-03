@@ -22,7 +22,7 @@ export const WorkItemAdditionalSidebarProperties: FC<TWorkItemAdditionalSidebarP
         <WorkItemSidebarCustomers workItemId={workItemId} workspaceSlug={workspaceSlug} isPeekView={isPeekView} />
       )}
       {isMilestonesFeatureEnabled && (
-        <WorkItemSideBarMilestoneItem isPeekView={isPeekView} projectId={projectId} workItemId={workItemId} />
+        <WorkItemSideBarMilestoneItem workspaceSlug={workspaceSlug} isPeekView={isPeekView} projectId={projectId} workItemId={workItemId} />
       )}
       {workItemTypeId && (
         <IssueAdditionalPropertyValuesUpdate

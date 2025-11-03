@@ -6,6 +6,8 @@ import type { TMilestone } from "@plane/types";
 import milestoneService from "@/plane-web/services/milestone.service";
 // stores
 import type { RootStore } from "../root.store";
+import type { IWorkItemMilestoneStore } from "./work-items.store";
+import { WorkItemMilestoneStore } from "./work-items.store";
 
 export interface IMilestoneStore {
   // observables
@@ -51,6 +53,8 @@ export interface IMilestoneStore {
 
   // helper methods
   updateMilestoneProgress: (projectId: string, milestoneId: string) => void;
+
+  workItems: IWorkItemMilestoneStore;
 }
 
 export class MilestoneStore implements IMilestoneStore {
@@ -60,6 +64,9 @@ export class MilestoneStore implements IMilestoneStore {
 
   // root store
   rootStore: RootStore;
+
+  // work items
+  workItems: IWorkItemMilestoneStore;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -78,6 +85,7 @@ export class MilestoneStore implements IMilestoneStore {
     });
 
     this.rootStore = store;
+    this.workItems = new WorkItemMilestoneStore(this, this.rootStore);
   }
 
   // computed

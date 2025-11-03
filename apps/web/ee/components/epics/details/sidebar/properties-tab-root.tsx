@@ -286,7 +286,12 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
         )}
 
         {isMilestonesFeatureEnabled && (
-          <WorkItemSideBarMilestoneItem projectId={projectId} workItemId={epicId} isPeekView={false} />
+          <WorkItemSideBarMilestoneItem
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            workItemId={epicId}
+            isPeekView={false}
+          />
         )}
 
         {epicDetails.type_id && (

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -119,21 +119,18 @@ export const MilestoneQuickActionButton = (props: MilestoneQuickActionButtonProp
   const { t } = useTranslation();
 
   const handleDeleteMilestone = () => {
-    deleteMilestone(workspaceSlug, projectId, milestoneId)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("toast.success"),
-          message: t("entity.delete.success", { entity: "Milestone" }),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: t("entity.delete.failed", { entity: "Milestone" }),
-        });
-      });
+    const promise = deleteMilestone(workspaceSlug, projectId, milestoneId);
+
+    setPromiseToast(promise, {
+      success: {
+        title: t("toast.success"),
+        message: () => t("entity.delete.success", { entity: "Milestone" }),
+      },
+      error: {
+        title: t("toast.error"),
+        message: () => t("entity.delete.failed", { entity: "Milestone" }),
+      },
+    });
   };
 
   const MENU_ITEMS: TContextMenuItem[] = [

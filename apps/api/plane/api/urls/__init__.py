@@ -10,6 +10,7 @@ from .state import urlpatterns as state_patterns
 from .user import urlpatterns as user_patterns
 from .work_item import urlpatterns as work_item_patterns
 from .work_item_type import urlpatterns as work_item_type_patterns
+from .invite import urlpatterns as invite_patterns
 
 # ee imports
 from plane.ee.urls.api import urlpatterns as ee_api_urls
@@ -30,4 +31,5 @@ urlpatterns = [
     *work_item_type_patterns,
     # ee url endpoints
     *ee_api_urls,
+    *invite_patterns,
 ]

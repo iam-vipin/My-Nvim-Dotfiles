@@ -36,7 +36,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar.tsx/date-alert";
+import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/date-alert";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";

@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
+import { BoardLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -19,6 +20,16 @@ import { IssueLayoutIcon } from "./layout-icon";
 type Props = {
   anchor: string;
 };
+
+// TODO: use from packages/constants and handle icons
+// export const SITES_ISSUE_LAYOUTS: {
+//   key: TIssueLayout;
+//   title: string;
+//   icon: any;
+// }[] = [
+//   { key: "list", title: "ListLayoutIcon", icon: ListLayoutIcon },
+//   { key: "kanban", title: "BoardLayoutIcon", icon: BoardLayoutIcon },
+// ];
 
 export const IssuesLayoutSelection: FC<Props> = observer((props) => {
   const { anchor } = props;

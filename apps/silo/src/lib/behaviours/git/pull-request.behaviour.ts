@@ -203,7 +203,8 @@ export class PullRequestBehaviour {
       issue = await this.planeClient.issue.getIssueByIdentifier(
         this.workspaceSlug,
         reference.identifier,
-        reference.sequence
+        reference.sequence,
+        true
       );
 
       // get the PR state for the event from projectId and PR state map

@@ -14,8 +14,6 @@ import { blockMathCommands } from "./commands";
 import { BlockMathNodeView, type BlockMathNodeViewProps } from "./components/node-view";
 // input rules
 import { blockMathInputRules } from "./input-rules";
-// paste rules
-import { blockMathPasteRules } from "./paste-rules";
 // local types
 import {
   TBlockMathSetCommandOptions,
@@ -82,10 +80,6 @@ export const BlockMathExtension: BlockMathExtensionType = Node.create({
 
   addInputRules() {
     return blockMathInputRules(this.type, this.options.isFlagged);
-  },
-
-  addPasteRules() {
-    return blockMathPasteRules(this.type, this.options.isFlagged);
   },
 
   addNodeView() {

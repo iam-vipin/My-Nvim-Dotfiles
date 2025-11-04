@@ -893,19 +893,25 @@ const replaceImageComponent = (
     });
   } else if (source === E_IMPORTER_KEYS.JIRA_SERVER) {
     // Find img tags
-    const aTags = root.querySelectorAll("a");
-
-    aTags.forEach((aTag: HTMLElement) => {
-      const imgSrc = aTag.getAttribute("href");
+    /**
+     * Replaces an HTML element with an image-component if its source matches the existing URL
+     */
+    const replaceMatchingElementWithImageComponent = (
+      element: HTMLElement,
+      attributeName: string,
+      existingURL: string,
+      assetId: string
+    ) => {
+      const elementSrc = element.getAttribute(attributeName);
       // Remove the query params from the URL
       const existingURLWithoutQuery = existingURL.split("?")[0];
-      const imgSrcWithoutQuery = imgSrc?.split("?")[0];
+      const elementSrcWithoutQuery = elementSrc?.split("?")[0];
 
-      // Check if the image source matches the existing URL
-      if (existingURLWithoutQuery === imgSrcWithoutQuery) {
-        // Get height and width from original img tag
-        const height = aTag.getAttribute("height");
-        const width = aTag.getAttribute("width");
+      // Check if the source matches the existing URL
+      if (existingURLWithoutQuery === elementSrcWithoutQuery) {
+        // Get height and width from original element
+        const height = element.getAttribute("height");
+        const width = element.getAttribute("width");
 
         // Build attributes string
         const heightAttr = height ? ` height="${height}"` : "";
@@ -915,15 +921,26 @@ const replaceImageComponent = (
         const imageComponent = `<image-component src="${assetId}"${heightAttr}${widthAttr}/>`;
 
         // Find the parent span
-        const parentSpan = aTag.closest("span");
+        const parentSpan = element.closest("span");
 
-        // Replace the span if it exists, otherwise replace the img
+        // Replace the span if it exists, otherwise replace the element
         if (parentSpan) {
           parentSpan.replaceWith(imageComponent);
         } else {
-          aTag.replaceWith(imageComponent);
+          element.replaceWith(imageComponent);
         }
       }
+    };
+
+    const aTags = root.querySelectorAll("a");
+    const imgTags = root.querySelectorAll("img");
+
+    imgTags.forEach((imgTag: HTMLElement) => {
+      replaceMatchingElementWithImageComponent(imgTag, "src", existingURL, assetId);
+    });
+
+    aTags.forEach((aTag: HTMLElement) => {
+      replaceMatchingElementWithImageComponent(aTag, "href", existingURL, assetId);
     });
 
     // Remove the body tag and replace it with the p tag

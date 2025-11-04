@@ -22,9 +22,10 @@ export class IssueService extends APIService {
   async getIssueByIdentifier(
     workspaceSlug: string,
     projectIdentifier: string,
-    issueSequence: number
+    issueSequence: number,
+    include_epics: boolean = false
   ): Promise<ExIssue> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/`)
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?include_epics=${include_epics}`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

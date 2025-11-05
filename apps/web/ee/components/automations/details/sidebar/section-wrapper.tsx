@@ -1,6 +1,6 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -30,7 +30,7 @@ export const AutomationDetailsSidebarSectionWrapper: React.FC<TProps> = (props) 
               <div className="flex-grow h-px" />
               {typeof headerActions === "function" ? headerActions(open) : headerActions}
               <div className="flex-shrink-0 size-4 rounded grid place-items-center outline-none border-none">
-                <ChevronRight className={cn("size-3.5 transition-transform", { "rotate-90": open })} />
+                <ChevronRightIcon className={cn("size-3.5 transition-transform", { "rotate-90": open })} />
               </div>
             </Disclosure.Button>
           </div>

@@ -4,8 +4,8 @@ import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -40,7 +40,7 @@ const ImporterLayout: FC<TImporterLayout> = observer((props) => {
         href={`/${workspaceSlug}/settings/imports`}
         className="flex items-center gap-2 text-sm text-custom-text-300 font-semibold pb-4"
       >
-        <ChevronLeft className="size-4" />
+        <ChevronLeftIcon className="size-4" />
         <span>Back to Imports</span>
       </Link>
       {children}

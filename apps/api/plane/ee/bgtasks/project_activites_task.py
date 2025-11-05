@@ -118,21 +118,25 @@ def track_state(
     epoch,
 ):
     if current_instance.get("state_id") != requested_data.get("state_id"):
-        new_state = ProjectState.objects.get(pk=requested_data.get("state_id", None))
-        old_state = ProjectState.objects.get(pk=current_instance.get("state_id", None))
+        new_state = None
+        old_state = None
+        if requested_data.get("state_id"):
+            new_state = ProjectState.objects.filter(pk=requested_data.get("state_id")).first()
+        if current_instance.get("state_id"):
+            old_state = ProjectState.objects.filter(pk=current_instance.get("state_id")).first()
 
         project_activities.append(
             WorkspaceActivity(
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_state.name,
-                new_value=new_state.name,
+                old_value=old_state.name if old_state else None,
+                new_value=new_state.name if new_state else None,
                 field="state",
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the state to",
-                old_identifier=old_state.id,
-                new_identifier=new_state.id,
+                old_identifier=old_state.id if old_state else None,
+                new_identifier=new_state.id if new_state else None,
                 epoch=epoch,
             )
         )

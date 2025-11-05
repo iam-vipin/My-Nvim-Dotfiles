@@ -68,6 +68,7 @@ class PlaneOAuthState(SQLModel, table=True):
     state: str = Field(unique=True, index=True)  # Random state parameter
     user_id: UUID = Field(index=True)
     workspace_id: Optional[UUID] = Field(default=None)
+    workspace_slug: Optional[str] = Field(default=None)
 
     # OAuth flow details
     redirect_uri: str = Field()

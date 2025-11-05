@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     help = """
     Marketplace app operations (assign-owner, publish, unpublish, make-app-internal, make-app-external, 
-    set-app-priority, set-app-status)
+    set-app-priority, set-app-status, skip-app-authorization, mandate-app-authorization)
     """
 
     def add_arguments(self, parser):
@@ -59,6 +59,18 @@ class Command(BaseCommand):
         set_app_status_parser = subparsers.add_parser("set-app-status", help="Set app status")
         set_app_status_parser.add_argument("app_slug", type=str, help="App slug")
         set_app_status_parser.add_argument("status", type=str, help="Status")
+
+        # Subcommand: skip-app-authorization
+        skip_app_authorization_parser = subparsers.add_parser(
+            "skip-app-authorization", help="Allow app to skip authorization"
+        )
+        skip_app_authorization_parser.add_argument("app_slug", type=str, help="App slug")
+
+        # Subcommand: mandate-app-authorization
+        mandate_app_authorization_parser = subparsers.add_parser(
+            "mandate-app-authorization", help="Mandate app to require authorization"
+        )
+        mandate_app_authorization_parser.add_argument("app_slug", type=str, help="App slug")
 
     def handle(self, *args, **options):
         subcommand = options["subcommand"]
@@ -106,6 +118,16 @@ class Command(BaseCommand):
             status = options["status"]
             self.stdout.write(self.style.SUCCESS(f"Setting app {app_slug} status to {status}"))
             self.set_app_status(app_slug, status)
+
+        elif subcommand == "skip-app-authorization":
+            app_slug = options["app_slug"]
+            self.stdout.write(self.style.SUCCESS(f"Allowing app {app_slug} to skip authorization"))
+            self.allow_app_to_skip_authorization(app_slug)
+
+        elif subcommand == "mandate-app-authorization":
+            app_slug = options["app_slug"]
+            self.stdout.write(self.style.SUCCESS(f"Mandating app {app_slug} to require authorization"))
+            self.mandate_app_to_require_authorization(app_slug)
 
         else:
             raise CommandError("Unknown subcommand")
@@ -180,4 +202,20 @@ class Command(BaseCommand):
         """
         app = Application.objects.get(slug=app_slug)
         app.status = status
+        app.save()
+
+    def allow_app_to_skip_authorization(self, app_slug):
+        """
+        python manage.py update_marketplace_app skip-app-authorization <app_slug>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.skip_authorization = True
+        app.save()
+
+    def mandate_app_to_require_authorization(self, app_slug):
+        """
+        python manage.py update_marketplace_app mandate-app-authorization <app_slug>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.skip_authorization = False
         app.save()

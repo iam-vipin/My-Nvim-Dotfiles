@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import logging
 from functools import wraps
 from typing import Any
@@ -13,6 +14,7 @@ from openai import APITimeoutError
 from openai import AuthenticationError
 from openai import BadRequestError
 from openai import InternalServerError
+from openai import LengthFinishReasonError  # type: ignore[attr-defined]
 from openai import PermissionDeniedError
 from openai import RateLimitError
 from openai import UnprocessableEntityError
@@ -30,6 +32,7 @@ def llm_error_handler(
     max_temp: float = 1.0,
     enable_retry: bool = True,
     log_context: str = "",
+    timeout: Optional[float] = None,
 ):
     """
     Decorator for handling LLM API errors with intelligent retry logic.
@@ -41,6 +44,7 @@ def llm_error_handler(
         max_temp: Maximum temperature allowed
         enable_retry: Whether to enable retry logic
         log_context: Additional context for logging
+        timeout: Optional timeout in seconds. If set, will retry with fallback model if call exceeds this time
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -48,10 +52,18 @@ def llm_error_handler(
         async def async_wrapper(*args, **kwargs) -> Any:
             last_exception: Optional[Exception] = None
             base_temp = kwargs.get("temperature", 0.0)
+            current_timeout = timeout  # Copy to avoid scoping issues when modifying
+            # Introspect function signature to only pass supported kwargs on retries
+            sig = inspect.signature(func)
+            func_param_names = set(sig.parameters.keys())
 
             for attempt in range(max_retries + 1):
                 try:
-                    return await func(*args, **kwargs)
+                    # Apply timeout if specified
+                    if current_timeout is not None:
+                        return await asyncio.wait_for(func(*args, **kwargs), timeout=current_timeout)
+                    else:
+                        return await func(*args, **kwargs)
 
                 except BadRequestError as e:
                     # Context length or other bad request errors
@@ -60,11 +72,62 @@ def llm_error_handler(
                             log.warning(f"{log_context} Context length exceeded, retrying {func.__name__} (attempt {attempt + 1})")
                             # Increase temperature for retry
                             new_temp = min(base_temp + (temp_increment * (attempt + 1)), max_temp)
-                            kwargs["temperature"] = new_temp
+                            if "temperature" in func_param_names:
+                                kwargs["temperature"] = new_temp
                             await asyncio.sleep(2**attempt)  # Exponential backoff
                             continue
 
                     log.error(f"{log_context} Bad request error in {func.__name__}: {e}")
+                    last_exception = e
+                    break
+
+                except LengthFinishReasonError as e:  # type: ignore[misc]
+                    # Completion hit its length limit while using structured output
+                    if attempt < max_retries and enable_retry:
+                        # Prefer switching to GPT-4o which tends to serialize JSON more compactly
+                        log.warning(
+                            f"{log_context} Length finish encountered, switching model to GPT-4o and retrying {func.__name__} (attempt {attempt + 1})"
+                        )
+                        # Only set model override if the function supports an LLM model kwarg
+                        fallback_model = "gpt-4o"
+                        for model_kw in ("llm_model", "model", "switch_llm"):
+                            if model_kw in func_param_names:
+                                kwargs[model_kw] = fallback_model
+                                break
+                        # Optionally bump temperature if supported
+                        new_temp = min(base_temp + (temp_increment * (attempt + 1)), max_temp)
+                        if "temperature" in func_param_names:
+                            kwargs["temperature"] = new_temp
+                        await asyncio.sleep(2**attempt)
+                        continue
+
+                    log.error(f"{log_context} Length finish in {func.__name__}: {e}")
+                    last_exception = e
+                    break
+
+                except asyncio.TimeoutError as e:
+                    # Function exceeded timeout - retry with fallback model
+                    if attempt < max_retries and enable_retry:
+                        log.warning(
+                            f"{log_context} Timeout ({current_timeout}s) exceeded, switching model to GPT-4o and retrying {func.__name__} (attempt {attempt + 1})"  # noqa: E501
+                        )
+                        # Switch to fallback model (GPT-4o is typically faster)
+                        fallback_model = "gpt-4o"
+                        for model_kw in ("llm_model", "model", "switch_llm"):
+                            if model_kw in func_param_names:
+                                kwargs[model_kw] = fallback_model
+                                break
+                        # Optionally bump temperature if supported
+                        new_temp = min(base_temp + (temp_increment * (attempt + 1)), max_temp)
+                        if "temperature" in func_param_names:
+                            kwargs["temperature"] = new_temp
+                        # Increase timeout for retry to give fallback model more time
+                        if current_timeout is not None:
+                            current_timeout = current_timeout * 2
+                        await asyncio.sleep(1)  # Short wait before retry
+                        continue
+
+                    log.error(f"{log_context} Timeout in {func.__name__}: {e}")
                     last_exception = e
                     break
 

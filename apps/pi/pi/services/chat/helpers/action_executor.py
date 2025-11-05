@@ -1,8 +1,9 @@
 """Action execution logic with retrieval tools."""
 
+import ast
 import contextlib
 import datetime
-import json
+import re
 import uuid
 from collections.abc import AsyncIterator
 from typing import Any
@@ -66,6 +67,119 @@ def _extract_action_type_from_tool_name(tool_name: str) -> str:
     return extract_action_type_from_tool_name(tool_name)
 
 
+async def _enhance_action_summary_with_complete_data(action_summary: dict, tool_name: str, cleaned_args: dict) -> None:
+    """
+    Enhance action summary with complete workitem data for update operations.
+
+    Args:
+        action_summary: The action summary to enhance
+        tool_name: Name of the tool being executed
+        cleaned_args: Cleaned tool arguments
+    """
+    try:
+        issue_id = cleaned_args.get("issue_id") or cleaned_args.get("workitem_id")
+
+        # Handle case where issue_id might be a placeholder like "<id of issue: name>"
+        if not issue_id:
+            # Check if there's a placeholder format
+            for key, value in cleaned_args.items():
+                if key in ["issue_id", "workitem_id"] and isinstance(value, str) and value.startswith("<id of"):
+                    # This is a placeholder, we need to get the actual ID from the action_summary
+                    if "artifact_id" in action_summary:
+                        issue_id = action_summary["artifact_id"]
+                        break
+
+        if not issue_id or not isinstance(action_summary, dict):
+            return
+
+        # For workitem/epic update operations, fetch complete data
+        if tool_name in ["workitems_update", "epics_update"]:
+            from pi.services.actions.artifacts.utils import merge_llm_updates_with_existing_data
+
+            entity_type = "epic" if tool_name == "epics_update" else "workitem"
+            current_params = action_summary.get("parameters", {})
+
+            # Fetch complete workitem data and merge with LLM updates
+            complete_data = await merge_llm_updates_with_existing_data(entity_type, str(issue_id), current_params)
+
+            action_summary["parameters"] = complete_data
+            log.info(f"Enhanced {entity_type} update action with complete data")
+        else:
+            # For other operations, just add the identifier
+            await _add_workitem_identifier(action_summary, issue_id)
+    except Exception as e:
+        log.warning(f"Error enhancing action summary: {e}")
+        import traceback
+
+        log.warning(f"Traceback: {traceback.format_exc()}")
+
+
+async def _add_workitem_identifier(action_summary: dict, issue_id: str) -> None:
+    """Add workitem identifier to action summary parameters."""
+    try:
+        from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+        issue_details = await get_issue_identifier_for_artifact(str(issue_id))
+        if not issue_details or not isinstance(issue_details, dict):
+            return
+
+        # Ensure parameters structure exists
+        params = action_summary.get("parameters", {})
+        if not isinstance(params, dict):
+            params = {}
+            action_summary["parameters"] = params
+
+        # Add workitem identifier
+        identifier_value = issue_details.get("identifier")
+        if identifier_value:
+            workitem_block = params.setdefault("workitem", {})
+            properties_block = workitem_block.setdefault("properties", {})
+            properties_block["identifier"] = identifier_value
+
+        # Add project identifier
+        project_identifier = issue_details.get("project_identifier")
+        if project_identifier:
+            project_block = params.setdefault("project", {})
+            project_block["identifier"] = project_identifier
+    except Exception as e:
+        log.warning(f"Error adding workitem identifier: {e}")
+
+
+async def _add_project_identifier(action_summary: dict, cleaned_args: dict) -> None:
+    """Add project identifier to action summary if available."""
+    try:
+        params = action_summary.get("parameters")
+        if not isinstance(params, dict):
+            return
+
+        # Skip if already has identifier
+        project_block = params.get("project")
+        if isinstance(project_block, dict) and project_block.get("identifier"):
+            return
+
+        # Try to resolve from project_id (only when it's a valid UUID; skip placeholders/non-UUIDs)
+        project_id = cleaned_args.get("project_id")
+        if not project_id:
+            return
+
+        import re
+
+        uuid_pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
+        if not (isinstance(project_id, str) and uuid_pattern.match(project_id)):
+            # Placeholder or non-UUID provided (e.g., "<id of project: Malpe>") - skip enrichment here
+            return
+
+        from pi.app.api.v1.helpers.plane_sql_queries import get_project_details_for_artifact
+
+        proj = await get_project_details_for_artifact(str(project_id))
+        if proj and proj.get("identifier"):
+            if "project" not in params:
+                params["project"] = {}
+            params["project"]["identifier"] = proj["identifier"]
+    except Exception as e:
+        log.warning(f"Error adding project identifier: {e}")
+
+
 async def execute_action_with_retrieval(
     chatbot_instance,
     selected_agents,
@@ -89,6 +203,19 @@ async def execute_action_with_retrieval(
 ) -> AsyncIterator[str]:
     """Execute action with access to retrieval tools"""
     try:
+        # Resolve workspace_id from project_id if needed (for project-level chats)
+        # This must happen BEFORE Phase 1 tools are built
+        if not workspace_id and project_id:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
+
+                resolved_workspace_id = await resolve_workspace_id_from_project_id(str(project_id))
+                if resolved_workspace_id:
+                    workspace_id = str(resolved_workspace_id)
+                    log.info(f"ChatID: {chat_id} - Resolved workspace_id {workspace_id} from project_id {project_id} (Phase 1)")
+            except Exception as e:
+                log.error(f"ChatID: {chat_id} - Failed to resolve workspace_id from project_id {project_id}: {e}")
+
         clarification_requested = False
         clarification_payload: dict | None = None
         # ----- PHASE 1: Category Selection -----
@@ -140,6 +267,7 @@ async def execute_action_with_retrieval(
                                 "is_temp": False,
                                 "workspace_in_context": True,
                                 "is_project_chat": bool(project_id),
+                                "enhanced_conversation_history": enhanced_conversation_history,
                                 "llm": chatbot_instance.switch_llm
                                 if hasattr(chatbot_instance, "switch_llm")
                                 else "gpt-4.1",  # Use chatbot's LLM model
@@ -162,7 +290,9 @@ async def execute_action_with_retrieval(
 
         if not category_tools:
             log.warning("Unable to initialize action tools. Please try again.")
-            yield "❌ Unable to initialize action tools. Please try again.\n"
+            msg = "An unexpected error occurred. Please try again later."
+            yield msg
+            yield f"__FINAL_RESPONSE__{msg}"
             return
 
         current_step = step_order
@@ -206,7 +336,9 @@ async def execute_action_with_retrieval(
             if not category_tool:
                 available_tool_names = [t.name if hasattr(t, "name") else "unnamed" for t in category_tools]
                 log.warning(f"Category selection tool not found. Available tools: {available_tool_names}")
-                yield "❌ Category selection tool not found\n"
+                msg = "An unexpected error occurred. Please try again later."
+                yield msg
+                yield f"__FINAL_RESPONSE__{msg}"
                 return
 
             # Execute category selection tool (advisory details like methods)
@@ -225,7 +357,9 @@ async def execute_action_with_retrieval(
                 current_step += 1
             except Exception as e:
                 log.warning(f"Category selection failed: {str(e)}")
-                yield f"❌ Category selection failed: {str(e)}\n"
+                msg = "An unexpected error occurred. Please try again later."
+                yield msg
+                yield f"__FINAL_RESPONSE__{msg}"
                 return
 
             # Run LLM category router (multi-select) using advisory + user intent
@@ -234,22 +368,35 @@ async def execute_action_with_retrieval(
                 ("human", "{custom_prompt}"),
             ])
             custom_prompt = f"User intent: {combined_agent_query}\n\n" f"Advisory: {advisory_text}"
+            # Prepend enhanced conversation history for better routing context if available
+            if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
+                custom_prompt = f"CONVERSATION HISTORY & ACTION CONTEXT:\n{enhanced_conversation_history}\n\n" + custom_prompt
 
             # Request raw response for debugging
-            action_router = chatbot_instance.decomposer_llm.with_structured_output(ActionCategoryRouting, include_raw=True)
-            action_router.set_tracking_context(query_id, db, MessageMetaStepType.ROUTER)
+            action_router = chatbot_instance.decomposer_llm.with_structured_output(
+                ActionCategoryRouting,
+                include_raw=True,
+                method="json_mode",
+            )
+            action_router.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_CATEGORY_ROUTING, chat_id=str(chat_id))
             dynamic_action_router = router_prompt_template | action_router
 
+            import time
+
             try:
+                category_router_start = time.time()
+                log.info(f"ChatID: {chat_id} - Starting action category router LLM call")
                 routing = await dynamic_action_router.ainvoke({"custom_prompt": custom_prompt})
+                category_router_elapsed = time.time() - category_router_start
+                log.info(f"ChatID: {chat_id} - Action category router LLM call completed in {category_router_elapsed:.2f}s")
 
                 # When include_raw=True, routing is a dict with keys: raw, parsed, parsing_error
                 parsed_obj = routing
                 if isinstance(routing, dict):
                     parsed_obj = routing.get("parsed")
-                    with contextlib.suppress(Exception):
-                        log.debug(f"ChatID: {chat_id} - Router raw message: {routing.get("raw")}")
-                        log.debug(f"ChatID: {chat_id} - Router parsing_error: {routing.get("parsing_error")}")
+                    # with contextlib.suppress(Exception):
+                    # log.debug(f"ChatID: {chat_id} - Router raw message: {routing.get("raw")}")
+                    # log.debug(f"ChatID: {chat_id} - Router parsing_error: {routing.get("parsing_error")}")
 
                 if parsed_obj and getattr(parsed_obj, "selections", None):
                     selections_list = list(parsed_obj.selections)
@@ -257,23 +404,26 @@ async def execute_action_with_retrieval(
                 # Log router response for analysis
                 with contextlib.suppress(Exception):
                     log.info(f"ChatID: {chat_id} - Action Category Router response selections: {selections_list}")
-                    log.debug(f"ChatID: {chat_id} - Raw router response: {routing}")
+                    # log.debug(f"ChatID: {chat_id} - Raw router response: {routing}")
             except Exception as e:
                 log.warning(f"Action category router failed: {e}")
 
-            # Fallback to heuristic if router fails
+            # If router returns empty list, it means the request is unsupported
             if not selections_list:
-                lower_adv = str(advisory_text).lower()
-                fallback = None
-                for key in ["pages", "projects", "workitems", "cycles", "labels", "states", "modules", "assets", "users"]:
-                    if key in lower_adv:
-                        fallback = key
-                        break
-                if not fallback:
-                    log.warning("Could not determine categories from router or advisory")
-                    yield "❌ Could not determine categories from router or advisory\n"
-                    return
-                selections_list = [{"category": fallback, "rationale": None}]
+                log.info(f"ChatID: {chat_id} - Category router returned empty list - unsupported action request")
+
+                # Provide user-friendly rejection message
+                rejection_message = (
+                    "I understand you'd like to perform this action, but I'm unable to fulfill this request with the available tools.\n\n"
+                    "**I can help you with:** work-items (create, update, assign, move), projects (create, list, manage), "
+                    "cycles (create, manage, add work-items), modules (create, manage, add work-items), "
+                    "labels and states (create, update), create pages\n\n"
+                    "Feel free to ask me about any of these supported actions, or let me know if you'd like help with something else!"
+                )
+
+                yield rejection_message
+                yield f"__FINAL_RESPONSE__{rejection_message}"
+                return
 
             # Persist router decision as a routing flow step
             # Normalize selections into serialisable dicts for persistence
@@ -300,7 +450,7 @@ async def execute_action_with_retrieval(
                             "step_type": FlowStepType.ROUTING.value,
                             "tool_name": "action_category_router",
                             "content": standardize_flow_step_content(routing_content, FlowStepType.ROUTING),
-                            "execution_data": {"skip_category_selection": False},
+                            "execution_data": {"skip_category_selection": False, "enhanced_conversation_history": enhanced_conversation_history},
                         }
                     ],
                     db=_subdb,
@@ -326,7 +476,11 @@ async def execute_action_with_retrieval(
                                 ],
                                 FlowStepType.ROUTING,
                             ),
-                            "execution_data": {"skip_category_selection": True, "source": "clarification"},
+                            "execution_data": {
+                                "skip_category_selection": True,
+                                "source": "clarification",
+                                "enhanced_conversation_history": enhanced_conversation_history,
+                            },
                         }
                     ],
                     db=_subdb,
@@ -420,15 +574,37 @@ async def execute_action_with_retrieval(
             except Exception as e:
                 log.warning(f"Failed to build tools for category {cat}: {e}")
 
+        # Deduplicate method tools (entity search tools may appear in multiple categories)
+        seen_tool_names = set()
+        deduplicated_method_tools = []
+        for tool in all_method_tools:
+            if tool.name not in seen_tool_names:
+                deduplicated_method_tools.append(tool)
+                seen_tool_names.add(tool.name)
+
         # Include retrieval tools from phase-1 so the LLM can chain look-ups ↔ actions
         # Filter out the category selection tool and include all other tools
-        retrieval_tools = [t for t in category_tools if t.name != "get_available_plane_actions"]
+        # Phase-2: rebuild retrieval tools with the normalized project_id to ensure correct scoping
+        fresh_retrieval_tools = chatbot_instance._create_tools(
+            db,
+            user_meta,
+            workspace_id,
+            project_id,
+            user_id,
+            chat_id,
+            query_flow_store,
+            conversation_history,
+            query_id,
+            is_project_chat=is_project_chat,
+        )
         # Merge while preserving order and avoiding duplicates
-        method_tool_names = {t.name for t in all_method_tools}
-        combined_tools = all_method_tools + [t for t in retrieval_tools if t.name not in method_tool_names]
+        method_tool_names = {t.name for t in deduplicated_method_tools}
+        combined_tools = deduplicated_method_tools + [t for t in fresh_retrieval_tools if t.name not in method_tool_names]
         if not combined_tools:
             log.warning("No method or retrieval tools available for selected categories")
-            yield "❌ No method or retrieval tools available for selected categories\n"
+            msg = "An unexpected error occurred. Please try again later."
+            yield msg
+            yield f"__FINAL_RESPONSE__{msg}"
             return
 
         # Build the planning prompt via shared helper, pass previously derived clar_ctx
@@ -436,6 +612,7 @@ async def execute_action_with_retrieval(
             combined_agent_query,
             project_id,
             user_id,
+            workspace_id,
             enhanced_conversation_history,
             clarification_context=clar_ctx,
         )
@@ -443,14 +620,48 @@ async def execute_action_with_retrieval(
         date_time_context = await get_current_timestamp_context(user_id)
         method_prompt = f"{method_prompt}\n\n{date_time_context}"
 
-        # Log the full method planning prompt prior to invocation
+        # Record the tool orchestration context (enhanced conversation history) before planning
+        try:
+            if enhanced_conversation_history and isinstance(enhanced_conversation_history, str) and enhanced_conversation_history.strip():
+                tool_flow_steps.append({
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL.value,
+                    "tool_name": "tool_orchestration_context",
+                    "content": "Context used for method planning",
+                    "execution_data": {
+                        "enhanced_conversation_history": enhanced_conversation_history,
+                        "agent_query": combined_agent_query,
+                        "selected_categories": list(built_categories),
+                        "available_tools_count": len(combined_tools),
+                        "method_tool_names": [t.name for t in all_method_tools],
+                        "bound_tool_names": [t.name for t in combined_tools],
+                    },
+                    "is_planned": False,
+                    "is_executed": False,
+                    "execution_success": ExecutionStatus.PENDING,
+                })
+                current_step += 1
+        except Exception:
+            pass
+
+        # Log the full method planning prompt and context for debugging
         try:
             # Determine if this is a clarification follow-up (raw user input) or router-synthesized query
             is_clarification_followup = bool(user_meta and isinstance(user_meta, dict) and user_meta.get("clarification_context"))
             query_label = "Agent Query (raw user input from clarification)" if is_clarification_followup else "Agent Query (router-synthesized)"
 
-        except Exception:
-            pass
+            # Log comprehensive debugging information
+            log.info(f"ChatID: {chat_id} - {query_label}: {combined_agent_query}")
+            log.info(f"ChatID: {chat_id} - Selected Categories: {built_categories}")
+            log.info(f"ChatID: {chat_id} - Available Tools Count: {len(combined_tools)}")
+            try:
+                tool_names_for_log = [t.name for t in combined_tools]
+                log.info(f"ChatID: {chat_id} - Planning tools: {tool_names_for_log}")
+            except Exception:
+                pass
+
+        except Exception as e:
+            log.warning(f"ChatID: {chat_id} - Failed to log debug info: {e}")
 
         # Initialize messages for Phase 2 tool orchestration
         messages = [SystemMessage(content=method_prompt), HumanMessage(content=combined_agent_query)]
@@ -460,9 +671,112 @@ async def execute_action_with_retrieval(
         # Re-bind LLM with the full toolset (action methods + retrieval)
         llm_with_method_tools = chatbot_instance.tool_llm.bind_tools(combined_tools)
 
+        # Set tracking context for method planning LLM calls
+        llm_with_method_tools.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_METHOD_PLANNING, chat_id=str(chat_id))
+
         # Continue iterative tool calling with method tools
         response = await llm_with_method_tools.ainvoke(messages)
         messages.append(response)
+
+        # Log LLM's initial response for debugging
+        log.info(f"ChatID: {chat_id} - LLM INITIAL RESPONSE")
+        log.info(f"ChatID: {chat_id} - Has Tool Calls: {hasattr(response, "tool_calls") and bool(getattr(response, "tool_calls", None))}")
+
+        # Log the complete LLM response for debugging
+        try:
+            response_content = str(getattr(response, "content", "") or "").strip()
+            tool_calls = getattr(response, "tool_calls", None)
+
+            log.info(f"ChatID: {chat_id} - LLM Response Content: {response_content}")
+            # if tool_calls:
+            #     log.info(f"ChatID: {chat_id} - LLM Tool Calls: {tool_calls}")
+            # else:
+            #     log.info(f"ChatID: {chat_id} - LLM Tool Calls: None")
+
+            # Log the full response object for complete debugging
+            try:
+                import json
+
+                response_dict = {
+                    "content": response_content,
+                    "tool_calls": tool_calls,
+                    "response_metadata": getattr(response, "response_metadata", None),
+                    "id": getattr(response, "id", None),
+                    "usage_metadata": getattr(response, "usage_metadata", None),
+                }
+                log.info(f"ChatID: {chat_id} - Full LLM Response: {json.dumps(response_dict, default=str, indent=2)}")
+            except Exception:
+                log.info(f"ChatID: {chat_id} - Full LLM Response (raw): {response}")
+
+        except Exception as e:
+            log.warning(f"ChatID: {chat_id} - Failed to log LLM response: {e}")
+
+        # Log planner decisions immediately (before flow step creation)
+        try:
+            if hasattr(response, "tool_calls") and getattr(response, "tool_calls", None):
+                tool_calls_list = getattr(response, "tool_calls", []) or []
+                tool_names = []
+                for _tc in tool_calls_list:
+                    if isinstance(_tc, dict):
+                        tool_names.append(_tc.get("name", ""))
+                    else:
+                        tool_names.append(getattr(_tc, "name", ""))
+
+                reasoning_text = str(getattr(response, "content", "") or "").strip()
+                reason_preview = reasoning_text or "(none)"
+
+                log.info(f"ChatID: {chat_id} - Planner selected tools: {tool_names}")
+                log.info(f"ChatID: {chat_id} - Planner reasoning: {reason_preview}")
+            else:
+                # Log when no tool calls are made
+                reasoning_text = str(getattr(response, "content", "") or "").strip()
+                log.info(f"ChatID: {chat_id} - Planner selected tools: []")
+                log.info(f"ChatID: {chat_id} - Planner reasoning (no tools): {reasoning_text}")
+        except Exception as e:
+            log.warning(f"ChatID: {chat_id} - Failed to log planner decisions: {e}")
+
+        # Record planner decision for this response (selected tools + reasoning)
+        try:
+            if hasattr(response, "tool_calls") and getattr(response, "tool_calls", None):
+                selected_calls: list[dict] = []
+                for _tc in getattr(response, "tool_calls", []) or []:
+                    if isinstance(_tc, dict):
+                        _name = _tc.get("name", "")
+                        _args = _tc.get("args", {})
+                        _id = _tc.get("id", "")
+                    else:
+                        _name = getattr(_tc, "name", "")
+                        _args = getattr(_tc, "args", {})
+                        _id = getattr(_tc, "id", "")
+                    selected_calls.append({"name": _name, "args": _args, "id": _id})
+
+                reasoning_text = str(getattr(response, "content", "") or "").strip()
+
+                tool_flow_steps.append({
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL,
+                    "tool_name": "planner_tool_selection",
+                    "content": standardize_flow_step_content({"selected_tool_calls": selected_calls, "reasoning": reasoning_text}, FlowStepType.TOOL),
+                    "execution_data": {
+                        "selected_tool_calls": selected_calls,
+                        "reasoning": reasoning_text,
+                    },
+                    "is_planned": False,
+                    "is_executed": False,
+                    "execution_success": ExecutionStatus.PENDING,
+                })
+                current_step += 1
+        except Exception:
+            pass
+        # Persist whether the initial LLM response had tool calls
+        try:
+            for _s in tool_flow_steps:
+                if _s.get("tool_name") == "tool_orchestration_context":
+                    _ed = _s.setdefault("execution_data", {})
+                    _ed["initial_has_tool_calls"] = bool(getattr(response, "tool_calls", None))
+                    break
+        except Exception:
+            pass
         # Handle iterative method tool calling until completion
         planned_actions: list = []
         planned_action_keys: set[str] = set()
@@ -470,6 +784,7 @@ async def execute_action_with_retrieval(
         iteration_count = 0
         reminder_count = 0
         max_reminders = 3  # Limit consecutive reminders to prevent infinite loops
+        loop_warning_detected = False
 
         # Continue the loop until either:
         # 1. No more tool calls are returned by the LLM, OR
@@ -478,6 +793,10 @@ async def execute_action_with_retrieval(
         loop_condition = (
             (hasattr(response, "tool_calls") and getattr(response, "tool_calls", None)) or len(planned_actions) == 0
         ) and iteration_count < max_iterations
+
+        # Track tool calls to detect loops
+        tool_call_history = []
+
         while loop_condition:
             iteration_count += 1
             tool_messages = []
@@ -485,6 +804,13 @@ async def execute_action_with_retrieval(
             # If no tool calls in this response but we haven't planned any actions yet,
             # we need to continue to allow the LLM to plan at least one action
             if not (hasattr(response, "tool_calls") and getattr(response, "tool_calls", None)):
+                # First, check if LLM explicitly returned NO_ACTIONS_PLANNED - if so, respect that decision
+                if hasattr(response, "content") and response.content:
+                    content = str(response.content).strip()
+                    if content == "NO_ACTIONS_PLANNED":
+                        log.info(f"ChatID: {chat_id} - LLM returned NO_ACTIONS_PLANNED - stopping iteration without reminders")
+                        break
+
                 # Check if we've exceeded reminder limit
                 if reminder_count >= max_reminders:
                     log.warning(f"ChatID: {chat_id} - Maximum reminders ({max_reminders}) reached. Breaking loop to prevent infinite reminders.")
@@ -524,8 +850,84 @@ async def execute_action_with_retrieval(
                     log.warning(f"Invalid tool name: {tool_name}, skipping tool call")
                     continue
 
+                # Log each tool call execution for debugging
+                log.info(f"ChatID: {chat_id} - EXECUTING TOOL: {tool_name} with args: {tool_args}")
+
+                # Track tool calls to detect loops
+                tool_call_signature = f"{tool_name}({tool_args})"
+                tool_call_history.append(tool_call_signature)
+
+                # Check for repeated identical calls (potential loop)
+                if tool_call_history.count(tool_call_signature) > 2:
+                    log.warning(
+                        f"ChatID: {chat_id} - DETECTED LOOP: Tool {tool_name} called {tool_call_history.count(tool_call_signature)} times with same args: {tool_args}"  # noqa: E501
+                    )  # noqa: E501
+                    log.warning(f"ChatID: {chat_id} - Tool call history: {tool_call_history[-10:]}")  # Last 10 calls
+                    loop_warning_detected = True
+
+                # Special handling for no_actions_planned tool
+                if tool_name == "no_actions_planned":
+                    # Execute the tool to get the structured payload
+                    tool_func = next((t for t in combined_tools if t.name == tool_name), None)
+                    result = None
+                    try:
+                        if tool_func is not None:
+                            if hasattr(tool_func, "ainvoke"):
+                                result = await tool_func.ainvoke(tool_args)
+                            else:
+                                result = tool_func.invoke(tool_args)
+                        else:
+                            result = '{"reason": "Tool not found", "explanation": "", "token": "NO_ACTIONS_PLANNED"}'
+                    except Exception as e:
+                        log.warning(f"No actions planned tool execution failed: {e}")
+                        result = '{"reason": "Tool execution failed", "explanation": "", "token": "NO_ACTIONS_PLANNED"}'
+
+                    # Parse JSON payload best-effort
+                    try:
+                        no_actions_payload = json.loads(str(result)) if result else {}
+                    except Exception:
+                        no_actions_payload = {"reason": "Parse failed", "explanation": str(result), "token": "NO_ACTIONS_PLANNED"}
+
+                    # Log the no actions decision
+                    try:
+                        reason = no_actions_payload.get("reason", "Unknown")
+                        explanation = no_actions_payload.get("explanation", "")
+                        log.info(f"ChatID: {chat_id} - LLM decided NO_ACTIONS_PLANNED: {reason}")
+                        if explanation:
+                            log.info(f"ChatID: {chat_id} - No actions explanation: {explanation}")
+                    except Exception:
+                        pass
+
+                    # Add tool message for conversation continuity
+                    tool_message = ToolMessage(content=str(result), tool_call_id=tool_id)
+                    tool_messages.append(tool_message)
+
+                    # Track flow step for no actions decision
+                    tool_flow_steps.append({
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL,
+                        "tool_name": "no_actions_planned",
+                        "content": standardize_flow_step_content(no_actions_payload, FlowStepType.TOOL),
+                        "execution_data": {
+                            "args": tool_args,
+                            "no_actions_payload": no_actions_payload,
+                            "original_query": combined_agent_query,
+                        },
+                        "is_planned": False,
+                        "is_executed": False,
+                        "execution_success": ExecutionStatus.SUCCESS,
+                    })
+                    current_step += 1
+
+                    # Set the response content to the token for downstream detection
+                    response.content = "NO_ACTIONS_PLANNED"
+
+                    # Clear further tool calls and break
+                    response.tool_calls = [] if hasattr(response, "tool_calls") else None
+                    break
+
                 # Special handling for clarification tool
-                if tool_name == "ask_for_clarification":
+                elif tool_name == "ask_for_clarification":
                     # Execute the tool to get the structured payload
                     tool_func = next((t for t in combined_tools if t.name == tool_name), None)
                     result = None
@@ -548,14 +950,14 @@ async def execute_action_with_retrieval(
                         clarification_payload = {"raw": str(result)}
 
                     # Log clarification payload produced by LLM tool call
-                    try:
-                        import json as _json
+                    # try:
+                    #     import json as _json
 
-                        log.info(
-                            f"{"*" * 100}\nChatID: {chat_id} - ASK_FOR_CLARIFICATION payload (LLM): {_json.dumps(clarification_payload, default=str)}\n{"*" * 100}"  # noqa: E501
-                        )
-                    except Exception:
-                        pass
+                    #     log.info(
+                    #         f"{"*" * 100}\nChatID: {chat_id} - ASK_FOR_CLARIFICATION payload (LLM): {_json.dumps(clarification_payload, default=str)}\n{"*" * 100}"  # noqa: E501
+                    #     )
+                    # except Exception:
+                    #     pass
 
                     # Add tool message for conversation continuity
                     tool_message = ToolMessage(content=str(result), tool_call_id=tool_id)
@@ -600,7 +1002,7 @@ async def execute_action_with_retrieval(
                         categories = list(built_categories) if "built_categories" in locals() else []
 
                         log.info(
-                            f"ChatID: {chat_id} - Creating clarification record: kind={clar_kind}, message_id={query_id}, categories={categories}"
+                            f"ChatID: {chat_id} - Creating clarification record: kind={clar_kind}, message_id={query_id}, categories={categories}"  # noqa: E501
                         )
 
                         # Use the current user message id (query_id) as the owning message for the clarification record.
@@ -659,6 +1061,113 @@ async def execute_action_with_retrieval(
                     except Exception:
                         missing_required = []
 
+                    # Attempt auto-resolution of common placeholders before asking for clarification
+                    try:
+
+                        def _extract_placeholder_name(val: str) -> tuple[str | None, str | None]:
+                            if isinstance(val, str) and "<id of" in val and ":" in val and val.endswith(">"):
+                                try:
+                                    inner = val.strip("<>")  # id of project: Mattu
+                                    parts = inner.split(":", 1)
+                                    left = parts[0].strip()  # id of project
+                                    right = parts[1].strip()  # Mattu
+                                    # entity type is last token of left
+                                    etype = left.split()[-1].strip()
+                                    return etype, right
+                                except Exception:
+                                    return None, None
+                            return None, None
+
+                        async def _auto_resolve_project_id_if_needed() -> bool:
+                            nonlocal tool_args
+                            # Only for project-scoped actions
+                            pid_val = tool_args.get("project_id") if isinstance(tool_args, dict) else None
+                            etype, pname = _extract_placeholder_name(pid_val) if isinstance(pid_val, str) else (None, None)
+                            if pname and (etype == "project" or etype is None):
+                                # Find search_project_by_name tool
+                                resolver = next((t for t in combined_tools if getattr(t, "name", "") == "search_project_by_name"), None)
+                                if resolver:
+                                    try:
+                                        res = await resolver.ainvoke({"name": pname, "workspace_slug": workspace_slug})
+                                        # Parse first id from Result: {...}
+                                        m = re.search(r"\n\nResult:\s*(\{[\s\S]*?\})", str(res))
+                                        if m:
+                                            try:
+                                                parsed = ast.literal_eval(m.group(1))
+                                                if isinstance(parsed, dict):
+                                                    cand = parsed.get("id") or parsed.get("project_id")
+                                                    if isinstance(cand, str):
+                                                        tool_args["project_id"] = cand
+                                                        return True
+                                            except Exception:
+                                                pass
+                                    except Exception:
+                                        return False
+                            # If not placeholder but a non-UUID string, try extracting a quoted name from the value
+                            if isinstance(pid_val, str):
+                                # Detect UUID quickly; if it's a UUID, skip
+                                uuid_like = re.match(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", pid_val, flags=re.IGNORECASE)
+                                if not uuid_like:
+                                    # Try to extract 'Name' or "Name" from free text
+                                    m_quote = re.search(r"'([^']+)'|\"([^\"]+)\"", pid_val)
+                                    candidate = None
+                                    if m_quote:
+                                        candidate = m_quote.group(1) or m_quote.group(2)
+                                    # As last resort, if string is short (<80 chars) and no quotes, use whole string
+                                    if not candidate and len(pid_val) <= 80:
+                                        candidate = pid_val.strip()
+                                    if candidate:
+                                        resolver = next((t for t in combined_tools if getattr(t, "name", "") == "search_project_by_name"), None)
+                                        if resolver:
+                                            try:
+                                                res = await resolver.ainvoke({"name": candidate, "workspace_slug": workspace_slug})
+                                                m = re.search(r"\n\nResult:\s*(\{[\s\S]*?\})", str(res))
+                                                if m:
+                                                    try:
+                                                        parsed = ast.literal_eval(m.group(1))
+                                                        if isinstance(parsed, dict):
+                                                            cand = parsed.get("id") or parsed.get("project_id")
+                                                            if isinstance(cand, str):
+                                                                tool_args["project_id"] = cand
+                                                                return True
+                                                    except Exception:
+                                                        pass
+                                            except Exception:
+                                                return False
+                            return False
+
+                        # If missing project_id (or it is a placeholder/non-uuid), try auto-resolve
+                        if "project_id" in (missing_required or []):
+                            did_resolve = await _auto_resolve_project_id_if_needed()
+                            if not did_resolve and tool_name == "workitems_update":
+                                # Derive project_id from issue_id when updating a work-item
+                                try:
+                                    issue_id_val = tool_args.get("issue_id") if isinstance(tool_args, dict) else None
+                                    if isinstance(issue_id_val, str) and re.match(
+                                        r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", issue_id_val, flags=re.IGNORECASE
+                                    ):
+                                        from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                                        ident_details = await get_issue_identifier_for_artifact(issue_id_val)
+                                        if ident_details and isinstance(ident_details, dict):
+                                            pid = ident_details.get("project_id")
+                                            if isinstance(pid, str):
+                                                tool_args["project_id"] = pid
+                                                did_resolve = True
+                                except Exception:
+                                    pass
+
+                            if did_resolve:
+                                # Recompute missing fields
+                                try:
+                                    from .tool_utils import preflight_missing_required_fields as _pre
+
+                                    missing_required = _pre(tool_name, tool_args, action_context)
+                                except Exception:
+                                    pass
+                    except Exception:
+                        pass
+
                     if missing_required:
                         clarification_result = await handle_missing_required_fields(
                             tool_name=tool_name,
@@ -694,6 +1203,35 @@ async def execute_action_with_retrieval(
                         except Exception:
                             yield f"πspecial clarification blockπ: {str(clarification_payload)}\n"
 
+                        # Persist a message_clarifications row for deterministic follow-up handling
+                        try:
+                            from pi.services.retrievers.pg_store.clarifications import create_clarification
+
+                            clar_kind = "action"  # Preflight clarifications are always for actions
+                            method_names = [t.name for t in all_method_tools] if "all_method_tools" in locals() else []
+                            bound_names = [t.name for t in combined_tools] if "combined_tools" in locals() else []
+                            categories = list(built_categories) if "built_categories" in locals() else []
+
+                            log.info(
+                                f"ChatID: {chat_id} - Creating clarification record (preflight): kind={clar_kind}, message_id={query_id}, categories={categories}"  # noqa: E501
+                            )
+
+                            # Use the current user message id (query_id) as the owning message for the clarification record.
+                            clar_id = await create_clarification(
+                                db,
+                                chat_id=uuid.UUID(str(chat_id)),
+                                message_id=uuid.UUID(str(query_id)),
+                                kind=clar_kind,
+                                original_query=combined_agent_query,
+                                payload=clarification_payload or {},
+                                categories=[str(c) for c in categories],
+                                method_tool_names=method_names,
+                                bound_tool_names=bound_names,
+                            )
+                            log.info(f"ChatID: {chat_id} - Successfully created clarification record (preflight): id={clar_id}")
+                        except Exception as e:
+                            log.warning(f"ChatID: {chat_id} - Failed to create clarification record (preflight): {e}")
+
                         # Clear further tool calls and break
                         response.tool_calls = [] if hasattr(response, "tool_calls") else None
                         break
@@ -710,6 +1248,17 @@ async def execute_action_with_retrieval(
 
                         # Clean tool_args to remove non-UUID values that should be resolved during execution
                         cleaned_args = _clean_tool_args_for_storage(tool_args)
+
+                        # Enhance action summary with complete data BEFORE streaming
+                        # Pass tool_args (not cleaned_args) because we need the actual UUIDs
+                        try:
+                            # Add project identifier if available
+                            await _add_project_identifier(action_summary, tool_args)
+
+                            # Add workitem/epic complete data for update operations
+                            await _enhance_action_summary_with_complete_data(action_summary, tool_name, tool_args)
+                        except Exception as e:
+                            log.warning(f"Error enhancing action summary before streaming: {e}")
 
                         # Suppress duplicate planned actions within a single planning session
                         try:
@@ -753,6 +1302,7 @@ async def execute_action_with_retrieval(
                         # Enhanced execution data for planned actions
                         enhanced_execution_data = {
                             "args": cleaned_args,
+                            "args_raw": tool_args,
                             "action_summary": action_summary,
                             "tool_id": tool_id,
                             "artifact_id": artifact_id,  # Artifact ID for frontend
@@ -772,6 +1322,7 @@ async def execute_action_with_retrieval(
                             artifact_data = {
                                 "planning_data": action_summary,
                                 "tool_args": cleaned_args,
+                                "tool_args_raw": tool_args,
                                 "planning_context": planning_context,
                                 "tool_id": tool_id,
                             }
@@ -849,71 +1400,6 @@ async def execute_action_with_retrieval(
                                                         pass
                             except Exception:
                                 # Non-fatal enrichment
-                                pass
-
-                            # Best-effort: add project_identifier into planning parameters if resolvable from context or search
-                            try:
-                                # If planning_data already has project.identifier, keep it
-                                params = action_summary.get("parameters") if isinstance(action_summary, dict) else None
-                                project_block = params.get("project") if isinstance(params, dict) else None
-                                already_has_identifier = isinstance(project_block, dict) and project_block.get("identifier")
-
-                                if not already_has_identifier:
-                                    # Try to resolve from project_id if present in args
-                                    project_id = cleaned_args.get("project_id") if isinstance(cleaned_args, dict) else None
-                                    if project_id:
-                                        from pi.app.api.v1.helpers.plane_sql_queries import get_project_details_for_artifact
-
-                                        proj = await get_project_details_for_artifact(str(project_id))
-                                        if proj and proj.get("identifier") and isinstance(action_summary, dict):
-                                            if isinstance(params, dict):
-                                                if "project" not in params or not isinstance(params["project"], dict):
-                                                    params["project"] = {}
-                                                params["project"]["identifier"] = proj["identifier"]
-                                            else:
-                                                action_summary["parameters"] = {"project": {"identifier": proj["identifier"]}}
-                            except Exception:
-                                pass
-
-                            # Best-effort: for update ops with issue_id, inject work-item unique identifier into properties
-                            try:
-                                issue_id = None
-                                if isinstance(cleaned_args, dict):
-                                    issue_id = cleaned_args.get("issue_id") or cleaned_args.get("workitem_id")
-                                if issue_id and isinstance(action_summary, dict):
-                                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
-
-                                    issue_details = await get_issue_identifier_for_artifact(str(issue_id))
-                                    if issue_details and isinstance(issue_details, dict):
-                                        # Ensure parameters/workitem/properties exist
-                                        params = action_summary.get("parameters") if isinstance(action_summary, dict) else None
-                                        if not isinstance(params, dict):
-                                            params = {}
-                                            action_summary["parameters"] = params
-                                        workitem_block = params.get("workitem")
-                                        if not isinstance(workitem_block, dict):
-                                            workitem_block = {}
-                                            params["workitem"] = workitem_block
-                                        properties_block = workitem_block.get("properties")
-                                        if not isinstance(properties_block, dict):
-                                            properties_block = {}
-                                            workitem_block["properties"] = properties_block
-
-                                        # Add the human-friendly unique identifier
-                                        identifier_value = issue_details.get("identifier")
-                                        if identifier_value:
-                                            properties_block["identifier"] = identifier_value
-
-                                        # Also ensure project.identifier is present based on issue
-                                        project_identifier = issue_details.get("project_identifier")
-                                        project_block = params.get("project")
-                                        if project_identifier:
-                                            if not isinstance(project_block, dict):
-                                                project_block = {}
-                                                params["project"] = project_block
-                                            if not project_block.get("identifier"):
-                                                project_block["identifier"] = project_identifier
-                            except Exception:
                                 pass
 
                             # Create the artifact record
@@ -997,6 +1483,15 @@ async def execute_action_with_retrieval(
                             else:
                                 result = tool_func.invoke(tool_args)
 
+                            # Log tool result for debugging (truncate to keep logs sane)
+                            try:
+                                _result_preview = str(result)
+                                if len(_result_preview) > 2000:
+                                    _result_preview = _result_preview[:2000] + "... [truncated]"
+                                log.info(f"ChatID: {chat_id} - TOOL RESULT ({tool_name}): {_result_preview}")
+                            except Exception:
+                                pass
+
                             # Create tool message for conversation continuity
                             tool_message = ToolMessage(content=str(result), tool_call_id=tool_id)
                             tool_messages.append(tool_message)
@@ -1065,6 +1560,80 @@ async def execute_action_with_retrieval(
 
             messages.append(response)
 
+            # Log the complete LLM response for this iteration
+            try:
+                response_content = str(getattr(response, "content", "") or "").strip()
+                tool_calls = getattr(response, "tool_calls", None)
+
+                log.info(f"ChatID: {chat_id} - LLM Response Content (iteration {iteration_count}): {response_content}")
+                if tool_calls:
+                    log.info(f"ChatID: {chat_id} - LLM Tool Calls (iteration {iteration_count}): {tool_calls}")
+                else:
+                    log.info(f"ChatID: {chat_id} - LLM Tool Calls (iteration {iteration_count}): None")
+
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Failed to log LLM response for iteration {iteration_count}: {e}")
+
+            # Log planner decisions for this iteration
+            try:
+                if hasattr(response, "tool_calls") and getattr(response, "tool_calls", None):
+                    tool_calls_list = getattr(response, "tool_calls", []) or []
+                    tool_names = []
+                    for _tc in tool_calls_list:
+                        if isinstance(_tc, dict):
+                            tool_names.append(_tc.get("name", ""))
+                        else:
+                            tool_names.append(getattr(_tc, "name", ""))
+
+                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+                    reason_preview = reasoning_text or "(none)"
+
+                    log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): {tool_names}")
+                    log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}): {reason_preview}")
+                else:
+                    # Log when no tool calls are made in iteration
+                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+                    log.info(f"ChatID: {chat_id} - Planner selected tools (iteration {iteration_count}): []")
+                    log.info(f"ChatID: {chat_id} - Planner reasoning (iteration {iteration_count}, no tools): {reasoning_text}")
+            except Exception as e:
+                log.warning(f"ChatID: {chat_id} - Failed to log planner decisions for iteration {iteration_count}: {e}")
+
+            # Record planner decision for this iteration (selected tools + reasoning)
+            try:
+                if hasattr(response, "tool_calls") and getattr(response, "tool_calls", None):
+                    for _tc in getattr(response, "tool_calls", []) or []:
+                        if isinstance(_tc, dict):
+                            _name = _tc.get("name", "")
+                            _args = _tc.get("args", {})
+                            _id = _tc.get("id", "")
+                        else:
+                            _name = getattr(_tc, "name", "")
+                            _args = getattr(_tc, "args", {})
+                            _id = getattr(_tc, "id", "")
+                        selected_calls.append({"name": _name, "args": _args, "id": _id})
+
+                    reasoning_text = str(getattr(response, "content", "") or "").strip()
+
+                    tool_flow_steps.append({
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL,
+                        "tool_name": "planner_tool_selection",
+                        "content": standardize_flow_step_content(
+                            {"selected_tool_calls": selected_calls, "reasoning": reasoning_text}, FlowStepType.TOOL
+                        ),
+                        "execution_data": {
+                            "iteration": iteration_count,
+                            "selected_tool_calls": selected_calls,
+                            "reasoning": reasoning_text,
+                        },
+                        "is_planned": False,
+                        "is_executed": False,
+                        "execution_success": ExecutionStatus.PENDING,
+                    })
+                    current_step += 1
+            except Exception:
+                pass
+
             # Update loop condition for next iteration
             loop_condition = (
                 (hasattr(response, "tool_calls") and getattr(response, "tool_calls", None)) or len(planned_actions) == 0
@@ -1089,8 +1658,30 @@ async def execute_action_with_retrieval(
             log.warning(f"Tool selection loop exited due to maximum iterations ({max_iterations}) reached")
             if len(planned_actions) == 0:
                 # Signal failure and stop before emitting any free-form LLM content
-                yield "❌ Unable to complete action planning within the maximum allowed iterations. Please try rephrasing your request.\n"
+                msg = "An unexpected error occurred. Please try again later."
+                yield msg
                 # Persist any retrieval steps captured so far
+                # Append planning summary before persisting steps
+                try:
+                    tool_flow_steps.append({
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL,
+                        "tool_name": "planner_summary",
+                        "content": "Method planning summary",
+                        "execution_data": {
+                            "iteration_count": iteration_count,
+                            "planned_actions_count": len(planned_actions),
+                            "loop_warning_detected": loop_warning_detected,
+                            "tool_calls_count": len(tool_call_history),
+                            "no_actions_planned": True,
+                        },
+                        "is_planned": False,
+                        "is_executed": False,
+                        "execution_success": ExecutionStatus.SUCCESS,
+                    })
+                    current_step += 1
+                except Exception:
+                    pass
                 if tool_flow_steps:
                     with contextlib.suppress(Exception):
                         async with get_streaming_db_session() as _subdb:
@@ -1101,13 +1692,60 @@ async def execute_action_with_retrieval(
                                 db=_subdb,
                             )
                 # Do not include free-form content; end stream
-                yield "__FINAL_RESPONSE__"
+                yield f"__FINAL_RESPONSE__{msg}"
                 return
         elif len(planned_actions) == 0:
-            log.warning("Tool selection loop exited without planning any actions - this may indicate an issue")
-            # Signal failure and stop before emitting any free-form LLM content
-            yield "❌ Unable to plan any actions for your request. Please check that your request is clear and try again.\n"
+            log.warning("Tool selection loop exited without planning any actions - checking for LLM explanation")
+
+            # Check if LLM provided meaningful explanation for why no actions were planned
+            llm_explanation = None
+            if hasattr(response, "content") and response.content:
+                content = str(response.content).strip()
+                # If LLM provided actual explanation (not just the NO_ACTIONS_PLANNED token), use it
+                if content and content != "NO_ACTIONS_PLANNED":
+                    llm_explanation = content
+                    log.info(f"ChatID: {chat_id} - Using LLM explanation for no-action scenario: {llm_explanation[:100]}...")
+
+            # Use LLM explanation if available, otherwise show generic refusal
+            if llm_explanation:
+                # LLM provided context-aware explanation (e.g., "no unassigned items found")
+                yield mask_uuids_in_text(llm_explanation) + "\n"
+                yield f"__FINAL_RESPONSE__{llm_explanation}"
+            else:
+                # No meaningful LLM explanation - show generic refusal
+                refusal_message = (
+                    "I understand you'd like to perform this action, but I wasn't able to plan any actions for this request with the available tools.\n\n"  # noqa: E501
+                    "**I can help you with:** work-items (create, update, assign, move), projects (create, list, manage), "
+                    "cycles (create, manage, add work-items), modules (create, manage, add work-items), "
+                    "labels and states (create, update), create pages\n\n"
+                    "Feel free to ask me about any of these supported actions, or let me know if you'd like help with something else!"
+                )
+                yield refusal_message
+                yield f"__FINAL_RESPONSE__{refusal_message}"
+
             # Persist any retrieval steps captured so far
+            # Append planning summary before persisting steps
+            try:
+                tool_flow_steps.append({
+                    "step_order": current_step,
+                    "step_type": FlowStepType.TOOL,
+                    "tool_name": "planner_summary",
+                    "content": "Method planning summary",
+                    "execution_data": {
+                        "iteration_count": iteration_count,
+                        "planned_actions_count": len(planned_actions),
+                        "loop_warning_detected": loop_warning_detected,
+                        "tool_calls_count": len(tool_call_history),
+                        "no_actions_planned": len(planned_actions) == 0,
+                        "exited_due_to_max_iterations": True,
+                    },
+                    "is_planned": False,
+                    "is_executed": False,
+                    "execution_success": ExecutionStatus.SUCCESS,
+                })
+                current_step += 1
+            except Exception:
+                pass
             if tool_flow_steps:
                 with contextlib.suppress(Exception):
                     async with get_streaming_db_session() as _subdb:
@@ -1117,8 +1755,6 @@ async def execute_action_with_retrieval(
                             flow_steps=tool_flow_steps,
                             db=_subdb,
                         )
-            # Do not include free-form content; end stream
-            yield "__FINAL_RESPONSE__"
             return
         else:
             log.debug(f"Tool selection loop completed successfully after {iteration_count} iterations with {len(planned_actions)} planned actions")
@@ -1127,15 +1763,74 @@ async def execute_action_with_retrieval(
         final_response_chunks = []
 
         if hasattr(response, "content") and response.content:
-            content = str(response.content)
-            final_response_chunks.append(content + "\n")
-            yield mask_uuids_in_text(content) + "\n"
+            content = str(response.content).strip()
+
+            # Check if LLM returned NO_ACTIONS_PLANNED token
+            if content == "NO_ACTIONS_PLANNED":
+                # Track explicit no-actions token in flow steps
+                try:
+                    tool_flow_steps.append({
+                        "step_order": current_step,
+                        "step_type": FlowStepType.TOOL,
+                        "tool_name": "planner_no_actions",
+                        "content": "NO_ACTIONS_PLANNED",
+                        "execution_data": {
+                            "reasoning": None,
+                            "iteration_count": iteration_count,
+                        },
+                        "is_planned": False,
+                        "is_executed": False,
+                        "execution_success": ExecutionStatus.SUCCESS,
+                    })
+                    current_step += 1
+                    log.info(f"ChatID: {chat_id} - Planner returned NO_ACTIONS_PLANNED token")
+                except Exception:
+                    pass
+                # Convert to a more user-friendly message - pure LLM decision
+                friendly_response = (
+                    "I understand you'd like to perform an action, but I wasn't able to plan any actions for this request with the available tools.\n\n"  # noqa: E501
+                    "**What you can try instead:**\n"
+                    "1. Try rephrasing your request with more specific action words (create, update, move, assign, etc.)\n"
+                    "2. Break down complex requests into smaller, specific actions\n"
+                    "3. Ask me to search for existing items first, then perform actions on them\n\n"
+                    "**I can help you with:** work-items (create, update, assign, move), projects (create, list, manage), "  # noqa: E501
+                    "cycles (create, manage, add work-items), modules (create, manage, add work-items), "
+                    "labels and states (create, update), create pages\n\n"
+                    "Feel free to ask me about any of these supported actions, or let me know if you'd like help with something else!"  # noqa: E501
+                )
+                final_response_chunks.append(friendly_response + "\n")
+                yield friendly_response + "\n"
+            else:
+                final_response_chunks.append(content + "\n")
+                yield mask_uuids_in_text(content) + "\n"
         else:
             content = "Planned these actions for you"
             final_response_chunks.append(content + "\n")
             yield content + "\n"
 
         # Record tool executions in database
+        # Append planning summary before persisting steps
+        try:
+            tool_flow_steps.append({
+                "step_order": current_step,
+                "step_type": FlowStepType.TOOL,
+                "tool_name": "planner_summary",
+                "content": "Method planning summary",
+                "execution_data": {
+                    "iteration_count": iteration_count,
+                    "planned_actions_count": len(planned_actions),
+                    "loop_warning_detected": loop_warning_detected,
+                    "tool_calls_count": len(tool_call_history),
+                    "no_actions_planned": (len(planned_actions) == 0)
+                    or (hasattr(response, "content") and str(getattr(response, "content")).strip() == "NO_ACTIONS_PLANNED"),
+                },
+                "is_planned": False,
+                "is_executed": False,
+                "execution_success": ExecutionStatus.SUCCESS,
+            })
+            current_step += 1
+        except Exception:
+            pass
         if tool_flow_steps:
             async with get_streaming_db_session() as _subdb:
                 flow_step_result = await _upsert_message_flow_steps(
@@ -1158,6 +1853,15 @@ async def execute_action_with_retrieval(
             # Signal end without free-form content
             yield "__FINAL_RESPONSE__"
 
-    except Exception as e:
-        log.warning(f"ChatID: {chat_id} - Error in action execution: {str(e)}")
-        # Don't show this error to user - keep it internal
+    except Exception:
+        # Log full traceback for diagnosis
+        log.error(f"ChatID: {chat_id} - Error in action execution", exc_info=True)
+        # Emit user-friendly error and final response so caller can persist
+        error_msg = "An unexpected error occurred. Please try again later."
+        try:
+            yield error_msg
+            yield f"__FINAL_RESPONSE__{error_msg}"
+        except Exception:
+            # Best effort; if streaming breaks here, nothing else we can do
+            pass
+        return

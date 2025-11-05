@@ -8,7 +8,7 @@ import { EUserPermissions } from "@plane/constants";
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
-import { PagesAppCommandPalette } from "@/plane-web/components/command-palette";
+import { WikiAppPowerKProvider } from "@/plane-web/components/command-palette/wiki/provider";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspacePagesUpgrade } from "@/plane-web/components/pages";
 // plane web layouts
@@ -22,6 +22,7 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
 
   return (
     <AuthenticationWrapper>
+      <WikiAppPowerKProvider />
       <WorkspaceAuthWrapper>
         <WithFeatureFlagHOC
           workspaceSlug={workspaceSlug?.toString()}
@@ -32,7 +33,6 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
             pageKey="pages"
             allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}
           >
-            <PagesAppCommandPalette />
             <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
               <PagesAppSidebar />
               <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">

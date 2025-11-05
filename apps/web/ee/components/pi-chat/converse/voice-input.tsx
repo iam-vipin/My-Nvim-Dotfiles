@@ -1,7 +1,8 @@
 import type { SetStateAction, Dispatch } from "react";
 import React, { useRef, useState } from "react";
-import { Check, LoaderCircle, MicIcon, X } from "lucide-react";
+import { Check, LoaderCircle, MicIcon } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
+import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
@@ -150,7 +151,7 @@ const AudioRecorder = (props: TProps) => {
           { "bg-custom-background-80": SPEECH_LOADERS.includes(loader) }
         )}
       >
-        {SPEECH_LOADERS.includes(loader) ? <X className="w-4 h-4" /> : <MicIcon className="w-4 h-4" />}
+        {SPEECH_LOADERS.includes(loader) ? <CloseIcon className="w-4 h-4" /> : <MicIcon className="w-4 h-4" />}
       </button>
 
       {/* waveform / transcribing */}

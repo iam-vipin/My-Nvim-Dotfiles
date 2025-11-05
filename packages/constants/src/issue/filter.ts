@@ -19,6 +19,7 @@ import {
   ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   EActivityFilterTypeEE,
   shouldRenderActivity,
+  ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
 } from "./filter-extended";
 
 import { TIssueLayout } from "./layout";
@@ -36,6 +37,7 @@ export enum EServerGroupByToFilterOptions {
   "target_date" = "target_date",
   "project_id" = "project",
   "created_by" = "created_by",
+  "milestone_id" = "milestone",
 }
 
 export enum EIssueFilterType {
@@ -234,7 +236,17 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       list: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+          group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+            null,
+          ],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],
         },
@@ -246,7 +258,16 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       kanban: {
         display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
         display_filters: {
-          group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by"],
+          group_by: [
+            "state",
+            "priority",
+            "cycle",
+            "module",
+            "labels",
+            "assignees",
+            "created_by",
+            ...ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS,
+          ],
           sub_group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
           order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
           type: ["active", "backlog"],

@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 // plane imports
 import {
   E_FEATURE_FLAGS,
@@ -13,6 +12,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 import type { TButtonSizes } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import type { TCreateTemplateSettingsPathProps } from "@plane/utils";
@@ -162,7 +162,7 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
           disabled={!hasAdminPermission}
         >
           {getButtonLabel()}
-          {hasAdminPermission && <ChevronDown className="size-3.5" />}
+          {hasAdminPermission && <ChevronDownIcon className="size-3.5" />}
         </Button>
       }
       placement="bottom-end"

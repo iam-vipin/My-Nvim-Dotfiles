@@ -85,7 +85,6 @@ export const WorkItemsList: FC<TProps> = observer((props) => {
         handleClose={() => setWorkItemsModal(false)}
         searchParams={{}}
         handleOnSubmit={handleAddWorkItems}
-        selectedWorkItems={[]}
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
       <div className="flex w-full items-center justify-between mb-4">

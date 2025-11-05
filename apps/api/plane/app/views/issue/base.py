@@ -60,7 +60,7 @@ from plane.db.models import (
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject
+from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject, MilestoneIssue
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -112,6 +112,36 @@ class IssueListEndpoint(BaseAPIView):
                 "assignees", "labels", "issue_module__module"
             )
 
+        values = [
+            "id",
+            "name",
+            "state_id",
+            "sort_order",
+            "completed_at",
+            "estimate_point",
+            "priority",
+            "start_date",
+            "target_date",
+            "sequence_id",
+            "project_id",
+            "parent_id",
+            "cycle_id",
+            "module_ids",
+            "label_ids",
+            "assignee_ids",
+            "sub_issues_count",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+            "attachment_count",
+            "link_count",
+            "is_draft",
+            "archived_at",
+            "deleted_at",
+            "type_id",
+        ]
+
         # Add annotations
         issue_queryset = (
             issue_queryset.annotate(
@@ -143,6 +173,17 @@ class IssueListEndpoint(BaseAPIView):
             .distinct()
         )
 
+        # Annotate milestone_id if the MILESTONES feature flag is enabled
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=str(request.user.id)):
+            issue_queryset = issue_queryset.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+            values.append("milestone_id")
+
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
         issue_queryset, _ = order_issue_queryset(issue_queryset=issue_queryset, order_by_param=order_by_param)
@@ -165,35 +206,7 @@ class IssueListEndpoint(BaseAPIView):
         if self.fields or self.expand:
             issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
         else:
-            issues = issue_queryset.values(
-                "id",
-                "name",
-                "state_id",
-                "sort_order",
-                "completed_at",
-                "estimate_point",
-                "priority",
-                "start_date",
-                "target_date",
-                "sequence_id",
-                "project_id",
-                "parent_id",
-                "cycle_id",
-                "module_ids",
-                "label_ids",
-                "assignee_ids",
-                "sub_issues_count",
-                "created_at",
-                "updated_at",
-                "created_by",
-                "updated_by",
-                "attachment_count",
-                "link_count",
-                "is_draft",
-                "archived_at",
-                "deleted_at",
-                "type_id",
-            )
+            issues = issue_queryset.values(*values)
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
         return Response(issues, status=status.HTTP_200_OK)
@@ -329,6 +342,19 @@ class IssueViewSet(BaseViewSet):
                         distinct=True,
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issues = issues.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
                 )
             )
 
@@ -716,6 +742,19 @@ class IssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+
+        # Annotate milestone_id if the MILESTONES feature flag is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+        ):
+            issue = issue.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+
         issue = issue.first()
 
         if not issue:
@@ -1008,7 +1047,7 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
 
-        return (
+        queryset = (
             issue_queryset.select_related("state")
             .annotate(
                 cycle_id=Subquery(
@@ -1074,6 +1113,19 @@ class IssuePaginatedViewSet(BaseViewSet):
             )
         )
 
+        # Annotate milestone_id if the MILESTONES feature flag is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+        ):
+            queryset = queryset.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+        return queryset
+
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 
@@ -1105,6 +1157,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "project_id",
             "parent_id",
             "cycle_id",
+            "milestone_id",
             "created_at",
             "updated_at",
             "created_by",
@@ -1206,7 +1259,7 @@ class IssueDetailEndpoint(BaseAPIView):
     filterset_class = IssueFilterSet
 
     def apply_annotations(self, issues):
-        return (
+        queryset = (
             issues.annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
@@ -1252,6 +1305,19 @@ class IssueDetailEndpoint(BaseAPIView):
                 )
             )
         )
+
+        # Annotate milestone_id if the MILESTONES feature flag is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+        ):
+            queryset = queryset.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
+                )
+            )
+        return queryset
 
     def _validate_order_by_field(self, order_by_param):
         """
@@ -1392,7 +1458,11 @@ class IssueDetailEndpoint(BaseAPIView):
             queryset=(issue),
             total_count_queryset=total_issue_queryset,
             on_results=lambda issue: IssueListDetailSerializer(
-                issue, many=True, fields=self.fields, expand=self.expand
+                issue,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"slug": slug, "user_id": str(request.user.id)},
             ).data,
         )
 
@@ -1639,6 +1709,17 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+        ):
+            issue = issue.annotate(
+                milestone_id=Subquery(
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
                 )
             )
 

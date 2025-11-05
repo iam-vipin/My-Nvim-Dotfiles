@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 
 // components
-import { ChevronLeft, ChevronRight } from "lucide-react";
 // icons
 import { useCalendarView } from "@/plane-web/hooks/store/use-calendar-view";
 import { CalendarMonthsDropdown } from "./dropdowns";
@@ -81,10 +81,10 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     <div className="mb-4 flex items-center justify-between gap-2 px-3">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
-          <ChevronLeft size={16} strokeWidth={2} />
+          <ChevronLeftIcon height={16} width={16} strokeWidth={2} />
         </button>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
-          <ChevronRight size={16} strokeWidth={2} />
+          <ChevronRightIcon height={16} width={16} strokeWidth={2} />
         </button>
         <CalendarMonthsDropdown calendarLayout={calendarLayout} />
       </div>

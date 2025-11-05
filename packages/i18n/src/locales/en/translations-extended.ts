@@ -3,6 +3,8 @@ export default {
   pi_chat: "Plane AI",
   in_app: "In-app",
   forms: "Forms",
+  milestones: "Milestones",
+  milestones_description: "Milestones provide a layer to align work items toward shared completion dates.",
   common: {
     worklogs: "Worklogs",
     live: "Live",
@@ -14,6 +16,7 @@ export default {
     business: "Business",
     members_and_teamspaces: "Members & Teamspaces",
     recurring_work_items: "Recurring work items",
+    milestones: "Milestones",
   },
   issue: {
     relation: {
@@ -3225,6 +3228,75 @@ export default {
         description: "Automations are a way to automate tasks in your project.",
         sub_description: "Get 80% of your admin time back when you use Automations.",
       },
+    },
+  },
+  pages: {
+    move_page: {
+      submit_button: {
+        default: "Move",
+        loading: "Moving",
+      },
+      cannot_move_to_teamspace: "Private and shared pages cannot be moved to a teamspace.",
+      placeholders: {
+        workspace_to_all: "Search for projects and teamspaces",
+        workspace_to_project: "Search for projects",
+        project_to_all: "Search for projects and teamspaces",
+        project_to_project: "Search for projects",
+        teamspace_to_all: "Search for projects and teamspaces",
+      },
+      toasts: {
+        success: {
+          title: "Success!",
+          message: "Page moved successfully.",
+        },
+        error: {
+          title: "Error!",
+          message: "Page could not be moved. Please try again later.",
+        },
+      },
+    },
+  },
+  power_k: {
+    contextual_actions: {
+      initiative: {
+        title: "Initiative actions",
+        indicator: "Initiative",
+        change_state: "Change state",
+        change_lead: "Change lead",
+        copy_url: "Copy URL",
+        copy_url_toast_success: "Initiative URL copied to clipboard.",
+        copy_url_toast_error: "Some error occurred while copying the initiative URL to clipboard.",
+      },
+    },
+    creation_actions: {
+      create_teamspace: "New teamspace",
+      create_teamspace_view: "New teamspace view",
+      create_initiative: "New initiative",
+      create_workspace_dashboard: "New dashboard",
+      create_customer: "New customer",
+      create_project_automation: "New automation",
+    },
+    navigation_actions: {
+      nav_workspace_active_cycle: "Go to all active cycles",
+      open_teamspace: "Open a teamspace",
+      nav_teamspaces_list: "Go to teamspaces",
+      open_initiative: "Open an initiative",
+      nav_initiatives_list: "Go to initiatives",
+      open_customer: "Open a customer record",
+      nav_customers_list: "Go to customer records",
+      nav_workspace_dashboards: "Go to dashboards",
+      nav_project_overview: "Go to project overview",
+      nav_project_epics: "Go to epics",
+    },
+    page_placeholders: {
+      open_teamspace: "Open a teamspace",
+      open_initiative: "Open an initiative",
+      open_customer: "Open a customer record",
+      change_initiative_state: "Change initiative state",
+      change_initiative_lead: "Change initiative lead",
+    },
+    search_menu: {
+      go_to_advanced_search: "Go to advanced search",
     },
   },
 };

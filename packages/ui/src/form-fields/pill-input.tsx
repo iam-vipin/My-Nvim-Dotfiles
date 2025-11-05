@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
 import * as React from "react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../utils";
 
@@ -157,7 +157,7 @@ export const PillInput = React.forwardRef<HTMLInputElement, PillInputProps>((pro
               }}
               className={cn("text-custom-text-300 hover:text-custom-text-200", removePillClassName)}
             >
-              <X className="size-3" />
+              <CloseIcon className="size-3" />
             </button>
           </div>
         ))}

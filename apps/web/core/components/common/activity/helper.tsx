@@ -1,23 +1,17 @@
 import type { ReactNode } from "react";
 import {
-  Signal,
   RotateCcw,
   Network,
   Link as LinkIcon,
-  Calendar,
-  Tag,
   Inbox,
   AlignLeft,
-  Users,
   Paperclip,
   Type,
-  Triangle,
   FileText,
   Globe,
   Hash,
   Clock,
   Bell,
-  LayoutGrid,
   GitBranch,
   Timer,
   ListTodo,
@@ -25,7 +19,20 @@ import {
 } from "lucide-react";
 
 // components
-import { ArchiveIcon, CycleIcon, DoubleCircleIcon, IntakeIcon, ModuleIcon } from "@plane/propel/icons";
+import {
+  ArchiveIcon,
+  CycleIcon,
+  DueDatePropertyIcon,
+  EstimatePropertyIcon,
+  GridLayoutIcon,
+  IntakeIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  ModuleIcon,
+  PriorityPropertyIcon,
+  StartDatePropertyIcon,
+  StatePropertyIcon,
+} from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
 import type { TProjectActivity } from "@/plane-web/types";
 
@@ -33,20 +40,20 @@ type ActivityIconMap = {
   [key: string]: ReactNode;
 };
 export const iconsMap: ActivityIconMap = {
-  priority: <Signal size={14} className="text-custom-text-200" />,
+  priority: <PriorityPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   restored: <RotateCcw className="h-3.5 w-3.5 text-custom-text-200" />,
   link: <LinkIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  start_date: <Calendar className="h-3.5 w-3.5 text-custom-text-200" />,
-  target_date: <Calendar className="h-3.5 w-3.5 text-custom-text-200" />,
-  label: <Tag className="h-3.5 w-3.5 text-custom-text-200" />,
+  start_date: <StartDatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  target_date: <DueDatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  label: <LabelPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   inbox: <Inbox className="h-3.5 w-3.5 text-custom-text-200" />,
   description: <AlignLeft className="h-3.5 w-3.5 text-custom-text-200" />,
-  assignee: <Users className="h-3.5 w-3.5 text-custom-text-200" />,
+  assignee: <MembersPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   attachment: <Paperclip className="h-3.5 w-3.5 text-custom-text-200" />,
   name: <Type className="h-3.5 w-3.5 text-custom-text-200" />,
-  state: <DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  estimate: <Triangle size={14} className="text-custom-text-200" />,
+  state: <StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  estimate: <EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   cycle: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   module: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   page: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
@@ -54,7 +61,7 @@ export const iconsMap: ActivityIconMap = {
   identifier: <Hash className="h-3.5 w-3.5 text-custom-text-200" />,
   timezone: <Clock className="h-3.5 w-3.5 text-custom-text-200" />,
   is_project_updates_enabled: <Bell className="h-3.5 w-3.5 text-custom-text-200" />,
-  is_epic_enabled: <LayoutGrid className="h-3.5 w-3.5 text-custom-text-200" />,
+  is_epic_enabled: <GridLayoutIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   is_workflow_enabled: <GitBranch className="h-3.5 w-3.5 text-custom-text-200" />,
   is_time_tracking_enabled: <Timer className="h-3.5 w-3.5 text-custom-text-200" />,
   is_issue_type_enabled: <ListTodo className="h-3.5 w-3.5 text-custom-text-200" />,

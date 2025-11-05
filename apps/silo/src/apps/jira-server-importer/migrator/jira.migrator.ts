@@ -83,7 +83,7 @@ export class JiraDataCenterMigrator extends BaseDataMigrator<JiraConfig, JiraEnt
     const comments = await withLog(
       E_KNOWN_ETL_ASSET.Comments,
       () => pullComments(issues, client),
-      (result) => result.reduce((sum, issue) => sum + issue.comments.length, 0)
+      (result) => result.length
     );
     /* -------------- Pull Jira Data --------------- */
 

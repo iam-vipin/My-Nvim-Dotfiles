@@ -260,6 +260,9 @@ class TokenTracker:
                     log.warning(
                         f"MODEL VERIFICATION: Could not extract actual model used from response metadata for '{model_key}' (Step: {step_type.value})"
                     )
+            log.info(
+                f"Tracking LLM usage for message: {msg_id} (Step: {step_type.value}, Model: {model_key}) - Total input tokens: {total_input_tokens}, Output tokens: {output_tokens}, Cached input tokens: {cached_input_tokens}"  # noqa: E501
+            )
 
             # Get LLM model ID
             llm_model_id = await get_llm_model_id_from_key(model_key, self.db)

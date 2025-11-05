@@ -81,6 +81,7 @@ class WorkspacePageViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_global=True)
+            .filter(moved_to_page__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .select_related("workspace")
             .select_related("owned_by")
@@ -118,9 +119,9 @@ class WorkspacePageViewSet(BaseViewSet):
         )
 
     def get_largest_sort_order(self, slug, parent_id):
-        largest_sort_order = Page.objects.filter(
-            workspace__slug=slug, parent_id=parent_id
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        largest_sort_order = Page.objects.filter(workspace__slug=slug, parent_id=parent_id).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
         return largest_sort_order + 10000 if largest_sort_order else 65535
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
@@ -136,16 +137,18 @@ class WorkspacePageViewSet(BaseViewSet):
         )
 
         if request.data.get("parent_id") and request.data.get("sort_order") is None:
-            largest_sort_order = self.get_largest_sort_order(
-                slug, request.data.get("parent_id")
-            )
+            largest_sort_order = self.get_largest_sort_order(slug, request.data.get("parent_id"))
             if largest_sort_order is not None:
                 request.data["sort_order"] = largest_sort_order
 
         if serializer.is_valid():
             serializer.save(is_global=True)
             # capture the page transaction
-            page_transaction.delay(request.data, None, serializer.data["id"])
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=serializer.data["id"],
+            )
             if serializer.data.get("parent_id"):
                 nested_page_update.delay(
                     page_id=serializer.data["id"],
@@ -167,45 +170,32 @@ class WorkspacePageViewSet(BaseViewSet):
             page = Page.objects.get(pk=page_id, workspace__slug=slug)
 
             if page.is_locked:
-                return Response(
-                    {"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             parent = request.data.get("parent_id", None)
             if parent:
                 _ = Page.objects.get(pk=parent, workspace__slug=slug)
 
             # Only update access if the page owner is the requesting  user
-            if (
-                page.access != request.data.get("access", page.access)
-                and page.owned_by_id != request.user.id
-            ):
+            if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
                 return Response(
-                    {
-                        "error": "Access cannot be updated since this page is owned by someone else"
-                    },
+                    {"error": "Access cannot be updated since this page is owned by someone else"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             current_instance = WorkspacePageDetailSerializer(page).data
 
             moved_internally = False
-            if request.data.get("parent_id") and current_instance.get(
-                "parent_id"
-            ) != request.data.get("parent_id"):
+            if request.data.get("parent_id") and current_instance.get("parent_id") != request.data.get("parent_id"):
                 moved_internally = True
                 if request.data.get("sort_order") is None:
                     # get the largest sort order for the new parent
-                    largest_sort_order = self.get_largest_sort_order(
-                        slug, request.data.get("parent_id")
-                    )
+                    largest_sort_order = self.get_largest_sort_order(slug, request.data.get("parent_id"))
                     # Page ordering
                     if largest_sort_order is not None:
                         page.sort_order = largest_sort_order
 
-            serializer = WorkspacePageDetailSerializer(
-                page, data=request.data, partial=True
-            )
+            serializer = WorkspacePageDetailSerializer(page, data=request.data, partial=True)
             page_description = page.description_html
             if serializer.is_valid():
                 serializer.save()
@@ -236,11 +226,8 @@ class WorkspacePageViewSet(BaseViewSet):
                 # capture the page transaction
                 if request.data.get("description_html"):
                     page_transaction.delay(
-                        new_value=request.data,
-                        old_value=json.dumps(
-                            {"description_html": page_description},
-                            cls=DjangoJSONEncoder,
-                        ),
+                        new_description_html=request.data.get("description_html", "<p></p>"),
+                        old_description_html=page_description,
                         page_id=page_id,
                     )
 
@@ -248,9 +235,7 @@ class WorkspacePageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -260,9 +245,7 @@ class WorkspacePageViewSet(BaseViewSet):
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         if not page:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if page.parent_id and (
             not check_workspace_feature_flag(
@@ -277,9 +260,7 @@ class WorkspacePageViewSet(BaseViewSet):
             )
 
         if page is None:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
             if track_visit:
                 recent_visited_task.delay(
@@ -288,9 +269,7 @@ class WorkspacePageViewSet(BaseViewSet):
                     entity_identifier=page_id,
                     user_id=request.user.id,
                 )
-            return Response(
-                WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK
-            )
+            return Response(WorkspacePageDetailSerializer(page).data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def lock(self, request, slug, page_id):
@@ -332,14 +311,9 @@ class WorkspacePageViewSet(BaseViewSet):
         old_page_access = page.access
 
         # Only update access if the page owner is the requesting user
-        if (
-            page.access != request.data.get("access", page.access)
-            and page.owned_by_id != request.user.id
-        ):
+        if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
             return Response(
-                {
-                    "error": "Access cannot be updated since this page is owned by someone else"
-                },
+                {"error": "Access cannot be updated since this page is owned by someone else"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -506,9 +480,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         page.delete()
         # Delete the deploy board
-        DeployBoard.objects.filter(
-            entity_name="page", entity_identifier=page_id, workspace__slug=slug
-        ).delete()
+        DeployBoard.objects.filter(entity_name="page", entity_identifier=page_id, workspace__slug=slug).delete()
         # Delete the page from user recent's visit
         UserRecentVisit.objects.filter(
             workspace__slug=slug,
@@ -589,11 +561,7 @@ class WorkspacePageViewSet(BaseViewSet):
                     output_field=IntegerField(),
                 )
             ),
-            archived_pages=Count(
-                Case(
-                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
-                )
-            ),
+            archived_pages=Count(Case(When(archived_at__isnull=False, then=1), output_field=IntegerField())),
         )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -608,9 +576,7 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
-            return Response(
-                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
         # update the descendants pages with the current page
         nested_page_update.delay(
@@ -628,9 +594,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, page_id):
         user_pages = (
-            PageUser.objects.filter(
-                page_id=page_id, user_id=request.user.id, workspace__slug=slug
-            )
+            PageUser.objects.filter(page_id=page_id, user_id=request.user.id, workspace__slug=slug)
             .values_list("page_id", flat=True)
             .first()
         )
@@ -640,9 +604,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             .first()
         )
         if page is None:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         binary_data = page.description_binary
 
         def stream_data():
@@ -651,18 +613,14 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             else:
                 yield b""
 
-        response = StreamingHttpResponse(
-            stream_data(), content_type="application/octet-stream"
-        )
+        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, page_id):
         user_pages = (
-            PageUser.objects.filter(
-                page_id=page_id, user_id=request.user.id, workspace__slug=slug
-            )
+            PageUser.objects.filter(page_id=page_id, user_id=request.user.id, workspace__slug=slug)
             .values_list("page_id", flat=True)
             .first()
         )
@@ -673,9 +631,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
         )
 
         if page is None:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if page.is_locked:
             return Response(
@@ -696,9 +652,7 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             )
 
         # Serialize the existing instance
-        existing_instance = json.dumps(
-            {"description_html": page.description_html}, cls=DjangoJSONEncoder
-        )
+        existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
 
         # Use serializer for validation and update
         serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
@@ -706,7 +660,9 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
             # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data, old_value=existing_instance, page_id=page_id
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page.description_html,
+                    page_id=page_id,
                 )
 
             # Update the page using serializer
@@ -731,16 +687,12 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
         # Check if pk is provided
         if pk:
             # Return a single page version
-            page_version = PageVersion.objects.get(
-                workspace__slug=slug, page_id=page_id, pk=pk
-            )
+            page_version = PageVersion.objects.get(workspace__slug=slug, page_id=page_id, pk=pk)
             # Serialize the page version
             serializer = WorkspacePageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return all page versions
-        page_versions = PageVersion.objects.filter(
-            workspace__slug=slug, page_id=page_id
-        )
+        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
         # Serialize the page versions
         serializer = WorkspacePageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -789,11 +741,7 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
 
         # Get the version's sub pages data
         version_sub_pages = page_version.sub_pages_data
-        version_sub_page_ids = [
-            str(sub_page["id"])
-            for sub_page in version_sub_pages
-            if sub_page["deleted_at"] is None
-        ]
+        version_sub_page_ids = [str(sub_page["id"]) for sub_page in version_sub_pages if sub_page["deleted_at"] is None]
 
         # Find pages that need to be restored (in old version but deleted in latest)
         pages_to_restore = set(version_sub_page_ids) - set(latest_sub_pages)
@@ -844,9 +792,7 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
                 PageVersion.all_objects.filter(
                     page_id__in=descendant_page_ids + [str(page.id)],
                     workspace__slug=slug,
-                ).update(
-                    deleted_at=None, updated_at=timezone.now(), updated_by=request.user
-                )
+                ).update(deleted_at=None, updated_at=timezone.now(), updated_by=request.user)
 
         # delete the pages that need to be deleted
         if pages_to_delete:
@@ -883,9 +829,7 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
             slug=slug,
             user_id=request.user.id,
             extra={
-                "deleted_page_ids": [
-                    str(deleted_page) for deleted_page in pages_to_delete
-                ],
+                "deleted_page_ids": [str(deleted_page) for deleted_page in pages_to_delete],
             },
         )
 

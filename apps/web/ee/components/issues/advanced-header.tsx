@@ -24,6 +24,7 @@ import { CountChip } from "@/components/common/count-chip";
 import { HeaderFilters } from "@/components/issues/filters";
 // helpers
 // hooks
+import { LayoutQuickActions } from "@/components/issues/layout-quick-actions";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -118,6 +119,7 @@ export const AdvancedIssuesHeader = observer(() => {
         ) : (
           <></>
         )}
+        <LayoutQuickActions workspaceSlug={workspaceSlug} projectId={projectId} storeType={EIssuesStoreType.PROJECT} />
       </Header.RightItem>
     </Header>
   );

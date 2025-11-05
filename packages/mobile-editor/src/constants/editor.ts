@@ -10,7 +10,6 @@ import {
   Heading6,
   Image,
   Italic,
-  List,
   ListOrdered,
   ListTodo,
   LucideIcon,
@@ -22,7 +21,7 @@ import {
 // editor
 import { TEditorCommands, TEditorFontStyle } from "@plane/editor";
 // ui
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 
 type TEditorTypes = "lite" | "document";
 
@@ -61,7 +60,7 @@ const LIST_ITEMS: ToolbarMenuItem[] = [
   {
     key: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListLayoutIcon,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },

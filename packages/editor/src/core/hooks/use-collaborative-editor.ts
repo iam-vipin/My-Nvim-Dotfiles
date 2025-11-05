@@ -13,6 +13,7 @@ import { useRealtimeEvents } from "@/hooks/use-realtime-events";
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorHookProps } from "@/types";
+import type { CollaborationState, ConnectionStatus, SyncStatus } from "@/types/collaboration";
 // local imports
 import { useEditorNavigation } from "./use-editor-navigation";
 import { useTitleEditor } from "./use-title-editor";
@@ -62,12 +63,19 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     user,
   } = props;
 
+  // State machine for collaboration status
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("initial");
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("syncing");
+  const [collaborationError, setCollaborationError] = useState<CollaborationState["error"]>();
+
   // Sync states for loading management
   const [isContentInIndexedDb, setIsContentInIndexedDb] = useState(false);
-  const [hasServerSynced, setHasServerSynced] = useState(false);
-  const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [isIndexedDbSynced, setIsIndexedDbSynced] = useState(false);
   const [isEditorContentReady, setIsEditorContentReady] = useState(false);
+
+  // Derived values for backward compatibility
+  const hasServerSynced = syncStatus === "synced";
+  const hasServerConnectionFailed = connectionStatus === "disconnected";
 
   // Connection tracking (ref avoids closure issues in provider callbacks)
   const connectionRef = useRef({
@@ -76,51 +84,71 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     forceCloseReceived: false,
   });
 
-  // Constants
   const maxConnectionAttempts = 3;
-
-  // Create navigation handlers
   const { mainNavigationExtension, titleNavigationExtension, setMainEditor, setTitleEditor } = useEditorNavigation();
 
-  // Reset force close state when document ID changes
   useEffect(() => {
+    setConnectionStatus("initial");
+    setSyncStatus("syncing");
+    setCollaborationError(undefined);
+    setIsContentInIndexedDb(false);
+    setIsIndexedDbSynced(false);
+    setIsEditorContentReady(false);
+    connectionRef.current.connectionAttempts = 0;
     connectionRef.current.forceCloseReceived = false;
+    connectionRef.current.isPermanentlyStopped = false;
   }, [id]);
 
-  // Initialize Hocuspocus provider for real-time collaboration
+  useEffect(() => {
+    const state: CollaborationState = {
+      connectionStatus,
+      syncStatus,
+      error: collaborationError,
+    };
+
+    serverHandler.onStateChange(state);
+  }, [connectionStatus, syncStatus, collaborationError, serverHandler]);
+
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
         name: id,
-        // using user id as a token to verify the user on the server
         token: JSON.stringify(user),
         url: realtimeConfig.url,
-        // NOTE: maxAttempts config is broken in Hocuspocus (see GitHub issue #762)
-        // We handle retry limiting manually in the onClose handler below
         onAuthenticationFailed: () => {
-          serverHandler?.onServerError?.();
-          setHasServerConnectionFailed(true);
+          setConnectionStatus("disconnected");
+          setCollaborationError({ type: "auth-failed", message: "Authentication failed" });
         },
         onConnect: () => {
-          // If we've permanently stopped, reject this connection (zombie reconnection from Hocuspocus)
           if (connectionRef.current.isPermanentlyStopped) {
             provider?.disconnect();
             return;
           }
 
-          // Reset retry counter on successful connection
           connectionRef.current.connectionAttempts = 0;
+          setConnectionStatus("connected");
+          setCollaborationError(undefined);
         },
         onStatus: (status) => {
-          if (status.status === "disconnected") {
-            serverHandler?.onServerError?.();
-            setHasServerConnectionFailed(true);
+          if (status.status === "connecting") {
+            const isReconnecting = connectionRef.current.connectionAttempts > 0;
+            setConnectionStatus(isReconnecting ? "reconnecting" : "connecting");
+            setSyncStatus("syncing"); // Reset sync status during connection attempts
+          } else if (status.status === "disconnected") {
+            setConnectionStatus("disconnected");
+            setSyncStatus("syncing"); // Reset sync status when disconnected
+            setCollaborationError({ type: "network-error", message: "Connection lost" });
+          } else if (status.status === "connected") {
+            setConnectionStatus("connected");
+            setCollaborationError(undefined);
           }
         },
         onSynced: () => {
-          // Reset retry counter on successful sync (stable connection)
           connectionRef.current.connectionAttempts = 0;
-          serverHandler?.onServerSynced?.();
+          setConnectionStatus("connected"); // Defensive: synced implies connected
+          setSyncStatus("synced");
+          setCollaborationError(undefined);
+
           const workspaceSlug = new URLSearchParams(realtimeConfig.url).get("workspaceSlug");
           const projectId = new URLSearchParams(realtimeConfig.url).get("projectId");
           provider.sendStateless(
@@ -130,77 +158,70 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
               projectId: projectId,
             })
           );
-          setHasServerSynced(true);
         },
       }),
-    [id, realtimeConfig.url, serverHandler, user]
+    [id, realtimeConfig.url, user]
   );
 
-  // Initialize local persistence using IndexedDB
   const localProvider = useMemo(
     () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
     [id, provider]
   );
 
-  // Helper function to permanently stop the provider and prevent all reconnection attempts
   const permanentlyStopProvider = useCallback(() => {
     const wsProvider = provider.configuration?.websocketProvider;
-
-    // Set flag FIRST to prevent any close event handlers from running
     connectionRef.current.isPermanentlyStopped = true;
 
-    // Disable reconnection in WebSocket provider
     if (wsProvider) {
       wsProvider.shouldConnect = false;
     }
 
-    // Destroy the provider completely (kills all internal timers and listeners)
     try {
       provider.destroy();
     } catch (error) {
-      console.error(`   ✗ Error destroying provider:`, error);
+      console.error(`Error destroying provider:`, error);
     }
   }, [provider]);
 
-  // Handle connection close events - check close code to determine behavior
   useEffect(() => {
     const handleClose = (event: { event?: { code?: number; reason?: string } }) => {
       const closeCode = event.event?.code;
       const conn = connectionRef.current;
 
-      // CRITICAL: If we've already permanently stopped, ignore ALL close events
       if (conn.isPermanentlyStopped) {
         return;
       }
 
-      // Forced close can be detected in two ways:
-      // 1. Close code 4000-4003 (if transmitted correctly by WebSocket)
-      // 2. force_close message received before close event (backup method)
       const isForcedClose = isForcedCloseCode(closeCode) || conn.forceCloseReceived;
 
       if (isForcedClose) {
-        // Trigger fallback mechanism (show error UI to user)
-        serverHandler?.onServerError?.();
-        setHasServerConnectionFailed(true);
+        setConnectionStatus("disconnected");
+        setSyncStatus("syncing"); // Reset sync status on forced close
+        setCollaborationError({
+          type: "forced-close",
+          code: closeCode || 0,
+          message: "Server forced connection close",
+        });
 
-        // Permanently stop the provider (destroys all timers)
         permanentlyStopProvider();
-
-        // Reset values
         conn.connectionAttempts = 0;
         conn.forceCloseReceived = false;
       } else {
-        // Increment connection attempts counter
         conn.connectionAttempts++;
 
-        // Always trigger fallback
-        serverHandler?.onServerError?.();
-        setHasServerConnectionFailed(true);
-
-        // Stop after max attempts
         if (conn.connectionAttempts >= maxConnectionAttempts) {
-          // Permanently stop the provider (destroys all timers and prevents zombie reconnections)
+          setConnectionStatus("disconnected");
+          setSyncStatus("syncing"); // Reset sync status after max retries
+          setCollaborationError({
+            type: "max-retries",
+            message: `Failed to connect after ${maxConnectionAttempts} attempts`,
+          });
+
           permanentlyStopProvider();
+        } else {
+          setConnectionStatus("reconnecting");
+          setSyncStatus("syncing"); // Reset sync status during reconnection
+          setCollaborationError({ type: "network-error", message: "Connection lost, reconnecting..." });
         }
       }
     };
@@ -210,7 +231,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     return () => {
       provider?.off("close", handleClose);
     };
-  }, [provider, serverHandler, id, maxConnectionAttempts, permanentlyStopProvider]);
+  }, [provider, maxConnectionAttempts, permanentlyStopProvider]);
 
   useEffect(() => {
     if (!localProvider) return;
@@ -234,7 +255,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     };
   }, [localProvider, id]);
 
-  // Clear IndexedDB if document is truly empty after both server and IndexedDB have synced
   useEffect(() => {
     if (!isIndexedDbSynced || !hasServerSynced || !localProvider) return;
     const docLength = localProvider.doc.share.get("default")?._length;
@@ -242,10 +262,11 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     if (docLength === 0 || docLength === undefined) {
       setIsContentInIndexedDb(false);
       clearIndexedDbForPage(id);
+    } else {
+      setIsContentInIndexedDb(true);
     }
   }, [isIndexedDbSynced, hasServerSynced, localProvider, id]);
 
-  // Mark editor content as ready when sync process completes
   useEffect(() => {
     if (!isIndexedDbSynced) {
       return;
@@ -262,20 +283,15 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     }
   }, [isIndexedDbSynced, isContentInIndexedDb, hasServerSynced, hasServerConnectionFailed, id]);
 
-  // Clean up providers on unmount
   useEffect(
     () => () => {
-      // CRITICAL: Set permanently stopped flag BEFORE destroying
-      // This prevents the onClose handler from processing the unmount close event
       connectionRef.current.isPermanentlyStopped = true;
-
       provider?.destroy();
       localProvider?.destroy();
     },
     [provider, localProvider]
   );
 
-  // Initialize main document editor
   const editor = useEditor({
     disabledExtensions,
     extendedEditorProps,
@@ -285,13 +301,11 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     editorClassName,
     enableHistory: false,
     extensions: [
-      // Core extensions
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled,
       }),
       HeadingListExtension,
-      // Collaboration extension
       Collaboration.configure({
         document: provider.document,
         field: "default",
@@ -306,7 +320,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         provider,
         userDetails: user,
       }),
-      // Navigation extension for keyboard shortcuts
       mainNavigationExtension,
     ],
     fileHandler,
@@ -324,12 +337,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     tabIndex,
   });
 
-  // Create setter function for realtime events hook
   const setForceCloseReceived = useCallback((value: boolean) => {
     connectionRef.current.forceCloseReceived = value;
   }, []);
 
-  // Use the new hook for realtime events
   useRealtimeEvents({
     editor,
     provider,
@@ -338,7 +349,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     setForceCloseReceived,
   });
 
-  // Initialize title editor
   const titleEditor = useTitleEditor({
     id,
     editable,
@@ -346,19 +356,15 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     titleRef,
     updatePageProperties,
     extensions: [
-      // Collaboration extension for title field
       Collaboration.configure({
         document: provider.document,
         field: "title",
       }),
-
-      // Navigation extension for keyboard shortcuts
       titleNavigationExtension,
     ],
     extendedEditorProps,
   });
 
-  // Connect editors for navigation once they're initialized
   useEffect(() => {
     if (editor && titleEditor) {
       setMainEditor(editor);
@@ -369,6 +375,9 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   return {
     editor,
     titleEditor,
+    connectionStatus,
+    syncStatus,
+    collaborationError,
     hasServerSynced,
     hasServerConnectionFailed,
     isContentInIndexedDb,

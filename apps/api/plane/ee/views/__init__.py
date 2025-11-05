@@ -6,6 +6,7 @@ from plane.ee.views.api import (
     IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
     IssuePropertyValueListAPIEndpoint,
+    WorkItemPropertyValueAPIEndpoint,
 )
 
 # App imports
@@ -37,7 +38,6 @@ from plane.ee.views.app.page import (
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
-    MovePageEndpoint,
     ProjectPageUserViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
@@ -140,6 +140,7 @@ from plane.ee.views.app.page.live import (
     PagesLiveServerDescriptionViewSet,
     PagesLiveServerSubPagesViewSet,
 )
+from plane.ee.views.app.page.move import MovePageEndpoint
 
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
 

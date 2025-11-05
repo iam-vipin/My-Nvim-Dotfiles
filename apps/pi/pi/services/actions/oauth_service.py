@@ -49,6 +49,7 @@ class PlaneOAuthService:
             "response_type": "code",
             "redirect_uri": self.redirect_uri,
             "state": state,
+            "disable_dropdown": True,
         }
 
         # Add workspace_slug if provided
@@ -65,6 +66,7 @@ class PlaneOAuthService:
         state: str,
         user_id: UUID,
         workspace_id: Optional[UUID] = None,
+        workspace_slug: Optional[str] = None,
         chat_id: Optional[str] = None,
         message_token: Optional[str] = None,
         return_url: Optional[str] = None,
@@ -80,6 +82,7 @@ class PlaneOAuthService:
             state=state,
             user_id=user_id,
             workspace_id=workspace_id,
+            workspace_slug=workspace_slug,
             redirect_uri=self.redirect_uri,
             expires_at=expires_at,
             chat_id=chat_id,
@@ -148,14 +151,14 @@ class PlaneOAuthService:
 
             return response.json()
 
-    async def get_app_installation_details(self, access_token: str, app_installation_id: str) -> Optional[Dict[str, Any]]:
+    async def get_app_installation_details(self, access_token: str) -> Optional[Dict[str, Any]]:
         """Fetch app installation details including workspace info"""
 
         headers = {"Authorization": f"Bearer {access_token}"}
 
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"{self.base_url}/auth/o/app-installation/?id={app_installation_id}",
+                f"{self.base_url}/auth/o/app-installation/",
                 headers=headers,
             )
 

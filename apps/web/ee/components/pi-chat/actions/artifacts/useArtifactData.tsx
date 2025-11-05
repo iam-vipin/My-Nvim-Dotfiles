@@ -48,6 +48,8 @@ export const useArtifactData = (artifactId: string, artifactType?: string): TUpd
   switch (artifactType) {
     case "workitem":
       return issueData;
+    case "epic":
+      return issueData;
     default:
       return templateData;
   }

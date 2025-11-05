@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { AlignLeft, Calendar, Link, Paperclip, Type, Users } from "lucide-react";
-import { EpicIcon, InitiativeIcon, ProjectIcon } from "@plane/propel/icons";
+import { AlignLeft, Link, Paperclip, Type } from "lucide-react";
+import { CalendarLayoutIcon, EpicIcon, InitiativeIcon, MembersPropertyIcon, ProjectIcon } from "@plane/propel/icons";
 import type { TBaseActivityVerbs } from "@plane/types";
 import { store } from "@/lib/store-context";
 import type { TInitiativeActivity } from "@/plane-web/types/initiative";
@@ -63,7 +63,7 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     message: <>updated the initiative description.</>,
   }),
   lead_updated: (activity: TInitiativeActivity) => ({
-    icon: <Users className={commonIconClassName} />,
+    icon: <MembersPropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_identifier && activity.new_identifier ? (
@@ -137,11 +137,11 @@ export const INITIATIVE_UPDATES_HELPER_MAP: Partial<TInitiativeActivityDetailsHe
     ),
   }),
   start_date_updated: () => ({
-    icon: <Calendar className={commonIconClassName} />,
+    icon: <CalendarLayoutIcon className={commonIconClassName} />,
     message: <>updated the start date.</>,
   }),
   end_date_updated: () => ({
-    icon: <Calendar className={commonIconClassName} />,
+    icon: <CalendarLayoutIcon className={commonIconClassName} />,
     message: <>updated the end date.</>,
   }),
   link_created: () => ({

@@ -4,8 +4,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
-import { ChevronRight } from "lucide-react";
-import { PageIcon } from "@plane/propel/icons";
+import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
 // plane imports
 import { TPage } from "@plane/types";
 // ui
@@ -56,7 +55,7 @@ export const PageDetailsHeader = observer(() => {
 
   const BreadcrumbSeparator = () => (
     <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRight className="size-3" />
+      <ChevronRightIcon className="size-3" />
     </div>
   );
 

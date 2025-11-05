@@ -2,11 +2,12 @@ import type { FC } from "react";
 import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
+import { Upload, File, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
 import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CircularProgressIndicator } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -300,7 +301,7 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
                 className="text-custom-text-300 hover:text-custom-text-200 focus:outline-none"
                 disabled={isUploading || isConfirming}
               >
-                <X className="w-5 h-5" />
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
           </div>

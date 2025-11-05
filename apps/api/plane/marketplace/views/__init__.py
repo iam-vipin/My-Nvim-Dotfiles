@@ -4,8 +4,4 @@ from .application import (
     ApplicationEndpoint,
     ApplicationMetaEndpoint,
 )
-from .template import (
-    TemplateCategoryEndpoint,
-    TemplateEndpoint,
-    TemplateMetaEndpoint,
-)
+from .template import TemplateCategoryEndpoint, TemplateEndpoint, TemplateMetaEndpoint, TemplateBySlugEndpoint

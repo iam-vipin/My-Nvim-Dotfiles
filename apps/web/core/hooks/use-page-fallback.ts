@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
 import { getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane propel
@@ -12,15 +12,18 @@ import useAutoSave from "@/hooks/use-auto-save";
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
   fetchPageDescription: () => Promise<ArrayBuffer>;
-  hasConnectionFailed: boolean;
+  collaborationState: CollaborationState | null;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
 };
 
 export const usePageFallback = (args: TArgs) => {
-  const { editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription } = args;
+  const { editorRef, fetchPageDescription, collaborationState, updatePageDescription } = args;
   const hasShownFallbackToast = useRef(false);
 
   const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
+
+  // Derive connection failure from collaboration state
+  const hasConnectionFailed = collaborationState?.connectionStatus === "disconnected";
 
   const handleUpdateDescription = useCallback(async () => {
     if (!hasConnectionFailed) return;

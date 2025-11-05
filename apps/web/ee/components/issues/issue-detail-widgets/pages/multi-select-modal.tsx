@@ -4,11 +4,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
-import { Earth, Lock, Search, X } from "lucide-react";
+import { Earth, Lock, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
-import { PageIcon } from "@plane/propel/icons";
+import { CloseIcon, PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { EPageAccess } from "@plane/types";
@@ -180,7 +180,7 @@ const PagesMultiSelectModal = observer(
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {getPageName(page?.name ?? "")}
                   </p>
-                  <X className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                  <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
                 </div>
               ))}
             </div>
@@ -246,7 +246,13 @@ const PagesMultiSelectModal = observer(
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onSubmit}
+            loading={isSubmitting}
+            disabled={isSubmitting || selectedPages.length === 0}
+          >
             {isSubmitting ? t("common.confirming") : t("common.confirm")}
           </Button>
         </div>

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane constants
 // plane imports
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -26,7 +26,7 @@ export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date
       buttonContent={(isOpen, val) => (
         <span className="flex items-center gap-1">
           {val && val.length > 0 ? `${val.length} selected` : "Due by"}
-          <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
+          <ChevronDownIcon className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>
       )}
       disableSearch

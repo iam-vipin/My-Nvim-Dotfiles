@@ -12,7 +12,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomerRequest } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
-import { getDescriptionPlaceholderI18n } from "@plane/utils";
+import { getDescriptionPlaceholderI18n, getChangedFields } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
@@ -26,7 +26,6 @@ import {
   SourceCreateUpdateModal,
   SourceItem,
 } from "@/plane-web/components/customers";
-import { getChangedRequestFields } from "@/plane-web/helpers/customers.helper";
 import { useCustomers } from "@/plane-web/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -95,7 +94,10 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
     const payload = !data?.id
       ? { ...formData, link }
       : {
-          ...getChangedRequestFields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+          ...getChangedFields<TCustomerRequest>(
+            formData,
+            dirtyFields as Partial<Record<Extract<keyof TCustomerRequest, string>, boolean | undefined>>
+          ),
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
           link,

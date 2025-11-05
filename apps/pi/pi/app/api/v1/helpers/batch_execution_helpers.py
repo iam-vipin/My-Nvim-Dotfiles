@@ -16,11 +16,69 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import Message
 from pi.app.schemas.chat import ActionBatchExecutionRequest
+from pi.app.schemas.chat import ArtifactData
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.batch_action_orchestrator import BatchActionOrchestrator
 from pi.services.chat.helpers.batch_execution_context import BatchExecutionContext
+from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
+from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
 
 log = logging.getLogger(__name__)
+
+
+def _is_valid_uuid(uuid_string: str) -> bool:
+    """Check if a string is a valid UUID format."""
+    try:
+        UUID(uuid_string)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
+def _extract_tool_args_from_artifact_data(artifact_data: dict, entity_type: str) -> dict:
+    """
+    Extract and format tool arguments from artifact data for execution.
+
+    Handles different data formats:
+    1. Direct tool_args (from planning phase)
+    2. Nested parameters structure (from planning_data)
+    3. Flattened parameters (from UI edits)
+    """
+    try:
+        # First, try direct tool_args (most reliable)
+        if "tool_args" in artifact_data:
+            tool_args = artifact_data["tool_args"]
+            if isinstance(tool_args, dict) and tool_args:
+                return tool_args
+
+        # Next, try planning_data.parameters structure
+        if "planning_data" in artifact_data:
+            planning_data = artifact_data["planning_data"]
+            if isinstance(planning_data, dict):
+                parameters = planning_data.get("parameters", {})
+                if isinstance(parameters, dict):
+                    # Check for nested entity structure
+                    if entity_type in parameters:
+                        entity_params = parameters[entity_type]
+                        if isinstance(entity_params, dict):
+                            # Flatten entity parameters and merge with other parameters
+                            flattened = dict(entity_params)
+                            # Add other non-entity parameters
+                            for key, value in parameters.items():
+                                if key != entity_type:
+                                    flattened[key] = value
+                            return flattened
+                    else:
+                        # Parameters are already flattened
+                        return parameters
+
+        # Fallback: return empty dict if no valid args found
+        log.warning(f"No valid tool args found in artifact data for entity {entity_type}")
+        return {}
+
+    except Exception as e:
+        log.error(f"Error extracting tool args from artifact data: {e}")
+        return {}
 
 
 async def validate_session_and_get_user(session: str) -> Optional[UUID]:
@@ -40,23 +98,195 @@ async def validate_session_and_get_user(session: str) -> Optional[UUID]:
 async def prepare_execution_data(request: ActionBatchExecutionRequest, user_id: UUID, db: AsyncSession) -> Optional[dict]:
     """Prepare execution data and return error response if validation fails."""
     try:
-        from pi.services.chat.helpers.batch_execution_helpers import get_original_user_query
-        from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
+        # **ARTIFACT-BASED EXECUTION**
+        # Prefer explicit artifact_data from the client. If absent, fall back to executing
+        # all planned artifacts for this message to maintain backward compatibility.
+        artifact_items = request.artifact_data or []
 
-        # Get planned actions for this message
-        planned_actions = await get_planned_actions_for_execution(request.message_id, request.chat_id, db)
+        if not artifact_items:
+            log.info("No artifact_data provided in request; attempting fallback to planned actions")
+            planned_for_message = await get_planned_actions_for_execution(request.message_id, request.chat_id, db)
+            if not planned_for_message:
+                log.error("No artifact_data provided and no planned actions found")
+                return None
 
-        # Filter out any retrieval steps accidentally marked as planned (shared heuristic)
-        from pi.services.chat.helpers.tool_utils import is_retrieval_tool
+            # Build a default list of artifacts to execute (all planned, unedited)
+            tmp_items: list[ArtifactData] = []
+            for pa in planned_for_message:
+                aid = pa.get("artifact_id")
+                if not aid:
+                    continue
+                try:
+                    tmp_items.append(ArtifactData(artifact_id=UUID(aid), is_edited=False))
+                except Exception as e:
+                    log.error(f"Invalid artifact_id in planned actions: {aid}: {e}")
 
-        planned_actions = [a for a in planned_actions if not is_retrieval_tool(a.get("tool_name"))]
+            if not tmp_items:
+                log.error("No valid artifact IDs found in planned actions for fallback execution")
+                return None
+
+            artifact_items = tmp_items
+
+        log.info(f"Processing artifacts: {len(artifact_items)} artifacts")
+
+        planned_actions: List[Dict[str, Any]] = []
+
+        for artifact_item in artifact_items:
+            log.info(f"Processing artifact: {artifact_item.artifact_id} (is_edited: {artifact_item.is_edited})")
+
+            # Get artifact metadata
+            artifacts = await get_action_artifacts_by_ids(db, [artifact_item.artifact_id])
+            if not artifacts:
+                log.error(f"Artifact {artifact_item.artifact_id} not found")
+                continue
+
+            artifact = artifacts[0]
+            entity_type = artifact.entity
+            entity_id = artifact.entity_id
+            original_action = artifact.action
+
+            if artifact_item.is_edited:
+                # **EDITED ARTIFACT** - Create ActionArtifactVersion and use its UUID
+
+                if not artifact_item.action_data:
+                    log.error(f"Artifact {artifact_item.artifact_id} marked as edited but no action_data provided")
+                    continue
+
+                # For edited artifacts, use the provided action_data directly
+                tool_args = artifact_item.action_data.copy()
+
+                # Resolve project_id to full project object for UI display
+                try:
+                    from pi.services.actions.artifacts.utils import resolve_project_id_to_object
+
+                    tool_args = await resolve_project_id_to_object(tool_args)
+                    log.info(f"Resolved project data for artifact {artifact_item.artifact_id}")
+                except Exception as e:
+                    log.error(f"Error resolving project_id for artifact {artifact_item.artifact_id}: {e}")
+
+                # Create ActionArtifactVersion and use its UUID as step_id
+                try:
+                    from pi.services.actions.artifacts.utils import convert_uuids_to_strings
+                    from pi.services.retrievers.pg_store.action_artifact import create_action_artifact_version
+
+                    # Ensure all UUID objects are converted to strings for JSON serialization
+                    serializable_tool_args = convert_uuids_to_strings(tool_args)
+
+                    version = await create_action_artifact_version(
+                        db=db,
+                        artifact_id=artifact_item.artifact_id,
+                        data=serializable_tool_args,  # Use UUID-safe tool_args
+                        change_type="manual_edit",
+                        chat_id=request.chat_id,
+                        message_id=request.message_id,
+                        user_id=str(user_id),
+                    )
+
+                    if version:
+                        step_id = str(version.id)  # Use ActionArtifactVersion UUID as step_id
+                        version_id = str(version.id)
+                        log.info(f"Created ActionArtifactVersion {version.id} for edited artifact {artifact_item.artifact_id}")
+                    else:
+                        log.error(f"Failed to create ActionArtifactVersion for artifact {artifact_item.artifact_id}")
+                        continue
+
+                except Exception as e:
+                    log.error(f"Error creating ActionArtifactVersion for artifact {artifact_item.artifact_id}: {e}")
+                    continue
+
+                log.info(f"Using edited artifact data for artifact {artifact_item.artifact_id}")
+
+            else:
+                # **NORMAL ARTIFACT** - Get the MessageFlowStep UUID
+                # Find the flow step for this artifact to get its UUID
+                planned_actions_for_artifact = await get_planned_actions_for_execution(request.message_id, request.chat_id, db)
+
+                # Find the planned action for this specific artifact
+                planned_action = None
+                for pa in planned_actions_for_artifact:
+                    if pa.get("artifact_id") == str(artifact_item.artifact_id):
+                        planned_action = pa
+                        break
+
+                if not planned_action:
+                    log.error(f"No planned action found for artifact {artifact_item.artifact_id}")
+                    continue
+
+                # Use the flow step UUID as step_id
+                step_id_raw = planned_action.get("step_id")
+                if not step_id_raw or not _is_valid_uuid(str(step_id_raw)):
+                    log.error(f"Invalid or missing step_id for artifact {artifact_item.artifact_id}: {step_id_raw}")
+                    continue
+
+                step_id = str(step_id_raw)
+
+                # Get tool args from the planned action
+                tool_args = planned_action.get("args", {})
+                if not tool_args:
+                    log.error(f"No tool args found for artifact {artifact_item.artifact_id}")
+                    continue
+
+                version_id = None  # Normal artifacts don't have versions
+                log.info(f"Using normal artifact data for artifact {artifact_item.artifact_id} with step_id {step_id}")
+
+            # Build tool name and args
+            tool_name = f"{entity_type}s_{original_action}"
+
+            # Validate and clean tool args
+            if not tool_args:
+                log.error(f"No tool args found for artifact {artifact_item.artifact_id}, entity: {entity_type}, action: {original_action}")
+                continue
+
+            args = {
+                **tool_args,
+                # Only add entity ID for update/delete actions
+                **(
+                    {f"{entity_type}_id" if entity_type != "workitem" else "issue_id": str(entity_id)}
+                    if original_action in ["update", "delete"] and entity_id
+                    else {}
+                ),
+            }
+
+            # Log the final args for debugging
+            log.info(f"Tool args for {tool_name}: {list(args.keys())}")
+
+            # Add to planned actions
+            planned_action_item = {
+                "step_id": step_id,  # Now always a proper UUID
+                "step_order": len(planned_actions) + 1,
+                "tool_name": tool_name,
+                "args": args,
+                "action_summary": {"action": original_action, "entity": entity_type},
+                "tool_id": None,
+                "artifact_id": str(artifact_item.artifact_id),
+                "artifact_type": entity_type,  # Add artifact type for response formatting
+                "sequence": len(planned_actions) + 1,
+            }
+
+            # Add version_id for edited artifacts
+            if artifact_item.is_edited and version_id:
+                planned_action_item["version_id"] = version_id
+                planned_action_item["is_edited"] = True
+
+            planned_actions.append(planned_action_item)
+
+            edit_type = "edited" if artifact_item.is_edited else "normal"
+            log.info(f"Added {tool_name} for artifact {artifact_item.artifact_id} ({edit_type})")
+
         if not planned_actions:
+            log.error("No valid artifacts found")
             return None
 
-        # Get original user query
-        original_query = await get_original_user_query(request.message_id, db)
-        if not original_query:
-            return None
+        # Create appropriate query message based on artifact types
+        normal_count = sum(1 for action in planned_actions if not action.get("is_edited", False))
+        edited_count = sum(1 for action in planned_actions if action.get("is_edited", False))
+
+        if normal_count > 0 and edited_count > 0:
+            original_query = f"Mixed execution: {normal_count} normal + {edited_count} edited artifacts"
+        elif edited_count > 0:
+            original_query = f"Execute {edited_count} edited artifacts"
+        else:
+            original_query = f"Execute {normal_count} artifacts"
 
         # Get OAuth token for the user
         chatbot = PlaneChatBot()
@@ -198,12 +428,22 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
     clean_actions = []
 
     for action in executed_actions:
+        # Extract action from tool name (e.g., "workitems_create" -> "create")
+        tool_name = action.get("tool_name", "")
+        action_name = "unknown"
+        if tool_name and "_" in tool_name:
+            action_name = tool_name.split("_", 1)[1]  # Get everything after the first underscore
+        elif tool_name:
+            action_name = tool_name
+
         action_data = {
-            "tool": action.get("tool_name"),
+            "action": action_name,
+            "artifact_type": action.get("artifact_type"),
             "success": action.get("success"),
             "executed_at": action.get("executed_at"),
             "artifact_id": action.get("artifact_id"),  # NEW: Include artifact ID
             "sequence": action.get("sequence"),  # NEW: Include planned step order
+            "version_number": action.get("version_number"),  # NEW: Include version sequence number
         }
 
         if action.get("success"):

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
-import { CalendarClock, Loader as Spinner } from "lucide-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
+import { StartDatePropertyIcon } from "@plane/propel/icons";
 import { Loader, Logo } from "@plane/ui";
 // plane web imports
 import { cn } from "@plane/utils";
@@ -43,7 +44,7 @@ export const TeamspaceProgressBanner: React.FC<TTeamspaceProgressBannerProps> = 
         >
           <div className="flex items-center gap-1.5">
             {areIssuesOverdue ? (
-              <CalendarClock className="size-4 flex-shrink-0" />
+              <StartDatePropertyIcon className="size-4 flex-shrink-0" />
             ) : (
               <Logo
                 logo={{

@@ -1,7 +1,9 @@
 from pi.app.models.action_artifact import ActionArtifact  # noqa: F401
+from pi.app.models.action_artifact import ActionArtifactVersion  # noqa: F401
 from pi.app.models.agent_artifact import AgentArtifact
 from pi.app.models.chat import Chat
 from pi.app.models.chat import UserChatPreference
+from pi.app.models.dupes_tracking import DupesTracking
 from pi.app.models.github_webhook import GitHubWebhook
 from pi.app.models.llm import LlmModel
 from pi.app.models.llm import LlmModelPricing
@@ -16,6 +18,7 @@ from pi.app.models.workspace_vectorization import WorkspaceVectorization  # noqa
 __all__ = [
     "AgentArtifact",
     "Chat",
+    "DupesTracking",
     "GitHubWebhook",
     "LlmModel",
     "LlmModelPricing",
@@ -28,4 +31,5 @@ __all__ = [
     "UserChatPreference",
     "WorkspaceVectorization",
     "ActionArtifact",
+    "ActionArtifactVersion",
 ]  # noqa: F401

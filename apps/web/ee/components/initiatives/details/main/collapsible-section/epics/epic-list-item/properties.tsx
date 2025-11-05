@@ -3,10 +3,10 @@
 import type { FC, SyntheticEvent } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock } from "lucide-react";
 // Plane
 import type { TIssuePriorities } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
@@ -169,7 +169,7 @@ export const EpicProperties: FC<Props> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={epic.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={disabled}
@@ -190,7 +190,7 @@ export const EpicProperties: FC<Props> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={epic.target_date ? "border-with-text" : "border-without-text"}
             clearIconClassName="text-custom-text-100"
             optionsClassName="z-10"

@@ -49,11 +49,16 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     titleRef,
     updatePageProperties,
     isFetchingFallbackBinary,
-    hasServerConnectionFailed,
   } = props;
 
   // use document editor
-  const { editor, titleEditor, isEditorContentReady, isContentInIndexedDb } = useCollaborativeEditor({
+  const {
+    editor,
+    titleEditor,
+    isEditorContentReady,
+    isContentInIndexedDb,
+    hasServerConnectionFailed: connectionFailed,
+  } = useCollaborativeEditor({
     disabledExtensions,
     editable,
     editorClassName,
@@ -90,7 +95,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
   if (!editor || !titleEditor) return null;
 
-  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !isContentInIndexedDb && hasServerConnectionFailed;
+  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !isContentInIndexedDb && connectionFailed;
   const isLoading = !isEditorContentReady || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
   return (

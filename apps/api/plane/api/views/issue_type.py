@@ -90,9 +90,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             "in_use": "icon",
             "icon": {
                 "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
-                "background_color": self.logo_backgrounds[
-                    random.randint(0, len(self.logo_backgrounds) - 1)
-                ],
+                "background_color": self.logo_backgrounds[random.randint(0, len(self.logo_backgrounds) - 1)],
             },
         }
 
@@ -100,7 +98,6 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
         return self.model.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
             project_issue_types__project_id=self.kwargs.get("project_id"),
-            is_epic=False,
         )
 
     # list issue types and get issue type by id
@@ -144,12 +141,8 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             ],
         ),
         responses={
-            201: OpenApiResponse(
-                description="Issue type created", response=IssueTypeAPISerializer
-            ),
-            409: OpenApiResponse(
-                description="Issue type with the same external id and external source already exists"
-            ),
+            201: OpenApiResponse(description="Issue type created", response=IssueTypeAPISerializer),
+            409: OpenApiResponse(description="Issue type with the same external id and external source already exists"),
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -163,9 +156,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             external_id = request.data.get("external_id")
             external_source = request.data.get("external_source")
             external_existing_issue_type = (
-                self.get_queryset()
-                .filter(external_id=external_id, external_source=external_source)
-                .first()
+                self.get_queryset().filter(external_id=external_id, external_source=external_source).first()
             )
 
             if external_id and external_source and external_existing_issue_type:
@@ -180,9 +171,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             # creating issue type
             issue_type_serializer = self.serializer_class(data=request.data)
             issue_type_serializer.is_valid(raise_exception=True)
-            issue_type_serializer.save(
-                workspace=workspace, logo_props=self.generate_logo_prop()
-            )
+            issue_type_serializer.save(workspace=workspace, logo_props=self.generate_logo_prop())
 
             # adding the issue type to the project
             project_issue_type_serializer = ProjectIssueTypeAPISerializer(
@@ -261,9 +250,7 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             "in_use": "icon",
             "icon": {
                 "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
-                "background_color": self.logo_backgrounds[
-                    random.randint(0, len(self.logo_backgrounds) - 1)
-                ],
+                "background_color": self.logo_backgrounds[random.randint(0, len(self.logo_backgrounds) - 1)],
             },
         }
 
@@ -271,7 +258,6 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         return self.model.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
             project_issue_types__project_id=self.kwargs.get("project_id"),
-            is_epic=False,
         )
 
     # list issue types and get issue type by id
@@ -281,28 +267,27 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         summary="Retrieve an issue type by id",
         description="Retrieve an issue type by id",
         responses={
-            200: OpenApiResponse(
-                description="Issue types", response=IssueTypeAPISerializer
-            ),
+            200: OpenApiResponse(description="Issue types", response=IssueTypeAPISerializer),
             404: OpenApiResponse(description="Issue type not found"),
         },
     )
     def get(self, request, slug, project_id, type_id):
-        issue_type = self.get_queryset().get(pk=type_id)
-        issue_type = self.get_queryset().annotate(
-            project_ids=Coalesce(
-                Subquery(
-                    ProjectIssueType.objects.filter(
-                        issue_type=OuterRef("pk"), workspace__slug=slug
-                    )
-                    .values("issue_type")
-                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                    .values("project_ids")
-                ),
-                [],
+        issue_type = (
+            self.get_queryset()
+            .annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
+                        .values("issue_type")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
+                )
             )
+            .get(pk=type_id)
         )
-        serializer = self.serializer_class(issue_type, many=True)
+        serializer = self.serializer_class(issue_type)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update issue type by id
@@ -326,12 +311,8 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             ],
         ),
         responses={
-            200: OpenApiResponse(
-                description="Issue type updated", response=IssueTypeAPISerializer
-            ),
-            409: OpenApiResponse(
-                description="Issue type with the same external id and external source already exists"
-            ),
+            200: OpenApiResponse(description="Issue type updated", response=IssueTypeAPISerializer),
+            409: OpenApiResponse(description="Issue type with the same external id and external source already exists"),
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
@@ -341,29 +322,20 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             data = request.data
 
             # check if the issue type is the default issue type and if the is_active field is being updated to false
-            if (
-                issue_type.is_default
-                and get_boolean_value(request.data.get("is_active")) is False
-            ):
+            if issue_type.is_default and get_boolean_value(request.data.get("is_active")) is False:
                 return Response(
-                    {
-                        "error": "Default work item type's is_active field cannot be false"
-                    },
+                    {"error": "Default work item type's is_active field cannot be false"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            issue_type_serializer = self.serializer_class(
-                issue_type, data=data, partial=True
-            )
+            issue_type_serializer = self.serializer_class(issue_type, data=data, partial=True)
             issue_type_serializer.is_valid(raise_exception=True)
 
             # check if issue type with the same external id and external source already exists
             external_id = request.data.get("external_id")
             external_source = request.data.get("external_source")
             external_existing_issue_type = (
-                self.get_queryset()
-                .filter(external_id=external_id, external_source=external_source)
-                .first()
+                self.get_queryset().filter(external_id=external_id, external_source=external_source).first()
             )
 
             # don't allow updating the external id if it already exists in another issue type
@@ -387,9 +359,7 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         description="Delete an issue type",
         responses={
             204: OpenApiResponse(description="Issue type deleted"),
-            400: OpenApiResponse(
-                description="Default work item type cannot be deleted"
-            ),
+            400: OpenApiResponse(description="Default work item type cannot be deleted"),
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)

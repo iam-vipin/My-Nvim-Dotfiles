@@ -1,8 +1,9 @@
 import type { FC } from "react";
-import { Info, X } from "lucide-react";
+import { Info } from "lucide-react";
 import type { TMobileAuthErrorInfo } from "@plane/constants";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 
 type TMobileAuthBanner = {
   bannerData: TMobileAuthErrorInfo | undefined;
@@ -31,7 +32,7 @@ export const MobileAuthBanner: FC<TMobileAuthBanner> = (props) => {
         onClick={() => handleBannerData?.(undefined)}
         aria-label={t("aria_labels.auth_forms.close_alert")}
       >
-        <X className="size-4" />
+        <CloseIcon className="size-4" />
       </button>
     </div>
   );

@@ -49,14 +49,24 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             "in_use": "icon",
             "icon": {"name": "UsersRound", "color": "#6d7b8a"},
         },
+        PropertyTypeEnum.URL: {
+            "in_use": "icon",
+            "icon": {"name": "Link", "color": "#6d7b8a"},
+        },
+        PropertyTypeEnum.EMAIL: {
+            "in_use": "icon",
+            "icon": {"name": "Envelope", "color": "#6d7b8a"},
+        },
+        PropertyTypeEnum.FILE: {
+            "in_use": "icon",
+            "icon": {"name": "File", "color": "#6d7b8a"},
+        },
     }
 
     def get_logo_props(self, property_type, relation_type=None):
         """Get logo properties for issue property"""
         if property_type == PropertyTypeEnum.RELATION:
-            return self.type_logo_props.get(
-                f"{PropertyTypeEnum.RELATION}_{relation_type}"
-            )
+            return self.type_logo_props.get(f"{PropertyTypeEnum.RELATION}_{relation_type}")
         return self.type_logo_props.get(property_type)
 
     # list issue properties and get issue property by id
@@ -78,7 +88,6 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_type_id=type_id,
-            issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -126,22 +135,16 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             issue_type_id=type_id,
-            issue_type__is_epic=False,
             external_source=request.data.get("external_source"),
             external_id=request.data.get("external_id"),
         )
-        if (
-            external_id
-            and request.data.get("external_source")
-            and external_existing_issue_property.exists()
-        ):
+        if external_id and request.data.get("external_source") and external_existing_issue_property.exists():
             issue_property = self.model.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_type_id=type_id,
                 external_source=request.data.get("external_source"),
                 external_id=external_id,
-                issue_type__is_epic=False,
             ).first()
             return Response(
                 {
@@ -158,9 +161,7 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             workspace=workspace,
             project=project,
             issue_type=issue_type,
-            logo_props=self.get_logo_props(
-                data.get("property_type"), data.get("relation_type")
-            ),
+            logo_props=self.get_logo_props(data.get("property_type"), data.get("relation_type")),
         )
 
         # getting the issue property
@@ -169,7 +170,6 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_type_id=type_id,
             pk=issue_property_serializer.data["id"],
-            issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -217,9 +217,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
     def get_logo_props(self, property_type, relation_type=None):
         """Get logo properties for issue property"""
         if property_type == PropertyTypeEnum.RELATION:
-            return self.type_logo_props.get(
-                f"{PropertyTypeEnum.RELATION}_{relation_type}"
-            )
+            return self.type_logo_props.get(f"{PropertyTypeEnum.RELATION}_{relation_type}")
         return self.type_logo_props.get(property_type)
 
     # list issue properties and get issue property by id
@@ -229,9 +227,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
         description="Get issue property by id",
         summary="Get issue property by id",
         responses={
-            200: OpenApiResponse(
-                description="Issue properties", response=IssuePropertyAPISerializer
-            ),
+            200: OpenApiResponse(description="Issue properties", response=IssuePropertyAPISerializer),
         },
     )
     def get(self, request, slug, project_id, type_id, property_id):
@@ -241,7 +237,6 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_type_id=type_id,
             pk=property_id,
-            issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -281,13 +276,10 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             project_id=project_id,
             issue_type_id=type_id,
             pk=property_id,
-            issue_type__is_epic=False,
         )
 
         data = request.data
-        issue_property_serializer = self.serializer_class(
-            issue_property, data=data, partial=True
-        )
+        issue_property_serializer = self.serializer_class(issue_property, data=data, partial=True)
         issue_property_serializer.is_valid(raise_exception=True)
         issue_property_serializer.save()
 
@@ -307,9 +299,8 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
         issue_property = self.model.objects.get(
             workspace__slug=self.workspace_slug,
             project_id=self.project_id,
-            issue_type_id=self.type_id,
-            pk=self.property_id,
-            issue_type__is_epic=False,
+            issue_type_id=type_id,
+            pk=property_id,
         )
         issue_property.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

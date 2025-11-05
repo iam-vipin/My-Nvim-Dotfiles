@@ -30,7 +30,7 @@ export function SlackConfigView(props: TPersonalAccountConnectProps) {
       setIsUpdating(true);
       await setUserAlertsConfig({ isEnabled: !userAlertsConfig?.isEnabled });
       mutateUserAlertsConfig();
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",

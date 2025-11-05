@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
+import { ChevronDownIcon, CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
@@ -175,7 +176,7 @@ export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
                         ) : (
                           <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                         )}
-                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                       </button>
                     }
                     onChange={(val: string) => {
@@ -202,7 +203,7 @@ export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
                         className="place-items-center self-center rounded"
                         onClick={() => setMemberIdsToInvite(memberIdsToInvite.filter((_, i) => i !== index))}
                       >
-                        <X className="h-4 w-4 text-custom-text-200" />
+                        <CloseIcon className="h-4 w-4 text-custom-text-200" />
                       </button>
                     </div>
                   )}

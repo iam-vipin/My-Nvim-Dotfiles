@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
-import { ArrowUp, Disc } from "lucide-react";
+import { ArrowUp, Disc, Square } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { PiChatEditorWithRef } from "@plane/editor";
@@ -55,6 +55,7 @@ export const InputBox = observer((props: TProps) => {
     createNewChat,
     getChatFocus,
     fetchModels,
+    abortStream,
     attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -120,6 +121,11 @@ export const InputBox = observer((props: TProps) => {
     setLoader("");
     setAttachments([]);
   });
+
+  const handleAbortStream = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    abortStream(activeChatId || "");
+  };
 
   const getMentionSuggestions = async (query: string) => {
     const response = await searchCallback(workspaceSlug.toString(), query, focus);
@@ -227,12 +233,21 @@ export const InputBox = observer((props: TProps) => {
                   </WithFeatureFlagHOC>
                   {!SPEECH_LOADERS.includes(loader) && (
                     <button
-                      className="rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 disabled:bg-pi-700/10"
+                      className={cn(
+                        "rounded-full bg-pi-700 text-white size-8 flex items-center justify-center flex-shrink-0 transition-all duration-300",
+                        {
+                          "bg-custom-background-80": isPiTyping || loader === "submitting",
+                        }
+                      )}
                       type="submit"
-                      onClick={handleSubmit}
-                      disabled={isPiTyping || loader === "submitting"}
+                      onClick={isPiTyping ? handleAbortStream : handleSubmit}
+                      disabled={loader === "submitting"}
                     >
-                      <ArrowUp size={16} />
+                      {!isPiTyping || loader === "submitting" ? (
+                        <ArrowUp size={16} />
+                      ) : (
+                        <Square size={16} className={cn("fill-custom-text-200 transition-all")} stroke={"0"} />
+                      )}
                     </button>
                   )}
                 </div>

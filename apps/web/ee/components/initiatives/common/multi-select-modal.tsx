@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { InitiativeIcon } from "@plane/propel/icons";
+import { CloseIcon, InitiativeIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
@@ -104,11 +105,15 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
                     handleSelectedInitiativeChange(selectedInitiativeIds.filter((id) => id !== initiativeDetails.id));
                   }}
                 >
-                  <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                  {initiativeDetails?.logo_props?.in_use ? (
+                    <Logo logo={initiativeDetails?.logo_props} size={16} type="lucide" />
+                  ) : (
+                    <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                  )}
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {initiativeDetails.name}
                   </p>
-                  <X className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                  <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
                 </div>
               );
             })}
@@ -150,7 +155,11 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
                       <span className="flex-shrink-0 flex items-center gap-2.5">
                         <Checkbox checked={isInitiativeSelected} />
                       </span>
-                      <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                      {initiativeDetails?.logo_props?.in_use ? (
+                        <Logo logo={initiativeDetails?.logo_props} size={16} type="lucide" />
+                      ) : (
+                        <InitiativeIcon className="size-4 text-custom-text-300 flex-shrink-0" />
+                      )}
                       <p className="text-sm truncate">{initiativeDetails.name}</p>
                     </div>
                   </Combobox.Option>

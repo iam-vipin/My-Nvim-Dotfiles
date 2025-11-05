@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { useUser } from "@/hooks/store/user";
@@ -63,7 +63,7 @@ export const PiChatDetail = observer((props: TProps) => {
                   }
                 )}
               >
-                <ChevronDown size={20} />
+                <ChevronDownIcon height={20} width={20} />
               </button>
             )}
             {/* Chat Input */}

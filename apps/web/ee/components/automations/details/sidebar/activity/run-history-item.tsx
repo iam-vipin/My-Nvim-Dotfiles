@@ -1,9 +1,10 @@
 import { differenceInSeconds } from "date-fns/differenceInSeconds";
 import { observer } from "mobx-react";
-import { Check, ChevronRight, CircleAlert, Clock, Dot } from "lucide-react";
+import { Check, CircleAlert, Clock, Dot } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Avatar } from "@plane/ui";
 import {
@@ -99,7 +100,7 @@ export const AutomationDetailsSidebarActivityRunHistoryItem: React.FC<Props> = o
                 type="button"
                 className="shrink-0 size-4 grid place-items-center text-custom-text-200 hover:text-custom-text-100"
               >
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("size-3 transition-transform", {
                     "rotate-90": open,
                   })}

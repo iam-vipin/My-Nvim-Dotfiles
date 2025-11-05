@@ -1,9 +1,10 @@
 import type { Dispatch, FC, SetStateAction } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
 import { Sortable } from "@plane/ui";
@@ -161,7 +162,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
             onClick={() => setEstimateEditType && setEstimateEditType(undefined)}
             className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeftIcon className="w-4 h-4" />
           </div>
           <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.edit.title")}</div>
         </div>

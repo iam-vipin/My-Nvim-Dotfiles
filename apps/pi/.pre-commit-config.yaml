@@ -3,21 +3,19 @@ repos:
     hooks:
       - id: lint-check
         name: Ruff Linting Check
-        entry: ruff check .
+        entry: bash -c 'ruff check apps/pi/pi'
         language: system
         always_run: true
         pass_filenames: false
       - id: import-sort
         name: Sort Python Imports
-        entry: ruff
-        args: ["check", "--select", "I", "--fix", "."]
+        entry: bash -c 'ruff check --select I --fix apps/pi/pi'
         language: system
         always_run: true
         pass_filenames: false
       - id: code-format
         name: Format Python Code
-        entry: ruff format
-        args: ["--line-length", "150", "."]
+        entry: bash -c 'ruff format --line-length 150 apps/pi/pi'
         language: system
         always_run: true
         pass_filenames: false
@@ -25,13 +23,13 @@ repos:
         stages: [commit]  # Only run during commit, not during CI
       - id: cleanup-empty-lines
         name: Clean Empty Lines at EOF
-        entry: bash -c 'for file in $(git diff --cached --name-only --diff-filter=ACM | grep -E "\.py$"); do sed -i "" -e :a -e "/^\n*$/{$d;N;};/\n$/ba" "$file"; done'
+        entry: bash -c 'for file in $(git diff --cached --name-only --diff-filter=ACM | grep -E "apps/pi/pi.*\.py$"); do sed -i "" -e :a -e "/^\n*$/{$d;N;};/\n$/ba" "$file"; done'
         language: system
         always_run: true
         pass_filenames: false
       - id: Type Check Python Code
         name: mypy
-        entry: mypy --config-file mypy.ini --show-error-codes
+        entry: bash -c 'cd apps/pi && mypy --config-file mypy.ini pi'
         language: system
         always_run: true
         pass_filenames: false

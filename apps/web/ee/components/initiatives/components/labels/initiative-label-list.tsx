@@ -7,18 +7,19 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import SettingsHeading from "@/components/settings/heading";
 
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 // local imports
+import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import type { TInitiativeLabelOperationsCallbacks } from "./create-update-initiative-label-inline";
 import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-label-inline";
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
@@ -41,11 +42,12 @@ export const InitiativeLabelList: React.FC = observer(() => {
     initiative: { createInitiativeLabel, updateInitiativeLabel, updateInitiativeLabelPosition, getInitiativesLabels },
   } = useInitiatives();
   const { allowPermissions } = useUserPermissions();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const initiativeLabels = getInitiativesLabels(workspaceSlug?.toString());
 
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
 
   const handleError = (error: unknown) => {
     const errorObj = error as { name?: string[] };
@@ -133,23 +135,33 @@ export const InitiativeLabelList: React.FC = observer(() => {
             />
           </div>
         )}
-        {initiativeLabels ? (
+        {!isInitiativesFeatureEnabled ? (
+          !showLabelForm && (
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title="Enable initiatives to manage labels"
+              description="Toggle initiatives on to organize and track your initiative labels."
+              align="start"
+              rootClassName="py-20"
+            />
+          )
+        ) : initiativeLabels ? (
           initiativeLabels.size === 0 && !showLabelForm ? (
-            <div className="flex items-center justify-center h-full w-full p-6">
-              <DetailedEmptyState
-                title={""}
-                description={""}
-                primaryButton={{
-                  text: "Create your first label",
-                  onClick: () => {
-                    newLabel();
-                  },
-                }}
-                assetPath={resolvedPath}
-                className="w-full !px-0 !py-0"
-                size="md"
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title={t("settings_empty_state.labels.title")}
+              description={t("settings_empty_state.labels.description")}
+              actions={[
+                {
+                  label: t("settings_empty_state.labels.cta_primary"),
+                  onClick: () => newLabel(),
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           ) : (
             initiativeLabels.size > 0 &&
             Array.from(initiativeLabels.values())

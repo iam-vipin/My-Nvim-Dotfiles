@@ -4,12 +4,12 @@ import type { FC, ReactNode } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Loader as Spinner, X } from "lucide-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { ApproverIcon, LayersIcon, WorkflowIcon } from "@plane/propel/icons";
+import { ApproverIcon, CloseIcon, LayersIcon, WorkflowIcon } from "@plane/propel/icons";
 import type { TWorkflowChangeHistory, TWorkflowChangeHistoryKeys } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, getWorkflowChangeHistoryKey } from "@plane/utils";
@@ -219,7 +219,7 @@ export const WorkflowChangeHistory: FC<TWorkflowChangeHistoryProps> = observer((
                 )}
                 onClick={onClose}
               >
-                <X className="size-3" />
+                <CloseIcon className="size-3" />
               </div>
             </span>
           </div>

@@ -52,11 +52,7 @@ export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
     onCreateMoreToggleChange: () => {},
     isDraft: false,
     moveToIssue: false,
-    modalTitle: "Work item modal",
-    primaryButtonText: {
-      default: "Work item modal",
-      loading: "Work item modal",
-    },
+    modalTitle: "Work item",
     isDuplicateModalOpen: false,
     handleDuplicateIssueModal: () => {},
     isProjectSelectionDisabled: false,

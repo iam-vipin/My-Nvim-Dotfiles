@@ -11,7 +11,7 @@ import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-co
 // plane web hooks
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // local imports
-import { MovePageModal } from "../modals";
+import { MovePageModal } from "../modals/move";
 
 export const PageMoveControl = observer((props: TPageMoveControlProps) => {
   const { page } = props;

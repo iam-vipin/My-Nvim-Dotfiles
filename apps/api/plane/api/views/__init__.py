@@ -46,7 +46,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberAPIEndpoint, WorkspaceMemberAPIEndpoint
+from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint, ProjectMemberSiloEndpoint
 from .user import UserEndpoint
 
 from .customer import (
@@ -70,3 +70,6 @@ from .intake import (
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
 from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
+from .user import UserEndpoint
+
+from .invite import WorkspaceInvitationsViewset

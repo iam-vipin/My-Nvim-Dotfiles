@@ -23,8 +23,80 @@ from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageFeedbackTypeChoices
 from pi.app.models.enums import MessageMetaStepType
 from pi.app.models.enums import UserTypeChoices
+from pi.services.retrievers.pg_store.json_serializer import sanitize_execution_data
 
 log = logger.getChild(__name__)
+
+
+async def get_latest_message_id_for_chat(db: AsyncSession, chat_id: UUID4) -> Optional[UUID]:
+    """Get the latest message_id in a chat (most recent user message)."""
+    try:
+        stmt = (
+            select(Message.id)  # type: ignore[call-overload]
+            .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
+            .where(Message.user_type == UserTypeChoices.USER)  # type: ignore[arg-type]
+            .where(Message.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+            .order_by(desc(Message.created_at))  # type: ignore[union-attr,arg-type]
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        message_id = result.scalar_one_or_none()
+        return message_id
+    except Exception as e:
+        log.error(f"Error getting latest message_id for chat {chat_id}: {e}")
+        return None
+
+
+async def get_latest_message_ids_for_chats(db: AsyncSession, chat_ids: List[UUID]) -> Dict[str, Optional[UUID]]:
+    """Get the latest message_id for multiple chats in a single query (optimized)."""
+    if not chat_ids:
+        return {}
+
+    try:
+        # Use window function to get latest message per chat in one query
+        from sqlalchemy import func
+
+        # Subquery to get row numbers partitioned by chat_id
+        subquery = (
+            select(  # type: ignore[call-overload]
+                Message.id,
+                Message.chat_id,
+                func.row_number()
+                .over(
+                    partition_by=Message.chat_id,  # type: ignore[arg-type]
+                    order_by=desc(Message.created_at),  # type: ignore[union-attr,arg-type]
+                )
+                .label("rn"),
+            )
+            .where(Message.chat_id.in_(chat_ids))  # type: ignore[union-attr,arg-type]
+            .where(Message.user_type == UserTypeChoices.USER)  # type: ignore[arg-type]
+            .where(Message.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        ).subquery()
+
+        # Select only the first row (latest) for each chat
+        stmt = select(subquery.c.chat_id, subquery.c.id).where(subquery.c.rn == 1)
+
+        result = await db.execute(stmt)
+        rows = result.all()
+
+        # Convert to dict with string keys for consistency
+        latest_messages = {}
+        for row in rows:
+            chat_id_str = str(row.chat_id)
+            latest_messages[chat_id_str] = row.id
+
+        # Fill in None for chats that have no messages
+        for chat_id in chat_ids:
+            chat_id_str = str(chat_id)
+            if chat_id_str not in latest_messages:
+                latest_messages[chat_id_str] = None
+
+        return latest_messages
+
+    except Exception as e:
+        log.error(f"Error getting latest message_ids for chats {chat_ids}: {e}")
+        # Fallback to empty dict
+        return {str(chat_id): None for chat_id in chat_ids}
 
 
 async def update_message_feedback(
@@ -52,7 +124,7 @@ async def update_message_feedback(
             return 404, {"detail": "Message not found"}
 
         # Check if feedback already exists for this message
-        existing_feedback_query = select(MessageFeedback).where(MessageFeedback.message_id == message.id)
+        existing_feedback_query = select(MessageFeedback).where(MessageFeedback.message_id == message.id)  # type: ignore[call-overload]
         result = await db.execute(existing_feedback_query)
         existing_feedback = result.scalar_one_or_none()
 
@@ -268,6 +340,10 @@ async def upsert_message_flow_steps(message_id: UUID4, chat_id: UUID4, db: Async
             else:
                 execution_success_value = ExecutionStatus.PENDING
 
+            # Sanitize execution_data to ensure JSON serializability
+            raw_execution_data = step_data.get("execution_data", {})
+            sanitized_execution_data = sanitize_execution_data(raw_execution_data)
+
             flow_step = MessageFlowStep(
                 message_id=message_id,
                 chat_id=chat_id,
@@ -275,7 +351,7 @@ async def upsert_message_flow_steps(message_id: UUID4, chat_id: UUID4, db: Async
                 step_type=step_type_value,
                 tool_name=step_data.get("tool_name"),
                 content=step_data.get("content", ""),
-                execution_data=step_data.get("execution_data", {}),
+                execution_data=sanitized_execution_data,
                 is_executed=step_data.get("is_executed", False) if step_data.get("is_executed") is not None else False,
                 is_planned=step_data.get("is_planned", False) if step_data.get("is_planned") is not None else False,
                 execution_success=execution_success_value,
@@ -307,7 +383,7 @@ async def get_tool_results_from_chat_history(
     """
     try:
         stmt = (
-            select(MessageFlowStep)
+            select(MessageFlowStep)  # type: ignore[call-overload]
             .where(MessageFlowStep.chat_id == chat_id)  # type: ignore[var-annotated,arg-type]
             .where(func.lower(MessageFlowStep.tool_name) == tool_name.lower())  # type: ignore[var-annotated,arg-type]
             .order_by(desc(MessageFlowStep.created_at))  # type: ignore[var-annotated,arg-type]
@@ -369,7 +445,7 @@ async def upsert_message_meta(
         else:
             # Fallback to old pricing calculation if prices not provided
             pricing_stmt = (
-                select(LlmModelPricing)
+                select(LlmModelPricing)  # type: ignore[call-overload]
                 .where(LlmModelPricing.llm_model_id == llm_model_id)  # type: ignore[var-annotated,arg-type]
                 .where(LlmModelPricing.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
                 .order_by(desc(LlmModelPricing.created_at))  # type: ignore[arg-type]
@@ -393,7 +469,7 @@ async def upsert_message_meta(
             pricing_id = pricing.id if pricing else None
 
         meta_stmt = (
-            select(MessageMeta)
+            select(MessageMeta)  # type: ignore[call-overload]
             .where(MessageMeta.message_id == message_id)  # type: ignore[var-annotated,arg-type]
             .where(MessageMeta.step_type == step_type)  # type: ignore[var-annotated,arg-type]
         )

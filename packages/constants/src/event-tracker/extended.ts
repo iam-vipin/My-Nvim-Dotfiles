@@ -515,3 +515,15 @@ export const AUTOMATION_TRACKER_ELEMENTS = {
 };
 
 // Automation Tracker End
+
+// Milestone Tracker Start
+
+export const MILESTONE_TRACKER_EVENTS = {
+  remove_work_items_from_milestone: "work_items_removed_from_milestone",
+};
+
+export const MILESTONE_TRACKER_ELEMENTS = {
+  REMOVE_WORK_ITEMS_FROM_MILESTONE_BUTTON: "remove_work_items_from_milestone_button",
+};
+
+// Milestone Tracker End

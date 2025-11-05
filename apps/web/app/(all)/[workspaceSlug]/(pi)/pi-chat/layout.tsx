@@ -2,7 +2,6 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CommandPalette } from "@/components/command-palette";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // components
@@ -22,7 +21,6 @@ function PiLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthenticationWrapper>
-      <CommandPalette />
       <WorkspaceAuthWrapper>
         <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
           <div className="relative flex size-full overflow-hidden">

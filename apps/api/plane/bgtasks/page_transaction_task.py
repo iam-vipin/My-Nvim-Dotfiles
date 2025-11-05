@@ -1,5 +1,6 @@
 # Python imports
 import json
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -7,89 +8,190 @@ from django.utils import timezone
 # Third-party imports
 from bs4 import BeautifulSoup
 
-# Module imports
-from plane.db.models import Page, PageLog
+# App imports
 from celery import shared_task
+from plane.db.models import Page, PageLog
 from plane.utils.exception_logger import log_exception
 
+logger = logging.getLogger("plane.worker")
 
-def extract_components(value, tag):
+COMPONENT_MAP = {
+    "mention-component": {
+        "attributes": ["id", "entity_identifier", "entity_name", "entity_type"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "image-component": {
+        "attributes": ["id", "src"],
+        "extract": lambda m: {
+            "entity_name": "image",
+            "entity_type": None,
+            "entity_identifier": m.get("src"),
+        },
+    },
+}
+
+EE_COMPONENT_MAP = {
+    "attachment-component": {
+        "attributes": ["id", "src", "data-file-type"],
+        "extract": lambda m: {
+            "entity_name": "attachment",
+            "entity_type": m.get("data-file-type"),
+            "entity_identifier": m.get("src"),
+        },
+    },
+    "external-embed-component": {
+        "attributes": ["id", "data-entity-name"],
+        "extract": lambda m: {
+            "entity_name": "external-embed",
+            "entity_type": m.get("data-entity-name"),
+            "entity_identifier": None,
+        },
+    },
+    "issue-embed-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "page-embed-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "page-link-component": {
+        "attributes": ["id", "entity_identifier", "entity_name"],
+        "extract": lambda m: {
+            "entity_name": m.get("entity_name"),
+            "entity_type": None,
+            "entity_identifier": m.get("entity_identifier"),
+        },
+    },
+    "block-math-component": {
+        "attributes": ["id"],
+        "extract": lambda m: {
+            "entity_name": "block-math",
+            "entity_type": None,
+            "entity_identifier": None,
+        },
+    },
+    "inline-math-component": {
+        "attributes": ["id"],
+        "extract": lambda m: {
+            "entity_name": "inline-math",
+            "entity_type": None,
+            "entity_identifier": None,
+        },
+    },
+}
+
+component_map = {
+    **COMPONENT_MAP,
+    **EE_COMPONENT_MAP,
+}
+
+
+def extract_all_components(description_html):
+    """
+    Extracts all component types from the HTML value in a single pass.
+    Returns a dict mapping component_type -> list of extracted entities.
+    """
     try:
-        mentions = []
-        html = value.get("description_html")
-        soup = BeautifulSoup(html, "html.parser")
-        mention_tags = soup.find_all(tag)
+        if not description_html:
+            return {component: [] for component in component_map.keys()}
 
-        for mention_tag in mention_tags:
-            mention = {
-                "id": mention_tag.get("id"),
-                "entity_identifier": mention_tag.get("entity_identifier"),
-                "entity_name": mention_tag.get("entity_name"),
-            }
-            mentions.append(mention)
+        soup = BeautifulSoup(description_html, "html.parser")
+        results = {}
 
-        return mentions
+        for component, config in component_map.items():
+            attributes = config.get("attributes", ["id"])
+            component_tags = soup.find_all(component)
+
+            entities = []
+            for tag in component_tags:
+                entity = {attr: tag.get(attr) for attr in attributes}
+                entities.append(entity)
+
+            results[component] = entities
+
+        return results
+
     except Exception:
-        return []
+        return {component: [] for component in component_map.keys()}
+
+
+def get_entity_details(component: str, component_data: dict):
+    """
+    Normalizes component attributes into entity_name, entity_type, entity_identifier.
+    """
+    config = component_map.get(component)
+    if not config:
+        return {"entity_name": None, "entity_type": None, "entity_identifier": None}
+    return config["extract"](component_data)
 
 
 @shared_task
-def page_transaction(new_value, old_value, page_id):
+def page_transaction(new_description_html, old_description_html, page_id):
+    """
+    Tracks changes in page content (mentions, embeds, etc.)
+    and logs them in PageLog for audit and reference.
+    """
     try:
         page = Page.objects.get(pk=page_id)
-        new_page_mention = PageLog.objects.filter(page_id=page_id).exists()
 
-        old_value = json.loads(old_value) if old_value else {}
+        has_existing_logs = PageLog.objects.filter(page_id=page_id).exists()
+
+        # Extract all components in a single pass (optimized)
+        old_components = extract_all_components(old_description_html)
+        new_components = extract_all_components(new_description_html)
 
         new_transactions = []
         deleted_transaction_ids = set()
 
-        # TODO - "todo" components
-        components = [
-            "mention-component",
-            "issue-embed-component",
-            "page-embed-component",
-            "page-link-component",
-            "image-component",
-        ]
+        for component in component_map.keys():
+            old_entities = old_components[component]
+            new_entities = new_components[component]
 
-        for component in components:
-            old_mentions = extract_components(old_value, component)
-            new_mentions = extract_components(new_value, component)
+            old_ids = {m.get("id") for m in old_entities if m.get("id")}
+            new_ids = {m.get("id") for m in new_entities if m.get("id")}
+            deleted_transaction_ids.update(old_ids - new_ids)
 
-            # Filter out None IDs before creating sets
-            new_mentions_ids = {
-                mention.get("id") for mention in new_mentions if mention.get("id")
-            }
-            old_mention_ids = {
-                mention.get("id") for mention in old_mentions if mention.get("id")
-            }
-            deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
+            for mention in new_entities:
+                mention_id = mention.get("id")
+                if not mention_id or (mention_id in old_ids and has_existing_logs):
+                    continue
 
-            new_transactions.extend(
-                PageLog(
-                    transaction=mention.get("id"),
-                    page_id=page_id,
-                    entity_identifier=mention.get("entity_identifier", None),
-                    entity_name=(
-                        mention.get("entity_name", None)
-                        if mention.get("entity_name", None)
-                        else "issue"
-                    ),
-                    workspace_id=page.workspace_id,
-                    created_at=timezone.now(),
-                    updated_at=timezone.now(),
+                details = get_entity_details(component, mention)
+                current_time = timezone.now()
+
+                new_transactions.append(
+                    PageLog(
+                        transaction=mention_id,
+                        page_id=page_id,
+                        entity_identifier=details["entity_identifier"],
+                        entity_name=details["entity_name"],
+                        entity_type=details["entity_type"],
+                        workspace_id=page.workspace_id,
+                        created_at=current_time,
+                        updated_at=current_time,
+                    )
                 )
-                for mention in new_mentions
-                if mention.get("id")
-                and (mention.get("id") not in old_mention_ids or not new_page_mention)
-            )
 
-        # Create new PageLog objects for new transactions
-        PageLog.objects.bulk_create(new_transactions, batch_size=10, ignore_conflicts=True)
+        # Bulk insert and cleanup
+        if new_transactions:
+            PageLog.objects.bulk_create(new_transactions, batch_size=50, ignore_conflicts=True)
 
-        # Delete the removed transactions
-        PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+        if deleted_transaction_ids:
+            PageLog.objects.filter(transaction__in=deleted_transaction_ids).delete()
+
     except Page.DoesNotExist:
         return
     except Exception as e:

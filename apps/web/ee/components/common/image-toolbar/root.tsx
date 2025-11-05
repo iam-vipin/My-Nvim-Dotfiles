@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { CloseIcon } from "@plane/propel/icons";
 // plane imports
-import { X } from "lucide-react";
 import { cn } from "@plane/utils";
 // local imports
 import { ImageDownloadAction } from "./download";
@@ -51,7 +51,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
             className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
             aria-label="Remove image"
           >
-            <X className="size-3" />
+            <CloseIcon className="size-3" />
           </button>
         )}
       </div>

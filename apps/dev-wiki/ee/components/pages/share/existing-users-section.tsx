@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { ChevronDown } from "lucide-react";
 import { EPageSharedUserAccess } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Avatar, Collapsible } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";
@@ -75,7 +75,7 @@ export const ExistingUsersSection = ({
               <span className="text-xs text-custom-text-400">
                 {existingUsers.length} {existingUsers.length === 1 ? "member" : "members"}
               </span>
-              <ChevronDown
+              <ChevronDownIcon
                 className={`h-3 w-3 text-custom-text-400 transition-transform duration-200 ${isAccordionOpen ? "rotate-180" : ""}`}
               />
             </div>

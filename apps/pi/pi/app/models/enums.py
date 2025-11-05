@@ -30,6 +30,7 @@ class FlowStepType(str, Enum):
     ROUTING = "routing"
     TOOL = "tool"
     COMBINATION = "combination"
+    ARTIFACT_CHAT = "artifact_chat"  # For sub-chat prompts under artifacts
 
     def __str__(self):
         return self.value
@@ -59,6 +60,10 @@ class MessageMetaStepType(str, Enum):
     TITLE_GENERATION = "title_generation"
     TOOL_ORCHESTRATION = "tool_orchestration"
     ATTACHMENT_CONTEXT_EXTRACTION = "attachment_context_extraction"
+    ARTIFACT_MODIFICATION = "artifact_modification"
+    ACTION_CATEGORY_ROUTING = "action_category_routing"
+    ACTION_METHOD_PLANNING = "action_method_planning"
+    ACTION_EXECUTION = "action_execution"
 
     def __str__(self):
         return self.value

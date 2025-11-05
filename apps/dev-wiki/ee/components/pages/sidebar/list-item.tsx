@@ -5,11 +5,11 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ArchiveIcon, ChevronRight, Loader } from "lucide-react";
+import { ArchiveIcon, Loader } from "lucide-react";
 // plane imports
-import { EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
-import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import { ChevronRightIcon, EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EPageAccess, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";
@@ -344,7 +344,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
               {isFetchingSubPages ? (
                 <Loader className="size-3.5 animate-spin" />
               ) : (
-                <ChevronRight className={chevronClassName} strokeWidth={2.5} />
+                <ChevronRightIcon className={chevronClassName} strokeWidth={2.5} />
               )}
             </button>
           ) : (

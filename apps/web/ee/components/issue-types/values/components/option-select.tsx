@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // components
-import { ChevronDown } from "lucide-react";
 import type {
   EIssuePropertyType,
   EIssuePropertyValueError,
@@ -109,7 +109,7 @@ export const OptionValueSelect = observer((props: TOptionValueSelectProps) => {
       <>
         <span className="text-sm truncate whitespace-nowrap">{getDisplayName()}</span>
         {!isDisabled && (
-          <ChevronDown className={cn("flex-shrink-0 h-3.5 w-3.5 hidden group-hover:inline")} aria-hidden="true" />
+          <ChevronDownIcon className={cn("flex-shrink-0 h-3.5 w-3.5 hidden group-hover:inline")} aria-hidden="true" />
         )}
       </>
     ),

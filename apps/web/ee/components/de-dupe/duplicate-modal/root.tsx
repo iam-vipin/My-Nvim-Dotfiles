@@ -1,9 +1,8 @@
 "use-client";
 
 import type { FC } from "react";
-import { X } from "lucide-react";
 // plane imports
-import { PlaneAIIcon } from "@plane/propel/icons";
+import { CloseIcon, PlaneAIIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
 // local-imports
@@ -23,7 +22,7 @@ export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
         <div className="flex items-center justify-between w-full">
           <span className="text-sm text-custom-text-300 font-semibold">Duplicate work items</span>
           <Tooltip tooltipContent="Close">
-            <X
+            <CloseIcon
               className="cursor-pointer size-3.5 text-custom-text-300 hover:text-custom-text-200"
               onClick={() => handleDuplicateIssueModal(false)}
             />

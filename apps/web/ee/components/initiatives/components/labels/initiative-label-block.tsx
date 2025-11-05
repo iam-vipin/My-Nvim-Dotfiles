@@ -3,10 +3,10 @@
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { X } from "lucide-react";
 
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
 import type { TInitiativeLabel } from "@plane/types";
 import { CustomMenu, DragHandle } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -88,7 +88,7 @@ export const InitiativeLabelBlock = (props: IInitiativeLabelBlock) => {
                 handleLabelDelete(label);
               }}
             >
-              <X className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
+              <CloseIcon className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
             </button>
           </div>
         </div>

@@ -20,6 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
+import { EpicLayoutQuickActions } from "@/plane-web/components/epics/quick-actions/layout-quick-actions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const EpicsHeader = observer(() => {
@@ -95,6 +96,9 @@ export const EpicsHeader = observer(() => {
             >
               <div className="hidden sm:block">New</div> Epic
             </Button>
+          )}
+          {projectId && (
+            <EpicLayoutQuickActions workspaceSlug={workspaceSlug?.toString()} projectId={projectId.toString()} />
           )}
         </Header.RightItem>
       </Header>

@@ -7,7 +7,7 @@ import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
@@ -16,8 +16,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 // plane web imports
-import { CustomerWorkItemProperties } from "@/plane-web/components/customers";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import { WorkItemPropertiesLite } from "@/plane-web/components/issues/issue-details/properties";
 import { useCustomerWorkItemOperations } from "./helper";
 
 type TProps = {
@@ -113,7 +113,7 @@ export const CustomerWorkItem: FC<TProps> = observer((props) => {
               e.stopPropagation();
             }}
           >
-            <CustomerWorkItemProperties
+            <WorkItemPropertiesLite
               workspaceSlug={workspaceSlug}
               workItemId={workItemId}
               disabled={false}

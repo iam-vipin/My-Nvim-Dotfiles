@@ -110,7 +110,7 @@ class TemplateEndpoint(BaseAPIView):
                 return Response(serialized_template.data, status=status.HTTP_200_OK)
             except Template.DoesNotExist:
                 return Response(
-                    {"error": "Template with the given short_id does not exist."},
+                    {"error": "Template with the given short ID does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
@@ -128,6 +128,30 @@ class TemplateEndpoint(BaseAPIView):
         return Response(paginated_response, status=status.HTTP_200_OK)
 
 
+class TemplateBySlugEndpoint(BaseAPIView):
+    """
+    Published Template By Slug Endpoint
+    """
+
+    permission_classes = [AllowAny]
+    model = Template
+    serializer_class = TemplateDetailSerializer
+
+    def get_queryset(self) -> QuerySet[Template]:
+        return self.model.objects.filter(is_published=True)
+
+    def get(self, request: Request, slug: str) -> Response:
+        try:
+            template = self.get_queryset().get(slug=slug)
+            serialized_template = self.serializer_class(template)
+            return Response(serialized_template.data, status=status.HTTP_200_OK)
+        except Template.DoesNotExist:
+            return Response(
+                {"error": "Template with the given slug does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+
 class TemplateMetaEndpoint(BaseAPIView):
     """
     Published Template Meta Endpoint
@@ -140,15 +164,15 @@ class TemplateMetaEndpoint(BaseAPIView):
     def get_queryset(self) -> QuerySet[Template]:
         return self.model.objects.filter(is_published=True)
 
-    def get(self, request: Request, short_id: Optional[str] = None) -> Response:
-        if short_id:
+    def get(self, request: Request, slug: Optional[str] = None) -> Response:
+        if slug:
             try:
-                template = self.get_queryset().get(short_id=short_id)
+                template = self.get_queryset().get(slug=slug)
                 serialized_template = self.serializer_class(template)
                 return Response(serialized_template.data, status=status.HTTP_200_OK)
             except Template.DoesNotExist:
                 return Response(
-                    {"error": "Template with the given short_id does not exist."},
+                    {"error": "Template with the given slug does not exist."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 

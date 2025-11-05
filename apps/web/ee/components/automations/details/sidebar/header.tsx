@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { EAutomationSidebarTab } from "@plane/types";
 import { getSidebarHeaderI18nTitle } from "@plane/utils";
 // helpers
@@ -43,7 +43,7 @@ export const AutomationDetailsSidebarHeader: React.FC<Props> = observer((props) 
             sidebarHelper?.setSelectedSidebarConfig({ tab: null, mode: null });
           }}
         >
-          <X className="size-4" />
+          <CloseIcon className="size-4" />
         </button>
       </div>
     </header>

@@ -18,10 +18,10 @@ def get_member_tools(method_executor, context):
 
     @tool
     async def members_get_workspace_members(workspace_slug: Optional[str] = None) -> str:
-        """Get all workspace members.
+        """Get all workspace members (excludes bot users).
 
         Args:
-            workspace_slug: Parameter description (optional)
+            workspace_slug: Workspace slug (auto-filled from context)
         """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -29,7 +29,24 @@ def get_member_tools(method_executor, context):
 
         result = await method_executor.execute("members", "get_workspace_members", workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved workspace members", result["data"])
+            # Filter out bot users from the results
+            members_data = result["data"]
+            if isinstance(members_data, list):
+                # Filter out users with is_bot=True and bot email patterns
+                filtered_members = [
+                    member
+                    for member in members_data
+                    if not (
+                        # Check is_bot field if present
+                        member.get("is_bot", False)
+                        # Check for bot email pattern (workspace_botname_bot@plane.so)
+                        or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
+                    )
+                ]
+                return PlaneToolBase.format_success_response("Successfully retrieved workspace members", filtered_members)
+            else:
+                # If data is not a list, return as-is (edge case)
+                return PlaneToolBase.format_success_response("Successfully retrieved workspace members", members_data)
         else:
             return PlaneToolBase.format_error_response("Failed to get workspace members", result["error"])
 
@@ -38,7 +55,12 @@ def get_member_tools(method_executor, context):
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
     ) -> str:
-        """Get all project members."""
+        """Get all project members (excludes bot users).
+
+        Args:
+            project_id: Project UUID (auto-filled from context if in project chat)
+            workspace_slug: Workspace slug (auto-filled from context)
+        """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
@@ -52,7 +74,24 @@ def get_member_tools(method_executor, context):
             workspace_slug=workspace_slug,
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved project members", result["data"])
+            # Filter out bot users from the results
+            members_data = result["data"]
+            if isinstance(members_data, list):
+                # Filter out users with is_bot=True and bot email patterns
+                filtered_members = [
+                    member
+                    for member in members_data
+                    if not (
+                        # Check is_bot field if present
+                        member.get("is_bot", False)
+                        # Check for bot email pattern (workspace_botname_bot@plane.so)
+                        or (isinstance(member.get("email"), str) and "_bot@plane.so" in member.get("email", "").lower())
+                    )
+                ]
+                return PlaneToolBase.format_success_response("Successfully retrieved project members", filtered_members)
+            else:
+                # If data is not a list, return as-is (edge case)
+                return PlaneToolBase.format_success_response("Successfully retrieved project members", members_data)
         else:
             return PlaneToolBase.format_error_response("Failed to get project members", result["error"])
 

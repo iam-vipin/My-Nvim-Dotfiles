@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { FieldPath } from "react-hook-form";
 import { Controller, useFormContext } from "react-hook-form";
-import { ChevronRight } from "lucide-react";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
@@ -59,7 +59,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
         <>
           {renderChevron && (
             <div className="flex items-center gap-2">
-              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-300" aria-hidden="true" />
             </div>
           )}
           <Controller<T>

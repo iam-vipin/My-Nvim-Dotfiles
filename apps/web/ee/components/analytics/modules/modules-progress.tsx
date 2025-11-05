@@ -6,16 +6,15 @@ import useSWR from "swr";
 import { MODULE_STATUS, MODULE_STATUS_COLORS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IModuleProgressData, IChartResponse, TChartData, TModuleStatus } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
-import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-8; // services
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 import type { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
 import ModulesCyclesTooltip from "../modules-cycles-tooltip";
@@ -27,7 +26,6 @@ const ModuleProgress = observer(() => {
   const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-radar" });
 
   const { data: moduleInsightsData, isLoading: isLoadingModuleInsight } = useSWR(
     `radar-chart-module-progress-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
@@ -144,11 +142,11 @@ const ModuleProgress = observer(() => {
           </div>
         </div>
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.module_progress.title")}
-          description={t("workspace_analytics.empty_state.module_progress.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_no_module.title")}
         />
       )}
     </AnalyticsSectionWrapper>

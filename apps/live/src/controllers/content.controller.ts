@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
-import { Controller, Get, Middleware } from "@plane/decorators";
+import { Controller, Get } from "@plane/decorators";
 // services
-import { requireSecretKey } from "@/lib/auth-middleware";
 import { ContentAPI } from "@/services/content.service";
 
 // Error interface for better type safety
@@ -16,7 +15,6 @@ type APIError = {
 @Controller("/content")
 export class ContentController {
   @Get("/")
-  @Middleware(requireSecretKey)
   async getFileContent(req: Request, res: Response) {
     try {
       // Extract URL from query params

@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
-import { Globe2, X, Lock } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 // plane imports
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import type { TProjectAccess } from "@/plane-web/types/workspace-project-filters";
 
 type Props = {
@@ -30,7 +31,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(access)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

@@ -1,5 +1,5 @@
-import { Calendar, Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
-import { ProjectIcon, ProjectStatesIcon } from "@plane/propel/icons";
+import { Dice4, Group, SignalHigh, Tags, User, Users } from "lucide-react";
+import { CalendarLayoutIcon, ProjectIcon, ProjectStatesIcon } from "@plane/propel/icons";
 import { cn } from "@plane/propel/utils";
 import type { TIssuePriorities, TLogoProps, TStateGroups } from "@plane/types";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
@@ -156,7 +156,7 @@ export const Properties = (props: TProps) => {
       {(start_date || target_date) && (
         <PropertyWrapper
           title={start_date || target_date ? "Dates" : start_date ? "Start Date" : "Target Date"}
-          Icon={Calendar}
+          Icon={CalendarLayoutIcon}
           showContainer={showContainer}
         >
           {({ className }) => (

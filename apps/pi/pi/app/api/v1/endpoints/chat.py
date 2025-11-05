@@ -1,8 +1,11 @@
 import asyncio
+import contextlib
 import json
 from typing import Any
 from typing import AsyncGenerator
+from typing import Coroutine
 from typing import Optional
+from typing import cast
 from uuid import UUID
 from uuid import uuid4
 
@@ -18,6 +21,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.api.v1.dependencies import cookie_schema
 from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.endpoints._sse import normalize_error_chunk
+from pi.app.api.v1.endpoints._sse import sse_done
+from pi.app.api.v1.endpoints._sse import sse_event
 from pi.app.api.v1.helpers.batch_execution_helpers import execute_batch_actions
 from pi.app.api.v1.helpers.batch_execution_helpers import format_execution_response
 from pi.app.api.v1.helpers.batch_execution_helpers import prepare_execution_data
@@ -111,62 +117,111 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
             pending_backticks = ""
             # Open a short-lived session for the duration of the streaming work
             async with get_streaming_db_session() as stream_db:
-                async for chunk in chatbot.process_query_stream(data, db=stream_db):
-                    if chunk.startswith("πspecial reasoning blockπ: "):
-                        reasoning_content = chunk.replace("πspecial reasoning blockπ: ", "")
-                        # JSON-encode reasoning payload
-                        payload = {"reasoning": reasoning_content}
-                        yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
-                    elif chunk.startswith("πspecial actions blockπ: "):
-                        # Extract the actions data and send as separate actions event
-                        actions_content = chunk.replace("πspecial actions blockπ: ", "")
-                        try:
-                            # Parse the JSON content to validate it
-                            actions_data = json.loads(actions_content)
-                            yield f"event: actions\ndata: {json.dumps(actions_data)}\n\n"
-                        except json.JSONDecodeError:
-                            # If JSON parsing fails, fall back to delta event
-                            log.warning(f"Failed to parse actions JSON: {actions_content}")
-                            payload = {"chunk": chunk}
-                            yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                    elif chunk.startswith("πspecial clarification blockπ: "):
-                        # Dedicated event to ask user for clarifications
-                        clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
-                        try:
-                            clarification_data = json.loads(clarification_content)
+                # Heartbeat mechanism that does not cancel the underlying generator
+                # Only emits heartbeat after 10s of inactivity (no chunks received)
+                heartbeat_stop = asyncio.Event()
+                heartbeat_task: Optional[asyncio.Task[None]] = None
 
-                            # Format clarification as natural language text for frontend display
-                            formatted_text = format_clarification_as_text(clarification_data)
-                            payload = {"chunk": formatted_text}
-                            yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                        except json.JSONDecodeError:
-                            log.warning(f"Failed to parse clarification JSON: {clarification_content}")
-                            # Fallback to raw content if JSON parsing fails
-                            payload = {"chunk": "I'm sorry, I can't understand your request in your workspace context. Can you be more specific?"}
-                            yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                    else:
-                        # Handle code block formatting
-                        if chunk.startswith("```"):
-                            # Triple backticks indicate code block - send as-is
-                            # First, yield any accumulated backticks if they exist
-                            if pending_backticks:
-                                payload = {"chunk": pending_backticks}
-                                yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                                pending_backticks = ""
-                            payload = {"chunk": chunk}
-                            yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
-                        elif chunk in ["`", "``"]:  # Only pure backticks, no other content
-                            # Accumulate backticks - don't overwrite, append
-                            pending_backticks += chunk
-                            continue
-                        else:
-                            # Regular chunk - prepend any pending backticks
-                            if pending_backticks:
-                                chunk = pending_backticks + chunk
-                                pending_backticks = ""
-                            # JSON-encode delta payload
-                            payload = {"chunk": chunk}
-                            yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                async def heartbeat_emitter() -> None:
+                    """Sleep for 10s, then put heartbeat in queue if not stopped."""
+                    with contextlib.suppress(asyncio.CancelledError):
+                        await asyncio.sleep(10)
+
+                base_iter = chatbot.process_query_stream(data, db=stream_db)
+                next_chunk_task: asyncio.Task[str] = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+
+                # Start initial heartbeat timer
+                heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                try:
+                    while True:
+                        # Race the next chunk against the heartbeat timer
+                        done, _pending = await asyncio.wait({next_chunk_task, heartbeat_task}, return_when=asyncio.FIRST_COMPLETED)
+
+                        # If heartbeat timer completed first, emit heartbeat and restart timer
+                        if heartbeat_task in done and not heartbeat_stop.is_set():
+                            payload = {"reasoning": "⏳ Still working...\n\n"}
+                            yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
+                            # Restart heartbeat timer
+                            heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                        if next_chunk_task in done:
+                            try:
+                                chunk = next_chunk_task.result()
+                            except StopAsyncIteration:
+                                break
+                            except Exception as _e:
+                                log.error(f"Error reading stream chunk: {_e!s}")
+                                break
+
+                            # Cancel and restart heartbeat timer since we got a chunk (activity detected)
+                            if heartbeat_task and not heartbeat_task.done():
+                                heartbeat_task.cancel()
+                                with contextlib.suppress(asyncio.CancelledError):
+                                    await heartbeat_task
+                            heartbeat_task = asyncio.create_task(heartbeat_emitter())
+
+                            # Normalize plain-text error chunks to SSE error events
+                            normalized_error = normalize_error_chunk(chunk)
+                            if normalized_error:
+                                yield normalized_error
+                                next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                                continue
+
+                            if chunk.startswith("πspecial reasoning blockπ: "):
+                                reasoning_content = chunk.replace("πspecial reasoning blockπ: ", "")
+                                payload = {"reasoning": reasoning_content}
+                                yield f"event: reasoning\ndata: {json.dumps(payload)}\n\n"
+                            elif chunk.startswith("πspecial actions blockπ: "):
+                                actions_content = chunk.replace("πspecial actions blockπ: ", "")
+                                try:
+                                    actions_data = json.loads(actions_content)
+                                    yield f"event: actions\ndata: {json.dumps(actions_data)}\n\n"
+                                except json.JSONDecodeError:
+                                    log.warning(f"Failed to parse actions JSON: {actions_content}")
+                                    payload = {"chunk": chunk}
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                            elif chunk.startswith("πspecial clarification blockπ: "):
+                                clarification_content = chunk.replace("πspecial clarification blockπ: ", "")
+                                try:
+                                    clarification_data = json.loads(clarification_content)
+                                    formatted_text = format_clarification_as_text(clarification_data)
+                                    payload = {"chunk": formatted_text}
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                except json.JSONDecodeError:
+                                    log.warning(f"Failed to parse clarification JSON: {clarification_content}")
+                                    payload = {
+                                        "chunk": "I'm sorry, I can't understand your request in your workspace context. Can you be more specific?"
+                                    }
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                            else:
+                                # Handle code block formatting
+                                if chunk.startswith("```"):
+                                    if pending_backticks:
+                                        payload = {"chunk": pending_backticks}
+                                        yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                        pending_backticks = ""
+                                    payload = {"chunk": chunk}
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+                                elif chunk in ["`", "``"]:
+                                    pending_backticks += chunk
+                                    next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                                    continue
+                                else:
+                                    if pending_backticks:
+                                        chunk = pending_backticks + chunk
+                                        pending_backticks = ""
+                                    payload = {"chunk": chunk}
+                                    yield f"event: delta\ndata: {json.dumps(payload)}\n\n"
+
+                            # Prepare next iteration
+                            next_chunk_task = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
+                finally:
+                    heartbeat_stop.set()
+                    if heartbeat_task and not heartbeat_task.done():
+                        heartbeat_task.cancel()
+                        with contextlib.suppress(asyncio.CancelledError):
+                            await heartbeat_task
 
             # Handle any remaining pending backticks at the end of stream
             if pending_backticks:
@@ -177,18 +232,19 @@ async def get_answer(data: ChatRequest, session: str = Depends(cookie_schema)):
             if hasattr(data, "context") and isinstance(data.context, dict):
                 token_id = data.context.get("token_id")
 
+            # Emit CTA before done to ensure clients receive it
+            yield sse_event("cta_available", {"type": "create_page"})
             # Explicitly signal completion so EventSource clients don't interpret
-            # the socket close as an error.  Use a custom "done" event.
-            # The [DONE] sentinel can be JSON-wrapped or left raw; we use message event
-            payload = {"done": "true"}
-            yield f"event: done\ndata: {json.dumps(payload)}\n\n"
-            yield 'event: cta_available\ndata: {"type": "create_page"}\n\n'
+            # the socket close as an error.
+            yield sse_done()
         except asyncio.CancelledError:
             # This is expected if the client disconnects, so log as info and let it propagate
             log.info("Stream cancelled by client disconnect.")
         except Exception as e:
             log.error(f"Error streaming response: {e!s}")
-            yield "error: 'An unexpected error occurred. Please try again'"
+            # Emit SSE-compliant error and finalize
+            yield sse_event("error", {"message": "An unexpected error occurred. Please try again"})
+            yield sse_done()
         finally:
             # Schedule Celery task to upsert chat search index after streaming completes
             if token_id:

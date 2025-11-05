@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import type { ETeamspaceAnalyticsDataKeys } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -28,7 +28,7 @@ export const StatisticsDataKeyFilter: React.FC<TStatisticsFilterProps<"data_key"
           {val && typeof val === "string"
             ? TEAM_STATISTICS_DATA_KEY_MAP[val as ETeamspaceAnalyticsDataKeys]
             : TEAM_STATISTICS_DATA_KEY_MAP[value]}
-          <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
+          <ChevronDownIcon className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>
       )}
       disableSearch

@@ -1,14 +1,17 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { ArrowRightLeft, CalendarIcon, ClockIcon, MessageSquare, Signal, Tag, Users } from "lucide-react";
+import { ArrowRightLeft, CalendarIcon, ClockIcon, MessageSquare } from "lucide-react";
 // plane imports
 import {
   DiceIcon,
-  DoubleCircleIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  PriorityPropertyIcon,
   RecurringWorkItemFailureIcon,
   RecurringWorkItemIcon,
   RecurringWorkItemSuccessIcon,
+  StatePropertyIcon,
 } from "@plane/propel/icons";
 import type {
   TBaseActivityVerbs,
@@ -216,19 +219,19 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     message: <>updated the description</>,
   }),
   state_updated: (activity) => ({
-    icon: <DoubleCircleIcon className={commonIconClassName} />,
+    icon: <StatePropertyIcon className={commonIconClassName} />,
     message: activity.new_value ? createValueMessage("set the state to", activity.new_value) : <>updated the state</>,
   }),
   assignees_added: (activity) => ({
-    icon: <Users className={commonIconClassName} />,
+    icon: <MembersPropertyIcon className={commonIconClassName} />,
     message: getAssigneeActivityMessage(activity, "added"),
   }),
   assignees_removed: (activity) => ({
-    icon: <Users className={commonIconClassName} />,
+    icon: <MembersPropertyIcon className={commonIconClassName} />,
     message: getAssigneeActivityMessage(activity, "removed"),
   }),
   priority_updated: (activity) => ({
-    icon: <Signal className={commonIconClassName} />,
+    icon: <PriorityPropertyIcon className={commonIconClassName} />,
     message: activity.new_value ? (
       createValueMessage("set the priority to", activity.new_value)
     ) : (
@@ -244,11 +247,11 @@ export const RECURRING_WORK_ITEM_ACTIVITY_HELPER_MAP: Partial<TRecurringWorkItem
     message: getModuleActivityMessage(activity, "removed"),
   }),
   labels_added: (activity) => ({
-    icon: <Tag className={commonIconClassName} />,
+    icon: <LabelPropertyIcon className={commonIconClassName} />,
     message: activity.new_value ? createValueMessage("added a new label", activity.new_value) : <>added a new label</>,
   }),
   labels_removed: (activity) => ({
-    icon: <Tag className={commonIconClassName} />,
+    icon: <LabelPropertyIcon className={commonIconClassName} />,
     message: activity.old_value ? createValueMessage("removed the label", activity.old_value) : <>removed a label</>,
   }),
   type_updated: (activity) => ({

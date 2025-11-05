@@ -1,9 +1,10 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { capitalize } from "lodash-es";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TEstimateSystemKeys } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -43,7 +44,7 @@ export const EstimateSwitchDropdown: FC<TProps> = (props) => {
           ) : (
             <span className="text-custom-text-400">{t("project_settings.estimates.select")}</span>
           )}
-          {<ChevronDown className={cn("h-3.5 w-3.5 flex-shrink-0 transition-transform", isOpen && "rotate-180")} />}
+          {<ChevronDownIcon className={cn("h-3.5 w-3.5 flex-shrink-0 transition-transform", isOpen && "rotate-180")} />}
         </span>
       )}
       options={options}

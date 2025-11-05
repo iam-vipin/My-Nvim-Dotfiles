@@ -1,9 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // plane imports
 import { AUTOMATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { InitiativeIcon } from "@plane/propel/icons";
+import { CloseIcon, InitiativeIcon } from "@plane/propel/icons";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
@@ -44,7 +43,7 @@ export const AutomationDetailsSidebarFooter: React.FC<TProps> = observer((props)
             className="flex-shrink-0 size-4 grid place-items-center hover:text-custom-text-100 transition-colors"
             aria-label="Close alert"
           >
-            <X className="size-3" />
+            <CloseIcon className="size-3" />
           </button>
         </div>
       )}

@@ -1,8 +1,10 @@
 # Python imports
 from functools import wraps
 from enum import Enum
+import requests
 
 # Django imports
+from django.conf import settings
 
 # Third party imports
 import openfeature.api
@@ -15,6 +17,7 @@ from rest_framework.response import Response
 from .provider import FlagProvider
 from plane.utils.cache import cache_function_result
 from plane.db.models.user import User
+from plane.utils.exception_logger import log_exception
 
 
 class ErrorCodes(Enum):
@@ -36,9 +39,7 @@ def check_feature_flag(feature_key, default_value=False):
             if client.get_boolean_value(
                 flag_key=feature_key.value,
                 default_value=default_value,
-                evaluation_context=EvaluationContext(
-                    user_id, {"slug": kwargs.get("slug")}
-                ),
+                evaluation_context=EvaluationContext(user_id, {"slug": kwargs.get("slug")}),
             ):
                 response = view_func(instance, request, *args, **kwargs)
             else:
@@ -57,9 +58,7 @@ def check_feature_flag(feature_key, default_value=False):
 
 
 @cache_function_result(timeout=300, key_prefix="workspace_feature_flag")
-def check_workspace_feature_flag(
-    feature_key, slug, user_id=None, default_value=False
-) -> bool:
+def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=False) -> bool:
     """Function to check workspace feature flag"""
     # Function to generate cache key
     openfeature.api.set_provider(FlagProvider())
@@ -76,3 +75,30 @@ def check_workspace_feature_flag(
     )
     # Return the flag
     return flag
+
+@cache_function_result(timeout=300, key_prefix="workspace_feature_flags")
+def get_all_workspace_feature_flags(slug) -> dict:
+    """Function to get all feature flags for a workspace"""
+    if settings.FEATURE_FLAG_SERVER_BASE_URL:
+        try:
+            # Make a request to the feature flag server
+            response = requests.post(
+                f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/",
+                headers={
+                    "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "workspace_slug": slug,
+                },
+            )
+            # If the request is successful, return all the feature flags
+            response.raise_for_status()
+            # Get all the feature flags from the response
+            resp = response.json()
+            return resp.get("values", {})
+        # If the request fails, log the exception and return the default value
+        except requests.exceptions.RequestException as e:
+            log_exception(e)
+            return {}
+    return {}

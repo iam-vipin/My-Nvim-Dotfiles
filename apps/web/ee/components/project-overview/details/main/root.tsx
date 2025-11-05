@@ -8,6 +8,7 @@ import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 // local components
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { ProjectOverviewCollapsibleSectionRoot } from "./collapsible-section-root";
 import { useLinks } from "./collaspible-section/links/use-links";
 import { ProjectOverviewInfoSectionRoot } from "./info-section-root";

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Info } from "lucide-react";
+import { Info } from "lucide-react";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState } from "@plane/types";
 import { Collapsible, ToggleSwitch } from "@plane/ui";
@@ -104,7 +105,7 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
                     />
                   )}
                 </div>
-                <ChevronDown
+                <ChevronDownIcon
                   strokeWidth={2}
                   className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
                     "rotate-180 text-custom-text-200": isOpen,

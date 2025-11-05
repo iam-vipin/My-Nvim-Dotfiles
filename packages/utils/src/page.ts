@@ -1,6 +1,14 @@
 import { sortBy } from "lodash-es";
 // plane imports
-import { TPage, TPageFilterProps, TPageFiltersSortBy, TPageFiltersSortKey, TPageNavigationTabs } from "@plane/types";
+import type {
+  TMovePageActions,
+  TMovePageEntity,
+  TPage,
+  TPageFilterProps,
+  TPageFiltersSortBy,
+  TPageFiltersSortKey,
+  TPageNavigationTabs,
+} from "@plane/types";
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
@@ -84,4 +92,16 @@ export const getPageName = (name: string | undefined) => {
   if (name === undefined) return "";
   if (!name || name.trim() === "") return "Untitled";
   return name;
+};
+
+/**
+ * @description returns the source and target from the move type
+ * @param {TMovePageActions} moveType
+ * @returns { { source: TMovePageEntity; target: TMovePageEntity } }
+ */
+export const getMoveSourceAndTargetFromMoveType = (
+  moveType: TMovePageActions
+): { source: TMovePageEntity; target: TMovePageEntity } => {
+  const [source, target] = moveType.split("_to_") as [TMovePageEntity, TMovePageEntity];
+  return { source, target };
 };

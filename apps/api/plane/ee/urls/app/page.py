@@ -8,7 +8,6 @@ from plane.ee.views import (
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
-    MovePageEndpoint,
     PagesLiveServerDescriptionViewSet,
     PagesLiveServerSubPagesViewSet,
     WorkspacePageRestoreEndpoint,
@@ -25,6 +24,7 @@ from plane.ee.views import (
     PageDuplicateExtendedEndpoint,
     PageVersionExtendedEndpoint,
     WorkspacePageLiveServerEndpoint,
+    MovePageEndpoint,
 )
 
 
@@ -268,11 +268,6 @@ urlpatterns = [
         ProjectPagePublishEndpoint.as_view(),
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/move/",
-        MovePageEndpoint.as_view(),
-        name="move-page",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/",
         ProjectPageCommentViewSet.as_view({"post": "create", "get": "list"}),
         name="project-page-comments",
@@ -328,4 +323,11 @@ urlpatterns = [
         ),
         name="project-page-shared",
     ),
+    # move pages
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/move/",
+        MovePageEndpoint.as_view(),
+        name="move-page",
+    ),
+    # end move pages
 ]

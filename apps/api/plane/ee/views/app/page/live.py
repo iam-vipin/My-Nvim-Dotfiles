@@ -39,7 +39,7 @@ class PagesLiveServerSubPagesViewSet(BaseViewSet):
             .annotate(
                 project_ids=Coalesce(
                     ArrayAgg(
-                        "projects__id", distinct=True, filter=~Q(projects__id=True)
+                        "project_pages__project_id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
@@ -79,9 +79,7 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
             else:
                 yield b""
 
-        response = StreamingHttpResponse(
-            stream_data(), content_type="application/octet-stream"
-        )
+        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
@@ -92,9 +90,7 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
             return Response({"error": "Page not found"}, status=404)
 
         # Serialize the existing instance
-        existing_instance = json.dumps(
-            {"description_html": page.description_html}, cls=DjangoJSONEncoder
-        )
+        existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
 
         # Get the base64 data from the request
         base64_data = request.data.get("description_binary")
@@ -106,7 +102,9 @@ class PagesLiveServerDescriptionViewSet(BaseViewSet):
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data, old_value=existing_instance, page_id=page_id
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page.description_html,
+                    page_id=page_id,
                 )
             # Store the updated binary data
             page.name = request.data.get("name", page.name)

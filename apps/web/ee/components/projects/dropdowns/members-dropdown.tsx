@@ -1,5 +1,5 @@
-import { Users } from "lucide-react";
 // plane imports
+import { MembersPropertyIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
@@ -21,7 +21,7 @@ export const MembersDropdown: React.FC<Props> = (props) => {
         buttonClassName
       )}
     >
-      <Users className="h-3 w-3 flex-shrink-0" />
+      <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
       <span>{value ? value.length : "Members"}</span>
     </div>
   );

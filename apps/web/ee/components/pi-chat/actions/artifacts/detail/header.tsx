@@ -1,7 +1,7 @@
 "use-client";
 
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { Header as HeaderUI, Row, CustomSelect } from "@plane/ui";
@@ -76,7 +76,7 @@ export const Header = observer((props: { artifact: TArtifact }) => {
                   toggleSidebar();
                 }}
               >
-                <X className="flex-shrink-0 size-3.5" />
+                <CloseIcon className="flex-shrink-0 size-3.5" />
               </button>
             </Tooltip>
           </div>

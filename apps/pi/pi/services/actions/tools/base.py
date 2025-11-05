@@ -105,14 +105,26 @@ class PlaneToolBase:
                         return f"✅ {message}\n\nResult: {data}{url_section}"
 
                 except Exception as e:
-                    # Log error but continue with basic response
+                    # Log error but continue with fallback entity info
                     log.error(f"Error constructing entity URL: {e}")
+                    # Still provide entity info even if URL construction fails
+                    if entity_data and entity_data.get("id"):
+                        fallback_section = f"\n\nEntity ID: {entity_data["id"]}"
+                        fallback_section += f"\nEntity Name: {entity_data.get("name", "")}"
+                        fallback_section += f"\nEntity Type: {entity_type}"
+                        return f"✅ {message}\n\nResult: {data}{fallback_section}"
             else:
                 log.warning(f"No workspace_slug found in context: {context}")
+                # Still provide entity info even without workspace_slug
+                if entity_data and entity_data.get("id"):
+                    fallback_section = f"\n\nEntity ID: {entity_data["id"]}"
+                    fallback_section += f"\nEntity Name: {entity_data.get("name", "")}"
+                    fallback_section += f"\nEntity Type: {entity_type}"
+                    return f"✅ {message}\n\nResult: {data}{fallback_section}"
         else:
             log.warning(f"Failed to extract entity data for entity_type: {entity_type}")
 
-        # Fallback to basic response if URL construction fails
+        # Final fallback to basic response if entity extraction completely fails
         return PlaneToolBase.format_success_response(message, data)
 
     @staticmethod

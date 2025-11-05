@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import type { TPropertyListItem } from "./root";
 
@@ -21,7 +21,7 @@ export const TeamsPropertiesListItem = (props: Omit<TPropertyListItem, "key">) =
           className="group flex py-1 px-1 gap-2 items-center justify-between hover:bg-custom-background-90 rounded cursor-pointer transition-all"
         >
           <span className="text-sm text-custom-text-200">{value}</span>
-          <ChevronRight className="size-3 text-custom-text-400 group-hover:text-custom-text-200" />
+          <ChevronRightIcon className="size-3 text-custom-text-400 group-hover:text-custom-text-200" />
         </Link>
       ) : (
         <span className="py-1 px-1 text-sm text-custom-text-200">{value}</span>

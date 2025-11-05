@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 import { type JSONContent } from "@plane/types";
 import { useNewComment } from "@/plane-web/hooks/pages/use-new-comment";
 import { FileService } from "@/services/file.service";
@@ -134,7 +134,7 @@ export const PageCommentCreationHandler = observer(
               className="absolute top-0.75 right-1 p-1 rounded transition-all duration-200 ease hover:bg-custom-background-80 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed z-10"
               aria-label="Cancel new comment"
             >
-              <X className="size-3 text-custom-text-300" />
+              <CloseIcon className="size-3 text-custom-text-300" />
             </button>
           </div>
         )}
@@ -149,7 +149,7 @@ export const PageCommentCreationHandler = observer(
               className="p-1 rounded transition-all duration-200 ease hover:bg-custom-background-90 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               aria-label="Cancel new comment"
             >
-              <X className="size-3.5 text-custom-text-300" />
+              <CloseIcon className="size-3.5 text-custom-text-300" />
             </button>
           </div>
         )}

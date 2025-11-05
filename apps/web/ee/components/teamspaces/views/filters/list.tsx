@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ListFilter, Search, X } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
 // components
 import type { TViewFilters } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -102,7 +103,7 @@ export const TeamspaceViewListHeader = observer((props: TeamspaceViewListHeaderP
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import { STATE_GROUPS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import type { TStateGroups } from "@plane/types";
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -26,7 +26,7 @@ export const StatisticsStateGroupFilter: React.FC<TStatisticsFilterProps<"state_
       buttonContent={(isOpen, val) => (
         <span className="flex items-center gap-1">
           {val && val.length > 0 ? `${val.length} group selected` : "State group"}
-          <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
+          <ChevronDownIcon className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
         </span>
       )}
       disableSearch

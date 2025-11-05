@@ -2,6 +2,16 @@ import pg from "pg";
 import { logger } from "@plane/logger";
 import { env } from "@/env";
 
+// PostgreSQL error codes that indicate SSL/connection configuration issues
+// These errors can often be resolved by retrying with sslmode=no-verify
+const SSL_RELATED_ERROR_CODES = [
+  "28000", // Authentication failure (SSL cert verification)
+  "08006", // Connection failure (no pg_hba.conf entry, SSL mismatch)
+  "08001", // Client unable to establish connection (SSL/network issues)
+  "08004", // Server rejected connection (SSL policy conflicts)
+  "08P01", // Protocol violation (SSL version/cipher mismatch)
+] as const;
+
 /**
  * Database class
  * @description This class is used to connect to the database and execute queries
@@ -52,12 +62,11 @@ class DB {
         break;
       } catch (error) {
         logger.error("❌----Error connecting to database----", { error });
-        // this error is thrown for ssl mode verification error
-        // no pg_hba.conf entry
+        // Handle SSL-related connection errors only
         if (
           error instanceof Error &&
           "code" in error &&
-          error.code === "28000" &&
+          SSL_RELATED_ERROR_CODES.includes(error.code as any) &&
           !dbURI.includes("sslmode=no-verify")
         ) {
           logger.info("🔄----Retrying connection with SSL Mode no verify----");

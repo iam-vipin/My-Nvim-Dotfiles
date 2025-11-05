@@ -10,6 +10,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { EDITABLE_ARTIFACT_TYPES } from "@/plane-web/types";
+import { EpicDetail } from "./epic";
 import { FollowUpDetail } from "./follow-up";
 import { Header } from "./header";
 import { TemplateDetail } from "./template";
@@ -29,6 +30,8 @@ const DetailCardRenderer = (props: {
   switch (data.artifact_type) {
     case "workitem":
       return <WorkItemDetail {...props} />;
+    case "epic":
+      return <EpicDetail {...props} />;
     default:
       return <TemplateDetail {...props} />;
   }

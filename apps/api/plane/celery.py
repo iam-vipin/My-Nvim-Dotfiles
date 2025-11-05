@@ -126,6 +126,11 @@ EE_JOBS = {
         "task": "plane.event_stream.bgtasks.outbox_cleaner.delete_outbox_records",
         "schedule": crontab(hour=0, minute=30),  # UTC 00:30
     },
+    # Cycles maintenance
+    "maintain-future-cycles": {
+        "task": "plane.ee.bgtasks.cycle_automation_task.maintain_future_cycles",
+        "schedule": crontab(minute="*/2"),  # Every 2 minutes
+    },
 }
 
 

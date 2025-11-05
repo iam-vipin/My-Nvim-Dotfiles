@@ -2,9 +2,8 @@ import { observer } from "mobx-react";
 // plane imports
 import type { ETemplateLevel } from "@plane/constants";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 // local imports
 import { CreateTemplatesButton } from "./create-button";
 
@@ -20,18 +19,17 @@ type TNoTemplatesEmptyStateProps = { workspaceSlug: string } & (
 
 export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProps) => {
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/templates/no-templates" });
+  const { t } = useTranslation();
 
   return (
     <>
       <div className="w-full py-2">
         <div className="flex items-center justify-center h-full w-full">
-          <DetailedEmptyState
-            title={""}
-            assetPath={resolvedPath}
-            className="h-fit min-h-full items-start !p-0"
-            size="md"
-            customPrimaryButton={
+          <EmptyStateCompact
+            assetKey="template"
+            title={t("settings_empty_state.templates.title")}
+            description={t("settings_empty_state.templates.description")}
+            customButton={
               <CreateTemplatesButton
                 {...props}
                 buttonSize="md"
@@ -39,6 +37,8 @@ export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProp
                 variant="empty_state"
               />
             }
+            align="start"
+            rootClassName="py-20"
           />
         </div>
       </div>

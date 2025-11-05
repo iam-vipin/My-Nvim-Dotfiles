@@ -147,7 +147,7 @@ export const DndWrapper: FC<Props> = observer((props) => {
           tabIndex: 0,
           "aria-label": "Drop files here to upload",
           className: cn(
-            "relative w-full rounded-xl border border-transparent text-sm transition-colors focus:outline-none focus:ring",
+            "relative w-full rounded-t-xl border border-transparent text-sm transition-colors focus:outline-none focus:ring bg-custom-background-100",
             {
               "border-dashed border-custom-primary-100 bg-custom-primary-100/10": isDragging,
             }

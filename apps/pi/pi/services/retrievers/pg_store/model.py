@@ -15,8 +15,6 @@ from pi import logger
 from pi.app.models import LlmModel
 from pi.app.models import LlmModelPricing
 from pi.core.db.fixtures.llms import LLMS_DATA
-from pi.services.feature_flags import FeatureFlagContext
-from pi.services.feature_flags import feature_flag_service
 
 log = logger.getChild(__name__)
 
@@ -33,23 +31,14 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
         execution = await db.execute(statement)
         db_models = execution.scalars().all()
 
-        # Only show GPT-4.1 and Claude to users (keep others for internal use)
-        # TODO: add feature flag check here
-        user_visible_models = ["gpt-4.1", "claude-sonnet-4"]
+        # Visible models for users (extendable via feature flags later)
+        # NOTE: Hide gpt-5-standard from user selection to reduce latency
+        user_visible_models = ["gpt-4.1", "gpt-5-fast", "claude-sonnet-4-0"]
 
         default_found = False
-        # Create feature flag context with user and workspace information
-        try:
-            feature_context = FeatureFlagContext(user_id=str(user_id), workspace_slug=workspace_slug)
-            is_sonnet_4_enabled = await feature_flag_service.is_sonnet_4_enabled(feature_context)
-        except Exception as e:
-            log.error(f"Error checking sonnet 4 feature flag: {e}")
-            is_sonnet_4_enabled = False
         for db_model in db_models:
             # Only include models that should be visible to users
             if db_model.model_key not in user_visible_models:
-                continue
-            if db_model.model_key == "claude-sonnet-4" and not is_sonnet_4_enabled:
                 continue
             # Map database model to frontend format
             model_entry = {

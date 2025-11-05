@@ -75,6 +75,7 @@ export interface IPiChatStore {
   ) => Promise<void>;
   executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<TExecuteActionResponse | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
+  abortStream: (chatId: string) => void;
   setActiveModel: (model: TAiModels) => void;
   createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
   renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
@@ -120,6 +121,7 @@ export class PiChatStore implements IPiChatStore {
   favoriteChats: string[] = [];
   isPiChatDrawerOpen: boolean = false;
   isPiArtifactsDrawerOpen: string | undefined = undefined;
+  eventSources: Record<string, EventSource> = {};
   //services
   userStore;
   rootStore;
@@ -146,6 +148,7 @@ export class PiChatStore implements IPiChatStore {
       favoriteChats: observable,
       isPiChatDrawerOpen: observable.ref,
       isPiArtifactsDrawerOpen: observable.ref,
+      eventSources: observable,
       // computed
       activeChat: computed,
       isPiTyping: computed,
@@ -170,6 +173,7 @@ export class PiChatStore implements IPiChatStore {
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
+      abortStream: action,
     });
 
     //services
@@ -319,12 +323,13 @@ export class PiChatStore implements IPiChatStore {
     workspaceSlug: string,
     workspaceId: string | undefined,
     callbackUrl: string | undefined,
-    attachmentIds: string[]
+    attachmentIds: string[],
+    isNewChat: boolean
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
       query,
-      is_new: this.chatMap[chatId]?.dialogue.length === 0,
+      is_new: isNewChat,
       is_temp: false,
       workspace_in_context: focus.isInWorkspaceContext,
       source: ESource.WEB,
@@ -367,6 +372,7 @@ export class PiChatStore implements IPiChatStore {
     const eventSource = new EventSource(url, {
       withCredentials: true,
     });
+    this.eventSources[chatId] = eventSource;
 
     // 🔹 Handles `delta` chunks
     eventSource.addEventListener("delta", (event: MessageEvent) => {
@@ -407,6 +413,7 @@ export class PiChatStore implements IPiChatStore {
     // 🔹 Handles done event
     eventSource.addEventListener("done", async () => {
       eventSource.close();
+      delete this.eventSources[chatId];
       if (newDialogue.isPiThinking) newDialogue.isPiThinking = false;
       this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
@@ -423,12 +430,23 @@ export class PiChatStore implements IPiChatStore {
       }
     });
 
-    eventSource.onerror = (err) => {
-      console.error("SSE error:", err);
+    eventSource.addEventListener("error", async (event: MessageEvent) => {
+      console.error("SSE error:", event);
       newDialogue.isPiThinking = false;
+      this.isPiTypingMap[chatId] = false;
       newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
       this.updateDialogue(chatId, token, newDialogue);
       eventSource.close();
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      newDialogue.isPiThinking = false;
+      this.isPiTypingMap[chatId] = false;
+      newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+      this.updateDialogue(chatId, token, newDialogue);
+      eventSource.close();
+      delete this.eventSources[chatId];
     };
   };
 
@@ -483,26 +501,53 @@ export class PiChatStore implements IPiChatStore {
       workspaceSlug,
       workspaceId,
       callbackUrl,
-      attachmentIds
+      attachmentIds,
+      isNewChat
     );
-    const token = await this.piChatService.retrieveToken(payload);
-    runInAction(() => {
-      update(this.chatMap, chatId, (chat) => {
-        chat.dialogue = [...dialogueHistory, token];
-        newDialogue.query_id = token;
-        chat.dialogueMap[token] = newDialogue;
-        return chat;
+    this.piChatService
+      .retrieveToken(payload)
+      .then((token) => {
+        runInAction(() => {
+          update(this.chatMap, chatId, (chat) => {
+            chat.dialogue = [...dialogueHistory, token];
+            newDialogue.query_id = token;
+            chat.dialogueMap[token] = newDialogue;
+            return chat;
+          });
+        });
+        try {
+          this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
+        } catch (e) {
+          console.log(e);
+          runInAction(() => {
+            newDialogue.isPiThinking = false;
+            newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+            this.updateDialogue(chatId, token, newDialogue);
+            this.isPiTypingMap[chatId] = false;
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        runInAction(() => {
+          newDialogue.isPiThinking = false;
+          newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
+          this.updateDialogue(chatId, "latest", newDialogue);
+          this.isPiTypingMap[chatId] = false;
+        });
       });
-    });
-    try {
-      this.getStreamingAnswer(token, isNewChat, chatId, workspaceId, newDialogue);
-    } catch (e) {
-      console.log(e);
+  };
+
+  abortStream = (chatId: string) => {
+    const eventSource = this.eventSources[chatId];
+    const dialogues = this.chatMap[chatId]?.dialogue;
+    if (eventSource && dialogues?.length > 0) {
+      eventSource.close();
+      delete this.eventSources[chatId];
+      console.warn(`SSE stream for chat ${chatId} aborted`);
       runInAction(() => {
-        newDialogue.isPiThinking = false;
-        newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        this.updateDialogue(chatId, token, newDialogue);
         this.isPiTypingMap[chatId] = false;
+        this.chatMap[chatId].dialogueMap[dialogues[dialogues.length - 1]].isPiThinking = false;
       });
     }
   };
@@ -645,7 +690,7 @@ export class PiChatStore implements IPiChatStore {
       runInAction(() => {
         this.models = response.models;
         response.models.forEach((model) => {
-          if (model.is_default) {
+          if (model.is_default && !this.activeModel) {
             this.activeModel = model;
           }
         });

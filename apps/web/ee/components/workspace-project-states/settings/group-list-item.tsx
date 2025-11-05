@@ -3,9 +3,10 @@
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // helpers
 import { PROJECT_STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import {
@@ -64,7 +65,7 @@ export const ProjectStateGroupListItem: FC<TGroupItem> = observer((props) => {
               }
             )}
           >
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDownIcon className="w-4 h-4" />
           </div>
           <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
             <ProjectStateIcon projectStateGroup={groupKey} width="14" height="14" />

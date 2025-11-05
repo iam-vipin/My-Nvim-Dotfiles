@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { ArrowRight, Calendar, CalendarClock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { StartDatePropertyIcon } from "@plane/propel/icons";
 import { Card, ECardSpacing } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import TrendPiece from "@/components/analytics/trend-piece";
@@ -47,7 +48,7 @@ const ModulesCyclesTooltip = ({
           <TrendPiece percentage={completionPercentage} size="xs" trendIconVisible={false} variant="tinted" />
         </div>
         <div className="flex items-center gap-2  opacity-50 ">
-          <CalendarClock className="w-3 h-3" />
+          <StartDatePropertyIcon className="w-3 h-3" />
           <div className="flex gap-1  text-xs">
             {renderFormattedDate(startDate) ?? "-"}
             <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />

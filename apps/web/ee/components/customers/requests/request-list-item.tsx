@@ -158,7 +158,6 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
         handleClose={() => setWorkItemsModal(false)}
         searchParams={{}}
         handleOnSubmit={handleAddWorkItemsToRequest}
-        selectedWorkItems={[]}
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
       <SourceCreateUpdateModal id={request.id} setLinkData={setLink} preloadedData={{ url: link }} />

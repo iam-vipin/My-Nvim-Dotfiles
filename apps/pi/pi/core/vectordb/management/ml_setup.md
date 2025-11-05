@@ -90,7 +90,7 @@ GET /_plugins/_ml/models/YOUR_MODEL_ID_FROM_STEP_4
 POST /_plugins/_ml/models/YOUR_MODEL_ID_FROM_STEP_4/_predict
 {
   "parameters": {
-    "input": ["hello world test"]
+    "texts": ["hello world test"]
   }
 }
 ```

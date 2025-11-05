@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import { MultiSelectDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useApplications } from "@/plane-web/hooks/store";
@@ -38,7 +38,7 @@ export const SelectCategories: React.FC<TSelectCategoriesProps> = observer((prop
           {val && val.length > 0
             ? `${val.length} ${t("workspace_settings.settings.applications.categories")}`
             : t("workspace_settings.settings.applications.categories")}
-          <ChevronDown size={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
+          <ChevronDownIcon height={16} width={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
         </span>
       )}
       disableSearch

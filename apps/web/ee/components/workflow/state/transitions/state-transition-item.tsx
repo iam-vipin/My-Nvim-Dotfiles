@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, MoveRight, Trash2 } from "lucide-react";
+import { MoveRight, Trash2 } from "lucide-react";
 // plane imports
 import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ApproverIcon } from "@plane/propel/icons";
+import { ApproverIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Collapsible, AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -212,7 +212,7 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
                     }}
                     data-ph-element={WORKFLOW_TRACKER_ELEMENTS.DELETE_TRANSITION_BUTTON}
                   />
-                  <ChevronDown
+                  <ChevronDownIcon
                     strokeWidth={2}
                     className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
                       "rotate-180 text-custom-text-200": isOpen && areApproversAvailable,

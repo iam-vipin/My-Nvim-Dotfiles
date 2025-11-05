@@ -1,7 +1,7 @@
 import { useParams } from "next/navigation";
-import { CircleDot, CopyPlus, XCircle, ArrowRightToLine, ArrowRightFromLine } from "lucide-react";
+import { CircleDot, XCircle, ArrowRightToLine, ArrowRightFromLine } from "lucide-react";
 // Plane
-import { RelatedIcon } from "@plane/propel/icons";
+import { DuplicatePropertyIcon, RelatedIcon } from "@plane/propel/icons";
 import { ISSUE_RELATION_OPTIONS as CE_ISSUE_RELATION_OPTIONS } from "@/ce/components/relations";
 // components
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
@@ -23,7 +23,7 @@ export const ISSUE_RELATION_OPTIONS: { [key in TIssueRelationTypes]?: TRelationO
     key: "duplicate",
     i18n_label: "issue.relation.duplicate",
     className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <CopyPlus size={size} className="text-custom-text-200" />,
+    icon: (size) => <DuplicatePropertyIcon height={size} width={size} className="text-custom-text-200" />,
     placeholder: "None",
   },
   blocked_by: {

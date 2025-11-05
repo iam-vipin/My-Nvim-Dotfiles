@@ -48,8 +48,13 @@ class ExtendedComplexFilterBackend(ComplexFilterBackend):
                 if match:
                     property_id = match.group(1)
                     lookup = match.group(2)
-                    # Transform to backend format: combine property_id and value
-                    transformed[f"customproperty_value__{lookup}"] = f"{property_id};{value}"
+
+                    # Check if the value is separated by ','
+                    value = value.split(',') if isinstance(value, str) and ',' in value and lookup == "in" else value
+                    if isinstance(value, list) and len(value) > 1:
+                        transformed[f"customproperty_value__{lookup}"] = ','.join([f"{property_id};{v}" for v in value])
+                    else:
+                        transformed[f"customproperty_value__{lookup}"] = f"{property_id};{value}"
                 else:
                     # If format is invalid, keep the original key
                     transformed[key] = value

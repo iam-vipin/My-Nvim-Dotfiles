@@ -10,6 +10,14 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
+class ArtifactData(BaseModel):
+    """Single artifact in a batch execution."""
+
+    artifact_id: UUID4
+    is_edited: bool = Field(default=False, description="True if artifact was edited/modified, False for normal execution")
+    action_data: Optional[Dict[str, Any]] = Field(default=None, description="New artifact data (required only when is_edited=True)")
+
+
 # Pagination base classes (defined here to avoid circular imports)
 class PaginationRequest(BaseModel):
     """Request schema for cursor-based pagination."""
@@ -164,9 +172,11 @@ class ActionBatchExecutionRequest(BaseModel):
     workspace_id: UUID4
     chat_id: UUID4
     message_id: UUID4
-    action_data: Optional[Dict[str, Any]] = None
     execution_strategy: Optional[str] = "sequential"  # sequential, parallel (future)
     rollback_on_failure: Optional[bool] = False
+
+    # Artifact execution - unified approach
+    artifact_data: Optional[List[ArtifactData]] = Field(default=None, description="List of artifacts to execute (each declares its own edit status)")
 
 
 # Search schemas

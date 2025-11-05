@@ -43,6 +43,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
 )
+from plane.payment.flags.flag_decorator import get_all_workspace_feature_flags
 
 
 class OAuthApplicationEndpoint(BaseAPIView):
@@ -144,16 +145,28 @@ class OAuthApplicationEndpoint(BaseAPIView):
     def get(self, request, slug, app_slug=None):
         try:
             if not app_slug:
+                # get all enabled apps feature flags for the workspace and filter the applications
+                feature_flags = get_all_workspace_feature_flags(slug)
+                # Extract app slugs from enabled marketplace feature flags
+                enabled_apps_slugs = [
+                    flag.split("MARKETPLACE_APP_")[-1].lower().replace("_", "-")
+                    for flag, enabled in feature_flags.items()
+                    if enabled and flag.startswith("MARKETPLACE_APP_")
+                ]
+
                 # Get all applications that is either owned by workspace
                 # OR published
+                # or feature flag enabled
                 applications = (
                     Application.objects.filter(
                         Q(application_owners__workspace__slug=slug)
                         | Q(published_at__isnull=False)
+                        | Q(slug__in=enabled_apps_slugs)
                     )
                     .select_related("logo_asset")
                     .prefetch_related("attachments", "categories")
                 )
+
                 # Annotate with ownership information
                 applications = applications.annotate(
                     is_owned=Case(

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { memo } from "react";
-import { Users } from "lucide-react";
 // plane ui
+import { MembersPropertyIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 
 type TEmptyStateProps = {
@@ -47,7 +47,7 @@ export const EmptyState = memo<TEmptyStateProps>(
       return (
         <div className="text-center py-8 animate-in fade-in duration-500 transition-all ease-in-out">
           <div className="w-16 h-16 bg-custom-background-80 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Users className="w-8 h-8 text-custom-text-300" />
+            <MembersPropertyIcon className="w-8 h-8 text-custom-text-300" />
           </div>
           <h4 className="text-sm font-medium text-custom-text-200 mb-1">No one has access yet</h4>
           <p className="text-xs text-custom-text-400">Add people above to start collaborating on this page</p>

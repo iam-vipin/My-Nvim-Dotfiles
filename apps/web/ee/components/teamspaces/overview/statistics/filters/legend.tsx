@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
-// plane imports
 import type { EStatisticsLegend } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -35,7 +35,7 @@ export const StatisticsLegend: React.FC<TStatisticsFilterProps<"legend">> = obse
               {val && typeof val === "string"
                 ? TEAM_STATISTICS_LEGEND_MAP[val as EStatisticsLegend]
                 : TEAM_STATISTICS_LEGEND_MAP[value]}
-              <ChevronDown className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
+              <ChevronDownIcon className={cn(chevronClassName, isOpen ? "rotate-180" : "rotate-0")} />
             </span>
           )}
           disableSearch

@@ -2,10 +2,10 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import {
   WorkspaceWorklogHeaderRoot,
   WorklogsPaginatedTableRoot,
@@ -26,7 +26,7 @@ export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) 
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, worklogIdsByWorkspaceId, getWorkspaceWorklogs } = useWorkspaceWorklogs();
-  const { resolvedTheme } = useTheme();
+  const { t } = useTranslation();
 
   // derived values
   const workspaceWorklogIds = (workspaceId && worklogIdsByWorkspaceId(workspaceId)) || undefined;
@@ -36,7 +36,6 @@ export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) 
     workspaceWorklogIds && workspaceWorklogIds.length > 0
       ? EWorklogLoader.WORKSPACE_MUTATION_LOADER
       : EWorklogLoader.WORKSPACE_INIT_LOADER;
-  const resolvedEmptyStatePath = `/empty-state/worklogs/worklog-${resolvedTheme === "light" ? "light" : "dark"}.png`;
 
   // fetching workspace worklogs
   useSWR(workspaceSlug ? `WORKSPACE_WORKLOGS_${workspaceSlug}` : null, () =>
@@ -61,11 +60,12 @@ export const WorkspaceWorklogRoot: FC<TWorkspaceWorklogRoot> = observer((props) 
               {loader === EWorklogLoader.WORKSPACE_PAGINATION_LOADER ? (
                 <WorklogLoader loader={loader} />
               ) : (workspaceWorklogIds || []).length <= 0 ? (
-                <DetailedEmptyState
-                  title="See timesheets for any member in any project."
-                  description="When you log time via Tracked time in work item properties, you will see detailed timesheets here. Any member can log time in any work item in any project in your workspace."
-                  assetPath={resolvedEmptyStatePath}
-                  size="sm"
+                <EmptyStateCompact
+                  assetKey="worklog"
+                  title={t("settings_empty_state.worklogs.title")}
+                  description={t("settings_empty_state.worklogs.description")}
+                  align="start"
+                  rootClassName="py-20"
                 />
               ) : (
                 <WorklogsPaginatedTableRoot workspaceSlug={workspaceSlug} workspaceId={workspaceId} />

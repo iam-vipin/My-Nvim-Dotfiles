@@ -29,6 +29,7 @@ export type TInitiativeStateDropdownProps = {
   showTooltip?: boolean;
   placeholder?: string;
   readonly?: boolean;
+  size?: "xs" | "sm" | "md" | "lg";
 };
 
 export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observer((props) => {
@@ -40,6 +41,7 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
     className = "",
     placeholder = "Select state",
     readonly = false,
+    size = "sm",
   } = props;
 
   // plane hooks
@@ -56,7 +58,35 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
     ),
   }));
 
+  const sizeConfig = {
+    xs: {
+      button: "h-6 px-1.5 py-0.5 text-xs gap-1",
+      icon: "h-3 w-3",
+      dropdown: "w-40 text-xs",
+      optionPadding: "px-1 py-1",
+    },
+    sm: {
+      button: "h-7 px-2 py-1 text-xs gap-1",
+      icon: "h-4 w-4",
+      dropdown: "w-48 text-xs",
+      optionPadding: "px-1 py-1.5",
+    },
+    md: {
+      button: "h-8 px-2.5 py-1.5 text-sm gap-2",
+      icon: "h-4 w-4",
+      dropdown: "w-56 text-sm",
+      optionPadding: "px-2 py-2",
+    },
+    lg: {
+      button: "h-10 px-3 py-2 text-sm gap-2",
+      icon: "h-5 w-5",
+      dropdown: "w-64 text-sm",
+      optionPadding: "px-2 py-2.5",
+    },
+  };
+
   const selectedState = stateOptions.find((option) => option.value === value);
+  const currentSize = sizeConfig[size];
 
   const handleValueChange = (newValue: string | string[]) => {
     if (typeof newValue === "string") {
@@ -65,11 +95,12 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
   };
 
   return (
-    <div className={className}>
+    <div className={cn("contain-layout", className)}>
       <Combobox value={value} onValueChange={handleValueChange} disabled={disabled || readonly}>
         <Combobox.Button
           className={cn(
             "flex h-full w-full items-center justify-between gap-1 rounded border border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
+            currentSize.button,
             buttonClassName
           )}
           disabled={disabled || readonly}
@@ -90,7 +121,10 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
           searchPlaceholder={t("search")}
           emptyMessage={t("no_matching_results")}
           maxHeight="md"
-          className="w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className={cn(
+            "rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg",
+            currentSize.dropdown
+          )}
           inputClassName="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
           optionsContainerClassName="mt-2 space-y-1"
           positionerClassName="z-50"
@@ -99,10 +133,13 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
             <Combobox.Option
               key={option.value}
               value={option.value}
-              className="w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none hover:bg-custom-background-80 data-[selected]:text-custom-text-100 text-custom-text-200 "
+              className={cn(
+                "w-full truncate flex items-center justify-between gap-2 rounded cursor-pointer select-none hover:bg-custom-background-80 data-[selected]:text-custom-text-100 text-custom-text-200",
+                currentSize.optionPadding
+              )}
             >
               <span className="flex-grow truncate">{option.content}</span>
-              {option.value === value && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+              {option.value === value && <Check className={cn(currentSize.icon, "flex-shrink-0")} />}
             </Combobox.Option>
           ))}
         </Combobox.Options>

@@ -1,4 +1,5 @@
 import json
+import time
 from importlib.resources import read_text
 from typing import Any
 from typing import Dict
@@ -20,6 +21,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
 from pi.app.models.enums import MessageMetaStepType
+from pi.config import settings
 from pi.services.llm.error_handling import llm_error_handler
 from pi.services.llm.llms import get_sql_agent_llm
 from pi.services.schemas.chat import QueryFlowStore
@@ -88,6 +90,21 @@ Message = Union[SystemMessage, HumanMessage, AIMessage]
 table_selection_model = get_sql_agent_llm("table_selection")
 sql_generation_model = get_sql_agent_llm("sql_generation")
 
+
+# Log the default models being used
+def get_reasoning_effort(model_instance):
+    """Extract reasoning_effort from a model instance."""
+    if hasattr(model_instance, "_llm"):
+        # TrackedLLM case - check the underlying ChatOpenAI instance
+        underlying_llm = model_instance._llm
+        return getattr(underlying_llm, "reasoning_effort", "N/A")
+    else:
+        # Direct ChatOpenAI case
+        return getattr(model_instance, "reasoning_effort", "N/A")
+
+
+# Default models initialized (removed verbose logging)
+
 # Note: structured_table_selection_model is now created dynamically in _perform_table_selection_llm_call
 # to ensure proper token tracking context
 
@@ -97,26 +114,43 @@ related_table_groupings: dict[str, list[str]] = json.loads(read_text("pi.agents.
 
 
 # Helper function for table selection LLM call with error handling
-@llm_error_handler(fallback_message="TABLE_SELECTION_FAILURE", max_retries=2, temp_increment=0.1, log_context="[SQL_TABLE_SELECTION]")
+@llm_error_handler(
+    fallback_message="TABLE_SELECTION_FAILURE",
+    max_retries=2,
+    temp_increment=0.1,
+    log_context="[SQL_TABLE_SELECTION]",
+    timeout=settings.llm_config.SQL_TABLE_SELECTION_TIMEOUT,
+)
 async def _perform_table_selection_llm_call(
-    langchain_messages: List[Message], message_id: UUID, db: AsyncSession, llm_model: str | None = None
+    langchain_messages: List[Message], message_id: UUID, db: AsyncSession, llm_model: str | None = None, chat_id: str | None = None
 ) -> Any:
-    """Perform the actual LLM call for table selection with error handling."""
+    """Perform the actual LLM call for table selection with error handling.
+
+    Note: For GPT-5 table selection, automatically uses gpt-5-fast instead of gpt-5-standard
+    to prevent token limit issues with large schema context. SQL generation keeps original model.
+    """
     # Create structured model dynamically and set tracking context
     # Use the provided model or fall back to the global one
     if llm_model:
-        table_selection_model_instance = get_sql_agent_llm("table_selection", llm_model)
+        # For GPT-5 table selection, automatically reduce to fast variant to prevent token limits
+        # Table selection involves large schema context which can hit token limits with standard reasoning
+        effective_model = llm_model
+        if llm_model == "gpt-5-standard":
+            effective_model = "gpt-5-fast"
+            log.info("Table selection: Automatically using gpt-5-fast instead of gpt-5-standard to prevent token limits")
+
+        table_selection_model_instance = get_sql_agent_llm("table_selection", effective_model)
     else:
         table_selection_model_instance = table_selection_model
 
     structured_table_selection_model = table_selection_model_instance.with_structured_output(TableSelectionResponse, include_raw=True)  # type: ignore[arg-type]
-    structured_table_selection_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_TABLE_SELECTION)  # type: ignore[attr-defined]
+    structured_table_selection_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_TABLE_SELECTION, chat_id=chat_id)  # type: ignore[attr-defined]
     return await structured_table_selection_model.ainvoke(langchain_messages)
 
 
 # Function to select relevant tables for SQL query generation
 async def select_relevant_tables(
-    messages: List[Message], focus_id: str, db: AsyncSession, message_id: UUID, llm_model: str | None = None
+    messages: List[Message], focus_id: str, db: AsyncSession, message_id: UUID, llm_model: str | None = None, chat_id: str | None = None
 ) -> List[Dict[str, Any]]:
     """Select tables relevant to the user query, ensuring focus_id column is included.
 
@@ -142,11 +176,35 @@ async def select_relevant_tables(
             langchain_messages.append(msg)
 
     # Use error handler for table selection LLM call
-    response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model)
+    response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model=llm_model, chat_id=chat_id)
 
     # Handle failure case
     if response == "TABLE_SELECTION_FAILURE":
         log.error("Table selection failed after all retries")
+        # If using GPT-5 models, try fallback with GPT-4.1
+        if llm_model in ["gpt-5-standard", "gpt-5-fast"]:
+            log.info("Attempting table selection fallback with GPT-4.1 due to GPT-5 token limits")
+            try:
+                fallback_response = await _perform_table_selection_llm_call(langchain_messages, message_id, db, llm_model="gpt-4.1", chat_id=chat_id)
+                if fallback_response != "TABLE_SELECTION_FAILURE":
+                    log.info("Table selection fallback successful")
+                    # Use the same robust response handling as main flow
+                    parsed_response = fallback_response.get("parsed") if isinstance(fallback_response, dict) else fallback_response
+                    fallback_dict: Dict[str, Any]
+
+                    if isinstance(parsed_response, BaseModel):
+                        # Convert Pydantic model to a plain dictionary.
+                        fallback_dict = parsed_response.model_dump()
+                    elif isinstance(parsed_response, dict):
+                        # Already a dictionary – cast for clarity.
+                        fallback_dict = cast(Dict[str, Any], parsed_response)
+                    else:
+                        # Fallback to an empty dictionary for unexpected response types including None.
+                        fallback_dict = {}
+
+                    return [fallback_dict]
+            except Exception as e:
+                log.error(f"Table selection fallback also failed: {e}")
         return [{"relevant_tables": []}]
 
     # Get the parsed structured response for the actual data
@@ -169,7 +227,7 @@ async def select_relevant_tables(
 # Helper function for SQL generation LLM call with error handling
 @llm_error_handler(fallback_message="SQL_GENERATION_FAILURE", max_retries=2, temp_increment=0.1, log_context="[SQL_GENERATION]")
 async def _perform_sql_generation_llm_call(
-    langchain_messages: List[Message], message_id: UUID, db: AsyncSession, llm_model: str | None = None
+    langchain_messages: List[Message], message_id: UUID, db: AsyncSession, llm_model: str | None = None, chat_id: str | None = None
 ) -> Any:
     """Perform the actual LLM call for SQL generation with error handling."""
     # Derive a fresh per-call instance to avoid shared-instance tracking context overlap
@@ -177,13 +235,18 @@ async def _perform_sql_generation_llm_call(
         per_call_sql_model = get_sql_agent_llm("sql_generation", llm_model)
     else:
         per_call_sql_model = sql_generation_model
-    per_call_sql_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_GENERATION)  # type: ignore[attr-defined]
+    per_call_sql_model.set_tracking_context(message_id, db, MessageMetaStepType.SQL_GENERATION, chat_id=chat_id)  # type: ignore[attr-defined]
     return await per_call_sql_model.ainvoke(langchain_messages)
 
 
 # Function to generate SQL query using LangChain
 async def sql_generation(
-    messages: List[Message], modified_sql_generator: str, db: AsyncSession, message_id: UUID, llm_model: str | None = None
+    messages: List[Message],
+    modified_sql_generator: str,
+    db: AsyncSession,
+    message_id: UUID,
+    llm_model: str | None = None,
+    chat_id: str | None = None,
 ) -> str:
     """Generate SQL query based on user request and database schema.
 
@@ -192,9 +255,13 @@ async def sql_generation(
         modified_sql_generator: Customized SQL generation prompt with schema details
         db: Database session for token tracking
         message_id: Message ID for tracking
+        llm_model: Model to use for SQL generation
 
     Returns:
         Generated SQL query as string
+
+    Note: For GPT-5, table selection uses gpt-5-fast to prevent token limits,
+    but SQL generation uses the original model for maximum quality.
     """
     # Prepare messages for the LLM
     langchain_messages: List[Message] = [SystemMessage(content=modified_sql_generator)]
@@ -203,7 +270,7 @@ async def sql_generation(
             langchain_messages.append(msg)
 
     # Use error handler for SQL generation LLM call
-    response = await _perform_sql_generation_llm_call(langchain_messages, message_id, db, llm_model)
+    response = await _perform_sql_generation_llm_call(langchain_messages, message_id, db, llm_model=llm_model, chat_id=chat_id)
 
     # Handle failure case
     if response == "SQL_GENERATION_FAILURE":
@@ -249,11 +316,15 @@ async def text2sql(
         # Create user message for both preset and regular flows
         user_message = _create_message_with_attachments(query, attachment_blocks)
 
+        # Log the incoming user query
+        log.info(f"ChatID: {chat_id} - User Query: {query}")
+
         # Step One: Table Selection
         relevant_tables: List[str]
         if preset_tables:
             # Use preset tables, skip LLM call
             relevant_tables = preset_tables.copy()
+            log.info(f"ChatID: {chat_id} - Using Preset Tables: {relevant_tables}")
             query_flow_store["tool_response"] += f"Text2SSQL: Using Preset Tables: {relevant_tables}\n"
             log.info(f"ChatID: {chat_id} - Using preset tables: {relevant_tables}")
         else:
@@ -269,14 +340,24 @@ async def text2sql(
                 log.info(f"ChatID: {chat_id} - Relevant tables from cache: {relevant_tables}")
                 selection_res.append({"relevant_tables": relevant_tables})
             else:
+                table_selection_start = time.time()
+                log.info(f"ChatID: {chat_id} - Starting table selection LLM call")
                 selection_res = await select_relevant_tables(
-                    messages, focus_id=focus_id, db=db, message_id=message_id, llm_model=query_flow_store.get("llm")
+                    messages,
+                    focus_id=focus_id,
+                    db=db,
+                    message_id=message_id,
+                    llm_model=query_flow_store.get("llm"),
+                    chat_id=chat_id,
                 )
+                table_selection_elapsed = time.time() - table_selection_start
+                log.info(f"ChatID: {chat_id} - Table selection completed in {table_selection_elapsed:.2f}s")
 
             if isinstance(selection_res, list) and selection_res and isinstance(selection_res[0], dict) and "relevant_tables" in selection_res[0]:
                 for idx, res in enumerate(selection_res):
                     iteration_relevant_tables = res["relevant_tables"]  # Access as dictionary key
                     # log_relevant_tables_info(chat_id or "", iteration_relevant_tables, idx)
+                    log.info(f"ChatID: {chat_id} - Selected Tables {idx}: {iteration_relevant_tables}")
                     query_flow_store["tool_response"] += f"Text2SSQL: Relevant Tables {idx}: {iteration_relevant_tables}\n"
                     relevant_tables.extend(iteration_relevant_tables)
             else:
@@ -306,6 +387,20 @@ async def text2sql(
                     "entity_urls": None,
                 },
             )
+
+        # 🧪 TESTING HOOK: Uncomment the lines below to simulate SQL failure and test hallucination fix
+        # To test: Uncomment, restart server, ask any SQL query, see the user response
+        # Expected: User sees error message directly, NOT a hallucinated answer
+        # if True:  # Set to True to force error
+        #     log.warning(f"ChatID: {chat_id} - 🧪 TEST MODE: Forcing SQL error to test hallucination fix")
+        #     return (
+        #         intermediate_results,
+        #         {
+        #             "sql_query": "TEST ERROR",
+        #             "results": "Failed to retrieve data from the DB due to an error. Please try again later.",
+        #             "entity_urls": None,
+        #         },
+        #     )
 
         # Verifying relevant tables for known hallucinations
         for table in relevant_tables:
@@ -417,6 +512,7 @@ async def text2sql(
         if preset_sql_query:
             # Use preset SQL query, skip LLM call
             generated_query = preset_sql_query.strip()
+            log.info(f"ChatID: {chat_id} - Using Preset SQL Query: {generated_query}")
             query_flow_store["tool_response"] += f"Text2SSQL: Using Preset SQL: {generated_query}\n"
             # log.info(f"ChatID: {chat_id} - Using preset SQL query")
 
@@ -455,15 +551,21 @@ async def text2sql(
 
                 sql_history: List[Message] = [sql_query_message]
 
+                sql_generation_start = time.time()
+                log.info(f"ChatID: {chat_id} - Starting SQL generation LLM call")
                 sql_query = await sql_generation(
                     messages=sql_history,
                     modified_sql_generator=enhanced_sql_prompt,
                     db=db,
                     message_id=message_id,
                     llm_model=query_flow_store.get("llm"),
+                    chat_id=chat_id,
                 )  # noqa: E501
+                sql_generation_elapsed = time.time() - sql_generation_start
+                log.info(f"ChatID: {chat_id} - SQL generation completed in {sql_generation_elapsed:.2f}s")
                 generated_query = sql_query
                 # log_generated_sql_info(chat_id or "", generated_query or "")
+                log.info(f"ChatID: {chat_id} - Generated SQL Query: {generated_query}")
 
                 # Store SQL generation in our intermediate results
                 intermediate_results["generated_sql"] = generated_query
@@ -574,10 +676,18 @@ async def text2sql(
                 query_flow_store["tool_response"] += f"Text2SSQL: Executing with parameters: {param_values}\n"
 
                 # Execute with parameters using the modified execute_sql_query function
+                sql_execution_start = time.time()
+                log.info(f"ChatID: {chat_id} - Starting SQL execution")
                 query_execution_result = await execute_sql_query(final_query, tuple(param_values))
+                sql_execution_elapsed = time.time() - sql_execution_start
+                log.info(f"ChatID: {chat_id} - SQL execution completed in {sql_execution_elapsed:.2f}s")
             else:
                 # Regular execution without parameters
+                sql_execution_start = time.time()
+                log.info(f"ChatID: {chat_id} - Starting SQL execution")
                 query_execution_result = await execute_sql_query(final_query)
+                sql_execution_elapsed = time.time() - sql_execution_start
+                log.info(f"ChatID: {chat_id} - SQL execution completed in {sql_execution_elapsed:.2f}s")
         except Exception as e:
             intermediate_results["sql_execution_error"] = e
             log.error(f"Error executing SQL query for chat ID {chat_id}: {e} \n Generated SQL query that resulted in the error:\n {final_query}\n")

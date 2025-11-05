@@ -3,9 +3,10 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Loader, X } from "lucide-react";
+import { Loader } from "lucide-react";
 // plane imports
 import { PROJECT_STATE_TRACKER_ELEMENTS, PROJECT_STATE_TRACKER_EVENTS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { AlertModalCore } from "@plane/ui";
@@ -112,7 +113,7 @@ export const ProjectStateDelete: FC<TProjectStateDelete> = observer((props) => {
           disabled={!isDeleteDisabled}
           className="focus:outline-none"
         >
-          {isDelete ? <Loader className="w-3.5 h-3.5 text-custom-text-200" /> : <X className="w-3.5 h-3.5" />}
+          {isDelete ? <Loader className="w-3.5 h-3.5 text-custom-text-200" /> : <CloseIcon className="w-3.5 h-3.5" />}
         </Tooltip>
       </button>
     </>

@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -65,7 +66,7 @@ export const DashboardsListSearch: React.FC<Props> = observer((props) => {
               setIsSearchOpen(false);
             }}
           >
-            <X className="size-3" />
+            <CloseIcon className="size-3" />
           </button>
         )}
       </div>

@@ -4,14 +4,12 @@ import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { getButtonStyling } from "@plane/propel/button";
-import { LayersIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TIssue, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
-import { cn } from "@plane/utils";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
-import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets/sub-issues";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -19,7 +17,6 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports
-import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -74,6 +71,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const {
     initiative: { fetchInitiativeAnalytics },
   } = useInitiatives();
+  const { t } = useTranslation();
 
   // helpers
   const subIssueOperations = useSubIssueOperations(EIssueServiceType.EPICS);
@@ -165,22 +163,11 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
 
   if (showEmptyState) {
     return (
-      <SectionEmptyState
-        heading="No work items yet"
-        subHeading="Start adding work items to manage and track the progress of the epic."
-        icon={<LayersIcon className="size-4" />}
-        actionElement={
-          <SubIssuesActionButton
-            issueId={epicId}
-            issueServiceType={EIssueServiceType.EPICS}
-            disabled={disabled}
-            customButton={
-              <span className={cn(getButtonStyling("accent-primary", "sm"), "font-medium px-2 py-1")}>
-                Add work items
-              </span>
-            }
-          />
-        }
+      <EmptyStateCompact
+        assetKey="work-item"
+        title={t("project_empty_state.epic_work_items.title")}
+        description={t("project_empty_state.epic_work_items.description")}
+        rootClassName="py-20"
       />
     );
   }

@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { UserCircle2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
+import { UserCirclePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
 import type { EFileAssetType } from "@plane/types";
@@ -129,7 +129,7 @@ export const AppImageUploadModal: React.FC<Props> = observer((props) => {
                     />
                   ) : (
                     <div className="text-center">
-                      <UserCircle2 className="mx-auto h-16 w-16 text-custom-text-200" />
+                      <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-custom-text-200" />
                       <p className="text-sm text-custom-text-200">
                         {isDragActive ? "Drop image here" : "Drag & drop or click to upload"}
                       </p>

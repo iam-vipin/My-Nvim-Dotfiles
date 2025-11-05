@@ -2,11 +2,11 @@
 
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+// plane imports
+import { BoardLayoutIcon, CalendarLayoutIcon, ChevronDownIcon, ListLayoutIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -17,9 +17,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
-  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
-  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
+  { key: "list", titleTranslationKey: "issue.layouts.list", icon: ListLayoutIcon },
+  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: BoardLayoutIcon },
+  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
 export const ProjectEpicMobileHeader = () => {
@@ -72,7 +72,7 @@ export const ProjectEpicMobileHeader = () => {
           customButton={
             <div className="flex flex-start text-sm text-custom-text-200">
               {t("common.layout")}
-              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+              <ChevronDownIcon className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
             </div>
           }
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -98,7 +98,7 @@ export const ProjectEpicMobileHeader = () => {
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 {t("common.display")}
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >

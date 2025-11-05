@@ -33,18 +33,20 @@ class ProjectModuleExportEndpoint(BaseAPIView):
 
         # Get the filters
         filters = request.data.get("filters", {})
-        rich_filters = request.data.get("rich_filters", None)
+        rich_filters = request.data.get("rich_filters", {})
 
         # Add the module filter to module id
-        filters["module"] = module_id
+        filters["module"] = str(module_id)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
-
+        
+        
+        
         # Create the exporter
         exporter = ExporterHistory.objects.create(
             workspace=workspace,
-            project=[project_id],
+            project=[str(project_id)],
             initiated_by=request.user,
             provider=provider,
             type="module_exports",
@@ -56,7 +58,7 @@ class ProjectModuleExportEndpoint(BaseAPIView):
         issue_export_task.delay(
             provider=exporter.provider,
             workspace_id=workspace.id,
-            project_ids=[project_id],
+            project_ids=[str(project_id)],
             token_id=exporter.token,
             multiple=False,
             slug=slug,

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
-from plane.db.models import ExporterHistory, Project, Workspace
+from plane.db.models import ExporterHistory, Project, Workspace, WorkspaceMember
 from plane.app.views.base import BaseAPIView
 
 
@@ -66,9 +66,19 @@ class ExportIssuesEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_exports").select_related(
-            "workspace", "initiated_by"
+        # Get the workspace role for the current user
+        is_member = WorkspaceMember.objects.filter(
+            workspace__slug=slug, member=request.user, is_active=True, role=ROLE.MEMBER.value
+        ).exists()
+
+        exporter_history = (
+            ExporterHistory.objects.filter(workspace__slug=slug)
+            .exclude(type="issue_worklogs")
+            .select_related("workspace", "initiated_by")
         )
+
+        if is_member:
+            exporter_history = exporter_history.filter(initiated_by=request.user)
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(

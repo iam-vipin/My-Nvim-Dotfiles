@@ -32,6 +32,7 @@ export const SlackIntegrationRoot = observer(() => {
     disconnectApp,
     connectUser,
     disconnectUser,
+    setUserAlertsConfig,
   } = useSlackIntegration();
   const { t } = useTranslation();
   // derived values
@@ -92,6 +93,7 @@ export const SlackIntegrationRoot = observer(() => {
           },
         });
         if (response) window.open(response, "_self");
+        await setUserAlertsConfig({ isEnabled: true });
       }
     } catch (error) {
       captureError({

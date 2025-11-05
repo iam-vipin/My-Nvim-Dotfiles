@@ -252,7 +252,17 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
-    return false;
+    // Shared access users cannot move pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner || this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const { workspaceSlug } = this.rootStore.router;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+
+    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**

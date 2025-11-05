@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Triangle } from "lucide-react";
 // hooks
+import { EstimatePropertyIcon } from "@plane/propel/icons";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import {
   IssueActivityBlockComponent,
@@ -25,7 +25,7 @@ export const IssueEstimateTimeActivity: FC<TIssueEstimateTimeActivity> = observe
 
   return (
     <IssueActivityBlockComponent
-      icon={<Triangle size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

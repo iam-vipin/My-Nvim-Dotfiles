@@ -1,18 +1,20 @@
 "use client";
 import { observer } from "mobx-react";
-import { CalendarDays } from "lucide-react";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
-import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
-import { Avatar } from "@plane/ui";
-import { getDate, getFileURL } from "@plane/utils";
+import { useTranslation } from "@plane/i18n";
+import type { DateRange } from "@plane/propel/calendar";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // core components
-import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
-// hooks
-import { useMember } from "@/hooks/store/use-member";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // plane Web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/plane-web/types/initiative";
+// ee components
+import { EpicsDropdown } from "../../dropdowns/epics";
 // local components
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
 import { PropertyBlockWrapper } from "./property-block-wrapper";
@@ -26,20 +28,24 @@ type Props = {
 
 export const InitiativesBlockProperties = observer((props: Props) => {
   const { initiative, isSidebarCollapsed, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
-  const { getUserDetails } = useMember();
   const {
-    initiative: { updateInitiative, getInitiativesLabels, createInitiativeLabel },
+    initiative: { updateInitiative, getInitiativesLabels, createInitiativeLabel, fetchInitiativeAnalytics },
   } = useInitiatives();
 
   // derived values
-  const lead = getUserDetails(initiative.lead ?? "");
-  const startDate = getDate(initiative.start_date);
-  const endDate = getDate(initiative.end_date);
   const initiativeLabels = getInitiativesLabels(workspaceSlug);
 
   const handleLabelChange = (labelIds: string[]) => {
     updateInitiative?.(workspaceSlug, initiative.id, { label_ids: labelIds });
+  };
+
+  const handleLeadChange = (leadId: string | null) => {
+    if (updateInitiative) {
+      updateInitiative(workspaceSlug, initiative.id, { lead: leadId });
+    }
   };
 
   const createLabel = async (labelName: string) => {
@@ -47,52 +53,120 @@ export const InitiativesBlockProperties = observer((props: Props) => {
     return createdLabel;
   };
 
+  const handleProjectChange = async (projectIds: string[]) => {
+    try {
+      await updateInitiative(workspaceSlug, initiative.id, { project_ids: projectIds });
+      fetchInitiativeAnalytics(workspaceSlug, initiative.id);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("initiatives.toast.project_update_success"),
+      });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("initiatives.toast.project_update_error"),
+      });
+    }
+  };
+
+  const handleEpicChange = async (epicIds: string[]) => {
+    try {
+      await updateInitiative(workspaceSlug, initiative.id, { epic_ids: epicIds });
+      fetchInitiativeAnalytics(workspaceSlug, initiative.id);
+      setToast({
+        title: t("toast.success"),
+        type: TOAST_TYPE.SUCCESS,
+        message: t("initiatives.toast.epic_update_success", { count: epicIds.length }),
+      });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("initiatives.toast.epic_update_error"),
+      });
+    }
+  };
+
+  const handleDateChange = (range: DateRange | undefined) => {
+    updateInitiative?.(workspaceSlug, initiative.id, {
+      start_date: range?.from ? renderFormattedPayloadDate(range.from) : null,
+      end_date: range?.to ? renderFormattedPayloadDate(range.to) : null,
+    });
+  };
+
   return (
     <div
       className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+      // Prevent click events from bubbling to parent initiative block.
+      // This is necessary to avoid triggering parent click handlers (e.g., for closing or selecting the block)
+      onClick={(e) => e.stopPropagation()}
     >
       {/* dates */}
-      {startDate && endDate && (
-        <PropertyBlockWrapper>
-          <CalendarDays className="h-3 w-3 flex-shrink-0" />
-          <MergedDateDisplay startDate={initiative.start_date} endDate={initiative.end_date} className="flex-grow" />
-        </PropertyBlockWrapper>
-      )}
+      <PropertyBlockWrapper>
+        <DateRangeDropdown
+          value={{
+            from: getDate(initiative.start_date) || undefined,
+            to: getDate(initiative.end_date) || undefined,
+          }}
+          onSelect={handleDateChange}
+          hideIcon={{
+            from: false,
+          }}
+          isClearable
+          mergeDates
+          buttonVariant={initiative.start_date || initiative.end_date ? "border-with-text" : "border-without-text"}
+          showTooltip
+          renderPlaceholder={false}
+          renderInPortal
+        />
+      </PropertyBlockWrapper>
 
-      {/*  lead */}
-      {lead && (
-        <PropertyBlockWrapper>
-          <Avatar
-            key={lead.id}
-            name={lead.display_name}
-            src={getFileURL(lead.avatar_url)}
-            size={16}
-            className="text-[9px]"
-          />
-          <div>{lead.first_name}</div>
-        </PropertyBlockWrapper>
-      )}
       {/* projects */}
-      {initiative.project_ids && initiative.project_ids.length > 0 && (
-        <PropertyBlockWrapper>
-          <ProjectIcon className="h-4 w-4" />
-          <span className="flex-grow truncate max-w-40">{initiative.project_ids.length}</span>
-        </PropertyBlockWrapper>
-      )}
+      <PropertyBlockWrapper>
+        <ProjectDropdown
+          buttonContainerClassName="truncate max-w-40"
+          value={initiative.project_ids ?? []}
+          onChange={handleProjectChange}
+          multiple
+          buttonVariant="border-with-text"
+          showTooltip
+        />
+      </PropertyBlockWrapper>
       {/* epics */}
-      {initiative.epic_ids && initiative.epic_ids.length > 0 && (
-        <PropertyBlockWrapper>
-          <EpicIcon className="h-4 w-4" />
-          <span className="flex-grow truncate max-w-40">{initiative.epic_ids.length}</span>
-        </PropertyBlockWrapper>
-      )}
+      <PropertyBlockWrapper>
+        <EpicsDropdown
+          buttonContainerClassName="truncate max-w-40"
+          value={initiative.epic_ids ?? []}
+          onChange={handleEpicChange}
+          searchParams={{}}
+          multiple
+          buttonVariant="border-with-text"
+          showTooltip
+        />
+      </PropertyBlockWrapper>
+      {/*  lead */}
+      <PropertyBlockWrapper>
+        <MemberDropdown
+          value={initiative.lead ?? null}
+          onChange={handleLeadChange}
+          multiple={false}
+          buttonVariant="border-with-text"
+          placeholder="Lead"
+          showUserDetails
+          optionsClassName="z-10"
+        />
+      </PropertyBlockWrapper>
       {/* state */}
       {initiative.state && (
         <PropertyBlockWrapper>
           <InitiativeStateDropdown
             value={initiative.state}
             placeholder="State"
-            buttonClassName="h-full"
+            size="xs"
             onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
           />
         </PropertyBlockWrapper>
@@ -105,6 +179,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
           onChange={handleLabelChange}
           onAddLabel={createLabel}
           placeholder=""
+          size="xs"
         />
       </PropertyBlockWrapper>
     </div>

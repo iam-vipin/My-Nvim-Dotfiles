@@ -4,13 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Loader, Search } from "lucide-react";
+import { Check, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
@@ -206,7 +207,7 @@ export const InitiativeLabelPropertyDropdown = (props: IInitiativeLabelPropertyD
         disabled={disabled}
       >
         {label}
-        {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
       </button>
     ),
     [buttonClassName, disabled, fullWidth, handleOnClick, hideDropdownArrow, label, maxRender, value.length]

@@ -139,6 +139,7 @@ from .app.job import ImportReportSerializer, ImportJobSerializer
 from .app.workspace.credential import WorkspaceCredentialSerializer
 from .app.workspace.connection import WorkspaceConnectionSerializer
 from .app.workspace.entity_connection import WorkspaceEntityConnectionSerializer
+from .app.cycle_schedule import AutomatedCycleSerializer
 
 # api
 from .api.job import ImportReportAPISerializer, ImportJobAPISerializer

@@ -19,7 +19,6 @@ from pi.celery_app import celery_app
 from pi.config import Settings
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.vectordb import VectorStore
-from pi.vectorizer.docs import process_repo_contents
 from pi.vectorizer.vectorize import _batched_predict
 
 log = logger.getChild(__name__)
@@ -80,6 +79,11 @@ class ChatSearchIndexResponse(BaseModel):
     failed_chats: int
     failed_messages: int
     duration_seconds: float
+
+
+class RemoveVectorDataRequest(BaseModel):
+    workspace_ids: list[str]
+    entities: list[str] | None = None  # ["issues", "pages"] - if None, removes from both
 
 
 @router.post("/vectorize/workspaces/", include_in_schema=False)
@@ -322,65 +326,121 @@ async def get_workspace_progress(
 @router.post("/vectorize/docs/", include_in_schema=False)
 async def trigger_docs_vectorization(
     body: VectorizeDocsRequest,
-    db: AsyncSession = Depends(get_async_session),
 ) -> JSONResponse:
     """
-    Trigger vectorization for documentation repositories.
-    Processes repository contents and feeds them to the docs index.
+    Queue background task to vectorize documentation repositories.
+
+    This operation can take several minutes for multiple repos with many files,
+    so it runs asynchronously via Celery. Use the returned task_id to check progress.
+
+    Args:
+        body: Request body containing optional list of repository names.
+              If None, uses default from settings.
+
+    Returns:
+        202 Accepted with task_id for status tracking
     """
-    settings = Settings()
-
     try:
-        # Determine which repositories to process
-        if body.repo_names:
-            repos = [repo.strip() for repo in body.repo_names if repo.strip()]
-        else:
-            repos = [repo.strip() for repo in settings.vector_db.DOCS_REPO_NAME.split(",") if repo.strip()]
+        # Queue Celery task for background processing
+        task = celery_app.send_task(
+            "pi.celery_app.vectorize_docs_task",
+            args=[body.repo_names],
+        )
 
-        if not repos:
-            return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "No repositories specified"})
-
-        log.info("Processing %d documentation repositories: %s", len(repos), repos)
-
-        total_ok = 0
-        total_failed = 0
-        results = []
-
-        async with VectorStore() as vdb:
-            for i, repo in enumerate(repos, 1):
-                repo_result = {"repo": repo, "ok": 0, "failed": 0}
-
-                try:
-                    log.info("Repo %d/%d: %s", i, len(repos), repo)
-                    docs = process_repo_contents(repo)  # read repo files
-
-                    if docs:
-                        ok, failed_docs = await vdb.async_feed(settings.vector_db.DOCS_INDEX, docs)  # bulk-index docs
-                        repo_result["ok"] = ok
-                        repo_result["failed"] = len(failed_docs)
-                        total_ok += ok
-                        total_failed += len(failed_docs)
-                        log.info("Repo %s: %d ok, %d failed", repo, ok, len(failed_docs))
-                    else:
-                        log.warning("No documents found in repository: %s", repo)
-
-                except Exception as exc:
-                    log.error("Error processing repo %s: %s", repo, exc)
-                    repo_result["failed"] = 1  # Mark the entire repo as failed
-                    total_failed += 1
-
-                results.append(repo_result)
-
-        log.info("Docs vectorization complete — %d ok, %d failed", total_ok, total_failed)
+        log.info("Queued docs vectorization task %s for repos: %s", task.id, body.repo_names or "default")
 
         return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={"total_ok": total_ok, "total_failed": total_failed, "results": results, "message": f"Processed {len(repos)} repositories"},
+            status_code=status.HTTP_202_ACCEPTED,
+            content={
+                "task_id": task.id,
+                "status": "queued",
+                "message": "Docs vectorization task queued successfully",
+                "repo_names": body.repo_names,
+                "status_url": f"/api/v1/internal/vectorize/docs/{task.id}/",
+            },
         )
 
     except Exception as exc:
-        log.error("Error in docs vectorization: %s", exc)
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": f"Failed to vectorize docs: {str(exc)}"})
+        log.error("Failed to queue docs vectorization task: %s", exc, exc_info=True)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": f"Failed to queue task: {str(exc)}",
+                "error_type": type(exc).__name__,
+            },
+        )
+
+
+@router.get("/vectorize/docs/{task_id}/", include_in_schema=False)
+async def get_docs_vectorization_task_status(task_id: str) -> JSONResponse:
+    """
+    Get the status and progress of a docs vectorization task.
+
+    Args:
+        task_id: The Celery task ID returned from the trigger endpoint
+
+    Returns:
+        Task status with detailed progress information including:
+        - Overall progress percentage
+        - Current repository being processed
+        - Document-level progress within current repository
+        - Aggregate success/failure counts
+    """
+    try:
+        from celery.result import AsyncResult
+
+        task_result = AsyncResult(task_id, app=celery_app)
+
+        response = {
+            "task_id": task_id,
+            "state": task_result.state,
+        }
+
+        if task_result.state == "PENDING":
+            response.update({
+                "status": "pending",
+                "message": "Task is waiting to be processed",
+            })
+
+        elif task_result.state == "PROGRESS":
+            response.update({
+                "status": "running",
+                "progress": task_result.info,
+                "message": "Task is running",
+            })
+
+        elif task_result.state == "SUCCESS":
+            response.update({
+                "status": "completed",
+                "result": task_result.result,
+                "message": "Task completed successfully",
+            })
+
+        elif task_result.state == "FAILURE":
+            response.update({
+                "status": "failed",
+                "error": str(task_result.info),
+                "message": "Task failed with error",
+            })
+
+        else:
+            response.update({
+                "status": task_result.state.lower(),
+                "message": f"Task in state: {task_result.state}",
+                "info": task_result.info or None,
+            })
+
+        return JSONResponse(status_code=status.HTTP_200_OK, content=response)
+
+    except Exception as exc:
+        log.error("Failed to get task status for %s: %s", task_id, exc, exc_info=True)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": f"Failed to get task status: {str(exc)}",
+                "error_type": type(exc).__name__,
+            },
+        )
 
 
 @router.post("/vectorize/query/", include_in_schema=False)
@@ -462,6 +522,111 @@ async def get_chat_search_index_task_status(task_id: str) -> JSONResponse:
             response = {"task_id": task_id, "status": "failed", "error": str(task_result.info), "message": "Task failed"}
         else:
             response = {"task_id": task_id, "status": task_result.state.lower(), "message": f"Task state: {task_result.state}"}
+
+        return JSONResponse(status_code=status.HTTP_200_OK, content=response)
+
+    except Exception as exc:
+        log.error("Failed to get task status for %s: %s", task_id, exc)
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": f"Failed to get task status: {str(exc)}"})
+
+
+@router.post("/vectorize/remove-data/", include_in_schema=False)
+async def remove_vector_data(
+    body: RemoveVectorDataRequest,
+) -> JSONResponse:
+    """
+    Queue background task to remove vector embeddings from specified indices.
+
+    This operation can take several minutes for large workspaces, so it runs
+    asynchronously via Celery. Use the returned task_id to check progress.
+
+    Args:
+        workspace_ids: List of workspace IDs to remove vector data for
+        entities: Optional list of entity types ["issues", "pages"]. If None, removes from both.
+
+    Returns:
+        202 Accepted with task_id for status tracking
+    """
+    if not body.workspace_ids:
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"detail": "No workspace IDs provided"})
+
+    # Validate entity types
+    valid_entities = ["issues", "pages"]
+    if body.entities:
+        for entity in body.entities:
+            if entity not in valid_entities:
+                return JSONResponse(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    content={"detail": f"Invalid entity type: {entity}. Valid types: {valid_entities}"},
+                )
+
+    try:
+        # Queue Celery task for background processing
+        task = celery_app.send_task(
+            "pi.celery_app.remove_vector_data_task",
+            args=[body.workspace_ids, body.entities],
+        )
+
+        log.info("Queued vector data removal task %s for %d workspaces", task.id, len(body.workspace_ids))
+
+        return JSONResponse(
+            status_code=status.HTTP_202_ACCEPTED,
+            content={
+                "task_id": task.id,
+                "status": "queued",
+                "message": "Vector data removal task started",
+                "workspace_ids": body.workspace_ids,
+                "entities": body.entities or ["issues", "pages"],
+            },
+        )
+
+    except Exception as exc:
+        log.error("Failed to queue vector data removal task: %s", exc)
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": f"Failed to queue task: {str(exc)}"})
+
+
+@router.get("/vectorize/remove-data/{task_id}/", include_in_schema=False)
+async def get_remove_data_task_status(task_id: str) -> JSONResponse:
+    """
+    Get the status and progress of a vector data removal task.
+
+    Returns:
+        Task status with progress information
+    """
+    try:
+        from celery.result import AsyncResult
+
+        task_result = AsyncResult(task_id, app=celery_app)
+
+        if task_result.state == "PENDING":
+            response = {"task_id": task_id, "status": "pending", "message": "Task is waiting to be processed"}
+        elif task_result.state == "PROGRESS":
+            response = {
+                "task_id": task_id,
+                "status": "running",
+                "progress": task_result.info,
+                "message": "Task is running",
+            }
+        elif task_result.state == "SUCCESS":
+            response = {
+                "task_id": task_id,
+                "status": "completed",
+                "result": task_result.info,
+                "message": "Task completed successfully",
+            }
+        elif task_result.state == "FAILURE":
+            response = {
+                "task_id": task_id,
+                "status": "failed",
+                "error": str(task_result.info),
+                "message": "Task failed",
+            }
+        else:
+            response = {
+                "task_id": task_id,
+                "status": task_result.state.lower(),
+                "message": f"Task state: {task_result.state}",
+            }
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=response)
 

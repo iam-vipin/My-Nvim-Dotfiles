@@ -58,7 +58,7 @@ async def browser_initiate_oauth(
         workspace_id=workspace_id,
         workspace_slug=workspace_slug,
     )
-    await oauth_service.save_oauth_state(db, state, user_id, workspace_id)
+    await oauth_service.save_oauth_state(db, state, user_id, workspace_id, workspace_slug)
 
     # just redirect the browser
     return RedirectResponse(url=auth_url, status_code=302)
@@ -104,7 +104,7 @@ async def public_initiate_oauth(
     )
 
     # Save state for verification
-    await oauth_service.save_oauth_state(db, state, user_id, workspace_id)
+    await oauth_service.save_oauth_state(db, state, user_id, workspace_id, workspace_slug)
 
     log.debug(f"Generated new OAuth state for user {user_id}")
 
@@ -144,23 +144,20 @@ async def oauth_callback(
             log.info("Processing OAuth callback without state parameter")
 
         # Exchange code for tokens
-        token_data = await oauth_service.exchange_code_for_tokens(code=code, app_installation_id=app_installation_id)
+        # token_data = await oauth_service.exchange_code_for_tokens(code=code, app_installation_id=app_installation_id)
+        token_data = await oauth_service.exchange_code_for_tokens(code=code)
 
         # Get app installation details to fetch workspace info
         installation_details = None
         workspace_id = oauth_state.workspace_id if oauth_state else None
-        workspace_slug = "unknown"
+        workspace_slug = oauth_state.workspace_slug if oauth_state and oauth_state.workspace_slug else "unknown"
 
-        if app_installation_id:
-            installation_details = await oauth_service.get_app_installation_details(
-                access_token=token_data["access_token"], app_installation_id=app_installation_id
-            )
+        installation_details = await oauth_service.get_app_installation_details(access_token=token_data["access_token"])
 
-            if installation_details:
-                workspace_info = installation_details["workspace_detail"]
-                workspace_id = UUID(workspace_info["id"])
-                workspace_slug = workspace_info["slug"]
-                workspace_info["name"]
+        if installation_details:
+            workspace_info = installation_details["workspace_detail"]
+            workspace_id = UUID(workspace_info["id"])
+            workspace_slug = workspace_info["slug"]
 
         # Ensure we have a valid workspace_id
         if not workspace_id:
@@ -470,6 +467,7 @@ async def clean_oauth_init(
             state,
             user_id,
             workspace_id,
+            workspace_slug,
             chat_id=chat_id,
             message_token=message_token,
             is_project_chat=is_project_chat,

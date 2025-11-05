@@ -3,6 +3,8 @@ import uuid
 from django.contrib.auth.hashers import make_password
 from django.db import models, transaction
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+import re
 
 from oauth2_provider.models import (
     AbstractAccessToken,
@@ -28,6 +30,11 @@ from plane.db.models.user import BotTypeEnum
 from plane.utils.html_processor import strip_tags
 
 
+def custom_app_slug_validator(value):
+    if not re.match(r'^[a-z0-9-]+$', value):
+        raise ValidationError("Slug must contain only lowercase letters, numbers and hyphens")
+    return value
+
 # oauth models
 class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     class Status(models.TextChoices):
@@ -51,7 +58,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         ARCHIVED = "archived", "Archived"
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
-    slug = models.SlugField(max_length=48, db_index=True, unique=True)
+    slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[custom_app_slug_validator])
     short_description = models.CharField(max_length=255)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)

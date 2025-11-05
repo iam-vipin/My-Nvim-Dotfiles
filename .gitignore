@@ -108,5 +108,6 @@ monitor.db
 
 .cursorrules
 .cursor
-claude.md
-agents.md
+CLAUDE.md
+AGENTS.md
+temp/

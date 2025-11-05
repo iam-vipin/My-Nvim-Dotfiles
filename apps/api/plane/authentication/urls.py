@@ -45,6 +45,10 @@ from .views import (
     SignInAuthSpaceEndpoint,
     SignUpAuthSpaceEndpoint,
     SignOutAuthSpaceEndpoint,
+    GiteaCallbackEndpoint,
+    GiteaOauthInitiateEndpoint,
+    GiteaCallbackSpaceEndpoint,
+    GiteaOauthInitiateSpaceEndpoint,
     # mobile web view authentication
     MobileEmailCheckEndpoint,
     MobileMagicGenerateEndpoint,
@@ -154,6 +158,19 @@ urlpatterns = [
     ),
     path("change-password/", ChangePasswordEndpoint.as_view(), name="forgot-password"),
     path("set-password/", SetUserPasswordEndpoint.as_view(), name="set-password"),
+    ## Gitea Oauth
+    path("gitea/", GiteaOauthInitiateEndpoint.as_view(), name="gitea-initiate"),
+    path("gitea/callback/", GiteaCallbackEndpoint.as_view(), name="gitea-callback"),
+    path(
+        "spaces/gitea/",
+        GiteaOauthInitiateSpaceEndpoint.as_view(),
+        name="space-gitea-initiate",
+    ),
+    path(
+        "spaces/gitea/callback/",
+        GiteaCallbackSpaceEndpoint.as_view(),
+        name="space-gitea-callback",
+    ),
     # OIDC
     path("oidc/", OIDCAuthInitiateEndpoint.as_view(), name="oidc"),
     path("oidc/callback/", OIDCallbackEndpoint.as_view(), name="oidc"),
@@ -195,9 +212,7 @@ urlpatterns = [
         MobileSessionTokenCheckEndpoint.as_view(),
         name="mobile-token-check",
     ),
-    path(
-        "mobile/sign-out/", MobileSignOutAuthEndpoint.as_view(), name="mobile-sign-out"
-    ),
+    path("mobile/sign-out/", MobileSignOutAuthEndpoint.as_view(), name="mobile-sign-out"),
     path(
         "mobile/session-token/",
         MobileSessionTokenEndpoint.as_view(),

@@ -155,7 +155,7 @@ def _sanitize_ml_content(text: str) -> str:
     Sanitize text content to prevent ML connector property interpolation conflicts.
 
     This specifically handles cases where documentation content contains OpenSearch API
-    examples that interfere with the ML connector's ${parameters.input} interpolation.
+    examples that interfere with the ML connector's ${parameters.texts} interpolation.
     """
     if not text:
         return text
@@ -169,13 +169,18 @@ def _sanitize_ml_content(text: str) -> str:
         flags=re.DOTALL | re.IGNORECASE,
     )
 
-    # Pattern 2: Remove standalone parameter blocks that could interfere
-    text = re.sub(r'\{\s*"parameters"\s*:\s*\{[^}]*"input"\s*:[^}]*\}\s*\}', "[Parameter example removed]", text, flags=re.DOTALL | re.IGNORECASE)
+    # Pattern 2: Remove standalone parameter blocks that could interfere (for both input and texts)
+    text = re.sub(
+        r'\{\s*"parameters"\s*:\s*\{[^}]*"(input|texts)"\s*:[^}]*\}\s*\}',
+        "[Parameter example removed]",
+        text,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
 
     # Pattern 3: Replace problematic interpolation patterns
     text = re.sub(r"\$\{[^}]*parameters[^}]*\}", "[interpolation pattern]", text)
 
-    # Pattern 4: Neutralize any remaining "input": [...] patterns in JSON-like structures
-    text = re.sub(r'"input"\s*:\s*\[[^\]]*\]', '"input_example": [...]', text, flags=re.IGNORECASE)
+    # Pattern 4: Neutralize any remaining "input": [...] or "texts": [...] patterns in JSON-like structures
+    text = re.sub(r'"(input|texts)"\s*:\s*\[[^\]]*\]', '"text_example": [...]', text, flags=re.IGNORECASE)
 
     return text

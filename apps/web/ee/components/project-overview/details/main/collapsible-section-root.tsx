@@ -15,6 +15,7 @@ import { ProjectAttachmentActionButton } from "./collaspible-section/attachment/
 import { ProjectLinkRoot } from "./collaspible-section/links";
 import { useLinks } from "./collaspible-section/links/use-links";
 import { ProjectActionButton } from "./collaspible-section/quick-action-button";
+import { ProjectMilestoneCollapsibleRoot } from "./milestones/collapsible-root";
 
 type Props = {
   workspaceSlug: string;
@@ -83,6 +84,8 @@ export const ProjectOverviewCollapsibleSectionRoot: FC<Props> = observer((props)
           onToggle={() => toggleOpenCollapsibleSection("attachments")}
         />
       )}
+
+      <ProjectMilestoneCollapsibleRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
     </>
   );
 });

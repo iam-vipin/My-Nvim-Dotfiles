@@ -1,6 +1,10 @@
 import { ListTodo, Mail, Zap } from "lucide-react";
 // plane imports
-import type { TProperties } from "@/ce/constants/project/settings/features";
+import { MilestoneIcon } from "@plane/propel/icons";
+import type {
+  TProperties,
+  TProjectOtherFeatureKeys as CE_TProjectOtherFeatureKeys,
+} from "@/ce/constants/project/settings/features";
 import {
   PROJECT_BASE_FEATURES_LIST as CE_PROJECT_BASE_FEATURES_LIST,
   PROJECT_OTHER_FEATURES_LIST as CE_PROJECT_OTHER_FEATURES_LIST,
@@ -8,6 +12,8 @@ import {
 } from "@/ce/constants/project/settings/features";
 
 export type TIntakeFeatureKeys = "in_app" | "email" | "form";
+
+type TProjectOtherFeatureKeys = CE_TProjectOtherFeatureKeys | "is_milestone_enabled";
 
 type TIntakeFeatureList = {
   [key in TIntakeFeatureKeys]: TProperties & {
@@ -58,14 +64,31 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
 
 export const PROJECT_BASE_FEATURES_LIST = {
   ...CE_PROJECT_BASE_FEATURES_LIST,
+  cycles: {
+    ...CE_PROJECT_BASE_FEATURES_LIST.cycles,
+    href: "/cycles",
+  },
 };
 
-export const PROJECT_OTHER_FEATURES_LIST = {
+type TOtherFeatureList = {
+  [key in TProjectOtherFeatureKeys]: TProperties;
+};
+
+export const PROJECT_OTHER_FEATURES_LIST: TOtherFeatureList = {
   ...CE_PROJECT_OTHER_FEATURES_LIST,
   is_time_tracking_enabled: {
     ...CE_PROJECT_OTHER_FEATURES_LIST.is_time_tracking_enabled,
     isEnabled: true,
     isPro: true,
+  },
+  is_milestone_enabled: {
+    key: "milestones",
+    property: "is_milestone_enabled",
+    title: "Milestones",
+    description: "Milestones provide a layer to align work items toward shared completion dates.",
+    icon: <MilestoneIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" variant="custom" />,
+    isPro: true,
+    isEnabled: true,
   },
 };
 

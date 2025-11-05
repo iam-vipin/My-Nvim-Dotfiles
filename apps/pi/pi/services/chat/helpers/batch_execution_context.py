@@ -44,6 +44,7 @@ class BatchExecutionContext:
         entity_info: Optional[Dict[str, Any]] = None,
         artifact_id: Optional[str] = None,
         sequence: Optional[int] = None,
+        artifact_type: Optional[str] = None,
     ) -> None:
         """Record the result of an executed action."""
         execution_record = {
@@ -52,8 +53,9 @@ class BatchExecutionContext:
             "tool_name": tool_name,
             "result": str(result),
             "entity_info": entity_info,
-            "artifact_id": artifact_id,  # NEW: Include artifact ID
-            "sequence": sequence,  # NEW: Include planned step order sequence
+            "artifact_id": artifact_id,
+            "sequence": sequence,
+            "artifact_type": artifact_type,
             "executed_at": datetime.datetime.utcnow().isoformat(),
             "success": True,
         }
@@ -68,7 +70,13 @@ class BatchExecutionContext:
         self.current_step += 1
 
     def add_execution_failure(
-        self, step_id: str, tool_name: str, error: str, artifact_id: Optional[str] = None, sequence: Optional[int] = None
+        self,
+        step_id: str,
+        tool_name: str,
+        error: str,
+        artifact_id: Optional[str] = None,
+        sequence: Optional[int] = None,
+        artifact_type: Optional[str] = None,
     ) -> None:
         """Record a failed action execution."""
         execution_record = {
@@ -76,8 +84,9 @@ class BatchExecutionContext:
             "step_id": step_id,
             "tool_name": tool_name,
             "error": error,
-            "artifact_id": artifact_id,  # NEW: Include artifact ID for failed actions
-            "sequence": sequence,  # NEW: Include planned step order sequence
+            "artifact_id": artifact_id,
+            "sequence": sequence,
+            "artifact_type": artifact_type,
             "executed_at": datetime.datetime.utcnow().isoformat(),
             "success": False,
         }

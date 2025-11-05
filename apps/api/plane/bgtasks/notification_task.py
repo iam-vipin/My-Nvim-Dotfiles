@@ -356,6 +356,8 @@ def notifications(
                         send_email = True
                     elif issue_activity.get("field") == "comment" and preference.comment:
                         send_email = True
+                    elif issue_activity.get("field") == "page":
+                        send_email = True
                     elif preference.property_change:
                         send_email = True
                     else:
@@ -418,6 +420,7 @@ def notifications(
                             },
                         )
                     )
+
                     # Create email notification
                     if send_email:
                         bulk_email_logs.append(
@@ -688,7 +691,12 @@ def notifications(
             )
             # Bulk create notifications
             notifications = Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+
             EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
+
+            # currently disabled the push notifications for epics in mobile.
+            if issue.type and issue.type.is_epic:
+                return
 
             """
             # Send Mobile Push Notifications for state, assignee, priority,

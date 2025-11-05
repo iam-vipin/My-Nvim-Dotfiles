@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
+import { Check, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { PriorityIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // constants
 // helpers
@@ -123,7 +123,7 @@ const BorderButton = (props: ButtonProps) => {
           ))}
         {!hideText && <span className="flex-grow truncate">{priorityDetails?.label ?? placeholder}</span>}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
@@ -203,7 +203,7 @@ const BackgroundButton = (props: ButtonProps) => {
           ))}
         {!hideText && <span className="flex-grow truncate">{priorityDetails?.label ?? placeholder}</span>}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
@@ -285,7 +285,7 @@ const TransparentButton = (props: ButtonProps) => {
           ))}
         {!hideText && <span className="flex-grow truncate">{priorityDetails?.label ?? placeholder}</span>}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>

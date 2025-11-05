@@ -1,8 +1,16 @@
 // types
 import type { FC } from "react";
+import { useParams } from "next/navigation";
+import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CustomerRequestIcon, CustomersIcon } from "@plane/propel/icons";
-import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
+import { CustomerRequestIcon, CustomersIcon, MilestoneIcon } from "@plane/propel/icons";
+import type {
+  IGroupByColumn,
+  IIssueDisplayProperties,
+  TGetColumns,
+  TIssueGroupByOptions,
+  TSpreadsheetColumn,
+} from "@plane/types";
 // components
 import type { TGetScopeMemberIdsResult } from "@/ce/components/issues/issue-layouts/utils";
 import {
@@ -17,6 +25,8 @@ import {
   SpreadsheetCustomerColumn,
   SpreadSheetCustomerRequestColumn,
 } from "@/plane-web/components/issues/issue-layouts/spreadsheet";
+import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns): TGetScopeMemberIdsResult => {
   // store values
@@ -63,4 +73,71 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   ...CE_SPREAD_SHEET_COLUMNS,
   customer_count: SpreadsheetCustomerColumn,
   customer_request_count: SpreadSheetCustomerRequestColumn,
+};
+
+export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
+  const { projectId, workspaceSlug } = store.router;
+  const { getProjectMilestoneIds, getMilestoneById, isMilestonesEnabled } = store.milestone;
+
+  if (!projectId || !workspaceSlug) return;
+
+  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
+
+  if (!isMilestonesFeatureEnabled) return;
+
+  const projectMilestoneIds = getProjectMilestoneIds(projectId);
+
+  if (!projectMilestoneIds) return;
+
+  const milestoneColumns: IGroupByColumn[] = [
+    {
+      id: "None",
+      name: "None",
+      icon: <MilestoneIcon className="w-4 h-4" variant={"default"} />,
+      payload: {},
+    },
+  ];
+
+  projectMilestoneIds.map((milestoneId) => {
+    const milestone = getMilestoneById(projectId.toString(), milestoneId);
+    if (!milestone) return;
+    milestoneColumns.push({
+      id: milestone.id,
+      name: milestone.title,
+      icon: <MilestoneIcon className="w-4 h-4" variant={getMilestoneVariant(milestone.progress_percentage)} />,
+      payload: { milestone_id: milestone.id },
+    });
+  });
+
+  return milestoneColumns;
+};
+
+export const useGroupByOptions = (
+  options: TIssueGroupByOptions[]
+): { key: TIssueGroupByOptions; titleTranslationKey: string }[] => {
+  // router
+  const { workspaceSlug, projectId } = useParams();
+  // store hooks
+  const { isMilestonesEnabled } = useMilestones();
+
+  //derived values
+  const groupByOptions = ISSUE_GROUP_BY_OPTIONS.filter((option) => options.includes(option.key));
+
+  if (!workspaceSlug || !projectId) return groupByOptions;
+
+  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug.toString(), projectId.toString());
+
+  const FEATURES_STATUS_MAP: Record<string, boolean> = {
+    milestone: isMilestonesFeatureEnabled,
+  };
+
+  // filter out options that are not enabled
+  const enabledGroupByOptions = groupByOptions.filter((option) => {
+    if (option.key === null) return true;
+    const isEnabled = FEATURES_STATUS_MAP[option.key];
+    if (isEnabled === undefined) return true;
+    return isEnabled;
+  });
+
+  return enabledGroupByOptions;
 };

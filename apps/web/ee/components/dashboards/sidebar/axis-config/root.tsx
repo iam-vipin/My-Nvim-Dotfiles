@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { ChevronRight } from "lucide-react";
 // plane imports
 import { CIRCULAR_WIDGET_CHART_TYPES, NUMBER_WIDGET_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import type { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
 import { EWidgetChartTypes } from "@plane/types";
 import { Collapsible } from "@plane/ui";
@@ -40,7 +40,7 @@ export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
           <div className="flex items-center gap-0.5 p-1 -ml-1 hover:bg-custom-background-80 rounded transition-colors">
             <h6 className="font-semibold text-custom-text-200">{t("dashboards.widget.common.widget_configuration")}</h6>
             <div className="flex-shrink-0 size-4 grid place-items-center">
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("size-2.5 transition-all", {
                   "rotate-90": isCollapsibleIcon,
                 })}

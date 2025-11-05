@@ -3,8 +3,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { PopoverMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -84,7 +84,7 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
         buttonClassName="outline-none focus:outline-none flex"
         button={
           <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto">
-            <ChevronDown size={16} className="my-auto" />
+            <ChevronDownIcon height={16} width={16} className="my-auto" />
           </div>
         }
         data={downloadFormatOptions}

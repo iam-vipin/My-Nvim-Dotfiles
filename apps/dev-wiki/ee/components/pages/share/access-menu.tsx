@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { ChevronDown, Trash2, Eye, Pencil, Check, MessageSquareText } from "lucide-react";
+import { Trash2, Eye, Pencil, Check, MessageSquareText } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 const ACCESS_OPTIONS = [
@@ -37,7 +38,7 @@ export const AccessMenu = memo<TAccessMenuProps>(
         customButton={
           <div className="flex items-center gap-1 px-2 py-1 text-xs text-custom-text-300 hover:bg-custom-background-90 rounded transition-colors whitespace-nowrap">
             can {accessLabel.toLowerCase()}
-            <ChevronDown className="h-3 w-3" />
+            <ChevronDownIcon className="h-3 w-3" />
           </div>
         }
         placement="bottom-end"

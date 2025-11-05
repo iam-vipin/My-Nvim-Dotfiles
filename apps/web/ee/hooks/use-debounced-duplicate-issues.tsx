@@ -50,7 +50,7 @@ export const useDebouncedDuplicateIssues = (
           await piService.getDuplicateIssues({
             workspace_id: workspaceId.toString(),
             project_id: projectId,
-            issue_id: formData?.issueId,
+            issue_id: formData?.issueId ?? null,
             title: debouncedFormData.name,
             description_stripped: getTextContent(debouncedFormData.description_html),
           })

@@ -1,7 +1,6 @@
-// plane constants
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
-// plane types
-import type { TPage, TDocumentPayload } from "@plane/types";
+import type { TPage, TDocumentPayload, TMovePagePayload } from "@plane/types";
 import type { TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
 // helpers;
 import { APIService } from "@/services/api.service";
@@ -258,6 +257,14 @@ export class TeamspacePageService extends APIService {
       });
   }
 
+  async move(workspaceSlug: string, pageId: string, data: TMovePagePayload): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/move/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   /**
    * Fetch sub-pages for a teamspace page
    * @param workspaceSlug
@@ -282,24 +289,6 @@ export class TeamspacePageService extends APIService {
    */
   async fetchParentPages(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/parent-pages`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Move a page between teamspaces
-   * @param workspaceSlug
-   * @param teamspaceId
-   * @param pageId
-   * @param newTeamspaceId
-   * @returns
-   */
-  async move(workspaceSlug: string, teamspaceId: string, pageId: string, newTeamspaceId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/move`, {
-      teamspace_id: newTeamspaceId,
-    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -31,7 +31,9 @@ def page_version(page_id, existing_instance, user_id):
             Page.all_objects.filter(parent_id=page_id)
             .annotate(
                 project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                    ArrayAgg(
+                        "project_pages__project_id", distinct=True, filter=Q(project_pages__deleted_at__isnull=True)
+                    ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )

@@ -5,6 +5,7 @@ from .issue_property import (
     IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
     IssuePropertyValueListAPIEndpoint,
+    WorkItemPropertyValueAPIEndpoint,
 )
 
 from plane.ee.views.api.base import BaseServiceAPIView

@@ -1,44 +1,52 @@
+import { useMemo } from "react";
 import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
+import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
-import { getGroupList } from "../utils";
-import { InitiativeGroup } from "./initiatives-group";
+import InitiativeLayoutLoader from "./initiative-layout-loader";
+import { InitiativeKanbanLayout } from "./layouts/kanban";
+import { InitiativesListLayout } from "./layouts/list";
 
 export const InitiativesRoot = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { initiative, initiativeFilters } = useInitiatives();
-  const { getUserDetails } = useMember();
   const { toggleCreateInitiativeModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
-  const groupBy = displayFilters?.group_by;
   const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
-  const generalResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/initiatives" });
+  const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
+  const activeLayout = displayFilters.layout;
+
   const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
-  if (initiative.fetchingFilteredInitiatives) return <ListLayoutLoader />;
+  const INITIATIVE_ACTIVE_LAYOUTS = useMemo(
+    () => ({
+      list: <InitiativesListLayout />,
+      kanban: <InitiativeKanbanLayout />,
+    }),
+    []
+  );
+
+  if (initiative.fetchingFilteredInitiatives) return <InitiativeLayoutLoader layout={activeLayout} />;
 
   const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
@@ -56,40 +64,22 @@ export const InitiativesRoot = observer(() => {
       </div>
     );
   }
-
   if (isEmptyInitiatives) {
     return (
-      <DetailedEmptyState
-        title={t("initiatives.empty_state.general.title")}
-        description={t("initiatives.empty_state.general.description")}
-        assetPath={generalResolvedPath}
-        primaryButton={{
-          text: t("initiatives.empty_state.general.primary_button.text"),
-          onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
-          disabled: !hasWorkspaceMemberLevelPermissions,
-        }}
+      <EmptyStateDetailed
+        assetKey="initiative"
+        title={t("workspace_empty_state.initiatives.title")}
+        description={t("workspace_empty_state.initiatives.description")}
+        actions={[
+          {
+            label: t("workspace_empty_state.initiatives.cta_primary"),
+            onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
+            disabled: !hasWorkspaceMemberLevelPermissions,
+          },
+        ]}
       />
     );
   }
 
-  const groupList = getGroupList(Object.keys(groupedInitiativeIds), groupBy, getUserDetails);
-
-  return (
-    <div className={`relative size-full bg-custom-background-90`}>
-      <div className="relative size-full flex flex-col">
-        {groupList && (
-          <div className="size-full vertical-scrollbar scrollbar-lg overflow-auto relative vertical-scrollbar-margin-top-md">
-            {groupList.map((group) => (
-              <InitiativeGroup
-                key={group.id}
-                group={group}
-                initiativesIds={groupedInitiativeIds[group.id]}
-                groupBy={groupBy}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return INITIATIVE_ACTIVE_LAYOUTS[activeLayout || DEFAULT_INITIATIVE_LAYOUT];
 });

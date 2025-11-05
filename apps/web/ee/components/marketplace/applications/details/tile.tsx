@@ -12,12 +12,12 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
 import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/types";
 import { cn, Tooltip } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
 import { useUserPermissions } from "@/hooks/store/user";
 import { IMPORTERS_LIST } from "@/plane-web/components/importers";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
+import { AppTileLogo } from "./tile-logo";
 
 // display app details like name, logo, description
 // button and more options to edit, delete, publish
@@ -40,7 +40,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
 
   // derived values
   const showConfigureButton = app.is_default;
-  const showInstallButton = !app.is_installed || !app.is_default;
+  const showInstallButton = app.setup_url && (!app.is_installed || !app.is_default);
   const showOptionsButton =
     (app.is_default &&
       app.is_owned &&
@@ -51,11 +51,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   const isNotSupported = app.is_not_supported || false;
   const isSelfManaged = subscriptionDetail?.is_self_managed || false;
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
+  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
   const isFeatureFlagEnabled = useFlag(
     workspaceSlug?.toString() || "",
     E_FEATURE_FLAGS[`${convertAppSlugToIntegrationKey(app.slug)}_INTEGRATION` as keyof typeof E_FEATURE_FLAGS]
   );
-  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
 
   const handleConfigure = () => {
     if (isAppDefault) {
@@ -97,11 +97,11 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
   };
 
   // for default apps, if the feature flag is not enabled, don't show the tile, or
-  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not default
+  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not owned or is not default
   if (
     (isAppDefault && !isFeatureFlagEnabled) ||
     importersSlug.includes(app.slug) ||
-    (!app.setup_url && !isAppDefault)
+    (!app.setup_url && !isAppDefault && !app.is_owned)
   ) {
     return null;
   }
@@ -113,17 +113,7 @@ export const AppTile: React.FC<AppTileProps> = observer((props) => {
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-1 justify-between">
               <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-custom-border-100">
-                {app?.logo_url ? (
-                  <img
-                    src={app.is_hardcoded ? app.logo_url : getFileURL(app.logo_url)}
-                    alt={app.name}
-                    className="h-full w-full"
-                  />
-                ) : (
-                  <div className=" bg-custom-background-80 flex items-center justify-center h-full w-full">
-                    <div className="text-lg font-medium">{app.name.charAt(0)}</div>
-                  </div>
-                )}
+                <AppTileLogo app={app} />
               </div>
               {(!isFreePlan || app.is_owned) && (
                 <div className="flex gap-1 items-center h-fit">

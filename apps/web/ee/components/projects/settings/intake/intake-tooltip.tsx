@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { X } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
 // plane web components
 import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
 // hooks
@@ -23,7 +23,7 @@ const IntakeTooltip = observer(({ projectId }: { projectId: string }) => {
         <span className="text-sm font-semibold"> Intake info</span>
 
         <Popover.Button>
-          <X size={16} />
+          <CloseIcon height={16} width={16} />
         </Popover.Button>
       </div>
       {isEmailEnabled || isFormEnabled ? (

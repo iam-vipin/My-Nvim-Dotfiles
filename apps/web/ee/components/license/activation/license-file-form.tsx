@@ -4,10 +4,10 @@ import type { FC } from "react";
 import { useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X } from "lucide-react";
+import { Upload } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { PageIcon } from "@plane/propel/icons";
+import { CloseIcon, PageIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useSelfHostedSubscription } from "@/plane-web/hooks/store";
@@ -119,7 +119,7 @@ export const LicenseFileForm: FC<TLicenseFileFormProps> = observer((props) => {
                       <p className="text-sm font-medium text-custom-text-200">{selectedFile.name}</p>
                     </div>
                     <Button type="button" variant="link-danger" size="sm" onClick={removeFile}>
-                      <X className="size-4" />
+                      <CloseIcon className="size-4" />
                     </Button>
                   </div>
                 </div>

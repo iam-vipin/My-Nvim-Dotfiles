@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import { GalleryVertical, GanttChartSquare, Kanban, List } from "lucide-react";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { BoardLayoutIcon, CardLayoutIcon, ListLayoutIcon, TimelineLayoutIcon } from "@plane/propel/icons";
 // plane web types
 import type { TProjectGroupBy, TProjectSortBy, TProjectSortOrder } from "@/plane-web/types/workspace-project-filters";
 import { EProjectLayouts, EProjectScope } from "@/plane-web/types/workspace-project-filters";
@@ -23,7 +24,13 @@ export const PROJECT_SCOPE_MAP: Partial<TProjectScopeMap> = {
 export const PROJECT_SCOPES = Object.values(PROJECT_SCOPE_MAP);
 
 // layout constants
-type TProjectLayoutMapObject<T> = { key: T; title: string; label: string; icon: LucideIcon; selectivelyHide: boolean };
+type TProjectLayoutMapObject<T> = {
+  key: T;
+  title: string;
+  label: string;
+  icon: LucideIcon | React.FC<ISvgIcons>;
+  selectivelyHide: boolean;
+};
 type TProjectLayoutMap = {
   [key in EProjectLayouts]: TProjectLayoutMapObject<key>;
 };
@@ -32,28 +39,28 @@ export const PROJECT_LAYOUT_MAP: TProjectLayoutMap = {
     key: EProjectLayouts.GALLERY,
     title: "Gallery Layout",
     label: "Gallery",
-    icon: GalleryVertical,
+    icon: CardLayoutIcon,
     selectivelyHide: false,
   },
   [EProjectLayouts.BOARD]: {
     key: EProjectLayouts.BOARD,
     title: "Board Layout",
     label: "Board",
-    icon: Kanban,
+    icon: BoardLayoutIcon,
     selectivelyHide: true,
   },
   [EProjectLayouts.TABLE]: {
     key: EProjectLayouts.TABLE,
     title: "List Layout",
     label: "Table",
-    icon: List,
+    icon: ListLayoutIcon,
     selectivelyHide: false,
   },
   [EProjectLayouts.TIMELINE]: {
     key: EProjectLayouts.TIMELINE,
     title: "Timeline Layout",
     label: "Timeline",
-    icon: GanttChartSquare,
+    icon: TimelineLayoutIcon,
     selectivelyHide: true,
   },
 };

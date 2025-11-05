@@ -132,6 +132,20 @@ export const createSlackLinkback = (
         action_id: ACTIONS.UPDATE_WORK_ITEM,
       }
     );
+
+    // Add Disable Sync button when sync is enabled
+    if (isSynced) {
+      actions.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "Disable Sync",
+          emoji: true,
+        },
+        value: `${issue.project.id}.${issue.id}`,
+        action_id: ACTIONS.DISABLE_SYNC,
+      });
+    }
   }
 
   // Action buttons

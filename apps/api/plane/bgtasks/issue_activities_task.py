@@ -30,7 +30,9 @@ from plane.db.models import (
     User,
     EstimatePoint,
     IssueType,
+    Page,
 )
+from plane.ee.models import Milestone
 from plane.db.models.workspace import Workspace
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
@@ -991,6 +993,74 @@ def delete_module_issue_activity(
     )
 
 
+
+def create_milestone_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    milestone = Milestone.objects.filter(pk=requested_data.get("milestone_id")).first()
+    issue = Issue.objects.filter(pk=issue_id).first()
+    if issue:
+        issue.updated_at = timezone.now()
+        issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="created",
+            old_value="",
+            new_value=milestone.title if milestone else "",
+            field="milestones",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"added to milestone {milestone.title if milestone else ''}",
+            new_identifier=requested_data.get("milestone_id"),
+            epoch=epoch,
+        )
+    )
+
+
+def delete_milestone_issue_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    milestone_name = current_instance.get("milestone_name")
+    current_issue = Issue.objects.filter(pk=issue_id).first()
+    if current_issue:
+        current_issue.updated_at = timezone.now()
+        current_issue.save(update_fields=["updated_at"])
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="deleted",
+            old_value=milestone_name,
+            new_value="",
+            field="milestones",
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"removed from milestone {milestone_name}",
+            old_identifier=(requested_data.get("milestone_id") if requested_data.get("milestone_id") is not None else None),
+            epoch=epoch,
+        )
+    )
+
+
 def create_link_activity(
     requested_data,
     current_instance,
@@ -1713,6 +1783,100 @@ def convert_work_item_to_epic_activity(
     )
 
 
+def create_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = requested_data["pages_ids"]
+
+    existing_pages = current_instance
+
+    added_pages = set(requested_data) - set(existing_pages)
+    dropped_pages = set(existing_pages) - set(requested_data)
+
+    for added_page in added_pages:
+        if not is_valid_uuid(added_page):
+            continue
+
+        page = Page.objects.get(pk=added_page)
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                verb="added",
+                field="page",
+                comment="added page",
+                old_value="",
+                new_value=page.name,
+                new_identifier=page.id,
+                old_identifier=None,
+                epoch=epoch,
+            )
+        )
+
+    for removed_page in dropped_pages:
+        if not is_valid_uuid(removed_page):
+            continue
+
+        page = Page.objects.get(pk=removed_page)
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                verb="deleted",
+                field="page",
+                comment="removed page",
+                old_value=page.name,
+                new_value="",
+                new_identifier=None,
+                old_identifier=page.id,
+                epoch=epoch,
+            )
+        )
+
+
+def delete_page_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    page = Page.objects.get(pk=requested_data)
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            verb="deleted",
+            field="page",
+            comment="removed page",
+            old_value=page.name,
+            new_value="",
+            new_identifier=None,
+            old_identifier=page.id,
+            epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1783,6 +1947,10 @@ def issue_activity(
             "epic.activity.converted": convert_work_item_to_epic_activity,
             "customer.activity.created": create_customer_activity,
             "customer.activity.deleted": delete_customer_activity,
+            "milestone_issue.activity.created": create_milestone_issue_activity,
+            "milestone_issue.activity.deleted": delete_milestone_issue_activity,
+            "page.activity.created": create_page_activity,
+            "page.activity.deleted": delete_page_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

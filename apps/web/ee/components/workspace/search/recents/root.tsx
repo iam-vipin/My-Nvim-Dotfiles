@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 
 export const RecentSearch = observer(() => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -35,7 +35,7 @@ export const RecentSearch = observer(() => {
                 key={search}
               >
                 <span className="truncate ellipsis w-full group-hover:w-[95%] text-start">{search}</span>
-                <X className="w-4 h-4 text-custom-text-400 my-auto opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out" />
+                <CloseIcon className="w-4 h-4 text-custom-text-400 my-auto opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out" />
               </button>
             ))}
           </div>

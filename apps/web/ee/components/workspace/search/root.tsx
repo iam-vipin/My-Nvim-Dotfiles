@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 // ui
 import type { TSearchResultItem } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -10,10 +12,18 @@ import { cn } from "@plane/utils";
 import { SearchResults } from "@/plane-web/components/workspace/search";
 
 export const AppSearchRoot = observer(() => {
-  // use state
+  // navigation
+  const searchParams = useSearchParams();
+  // states
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q === null) return;
+    setSearchQuery(q);
+  }, [searchParams]);
 
   return (
     <div
@@ -57,7 +67,7 @@ export const AppSearchRoot = observer(() => {
           </div>
           {searchQuery && (
             <div className="absolute right-2.5">
-              <X
+              <CloseIcon
                 className="w-4 h-4 text-custom-text-400 hover:text-custom-text-100 cursor-pointer transition-colors duration-200"
                 onClick={() => {
                   setSearchQuery("");

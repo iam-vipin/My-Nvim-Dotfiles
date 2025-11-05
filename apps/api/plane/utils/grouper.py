@@ -6,6 +6,7 @@ from django.db.models.functions import Coalesce
 
 # Module imports
 from plane.ee.models import TeamspaceProject
+from plane.ee.models import Milestone
 from plane.db.models import (
     Cycle,
     Issue,
@@ -132,6 +133,8 @@ def issue_on_results(
     if slug:
         if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id):
             required_fields.extend(["customer_ids", "customer_request_ids"])
+        if check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id):
+            required_fields.extend(["milestone_id"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])
@@ -185,6 +188,14 @@ def issue_group_values(
 
     if field == "cycle_id":
         queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
+        if project_id:
+            return list(queryset.filter(project_id=project_id)) + ["None"]
+        return list(queryset) + ["None"]
+
+    if field == "milestone_id":
+        queryset = Milestone.objects.filter(workspace__slug=slug).values_list(
+            "id", flat=True
+        )
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]

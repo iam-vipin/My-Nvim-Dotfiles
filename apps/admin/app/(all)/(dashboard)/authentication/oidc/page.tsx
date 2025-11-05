@@ -44,7 +44,7 @@ const InstanceOIDCAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `OIDC authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `OIDC authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",

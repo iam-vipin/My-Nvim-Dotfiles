@@ -1,30 +1,28 @@
 # Python imports
 import io
+import logging
 import zipfile
 from typing import List
-from collections import defaultdict
+from uuid import UUID
+
 import boto3
 from botocore.client import Config
-from uuid import UUID
-import logging
 
 # Third party imports
 from celery import shared_task
 
 # Django imports
 from django.conf import settings
-from django.utils import timezone
 from django.db.models import Prefetch
+from django.utils import timezone
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue, IssueRelation
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
 from plane.utils.exception_logger import log_exception
-from plane.utils.filters.filter_backend import ComplexFilterBackend
-from plane.utils.filters.filterset import IssueFilterSet
 from plane.utils.exporters import Exporter, IssueExportSchema
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.issue_filters import issue_filters
-
 
 # Logger
 logger = logging.getLogger("plane.worker")

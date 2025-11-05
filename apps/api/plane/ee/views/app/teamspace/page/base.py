@@ -79,9 +79,6 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
         return (
             Page.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(
-                projects__archived_at__isnull=True,
-            )
             .filter(moved_to_page__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .select_related("workspace")
@@ -132,11 +129,11 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
             .distinct()
         )
-    
+
     def get_largest_sort_order(self, slug, parent_id):
-        largest_sort_order = Page.objects.filter(
-            workspace__slug=slug, parent_id=parent_id
-        ).aggregate(largest=Max("sort_order"))["largest"]
+        largest_sort_order = Page.objects.filter(workspace__slug=slug, parent_id=parent_id).aggregate(
+            largest=Max("sort_order")
+        )["largest"]
         return largest_sort_order + 10000 if largest_sort_order else 65535
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -161,9 +158,9 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                 filters &= Q(parent__isnull=True, access=0, archived_at__isnull=True)
 
         # Get all the pages that are part of the team space
-        team_space_pages = TeamspacePage.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        ).values_list("page_id", flat=True)
+        team_space_pages = TeamspacePage.objects.filter(workspace__slug=slug, team_space_id=team_space_id).values_list(
+            "page_id", flat=True
+        )
 
         sub_pages_count = (
             Page.objects.filter(parent=OuterRef("id"))
@@ -210,9 +207,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             team_space_activity.delay(
                 type="page.activity.created",
                 slug=slug,
-                requested_data=json.dumps(
-                    {"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps({"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 team_space_id=str(team_space_id),
                 current_instance={},
@@ -220,7 +215,12 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
 
             # capture the page transaction
-            page_transaction.delay(request.data, None, serializer.data["id"])
+            page_transaction.delay(
+                new_description_html=request.data.get("description_html", "<p></p>"),
+                old_description_html=None,
+                page_id=serializer.data["id"],
+            )
+
             if serializer.data.get("parent_id"):
                 nested_page_update.delay(
                     page_id=serializer.data["id"],
@@ -230,9 +230,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                     user_id=request.user.id,
                 )
                 if request.data.get("parent_id") and request.data.get("sort_order") is None:
-                    largest_sort_order = self.get_largest_sort_order(
-                        slug, request.data.get("parent_id")
-                    )
+                    largest_sort_order = self.get_largest_sort_order(slug, request.data.get("parent_id"))
                     if largest_sort_order is not None:
                         request.data["sort_order"] = largest_sort_order
 
@@ -246,9 +244,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
-        team_space_page = TeamspacePage.objects.filter(
-            page_id=pk, team_space_id=team_space_id
-        ).first()
+        team_space_page = TeamspacePage.objects.filter(page_id=pk, team_space_id=team_space_id).first()
         if team_space_page is None:
             return Response(
                 {"error": "The page is not part of the team space"},
@@ -259,14 +255,10 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
         # Check if the page exists
         if page is None:
-            return Response(
-                {"error": "The page does not exist"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "The page does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         if page.is_locked:
-            return Response(
-                {"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Only update access if the page owner is the requesting  user
         if page.access == Page.PRIVATE_ACCESS:
@@ -276,9 +268,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
 
         current_instance = TeamspacePageDetailSerializer(page).data
-        serializer = TeamspacePageDetailSerializer(
-            page, data=request.data, partial=True
-        )
+        serializer = TeamspacePageDetailSerializer(page, data=request.data, partial=True)
         page_description = page.description_html
         if serializer.is_valid():
             serializer.save()
@@ -295,9 +285,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                     user_id=request.user.id,
                 )
 
-            if request.data.get("parent_id") and current_instance.get(
-                "parent_id"
-            ) != request.data.get("parent_id"):
+            if request.data.get("parent_id") and current_instance.get("parent_id") != request.data.get("parent_id"):
                 nested_page_update.delay(
                     page_id=page.id,
                     action=PageAction.MOVED_INTERNALLY,
@@ -313,10 +301,8 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data,
-                    old_value=json.dumps(
-                        {"description_html": page_description}, cls=DjangoJSONEncoder
-                    ),
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page_description,
                     page_id=pk,
                 )
 
@@ -325,9 +311,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
-        team_space_page = TeamspacePage.objects.filter(
-            page_id=pk, team_space_id=team_space_id
-        ).first()
+        team_space_page = TeamspacePage.objects.filter(page_id=pk, team_space_id=team_space_id).first()
         if team_space_page is None:
             return Response(
                 {"error": "The page is not part of the team space"},
@@ -339,9 +323,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
         # Check if the page exists
         if page is None:
-            return Response(
-                {"error": "The page does not exist"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "The page does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         if page.archived_at is None:
             return Response(
@@ -350,9 +332,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
 
         if (
-            ProjectMember.objects.filter(
-                member=request.user, is_active=True, role__lte=15
-            ).exists()
+            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
             and request.user.id != page.owned_by_id
         ):
             return Response(
@@ -365,13 +345,9 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
         page.delete()
         # Delete the user favorite page
-        UserFavorite.objects.filter(
-            workspace__slug=slug, entity_identifier=pk, entity_type="page"
-        ).delete()
+        UserFavorite.objects.filter(workspace__slug=slug, entity_identifier=pk, entity_type="page").delete()
         # Delete the deploy board
-        DeployBoard.objects.filter(
-            entity_name="teamspace_page", entity_identifier=pk, workspace__slug=slug
-        ).delete()
+        DeployBoard.objects.filter(entity_name="teamspace_page", entity_identifier=pk, workspace__slug=slug).delete()
 
         # Capture the team space activity
         team_space_activity.delay(
@@ -427,11 +403,7 @@ class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
                     output_field=IntegerField(),
                 )
             ),
-            archived_pages=Count(
-                Case(
-                    When(archived_at__isnull=False, then=1), output_field=IntegerField()
-                )
-            ),
+            archived_pages=Count(Case(When(archived_at__isnull=False, then=1), output_field=IntegerField())),
         )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -512,9 +484,7 @@ class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
         team_space_activity.delay(
             type="page.activity.created",
             slug=slug,
-            requested_data=json.dumps(
-                {"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder
-            ),
+            requested_data=json.dumps({"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             team_space_id=str(team_space_id),
             current_instance={},
@@ -523,7 +493,9 @@ class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
 
         # capture the page transaction
         page_transaction.delay(
-            {"description_html": page.description_html}, None, page.id
+            new_description_html=request.data.get("description_html", "<p></p>"),
+            old_description_html=page.description_html,
+            page_id=page.id,
         )
         page = (
             Page.objects.filter(pk=page.id)
@@ -554,9 +526,7 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
         if (
-            ProjectMember.objects.filter(
-                member=request.user, is_active=True, role__lte=15
-            ).exists()
+            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
             and request.user.id != page.owned_by_id
         ):
             return Response(
@@ -565,9 +535,7 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Archive the page
-        UserFavorite.objects.filter(
-            workspace__slug=slug, entity_identifier=pk, entity_type="page"
-        ).delete()
+        UserFavorite.objects.filter(workspace__slug=slug, entity_identifier=pk, entity_type="page").delete()
         current_time = datetime.now()
 
         page.archived_at = current_time
@@ -599,9 +567,7 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
         if (
-            ProjectMember.objects.filter(
-                member=request.user, is_active=True, role__lte=15
-            ).exists()
+            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
             and request.user.id != page.owned_by_id
         ):
             return Response(
@@ -639,9 +605,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
         if (
-            ProjectMember.objects.filter(
-                member=request.user, is_active=True, role__lte=15
-            ).exists()
+            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
             and request.user.id != page.owned_by_id
         ):
             return Response(
@@ -676,9 +640,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
         # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
         if (
-            ProjectMember.objects.filter(
-                member=request.user, is_active=True, role__lte=15
-            ).exists()
+            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
             and request.user.id != page.owned_by_id
         ):
             return Response(
@@ -707,9 +669,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id, pk):
         # Get the team space page
-        if not TeamspacePage.objects.filter(
-            page_id=pk, workspace__slug=slug, team_space_id=team_space_id
-        ).exists():
+        if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug, team_space_id=team_space_id).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -725,18 +685,14 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
             else:
                 yield b""
 
-        response = StreamingHttpResponse(
-            stream_data(), content_type="application/octet-stream"
-        )
+        response = StreamingHttpResponse(stream_data(), content_type="application/octet-stream")
         response["Content-Disposition"] = 'attachment; filename="page_description.bin"'
         return response
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         # Get the team space page
-        if not TeamspacePage.objects.filter(
-            page_id=pk, workspace__slug=slug, team_space_id=team_space_id
-        ).exists():
+        if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug, team_space_id=team_space_id).exists():
             return Response(
                 {"error": "The page is not part of the team space"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -762,9 +718,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Serialize the existing instance
-        existing_instance = json.dumps(
-            {"description_html": page.description_html}, cls=DjangoJSONEncoder
-        )
+        existing_instance = json.dumps({"description_html": page.description_html}, cls=DjangoJSONEncoder)
 
         # Get the base64 data from the request
         base64_data = request.data.get("description_binary")
@@ -776,7 +730,9 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
             # capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
-                    new_value=request.data, old_value=existing_instance, page_id=pk
+                    new_description_html=request.data.get("description_html", "<p></p>"),
+                    old_description_html=page.description_html,
+                    page_id=page.id,
                 )
             # Store the updated binary data
             page.name = request.data.get("name", page.name)
@@ -811,16 +767,12 @@ class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
         # Check if pk is provided
         if pk:
             # Return a single page version
-            page_version = PageVersion.objects.get(
-                workspace__slug=slug, page_id=page_id, pk=pk
-            )
+            page_version = PageVersion.objects.get(workspace__slug=slug, page_id=page_id, pk=pk)
             # Serialize the page version
             serializer = TeamspacePageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return all page versions
-        page_versions = PageVersion.objects.filter(
-            workspace__slug=slug, page_id=page_id
-        )
+        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
         # Serialize the page versions
         serializer = TeamspacePageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -47,7 +47,13 @@ def create_work_item_from_template(self, recurring_workitem_task_id: str):
         # Get the recurring task
         recurring_task = RecurringWorkitemTask.objects.select_related(
             "workitem_blueprint", "project", "workspace"
-        ).get(id=recurring_workitem_task_id)
+        ).filter(id=recurring_workitem_task_id).first()
+
+        if not recurring_task:
+            logger.info(
+                f"Recurring task {recurring_workitem_task_id} not found, skipping execution"
+            )
+            return {"status": "skipped", "message": "Task not found"}
 
         slug = recurring_task.workspace.slug
 

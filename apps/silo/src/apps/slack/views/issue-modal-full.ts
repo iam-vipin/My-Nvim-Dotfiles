@@ -204,18 +204,19 @@ export const createIssueModalViewFull = (props: TIssueModalViewProps): IssueModa
                     value: "true",
                   },
                 ],
-                initial_options: threadSyncEnabled
-                  ? [
-                      {
-                        text: {
-                          type: "plain_text",
-                          text: "Sync slack comments with plane comments and vice versa",
-                          emoji: true,
-                        } as PlainTextElement,
-                        value: "true",
-                      },
-                    ]
-                  : undefined,
+                initial_options:
+                  threadSyncEnabled || !isUpdate
+                    ? [
+                        {
+                          text: {
+                            type: "plain_text",
+                            text: "Sync slack comments with plane comments and vice versa",
+                            emoji: true,
+                          } as PlainTextElement,
+                          value: "true",
+                        },
+                      ]
+                    : undefined,
                 action_id: "enable_thread_sync",
               },
               label: {

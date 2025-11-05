@@ -71,7 +71,7 @@ export class ApplicationService extends APIService {
 
   async checkApplicationSlug(workspaceSlug: string, slug: string): Promise<any> {
     console.log("slug", slug);
-    return this.post(`/api/workspaces/${workspaceSlug}/applications/check-slug/`, { app_slug: slug })
+    return this.post(`/api/workspaces/${workspaceSlug}/applications/validations/check-slug/`, { app_slug: slug })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

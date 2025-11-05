@@ -3,7 +3,7 @@ import { MQActorBase } from "./mq";
 export class MQConsumer extends MQActorBase {
   startConsuming(callback: (data: any) => void) {
     // Store the callback for re-registration during reconnection
-    this.setConsumerCallback(callback);
+    this.consumerCallback = callback;
 
     return this.channel.consume(
       this.queueName,

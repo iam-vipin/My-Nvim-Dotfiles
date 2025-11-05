@@ -1,19 +1,15 @@
 import type { ReactNode } from "react";
+import { AlignLeft, ArrowRightLeft, Briefcase, CalendarDays, FileText, Link, Paperclip, Type } from "lucide-react";
 import {
-  AlignLeft,
-  ArrowRightLeft,
-  Briefcase,
-  CalendarDays,
-  Link,
-  Paperclip,
-  Tag,
-  Triangle,
-  Type,
-  Users,
-} from "lucide-react";
-import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/propel/icons";
+  CustomersIcon,
+  EpicIcon,
+  EstimatePropertyIcon,
+  LabelPropertyIcon,
+  MembersPropertyIcon,
+  StatePropertyIcon,
+} from "@plane/propel/icons";
 import type { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
+import { convertMinutesToHoursMinutesString, getPageName, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
@@ -42,7 +38,8 @@ export type TEpicActivityFields =
   | "attachment"
   | "customer_request"
   | "customer"
-  | "work_item";
+  | "work_item"
+  | "page";
 
 export type TEpicActivityVerbs = TBaseActivityVerbs;
 
@@ -84,7 +81,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     message: <>updated the description.</>,
   }),
   state_updated: (activity: TIssueActivity) => ({
-    icon: <DoubleCircleIcon className={commonIconClassName} />,
+    icon: <StatePropertyIcon className={commonIconClassName} />,
     message: (
       <>
         set the state to <span className={commonTextClassName}>{activity.new_value}</span>.
@@ -92,7 +89,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   assignees_updated: (activity: TIssueActivity) => ({
-    icon: <Users className={commonIconClassName} />,
+    icon: <MembersPropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
@@ -135,7 +132,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   labels_updated: (activity: TIssueActivity) => ({
-    icon: <Tag className={commonIconClassName} />,
+    icon: <LabelPropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.old_value === "" ? `added a new label ` : `removed the label `}
@@ -151,7 +148,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   estimate_points_updated: (activity: TIssueActivity) => ({
-    icon: <Triangle className={commonIconClassName} />,
+    icon: <EstimatePropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -160,7 +157,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     ),
   }),
   estimate_categories_updated: (activity: TIssueActivity) => ({
-    icon: <Triangle className={commonIconClassName} />,
+    icon: <EstimatePropertyIcon className={commonIconClassName} />,
     message: (
       <>
         {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -171,7 +168,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   estimate_time_updated: (activity: TIssueActivity) => {
     const value = convertMinutesToHoursMinutesString(Number(activity.new_value));
     return {
-      icon: <Triangle className={commonIconClassName} />,
+      icon: <EstimatePropertyIcon className={commonIconClassName} />,
       message: (
         <>
           {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
@@ -341,6 +338,22 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
           className={commonTextClassName}
         >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
         to work item.
+      </>
+    ),
+  }),
+  page_added: (activity: TIssueActivity) => ({
+    icon: <FileText className={commonIconClassName} />,
+    message: (
+      <>
+        added a new page <span className={commonTextClassName}>{getPageName(activity.new_value || "")}</span>.
+      </>
+    ),
+  }),
+  page_deleted: (activity: TIssueActivity) => ({
+    icon: <FileText className={commonIconClassName} />,
+    message: (
+      <>
+        removed the page <span className={commonTextClassName}>{getPageName(activity.old_value || "")}</span>.
       </>
     ),
   }),

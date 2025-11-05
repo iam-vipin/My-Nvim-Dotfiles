@@ -3,12 +3,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel, Users, X } from "lucide-react";
+import { Check, Hotel } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
@@ -66,7 +66,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "invite-team",
       title: "home.empty.invite_team.title",
       description: "home.empty.invite_team.description",
-      icon: <Users className="size-4" />,
+      icon: <MembersPropertyIcon className="size-4" />,
       flag: "visited_members",
       cta: {
         text: "home.empty.invite_team.cta",
@@ -142,7 +142,7 @@ export const NoProjectsEmptyState = observer(() => {
             setValue({ ...storedValue, hide: true });
           }}
         >
-          <X className="size-4" />
+          <CloseIcon className="size-4" />
           {t("home.empty.not_right_now")}
         </button>
       </div>

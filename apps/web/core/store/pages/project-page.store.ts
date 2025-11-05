@@ -1,9 +1,9 @@
-import { unset, set } from "lodash-es";
+import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { EPageAccess, EUserPermissions } from "@plane/constants";
-import type { TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
+import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
@@ -86,11 +86,13 @@ export interface IProjectPageStore {
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePageInternally: (pageId: string, updatePayload: Partial<TPage>) => Promise<void>;
-  movePage: (params: {
-    workspaceSlug: string;
-    newProjectId: string;
+  movePage: ({
+    pageId,
+    data,
+    shouldSync,
+  }: {
     pageId: string;
-    projectId: string;
+    data: TMovePagePayload;
     shouldSync?: boolean;
   }) => Promise<void>;
   getOrFetchPageInstance: ({
@@ -884,6 +886,30 @@ export class ProjectPageStore implements IProjectPageStore {
   };
 
   /**
+   * @description move a page to Wiki/teamspace or another project
+   */
+  movePage: IProjectPageStore["movePage"] = async ({ pageId, data, shouldSync = true }) => {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return;
+
+    try {
+      if (shouldSync) {
+        await this.service.move(workspaceSlug, pageId, data);
+      }
+    } catch (error) {
+      console.error("Unable to move page", error);
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to move the page. Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
    * @description Helper method to update sub_pages_count when moving pages between parents
    * @param {string | null} oldParentId - The current parent ID (can be null for root pages)
    * @param {string | null} newParentId - The new parent ID (can be null for root pages)
@@ -906,43 +932,6 @@ export class ProjectPageStore implements IProjectPageStore {
         const newCount = (newParentPageInstance.sub_pages_count ?? 0) + 1;
         newParentPageInstance.mutateProperties({ sub_pages_count: newCount });
       }
-    }
-  };
-
-  /**
-   * @description move a page to a new project
-   * @param {string} workspaceSlug
-   * @param {string} projectId
-   * @param {string} pageId
-   * @param {string} projectId
-   */
-  movePage = async ({
-    workspaceSlug,
-    pageId,
-    newProjectId,
-    projectId,
-    shouldSync = true,
-  }: {
-    workspaceSlug: string;
-    newProjectId: string;
-    pageId: string;
-    projectId: string;
-    shouldSync?: boolean;
-  }) => {
-    try {
-      if (shouldSync) {
-        await this.service.move(workspaceSlug, projectId, pageId, newProjectId);
-      }
-    } catch (error) {
-      console.error("Unable to move page", error);
-      runInAction(() => {
-        this.loader = undefined;
-        this.error = {
-          title: "Failed",
-          description: "Failed to move a page, Please try again later.",
-        };
-      });
-      throw error;
     }
   };
 

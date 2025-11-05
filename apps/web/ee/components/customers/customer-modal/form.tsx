@@ -9,13 +9,12 @@ import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomer, TCustomerPayload } from "@plane/types";
 // helpers
-import { cn, getTabIndex } from "@plane/utils";
+import { cn, getChangedFields, getTabIndex } from "@plane/utils";
 // store
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web components
 import { CustomerAdditionalProperties, DefaultProperties } from "@/plane-web/components/customers";
-import { getChangedCustomerFields } from "@/plane-web/helpers/customers.helper";
 import { useCustomerModal } from "@/plane-web/hooks/context/use-customer-modal";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CreateCustomerCreateToastActions } from "./customer-create-toast-actions";
@@ -170,7 +169,10 @@ export const CustomerForm: FC<TCustomerForms> = (props) => {
     const submitData: Partial<TCustomer> = !data?.id
       ? payload
       : {
-          ...getChangedCustomerFields(payload, dirtyFields as { [key: string]: boolean | undefined }),
+          ...getChangedFields<TCustomerPayload>(
+            payload,
+            dirtyFields as Partial<Record<Extract<keyof TCustomerPayload, string>, boolean | undefined>>
+          ),
           id: data.id,
           description_html: payload.description_html ?? "<p></p>",
         };

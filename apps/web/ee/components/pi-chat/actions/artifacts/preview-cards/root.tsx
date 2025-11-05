@@ -20,6 +20,8 @@ export const PreviewCard = observer((props: { artifactId: string; type: string; 
   switch (type) {
     case "workitem":
       return <WorkItemPreviewCard artifactId={artifactId} />;
+    case "epic":
+      return <WorkItemPreviewCard artifactId={artifactId} isEpic />;
     case "page":
       return <PagePreviewCard artifactId={artifactId} />;
     case "cycle":

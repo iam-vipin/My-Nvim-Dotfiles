@@ -36,7 +36,7 @@ def is_retrieval_tool(tool_name: Any) -> bool:
     if name.endswith("_list") or name.endswith("_retrieve"):
         return True
     # Known retrieval utilities
-    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "generic_query_tool"}:
+    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "generic_query_tool", "fetch_cycle_details"}:
         return True
     return False
 
@@ -66,6 +66,8 @@ def tool_name_shown_to_user(tool_name: str) -> str:
     tool_to_user_map = {
         "vector_search_tool": "Semantic search",
         "structured_db_tool": "Database querying",
+        "fetch_cycle_details": "Cycle Details",
+        "list_recent_cycles": "Recent Cycles",
         "pages_search_tool": "Semantic search of pages",
         "docs_search_tool": "Semantic search of docs",
         "generic_query_tool": "General Knowledge",
@@ -186,6 +188,7 @@ def build_method_prompt(
     combined_agent_query: str,
     project_id: Optional[str],
     user_id: Optional[str],
+    workspace_id: Optional[str],
     enhanced_conversation_history: Optional[str],
     clarification_context: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -196,8 +199,6 @@ def build_method_prompt(
 
 Context about Plane:
 {plane_context}
-
-The user wants to: {combined_agent_query}
 
 **IMPORTANT: You are in PLANNING mode with a TWO-PHASE APPROACH:**
 
@@ -230,6 +231,28 @@ Use retrieval tools to gather information, then plan the modifying actions based
 1. **FIRST**: Use retrieval tools to gather required information (IDs, existence checks, etc.)
 2. **THEN**: Plan at least one MODIFYING ACTION that will change data
 
+**REASONING AND COMMUNICATION:**
+- When making tool calls, ALWAYS provide a brief explanation of your reasoning in your response
+- Explain why you're selecting specific tools and what you're trying to accomplish
+- This helps with debugging and understanding your decision-making process
+- Example: "I need to create a cycle as per the user's request, so I'll use cycles_create with the project ID."
+
+**RETRIEVAL RESULT RELEVANCE (CRITICAL):**
+- Treat retrieval results as candidates, not ground truth.
+- Use results ONLY if they directly match the user's current intent and entities; otherwise ignore them.
+- Never copy retrieval text verbatim into parameters like description_html unless the user explicitly asked for it.
+- When the user provides guidance about what should be in a description (e.g., "with details about X"), generate intelligent, informative content based on that topic - do NOT just copy the user's instruction text verbatim into the description.
+- If the user's request doesn't refer to any specific topic to fill in the description, or is vague or unclear, provide a concise description synthesized from the user's request when uncertain.
+- Always scope retrieval to the current project_id when available; do not use workspace-wide results if a project is set.
+
+**PLURAL GENERATION POLICY (CRITICAL):**
+- When the user intent is to create/add multiple entities (plural) and the user does not provide a list:
+  - Generate a reasonable set (default 5-10) of distinct, actionable titles with short descriptions (when applicable) based on the user's theme/context.
+  - Plan a separate create/add call for each item in that set (do not collapse to one).
+  - Avoid using the project name itself as a entity title; titles should be specific to the entity type.
+  - Keep titles concise; descriptions one or two sentences; ensure they are clearly relevant to the theme.
+  - If the user hints at volume (e.g., "a few", "several", "a dozen"), align the count accordingly.
+
 **ENTITY SEARCH FALLBACK AND DISAMBIGUATION RULES:**
 - **Lookup fallback**: If one of the search tools for a given entity type fails or returns "Invalid identifier format", immediately try the next search tool for that entity type with the same query
 - **Multiple matches**: If the search tool for a given entity type returns multiple candidates (users, work-items, etc.), call `ask_for_clarification` with:
@@ -244,21 +267,29 @@ Use retrieval tools to gather information, then plan the modifying actions based
   - **PREFER** `list_member_projects` to get active (unarchived, undeleted) projects the user is a member of
   - THEN call `ask_for_clarification` with `disambiguation_options` containing these filtered projects
   - **AVOID** using `structured_db_tool` or `projects_list` for project selection - they may include archived projects
+- **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
+  - **Do not loop the same call.**
 
-**MANDATORY PROJECT RESOLUTION:**
-- If user mentions a project NAME, you MUST call `search_project_by_name` FIRST
-- If user mentions a project IDENTIFIER (like 'HYDR', 'PARM'), you MUST call `search_project_by_identifier` FIRST
-- Extract the UUID from the response before using it in other tools
-- NEVER use project names directly as project_id parameters
-- NEVER use project_id as a placeholder for project name
-- NEVER use project identifier (which is a string like 'HYDR') as project_id (which is a UUID). You MUST resolve the project identifier to a UUID using `search_project_by_identifier` before using it as project_id.
+**MANDATORY PROJECT/ENTITY RESOLUTION (NO PLACEHOLDERS FOR EXISTING ENTITIES):**
+- If the user mentions an EXISTING entity by NAME or IDENTIFIER, you MUST resolve it FIRST using the appropriate search tool and then use its UUID:
+  - project NAME → `search_project_by_name` FIRST
+  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `search_project_by_identifier` FIRST
+  - cycle/module/label/state/user/workitem NAME/IDENTIFIER → use the corresponding `search_*_by_name` / `search_*_by_identifier` tool FIRST
+- Extract the UUID from the search response before using it in any subsequent tools.
+- NEVER use names/identifiers directly as *_id parameters.
+- NEVER emit placeholders for EXISTING entities named by the user (e.g., `project_id: "<id of project: Mattu>"` is forbidden). Resolve to a UUID instead.
 - **CRITICAL**: If you need to list modules/cycles but don't have project_id, call `projects_list` FIRST to get options, then ask user which project via `ask_for_clarification` with the projects as disambiguation_options
+
+**WORKSPACE-LEVEL CONTEXT - USE PROJECT FROM HISTORY:**
+- In workspace-level chats (no explicit project pre-selected), if the conversation history clearly shows a specific project selection or creation (e.g., an executed action with "Entity: <project name> (<uuid>)" or a project URL containing the UUID), you MUST include that exact UUID as `project_id` for all project-scoped tools (e.g., `workitems_create`, `workitems_update`, `modules_*`, `cycles_*`).
+- Prefer the most recent project in the history when multiple appear; if multiple conflicting projects are present, disambiguate by selecting the one explicitly referenced in the current user request; otherwise ask for clarification.
+- Only omit `project_id` when no project is inferable from the history or current query.
 
 **TOOL TYPES:**
 - **Retrieval tools** (search_*, *_list, *_retrieve): Execute immediately, gather info
 - **Modifying actions** (*_create, *_update, *_add, *_remove): Planned for user approval
 
-**REQUIREMENT**: You MUST plan at least one modifying action - retrieval alone is insufficient!
+**IMPORTANT**: Only plan modifying actions if the user's request actually requires modifying data. If the request cannot be fulfilled with available tools (e.g., analytics, visualizations, external integrations), return NO_ACTIONS_PLANNED instead of creating workaround entities.
 
 **INTERLINKED ACTIONS GUIDANCE:**
 - **Multi-step operations**: When a request involves multiple related actions, you MUST plan ALL of them
@@ -274,7 +305,15 @@ Use retrieval tools to gather information, then plan the modifying actions based
 **WORK-ITEM CREATION CAPABILITIES:**
 **✅ CAN be set during workitems_create:**
 - name, description, priority, state, assignees, labels, story_points, start_date, target_date
+- **EPIC CREATION**: Use `epics_create` tool to create epics - this automatically sets the correct epic type_id
 - **IMPORTANT**: Use workitems_create with ALL properties at once - do NOT create then update!
+
+**WORK-ITEM RELATIONS CAPABILITIES:**
+**✅ CAN create relationships between work items using workitems_create_relation:**
+- Relation types: blocking, blocked_by, duplicate, relates_to, start_before, start_after, finish_before, finish_after
+- **CRITICAL**: You MUST collect actual work item IDs (UUIDs) FIRST before creating relations
+- **WORKFLOW**: User says "Make issue A block issue B" → FIRST search for both issues to get their IDs → THEN create relation
+- **NEVER** use work item names directly - always resolve to UUIDs first using search tools
 
 **❌ CANNOT be set during workitems_create (requires separate API calls):**
 - Adding to modules (use modules_add_work_items after creation)
@@ -284,6 +323,9 @@ Use retrieval tools to gather information, then plan the modifying actions based
 **EFFICIENCY RULE**: Always try to set as many properties as possible during creation to minimize API calls.
 
 **SPECIFIC EXAMPLES**:
+* "Make issue A block issue B" = search_workitem_by_name for A, search_workitem_by_name for B, then workitems_create_relation(issue_id=A_id, relation_type="blocking", related_issues=[B_id])
+* "Mark task X as duplicate of task Y" = search for X and Y to get IDs, then workitems_create_relation(issue_id=X_id, relation_type="duplicate", related_issues=[Y_id])
+* "Issue C should start after issues D and E finish" = search for C, D, E to get IDs, then workitems_create_relation(issue_id=C_id, relation_type="start_after", related_issues=[D_id, E_id])
 * "Move work item to module" = search for existing work item, then modules_add_work_items
 * "Create work item in module" = workitems_create, then modules_add_work_items
 * "Create work item with priority and state" = workitems_create with BOTH priority AND state (single call)
@@ -292,16 +334,14 @@ Use retrieval tools to gather information, then plan the modifying actions based
 * "Move work item to cycle" = search for existing work item, then cycles_add_work_items
 * Creating entities AND adding them to containers = plan BOTH create + add actions
 
-**PLANNING DEPENDENT ACTIONS:**
-- When planning actions that depend on created entities, use descriptive references
-- For containers (cycles, modules, projects): use the container name as a reference
-- For entities (work items, labels, states): use the entity names as references
-- **IMPORTANT**: The system will automatically convert these references to placeholders during storage
-- **PLACEHOLDER SYSTEM**:
-  - Module names like 'my-module' → stored as `<id of module: my-module>`
-  - Workitem names like 'bug fix' → stored as `<id of workitem: bug fix>`
-  - Project names → stored as `<id of project: project_name>` (if not already a UUID)
-  - The execution phase will resolve these placeholders using retrieval tools
+**PLANNING DEPENDENT ACTIONS (PLACEHOLDERS ONLY FOR NEWLY CREATED ENTITIES):**
+- When planning multiple actions that depend on an entity you CREATE in the same plan, you may use a descriptive reference for that newly created entity in downstream actions.
+- For containers (cycles, modules, projects) or entities (work items, labels, states) that ALREADY EXIST, DO NOT use placeholders; resolve to UUIDs via search tools.
+- **PLACEHOLDER SYSTEM (new entities only)**:
+  - Module created in this plan 'my-module' → downstream action may refer to `<id of module: my-module>`
+  - Workitem created in this plan 'bug fix' → downstream action may refer to `<id of workitem: bug fix>`
+  - Project created in this plan 'my-project' → downstream action may refer to `<id of project: my-project>`
+  - The execution phase will resolve these placeholders using retrieval tools ONLY for entities that were created in the current plan.
 
 **OPTIMIZATION GUIDANCE:**
 - **Descriptive references**: Use entity names/descriptions that clearly identify what should be linked
@@ -329,6 +369,10 @@ When planning: "Create workitem 'bug fix' and add it to module 'my-module'"
   3. Use that exact UUID string in subsequent tool calls
 - **WRONG**: Using entity names like "MyProject", "ExampleModule", etc. for ID parameters
 - **CORRECT**: Using the actual UUID string returned by search tools
+- **For Relation Tasks**:
+  - **Step 1**: ALWAYS search for ALL work items mentioned by name or identifier to get their UUIDs
+  - **Step 2**: Use workitems_create_relation with the collected UUIDs
+  - **CRITICAL**: Never attempt relations without first collecting actual work item IDs
 - Do NOT use vector_search_tool for finding projects, users, or other non-content queries
 - Plan actions in logical dependency order (e.g., create issue first, then add to container)
 - **Optimize similar actions**: If adding multiple items to the same target, use ONE action with a list
@@ -367,17 +411,33 @@ For "move workitem X to module Y":
 - Do NOT provide meta commentary. Do NOT say "I will plan..." or "I will update...".
 - Do NOT ask the user to click 'Confirm' or otherwise prompt for approval in text. The system handles approval.
 - When actions are planned: provide a very brief summary of the actions you planned.
-- When no actions can be planned: return ONLY the exact token NO_ACTIONS_PLANNED and nothing else.
+- When no actions can be planned: use the `no_actions_planned` tool with a clear reason and optional explanation.
 
-**STOP CONDITION: Only stop after you have:**
-1. Used retrieval/search tools to gather necessary information (IDs, etc.)
-2. **AND** planned at least one MODIFYING ACTION (create, update, delete, add, remove, move, etc.)
+**STOP CONDITION:**
 
-**REMEMBER: The user's request requires MODIFYING data. You cannot stop after just searching/retrieving.**
+**IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
+1. Use retrieval/search tools to gather necessary information (IDs, etc.)
+2. **AND** plan at least one MODIFYING ACTION (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions
+
+**IF the user's request is asking for unsupported features:**
+- Analytics/visualizations (pie charts, reports, dashboards, graphs)
+- External integrations (Slack, GitHub, Jira sync)
+- Bulk operations (bulk delete, mass archive)
+- Administrative functions (workspace settings, permissions, billing)
+- File uploads/management
+- Use the `no_actions_planned` tool with reason explaining why the feature is unsupported
+- Do NOT create workaround entities (like workitems) to satisfy these requests
+
+**CRITICAL**: Distinguish between legitimate data modification requests and requests for unsupported features. Only enforce the "must plan action" requirement for the former.
 """  # noqa: E501
 
     if project_id:
-        method_prompt += f"\n\n**PROJECT CONTEXT:**\nProject ID: {project_id}\nUse this when user refers to 'this project'/'the project'/'current project' etc. or doesn't mention the project name."  # noqa: E501
+        method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
+    else:
+        # Workspace-level context (no specific project)
+        method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (without limit or with high limit) to get ALL projects in the workspace\n- Then iterate through projects to find relevant cycles/modules/work-items\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
+
     if user_id:
         method_prompt += f"\n\n**USER CONTEXT:**\nUser ID: {user_id}\nUse this when user refers to him/herself or 'I' or 'me' or 'my' or 'mine' or any other personal pronoun or any derivative of these words."  # noqa: E501
 
@@ -585,6 +645,8 @@ def extract_entity_type_from_tool_name(tool_name: str) -> str:
     """Extract entity type from tool name (e.g., 'workitems_create' -> 'workitem')."""
     if tool_name.startswith("workitems_"):
         return "workitem"
+    elif tool_name.startswith("epics_"):
+        return "epic"  # Treat epics as their own entity type for user-facing display
     elif tool_name.startswith("projects_"):
         return "project"
     elif tool_name.startswith("cycles_"):
@@ -613,7 +675,10 @@ def extract_entity_type_from_tool_name(tool_name: str) -> str:
 
 def extract_action_type_from_tool_name(tool_name: str) -> str:
     """Extract action type from tool name (e.g., 'workitems_create' -> 'create')."""
-    if "_create" in tool_name:
+    # Special case: relation operations are updates, not creates
+    if "_create_relation" in tool_name:
+        return "update"
+    elif "_create" in tool_name:
         return "create"
     elif "_update" in tool_name:
         return "update"
@@ -764,10 +829,32 @@ def preflight_missing_required_fields(tool_name: str, tool_args: Dict[str, Any],
         return missing
 
     args = tool_args or {}
+    # UUID format for strict validation of *_id fields
+    uuid_pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
     for key in required:
         val = args.get(key)
         # Treat 'NEEDS_CLARIFICATION' as missing - it's a sentinel value from LLM
-        if val and val != "NEEDS_CLARIFICATION":
+        # Also treat placeholders (e.g., "<id of project: X>") and non-UUID *_id values as missing
+        is_missing = False
+
+        if not val or val == "NEEDS_CLARIFICATION":
+            is_missing = True
+        elif key.endswith("_id"):
+            # Special sentinel allowed for pages scope
+            if isinstance(val, str) and key == "project_id" and val == "__workspace_scope__":
+                is_missing = False
+            elif isinstance(val, str):
+                # Missing if placeholder or non-UUID
+                if "<id of" in val or not uuid_pattern.match(val):
+                    is_missing = True
+            elif isinstance(val, dict):
+                # If dict provided, require a valid UUID in 'id' key
+                vid = val.get("id") if isinstance(val, dict) else None
+                if not (isinstance(vid, str) and uuid_pattern.match(vid)):
+                    is_missing = True
+        # Non *_id fields: treat as present if truthy
+
+        if not is_missing:
             continue
         # Try resolving from context
         ctx_val = resolve_from_context(key, args, action_context)
@@ -987,7 +1074,7 @@ async def handle_missing_required_fields(
                                 cid = it.get("id") if isinstance(it, dict) else None
                                 name = it.get("name") if isinstance(it, dict) else None
                                 if cid and name:
-                                    disambig_options.append({"id": str(cid), "name": str(name)})
+                                    disambig_options.append({"id": str(cid), "name": str(name), "type": "cycle", "project_id": str(proj)})
                             except Exception:
                                 continue
                 clarification_payload["questions"] = ["Which cycle should I use?"]
@@ -1089,7 +1176,7 @@ async def handle_missing_required_fields(
             # Best-effort only; lack of options shouldn't block clarification
             pass
 
-        # Enrich options with entity URLs (projects/users) for better UX in clarification
+        # Enrich options with entity URLs (projects/users/cycles/modules) for better UX in clarification
         try:
             if disambig_options:
                 from pi.config import settings as _settings
@@ -1102,9 +1189,14 @@ async def handle_missing_required_fields(
                             _opt2 = dict(_opt)
                             _typ = _opt2.get("type")
                             _idv = _opt2.get("id")
+                            _proj_id = _opt2.get("project_id")
                             try:
                                 if _typ == "project" and _idv:
                                     _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_idv}/overview/"
+                                elif _typ == "cycle" and _idv and _proj_id:
+                                    _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_proj_id}/cycles/{_idv}/"
+                                elif _typ == "module" and _idv and _proj_id:
+                                    _opt2["url"] = f"{base_url}/{workspace_slug}/projects/{_proj_id}/modules/{_idv}/"
                                 elif _typ == "user" and _idv:
                                     _opt2["url"] = f"{base_url}/{workspace_slug}/profile/{_idv}/"
                             except Exception:

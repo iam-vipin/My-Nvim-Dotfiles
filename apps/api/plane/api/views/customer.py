@@ -42,6 +42,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models.functions import Cast
 from django.core.exceptions import ValidationError
 from .base import BaseAPIView
+from plane.utils.openapi.responses import WORKSPACE_NOT_FOUND_RESPONSE, create_paginated_response
 
 
 class CustomerAPIEndpoint(BaseAPIView):
@@ -75,11 +76,13 @@ class CustomerAPIEndpoint(BaseAPIView):
         description="List all customers in a workspace with optional search filtering",
         tags=["Customers"],
         responses={
-            200: OpenApiResponse(
-                description="Customers retrieved successfully",
-                response=CustomerSerializer,
+            200: create_paginated_response(
+                CustomerSerializer,
+                "PaginatedCustomerResponse",
+                "Paginated list of customers",
+                "Paginated Customers",
             ),
-            404: OpenApiResponse(description="Workspace not found"),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug):
@@ -707,9 +710,11 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         description="List all customer properties in a workspace.",
         tags=["Customer Properties"],
         responses={
-            200: OpenApiResponse(
-                description="Customer properties retrieved successfully",
-                response=CustomerPropertySerializer,
+            200: create_paginated_response(
+                CustomerPropertySerializer,
+                "PaginatedCustomerPropertyResponse",
+                "Paginated list of customer properties",
+                "Paginated Customer Properties",
             ),
             404: OpenApiResponse(description="Workspace not found"),
         },
@@ -734,57 +739,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         summary="Create customer property",
         description="Create a new customer property in the specified workspace.",
         tags=["Customer Properties"],
-        request=OpenApiRequest(
-            request={
-                "application/json": {
-                    "type": "object",
-                    "properties": {
-                        "name": {"type": "string", "description": "Property name"},
-                        "description": {
-                            "type": "string",
-                            "description": "Property description",
-                        },
-                        "property_type": {
-                            "type": "string",
-                            "enum": [
-                                "TEXT",
-                                "NUMBER",
-                                "SELECT",
-                                "MULTI_SELECT",
-                                "DATE",
-                                "OPTION",
-                            ],
-                            "description": "Property type",
-                        },
-                        "is_required": {
-                            "type": "boolean",
-                            "description": "Whether property is required",
-                        },
-                        "is_multi": {
-                            "type": "boolean",
-                            "description": "Whether property allows multiple values",
-                        },
-                        "default_value": {
-                            "type": "array",
-                            "description": "Default value(s)",
-                        },
-                        "options": {
-                            "type": "array",
-                            "description": "Options for OPTION type properties",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {"type": "string"},
-                                    "description": {"type": "string"},
-                                    "is_default": {"type": "boolean"},
-                                },
-                            },
-                        },
-                    },
-                    "required": ["name", "property_type"],
-                }
-            }
-        ),
+        request=OpenApiRequest(request=CustomerPropertySerializer),
         responses={
             201: OpenApiResponse(
                 description="Customer property created successfully",

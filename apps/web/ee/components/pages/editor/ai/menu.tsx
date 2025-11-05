@@ -2,9 +2,10 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { ChevronRight, CornerDownRight, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
+import { CornerDownRight, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // components
@@ -202,7 +203,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                 <item.icon className="flex-shrink-0 size-3" />
                 {item.label}
               </span>
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("flex-shrink-0 size-3 opacity-0 pointer-events-none transition-opacity", {
                   "opacity-100 pointer-events-auto": isActiveTask,
                 })}

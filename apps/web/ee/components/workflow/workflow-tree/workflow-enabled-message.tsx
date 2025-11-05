@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { StatePropertyIcon } from "@plane/propel/icons";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
 import { WorkflowTree } from "./workflow-tree";
@@ -25,7 +25,7 @@ export const WorkFlowEnabledMessage = observer((props: Props) => {
   return (
     <div className="relative w-72 flex flex-col gap-2">
       <div className="flex gap-1 items-center">
-        <DoubleCircleIcon className="size-3 text-custom-text-200" />
+        <StatePropertyIcon className="size-3 text-custom-text-200" />
         <span className="text-xs font-medium">{t("workflows.workflow_enabled.label")}</span>
       </div>
       <div className="pl-4">

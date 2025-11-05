@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LayersIcon } from "@plane/propel/icons";
+import { EpicIcon, LayersIcon } from "@plane/propel/icons";
 // components
 import { cn, stripAndTruncateHTML } from "@plane/utils";
 import { ReadonlyLabels } from "@/components/readonly";
@@ -15,10 +15,11 @@ import { useWorkItemData } from "../useArtifactData";
 import { WithPreviewHOC } from "./with-preview-hoc";
 type TProps = {
   artifactId: string;
+  isEpic?: boolean;
 };
 
 export const WorkItemPreviewCard = observer((props: TProps) => {
-  const { artifactId } = props;
+  const { artifactId, isEpic = false } = props;
   const data = useWorkItemData(artifactId);
   const { workspaceSlug } = useParams();
   return (
@@ -27,7 +28,11 @@ export const WorkItemPreviewCard = observer((props: TProps) => {
         {/* header */}
         <div className="flex gap-2 items-center overflow-hidden w-full">
           {/* issue type icon */}
-          <LayersIcon className="size-4 rounded flex-shrink-0" />
+          {isEpic ? (
+            <EpicIcon className="size-4 rounded text-custom-text-200 flex-shrink-0" />
+          ) : (
+            <LayersIcon className="size-4 rounded flex-shrink-0" />
+          )}
           {/* title */}
           <div className="truncate text-sm font-medium text-start">{data.name}</div>
         </div>

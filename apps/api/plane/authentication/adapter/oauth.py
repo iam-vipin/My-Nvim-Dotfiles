@@ -52,6 +52,8 @@ class OauthAdapter(Adapter):
             return "GITHUB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitlab":
             return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitea":
+            return "GITEA_OAUTH_PROVIDER_ERROR"
         elif self.provider == "oidc":
             return "OIDC_PROVIDER_ERROR"
         else:
@@ -84,14 +86,14 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
-            logger.warning("Error getting user token", extra={
-                "error_code": code,
-                "error_message": str(code),
-            })
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
+            logger.warning(
+                "Error getting user token",
+                extra={
+                    "error_code": code,
+                    "error_message": str(code),
+                },
             )
-
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def get_user_response(self):
         try:
@@ -105,13 +107,14 @@ class OauthAdapter(Adapter):
             return response.json()
         except requests.RequestException:
             code = self.authentication_error_code()
-            logger.warning("Error getting user response", extra={
-                "error_code": code,
-                "error_message": str(code),
-            })
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code)
+            logger.warning(
+                "Error getting user response",
+                extra={
+                    "error_code": code,
+                    "error_message": str(code),
+                },
             )
+            raise AuthenticationException(error_code=AUTHENTICATION_ERROR_CODES[code], error_message=str(code))
 
     def set_user_data(self, data):
         self.user_data = data

@@ -4,6 +4,8 @@ from .issue_property import (
     IssuePropertyValueAPISerializer,
     IssuePropertyValueAPIDetailSerializer,
     IssuePropertyActivityAPISerializer,
+    WorkItemPropertyValueRequestSerializer,
+    WorkItemPropertyValueResponseSerializer,
 )
 from .worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 from .epic import EpicSerializer

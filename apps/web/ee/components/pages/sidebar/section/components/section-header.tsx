@@ -1,10 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronRight, LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // constants
 import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // utils
 import { cn } from "@plane/utils";
 // types
@@ -58,7 +59,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
             }}
           >
             {({ open }) => (
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("size-3.5 transform transition-transform duration-300 ease-in-out", {
                   "rotate-90": open,
                 })}

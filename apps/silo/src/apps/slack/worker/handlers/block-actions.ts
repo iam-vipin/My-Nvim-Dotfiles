@@ -1,9 +1,12 @@
 import axios from "axios";
 import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
 import { refreshLinkback } from "../../helpers/linkback";
@@ -74,6 +77,8 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return await handleCreateCommentAction(data, details);
       case ACTIONS.LINKBACK_ADD_WEB_LINK:
         return await handleCreateWebLinkAction(data, details);
+      case ACTIONS.DISABLE_SYNC:
+        return await handleDisableSyncAction(data, details);
       default:
         return false;
     }
@@ -606,5 +611,76 @@ async function handleAssignToMeButtonAction(data: TBlockActionPayload, details: 
         });
       }
     }
+  }
+}
+
+async function handleDisableSyncAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
+  if (data.actions[0].type !== "button") return;
+
+  const value = data.actions[0].value;
+  const values = value.split(".");
+
+  if (values.length !== 2) {
+    return;
+  }
+
+  const projectId = values[0];
+  const issueId = values[1];
+  const { workspaceConnection, slackService } = details;
+  const apiClient = getAPIClient();
+
+  try {
+    // Get existing workspace entity connections for this issue
+    const connections = await integrationConnectionHelper.getWorkspaceEntityConnectionsByPlaneProps({
+      workspace_id: workspaceConnection.workspace_id,
+      issue_id: issueId,
+      entity_type: E_INTEGRATION_KEYS.SLACK,
+    });
+
+    // Delete all connections for this issue
+    if (connections.length > 0) {
+      for (const connection of connections) {
+        await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(connection.id);
+      }
+
+      if (data.message?.thread_ts) {
+        // Get user info to include in the message
+        const userInfo = await slackService.getUserInfo(data.user.id);
+        const userName = userInfo?.user?.real_name || "Unknown User";
+
+        await slackService.sendThreadMessage(
+          data.channel.id,
+          data.message?.thread_ts,
+          `Thread sync has been disabled for this work item by ${userName}.`
+        );
+      }
+
+      // Update the linkback to remove sync info
+      const refreshedLinkback = await refreshLinkback({
+        details,
+        issueId,
+        projectId,
+      });
+
+      if (data.response_url) {
+        await axios.post(data.response_url, {
+          blocks: refreshedLinkback.blocks,
+        });
+      }
+    } else {
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        "Thread sync is not currently enabled for this work item.",
+        data.channel.id,
+        data.message?.thread_ts
+      );
+    }
+  } catch {
+    await slackService.sendEphemeralMessage(
+      data.user.id,
+      "Failed to disable thread sync. Please try again.",
+      data.channel.id,
+      data.message?.thread_ts
+    );
   }
 }

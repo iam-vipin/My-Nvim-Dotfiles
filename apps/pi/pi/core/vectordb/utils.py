@@ -100,7 +100,12 @@ def build_issue_semantic_query(
         query = {
             "bool": {
                 "must": [query],
-                "must_not": [{"term": {"id": issue_id}}, {"term": {"duplicate_of": issue_id}}, {"term": {"not_duplicates_with": issue_id}}],
+                "must_not": [
+                    {"ids": {"values": [issue_id]}},  # exclude by _id defensively
+                    {"term": {"id": issue_id}},  # exclude by explicit id field if present
+                    {"term": {"duplicate_of": issue_id}},
+                    {"term": {"not_duplicates_with": issue_id}},
+                ],
             }
         }
 

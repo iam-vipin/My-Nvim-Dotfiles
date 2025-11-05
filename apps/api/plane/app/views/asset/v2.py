@@ -251,6 +251,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
+            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
         ):
             return {"entity_identifier": entity_id}
 
@@ -373,6 +374,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
             FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
         }
 
         # Map entity type category to allowed types and error message
@@ -637,6 +639,8 @@ class ProjectAssetEndpoint(BaseAPIView):
 
         if entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
             return {"draft_issue_id": entity_id}
+        if entity_type == FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION:
+            return {"entity_identifier": entity_id}
         return {}
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -671,6 +675,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
+            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
         }
 
         # Map entity type category to allowed types and error message

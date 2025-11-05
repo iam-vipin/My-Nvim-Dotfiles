@@ -16,6 +16,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
+import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
@@ -23,7 +24,6 @@ import { captureClick, captureSuccess, captureError } from "@/helpers/event-trac
 import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
@@ -97,7 +97,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
 
   // Use unified menu hook from plane-web (resolves to CE or EE)
   const menuResult = useModuleMenuItems({
-    moduleDetails: moduleDetails!,
+    moduleDetails: moduleDetails ?? undefined,
     workspaceSlug,
     projectId,
     moduleId,

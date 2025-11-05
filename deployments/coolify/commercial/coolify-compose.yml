@@ -64,9 +64,8 @@ x-docstore-env: &docstore-env
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
   AWS_S3_BUCKET_NAME: ${BUCKET_NAME:-uploads}
 
-x-silo-env:
-  # App Envs
-  &silo-env
+x-silo-env: &silo-env
+  # Silo App Envs
   PORT: 3000
   BATCH_SIZE: ${BATCH_SIZE:-60}
   DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}

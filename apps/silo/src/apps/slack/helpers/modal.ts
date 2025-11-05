@@ -88,7 +88,10 @@ export async function createWorkItemModal(params: TSlackWorkItemOrIntakeModalPar
 
   if (issueTypeEnabled && !params.disableIssueType) {
     const issueTypes = await planeClient.issueType.fetch(workspaceConnection.workspace_slug, selectedProject.id);
-    issueTypeOptions.push(...convertToSlackOptions(issueTypes, selectedProject.id));
+    const filteredIssueTypeOptions = convertToSlackOptions(issueTypes, selectedProject.id).filter(
+      (option) => option && option.text && option.text.text && option.value
+    );
+    issueTypeOptions.push(...filteredIssueTypeOptions);
 
     // If issue type is enabled, we need to find the matching issue type,
     // as in plane there is a concept of default issue type, which is not the one we want to use.

@@ -448,11 +448,29 @@ If the user's request falls into any of these categories, return an EMPTY LIST i
 
 These requests cannot be fulfilled with the available action categories. Return [] so the system can provide a proper rejection message.
 
-Output:
-- Return ONLY structured data JSON schema (a list of selections, each with `category` and optional `rationale`).
-- If no categories are appropriate for the request, return an empty list: []
-- No explanation outside the JSON schema. No examples. No extra keys.
-- Valid category values: workitems, projects, cycles, labels, states, modules, pages, assets, users, intake, members, activity, attachments, comments, links, properties, types, worklogs.
+Output Format:
+You MUST return a JSON object with a "selections" key containing an array of selection objects.
+
+**Required JSON Structure:**
+{{{{
+  "selections": [
+    {{{{
+      "category": "category_name",
+      "rationale": "brief explanation"
+    }}}}
+  ]
+}}}}
+
+**Examples:**
+- Single category: {{{{"selections": [{{{{"category": "projects", "rationale": "User wants to create a project"}}}}]}}}}
+- Multiple categories: {{{{"selections": [{{{{"category": "workitems", "rationale": "..."}}}}, {{{{"category": "cycles", "rationale": "..."}}}}]}}}}
+- Unsupported request: {{{{"selections": []}}}}
+
+**Rules:**
+- ALWAYS wrap selections in a "selections" array, even for a single category
+- If no categories are appropriate, return: {{{{"selections": []}}}}
+- Valid category values: workitems, projects, cycles, labels, states, modules, pages, assets, users, intake, members, activity, attachments, comments, links, properties, types, worklogs
+- No explanation outside the JSON structure
 """  # noqa: E501
 
 

@@ -62,6 +62,7 @@ class ChatKit(AttachmentMixin):
         # Model name mapping for user-friendly names to actual LiteLLM model names
         model_name_mapping = {
             "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
+            "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
         }
 
         if not switch_llm:
@@ -73,15 +74,29 @@ class ChatKit(AttachmentMixin):
             actual_model_name = model_name_mapping.get(switch_llm, switch_llm)
 
             if switch_llm in model_name_mapping:
-                # This is a LiteLLM model
-                TOOL_LLM = actual_model_name
-                tool_config = LLMConfig(
-                    model=TOOL_LLM,
-                    temperature=0.2,
-                    streaming=False,
-                    base_url=settings.llm_config.LITE_LLM_HOST,
-                    api_key=settings.llm_config.LITE_LLM_API_KEY,
-                )
+                # This is a Claude model
+                if actual_model_name == settings.llm_model.CLAUDE_SONNET_4_0:
+                    TOOL_LLM = settings.llm_model.CLAUDE_SONNET_4_0
+                    tool_config = LLMConfig(
+                        model=TOOL_LLM,
+                        temperature=0.2,
+                        streaming=False,
+                        base_url=settings.llm_config.CLAUDE_BASE_URL,
+                        api_key=settings.llm_config.CLAUDE_API_KEY,
+                    )
+                elif actual_model_name == settings.llm_model.LITE_LLM_CLAUDE_SONNET_4:
+                    # This is a LiteLLM model
+                    TOOL_LLM = settings.llm_model.LITE_LLM_CLAUDE_SONNET_4
+                    tool_config = LLMConfig(
+                        model=TOOL_LLM,
+                        temperature=0.2,
+                        streaming=False,
+                        base_url=settings.llm_config.LITE_LLM_HOST,
+                        api_key=settings.llm_config.LITE_LLM_API_KEY,
+                    )
+                else:
+                    raise ValueError(f"Unsupported model: {actual_model_name}")
+
             elif switch_llm == "gpt-5-standard":
                 # This is GPT-5 Standard with medium reasoning
                 TOOL_LLM = "gpt-5"  # Use base GPT-5 model name for OpenAI API

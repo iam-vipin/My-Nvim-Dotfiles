@@ -295,6 +295,44 @@ _DEFAULT_CONFIGS = {
     ),
 }
 
+# Anthropic configs
+_ANTHROPIC_CONFIGS = {
+    "claude-sonnet-4-0-default": LLMConfig(
+        model=settings.llm_model.CLAUDE_SONNET_4_0,
+        temperature=0.2,
+        streaming=False,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    ),
+    "claude-sonnet-4-0-stream": LLMConfig(
+        model=settings.llm_model.CLAUDE_SONNET_4_0,
+        temperature=0.2,
+        streaming=True,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    ),
+    "claude-sonnet-4-0-decomposer": LLMConfig(
+        model=settings.llm_model.CLAUDE_SONNET_4_0,
+        temperature=0.2,
+        streaming=False,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    ),
+    "claude-sonnet-4-0-fast": LLMConfig(
+        model=settings.llm_model.CLAUDE_SONNET_4_0,
+        temperature=0.2,
+        streaming=False,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    ),
+    "claude-sonnet-4-0-fast-stream": LLMConfig(
+        model=settings.llm_model.CLAUDE_SONNET_4_0,
+        temperature=0.2,
+        streaming=True,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    ),
+}
 
 # LiteLLM configs
 _LITE_LLM_CONFIGS = {
@@ -340,7 +378,9 @@ _LITE_LLM_CONFIGS = {
 class LLMFactory:
     @classmethod
     def get_default_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _LITE_LLM_CONFIGS.keys():
+        if model_name in _ANTHROPIC_CONFIGS.keys():
+            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+        elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
             config = _DEFAULT_CONFIGS[model_name]
@@ -350,7 +390,9 @@ class LLMFactory:
 
     @classmethod
     def get_stream_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _LITE_LLM_CONFIGS.keys():
+        if model_name in _ANTHROPIC_CONFIGS.keys():
+            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+        elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
             config = _DEFAULT_CONFIGS[model_name]
@@ -360,7 +402,9 @@ class LLMFactory:
 
     @classmethod
     def get_decomposer_llm(cls, model_name: Optional[str] = None) -> Any:
-        if model_name in _LITE_LLM_CONFIGS.keys():
+        if model_name in _ANTHROPIC_CONFIGS.keys():
+            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+        elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
             config = _DEFAULT_CONFIGS[model_name]
@@ -370,7 +414,9 @@ class LLMFactory:
 
     @classmethod
     def get_fast_llm(cls, streaming: bool = False, model_name: Optional[str] = None) -> Any:
-        if model_name in _LITE_LLM_CONFIGS.keys():
+        if model_name in _ANTHROPIC_CONFIGS.keys():
+            return create_openai_llm(_ANTHROPIC_CONFIGS[model_name])
+        elif model_name in _LITE_LLM_CONFIGS.keys():
             return create_openai_llm(_LITE_LLM_CONFIGS[model_name])
         elif model_name in _DEFAULT_CONFIGS.keys():
             config = _DEFAULT_CONFIGS[model_name]
@@ -421,6 +467,14 @@ def get_chat_llm(llm_name: str) -> Any:
                 base_url=settings.llm_config.LITE_LLM_HOST,
                 api_key=settings.llm_config.LITE_LLM_API_KEY,
             )
+        elif llm_name.lower() == "claude-sonnet-4-0":
+            config = LLMConfig(
+                model=settings.llm_model.CLAUDE_SONNET_4_0,
+                temperature=0.2,
+                streaming=True,
+                base_url=settings.llm_config.CLAUDE_BASE_URL,
+                api_key=settings.llm_config.CLAUDE_API_KEY,
+            )
         else:
             # Fallback to default (GPT-4.1)
             config = LLMConfig(model=settings.llm_model.GPT_4_1, temperature=0.2, streaming=True)
@@ -453,6 +507,18 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
                 api_key=settings.llm_config.LITE_LLM_API_KEY,
             )
             # Claude doesn't support frequency_penalty, so don't pass it
+            return create_openai_llm(
+                config,
+                max_completion_tokens=4096,
+            )
+        elif model == "claude-sonnet-4-0":
+            config = LLMConfig(
+                model=settings.llm_model.CLAUDE_SONNET_4_0,
+                temperature=0.2,
+                streaming=False,
+                base_url=settings.llm_config.CLAUDE_BASE_URL,
+                api_key=settings.llm_config.CLAUDE_API_KEY,
+            )
             return create_openai_llm(
                 config,
                 max_completion_tokens=4096,

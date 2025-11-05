@@ -373,7 +373,11 @@ async def execute_action_with_retrieval(
                 custom_prompt = f"CONVERSATION HISTORY & ACTION CONTEXT:\n{enhanced_conversation_history}\n\n" + custom_prompt
 
             # Request raw response for debugging
-            action_router = chatbot_instance.decomposer_llm.with_structured_output(ActionCategoryRouting, include_raw=True)
+            action_router = chatbot_instance.decomposer_llm.with_structured_output(
+                ActionCategoryRouting,
+                include_raw=True,
+                method="json_mode",
+            )
             action_router.set_tracking_context(query_id, db, MessageMetaStepType.ACTION_CATEGORY_ROUTING, chat_id=str(chat_id))
             dynamic_action_router = router_prompt_template | action_router
 
@@ -570,6 +574,14 @@ async def execute_action_with_retrieval(
             except Exception as e:
                 log.warning(f"Failed to build tools for category {cat}: {e}")
 
+        # Deduplicate method tools (entity search tools may appear in multiple categories)
+        seen_tool_names = set()
+        deduplicated_method_tools = []
+        for tool in all_method_tools:
+            if tool.name not in seen_tool_names:
+                deduplicated_method_tools.append(tool)
+                seen_tool_names.add(tool.name)
+
         # Include retrieval tools from phase-1 so the LLM can chain look-ups ↔ actions
         # Filter out the category selection tool and include all other tools
         # Phase-2: rebuild retrieval tools with the normalized project_id to ensure correct scoping
@@ -586,8 +598,8 @@ async def execute_action_with_retrieval(
             is_project_chat=is_project_chat,
         )
         # Merge while preserving order and avoiding duplicates
-        method_tool_names = {t.name for t in all_method_tools}
-        combined_tools = all_method_tools + [t for t in fresh_retrieval_tools if t.name not in method_tool_names]
+        method_tool_names = {t.name for t in deduplicated_method_tools}
+        combined_tools = deduplicated_method_tools + [t for t in fresh_retrieval_tools if t.name not in method_tool_names]
         if not combined_tools:
             log.warning("No method or retrieval tools available for selected categories")
             msg = "An unexpected error occurred. Please try again later."

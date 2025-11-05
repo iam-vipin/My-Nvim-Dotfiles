@@ -21,13 +21,12 @@ type EndCycleModalProps = {
   projectId: string;
   workspaceSlug: string;
   transferrableIssuesCount: number;
-  cycleName: string;
 };
 
 type LoadingState = "Transferring..." | "Ending Cycle..." | "Completing Cycle ...";
 
 export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
-  const { isOpen, handleClose, transferrableIssuesCount, projectId, workspaceSlug, cycleId, cycleName } = props;
+  const { isOpen, handleClose, transferrableIssuesCount, projectId, workspaceSlug, cycleId } = props;
   const [transferIssues, setTransferIssues] = useState<boolean>(false);
   const [targetCycle, setTargetCycle] = useState<string | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState | null>(null);

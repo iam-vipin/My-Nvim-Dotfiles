@@ -5,8 +5,8 @@ import type { TContextMenuItem } from "@plane/ui";
 import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
 
 // Types
-export interface UseCycleMenuItemsProps {
-  cycleDetails: ICycle;
+interface UseCycleMenuItemsProps {
+  cycleDetails: ICycle | undefined;
   isEditingAllowed: boolean;
   workspaceSlug: string;
   projectId: string;
@@ -19,8 +19,8 @@ export interface UseCycleMenuItemsProps {
   handleOpenInNewTab: () => void;
 }
 
-export interface UseModuleMenuItemsProps {
-  moduleDetails: IModule;
+interface UseModuleMenuItemsProps {
+  moduleDetails: IModule | undefined;
   isEditingAllowed: boolean;
   workspaceSlug: string;
   projectId: string;
@@ -33,7 +33,7 @@ export interface UseModuleMenuItemsProps {
   handleOpenInNewTab: () => void;
 }
 
-export interface UseViewMenuItemsProps {
+interface UseViewMenuItemsProps {
   isOwner: boolean;
   isAdmin: boolean;
   workspaceSlug: string;
@@ -45,7 +45,7 @@ export interface UseViewMenuItemsProps {
   handleOpenInNewTab: () => void;
 }
 
-export interface UseLayoutMenuItemsProps {
+interface UseLayoutMenuItemsProps {
   workspaceSlug: string;
   projectId: string;
   storeType: "PROJECT" | "EPIC";
@@ -53,7 +53,7 @@ export interface UseLayoutMenuItemsProps {
   handleOpenInNewTab: () => void;
 }
 
-export type MenuResult = {
+type MenuResult = {
   items: TContextMenuItem[];
   modals: JSX.Element | null;
 };
@@ -73,7 +73,7 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
     workspaceSlug,
     projectId,
     cycleId,
-    cycleName: cycleDetails.name,
+    cycleName: cycleDetails?.name,
     isCurrentCycle,
     transferrableIssuesCount,
   });

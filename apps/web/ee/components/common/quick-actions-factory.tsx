@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { StopCircle, Download, Lock, LockOpen } from "lucide-react";
-import type { TContextMenuItem } from "@plane/ui";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
 // core
 import { useQuickActionsFactory as useCoreQuickActionsFactory } from "@/components/common/quick-actions-factory";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -62,7 +62,7 @@ export const useQuickActionsFactory = () => {
       workspaceSlug: string;
       projectId: string;
       cycleId: string;
-      cycleName: string;
+      cycleName: string | undefined;
       isCurrentCycle: boolean;
       transferrableIssuesCount: number;
     }): FeatureResult => {
@@ -91,7 +91,6 @@ export const useQuickActionsFactory = () => {
             projectId={props.projectId}
             workspaceSlug={props.workspaceSlug}
             transferrableIssuesCount={props.transferrableIssuesCount}
-            cycleName={props.cycleName}
           />
         ) : null;
 

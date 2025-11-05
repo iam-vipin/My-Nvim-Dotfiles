@@ -19,6 +19,7 @@ llm_id_map = {
     "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
     "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
+    "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
 }
 
 # Data for sync.
@@ -77,6 +78,14 @@ LLMS_DATA = [
         "description": "Anthropic's Claude Sonnet 4 model - powerful reasoning and analysis.",
         "provider": "Anthropic",
         "model_key": "claude-sonnet-4",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["claude-sonnet-4-0"],
+        "name": "Claude Sonnet 4.0",
+        "description": "Anthropic's Claude Sonnet 4.0 model - powerful reasoning and analysis.",
+        "provider": "Anthropic",
+        "model_key": "claude-sonnet-4-0",
         "max_tokens": 200000,
     },
 ]

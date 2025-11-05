@@ -63,6 +63,13 @@ PRICING_DATA = [
         "text_output_price": 15.00,
         "cached_text_input_price": 1.50,
     },
+    {
+        "id": "0344a9f5-92f6-40f8-8cb0-288cf13b0a96",
+        "llm_model_id": llm_id_map["claude-sonnet-4-0"],
+        "text_input_price": 3.00,
+        "text_output_price": 15.00,
+        "cached_text_input_price": 1.50,
+    },
 ]
 
 tracked_fields = ["text_input_price", "text_output_price", "cached_text_input_price"]

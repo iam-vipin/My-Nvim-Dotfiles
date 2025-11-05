@@ -54,14 +54,22 @@ Since this is a UUID, please always include the structured DB agent in the selec
         log.info("************************************************")
         # Create router dynamically with tracking context
         route_query_type: Type[BaseModel] = RouteQuery  # type: ignore[assignment]
-        structured_decomposer = chatbot_instance.decomposer_llm.with_structured_output(route_query_type, include_raw=True)
+        structured_decomposer = chatbot_instance.decomposer_llm.with_structured_output(
+            route_query_type,
+            include_raw=True,
+            method="json_mode",
+        )
         structured_decomposer.set_tracking_context(query_id, db, MessageMetaStepType.ROUTER, chat_id=str(chat_id))
 
         # Create dynamic router chain
+        json_schema_hint = '{"decomposed_queries": [{"agent": "<agent_name>", "query": "<query_text>"}]}'
         router_prompt_template = ChatPromptTemplate.from_messages([
-            ("system", router_prompt),
+            (
+                "system",
+                "{base_prompt}\n\nRespond **only** in valid JSON format matching this schema:\n{json_schema_hint}",
+            ),
             ("human", "{custom_prompt}"),
-        ])
+        ]).partial(base_prompt=router_prompt, json_schema_hint=json_schema_hint)
         dynamic_router = router_prompt_template | structured_decomposer
 
         # handle openai.LengthFinishReasonError by retrying once with a slightly higher temperature
@@ -88,7 +96,11 @@ Since this is a UUID, please always include the structured DB agent in the selec
             # Create new structured output and router
             # Use the same type alias; mypy: no-redef warning avoided by reusing existing name
             route_query_type_retry: Type[BaseModel] = RouteQuery  # type: ignore[assignment]
-            retry_json_llm = retry_decomposer_llm.with_structured_output(route_query_type_retry, include_raw=True)
+            retry_json_llm = retry_decomposer_llm.with_structured_output(
+                route_query_type_retry,
+                include_raw=True,
+                method="json_mode",
+            )
 
             # Set tracking context on the structured LLM instance
             retry_json_llm.set_tracking_context(query_id, db, MessageMetaStepType.ROUTER, chat_id=str(chat_id))

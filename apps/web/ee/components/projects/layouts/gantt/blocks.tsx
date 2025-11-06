@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IGanttBlock } from "@plane/types";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

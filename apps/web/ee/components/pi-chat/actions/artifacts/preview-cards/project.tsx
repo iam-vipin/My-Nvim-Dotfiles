@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
-import { Logo } from "@/components/common/logo";
 import type { TArtifact } from "@/plane-web/types";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";

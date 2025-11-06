@@ -8,6 +8,7 @@ import { Lock } from "lucide-react";
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
@@ -17,7 +18,6 @@ import { Breadcrumbs, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdow
 // components
 import { getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Logo } from "@/components/common/logo";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";

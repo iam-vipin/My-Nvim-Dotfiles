@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
 // components
 import { BlockItemAction } from "@/components/pages/list";

@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // types
 // ui
-import { EmojiIconPicker, EmojiIconPickerTypes, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // hooks
@@ -89,7 +90,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
           <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
             {showLogo && (
               <div className="flex h-5 w-5 items-center justify-center overflow-hidden">
-                <EmojiIconPicker
+                <EmojiPicker
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"

@@ -5,12 +5,12 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TDashboard } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

@@ -5,13 +5,13 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports
 import type { TMovePageModalProps } from "@/ce/components/pages/modals";
 // components
-import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

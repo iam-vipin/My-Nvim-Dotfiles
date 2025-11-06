@@ -7,6 +7,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
@@ -15,7 +16,6 @@ import noResultsLight from "@/app/assets/empty-state/teams/no-results-light.webp
 import noTeamspacesDark from "@/app/assets/empty-state/teams/no-teamspace-dark.webp?url";
 import noTeamspacesLight from "@/app/assets/empty-state/teams/no-teamspaces-light.webp?url";
 // components
-import { Logo } from "@/components/common/logo";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

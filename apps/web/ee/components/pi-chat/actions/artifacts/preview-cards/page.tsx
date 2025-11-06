@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
-import { Logo } from "@/components/common/logo";
 import { useTemplateData } from "../useArtifactData";
 import { Properties } from "./properties";
 import { WithPreviewHOC } from "./with-preview-hoc";

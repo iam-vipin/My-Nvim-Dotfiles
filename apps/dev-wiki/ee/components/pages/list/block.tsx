@@ -2,11 +2,10 @@
 
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
@@ -44,7 +43,7 @@ export const WikiPageListBlock: FC<TPageListBlock> = observer((props) => {
     <ListItem
       prependTitleElement={
         <>
-          <EmojiIconPicker
+          <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center"

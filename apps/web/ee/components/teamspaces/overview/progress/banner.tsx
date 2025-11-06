@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { StartDatePropertyIcon } from "@plane/propel/icons";
-import { Loader, Logo } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web imports
 import { cn } from "@plane/utils";
 import { useTeamspaces } from "@/plane-web/hooks/store";

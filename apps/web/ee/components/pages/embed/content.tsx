@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { TPageEmbedConfig } from "@plane/editor";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components

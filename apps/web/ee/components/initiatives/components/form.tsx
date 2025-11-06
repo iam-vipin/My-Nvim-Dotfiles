@@ -6,15 +6,14 @@ import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Input, EmojiIconPickerTypes } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 
 // components
-import { Logo } from "@/components/common/logo";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";

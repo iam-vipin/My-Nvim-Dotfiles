@@ -6,9 +6,10 @@ import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENT
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TreeMapIcon } from "@plane/propel/icons";
 import type { TreeMapItem } from "@plane/types";
-import { Avatar, Loader, Logo } from "@plane/ui";
+import { Avatar, Loader } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";

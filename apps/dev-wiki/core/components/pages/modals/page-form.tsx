@@ -8,11 +8,11 @@ import { ETabIndices, EPageAccess } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import { TPage } from "@plane/types";
 // ui
-import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
-import { Logo } from "@/components/common";
+import { Input } from "@plane/ui";
 // constants
 import { AccessField } from "@/components/common/access-field";
 // helpers
@@ -68,7 +68,7 @@ export const PageForm: React.FC<Props> = (props) => {
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <EmojiIconPicker
+          <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"

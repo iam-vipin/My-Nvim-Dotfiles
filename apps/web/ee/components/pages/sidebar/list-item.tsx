@@ -7,13 +7,13 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, Loader } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 import { cn, getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

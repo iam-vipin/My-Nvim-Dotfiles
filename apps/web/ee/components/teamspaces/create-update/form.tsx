@@ -7,14 +7,13 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import type { TTeamspace } from "@plane/types";
 import { EFileAssetType, EUserWorkspaceRoles } from "@plane/types";
 import { Input } from "@plane/ui";
 
 import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // store hooks

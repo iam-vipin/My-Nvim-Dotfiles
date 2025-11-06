@@ -6,11 +6,12 @@ import { CircleMinus } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TeamsIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TTeamspace } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { AlertModalCore, Avatar, AvatarGroup, CustomMenu, Logo, Table } from "@plane/ui";
+import { AlertModalCore, Avatar, AvatarGroup, CustomMenu, Table } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";

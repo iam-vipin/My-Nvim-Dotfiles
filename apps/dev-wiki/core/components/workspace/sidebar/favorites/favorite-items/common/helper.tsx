@@ -1,10 +1,10 @@
 "use client";
 
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { IFavorite, TLogoProps } from "@plane/types";
 // components
-import { Logo } from "@/components/common";
 // plane web constants
 import { FAVORITE_ITEM_ICONS, FAVORITE_ITEM_LINKS } from "@/plane-web/constants";
 

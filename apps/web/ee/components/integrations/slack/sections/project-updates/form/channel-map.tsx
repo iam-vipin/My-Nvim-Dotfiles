@@ -6,9 +6,9 @@ import { ArrowRight, Hash } from "lucide-react";
 // Plane components
 import type { SlackConversation } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PlaneLogo, ProjectIcon } from "@plane/propel/icons";
 import SlackLogo from "@/app/assets/services/slack.png?url";
-import { Logo } from "@/components/common/logo";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 
 // Hooks

@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
-import { CircularProgressIndicator, Logo } from "@plane/ui";
+import { CircularProgressIndicator } from "@plane/ui";
 import { getProgress } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";

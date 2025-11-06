@@ -1,13 +1,13 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks

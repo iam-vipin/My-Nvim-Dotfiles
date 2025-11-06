@@ -2,8 +2,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import {

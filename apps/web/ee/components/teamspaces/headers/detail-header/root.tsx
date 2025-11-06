@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleIcon,
   WorkItemsIcon,
@@ -22,7 +23,6 @@ import {
   Breadcrumbs,
   BreadcrumbNavigationDropdown,
   BreadcrumbNavigationSearchDropdown,
-  Logo,
   Header,
   Loader,
 } from "@plane/ui";

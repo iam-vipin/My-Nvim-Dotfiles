@@ -3,14 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { LeadIcon, TeamsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { AvatarGroup, Avatar } from "@plane/ui";
 // plane utils
 import { getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports

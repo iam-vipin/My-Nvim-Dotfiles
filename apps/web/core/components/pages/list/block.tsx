@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane imports
 import { ChevronRightIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";

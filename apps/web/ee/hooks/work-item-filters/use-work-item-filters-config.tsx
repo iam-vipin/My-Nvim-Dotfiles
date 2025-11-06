@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { AlignLeft } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { EIssuePropertyType, IIssueProperty, IIssueType, IProject, TWorkItemFilterProperty } from "@plane/types";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,

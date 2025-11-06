@@ -2,9 +2,9 @@ import React from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CustomSearchSelect } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";

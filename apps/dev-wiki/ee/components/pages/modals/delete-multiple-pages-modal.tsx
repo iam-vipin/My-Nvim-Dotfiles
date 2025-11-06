@@ -7,10 +7,10 @@ import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { EmptyPageIcon } from "@plane/propel/icons";
-import { AlertModalCore } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Logo } from "@/components/common";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

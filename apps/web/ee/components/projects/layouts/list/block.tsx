@@ -4,10 +4,11 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { Logo, Row } from "@plane/ui";
+import { Row } from "@plane/ui";
 // helpers
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks

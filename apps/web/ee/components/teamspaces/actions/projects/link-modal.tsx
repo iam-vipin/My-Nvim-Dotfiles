@@ -7,6 +7,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon, TeamsIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, truncateText } from "@plane/utils";
@@ -14,7 +15,6 @@ import { cn, truncateText } from "@plane/utils";
 import searchProjectDark from "@/app/assets/empty-state/search/project-dark.webp?url";
 import searchProjectLight from "@/app/assets/empty-state/search/project-light.webp?url";
 // components
-import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

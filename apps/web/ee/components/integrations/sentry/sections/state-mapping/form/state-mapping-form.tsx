@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import { useMemo, useCallback } from "react";
 import useSWR from "swr";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { ExState } from "@plane/sdk";
 import type { IState } from "@plane/types";
-import { CustomSearchSelect, Logo, Loader } from "@plane/ui";
+import { CustomSearchSelect, Loader } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";

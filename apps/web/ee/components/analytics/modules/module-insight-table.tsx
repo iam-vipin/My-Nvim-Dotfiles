@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ModuleStatusIcon, ProjectIcon } from "@plane/propel/icons";
 import type { ModuleInsightColumns } from "@plane/types";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";

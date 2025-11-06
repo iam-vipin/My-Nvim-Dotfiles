@@ -1,9 +1,9 @@
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { BriefcaseBusiness } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { cn } from "@plane/propel/utils";
 import type { TLogoProps } from "@plane/types";
-import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 
 export const DisplayProject = observer(

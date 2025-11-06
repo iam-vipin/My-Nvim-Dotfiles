@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import type { TSentryStateMapping } from "@plane/etl/sentry";
-import { StateGroupIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { StateGroupIcon } from "@plane/propel/icons";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

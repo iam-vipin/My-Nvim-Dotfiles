@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserPermissionsLevel } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";

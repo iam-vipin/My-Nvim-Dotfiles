@@ -3,8 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { TTeamspace } from "@plane/types";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { TTeamspace } from "@plane/types";
 import { PowerKMenuBuilder } from "@/components/power-k/menus/builder";
 
 type Props = {

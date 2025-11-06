@@ -9,11 +9,11 @@ import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS 
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
 // assets
 import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
-import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks

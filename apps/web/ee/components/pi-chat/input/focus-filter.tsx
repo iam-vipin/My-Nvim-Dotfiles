@@ -5,10 +5,11 @@ import { useParams } from "next/navigation";
 import { AtSign } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { CustomSelect, Loader, Logo, ToggleSwitch } from "@plane/ui";
+import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";

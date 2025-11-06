@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 import type { ProjectInsightColumns } from "@plane/types";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 // components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";

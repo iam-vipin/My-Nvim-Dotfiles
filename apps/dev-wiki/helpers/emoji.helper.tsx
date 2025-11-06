@@ -1,6 +1,6 @@
 // plane imports
 import { RANDOM_EMOJI_CODES } from "@plane/constants";
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
+import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 
 export const getRandomEmoji = () => RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)];
 

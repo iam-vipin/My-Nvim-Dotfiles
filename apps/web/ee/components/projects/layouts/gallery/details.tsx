@@ -4,6 +4,7 @@ import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ArchiveIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
@@ -11,7 +12,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
-// hooks
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // constants
 import { SIDEBAR_WIDTH } from "../constants";
 import type { IGanttBlock } from "../types";

@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";

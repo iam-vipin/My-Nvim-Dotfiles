@@ -116,4 +116,7 @@ build/
 .react-router/
 AGENTS.md
 
+build/
+.react-router/
+
 temp/

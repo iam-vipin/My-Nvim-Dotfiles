@@ -8,11 +8,11 @@ import { PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { cn } from "@plane/utils";
+// assets
+import GridBgDark from "@/app/assets/images/grid-bg-dark.svg?url";
+import GridBgLight from "@/app/assets/images/grid-bg-light.svg?url";
 // plane web imports
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
-// assets
-import GridBgDark from "@/public/images/grid-bg-dark.svg";
-import GridBgLight from "@/public/images/grid-bg-light.svg";
 // local imports
 import IntakeInfo from "../info";
 import IssueForm from "./form";

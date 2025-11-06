@@ -12,6 +12,7 @@ type Props = {
   };
 };
 
+// TODO: Convert into SSR in order to generate metadata
 export async function generateMetadata({ params }: Props) {
   const { anchor } = params;
   const DEFAULT_TITLE = "Plane";
@@ -42,5 +43,6 @@ export default async function ViewsLayout(props: Props) {
   const { children, params } = props;
   const { anchor } = params;
 
-  return <ViewsClientLayout anchor={anchor}>{children}</ViewsClientLayout>;
+  // return <ViewsClientLayout anchor={anchor}>{children}</ViewsClientLayout>;
+  return null;
 }

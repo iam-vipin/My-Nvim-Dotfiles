@@ -6,14 +6,9 @@ import { useMember } from "@/hooks/store/use-member";
 import { useStates } from "@/hooks/store/use-state";
 // components
 import { PageDetailsMainContent } from "@/plane-web/components/pages";
+import type { Route } from "./+types/client-layout";
 
-type Props = {
-  params: {
-    anchor: string;
-  };
-};
-
-export default function PageDetailsPage(props: Props) {
+export default function PageDetailsPage(props: Route.ComponentProps) {
   const { params } = props;
   // params
   const { anchor } = params;

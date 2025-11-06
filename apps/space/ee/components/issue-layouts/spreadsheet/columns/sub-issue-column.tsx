@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import type { IIssue } from "@/types/issue";
 

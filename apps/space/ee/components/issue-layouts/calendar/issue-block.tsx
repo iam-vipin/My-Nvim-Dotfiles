@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // components
 import { Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { usePublish } from "@/hooks/store/publish";

@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import type { ChartDataType, IGanttBlock } from "../";
 // constants

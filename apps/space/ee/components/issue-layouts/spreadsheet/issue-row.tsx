@@ -7,12 +7,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
-// ui
+// plane imports
 import { Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
-// helper
-import { cn } from "@/helpers/common.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { usePublish } from "@/hooks/store/publish";

@@ -1,6 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -9,14 +10,10 @@ import { PageNotFound } from "@/components/ui/not-found";
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 // plane web components
 import { PageDetailsError } from "@/plane-web/components/pages";
+import type { Route } from "./+types/client-layout";
 
-type Props = {
-  children: React.ReactNode;
-  anchor: string;
-};
-
-export const PagesClientLayout = observer((props: Props) => {
-  const { children, anchor } = props;
+export const PagesClientLayout = observer((props: Route.ComponentProps) => {
+  const { anchor } = props.params;
   // store hooks
   const { fetchPublishSettings } = usePublishList();
   const { entity_identifier } = usePublish(anchor);
@@ -37,7 +34,11 @@ export const PagesClientLayout = observer((props: Props) => {
 
   if (error) return <PageDetailsError />;
 
-  return <div className="size-full flex flex-col">{children}</div>;
+  return (
+    <div className="size-full flex flex-col">
+      <Outlet />
+    </div>
+  );
 });
 
 export default PagesClientLayout;

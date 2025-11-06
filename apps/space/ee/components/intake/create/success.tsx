@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
-import SuccessDark from "@/public/instance/intake-sent-dark.png";
-import SuccessLight from "@/public/instance/intake-sent-light.png";
+// assets
+import SuccessDark from "@/app/assets/instance/intake-sent-dark.png?url";
+import SuccessLight from "@/app/assets/instance/intake-sent-light.png?url";
 
 const FormSuccess = ({ onReset }: { onReset: () => void }) => {
   const { resolvedTheme } = useTheme();

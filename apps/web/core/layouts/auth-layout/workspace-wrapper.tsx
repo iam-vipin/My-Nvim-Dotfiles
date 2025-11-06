@@ -21,6 +21,16 @@ import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-availabl
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
+import {
+  WORKSPACE_MEMBERS,
+  WORKSPACE_PARTIAL_PROJECTS,
+  WORKSPACE_MEMBER_ME_INFORMATION,
+  WORKSPACE_PROJECTS_ROLES_INFORMATION,
+  WORKSPACE_FAVORITE,
+  WORKSPACE_STATES,
+  WORKSPACE_SIDEBAR_PREFERENCES,
+  WORKSPACE_DB,
+} from "@/constants/fetch-keys";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -64,32 +74,32 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching user workspace information
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PARTIAL_PROJECTS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace favorite
   useSWR(
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
-      ? `WORKSPACE_FAVORITE_${workspaceSlug}`
+      ? WORKSPACE_FAVORITE(workspaceSlug.toString())
       : null,
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
@@ -98,21 +108,21 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace states
   useSWR(
-    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_STATES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace sidebar preferences
   useSWR(
-    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_SIDEBAR_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_DB(workspaceSlug.toString()) : null,
     workspaceSlug
       ? async () => {
           // persistence.reset();

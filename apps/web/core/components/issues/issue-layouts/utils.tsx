@@ -33,6 +33,7 @@ import { Logo } from "@/components/common/logo";
 import { store } from "@/lib/store-context";
 // plane web store
 import {
+  getMilestoneColumns,
   getScopeMemberIds,
   getTeamProjectColumns,
   SpreadSheetPropertyIconMap,
@@ -119,6 +120,7 @@ export const getGroupByColumns = ({
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
     team_project: getTeamProjectColumns,
+    milestone: getMilestoneColumns,
   };
 
   // Get and return the columns for the specified group by option

@@ -21,6 +21,8 @@ from plane.db.models import (
     ProjectMember,
 )
 from django.db.models import Subquery
+from plane.app.serializers import NotificationSerializer
+from plane.graphql.bgtasks.push_notifications import issue_push_notifications
 
 # Third Party imports
 from celery import shared_task
@@ -150,14 +152,23 @@ def get_new_comment_mentions(new_value, old_value):
     return new_mentions
 
 
-def create_mention_notification(project, notification_comment, issue, actor_id, mention_id, issue_id, activity):
+def create_mention_notification(
+    project,
+    notification_comment,
+    issue,
+    actor_id,
+    mention_id,
+    issue_id,
+    activity,
+    entity_name,
+):
     return Notification(
         workspace=project.workspace,
         sender="in_app:issue_activities:mentioned",
         triggered_by_id=actor_id,
         receiver_id=mention_id,
         entity_identifier=issue_id,
-        entity_name="issue",
+        entity_name=entity_name,
         project=project,
         message=notification_comment,
         data={
@@ -168,6 +179,7 @@ def create_mention_notification(project, notification_comment, issue, actor_id, 
                 "sequence_id": issue.sequence_id,
                 "state_name": issue.state.name,
                 "state_group": issue.state.group,
+                "type_id": str(issue.type_id),
             },
             "issue_activity": {
                 "id": str(activity.get("id")),
@@ -285,6 +297,11 @@ def notifications(
 
             issue = Issue.objects.filter(pk=issue_id).first()
 
+            if issue.type and issue.type.is_epic:
+                entity_name = "epic"
+            else:
+                entity_name = "issue"
+
             if subscriber:
                 # add the user to issue subscriber
                 try:
@@ -339,6 +356,8 @@ def notifications(
                         send_email = True
                     elif issue_activity.get("field") == "comment" and preference.comment:
                         send_email = True
+                    elif issue_activity.get("field") == "page":
+                        send_email = True
                     elif preference.property_change:
                         send_email = True
                     else:
@@ -364,7 +383,7 @@ def notifications(
                             triggered_by_id=actor_id,
                             receiver_id=subscriber,
                             entity_identifier=issue_id,
-                            entity_name="issue",
+                            entity_name=entity_name,
                             project=project,
                             title=issue_activity.get("comment"),
                             data={
@@ -375,6 +394,7 @@ def notifications(
                                     "sequence_id": issue.sequence_id,
                                     "state_name": issue.state.name,
                                     "state_group": issue.state.group,
+                                    "type_id": str(issue.type_id),
                                 },
                                 "issue_activity": {
                                     "id": str(issue_activity.get("id")),
@@ -400,6 +420,7 @@ def notifications(
                             },
                         )
                     )
+
                     # Create email notification
                     if send_email:
                         bulk_email_logs.append(
@@ -407,7 +428,7 @@ def notifications(
                                 triggered_by_id=actor_id,
                                 receiver_id=subscriber,
                                 entity_identifier=issue_id,
-                                entity_name="issue",
+                                entity_name=entity_name,
                                 data={
                                     "issue": {
                                         "id": str(issue_id),
@@ -418,6 +439,7 @@ def notifications(
                                         "sequence_id": issue.sequence_id,
                                         "state_name": issue.state.name,
                                         "state_group": issue.state.group,
+                                        "type_id": str(issue.type_id),
                                     },
                                     "issue_activity": {
                                         "id": str(issue_activity.get("id")),
@@ -470,6 +492,7 @@ def notifications(
                             mention_id=mention_id,
                             issue_id=issue_id,
                             activity=issue_activity,
+                            entity_name=entity_name,
                         )
 
                         # check for email notifications
@@ -479,7 +502,7 @@ def notifications(
                                     triggered_by_id=actor_id,
                                     receiver_id=mention_id,
                                     entity_identifier=issue_id,
-                                    entity_name="issue",
+                                    entity_name=entity_name,
                                     data={
                                         "issue": {
                                             "id": str(issue_id),
@@ -490,6 +513,7 @@ def notifications(
                                             "state_group": issue.state.group,
                                             "project_id": str(issue.project.id),
                                             "workspace_slug": str(issue.project.workspace.slug),
+                                            "type_id": str(issue.type_id),
                                         },
                                         "issue_activity": {
                                             "id": str(issue_activity.get("id")),
@@ -530,7 +554,7 @@ def notifications(
                                 triggered_by_id=actor_id,
                                 receiver_id=mention_id,
                                 entity_identifier=issue_id,
-                                entity_name="issue",
+                                entity_name=entity_name,
                                 project=project,
                                 message=f"You have been mentioned in the issue {issue.name}",
                                 data={
@@ -543,6 +567,7 @@ def notifications(
                                         "state_group": issue.state.group,
                                         "project_id": str(issue.project.id),
                                         "workspace_slug": str(issue.project.workspace.slug),
+                                        "type_id": str(issue.type_id),
                                     },
                                     "issue_activity": {
                                         "id": str(last_activity.id),
@@ -571,7 +596,7 @@ def notifications(
                                     triggered_by_id=actor_id,
                                     receiver_id=subscriber,
                                     entity_identifier=issue_id,
-                                    entity_name="issue",
+                                    entity_name=entity_name,
                                     data={
                                         "issue": {
                                             "id": str(issue_id),
@@ -580,6 +605,7 @@ def notifications(
                                             "sequence_id": issue.sequence_id,
                                             "state_name": issue.state.name,
                                             "state_group": issue.state.group,
+                                            "type_id": str(issue.type_id),
                                         },
                                         "issue_activity": {
                                             "id": str(last_activity.id),
@@ -613,6 +639,7 @@ def notifications(
                                 mention_id=mention_id,
                                 issue_id=issue_id,
                                 activity=issue_activity,
+                                entity_name=entity_name,
                             )
                             if preference.mention:
                                 bulk_email_logs.append(
@@ -620,7 +647,7 @@ def notifications(
                                         triggered_by_id=actor_id,
                                         receiver_id=subscriber,
                                         entity_identifier=issue_id,
-                                        entity_name="issue",
+                                        entity_name=entity_name,
                                         data={
                                             "issue": {
                                                 "id": str(issue_id),
@@ -629,6 +656,7 @@ def notifications(
                                                 "sequence_id": issue.sequence_id,
                                                 "state_name": issue.state.name,
                                                 "state_group": issue.state.group,
+                                                "type_id": str(issue.type_id),
                                             },
                                             "issue_activity": {
                                                 "id": str(issue_activity.get("id")),
@@ -662,8 +690,30 @@ def notifications(
                 removed_mention=removed_mention,
             )
             # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+            notifications = Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+
             EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
+
+            # currently disabled the push notifications for epics in mobile.
+            if issue.type and issue.type.is_epic:
+                return
+
+            """
+            # Send Mobile Push Notifications for state, assignee, priority,
+            # start_date, target_date, and parent issue changes
+            """
+            if notifications and len(notifications) > 0:
+                serialized_notifications = NotificationSerializer(notifications, many=True).data
+
+                # converting the uuid to string
+                for notification in serialized_notifications:
+                    if notification is not None:
+                        for key in ["id", "workspace", "project", "receiver"]:
+                            if key in notification:
+                                notification[key] = str(notification[key])
+                        if "triggered_by_details" in notification:
+                            notification["triggered_by_details"]["id"] = str(notification["triggered_by_details"]["id"])
+                        issue_push_notifications.delay(notification)
         return
     except Exception as e:
         print(e)

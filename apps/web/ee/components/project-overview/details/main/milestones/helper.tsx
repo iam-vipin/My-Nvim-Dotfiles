@@ -1,0 +1,184 @@
+"use client";
+import { useMemo, useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { MILESTONE_TRACKER_EVENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu, cn } from "@plane/ui";
+// helper
+import { copyTextToClipboard } from "@plane/utils";
+// hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { CreateUpdateMilestoneModal } from "./create-update-modal";
+
+export type TMilestoneWorkItemOperations = {
+  copyText: (text: string) => void;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  removeRelation: (workspaceSlug: string, projectId: string, workItemId: string) => Promise<void>;
+};
+
+export const useMilestonesWorkItemOperations = (
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES,
+  milestoneId: string
+): TMilestoneWorkItemOperations => {
+  const { updateIssue } = useIssueDetail(issueServiceType);
+  const { removeWorkItemFromMilestone, updateMilestoneProgress } = useMilestones();
+
+  const { t } = useTranslation();
+  // derived values
+  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Work item" : "Epic";
+
+  const issueOperations: TMilestoneWorkItemOperations = useMemo(
+    () => ({
+      copyText: (text: string) => {
+        const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+        copyTextToClipboard(`${originURL}${text}`).then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("common.link_copied"),
+            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
+          });
+        });
+      },
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+        try {
+          await updateIssue(workspaceSlug, projectId, issueId, data);
+          updateMilestoneProgress(projectId, milestoneId);
+          setToast({
+            title: t("toast.success"),
+            type: TOAST_TYPE.SUCCESS,
+            message: t("entity.update.success", { entity: entityName }),
+          });
+        } catch {
+          setToast({
+            title: t("toast.error"),
+            type: TOAST_TYPE.ERROR,
+            message: t("entity.update.failed", { entity: entityName }),
+          });
+        }
+      },
+      removeRelation: async (workspaceSlug: string, projectId: string, workItemId: string) => {
+        try {
+          return removeWorkItemFromMilestone(workspaceSlug, projectId, milestoneId, workItemId).then(() => {
+            captureSuccess({
+              eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
+            });
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Work item removed from milestone successfully",
+            });
+          });
+        } catch (error) {
+          captureError({
+            eventName: MILESTONE_TRACKER_EVENTS.remove_work_items_from_milestone,
+
+            error: error as Error,
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Failed to remove work item from milestone",
+          });
+        }
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [entityName, removeWorkItemFromMilestone, updateIssue, milestoneId]
+  );
+
+  return issueOperations;
+};
+
+// Utils
+export const getMilestoneVariant = (progress: number) => {
+  if (progress === 100) return "done";
+  if (progress === 0) return "not_started_yet";
+  if (progress > 0 && progress < 100) return "in_progress";
+  return "started_no_progress";
+};
+
+// Components
+type MilestoneQuickActionButtonProps = {
+  milestoneId: string;
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const MilestoneQuickActionButton = (props: MilestoneQuickActionButtonProps) => {
+  const { milestoneId, workspaceSlug, projectId } = props;
+
+  const [isCreateUpdateMilestoneModalOpen, setIsCreateUpdateMilestoneModalOpen] = useState(false);
+  const { deleteMilestone } = useMilestones();
+
+  const { t } = useTranslation();
+
+  const handleDeleteMilestone = () => {
+    const promise = deleteMilestone(workspaceSlug, projectId, milestoneId);
+
+    setPromiseToast(promise, {
+      success: {
+        title: t("toast.success"),
+        message: () => t("entity.delete.success", { entity: "Milestone" }),
+      },
+      error: {
+        title: t("toast.error"),
+        message: () => t("entity.delete.failed", { entity: "Milestone" }),
+      },
+    });
+  };
+
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      action: () => {
+        setIsCreateUpdateMilestoneModalOpen(true);
+      },
+      title: t("common.actions.edit"),
+      icon: Pencil,
+    },
+    {
+      key: "delete",
+      action: () => {
+        handleDeleteMilestone();
+      },
+      title: t("common.actions.delete"),
+      icon: Trash2,
+      iconClassName: "text-red-500",
+    },
+  ];
+
+  return (
+    <>
+      <CreateUpdateMilestoneModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        isOpen={isCreateUpdateMilestoneModalOpen}
+        handleClose={() => setIsCreateUpdateMilestoneModalOpen(false)}
+        milestoneId={milestoneId}
+      />
+      <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
+        {MENU_ITEMS.map((item) => (
+          <CustomMenu.MenuItem
+            key={item.key}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              item.action();
+            }}
+            className="flex items-center gap-2"
+            disabled={item.disabled}
+          >
+            {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+            {item.title}
+          </CustomMenu.MenuItem>
+        ))}
+      </CustomMenu>
+    </>
+  );
+};

@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon, ProjectIcon } from "@plane/propel/icons";
 import type { ModuleInsightColumns } from "@plane/types";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";

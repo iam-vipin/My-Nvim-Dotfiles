@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TCycleGroups } from "@plane/propel/icons";
 import { CycleGroupIcon, ProjectIcon } from "@plane/propel/icons";
 import type { CycleInsightColumns } from "@plane/types";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { exportCSV } from "@/components/analytics/export";

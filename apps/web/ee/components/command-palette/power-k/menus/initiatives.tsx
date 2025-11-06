@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { InitiativeIcon } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // components
 import { PowerKMenuBuilder } from "@/components/power-k/menus/builder";
 // plane web imports

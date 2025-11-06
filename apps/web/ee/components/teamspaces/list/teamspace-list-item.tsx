@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // ui
 import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { TeamsIcon } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks

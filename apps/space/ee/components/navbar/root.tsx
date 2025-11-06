@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { PhotoFilterIcon } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // hooks
 import { useView } from "@/plane-web/hooks/store/use-published-view";
 // store

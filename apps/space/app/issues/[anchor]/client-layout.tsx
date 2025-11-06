@@ -9,6 +9,7 @@ import { PoweredBy } from "@/components/common/powered-by";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 import { IssuesNavbarRoot } from "@/components/issues/navbar";
 // hooks
+import { PageNotFound } from "@/components/ui/not-found";
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 import type { Route } from "./+types/client-layout";
@@ -45,6 +46,8 @@ const IssuesClientLayout = observer((props: Route.ComponentProps) => {
       </div>
     );
   }
+
+  if (error?.status === 404) return <PageNotFound />;
 
   if (error) return <SomethingWentWrongError />;
 

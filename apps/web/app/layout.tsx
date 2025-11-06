@@ -5,8 +5,6 @@ import "@/styles/globals.css";
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@plane/utils";
 // plane web imports
-import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
-import { TrialBanner } from "@/plane-web/components/license";
 
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -14,6 +12,10 @@ import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
+
+// assets
+import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
+import { TrialBanner } from "@/plane-web/components/license";
 
 // local
 import { AppProvider } from "./provider";

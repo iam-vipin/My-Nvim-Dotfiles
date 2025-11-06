@@ -6,6 +6,7 @@ import ProjectNotAuthorizedImg from "@/app/assets/auth/project-not-authorized.sv
 import Unauthorized from "@/app/assets/auth/unauthorized.svg?url";
 import WorkspaceNotAuthorizedImg from "@/app/assets/auth/workspace-not-authorized.svg?url";
 // layouts
+import { cn } from "@plane/utils";
 import DefaultLayout from "@/layouts/default-layout";
 
 type Props = {
@@ -23,8 +24,8 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
   const asset = section === "settings" ? settingAsset : Unauthorized;
 
   return (
-    <DefaultLayout className={className}>
-      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
+    <DefaultLayout className={cn("bg-custom-background-100", className)}>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 text-center">
         <div className="h-44 w-72">
           <Image src={asset} height="176" width="288" alt="ProjectSettingImg" />
         </div>

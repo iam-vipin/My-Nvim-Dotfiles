@@ -35,6 +35,7 @@ export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
         toggleProjectModal={toggleProjectModal}
         toggleEpicModal={toggleEpicModal}
       />
+      <InitiativeProgressSection initiativeId={initiativeId} />
       <ScopeBreakdown
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
@@ -42,7 +43,6 @@ export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
         toggleEpicModal={toggleEpicModal}
         disabled={disabled}
       />
-      <InitiativeProgressSection initiativeId={initiativeId} />
       <InitiativeCollapsibleSection
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}

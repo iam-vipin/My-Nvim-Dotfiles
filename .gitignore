@@ -108,6 +108,12 @@ monitor.db
 
 .cursorrules
 .cursor
+claude.md
+agents.md
 CLAUDE.md
+
+build/
+.react-router/
 AGENTS.md
+
 temp/

@@ -137,7 +137,8 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request, is_admin=True),
+                base_host(request=request, is_admin=True, ),
+                
                 "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)
@@ -231,7 +232,7 @@ class InstanceAdminSignUpEndpoint(View):
 
             # get tokens for user
             user_login(request=request, user=user, is_admin=True)
-            url = urljoin(base_host(request=request, is_admin=True), "general")
+            url = urljoin(base_host(request=request, is_admin=True), "general/")
             return HttpResponseRedirect(url)
 
 
@@ -350,7 +351,7 @@ class InstanceAdminSignInEndpoint(View):
 
         # get tokens for user
         user_login(request=request, user=user, is_admin=True)
-        url = urljoin(base_host(request=request, is_admin=True), "general")
+        url = urljoin(base_host(request=request, is_admin=True), "general/")
         return HttpResponseRedirect(url)
 
 

@@ -387,4 +387,22 @@ export class PiChatService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  // convert to page
+  async convertToPage(data: {
+    chat_id: string;
+    name?: string;
+    description_html: string;
+    workspace_slug: string;
+    page_type: string;
+    project_id: string | undefined;
+  }): Promise<{
+    page_url: string;
+  }> {
+    return this.post(`/api/v1/chat-ctas/save-as-page/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

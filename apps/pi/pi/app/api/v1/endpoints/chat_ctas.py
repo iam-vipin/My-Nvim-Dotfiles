@@ -24,16 +24,18 @@ from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.oauth_service import PlaneOAuthService
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
+from pi.services.retrievers.pg_store.chat import get_chat_title
 
 log = logger.getChild("v1/chat_ctas")
 router = APIRouter()
 
 
 class SaveAsPageRequest(BaseModel):
-    name: str = Field(..., description="Page title/name")
+    name: Optional[str] = Field(None, description="Page title/name")
     description_html: str = Field(..., description="Page content in HTML format")
     workspace_slug: str = Field(..., description="Workspace slug where the page will be created")
     page_type: str = Field(..., description="Type of page: 'workspace' for wiki pages or 'project' for project pages")
+    chat_id: Optional[UUID] = Field(None, description="Chat ID")
     project_id: Optional[UUID] = Field(None, description="Project ID (required if page_type is 'project')")
     access: Optional[int] = Field(None, description="Access level - 0 for public, 1 for private")
     color: Optional[str] = Field(None, description="Page color in hex format")
@@ -130,6 +132,10 @@ async def save_as_page(
                 },
             )
 
+        page_name = data.name
+        if not page_name or page_name.strip() == "":
+            page_name = await get_chat_title(data.chat_id, db) if data.chat_id else "Untitled Page"
+
         # Initialize executor
         plane_executor = PlaneActionsExecutor(access_token=oauth_token, base_url=settings.plane_api.HOST)
         method_executor = MethodExecutor(plane_executor)
@@ -142,7 +148,7 @@ async def save_as_page(
                 "create_project_page",
                 project_id=str(data.project_id),
                 workspace_slug=data.workspace_slug,
-                name=data.name,
+                name=page_name,
                 description_html=data.description_html,
                 access=data.access,
                 color=data.color,
@@ -153,7 +159,7 @@ async def save_as_page(
                 "pages",
                 "create_workspace_page",
                 workspace_slug=data.workspace_slug,
-                name=data.name,
+                name=page_name,
                 description_html=data.description_html,
                 access=data.access,
                 color=data.color,

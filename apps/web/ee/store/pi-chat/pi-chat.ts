@@ -103,6 +103,14 @@ export interface IPiChatStore {
     entity_type: string,
     artifactData: TUpdatedArtifact
   ) => Promise<void>;
+  convertToPage: (
+    description: string,
+    workspaceSlug: string,
+    projectId: string | undefined,
+    chatId: string
+  ) => Promise<{
+    page_url: string;
+  }>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -172,6 +180,7 @@ export class PiChatStore implements IPiChatStore {
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
+      convertToPage: action,
       abortStream: action,
     });
 
@@ -945,6 +954,23 @@ export class PiChatStore implements IPiChatStore {
       } else {
         throw new Error("Failed to follow up");
       }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  convertToPage = async (description: string, workspaceSlug: string, projectId: string | undefined, chatId: string) => {
+    const payload = {
+      description_html: description,
+      workspace_slug: workspaceSlug,
+      page_type: projectId ? "project" : "workspace",
+      project_id: projectId,
+      chat_id: chatId,
+    };
+    try {
+      const response = await this.piChatService.convertToPage(payload);
+      return response;
     } catch (error) {
       console.error(error);
       throw error;

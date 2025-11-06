@@ -59,6 +59,26 @@ def parse_flow_step_content(content: str) -> Union[str, Dict[str, Any], List[Any
         return content
 
 
+async def get_chat_title(chat_id: UUID4, db: AsyncSession) -> Optional[str]:
+    """Fetch chat title from the database.
+
+    Args:
+        chat_id: The chat ID to fetch title for
+        db: Database session
+
+    Returns:
+        Chat title if found, None otherwise
+    """
+    try:
+        stmt = select(Chat).where(Chat.id == chat_id).where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        result = await db.execute(stmt)
+        chat = result.scalar_one_or_none()
+        return chat.title if chat else None
+    except Exception as e:
+        log.error(f"Error fetching chat title for chat_id {chat_id}: {e}")
+        return None
+
+
 def _extract_success_message_from_result(result: str) -> Optional[str]:
     """Extract the nice success message from the tool result."""
     if not result:

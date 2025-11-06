@@ -20,10 +20,11 @@ type TProps = {
   dialogue?: TDialogue;
   isLatest?: boolean;
   isLoading?: boolean;
+  handleConvertToPage?: () => void;
 };
 export const AiMessage = observer((props: TProps) => {
   // props
-  const { dialogue, id = "", isLatest, isLoading } = props;
+  const { dialogue, id = "", isLatest, isLoading, handleConvertToPage } = props;
   // store
   const { workspaceSlug } = useParams();
   const { activeChatId, isPiTyping } = usePiChat();
@@ -87,7 +88,14 @@ export const AiMessage = observer((props: TProps) => {
 
         {/* Feedback bar */}
         {answer && (
-          <Feedback answer={answer} activeChatId={activeChatId} id={id} workspaceId={workspaceId} feedback={feedback} />
+          <Feedback
+            answer={answer}
+            activeChatId={activeChatId}
+            id={id}
+            workspaceId={workspaceId}
+            feedback={feedback}
+            handleConvertToPage={handleConvertToPage}
+          />
         )}
       </div>
     </div>

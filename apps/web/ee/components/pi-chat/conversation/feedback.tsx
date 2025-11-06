@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Copy, FilePlus2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -13,11 +13,12 @@ export type TProps = {
   id: string;
   workspaceId: string | undefined;
   feedback: EFeedback | undefined;
+  handleConvertToPage?: () => void;
 };
 
 export const Feedback = (props: TProps) => {
   // props
-  const { answer, activeChatId, id, workspaceId, feedback } = props;
+  const { answer, activeChatId, id, workspaceId, feedback, handleConvertToPage } = props;
   // states
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   // store
@@ -53,7 +54,7 @@ export const Feedback = (props: TProps) => {
     <div className="flex gap-4 mt-6">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
-        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-pi-700" />
+        <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-custom-text-300" />
       </Tooltip>
 
       {/* Good response */}
@@ -68,7 +69,7 @@ export const Feedback = (props: TProps) => {
             <ThumbsUp
               size={16}
               fill={feedback === EFeedback.POSITIVE ? "currentColor" : "none"}
-              className="my-auto text-pi-700 transition-colors	"
+              className="my-auto text-custom-text-300 transition-colors	"
             />
           </button>
         </Tooltip>
@@ -86,7 +87,7 @@ export const Feedback = (props: TProps) => {
             <ThumbsDown
               size={16}
               fill={feedback === EFeedback.NEGATIVE ? "currentColor" : "none"}
-              className="my-auto text-pi-700 transition-colors	"
+              className="my-auto text-custom-text-300 transition-colors	"
             />
           </button>
         </Tooltip>
@@ -101,6 +102,15 @@ export const Feedback = (props: TProps) => {
       {/* <div className="flex text-sm font-medium gap-1 cursor-pointer">
             <Repeat2 size={20} onClick={() => console.log()} className="my-auto cursor-pointer" /> Rewrite
           </div> */}
+
+      {/* Convert to page */}
+      <div className="flex text-sm font-medium gap-1 cursor-pointer">
+        <Tooltip tooltipContent="Convert to page" position="bottom" className="mb-4">
+          <button type="button" onClick={handleConvertToPage}>
+            <FilePlus2 size={16} className="my-auto text-custom-text-300 transition-colors	" />
+          </button>
+        </Tooltip>
+      </div>
     </div>
   );
 };

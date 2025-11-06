@@ -118,6 +118,7 @@ class VectorDB:
     EMBEDDING_DIMENSION: int = 1536  # unused
     EMBEDDING_MODEL_API_VERSION: str = "2024-05-01-preview"  # unused
 
+    @staticmethod
     def generate_index_name(suffix: str) -> str:
         prefix = os.getenv("OPENSEARCH_INDEX_PREFIX", "")
         if prefix:

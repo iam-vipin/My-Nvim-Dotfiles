@@ -204,6 +204,90 @@ export default {
       },
       disabled: "無効",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "サイクルの自動スケジュール",
+        description: "手動設定なしでサイクルを維持します。",
+        tooltip: "選択したスケジュールに基づいて新しいサイクルを自動的に作成します。",
+        edit_button: "編集",
+        form: {
+          cycle_title: {
+            label: "サイクルタイトル",
+            placeholder: "タイトル",
+            tooltip: "タイトルは後続のサイクルに番号が追加されます。例：デザイン - 1/2/3",
+            validation: {
+              required: "サイクルタイトルは必須です",
+              max_length: "タイトルは255文字を超えてはいけません",
+            },
+          },
+          cycle_duration: {
+            label: "サイクル期間",
+            unit: "週",
+            validation: {
+              required: "サイクル期間は必須です",
+              min: "サイクル期間は少なくとも1週間である必要があります",
+              max: "サイクル期間は30週を超えてはいけません",
+              positive: "サイクル期間は正の値である必要があります",
+            },
+          },
+          cooldown_period: {
+            label: "クールダウン期間",
+            unit: "日",
+            tooltip: "次のサイクルが始まる前のサイクル間の休止期間。",
+            validation: {
+              required: "クールダウン期間は必須です",
+              negative: "クールダウン期間は負の値にはできません",
+            },
+          },
+          start_date: {
+            label: "サイクル開始日",
+            validation: {
+              required: "開始日は必須です",
+              past: "開始日を過去の日付にすることはできません",
+            },
+          },
+          number_of_cycles: {
+            label: "将来のサイクル数",
+            validation: {
+              required: "サイクル数は必須です",
+              min: "少なくとも1つのサイクルが必要です",
+              max: "3つを超えるサイクルをスケジュールすることはできません",
+            },
+          },
+          auto_rollover: {
+            label: "作業項目の自動繰り越し",
+            tooltip: "サイクルが完了した日に、未完了のすべての作業項目を次のサイクルに移動します。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "サイクルの自動スケジュールを有効化中",
+            loading_disable: "サイクルの自動スケジュールを無効化中",
+            success: {
+              title: "成功！",
+              message: "サイクルの自動スケジュールが正常に切り替えられました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "サイクルの自動スケジュールの切り替えに失敗しました。",
+            },
+          },
+          save: {
+            loading: "サイクルの自動スケジュール設定を保存中",
+            success: {
+              title: "成功！",
+              message_create: "サイクルの自動スケジュール設定が正常に保存されました。",
+              message_update: "サイクルの自動スケジュール設定が正常に更新されました。",
+            },
+            error: {
+              title: "エラー！",
+              message_create: "サイクルの自動スケジュール設定の保存に失敗しました。",
+              message_update: "サイクルの自動スケジュール設定の更新に失敗しました。",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "チームスペース",

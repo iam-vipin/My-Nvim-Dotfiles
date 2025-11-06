@@ -207,6 +207,90 @@ export default {
       },
       disabled: "Wyłączone",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatyczne planowanie cykli",
+        description: "Utrzymuj cykle w ruchu bez ręcznej konfiguracji.",
+        tooltip: "Automatycznie twórz nowe cykle na podstawie wybranego harmonogramu.",
+        edit_button: "Edytuj",
+        form: {
+          cycle_title: {
+            label: "Tytuł cyklu",
+            placeholder: "Tytuł",
+            tooltip: "Tytuł zostanie uzupełniony o numery dla kolejnych cykli. Na przykład: Projekt - 1/2/3",
+            validation: {
+              required: "Tytuł cyklu jest wymagany",
+              max_length: "Tytuł nie może przekraczać 255 znaków",
+            },
+          },
+          cycle_duration: {
+            label: "Czas trwania cyklu",
+            unit: "Tygodnie",
+            validation: {
+              required: "Czas trwania cyklu jest wymagany",
+              min: "Czas trwania cyklu musi wynosić co najmniej 1 tydzień",
+              max: "Czas trwania cyklu nie może przekraczać 30 tygodni",
+              positive: "Czas trwania cyklu musi być dodatni",
+            },
+          },
+          cooldown_period: {
+            label: "Okres ochłodzenia",
+            unit: "dni",
+            tooltip: "Przerwa między cyklami przed rozpoczęciem następnego.",
+            validation: {
+              required: "Okres ochłodzenia jest wymagany",
+              negative: "Okres ochłodzenia nie może być ujemny",
+            },
+          },
+          start_date: {
+            label: "Dzień rozpoczęcia cyklu",
+            validation: {
+              required: "Data rozpoczęcia jest wymagana",
+              past: "Data rozpoczęcia nie może być w przeszłości",
+            },
+          },
+          number_of_cycles: {
+            label: "Liczba przyszłych cykli",
+            validation: {
+              required: "Liczba cykli jest wymagana",
+              min: "Wymagany jest co najmniej 1 cykl",
+              max: "Nie można zaplanować więcej niż 3 cykle",
+            },
+          },
+          auto_rollover: {
+            label: "Automatyczne przenoszenie elementów pracy",
+            tooltip: "W dniu zakończenia cyklu przenieś wszystkie niedokończone elementy pracy do następnego cyklu.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Włączanie automatycznego planowania cykli",
+            loading_disable: "Wyłączanie automatycznego planowania cykli",
+            success: {
+              title: "Sukces!",
+              message: "Automatyczne planowanie cykli zostało pomyślnie przełączone.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Nie udało się przełączyć automatycznego planowania cykli.",
+            },
+          },
+          save: {
+            loading: "Zapisywanie konfiguracji automatycznego planowania cykli",
+            success: {
+              title: "Sukces!",
+              message_create: "Konfiguracja automatycznego planowania cykli została pomyślnie zapisana.",
+              message_update: "Konfiguracja automatycznego planowania cykli została pomyślnie zaktualizowana.",
+            },
+            error: {
+              title: "Błąd!",
+              message_create: "Nie udało się zapisać konfiguracji automatycznego planowania cykli.",
+              message_update: "Nie udało się zaktualizować konfiguracji automatycznego planowania cykli.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Przestrzenie zespołu",

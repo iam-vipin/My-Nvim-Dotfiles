@@ -205,6 +205,90 @@ export default {
       },
       disabled: "비활성화됨",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "사이클 자동 일정",
+        description: "수동 설정 없이 사이클을 유지합니다.",
+        tooltip: "선택한 일정에 따라 새로운 사이클을 자동으로 생성합니다.",
+        edit_button: "편집",
+        form: {
+          cycle_title: {
+            label: "사이클 제목",
+            placeholder: "제목",
+            tooltip: "제목은 후속 사이클에 번호가 추가됩니다. 예: 디자인 - 1/2/3",
+            validation: {
+              required: "사이클 제목은 필수입니다",
+              max_length: "제목은 255자를 초과할 수 없습니다",
+            },
+          },
+          cycle_duration: {
+            label: "사이클 기간",
+            unit: "주",
+            validation: {
+              required: "사이클 기간은 필수입니다",
+              min: "사이클 기간은 최소 1주 이상이어야 합니다",
+              max: "사이클 기간은 30주를 초과할 수 없습니다",
+              positive: "사이클 기간은 양수여야 합니다",
+            },
+          },
+          cooldown_period: {
+            label: "쿨다운 기간",
+            unit: "일",
+            tooltip: "다음 사이클이 시작되기 전 사이클 간 휴지 기간입니다.",
+            validation: {
+              required: "쿨다운 기간은 필수입니다",
+              negative: "쿨다운 기간은 음수일 수 없습니다",
+            },
+          },
+          start_date: {
+            label: "사이클 시작일",
+            validation: {
+              required: "시작일은 필수입니다",
+              past: "시작일은 과거일 수 없습니다",
+            },
+          },
+          number_of_cycles: {
+            label: "미래 사이클 수",
+            validation: {
+              required: "사이클 수는 필수입니다",
+              min: "최소 1개의 사이클이 필요합니다",
+              max: "3개 이상의 사이클을 예약할 수 없습니다",
+            },
+          },
+          auto_rollover: {
+            label: "작업 항목 자동 이월",
+            tooltip: "사이클이 완료되는 날, 완료되지 않은 모든 작업 항목을 다음 사이클로 이동합니다.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "사이클 자동 일정 활성화 중",
+            loading_disable: "사이클 자동 일정 비활성화 중",
+            success: {
+              title: "성공!",
+              message: "사이클 자동 일정이 성공적으로 전환되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "사이클 자동 일정 전환에 실패했습니다.",
+            },
+          },
+          save: {
+            loading: "사이클 자동 일정 구성 저장 중",
+            success: {
+              title: "성공!",
+              message_create: "사이클 자동 일정 구성이 성공적으로 저장되었습니다.",
+              message_update: "사이클 자동 일정 구성이 성공적으로 업데이트되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message_create: "사이클 자동 일정 구성 저장에 실패했습니다.",
+              message_update: "사이클 자동 일정 구성 업데이트에 실패했습니다.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "팀스페이스",

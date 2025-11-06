@@ -251,6 +251,90 @@ export default {
       heading: "Templates",
       description: "Save 80% time spent on creating projects, work items, and pages when you use templates.",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Auto-schedule cycles",
+        description: "Keep cycles moving without manual setup.",
+        tooltip: "Automatically create new cycles based on your chosen schedule.",
+        edit_button: "Edit",
+        form: {
+          cycle_title: {
+            label: "Cycle Title",
+            placeholder: "Title",
+            tooltip: "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
+            validation: {
+              required: "Cycle title is required",
+              max_length: "Title must not exceed 255 characters",
+            },
+          },
+          cycle_duration: {
+            label: "Cycle Duration",
+            unit: "Weeks",
+            validation: {
+              required: "Cycle duration is required",
+              min: "Cycle duration must be at least 1 week",
+              max: "Cycle duration cannot exceed 30 weeks",
+              positive: "Cycle duration must be positive",
+            },
+          },
+          cooldown_period: {
+            label: "Cooldown Period",
+            unit: "days",
+            tooltip: "Pause between cycles before the next begins.",
+            validation: {
+              required: "Cooldown period is required",
+              negative: "Cooldown period cannot be negative",
+            },
+          },
+          start_date: {
+            label: "Cycle starts day",
+            validation: {
+              required: "Start date is required",
+              past: "Start date cannot be in the past",
+            },
+          },
+          number_of_cycles: {
+            label: "Number of future cycles",
+            validation: {
+              required: "Number of cycles is required",
+              min: "At least 1 cycle is required",
+              max: "Cannot schedule more than 3 cycles",
+            },
+          },
+          auto_rollover: {
+            label: "Auto-rollover work items",
+            tooltip: "On the day a cycle completes, move all unfinished work items into the next cycle.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Enabling auto-schedule cycles",
+            loading_disable: "Disabling auto-schedule cycles",
+            success: {
+              title: "Success!",
+              message: "Auto-schedule cycles toggled successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Failed to toggle auto-schedule cycles.",
+            },
+          },
+          save: {
+            loading: "Saving auto-schedule cycles configuration",
+            success: {
+              title: "Success!",
+              message_create: "Auto-schedule cycles configuration saved successfully.",
+              message_update: "Auto-schedule cycles configuration updated successfully.",
+            },
+            error: {
+              title: "Error!",
+              message_create: "Failed to save auto-schedule cycles configuration.",
+              message_update: "Failed to update auto-schedule cycles configuration.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Teamspaces",

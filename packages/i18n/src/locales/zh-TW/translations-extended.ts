@@ -205,6 +205,90 @@ export default {
       },
       disabled: "已停用",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "自動排程週期",
+        description: "無需手動設定即可保持週期運作。",
+        tooltip: "根據您選擇的排程自動建立新週期。",
+        edit_button: "編輯",
+        form: {
+          cycle_title: {
+            label: "週期標題",
+            placeholder: "標題",
+            tooltip: "標題將為後續週期添加編號。例如：設計 - 1/2/3",
+            validation: {
+              required: "週期標題為必填項",
+              max_length: "標題不得超過255個字元",
+            },
+          },
+          cycle_duration: {
+            label: "週期持續時間",
+            unit: "週",
+            validation: {
+              required: "週期持續時間為必填項",
+              min: "週期持續時間必須至少為1週",
+              max: "週期持續時間不得超過30週",
+              positive: "週期持續時間必須為正數",
+            },
+          },
+          cooldown_period: {
+            label: "冷卻期",
+            unit: "天",
+            tooltip: "下一個週期開始前的週期間隔暫停期。",
+            validation: {
+              required: "冷卻期為必填項",
+              negative: "冷卻期不能為負數",
+            },
+          },
+          start_date: {
+            label: "週期開始日",
+            validation: {
+              required: "開始日期為必填項",
+              past: "開始日期不能是過去的日期",
+            },
+          },
+          number_of_cycles: {
+            label: "未來週期數",
+            validation: {
+              required: "週期數為必填項",
+              min: "至少需要1個週期",
+              max: "無法排程超過3個週期",
+            },
+          },
+          auto_rollover: {
+            label: "工作項自動結轉",
+            tooltip: "在週期完成的當天，將所有未完成的工作項移至下一個週期。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "正在啟用自動排程週期",
+            loading_disable: "正在停用自動排程週期",
+            success: {
+              title: "成功！",
+              message: "自動排程週期已成功切換。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "切換自動排程週期失敗。",
+            },
+          },
+          save: {
+            loading: "正在儲存自動排程週期設定",
+            success: {
+              title: "成功！",
+              message_create: "自動排程週期設定已成功儲存。",
+              message_update: "自動排程週期設定已成功更新。",
+            },
+            error: {
+              title: "錯誤！",
+              message_create: "儲存自動排程週期設定失敗。",
+              message_update: "更新自動排程週期設定失敗。",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "團隊空間",

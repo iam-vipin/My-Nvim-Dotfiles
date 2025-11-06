@@ -206,6 +206,92 @@ export default {
       },
       disabled: "Désactivé",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Planification automatique des cycles",
+        description: "Maintenez les cycles en mouvement sans configuration manuelle.",
+        tooltip: "Créez automatiquement de nouveaux cycles selon votre planning choisi.",
+        edit_button: "Modifier",
+        form: {
+          cycle_title: {
+            label: "Titre du cycle",
+            placeholder: "Titre",
+            tooltip:
+              "Le titre sera complété par des numéros pour les cycles suivants. Par exemple : Conception - 1/2/3",
+            validation: {
+              required: "Le titre du cycle est requis",
+              max_length: "Le titre ne doit pas dépasser 255 caractères",
+            },
+          },
+          cycle_duration: {
+            label: "Durée du cycle",
+            unit: "Semaines",
+            validation: {
+              required: "La durée du cycle est requise",
+              min: "La durée du cycle doit être d'au moins 1 semaine",
+              max: "La durée du cycle ne peut pas dépasser 30 semaines",
+              positive: "La durée du cycle doit être positive",
+            },
+          },
+          cooldown_period: {
+            label: "Période de refroidissement",
+            unit: "jours",
+            tooltip: "Pause entre les cycles avant le début du suivant.",
+            validation: {
+              required: "La période de refroidissement est requise",
+              negative: "La période de refroidissement ne peut pas être négative",
+            },
+          },
+          start_date: {
+            label: "Jour de début du cycle",
+            validation: {
+              required: "La date de début est requise",
+              past: "La date de début ne peut pas être dans le passé",
+            },
+          },
+          number_of_cycles: {
+            label: "Nombre de cycles futurs",
+            validation: {
+              required: "Le nombre de cycles est requis",
+              min: "Au moins 1 cycle est requis",
+              max: "Impossible de planifier plus de 3 cycles",
+            },
+          },
+          auto_rollover: {
+            label: "Report automatique des éléments de travail",
+            tooltip:
+              "Le jour où un cycle se termine, déplacer tous les éléments de travail non terminés vers le cycle suivant.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Activation de la planification automatique des cycles",
+            loading_disable: "Désactivation de la planification automatique des cycles",
+            success: {
+              title: "Succès !",
+              message: "Planification automatique des cycles activée avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Échec de l'activation de la planification automatique des cycles.",
+            },
+          },
+          save: {
+            loading: "Enregistrement de la configuration de planification automatique des cycles",
+            success: {
+              title: "Succès !",
+              message_create: "Configuration de planification automatique des cycles enregistrée avec succès.",
+              message_update: "Configuration de planification automatique des cycles mise à jour avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message_create: "Échec de l'enregistrement de la configuration de planification automatique des cycles.",
+              message_update: "Échec de la mise à jour de la configuration de planification automatique des cycles.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Espaces d'équipe",

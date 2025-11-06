@@ -209,6 +209,91 @@ export default {
       },
       disabled: "Deaktiviert",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatische Zyklusplanung",
+        description: "Halten Sie Zyklen ohne manuelle Einrichtung in Bewegung.",
+        tooltip: "Erstellen Sie automatisch neue Zyklen basierend auf Ihrem gewählten Zeitplan.",
+        edit_button: "Bearbeiten",
+        form: {
+          cycle_title: {
+            label: "Zyklustitel",
+            placeholder: "Titel",
+            tooltip: "Der Titel wird für nachfolgende Zyklen mit Nummern ergänzt. Zum Beispiel: Design - 1/2/3",
+            validation: {
+              required: "Zyklustitel ist erforderlich",
+              max_length: "Der Titel darf 255 Zeichen nicht überschreiten",
+            },
+          },
+          cycle_duration: {
+            label: "Zyklusdauer",
+            unit: "Wochen",
+            validation: {
+              required: "Zyklusdauer ist erforderlich",
+              min: "Die Zyklusdauer muss mindestens 1 Woche betragen",
+              max: "Die Zyklusdauer darf 30 Wochen nicht überschreiten",
+              positive: "Die Zyklusdauer muss positiv sein",
+            },
+          },
+          cooldown_period: {
+            label: "Abkühlungsphase",
+            unit: "Tage",
+            tooltip: "Pause zwischen Zyklen, bevor der nächste beginnt.",
+            validation: {
+              required: "Abkühlungsphase ist erforderlich",
+              negative: "Die Abkühlungsphase darf nicht negativ sein",
+            },
+          },
+          start_date: {
+            label: "Zyklus-Starttag",
+            validation: {
+              required: "Startdatum ist erforderlich",
+              past: "Das Startdatum darf nicht in der Vergangenheit liegen",
+            },
+          },
+          number_of_cycles: {
+            label: "Anzahl zukünftiger Zyklen",
+            validation: {
+              required: "Anzahl der Zyklen ist erforderlich",
+              min: "Mindestens 1 Zyklus ist erforderlich",
+              max: "Es können nicht mehr als 3 Zyklen geplant werden",
+            },
+          },
+          auto_rollover: {
+            label: "Automatische Übertragung von Arbeitselementen",
+            tooltip:
+              "Am Tag der Zyklusbeendigung werden alle unvollendeten Arbeitselemente in den nächsten Zyklus verschoben.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Automatische Zyklusplanung wird aktiviert",
+            loading_disable: "Automatische Zyklusplanung wird deaktiviert",
+            success: {
+              title: "Erfolg!",
+              message: "Automatische Zyklusplanung erfolgreich aktiviert.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Aktivierung der automatischen Zyklusplanung fehlgeschlagen.",
+            },
+          },
+          save: {
+            loading: "Konfiguration der automatischen Zyklusplanung wird gespeichert",
+            success: {
+              title: "Erfolg!",
+              message_create: "Konfiguration der automatischen Zyklusplanung erfolgreich gespeichert.",
+              message_update: "Konfiguration der automatischen Zyklusplanung erfolgreich aktualisiert.",
+            },
+            error: {
+              title: "Fehler!",
+              message_create: "Speichern der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+              message_update: "Aktualisierung der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Teamspaces",

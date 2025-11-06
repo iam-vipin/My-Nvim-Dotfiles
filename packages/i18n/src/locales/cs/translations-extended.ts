@@ -206,6 +206,90 @@ export default {
       },
       disabled: "Zakázáno",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatické plánování cyklů",
+        description: "Udržujte cykly v pohybu bez manuálního nastavení.",
+        tooltip: "Automaticky vytvářejte nové cykly na základě zvoleného rozvrhu.",
+        edit_button: "Upravit",
+        form: {
+          cycle_title: {
+            label: "Název cyklu",
+            placeholder: "Název",
+            tooltip: "K názvu budou přidána čísla pro následné cykly. Například: Design - 1/2/3",
+            validation: {
+              required: "Název cyklu je povinný",
+              max_length: "Název nesmí přesáhnout 255 znaků",
+            },
+          },
+          cycle_duration: {
+            label: "Trvání cyklu",
+            unit: "Týdny",
+            validation: {
+              required: "Trvání cyklu je povinné",
+              min: "Trvání cyklu musí být alespoň 1 týden",
+              max: "Trvání cyklu nemůže přesáhnout 30 týdnů",
+              positive: "Trvání cyklu musí být kladné",
+            },
+          },
+          cooldown_period: {
+            label: "Období chlazení",
+            unit: "dny",
+            tooltip: "Pauza mezi cykly před začátkem dalšího.",
+            validation: {
+              required: "Období chlazení je povinné",
+              negative: "Období chlazení nemůže být záporné",
+            },
+          },
+          start_date: {
+            label: "Den zahájení cyklu",
+            validation: {
+              required: "Datum zahájení je povinné",
+              past: "Datum zahájení nemůže být v minulosti",
+            },
+          },
+          number_of_cycles: {
+            label: "Počet budoucích cyklů",
+            validation: {
+              required: "Počet cyklů je povinný",
+              min: "Je vyžadován alespoň 1 cyklus",
+              max: "Nelze naplánovat více než 3 cykly",
+            },
+          },
+          auto_rollover: {
+            label: "Automatický převod pracovních položek",
+            tooltip: "V den dokončení cyklu přesunout všechny nedokončené pracovní položky do dalšího cyklu.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Povolování automatického plánování cyklů",
+            loading_disable: "Zakazování automatického plánování cyklů",
+            success: {
+              title: "Úspěch!",
+              message: "Automatické plánování cyklů bylo úspěšně přepnuto.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Nepodařilo se přepnout automatické plánování cyklů.",
+            },
+          },
+          save: {
+            loading: "Ukládání konfigurace automatického plánování cyklů",
+            success: {
+              title: "Úspěch!",
+              message_create: "Konfigurace automatického plánování cyklů byla úspěšně uložena.",
+              message_update: "Konfigurace automatického plánování cyklů byla úspěšně aktualizována.",
+            },
+            error: {
+              title: "Chyba!",
+              message_create: "Nepodařilo se uložit konfiguraci automatického plánování cyklů.",
+              message_update: "Nepodařilo se aktualizovat konfiguraci automatického plánování cyklů.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Týmové prostory",

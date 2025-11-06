@@ -213,6 +213,7 @@ export class IssueStore implements IIssueStore {
       customer_request_ids: issue?.customer_request_ids,
       initiative_ids: issue?.initiative_ids,
       milestone_id: issue?.milestone_id,
+      transferred_cycle_ids: issue?.transferred_cycle_ids,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

@@ -1162,6 +1162,12 @@ class IssueDetailSerializer(IssueSerializer):
                     read_only=True
                 )
                 self.fields["initiative_ids"] = serializers.ListField(read_only=True)
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES, slug=slug, user_id=user_id
+            ):
+                self.fields["transferred_cycle_ids"] = serializers.ListField(
+                    read_only=True
+                )
 
 
 class IssuePublicSerializer(BaseSerializer):

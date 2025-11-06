@@ -56,11 +56,17 @@ from plane.db.models import (
     Project,
     ProjectMember,
     UserRecentVisit,
+    IssueActivity,
 )
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject, MilestoneIssue
+from plane.ee.models import (
+    CustomerRequestIssue,
+    TeamspaceMember,
+    TeamspaceProject,
+    MilestoneIssue,
+)
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -745,13 +751,37 @@ class IssueViewSet(BaseViewSet):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
         ):
             issue = issue.annotate(
                 milestone_id=Subquery(
                     MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
                         :1
                     ]
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                transferred_cycle_ids=Coalesce(
+                    Subquery(
+                        IssueActivity.objects.filter(
+                            issue_id=OuterRef("id"),
+                            field="cycles",
+                            verb__in=["created", "updated"],
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("new_identifier", distinct=True))
+                        .values("arr")[:1]
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 
@@ -1115,7 +1145,9 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
         ):
             queryset = queryset.annotate(
                 milestone_id=Subquery(
@@ -1308,7 +1340,9 @@ class IssueDetailEndpoint(BaseAPIView):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
         ):
             queryset = queryset.annotate(
                 milestone_id=Subquery(
@@ -1713,13 +1747,37 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
         ):
             issue = issue.annotate(
                 milestone_id=Subquery(
                     MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
                         :1
                     ]
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                transferred_cycle_ids=Coalesce(
+                    Subquery(
+                        IssueActivity.objects.filter(
+                            issue_id=OuterRef("id"),
+                            field="cycles",
+                            verb__in=["created", "updated"],
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("new_identifier", distinct=True))
+                        .values("arr")[:1]
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 

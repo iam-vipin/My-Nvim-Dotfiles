@@ -204,6 +204,90 @@ export default {
       },
       disabled: "已禁用",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "自动安排周期",
+        description: "无需手动设置即可保持周期运行。",
+        tooltip: "根据您选择的计划自动创建新周期。",
+        edit_button: "编辑",
+        form: {
+          cycle_title: {
+            label: "周期标题",
+            placeholder: "标题",
+            tooltip: "标题将为后续周期添加编号。例如：设计 - 1/2/3",
+            validation: {
+              required: "周期标题为必填项",
+              max_length: "标题不得超过255个字符",
+            },
+          },
+          cycle_duration: {
+            label: "周期持续时间",
+            unit: "周",
+            validation: {
+              required: "周期持续时间为必填项",
+              min: "周期持续时间必须至少为1周",
+              max: "周期持续时间不得超过30周",
+              positive: "周期持续时间必须为正数",
+            },
+          },
+          cooldown_period: {
+            label: "冷却期",
+            unit: "天",
+            tooltip: "下一个周期开始前的周期间隔暂停期。",
+            validation: {
+              required: "冷却期为必填项",
+              negative: "冷却期不能为负数",
+            },
+          },
+          start_date: {
+            label: "周期开始日",
+            validation: {
+              required: "开始日期为必填项",
+              past: "开始日期不能是过去的日期",
+            },
+          },
+          number_of_cycles: {
+            label: "未来周期数",
+            validation: {
+              required: "周期数为必填项",
+              min: "至少需要1个周期",
+              max: "无法安排超过3个周期",
+            },
+          },
+          auto_rollover: {
+            label: "工作项自动结转",
+            tooltip: "在周期完成的当天，将所有未完成的工作项移至下一个周期。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "正在启用自动安排周期",
+            loading_disable: "正在禁用自动安排周期",
+            success: {
+              title: "成功！",
+              message: "自动安排周期已成功切换。",
+            },
+            error: {
+              title: "错误！",
+              message: "切换自动安排周期失败。",
+            },
+          },
+          save: {
+            loading: "正在保存自动安排周期配置",
+            success: {
+              title: "成功！",
+              message_create: "自动安排周期配置已成功保存。",
+              message_update: "自动安排周期配置已成功更新。",
+            },
+            error: {
+              title: "错误！",
+              message_create: "保存自动安排周期配置失败。",
+              message_update: "更新自动安排周期配置失败。",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "团队空间",

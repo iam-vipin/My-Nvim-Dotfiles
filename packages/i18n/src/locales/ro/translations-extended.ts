@@ -209,6 +209,91 @@ export default {
       },
       disabled: "Dezactivat",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Programare automată a ciclurilor",
+        description: "Mențineți ciclurile în mișcare fără configurare manuală.",
+        tooltip: "Creați automat cicluri noi pe baza programului ales.",
+        edit_button: "Editează",
+        form: {
+          cycle_title: {
+            label: "Titlul ciclului",
+            placeholder: "Titlu",
+            tooltip: "Titlul va fi completat cu numere pentru ciclurile următoare. De exemplu: Design - 1/2/3",
+            validation: {
+              required: "Titlul ciclului este obligatoriu",
+              max_length: "Titlul nu trebuie să depășească 255 de caractere",
+            },
+          },
+          cycle_duration: {
+            label: "Durata ciclului",
+            unit: "Săptămâni",
+            validation: {
+              required: "Durata ciclului este obligatorie",
+              min: "Durata ciclului trebuie să fie de cel puțin 1 săptămână",
+              max: "Durata ciclului nu poate depăși 30 de săptămâni",
+              positive: "Durata ciclului trebuie să fie pozitivă",
+            },
+          },
+          cooldown_period: {
+            label: "Perioadă de răcire",
+            unit: "zile",
+            tooltip: "Pauză între cicluri înainte de începerea următorului.",
+            validation: {
+              required: "Perioada de răcire este obligatorie",
+              negative: "Perioada de răcire nu poate fi negativă",
+            },
+          },
+          start_date: {
+            label: "Ziua de început a ciclului",
+            validation: {
+              required: "Data de început este obligatorie",
+              past: "Data de început nu poate fi în trecut",
+            },
+          },
+          number_of_cycles: {
+            label: "Numărul de cicluri viitoare",
+            validation: {
+              required: "Numărul de cicluri este obligatoriu",
+              min: "Este necesar cel puțin 1 ciclu",
+              max: "Nu se pot programa mai mult de 3 cicluri",
+            },
+          },
+          auto_rollover: {
+            label: "Transfer automat al elementelor de lucru",
+            tooltip:
+              "În ziua în care se completează un ciclu, mutați toate elementele de lucru nefinalizate în ciclul următor.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Se activează programarea automată a ciclurilor",
+            loading_disable: "Se dezactivează programarea automată a ciclurilor",
+            success: {
+              title: "Succes!",
+              message: "Programarea automată a ciclurilor a fost comutată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Nu s-a putut comuta programarea automată a ciclurilor.",
+            },
+          },
+          save: {
+            loading: "Se salvează configurația programării automate a ciclurilor",
+            success: {
+              title: "Succes!",
+              message_create: "Configurația programării automate a ciclurilor a fost salvată cu succes.",
+              message_update: "Configurația programării automate a ciclurilor a fost actualizată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message_create: "Nu s-a putut salva configurația programării automate a ciclurilor.",
+              message_update: "Nu s-a putut actualiza configurația programării automate a ciclurilor.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Spații de echipă",

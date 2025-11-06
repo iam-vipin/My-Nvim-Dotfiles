@@ -207,6 +207,91 @@ export default {
       },
       disabled: "Desativado",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Agendamento automático de ciclos",
+        description: "Mantenha os ciclos em movimento sem configuração manual.",
+        tooltip: "Crie automaticamente novos ciclos com base na programação escolhida.",
+        edit_button: "Editar",
+        form: {
+          cycle_title: {
+            label: "Título do ciclo",
+            placeholder: "Título",
+            tooltip: "O título será acrescido de números para os ciclos subsequentes. Por exemplo: Design - 1/2/3",
+            validation: {
+              required: "O título do ciclo é obrigatório",
+              max_length: "O título não deve exceder 255 caracteres",
+            },
+          },
+          cycle_duration: {
+            label: "Duração do ciclo",
+            unit: "Semanas",
+            validation: {
+              required: "A duração do ciclo é obrigatória",
+              min: "A duração do ciclo deve ser de pelo menos 1 semana",
+              max: "A duração do ciclo não pode exceder 30 semanas",
+              positive: "A duração do ciclo deve ser positiva",
+            },
+          },
+          cooldown_period: {
+            label: "Período de resfriamento",
+            unit: "dias",
+            tooltip: "Pausa entre ciclos antes do início do próximo.",
+            validation: {
+              required: "O período de resfriamento é obrigatório",
+              negative: "O período de resfriamento não pode ser negativo",
+            },
+          },
+          start_date: {
+            label: "Dia de início do ciclo",
+            validation: {
+              required: "A data de início é obrigatória",
+              past: "A data de início não pode estar no passado",
+            },
+          },
+          number_of_cycles: {
+            label: "Número de ciclos futuros",
+            validation: {
+              required: "O número de ciclos é obrigatório",
+              min: "Pelo menos 1 ciclo é obrigatório",
+              max: "Não é possível agendar mais de 3 ciclos",
+            },
+          },
+          auto_rollover: {
+            label: "Transferência automática de itens de trabalho",
+            tooltip:
+              "No dia em que um ciclo for concluído, mover todos os itens de trabalho não concluídos para o próximo ciclo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Ativando agendamento automático de ciclos",
+            loading_disable: "Desativando agendamento automático de ciclos",
+            success: {
+              title: "Sucesso!",
+              message: "Agendamento automático de ciclos ativado com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Falha ao ativar o agendamento automático de ciclos.",
+            },
+          },
+          save: {
+            loading: "Salvando configuração de agendamento automático de ciclos",
+            success: {
+              title: "Sucesso!",
+              message_create: "Configuração de agendamento automático de ciclos salva com sucesso.",
+              message_update: "Configuração de agendamento automático de ciclos atualizada com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message_create: "Falha ao salvar a configuração de agendamento automático de ciclos.",
+              message_update: "Falha ao atualizar a configuração de agendamento automático de ciclos.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Espaços de equipe",

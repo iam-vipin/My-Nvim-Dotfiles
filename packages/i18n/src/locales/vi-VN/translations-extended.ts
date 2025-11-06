@@ -195,6 +195,91 @@ export default {
       },
       disabled: "Đã vô hiệu hóa",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Tự động lên lịch chu kỳ",
+        description: "Duy trì chu kỳ hoạt động mà không cần thiết lập thủ công.",
+        tooltip: "Tự động tạo chu kỳ mới dựa trên lịch trình bạn chọn.",
+        edit_button: "Chỉnh sửa",
+        form: {
+          cycle_title: {
+            label: "Tiêu đề chu kỳ",
+            placeholder: "Tiêu đề",
+            tooltip: "Tiêu đề sẽ được thêm số cho các chu kỳ tiếp theo. Ví dụ: Thiết kế - 1/2/3",
+            validation: {
+              required: "Tiêu đề chu kỳ là bắt buộc",
+              max_length: "Tiêu đề không được vượt quá 255 ký tự",
+            },
+          },
+          cycle_duration: {
+            label: "Thời lượng chu kỳ",
+            unit: "Tuần",
+            validation: {
+              required: "Thời lượng chu kỳ là bắt buộc",
+              min: "Thời lượng chu kỳ phải ít nhất 1 tuần",
+              max: "Thời lượng chu kỳ không được vượt quá 30 tuần",
+              positive: "Thời lượng chu kỳ phải là số dương",
+            },
+          },
+          cooldown_period: {
+            label: "Thời gian nghỉ",
+            unit: "ngày",
+            tooltip: "Khoảng nghỉ giữa các chu kỳ trước khi bắt đầu chu kỳ tiếp theo.",
+            validation: {
+              required: "Thời gian nghỉ là bắt buộc",
+              negative: "Thời gian nghỉ không thể là số âm",
+            },
+          },
+          start_date: {
+            label: "Ngày bắt đầu chu kỳ",
+            validation: {
+              required: "Ngày bắt đầu là bắt buộc",
+              past: "Ngày bắt đầu không thể ở quá khứ",
+            },
+          },
+          number_of_cycles: {
+            label: "Số chu kỳ tương lai",
+            validation: {
+              required: "Số chu kỳ là bắt buộc",
+              min: "Cần ít nhất 1 chu kỳ",
+              max: "Không thể lên lịch nhiều hơn 3 chu kỳ",
+            },
+          },
+          auto_rollover: {
+            label: "Tự động chuyển các mục công việc",
+            tooltip:
+              "Vào ngày hoàn thành chu kỳ, chuyển tất cả các mục công việc chưa hoàn thành sang chu kỳ tiếp theo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Đang bật tự động lên lịch chu kỳ",
+            loading_disable: "Đang tắt tự động lên lịch chu kỳ",
+            success: {
+              title: "Thành công!",
+              message: "Đã chuyển đổi tự động lên lịch chu kỳ thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Không thể chuyển đổi tự động lên lịch chu kỳ.",
+            },
+          },
+          save: {
+            loading: "Đang lưu cấu hình tự động lên lịch chu kỳ",
+            success: {
+              title: "Thành công!",
+              message_create: "Đã lưu cấu hình tự động lên lịch chu kỳ thành công.",
+              message_update: "Đã cập nhật cấu hình tự động lên lịch chu kỳ thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message_create: "Không thể lưu cấu hình tự động lên lịch chu kỳ.",
+              message_update: "Không thể cập nhật cấu hình tự động lên lịch chu kỳ.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Không gian nhóm",

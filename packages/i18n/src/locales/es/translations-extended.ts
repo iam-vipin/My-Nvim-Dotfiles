@@ -206,6 +206,91 @@ export default {
       },
       disabled: "Deshabilitado",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Programación automática de ciclos",
+        description: "Mantén los ciclos en movimiento sin configuración manual.",
+        tooltip: "Crea automáticamente nuevos ciclos basados en tu programación elegida.",
+        edit_button: "Editar",
+        form: {
+          cycle_title: {
+            label: "Título del ciclo",
+            placeholder: "Título",
+            tooltip: "El título se agregará con números para los ciclos subsiguientes. Por ejemplo: Diseño - 1/2/3",
+            validation: {
+              required: "El título del ciclo es requerido",
+              max_length: "El título no debe exceder los 255 caracteres",
+            },
+          },
+          cycle_duration: {
+            label: "Duración del ciclo",
+            unit: "Semanas",
+            validation: {
+              required: "La duración del ciclo es requerida",
+              min: "La duración del ciclo debe ser al menos 1 semana",
+              max: "La duración del ciclo no puede exceder 30 semanas",
+              positive: "La duración del ciclo debe ser positiva",
+            },
+          },
+          cooldown_period: {
+            label: "Período de enfriamiento",
+            unit: "días",
+            tooltip: "Pausa entre ciclos antes de que comience el siguiente.",
+            validation: {
+              required: "El período de enfriamiento es requerido",
+              negative: "El período de enfriamiento no puede ser negativo",
+            },
+          },
+          start_date: {
+            label: "Día de inicio del ciclo",
+            validation: {
+              required: "La fecha de inicio es requerida",
+              past: "La fecha de inicio no puede estar en el pasado",
+            },
+          },
+          number_of_cycles: {
+            label: "Número de ciclos futuros",
+            validation: {
+              required: "El número de ciclos es requerido",
+              min: "Se requiere al menos 1 ciclo",
+              max: "No se pueden programar más de 3 ciclos",
+            },
+          },
+          auto_rollover: {
+            label: "Transferencia automática de elementos de trabajo",
+            tooltip:
+              "El día que se complete un ciclo, mover todos los elementos de trabajo sin terminar al siguiente ciclo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Habilitando programación automática de ciclos",
+            loading_disable: "Deshabilitando programación automática de ciclos",
+            success: {
+              title: "¡Éxito!",
+              message: "Programación automática de ciclos activada exitosamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message: "Error al activar la programación automática de ciclos.",
+            },
+          },
+          save: {
+            loading: "Guardando configuración de programación automática de ciclos",
+            success: {
+              title: "¡Éxito!",
+              message_create: "Configuración de programación automática de ciclos guardada exitosamente.",
+              message_update: "Configuración de programación automática de ciclos actualizada exitosamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message_create: "Error al guardar la configuración de programación automática de ciclos.",
+              message_update: "Error al actualizar la configuración de programación automática de ciclos.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Espacios de equipo",

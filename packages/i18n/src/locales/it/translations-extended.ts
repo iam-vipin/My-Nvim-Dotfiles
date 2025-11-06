@@ -205,6 +205,91 @@ export default {
       },
       disabled: "Disabilitato",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Pianificazione automatica dei cicli",
+        description: "Mantieni i cicli in movimento senza configurazione manuale.",
+        tooltip: "Crea automaticamente nuovi cicli in base alla pianificazione scelta.",
+        edit_button: "Modifica",
+        form: {
+          cycle_title: {
+            label: "Titolo del ciclo",
+            placeholder: "Titolo",
+            tooltip: "Il titolo sarà seguito da numeri per i cicli successivi. Ad esempio: Design - 1/2/3",
+            validation: {
+              required: "Il titolo del ciclo è obbligatorio",
+              max_length: "Il titolo non deve superare 255 caratteri",
+            },
+          },
+          cycle_duration: {
+            label: "Durata del ciclo",
+            unit: "Settimane",
+            validation: {
+              required: "La durata del ciclo è obbligatoria",
+              min: "La durata del ciclo deve essere di almeno 1 settimana",
+              max: "La durata del ciclo non può superare 30 settimane",
+              positive: "La durata del ciclo deve essere positiva",
+            },
+          },
+          cooldown_period: {
+            label: "Periodo di raffreddamento",
+            unit: "giorni",
+            tooltip: "Pausa tra i cicli prima dell'inizio del successivo.",
+            validation: {
+              required: "Il periodo di raffreddamento è obbligatorio",
+              negative: "Il periodo di raffreddamento non può essere negativo",
+            },
+          },
+          start_date: {
+            label: "Giorno di inizio del ciclo",
+            validation: {
+              required: "La data di inizio è obbligatoria",
+              past: "La data di inizio non può essere nel passato",
+            },
+          },
+          number_of_cycles: {
+            label: "Numero di cicli futuri",
+            validation: {
+              required: "Il numero di cicli è obbligatorio",
+              min: "È richiesto almeno 1 ciclo",
+              max: "Non è possibile pianificare più di 3 cicli",
+            },
+          },
+          auto_rollover: {
+            label: "Trasferimento automatico degli elementi di lavoro",
+            tooltip:
+              "Il giorno del completamento di un ciclo, spostare tutti gli elementi di lavoro non completati nel ciclo successivo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Attivazione pianificazione automatica dei cicli",
+            loading_disable: "Disattivazione pianificazione automatica dei cicli",
+            success: {
+              title: "Successo!",
+              message: "Pianificazione automatica dei cicli attivata con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message: "Attivazione della pianificazione automatica dei cicli non riuscita.",
+            },
+          },
+          save: {
+            loading: "Salvataggio configurazione pianificazione automatica dei cicli",
+            success: {
+              title: "Successo!",
+              message_create: "Configurazione pianificazione automatica dei cicli salvata con successo.",
+              message_update: "Configurazione pianificazione automatica dei cicli aggiornata con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message_create: "Salvataggio configurazione pianificazione automatica dei cicli non riuscito.",
+              message_update: "Aggiornamento configurazione pianificazione automatica dei cicli non riuscito.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Teamspaces",

@@ -207,6 +207,91 @@ export default {
       },
       disabled: "Dinonaktifkan",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Penjadwalan otomatis siklus",
+        description: "Jaga agar siklus tetap berjalan tanpa pengaturan manual.",
+        tooltip: "Buat siklus baru secara otomatis berdasarkan jadwal yang Anda pilih.",
+        edit_button: "Edit",
+        form: {
+          cycle_title: {
+            label: "Judul siklus",
+            placeholder: "Judul",
+            tooltip: "Judul akan ditambahkan dengan nomor untuk siklus berikutnya. Misalnya: Desain - 1/2/3",
+            validation: {
+              required: "Judul siklus wajib diisi",
+              max_length: "Judul tidak boleh melebihi 255 karakter",
+            },
+          },
+          cycle_duration: {
+            label: "Durasi siklus",
+            unit: "Minggu",
+            validation: {
+              required: "Durasi siklus wajib diisi",
+              min: "Durasi siklus harus minimal 1 minggu",
+              max: "Durasi siklus tidak boleh melebihi 30 minggu",
+              positive: "Durasi siklus harus positif",
+            },
+          },
+          cooldown_period: {
+            label: "Periode pendinginan",
+            unit: "hari",
+            tooltip: "Jeda antara siklus sebelum siklus berikutnya dimulai.",
+            validation: {
+              required: "Periode pendinginan wajib diisi",
+              negative: "Periode pendinginan tidak boleh negatif",
+            },
+          },
+          start_date: {
+            label: "Hari mulai siklus",
+            validation: {
+              required: "Tanggal mulai wajib diisi",
+              past: "Tanggal mulai tidak boleh di masa lalu",
+            },
+          },
+          number_of_cycles: {
+            label: "Jumlah siklus mendatang",
+            validation: {
+              required: "Jumlah siklus wajib diisi",
+              min: "Setidaknya 1 siklus diperlukan",
+              max: "Tidak dapat menjadwalkan lebih dari 3 siklus",
+            },
+          },
+          auto_rollover: {
+            label: "Pemindahan otomatis item pekerjaan",
+            tooltip:
+              "Pada hari siklus selesai, pindahkan semua item pekerjaan yang belum selesai ke siklus berikutnya.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Mengaktifkan penjadwalan otomatis siklus",
+            loading_disable: "Menonaktifkan penjadwalan otomatis siklus",
+            success: {
+              title: "Berhasil!",
+              message: "Penjadwalan otomatis siklus berhasil diaktifkan.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Gagal mengaktifkan penjadwalan otomatis siklus.",
+            },
+          },
+          save: {
+            loading: "Menyimpan konfigurasi penjadwalan otomatis siklus",
+            success: {
+              title: "Berhasil!",
+              message_create: "Konfigurasi penjadwalan otomatis siklus berhasil disimpan.",
+              message_update: "Konfigurasi penjadwalan otomatis siklus berhasil diperbarui.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message_create: "Gagal menyimpan konfigurasi penjadwalan otomatis siklus.",
+              message_update: "Gagal memperbarui konfigurasi penjadwalan otomatis siklus.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Ruang Tim",

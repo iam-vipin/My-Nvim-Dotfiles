@@ -221,6 +221,90 @@ export default {
       },
       disabled: "Deaktive",
     },
+    cycles: {
+      auto_schedule: {
+        heading: "Otomatik döngü planlaması",
+        description: "Döngüleri manuel kurulum olmadan devam ettirin.",
+        tooltip: "Seçtiğiniz programa göre otomatik olarak yeni döngüler oluşturun.",
+        edit_button: "Düzenle",
+        form: {
+          cycle_title: {
+            label: "Döngü başlığı",
+            placeholder: "Başlık",
+            tooltip: "Başlık, sonraki döngüler için numaralarla tamamlanacaktır. Örneğin: Tasarım - 1/2/3",
+            validation: {
+              required: "Döngü başlığı zorunludur",
+              max_length: "Başlık 255 karakteri aşmamalıdır",
+            },
+          },
+          cycle_duration: {
+            label: "Döngü süresi",
+            unit: "Hafta",
+            validation: {
+              required: "Döngü süresi zorunludur",
+              min: "Döngü süresi en az 1 hafta olmalıdır",
+              max: "Döngü süresi 30 haftayı aşamaz",
+              positive: "Döngü süresi pozitif olmalıdır",
+            },
+          },
+          cooldown_period: {
+            label: "Soğuma süresi",
+            unit: "gün",
+            tooltip: "Bir sonraki döngü başlamadan önce döngüler arası duraklatma.",
+            validation: {
+              required: "Soğuma süresi zorunludur",
+              negative: "Soğuma süresi negatif olamaz",
+            },
+          },
+          start_date: {
+            label: "Döngü başlangıç günü",
+            validation: {
+              required: "Başlangıç tarihi zorunludur",
+              past: "Başlangıç tarihi geçmişte olamaz",
+            },
+          },
+          number_of_cycles: {
+            label: "Gelecekteki döngü sayısı",
+            validation: {
+              required: "Döngü sayısı zorunludur",
+              min: "En az 1 döngü gereklidir",
+              max: "3'ten fazla döngü planlanamaz",
+            },
+          },
+          auto_rollover: {
+            label: "İş öğelerini otomatik devret",
+            tooltip: "Bir döngünün tamamlandığı gün, tüm bitmemiş iş öğelerini bir sonraki döngüye taşıyın.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Otomatik döngü planlaması etkinleştiriliyor",
+            loading_disable: "Otomatik döngü planlaması devre dışı bırakılıyor",
+            success: {
+              title: "Başarılı!",
+              message: "Otomatik döngü planlaması başarıyla değiştirildi.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Otomatik döngü planlaması değiştirilemedi.",
+            },
+          },
+          save: {
+            loading: "Otomatik döngü planlaması yapılandırması kaydediliyor",
+            success: {
+              title: "Başarılı!",
+              message_create: "Otomatik döngü planlaması yapılandırması başarıyla kaydedildi.",
+              message_update: "Otomatik döngü planlaması yapılandırması başarıyla güncellendi.",
+            },
+            error: {
+              title: "Hata!",
+              message_create: "Otomatik döngü planlaması yapılandırması kaydedilemedi.",
+              message_update: "Otomatik döngü planlaması yapılandırması güncellenemedi.",
+            },
+          },
+        },
+      },
+    },
   },
   teamspaces: {
     label: "Takım Alanları",

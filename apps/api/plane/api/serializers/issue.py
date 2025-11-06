@@ -63,6 +63,9 @@ class IssueSerializer(BaseSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=Issue.objects.all(), required=False, allow_null=True
+    )
 
     class Meta:
         model = Issue

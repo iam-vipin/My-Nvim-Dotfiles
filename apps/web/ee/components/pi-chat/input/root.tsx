@@ -66,7 +66,11 @@ export const InputBox = observer((props: TProps) => {
   const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const chatFocus = getChatFocus(activeChatId, projectId?.toString(), workspaceId?.toString());
+  const chatFocus = getChatFocus(activeChatId) || {
+    isInWorkspaceContext: true,
+    entityType: projectId ? "project_id" : "workspace_id",
+    entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
+  };
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
   const [focus, setFocus] = useState<TFocus>(chatFocus);

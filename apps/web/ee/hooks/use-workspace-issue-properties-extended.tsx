@@ -1,5 +1,6 @@
 import useSWR from "swr";
 // store
+import { WORKSPACE_WORKFLOW_STATES } from "@/constants/fetch-keys";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
@@ -11,7 +12,7 @@ export const useWorkspaceIssuePropertiesExtended = (workspaceSlug: string | stri
 
   // fetch workspace workflow states
   useSWR(
-    workspaceSlug && isWorkflowFeatureFlagEnabled ? `WORKSPACE_WORKFLOW_STATES_${workspaceSlug}` : null,
+    workspaceSlug && isWorkflowFeatureFlagEnabled ? WORKSPACE_WORKFLOW_STATES(workspaceSlug.toString()) : null,
     workspaceSlug && isWorkflowFeatureFlagEnabled ? () => fetchWorkflowStates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

@@ -8,7 +8,6 @@ import { cn } from "@plane/ui";
 import { isCommentEmpty } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import { formatSearchQuery } from "../../../helper";
 import { useArtifactData } from "../useArtifactData";
 
 type TProps = {
@@ -27,7 +26,7 @@ type TEditCommands = {
 };
 
 export const FollowUpDetail = observer((props: TProps) => {
-  const { projectId, workspaceId, workspaceSlug, artifactId, messageId, artifactType } = props;
+  const { projectId, workspaceId, artifactId, messageId, artifactType } = props;
   // states
   const [isThinking, setIsThinking] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -36,16 +35,11 @@ export const FollowUpDetail = observer((props: TProps) => {
   const editorCommands = useRef<TEditCommands | null>(null);
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
-  const { searchCallback, getChatFocus, followUp, activeChatId } = usePiChat();
-  const chatFocus = getChatFocus(activeChatId, projectId?.toString(), workspaceId?.toString());
+  const { followUp, activeChatId } = usePiChat();
   // hooks
   const artifactData = useArtifactData(artifactId, artifactType);
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
-  };
-  const getMentionSuggestions = async (query: string) => {
-    const response = await searchCallback(workspaceSlug?.toString() || "", query, chatFocus);
-    return formatSearchQuery(response);
   };
 
   const handleSubmit = useEvent(async (e?: React.FormEvent) => {

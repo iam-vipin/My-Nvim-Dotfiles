@@ -13,7 +13,6 @@ import type {
   TAiModels,
   TChatHistory,
   TDialogue,
-  TExecuteActionResponse,
   TFocus,
   TInitPayload,
   TQuery,
@@ -49,7 +48,7 @@ export interface IPiChatStore {
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
-  getChatFocus: (chatId: string | undefined, projectId: string | undefined, workspaceId: string | undefined) => TFocus;
+  getChatFocus: (chatId: string | undefined) => TFocus | undefined;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
@@ -73,7 +72,7 @@ export interface IPiChatStore {
     workspaceId?: string,
     feedbackMessage?: string
   ) => Promise<void>;
-  executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<TExecuteActionResponse | undefined>;
+  executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<string[] | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
   setActiveModel: (model: TAiModels) => void;
@@ -220,24 +219,16 @@ export class PiChatStore implements IPiChatStore {
 
   getChatById = computedFn((chatId: string) => this.chatMap[chatId]);
 
-  getChatFocus = computedFn(
-    (chatId: string | undefined, projectId: string | undefined, workspaceId: string | undefined) => {
-      const chat = chatId && this.chatMap[chatId];
-      if (chat) {
-        return {
-          isInWorkspaceContext: chat.is_focus_enabled,
-          entityType: chat.focus_project_id ? "project_id" : "workspace_id",
-          entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
-        };
-      }
-
+  getChatFocus = computedFn((chatId: string | undefined) => {
+    const chat = chatId && this.chatMap[chatId];
+    if (chat) {
       return {
-        isInWorkspaceContext: true,
-        entityType: projectId ? "project_id" : "workspace_id",
-        entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
+        isInWorkspaceContext: chat.is_focus_enabled,
+        entityType: chat.focus_project_id ? "project_id" : "workspace_id",
+        entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
       };
     }
-  );
+  });
 
   getGroupedArtifactsByDialogue = computedFn((chatId: string, messageId: string) => {
     const dialogue = this.chatMap[chatId]?.dialogueMap[messageId];
@@ -864,11 +855,7 @@ export class PiChatStore implements IPiChatStore {
     this.isPiArtifactsDrawerOpen = value;
   };
 
-  executeAction = async (
-    workspaceId: string,
-    chatId: string,
-    actionId: string
-  ): Promise<TExecuteActionResponse | undefined> => {
+  executeAction = async (workspaceId: string, chatId: string, actionId: string): Promise<string[] | undefined> => {
     const dialogue = {
       ...this.chatMap[chatId].dialogueMap[actionId],
     };
@@ -903,6 +890,7 @@ export class PiChatStore implements IPiChatStore {
         artifact_data: artifactData,
       });
       // update artifacts
+      const actionableEntities: string[] = [];
       response.actions?.forEach((action) => {
         this.artifactsStore.updateArtifact(action.artifact_id, "original", {
           entity_id: action.entity?.entity_id,
@@ -912,6 +900,9 @@ export class PiChatStore implements IPiChatStore {
           is_executed: true,
           success: action.success,
         });
+        if (action.success) {
+          actionableEntities.push(action.artifact_type);
+        }
       });
       // update dialogue
       dialogue.execution_status = EExecutionStatus.COMPLETED;
@@ -919,7 +910,7 @@ export class PiChatStore implements IPiChatStore {
       dialogue.actions = response.actions;
       this.updateDialogue(chatId, actionId, dialogue);
 
-      return response;
+      return actionableEntities;
     } catch (error) {
       console.error(error);
       dialogue.execution_status = EExecutionStatus.COMPLETED;

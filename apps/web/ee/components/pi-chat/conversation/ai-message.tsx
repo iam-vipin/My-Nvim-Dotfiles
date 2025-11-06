@@ -73,6 +73,7 @@ export const AiMessage = observer((props: TProps) => {
             {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} />}
             {/* Action bar */}
             <ActionStatusBlock
+              workspaceSlug={workspaceSlug?.toString()}
               dialogue={dialogue}
               isLatest={isLatest}
               isPiTyping={isPiTyping}

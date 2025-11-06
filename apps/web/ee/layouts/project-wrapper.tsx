@@ -4,6 +4,11 @@ import useSWR from "swr";
 // ce imports
 import type { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
 // hooks
+import {
+  EPICS_PROPERTIES_AND_OPTIONS,
+  PROJECT_WORKFLOWS,
+  WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS,
+} from "@/constants/fetch-keys";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // layouts
 import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
@@ -31,7 +36,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching all work item types and properties
   useSWR(
     workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? ["workItemTypesPropertiesAndOptions", workspaceSlug, projectId, isWorkItemTypeEnabled]
+      ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug.toString(), projectId.toString())
       : null,
     workspaceSlug && projectId && isWorkItemTypeEnabled
       ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
@@ -42,7 +47,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching all epic types and properties
   useSWR(
     workspaceSlug && projectId && isEpicEnabled
-      ? ["epicsPropertiesAndOptions", workspaceSlug, projectId, isEpicEnabled]
+      ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug.toString(), projectId.toString())
       : null,
     workspaceSlug && projectId && isEpicEnabled
       ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
@@ -53,7 +58,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project level workflow states
   useSWR(
     workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? `PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}`
+      ? PROJECT_WORKFLOWS(workspaceSlug.toString(), projectId.toString())
       : null,
     workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
       ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())

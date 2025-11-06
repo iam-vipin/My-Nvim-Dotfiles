@@ -34,7 +34,7 @@ const ProjectIntegrationsPage = observer(() => {
   const { resolvedTheme } = useTheme();
   // fetch project details
   const { data: projectDetails } = useSWR<IProject>(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId ? PROJECT_DETAILS(workspaceSlug?.toString(), projectId?.toString()) : null,
     workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
   // fetch Integrations list

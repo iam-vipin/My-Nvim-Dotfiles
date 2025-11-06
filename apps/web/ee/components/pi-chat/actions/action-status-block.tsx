@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Info } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { revalidateProjectData } from "@/plane-web/helpers/swr.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/plane-web/types";
 import { EExecutionStatus } from "@/plane-web/types";
@@ -11,6 +12,7 @@ type TProps = {
   isLatest: boolean | undefined;
   isPiThinking: boolean | undefined;
   workspaceId: string | undefined;
+  workspaceSlug: string | undefined;
   query_id: string | undefined;
   activeChatId: string;
   isPiTyping: boolean;
@@ -19,17 +21,23 @@ type TProps = {
 
 const ActionStatusBlock = (props: TProps) => {
   // props
-  const { isLatest, isPiThinking, workspaceId, query_id, activeChatId, isPiTyping, dialogue } = props;
+  const { isLatest, isPiThinking, workspaceSlug, workspaceId, query_id, activeChatId, isPiTyping, dialogue } = props;
   const { execution_status, action_summary, actions } = dialogue;
   // states
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   // store
-  const { executeAction } = usePiChat();
+  const { getChatFocus, executeAction } = usePiChat();
+
+  const chatFocus = getChatFocus(activeChatId);
   // handlers
   const handleExecuteAction = async (workspaceId: string, query_id: string) => {
     try {
       setIsExecutingAction(true);
-      await executeAction(workspaceId, activeChatId, query_id);
+      const actionableEntities = await executeAction(workspaceId, activeChatId, query_id);
+      if (actionableEntities && actionableEntities.length > 0 && workspaceSlug) {
+        const projectId = chatFocus?.entityType === "project_id" ? chatFocus?.entityIdentifier : undefined;
+        revalidateProjectData(workspaceSlug, actionableEntities, projectId);
+      }
     } catch (e: any) {
       console.error(e);
       setToast({

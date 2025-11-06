@@ -65,7 +65,7 @@ function WorkspaceIntegrationsPage() {
           title={t("workspace_settings.settings.integrations.page_title")}
           description={t("workspace_settings.settings.integrations.page_description")}
           appendToRight={
-            <Link href={`create`}>
+            <Link href={`/${workspaceSlug}/settings/integrations/create`}>
               <Button variant="primary">Build your own</Button>
             </Link>
           }

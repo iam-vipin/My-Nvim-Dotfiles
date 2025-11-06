@@ -363,6 +363,11 @@ export const extendedRoutes: RouteConfigEntry[] = [
 
           // Integrations
           layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/layout.tsx", [
+            // Integrations - List
+            route(
+              ":workspaceSlug/settings/integrations",
+              "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/page.tsx"
+            ),
             // Integrations - Create
             route(
               ":workspaceSlug/settings/integrations/create",
@@ -411,6 +416,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
           ]),
 
           // Imports importers
+          route(
+            ":workspaceSlug/settings/imports",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/page.tsx"
+          ),
           layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/imports/(importers)/layout.tsx", [
             route(
               ":workspaceSlug/settings/imports/asana",

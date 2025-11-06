@@ -20,7 +20,7 @@ import {
   TeamsIcon,
   ViewsIcon,
 } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { PageIcon } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { IPage } from "@/plane-web/store/pages";
 
 type Props = {

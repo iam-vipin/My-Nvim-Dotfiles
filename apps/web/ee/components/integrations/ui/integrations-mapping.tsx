@@ -6,7 +6,7 @@ import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
-import { Logo } from "@plane/ui";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 
 type TIntegrationsMappingProps = {
   entityName: string | ReactNode;

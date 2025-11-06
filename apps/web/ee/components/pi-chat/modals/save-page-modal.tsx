@@ -5,11 +5,12 @@ import { useState } from "react";
 // types
 import { ETabIndices } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, WikiIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
-import { cn, EModalPosition, EModalWidth, Input, Logo, ModalCore } from "@plane/ui";
-import { getTabIndex } from "@plane/utils";
+import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
+import { cn, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";

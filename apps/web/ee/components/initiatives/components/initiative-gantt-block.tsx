@@ -5,18 +5,18 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { INITIATIVE_STATES } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { ControlLink } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
   initiativeId: string;

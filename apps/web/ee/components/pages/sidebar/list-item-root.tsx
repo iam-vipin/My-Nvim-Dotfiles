@@ -14,12 +14,11 @@ import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

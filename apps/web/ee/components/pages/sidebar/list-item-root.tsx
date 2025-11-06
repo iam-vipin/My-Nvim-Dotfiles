@@ -3,21 +3,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// lucide icons
+import { createRoot } from "react-dom/client";
 import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { PageIcon } from "@plane/propel/icons";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
-// plane ui
 import { DropIndicator } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
+import { cn, getPageName } from "@plane/utils";
+// components
+import { Logo } from "@/components/common/logo";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -253,6 +258,30 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         element,
         dragHandle: element,
         getInitialData: () => initialData,
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
+          setCustomNativeDragPreview({
+            getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
+            render: ({ container }) => {
+              const root = createRoot(container);
+              root.render(
+                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-custom-sidebar-text-200 bg-custom-sidebar-background-80 opacity-40">
+                  <div className="size-4 flex-shrink-0 grid place-items-center">
+                    <span className="grid place-items-center">
+                      {page.logo_props?.in_use ? (
+                        <Logo logo={page.logo_props} size={14} type="lucide" />
+                      ) : (
+                        <PageIcon className="size-3.5" />
+                      )}
+                    </span>
+                  </div>
+                  <p className="truncate text-sm flex-grow min-w-0">{getPageName(page.name)}</p>
+                </div>
+              );
+              return () => root.unmount();
+            },
+            nativeSetDragImage,
+          });
+        },
         onDragStart: () => {
           setIsDragging(true);
         },
@@ -368,10 +397,10 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           isHovered={isHovered}
           canShowAddButton={canShowAddButton}
           expandedPageIds={expandedPageIds}
-          setExpandedPageIds={setExpandedPageIds}
           sectionType={sectionType}
           setIsDropping={setIsDropping}
           setLocalIsExpanded={setLocalIsExpanded}
+          setExpandedPageIds={setExpandedPageIds}
         />
         {isHovered && canShowAddButton && (
           <button

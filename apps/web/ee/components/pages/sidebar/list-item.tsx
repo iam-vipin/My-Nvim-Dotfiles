@@ -53,6 +53,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   // refs
   const listItemContentRef = useRef<HTMLDivElement>(null);
+  const expandTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // navigation
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -215,25 +216,42 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     const element = listItemContentRef.current;
     if (!element || !page || !page.id) return;
 
-    return combine(
+    const cleanup = combine(
       dropTargetForElements({
         element,
         onDragEnter: () => {
           setIsDropping(true);
-          if (setExpandedPageIds) {
-            if (!expandedPageIds.includes(pageId)) {
-              setExpandedPageIds([...expandedPageIds, pageId]);
-            }
-          } else {
-            setLocalIsExpanded(true);
+          // Clear any existing timer
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
           }
+          // Set new timer to expand after 1 second
+          expandTimerRef.current = setTimeout(() => {
+            if (setExpandedPageIds) {
+              if (!expandedPageIds.includes(pageId)) {
+                setExpandedPageIds([...expandedPageIds, pageId]);
+              }
+            } else {
+              setLocalIsExpanded(true);
+            }
+          }, 1000);
         },
         onDragLeave: () => {
           setIsDropping(false);
+          // Clear the expand timer when drag leaves
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
+            expandTimerRef.current = null;
+          }
         },
         onDrop: ({ location, self, source }) => {
           // toggle drop state to off
           setIsDropping(false);
+          // Clear the expand timer on drop
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
+            expandTimerRef.current = null;
+          }
 
           if (location.current.dropTargets[0]?.element !== self.element) return;
           // get data of the dropped page(source)
@@ -290,6 +308,15 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         },
       })
     );
+
+    return () => {
+      cleanup();
+      // Clear any pending timer on unmount
+      if (expandTimerRef.current) {
+        clearTimeout(expandTimerRef.current);
+        expandTimerRef.current = null;
+      }
+    };
   }, [
     expandedPageIds,
     getPageById,
@@ -335,7 +362,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         style={contentStyle}
       >
         <div className="size-4 flex-shrink-0 grid place-items-center">
-          {shouldShowSubPagesButton && isHovering ? (
+          {isFetchingSubPages || (shouldShowSubPagesButton && isHovering) ? (
             <button
               type="button"
               onClick={handleSubPagesToggle}

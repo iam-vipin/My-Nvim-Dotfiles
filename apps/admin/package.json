@@ -29,8 +29,6 @@
     "@plane/utils": "workspace:*",
     "@react-router/express": "^7.9.3",
     "@react-router/node": "^7.9.3",
-    "@tanstack/react-virtual": "^3.13.12",
-    "@tanstack/virtual-core": "^3.13.12",
     "@vercel/edge": "1.2.2",
     "axios": "catalog:",
     "compression": "^1.8.1",

@@ -13,9 +13,11 @@ from django.db.models import (
     F,
     CharField,
     Max,
+    OuterRef,
+    Subquery
 )
 from django.http import HttpRequest
-from django.db.models.functions import TruncMonth, Cast, Concat
+from django.db.models.functions import TruncMonth, Cast, Concat, Coalesce
 from django.utils import timezone
 from django.db.models.fields.json import KeyTextTransform
 
@@ -32,6 +34,7 @@ from plane.db.models import (
     Workspace,
     ProjectMember,
     User,
+    Page
 )
 from plane.ee.models import EntityUpdates, ProjectAttribute
 from plane.utils.build_chart import build_analytics_chart
@@ -304,84 +307,121 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         )
 
     def get_project_stats(self) -> List[Dict[str, Any]]:
-        # Get all project stats in a single query using annotations
-        projects = (
-            Project.objects.filter(**self.filters["project_filters"])
+        """
+        Optimized version of get_project_stats.
+        Uses subqueries instead of massive joins for much better performance.
+        """
+
+        # --- Base queryset for projects ---
+        base_projects = Project.objects.filter(**self.filters["project_filters"]).values(
+            "id", "name", "logo_props", "identifier"
+        )
+        project_ids = [p["id"] for p in base_projects]
+
+        # --- Subqueries for Issue-related counts ---
+        issue_subquery = (
+            Issue.objects.filter(
+                **self.filters["base_filters"],
+            )
+            .values("project_id")
             .annotate(
-                # Issue stats
-                total_work_items=Count(
-                    "project_issue",
-                    filter=Q(
-                        project_issue__archived_at__isnull=True,
-                        project_issue__is_draft=False,
-                    ),
-                    distinct=True,
-                ),
+                total_work_items=Count("id", distinct=True),
                 completed_work_items=Count(
-                    "project_issue",
-                    filter=Q(
-                        project_issue__archived_at__isnull=True,
-                        project_issue__is_draft=False,
-                        project_issue__state__group="completed",
-                    ),
+                    "id",
+                    filter=Q(state__group="completed"),
                     distinct=True,
                 ),
                 total_epics=Count(
-                    "project_issue",
-                    filter=Q(
-                        project_issue__archived_at__isnull=True,
-                        project_issue__is_draft=False,
-                        project_issue__type__is_epic=True,
-                    ),
+                    "id",
+                    filter=Q(type__is_epic=True),
                     distinct=True,
                 ),
                 total_intake=Count(
-                    "project_issue",
+                    "id",
                     filter=Q(
-                        project_issue__archived_at__isnull=True,
-                        project_issue__is_draft=False,
-                        project_issue__issue_intake__isnull=False,
-                        project_issue__issue_intake__status__in=[
-                            "-2",
-                            "-1",
-                            "0",
-                            "1",
-                            "2",
-                        ],
+                        issue_intake__isnull=False,
+                        issue_intake__status__in=["-2", "-1", "0", "1", "2"],
                     ),
                     distinct=True,
                 ),
-                # Cycle stats
-                total_cycles=Count(
-                    "project_cycle",
-                    filter=Q(project_cycle__archived_at__isnull=True),
-                    distinct=True,
+            )
+        )
+
+        # --- Subqueries for other related models ---
+        cycle_subquery = (
+            Cycle.objects.filter(
+                project_id=OuterRef("pk"),
+                archived_at__isnull=True,
+            )
+            .values("project_id")
+            .annotate(total_cycles=Count("id", distinct=True))
+        )
+
+        module_subquery = (
+            Module.objects.filter(
+                project_id=OuterRef("pk"),
+                archived_at__isnull=True,
+            )
+            .values("project_id")
+            .annotate(total_modules=Count("id", distinct=True))
+        )
+
+        member_subquery = (
+            ProjectMember.objects.filter(
+                project_id=OuterRef("pk"),
+                is_active=True,
+                member__is_bot=False,
+            )
+            .values("project_id")
+            .annotate(total_members=Count("id", distinct=True))
+        )
+
+        page_subquery = (
+            Page.objects.filter(
+                project_pages__project_id=OuterRef("pk"),
+                archived_at__isnull=True,
+            )
+            .values("project_pages__project_id")
+            .annotate(total_pages=Count("id", distinct=True))
+        )
+
+        view_subquery = (
+            IssueView.objects.filter(project_id=OuterRef("pk"))
+            .values("project_id")
+            .annotate(total_views=Count("id", distinct=True))
+        )
+
+        # --- Combine all subqueries into the final queryset ---
+        projects_qs = (
+            Project.objects.filter(id__in=project_ids)
+            .annotate(
+                total_work_items=Coalesce(
+                    Subquery(issue_subquery.values("total_work_items")[:1]), Value(0)
                 ),
-                # Module stats
-                total_modules=Count(
-                    "project_module",
-                    filter=Q(project_module__archived_at__isnull=True),
-                    distinct=True,
+                completed_work_items=Coalesce(
+                    Subquery(issue_subquery.values("completed_work_items")[:1]),
+                    Value(0),
                 ),
-                # Member stats
-                total_members=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__is_active=True,
-                        project_projectmember__member__is_bot=False,
-                    ),
-                    distinct=True,
+                total_epics=Coalesce(
+                    Subquery(issue_subquery.values("total_epics")[:1]), Value(0)
                 ),
-                # Page stats
-                total_pages=Count(
-                    "project_pages",
-                    filter=Q(project_pages__page__archived_at__isnull=True),
-                    distinct=True,
+                total_intake=Coalesce(
+                    Subquery(issue_subquery.values("total_intake")[:1]), Value(0)
                 ),
-                # View stats
-                total_views=Count(
-                    "project_issueview",
-                    distinct=True,
+                total_cycles=Coalesce(
+                    Subquery(cycle_subquery.values("total_cycles")[:1]), Value(0)
+                ),
+                total_modules=Coalesce(
+                    Subquery(module_subquery.values("total_modules")[:1]), Value(0)
+                ),
+                total_members=Coalesce(
+                    Subquery(member_subquery.values("total_members")[:1]), Value(0)
+                ),
+                total_pages=Coalesce(
+                    Subquery(page_subquery.values("total_pages")[:1]), Value(0)
+                ),
+                total_views=Coalesce(
+                    Subquery(view_subquery.values("total_views")[:1]), Value(0)
                 ),
             )
             .values(
@@ -401,7 +441,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             )
         )
 
-        return list(projects)
+        return list(projects_qs)
 
     def get_users_stats(self) -> List[Dict[str, Any]]:
         # get all the workspace members with active status

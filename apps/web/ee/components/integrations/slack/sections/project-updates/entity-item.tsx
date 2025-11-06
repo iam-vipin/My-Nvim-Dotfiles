@@ -5,8 +5,8 @@ import { Button } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import type { TWorkspaceEntityConnection } from "@plane/types";
 import { Logo } from "@plane/ui";
+import SlackLogo from "@/app/assets/services/slack.png?url";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
-import SlackLogo from "@/public/services/slack.png";
 
 interface ConnectionItemProps {
   connection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>;
@@ -120,7 +120,7 @@ export const ConnectionItem: React.FC<ConnectionItemProps> = ({ connection, onEd
               >
                 {/* Slack Logo */}
                 <div className="h-5 w-5 flex-shrink-0 relative">
-                  <Image src={SlackLogo} alt="Slack" layout="fill" objectFit="contain" />
+                  <Image src={SlackLogo} fill alt="Slack" />
                 </div>
 
                 {/* Channel Info */}

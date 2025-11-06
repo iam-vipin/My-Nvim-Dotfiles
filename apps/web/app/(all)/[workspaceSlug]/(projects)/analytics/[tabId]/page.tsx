@@ -20,17 +20,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 import { useFlag } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-type Props = {
-  params: {
-    tabId: string;
-    workspaceSlug: string;
-  };
-};
-
-const AnalyticsPage = observer((props: Props) => {
-  // props
-  const { params } = props;
+function AnalyticsPage({ params }: Route.ComponentProps) {
   const { tabId } = params;
 
   // hooks
@@ -72,7 +64,7 @@ const AnalyticsPage = observer((props: Props) => {
       })),
     [ANALYTICS_TABS, router, currentWorkspace?.slug]
   );
-  const defaultTab = tabId || ANALYTICS_TABS[0].key;
+  const defaultTab = tabId;
 
   return (
     <>
@@ -115,6 +107,6 @@ const AnalyticsPage = observer((props: Props) => {
       )}
     </>
   );
-});
+}
 
-export default AnalyticsPage;
+export default observer(AnalyticsPage);

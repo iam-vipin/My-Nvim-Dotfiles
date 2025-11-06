@@ -1,6 +1,5 @@
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
@@ -10,7 +9,7 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const AreaChart = dynamic(() =>
+const AreaChart = lazy(() =>
   import("@plane/propel/charts/area-chart").then((mod) => ({
     default: mod.AreaChart,
   }))
@@ -70,40 +69,42 @@ export const DashboardAreaChartWidget: React.FC<TWidgetComponentProps> = observe
   if (!widget) return null;
 
   return (
-    <AreaChart
-      className="size-full"
-      data={parsedData.data}
-      areas={areas}
-      margin={{
-        top: 20,
-        right: 16,
-        bottom: 20,
-        left: -10,
-      }}
-      xAxis={{
-        key: "name",
-      }}
-      yAxis={{
-        key: "count",
-      }}
-      legend={
-        showLegends
-          ? {
-              align: "center",
-              verticalAlign: "bottom",
-              layout: "horizontal",
-            }
-          : undefined
-      }
-      showTooltip={!!widgetConfig?.show_tooltip}
-      comparisonLine={
-        isComparisonModel
-          ? {
-              strokeColor: widgetConfig?.line_color ?? "",
-              dashedLine: widgetConfig?.line_type === "dashed",
-            }
-          : undefined
-      }
-    />
+    <Suspense fallback={<></>}>
+      <AreaChart
+        className="size-full"
+        data={parsedData.data}
+        areas={areas}
+        margin={{
+          top: 20,
+          right: 16,
+          bottom: 20,
+          left: -10,
+        }}
+        xAxis={{
+          key: "name",
+        }}
+        yAxis={{
+          key: "count",
+        }}
+        legend={
+          showLegends
+            ? {
+                align: "center",
+                verticalAlign: "bottom",
+                layout: "horizontal",
+              }
+            : undefined
+        }
+        showTooltip={!!widgetConfig?.show_tooltip}
+        comparisonLine={
+          isComparisonModel
+            ? {
+                strokeColor: widgetConfig?.line_color ?? "",
+                dashedLine: widgetConfig?.line_type === "dashed",
+              }
+            : undefined
+        }
+      />
+    </Suspense>
   );
 });

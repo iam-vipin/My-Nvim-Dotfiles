@@ -2,16 +2,19 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
+// assets
+import teamsDark from "@/app/assets/empty-state/teams/teams-dark.webp?url";
+import teamsLight from "@/app/assets/empty-state/teams/teams-light.webp?url";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { TeamspaceProjectsWithGroupingRoot } from "@/plane-web/components/teamspaces/projects/grouping-root";
 import { TeamspaceProjectsWithoutGroupingRoot } from "@/plane-web/components/teamspaces/projects/non-grouping-root";
 import { useFlag, useTeamspaces, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -21,6 +24,8 @@ const TeamspaceProjectsPage = observer(() => {
   const { workspaceSlug, teamspaceId } = useParams();
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { fetchProjects } = useProject();
   const { getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
@@ -32,7 +37,7 @@ const TeamspaceProjectsPage = observer(() => {
   const isProjectGroupingEnabled =
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/projects" });
+  const resolvedPath = resolvedTheme === "light" ? teamsLight : teamsDark;
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,

@@ -10,11 +10,11 @@ import { PLANE_INTELLIGENCE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
+// assets
+import PiUpgradeDark from "@/app/assets/empty-state/pi/chat-dark.webp?url";
+import PiUpgradeLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PiUpgradeDark from "@/public/empty-state/pi/chat-dark.webp";
-import PiUpgradeLight from "@/public/empty-state/pi/chat-light.webp";
 
 export const PiChatUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();

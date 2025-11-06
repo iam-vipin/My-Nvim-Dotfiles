@@ -10,10 +10,12 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-import ProjectUpdatesUpgradeDark from "@/public/empty-state/project-settings/updates-dark.png";
-import ProjectUpdatesUpgradeLight from "@/public/empty-state/project-settings/updates-light.png";
+// assets
+import ProjectUpdatesUpgradeDark from "@/app/assets/empty-state/project-settings/updates-dark.png?url";
+import ProjectUpdatesUpgradeLight from "@/app/assets/empty-state/project-settings/updates-light.png?url";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const ProjectUpdatesUpgrade = observer(() => {
   // store hooks

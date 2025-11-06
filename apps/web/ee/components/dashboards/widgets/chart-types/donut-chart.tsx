@@ -1,6 +1,5 @@
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, STATE_GROUPS } from "@plane/constants";
@@ -10,7 +9,7 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const PieChart = dynamic(() =>
+const PieChart = lazy(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({
     default: mod.PieChart,
   }))
@@ -94,44 +93,46 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
   if (!widget) return null;
 
   return (
-    <PieChart
-      className="size-full"
-      margin={{
-        top: isOfUnitHeight ? 0 : 20,
-        right: 16,
-        bottom: isOfUnitHeight ? 12 : 20,
-        left: 16,
-      }}
-      data={donutParsedData}
-      dataKey="count"
-      cells={cells}
-      innerRadius="60%"
-      cornerRadius={2}
-      paddingAngle={4}
-      centerLabel={
-        showCenterLabel
-          ? {
-              text: totalCount,
-              fill: "rgba(var(--color-text-100))",
-              className: "text-2xl font-semibold",
-              style: {
-                fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
-              },
-            }
-          : undefined
-      }
-      legend={
-        showLegends
-          ? {
-              align: legendPosition === "right" ? "right" : "center",
-              verticalAlign: legendPosition === "right" ? "middle" : "bottom",
-              layout: legendPosition === "right" ? "vertical" : "horizontal",
-            }
-          : undefined
-      }
-      showTooltip={!!widgetConfig?.show_tooltip}
-      showLabel={showLabels}
-      tooltipLabel="Count"
-    />
+    <Suspense fallback={<></>}>
+      <PieChart
+        className="size-full"
+        margin={{
+          top: isOfUnitHeight ? 0 : 20,
+          right: 16,
+          bottom: isOfUnitHeight ? 12 : 20,
+          left: 16,
+        }}
+        data={donutParsedData}
+        dataKey="count"
+        cells={cells}
+        innerRadius="60%"
+        cornerRadius={2}
+        paddingAngle={4}
+        centerLabel={
+          showCenterLabel
+            ? {
+                text: totalCount,
+                fill: "rgba(var(--color-text-100))",
+                className: "text-2xl font-semibold",
+                style: {
+                  fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
+                },
+              }
+            : undefined
+        }
+        legend={
+          showLegends
+            ? {
+                align: legendPosition === "right" ? "right" : "center",
+                verticalAlign: legendPosition === "right" ? "middle" : "bottom",
+                layout: legendPosition === "right" ? "vertical" : "horizontal",
+              }
+            : undefined
+        }
+        showTooltip={!!widgetConfig?.show_tooltip}
+        showLabel={showLabels}
+        tooltipLabel="Count"
+      />
+    </Suspense>
   );
 });

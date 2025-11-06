@@ -10,13 +10,13 @@ import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { BetaBadge } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import PiDark from "@/app/assets/empty-state/pi/chat-dark.webp?url";
+import PiLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
+import PiChatLogo from "@/app/assets/logos/pi.png?url";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import PiDark from "@/public/empty-state/pi/chat-dark.webp";
-import PiLight from "@/public/empty-state/pi/chat-light.webp";
-import PiChatLogo from "@/public/logos/pi.png";
 
 export const EmptyPiChat = observer(() => {
   // store hooks

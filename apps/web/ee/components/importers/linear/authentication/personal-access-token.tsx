@@ -5,6 +5,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import LinearLogo from "@/app/assets/services/linear.svg?url";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
 // plane web components
@@ -13,7 +15,6 @@ import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
-import LinearLogo from "@/public/services/linear.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

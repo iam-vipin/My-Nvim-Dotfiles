@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components
 import { AppHeader } from "@/components/core/app-header";
@@ -12,7 +12,7 @@ import { TeamspaceDetailHeader } from "@/plane-web/components/teamspaces/headers
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
-export default function TeamspacePagesLayout({ children }: { children: ReactNode }) {
+export default function TeamspacePagesLayout() {
   const { teamspaceId } = useParams();
   // store hooks
   const { getTeamspaceById } = useTeamspaces();
@@ -24,7 +24,9 @@ export default function TeamspacePagesLayout({ children }: { children: ReactNode
     <>
       <PageHead title={pageTitle} />
       <AppHeader header={<TeamspaceDetailHeader selectedNavigationKey={ETeamspaceNavigationItem.PAGES} />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

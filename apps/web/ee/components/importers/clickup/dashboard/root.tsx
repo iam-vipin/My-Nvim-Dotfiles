@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { TClickUpConfig } from "@plane/etl/clickup";
 import type { TImportJob } from "@plane/types";
-import { useClickUpImporter } from "@/plane-web/hooks/store";
 // assets
-import ClickUpLogo from "@/public/services/clickup.svg";
+import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
+// plane web imports
+import { useClickUpImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 

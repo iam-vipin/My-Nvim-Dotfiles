@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
+// contexts
+import { CollaborationProvider, useCollaboration } from "@/contexts/collaboration-context";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -14,7 +16,8 @@ import { DocumentEditorSideEffects } from "@/plane-editor/components/document-ed
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
-const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+// Inner component that has access to collaboration context
+const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
@@ -41,8 +44,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     onEditorFocus,
     onTransaction,
     placeholder,
-    realtimeConfig,
-    serverHandler,
     tabIndex,
     user,
     extendedDocumentEditorProps,
@@ -51,14 +52,12 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     isFetchingFallbackBinary,
   } = props;
 
-  // use document editor
-  const {
-    editor,
-    titleEditor,
-    isEditorContentReady,
-    isContentInIndexedDb,
-    hasServerConnectionFailed: connectionFailed,
-  } = useCollaborativeEditor({
+  // Get non-null provider from context
+  const { provider, status, actions } = useCollaboration();
+
+  // Editor initialization with guaranteed non-null provider
+  const { editor, titleEditor } = useCollaborativeEditor({
+    provider,
     disabledExtensions,
     editable,
     editorClassName,
@@ -78,13 +77,11 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     onEditorFocus,
     onTransaction,
     placeholder,
-    realtimeConfig,
-    serverHandler,
     tabIndex,
-    user,
-    extendedDocumentEditorProps,
     titleRef,
     updatePageProperties,
+    user,
+    actions,
   });
 
   const editorContainerClassNames = getEditorClassNames({
@@ -93,10 +90,16 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     containerClassName,
   });
 
-  if (!editor || !titleEditor) return null;
+  // Show loader ONLY when IndexedDB is known empty and server hasn't synced yet
+  const shouldShowSyncLoader = status.isIndexedDbSynced && !status.isContentInIndexedDb && !status.hasServerSynced;
+  const shouldWaitForFallbackBinary =
+    isFetchingFallbackBinary && !status.isContentInIndexedDb && status.hasServerConnectionFailed;
+  const isLoading = shouldShowSyncLoader || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
-  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !isContentInIndexedDb && connectionFailed;
-  const isLoading = !isEditorContentReady || shouldWaitForFallbackBinary || pageRestorationInProgress;
+  // Gate content rendering on isEditorContentReady to prevent empty editor flash
+  const showContentSkeleton = !status.isEditorContentReady;
+
+  if (!editor || !titleEditor) return null;
 
   return (
     <>
@@ -106,29 +109,51 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         updatePageProperties={updatePageProperties}
         extendedEditorProps={extendedEditorProps}
       />
-      <PageRenderer
-        aiHandler={aiHandler}
-        bubbleMenuEnabled={bubbleMenuEnabled}
-        displayConfig={displayConfig}
-        documentLoaderClassName={documentLoaderClassName}
-        disabledExtensions={disabledExtensions}
-        extendedDocumentEditorProps={extendedDocumentEditorProps}
-        editor={editor}
-        flaggedExtensions={flaggedExtensions}
-        titleEditor={titleEditor}
-        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-        extendedEditorProps={extendedEditorProps}
-        id={id}
-        isLoading={isLoading}
-        isTouchDevice={!!isTouchDevice}
-        tabIndex={tabIndex}
-      />
+      <div
+        className={cn(
+          "transition-opacity duration-200",
+          showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
+        )}
+      >
+        <PageRenderer
+          aiHandler={aiHandler}
+          bubbleMenuEnabled={bubbleMenuEnabled}
+          displayConfig={displayConfig}
+          documentLoaderClassName={documentLoaderClassName}
+          disabledExtensions={disabledExtensions}
+          extendedDocumentEditorProps={extendedDocumentEditorProps}
+          editor={editor}
+          flaggedExtensions={flaggedExtensions}
+          titleEditor={titleEditor}
+          editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+          extendedEditorProps={extendedEditorProps}
+          id={id}
+          isLoading={isLoading}
+          isTouchDevice={!!isTouchDevice}
+          tabIndex={tabIndex}
+        />
+      </div>
     </>
   );
 };
 
+// Outer component that provides collaboration context
+const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+  const { id, realtimeConfig, serverHandler, user } = props;
+
+  const token = useMemo(() => JSON.stringify(user), [user]);
+
+  return (
+    <CollaborationProvider id={id} url={realtimeConfig.url} token={token} serverHandler={serverHandler}>
+      <CollaborativeDocumentEditorInner {...props} />
+    </CollaborationProvider>
+  );
+};
+
 const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
+  (props, ref) => (
+    <CollaborativeDocumentEditor key={props.id} {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
+  )
 );
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";

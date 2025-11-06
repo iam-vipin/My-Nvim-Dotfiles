@@ -1,14 +1,16 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
+// assets
+import completedCyclesDark from "@/app/assets/empty-state/teams/completed-cycles-dark.webp?url";
+import completedCyclesLight from "@/app/assets/empty-state/teams/completed-cycles-light.webp?url";
 // components
 import { CycleListProjectGroupHeader } from "@/components/cycles/list/cycle-list-project-group-header";
 import { CyclesListMap } from "@/components/cycles/list/cycles-list-map";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
 
@@ -21,12 +23,14 @@ export const TeamCompletedCyclesRoot = observer((props: TeamCompletedCyclesRootP
   const { teamspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { getTeamspaceFilteredCompletedCycleIds, getTeamspaceGroupedCompletedCycleIds } = useTeamspaceCycles();
   // derived values
   const filteredCompletedCycleIds = getTeamspaceFilteredCompletedCycleIds(teamspaceId);
   const groupedCompletedCycleIds = getTeamspaceGroupedCompletedCycleIds(teamspaceId);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/completed-cycles" });
+  const resolvedPath = resolvedTheme === "light" ? completedCyclesLight : completedCyclesDark;
 
   if (filteredCompletedCycleIds.length === 0) {
     return (

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { Info, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -8,10 +9,13 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import noResultsDark from "@/app/assets/empty-state/teams/no-results-dark.webp?url";
+import noResultsLight from "@/app/assets/empty-state/teams/no-results-light.webp?url";
+import noTeamspacesDark from "@/app/assets/empty-state/teams/no-teamspace-dark.webp?url";
+import noTeamspacesLight from "@/app/assets/empty-state/teams/no-teamspaces-light.webp?url";
 // components
 import { Logo } from "@/components/common/logo";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
@@ -50,6 +54,8 @@ export const LinkTeamspaceToProjectModal: React.FC<Props> = observer((props) => 
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { getAvailableTeamspaceIdsForProject, getTeamspaceById } = useTeamspaces();
   // derived values
@@ -59,12 +65,8 @@ export const LinkTeamspaceToProjectModal: React.FC<Props> = observer((props) => 
     const teamspace = teamspaceDetailsMap.get(id);
     return teamspace?.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
-  const noTeamspacesResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/teams/no-teamspaces",
-  });
-  const filteredTeamspaceResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/teams/no-results",
-  });
+  const noTeamspacesResolvedPath = resolvedTheme === "light" ? noTeamspacesLight : noTeamspacesDark;
+  const filteredTeamspaceResolvedPath = resolvedTheme === "light" ? noResultsLight : noResultsDark;
 
   const handleClose = () => {
     onClose();

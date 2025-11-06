@@ -2,9 +2,10 @@
 import Link from "next/link";
 
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 
-const IntegrationLayout = ({ children }: { children: React.ReactNode }) => {
+const IntegrationLayout = () => {
   const { workspaceSlug } = useParams();
   return (
     <div className="w-full h-full">
@@ -15,7 +16,7 @@ const IntegrationLayout = ({ children }: { children: React.ReactNode }) => {
         <ChevronLeftIcon className="w-4 h-4" />
         Back to integrations
       </Link>
-      {children}
+      <Outlet />
     </div>
   );
 };

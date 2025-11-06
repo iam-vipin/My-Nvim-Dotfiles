@@ -4,14 +4,14 @@ import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import DetailDark from "@/app/assets/empty-state/customers/detail-dark.svg?url";
+import DetailLight from "@/app/assets/empty-state/customers/detail-light.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import DetailDark from "@/public/empty-state/customers/detail-dark.svg";
-import DetailLight from "@/public/empty-state/customers/detail-light.svg";
 
 type TProps = {
   workspaceSlug: string;

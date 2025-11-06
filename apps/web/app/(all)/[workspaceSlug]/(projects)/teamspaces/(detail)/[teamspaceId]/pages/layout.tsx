@@ -1,11 +1,12 @@
 "use client";
-import type { ReactNode } from "react";
+
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export default function TeamspacePagesLayout({ children }: { children: ReactNode }) {
+export default function TeamspacePagesLayout() {
   const { workspaceSlug, teamspaceId } = useParams();
   // store hooks
   const { fetchPagesList } = usePageStore(EPageStoreType.TEAMSPACE);
@@ -18,5 +19,5 @@ export default function TeamspacePagesLayout({ children }: { children: ReactNode
       revalidateIfStale: false,
     }
   );
-  return <>{children}</>;
+  return <Outlet />;
 }

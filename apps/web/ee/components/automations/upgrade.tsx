@@ -10,12 +10,11 @@ import { useTheme } from "next-themes";
 import type { TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+// assets
+import AutomationsUpgradeDark from "@/app/assets/empty-state/templates/upgrade-dark.webp?url";
+import AutomationsUpgradeLight from "@/app/assets/empty-state/templates/upgrade-light.webp?url";
 // plane web imports
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
-// assets
-// TODO: Update path to automations
-import AutomationsUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
-import AutomationsUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
 
 type TAutomationsUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;

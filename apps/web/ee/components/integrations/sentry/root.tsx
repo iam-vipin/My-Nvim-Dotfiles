@@ -4,13 +4,14 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// assets
+import SentryLogo from "@/app/assets/services/sentry.svg?url";
 // plane web components
 import { ConnectedAppCard } from "@/plane-web/components/integrations/sentry";
 import { InstallationCard } from "@/plane-web/components/integrations/ui";
 // hooks
 import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-sentry";
 // sections
-import SentryLogo from "@/public/services/sentry.svg";
 import { SentryStateMappingRoot } from "./sections/state-mapping/root";
 // assets
 

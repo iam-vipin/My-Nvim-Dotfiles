@@ -6,6 +6,9 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
+// assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
@@ -20,9 +23,6 @@ import * as store from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-// public
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage = observer(() => {
   // router

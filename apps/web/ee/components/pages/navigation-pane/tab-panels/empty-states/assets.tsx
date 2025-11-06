@@ -1,12 +1,16 @@
 import Image from "next/image";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import assetsDark from "@/app/assets/empty-state/wiki/navigation-pane/assets-dark.webp?url";
+import assetsLight from "@/app/assets/empty-state/wiki/navigation-pane/assets-light.webp?url";
 
 export const PageNavigationPaneAssetsTabEmptyState = () => {
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // asset resolved path
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/assets" });
+  const resolvedPath = resolvedTheme === "light" ? assetsLight : assetsDark;
   // translation
   const { t } = useTranslation();
 

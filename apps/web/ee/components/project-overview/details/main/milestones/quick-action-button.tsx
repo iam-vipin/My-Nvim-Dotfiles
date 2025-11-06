@@ -1,4 +1,4 @@
-import type { FC} from "react";
+import type { FC } from "react";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";

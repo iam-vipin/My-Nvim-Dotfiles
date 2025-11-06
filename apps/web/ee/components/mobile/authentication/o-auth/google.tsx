@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // images
-import GoogleLogo from "/public/logos/google-logo.svg";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 
 export type TGoogleAuthButton = {
   title: string;

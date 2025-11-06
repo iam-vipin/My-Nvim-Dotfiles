@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
+// assets
+import widgetsListDark from "@/app/assets/empty-state/dashboards/widgets/list-dark.webp?url";
+import widgetsListLight from "@/app/assets/empty-state/dashboards/widgets/list-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useDashboards } from "@/plane-web/hooks/store";
 import { DashboardWidgetChartTypesDropdown } from "../widgets/dropdown";
 
@@ -23,13 +26,15 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
   const [isAddingWidget, setIsAddingWidget] = useState(false);
   // store hooks
   const { getDashboardById } = useDashboards();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // derived values
   const { isViewModeEnabled, widgetsStore } = getDashboardById(dashboardId) ?? {};
   const { canCurrentUserCreateWidget, createWidget, getNewWidgetPayload, toggleEditWidget } = widgetsStore ?? {};
   // translation
   const { t } = useTranslation();
   // empty state asset path
-  const widgetsAssetResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/widgets/list" });
+  const widgetsAssetResolvedPath = resolvedTheme === "light" ? widgetsListLight : widgetsListDark;
 
   const handleAddNewWidget = async (chartType: EWidgetChartTypes, chartModel: EWidgetChartModels) => {
     const payload = getNewWidgetPayload?.(chartType, chartModel);

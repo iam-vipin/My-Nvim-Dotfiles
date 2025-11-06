@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
 import { getButtonStyling } from "@plane/propel/button";
@@ -29,6 +28,7 @@ import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+import type { Route } from "./+types/page";
 
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
@@ -36,73 +36,53 @@ const projectPageVersionService = new ProjectPageVersionService();
 
 const storeType = EPageStoreType.PROJECT;
 
-const PageDetailsPage = observer(() => {
+function PageDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, pageId } = useParams();
+  const { workspaceSlug, projectId, pageId } = params;
   // store hooks
   const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
   const page = usePage({
-    pageId: pageId?.toString() ?? "",
+    pageId,
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
+  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+      await workspaceService.searchEntity(workspaceSlug, {
         ...payload,
-        project_id: projectId?.toString() ?? "",
+        project_id: projectId,
       }),
     [projectId, workspaceSlug]
   );
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
-  const { error: pageDetailsError } = useSWR(
-    workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && projectId && pageId ? () => fetchPageDetails(projectId?.toString(), pageId.toString()) : null,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-    }
-  );
+  const { error: pageDetailsError } = useSWR(`PAGE_DETAILS_${pageId}`, () => fetchPageDetails(projectId, pageId), {
+    revalidateIfStale: true,
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  });
   // page root handlers
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
       create: createPage,
-      fetchAllVersions: async (pageId) => {
-        if (!workspaceSlug || !projectId) return;
-        return await projectPageVersionService.fetchAllVersions(workspaceSlug.toString(), projectId.toString(), pageId);
-      },
+      fetchAllVersions: async (pageId) =>
+        await projectPageVersionService.fetchAllVersions(workspaceSlug, projectId, pageId),
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !projectId || !id) return;
-        return await projectPageService.fetchDescriptionBinary(workspaceSlug.toString(), projectId.toString(), id);
+        if (!id) return;
+        return await projectPageService.fetchDescriptionBinary(workspaceSlug, projectId, id);
       },
       fetchEntity: fetchEntityCallback,
-      fetchVersionDetails: async (pageId, versionId) => {
-        if (!workspaceSlug || !projectId) return;
-        return await projectPageVersionService.fetchVersionById(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          pageId,
-          versionId
-        );
-      },
-      restoreVersion: async (pageId, versionId) => {
-        if (!workspaceSlug || !projectId) return;
-        await projectPageVersionService.restoreVersion(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          pageId,
-          versionId
-        );
-      },
+      fetchVersionDetails: async (pageId, versionId) =>
+        await projectPageVersionService.fetchVersionById(workspaceSlug, projectId, pageId, versionId),
+      restoreVersion: async (pageId, versionId) =>
+        await projectPageVersionService.restoreVersion(workspaceSlug, projectId, pageId, versionId),
       getRedirectionLink: (pageId) => {
         if (pageId) {
           return `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`;
@@ -118,7 +98,7 @@ const PageDetailsPage = observer(() => {
   const pageRootConfig: TPageRootConfig = useMemo(
     () => ({
       fileHandler: getEditorFileHandlers({
-        projectId: projectId?.toString() ?? "",
+        projectId,
         uploadFile: async (blockId, file) => {
           const { asset_id } = await uploadEditorAsset({
             blockId,
@@ -127,13 +107,13 @@ const PageDetailsPage = observer(() => {
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
             file,
-            workspaceSlug: workspaceSlug?.toString() ?? "",
-            projectId: projectId?.toString() ?? "",
+            projectId,
+            workspaceSlug,
           });
           return asset_id;
         },
         workspaceId,
-        workspaceSlug: workspaceSlug?.toString() ?? "",
+        workspaceSlug,
       }),
     }),
     [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
@@ -142,8 +122,8 @@ const PageDetailsPage = observer(() => {
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
     () => ({
       documentType: "project_page",
-      projectId: projectId?.toString() ?? "",
-      workspaceSlug: workspaceSlug?.toString() ?? "",
+      projectId,
+      workspaceSlug,
     }),
     [projectId, workspaceSlug]
   );
@@ -193,7 +173,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (!page || !workspaceSlug || !projectId) return null;
+  if (!page) return null;
 
   return (
     <>
@@ -206,8 +186,8 @@ const PageDetailsPage = observer(() => {
             storeType={storeType}
             page={page}
             webhookConnectionParams={webhookConnectionParams}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
           />
           <IssuePeekOverview />
           <EpicPeekOverview />
@@ -215,6 +195,6 @@ const PageDetailsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default PageDetailsPage;
+export default observer(PageDetailsPage);

@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { AsanaConfig } from "@plane/etl/asana";
 import type { TImportJob } from "@plane/types";
-import { useAsanaImporter } from "@/plane-web/hooks/store";
 // assets
-import AsanaLogo from "@/public/services/asana.svg";
-// components
+import AsanaLogo from "@/app/assets/services/asana.svg";
+// plane web imports
+import { useAsanaImporter } from "@/plane-web/hooks/store";
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 
 export const AsanaDashboardRoot: FC = observer(() => {

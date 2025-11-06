@@ -6,6 +6,11 @@ import { useParams } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
+// assets
+import integrationsCta1Dark from "@/app/assets/upcoming-features/integrations-cta-1-dark.png?url";
+import integrationsCta1Light from "@/app/assets/upcoming-features/integrations-cta-1-light.png?url";
+import integrationsCta2Dark from "@/app/assets/upcoming-features/integrations-cta-2-dark.png?url";
+import integrationsCta2Light from "@/app/assets/upcoming-features/integrations-cta-2-light.png?url";
 // components
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
@@ -46,7 +51,7 @@ export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = observer(
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
             <Image
-              src={`/upcoming-features/integrations-cta-1-${isDarkMode ? "dark" : "light"}.png`}
+              src={isDarkMode ? integrationsCta1Dark : integrationsCta1Light}
               height={420}
               width={420}
               alt="cta-1"
@@ -54,7 +59,7 @@ export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = observer(
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
             <Image
-              src={`/upcoming-features/integrations-cta-2-${isDarkMode ? "dark" : "light"}.png`}
+              src={isDarkMode ? integrationsCta2Dark : integrationsCta2Light}
               height={210}
               width={280}
               alt="cta-2"

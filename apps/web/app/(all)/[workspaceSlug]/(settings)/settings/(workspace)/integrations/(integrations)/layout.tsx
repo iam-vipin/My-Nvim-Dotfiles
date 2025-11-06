@@ -1,9 +1,9 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH, E_FEATURE_FLAGS } from "@plane/constants";
 // hooks
@@ -13,13 +13,7 @@ import { useUser, useUserProfile } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IntegrationsEmptyState } from "@/plane-web/components/integrations";
 
-type TIntegrationLayout = {
-  children: ReactNode;
-};
-
-const IntegrationLayout: FC<TIntegrationLayout> = observer((props) => {
-  const { children } = props;
-
+const IntegrationLayout = observer(() => {
   // router params
   const { workspaceSlug: workspaceSlugParam } = useParams();
 
@@ -52,7 +46,9 @@ const IntegrationLayout: FC<TIntegrationLayout> = observer((props) => {
             <ChevronLeftIcon className="w-4 h-4" />
             Back to integrations
           </Link>
-          <div className="w-full h-full">{children}</div>
+          <div className="w-full h-full">
+            <Outlet />
+          </div>
         </div>
       </SettingsContentWrapper>
     </WithFeatureFlagHOC>

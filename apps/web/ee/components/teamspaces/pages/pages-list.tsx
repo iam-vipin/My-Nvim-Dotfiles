@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
 import {
   EUserPermissionsLevel,
@@ -11,6 +12,13 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
+// assets
+import onboardingPagesDark from "@/app/assets/empty-state/onboarding/pages-dark.webp?url";
+import onboardingPagesLight from "@/app/assets/empty-state/onboarding/pages-light.webp?url";
+import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
+import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
+import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?url";
+import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
 // components
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -22,7 +30,6 @@ import { captureClick, captureError, captureSuccess } from "@/helpers/event-trac
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 const storeType = EPageStoreType.TEAMSPACE;
@@ -55,19 +62,12 @@ export const TeamspacePagesList = observer((props: Props) => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const generalPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/pages",
-  });
-  const filteredPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/all-filters",
-    extension: "svg",
-    includeThemeInPath: false,
-  });
-  const searchedPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-    includeThemeInPath: false,
-  });
+  // theme hook
+  const { resolvedTheme } = useTheme();
+  // derived asset paths
+  const allFiltersResolvedPath = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
+  const nameFilterResolvedPath = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
+  const generalPageResolvedPath = resolvedTheme === "light" ? onboardingPagesLight : onboardingPagesDark;
   // handlers
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
@@ -118,13 +118,13 @@ export const TeamspacePagesList = observer((props: Props) => {
           <SimpleEmptyState
             title={t("teamspace_pages.empty_state.search.title")}
             description={t("teamspace_pages.empty_state.search.description")}
-            assetPath={searchedPageResolvedPath}
+            assetPath={nameFilterResolvedPath}
           />
         ) : (
           <SimpleEmptyState
             title={t("teamspace_pages.empty_state.filter.title")}
             description={t("teamspace_pages.empty_state.filter.description")}
-            assetPath={filteredPageResolvedPath}
+            assetPath={allFiltersResolvedPath}
           />
         )}
       </div>

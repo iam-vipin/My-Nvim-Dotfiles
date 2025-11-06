@@ -2,6 +2,7 @@
 
 // layouts
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 // components
 import { EUserPermissions } from "@plane/constants";
 // wrappers
@@ -16,7 +17,7 @@ import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 // local components
 import { PagesAppSidebar } from "./_sidebar";
 
-export default function WorkspacePagesLayout({ children }: { children: React.ReactNode }) {
+export default function WikiLayout() {
   // router
   const { workspaceSlug } = useParams();
 
@@ -36,7 +37,7 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
             <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
               <PagesAppSidebar />
               <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-                {children}
+                <Outlet />
               </main>
             </div>
           </WorkspaceAccessWrapper>

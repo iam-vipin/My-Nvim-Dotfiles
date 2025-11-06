@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
-import GithubDarkLogo from "@/public/services/github-dark.svg";
-import GithubLightLogo from "@/public/services/github-light.svg";
+// assets
+import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
+import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
 
 export const GithubHeader = () => {
   // hooks
@@ -12,7 +13,7 @@ export const GithubHeader = () => {
   return (
     <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
       <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-        <Image src={githubLogo} layout="fill" objectFit="contain" alt="GitHub Logo" />
+        <Image src={githubLogo} fill alt="GitHub Logo" />
       </div>
       <div>
         <div className="text-lg font-medium">GitHub</div>

@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { Outlet } from "react-router";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -14,7 +14,7 @@ import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
-const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
+const InitiativesLayout = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store
@@ -36,7 +36,7 @@ const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
       ) : (
         <>
           <PageHead title={pageTitle} />
-          {children}
+          <Outlet />
         </>
       )}
     </WorkspaceAccessWrapper>

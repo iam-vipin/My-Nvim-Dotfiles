@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { difference, xor } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -9,12 +10,14 @@ import { Button } from "@plane/propel/button";
 import { CloseIcon, TeamsIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn, truncateText } from "@plane/utils";
+// assets
+import searchProjectDark from "@/app/assets/empty-state/search/project-dark.webp?url";
+import searchProjectLight from "@/app/assets/empty-state/search/project-light.webp?url";
 // components
 import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -37,6 +40,8 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { getProjectById } = useProject();
   const { getTeamspaceById } = useTeamspaces();
@@ -55,9 +60,7 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
     const projectQuery = `${project?.identifier} ${project?.name}`.toLowerCase();
     return projectQuery.includes(searchTerm.toLowerCase());
   });
-  const filteredProjectResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/search/project",
-  });
+  const filteredProjectResolvedPath = resolvedTheme === "light" ? searchProjectLight : searchProjectDark;
 
   useEffect(() => {
     if (isOpen) setSelectedProjectIds(selectedProjectIdsProp);

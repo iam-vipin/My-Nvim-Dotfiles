@@ -1,8 +1,14 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
+// assets
+import searchViewsDark from "@/app/assets/empty-state/search/views-dark.webp?url";
+import searchViewsLight from "@/app/assets/empty-state/search/views-light.webp?url";
+import teamsViewsDark from "@/app/assets/empty-state/teams/views-dark.webp?url";
+import teamsViewsLight from "@/app/assets/empty-state/teams/views-light.webp?url";
 // components
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -11,7 +17,6 @@ import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 // local imports
@@ -25,6 +30,8 @@ export const TeamspaceViewsList = observer((props: Props) => {
   const { teamspaceId } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleCreateTeamspaceViewModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -37,12 +44,8 @@ export const TeamspaceViewsList = observer((props: Props) => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const generalViewResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/teams/views",
-  });
-  const filteredViewResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/search/views",
-  });
+  const generalViewResolvedPath = resolvedTheme === "light" ? teamsViewsLight : teamsViewsDark;
+  const filteredViewResolvedPath = resolvedTheme === "light" ? searchViewsLight : searchViewsDark;
 
   if (teamspaceViewsLoader === "init-loader" || !teamspaceViews || !filteredTeamspaceViews) return <ViewListLoader />;
 

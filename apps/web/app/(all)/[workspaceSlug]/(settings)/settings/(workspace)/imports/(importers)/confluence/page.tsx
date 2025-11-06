@@ -5,6 +5,7 @@ import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import ConfluenceLogo from "@/app/assets/services/confluence.svg?url";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-importer/dashboard";
 import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
@@ -12,7 +13,6 @@ import { useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
-import ConfluenceLogo from "@/public/services/confluence.svg";
 
 const ConfluenceImporter: FC = observer(() => {
   const {

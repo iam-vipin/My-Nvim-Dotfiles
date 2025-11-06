@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { FlatfileConfig } from "@plane/etl/flatfile";
 import type { TImportJob } from "@plane/types";
-import { useFlatfileImporter } from "@/plane-web/hooks/store";
 // assets
-import CSVLogo from "@/public/services/csv.svg";
+import CSVLogo from "@/app/assets/services/csv.svg?url";
+// plane web imports
+import { useFlatfileImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 

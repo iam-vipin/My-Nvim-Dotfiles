@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// assets
+import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
@@ -12,8 +14,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { TeamspaceViewLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-view-layout-root";
 // plane web hooks
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
-// assets
-import emptyView from "@/public/empty-state/view.svg";
 
 const TeamspaceViewWorkItemsPage = observer(() => {
   // router

@@ -94,7 +94,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   // states
   const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   // refs
   const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
@@ -111,15 +110,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
-
-  // Simple animation effect that triggers on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100); // Slightly longer delay for smoother coordination
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // use editor mention
   const { fetchMentions } = useEditorMention({
@@ -239,6 +229,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   );
 
   const isPageLoading = pageId === undefined || !realtimeConfig;
+
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
@@ -267,13 +258,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-        <div
-          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
-          style={{
-            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
-            animationDelay: "100ms",
-          }}
-        >
+        <div>
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
               <PageEditorHeaderRoot

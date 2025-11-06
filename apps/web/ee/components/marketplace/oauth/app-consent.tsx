@@ -12,11 +12,11 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspace, TUserApplication } from "@plane/types";
 import { cn, CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+import ConnectSvg from "@/app/assets/marketplace/connect.svg?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import type { TConsentParams } from "@/plane-web/services/marketplace";
 import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
-import ConnectSvg from "@/public/marketplace/connect.svg";
 import { AuthService } from "@/services/auth.service";
 import {
   ApplicationPermissionText,

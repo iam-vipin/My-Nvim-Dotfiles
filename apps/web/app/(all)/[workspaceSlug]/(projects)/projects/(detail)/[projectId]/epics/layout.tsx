@@ -1,8 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
@@ -15,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { EpicsEmptyState } from "@/plane-web/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
-const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
+const EpicsLayout = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -55,7 +55,7 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   return (
     <>
       <PageHead title={pageTitle} />
-      {children}
+      <Outlet />
     </>
   );
 });

@@ -10,11 +10,11 @@ import { useTheme } from "next-themes";
 import type { TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 // assets
-import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
-import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
+import TemplatesUpgradeDark from "@/app/assets/empty-state/templates/upgrade-dark.webp?url";
+import TemplatesUpgradeLight from "@/app/assets/empty-state/templates/upgrade-light.webp?url";
+// plane web components
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 
 type TTemplatesUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;

@@ -5,14 +5,14 @@ import useSWR from "swr";
 import { INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// assets
+import SlackLogo from "@/app/assets/services/slack.png?url";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ConnectedAppCard } from "@/plane-web/components/integrations/slack";
 import { InstallationCard, PersonalAccountInstallationCard } from "@/plane-web/components/integrations/ui";
 // hooks
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
-// assets
-import SlackLogo from "@/public/services/slack.png";
 import { ProjectUpdatesRoot } from "./sections";
 
 export const SlackIntegrationRoot = observer(() => {

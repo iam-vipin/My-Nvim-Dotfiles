@@ -1,12 +1,13 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
+// assets
+import CSVLogo from "@/app/assets/services/csv.svg?url";
+// plane web imports
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/flatfile";
 // hooks
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
-// assets
-import CSVLogo from "@/public/services/csv.svg";
 
 export const StepsRoot: FC = observer(() => {
   const { currentStepIndex, resetImporterData } = useFlatfileImporter();

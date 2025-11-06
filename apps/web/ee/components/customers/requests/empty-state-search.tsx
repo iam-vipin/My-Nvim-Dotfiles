@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
-import RequestEmptyDark from "@/public/empty-state/customers/request-search-dark.svg";
-import RequestEmptyLight from "@/public/empty-state/customers/request-search-light.svg";
+import RequestEmptyDark from "@/app/assets/empty-state/customers/request-search-dark.svg?url";
+import RequestEmptyLight from "@/app/assets/empty-state/customers/request-search-light.svg?url";
 
 export const CustomerRequestSearchEmptyState: FC = observer(() => {
   // i18n

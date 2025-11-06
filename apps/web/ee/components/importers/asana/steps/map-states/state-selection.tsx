@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 // types
-import { AsanaSection } from "@plane/etl/asana";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";

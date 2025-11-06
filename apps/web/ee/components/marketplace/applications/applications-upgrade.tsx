@@ -9,9 +9,10 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
+import TemplatesUpgradeDark from "@/app/assets/empty-state/templates/upgrade-dark.webp?url";
+import TemplatesUpgradeLight from "@/app/assets/empty-state/templates/upgrade-light.webp?url";
+// components
 import { SettingsHeading } from "@/components/settings/heading";
-import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
-import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
 
 export const ApplicationsUpgrade: FC = observer(() => {
   // router

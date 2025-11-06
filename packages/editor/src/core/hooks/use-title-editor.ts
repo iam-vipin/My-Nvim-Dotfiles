@@ -46,6 +46,9 @@ export const useTitleEditor = (props: Props) => {
 
   const { isSmoothCursorEnabled } = extendedEditorProps ?? {};
 
+  // Force editor recreation when Y.Doc changes (provider.document.guid)
+  const docKey = provider?.document?.guid ?? id;
+
   const editor = useEditor(
     {
       onUpdate: () => {
@@ -66,7 +69,7 @@ export const useTitleEditor = (props: Props) => {
       ],
       content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<h1></h1>",
     },
-    [editable, initialValue]
+    [editable, initialValue, docKey]
   );
 
   useImperativeHandle(titleRef, () => ({

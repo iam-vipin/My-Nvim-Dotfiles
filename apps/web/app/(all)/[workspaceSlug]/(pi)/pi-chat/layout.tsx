@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // components
@@ -14,7 +15,7 @@ import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { PiAppSidebar } from "./sidebar";
 
-function PiLayout({ children }: { children: React.ReactNode }) {
+function PiLayout() {
   // router
   const { workspaceSlug } = useParams();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -29,7 +30,7 @@ function PiLayout({ children }: { children: React.ReactNode }) {
               {isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) ? (
                 <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<EmptyPiChat />}>
                   <PiChatLayout shouldRenderSidebarToggle isFullScreen>
-                    {children}
+                    <Outlet />
                   </PiChatLayout>
                 </WithFeatureFlagHOC>
               ) : (

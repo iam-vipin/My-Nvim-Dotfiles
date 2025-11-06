@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
@@ -8,13 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CloseIcon, InitiativeIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
+// assets
 import { cn } from "@plane/utils";
+import searchDark from "@/app/assets/empty-state/search/search-dark.webp?url";
+import searchLight from "@/app/assets/empty-state/search/search-light.webp?url";
+// components
 import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
@@ -34,6 +37,7 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // store hooks
   const {
     initiative: { initiativeIds, getInitiativeById },
@@ -50,7 +54,7 @@ export const InitiativeMultiSelectModal: React.FC<Props> = observer((props) => {
     const initiativeQuery = `${initiative?.name}`.toLowerCase();
     return initiativeQuery.includes(searchTerm.toLowerCase());
   });
-  const filteredInitiativeResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+  const filteredInitiativeResolvedPath = resolvedTheme === "light" ? searchLight : searchDark;
 
   useEffect(() => {
     if (isOpen) setSelectedInitiativeIds(selectedInitiativeIdsProp);

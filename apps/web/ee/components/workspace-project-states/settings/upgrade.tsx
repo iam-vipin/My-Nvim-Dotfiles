@@ -10,13 +10,13 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { cn } from "@plane/utils";
+// assets
+import StateDark from "@/app/assets/projects/dark-upgrade.svg?url";
+import StateLight from "@/app/assets/projects/light-upgrade.svg?url";
+import StateDarkStandalone from "@/app/assets/projects/states-dark.svg?url";
+import StateLightStandalone from "@/app/assets/projects/states-light.svg?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import StateDark from "@/public/projects/dark-upgrade.svg";
-import StateLight from "@/public/projects/light-upgrade.svg";
-import StateDarkStandalone from "@/public/projects/states-dark.svg";
-import StateLightStandalone from "@/public/projects/states-light.svg";
 
 const Upgrade = observer(() => {
   const { resolvedTheme } = useTheme();

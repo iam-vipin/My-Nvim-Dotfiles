@@ -2,6 +2,7 @@ import type { FC } from "react";
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // constants
 import useSWR from "swr";
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -10,28 +11,27 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
+import searchEmptyDarkSvg from "@/app/assets/empty-state/customers/search-empty-dark.svg?url";
+import searchEmptyLightSvg from "@/app/assets/empty-state/customers/search-empty-light.svg?url";
 import { ListLayout } from "@/components/core/list";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
+// assets
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web components
 import { CustomerListItem, CustomerLoader } from "@/plane-web/components/customers/list";
-// assets
 import { useCustomers } from "@/plane-web/hooks/store";
 
 export const CustomersListRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
-  const resolvedPathSearch = useResolvedAssetPath({
-    basePath: "/empty-state/customers/search-empty",
-    extension: "svg",
-  });
+  const { resolvedTheme } = useTheme();
   // i18n
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateCustomerModal } = useCommandPalette();
+  const resolvedPathSearch = resolvedTheme === "light" ? searchEmptyLightSvg : searchEmptyDarkSvg;
   const {
     customerIds,
     customerSearchQuery: searchQuery,

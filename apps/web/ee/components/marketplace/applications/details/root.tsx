@@ -3,13 +3,14 @@ import React from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
+//assets
+import GitHubLogo from "@/app/assets/logos/integrations/github.png?url";
+import GitlabLogo from "@/app/assets/logos/integrations/gitlab.png?url";
+import SentryLogo from "@/app/assets/logos/integrations/sentry.png?url";
+import SlackLogo from "@/app/assets/logos/integrations/slack.png?url";
+// plane web imports
 import { AppList } from "@/plane-web/components/marketplace";
 import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
-
-import GitHubLogo from "@/public/logos/integrations/github.png";
-import GitlabLogo from "@/public/logos/integrations/gitlab.png";
-import SentryLogo from "@/public/logos/integrations/sentry.png";
-import SlackLogo from "@/public/logos/integrations/slack.png";
 
 // list all the applications
 // have tabs to filter by category
@@ -35,7 +36,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "github",
     key: "github",
     title: "GitHub",
-    logoUrl: GitHubLogo.src,
+    logoUrl: GitHubLogo,
     beta: true,
   },
   {
@@ -43,7 +44,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "gitlab",
     key: "gitlab",
     title: "GitLab",
-    logoUrl: GitlabLogo.src,
+    logoUrl: GitlabLogo,
     beta: true,
   },
   {
@@ -51,7 +52,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "slack",
     key: "slack",
     title: "Slack",
-    logoUrl: SlackLogo.src,
+    logoUrl: SlackLogo,
     beta: true,
   },
   {
@@ -59,7 +60,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "sentry",
     key: "sentry",
     title: "Sentry",
-    logoUrl: SentryLogo.src,
+    logoUrl: SentryLogo,
     beta: true,
   },
   {
@@ -67,7 +68,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "github-enterprise",
     key: "github_enterprise",
     title: "GitHub Enterprise",
-    logoUrl: GitHubLogo.src,
+    logoUrl: GitHubLogo,
     beta: true,
   },
   {
@@ -75,7 +76,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     urlSlug: "gitlab-enterprise",
     key: "gitlab_enterprise",
     title: "GitLab Enterprise",
-    logoUrl: GitlabLogo.src,
+    logoUrl: GitlabLogo,
     beta: true,
   },
 ];

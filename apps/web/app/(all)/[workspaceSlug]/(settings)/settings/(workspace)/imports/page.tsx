@@ -16,7 +16,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ImportersList } from "@/plane-web/components/importers";
 
-const ImportsPage = observer(() => {
+function ImportsPage() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -41,6 +41,6 @@ const ImportsPage = observer(() => {
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ImportsPage;
+export default observer(ImportsPage);

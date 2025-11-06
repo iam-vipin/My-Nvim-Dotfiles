@@ -10,6 +10,7 @@ import { PlaneLockup } from "@plane/propel/icons";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
+import tourImage from "@/app/assets/onboarding/tour.webp?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
@@ -67,7 +68,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
           </p>
         </div>
         <div className="hidden md:block">
-          <img src="/onboarding/tour.webp" className="w-full" alt="Welcome" />
+          <img src={tourImage} className="w-full" alt="Welcome" />
         </div>
         <p className="text-center text-xs text-white/60 md:text-sm">You can use free plan after your trial ends</p>
       </div>

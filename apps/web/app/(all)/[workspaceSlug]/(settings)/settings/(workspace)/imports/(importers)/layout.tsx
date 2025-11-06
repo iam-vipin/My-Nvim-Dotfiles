@@ -1,9 +1,9 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
 import { ChevronLeftIcon } from "@plane/propel/icons";
 // hooks
@@ -11,13 +11,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 
-type TImporterLayout = {
-  children: ReactNode;
-};
-
-const ImporterLayout: FC<TImporterLayout> = observer((props) => {
-  const { children } = props;
-
+const ImporterLayout = observer(() => {
   // router params
   const { workspaceSlug: workspaceSlugParam } = useParams();
 
@@ -43,7 +37,7 @@ const ImporterLayout: FC<TImporterLayout> = observer((props) => {
         <ChevronLeftIcon className="size-4" />
         <span>Back to Imports</span>
       </Link>
-      {children}
+      <Outlet />
     </SettingsContentWrapper>
   );
 });

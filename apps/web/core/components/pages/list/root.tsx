@@ -3,6 +3,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import {
@@ -17,6 +18,10 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles } from "@plane/types";
 import type { TPage, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // components
+import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
+import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
+import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?url";
+import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // helpers
@@ -25,8 +30,7 @@ import { captureClick, captureError, captureSuccess } from "@/helpers/event-trac
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import useDebounce from "@/hooks/use-debounce";
-// plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -47,7 +51,8 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
   const rootDropRef = useRef<HTMLDivElement>(null);
   // router
   const router = useRouter();
-
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -64,6 +69,9 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     getPageById,
     isNestedPagesEnabled,
   } = usePageStore(storeType);
+  // derived values
+  const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
+  const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
 
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
@@ -215,12 +223,6 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
     movePageInternally,
   ]);
 
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-  });
-
   if (isLoading) return <PageLoader />;
 
   // if no pages exist in the active page type
@@ -298,7 +300,7 @@ export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
           <Image
-            src={debouncedSearchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
+            src={debouncedSearchQuery.length > 0 ? resolvedNameFilterImage : resolvedAllFiltersImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching pages"
           />

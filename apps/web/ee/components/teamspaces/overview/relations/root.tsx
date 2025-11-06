@@ -1,9 +1,8 @@
 "use client";
 
 import type { FC } from "react";
-import React, { useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
@@ -15,7 +14,7 @@ import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-te
 // local imports
 import { TeamspaceRelationIssueList } from "./list";
 // dynamic imports
-const IssuePeekOverview = dynamic(() =>
+const IssuePeekOverview = lazy(() =>
   import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
 );
 
@@ -115,7 +114,9 @@ export const TeamspaceRelationsRoot: FC<Props> = observer((props) => {
             storeInLocalStorage={false}
           />
         </div>
-        <IssuePeekOverview />
+        <Suspense fallback={<></>}>
+          <IssuePeekOverview />
+        </Suspense>
       </>
     </Collapsible>
   );

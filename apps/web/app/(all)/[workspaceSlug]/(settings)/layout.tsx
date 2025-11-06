@@ -1,5 +1,7 @@
 "use client";
 
+import { Outlet } from "react-router";
+// components
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 import { SettingsHeader } from "@/components/settings/header";
@@ -8,7 +10,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { LicenseSeatsBanner } from "@/plane-web/components/license";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 
-export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+export default function SettingsLayout() {
   return (
     <AuthenticationWrapper>
       <WorkspaceAuthWrapper>
@@ -20,7 +22,9 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
             <SettingsHeader />
             {/* Content */}
             <ContentWrapper className="p-page-x md:flex w-full">
-              <div className="w-full h-full overflow-hidden">{children}</div>
+              <div className="w-full h-full overflow-hidden">
+                <Outlet />
+              </div>
             </ContentWrapper>
           </main>
         </div>

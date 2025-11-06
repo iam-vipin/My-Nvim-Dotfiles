@@ -1,21 +1,21 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import emptyWorkspaceDarkPng from "@/app/assets/empty-state/marketplace/empty-workspace-dark.png?url";
+import emptyWorkspaceLightPng from "@/app/assets/empty-state/marketplace/empty-workspace-light.png?url";
 
 export const WorkspaceSelectorEmptyState = observer(() => {
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // derived values
-  const image = useResolvedAssetPath({
-    basePath: "/empty-state/marketplace/empty-workspace",
-    extension: "png",
-  });
+  const image = resolvedTheme === "light" ? emptyWorkspaceLightPng : emptyWorkspaceDarkPng;
 
   return (
     <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-8 items-center">

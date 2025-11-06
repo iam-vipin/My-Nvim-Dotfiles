@@ -1,4 +1,3 @@
-import * as CSV from "csv-string";
 import {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
@@ -9,6 +8,7 @@ import {
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
+import Papa from "papaparse";
 import { JiraService } from "@/jira/services";
 import {
   ImportedJiraUser,
@@ -28,7 +28,7 @@ import {
 } from "../helpers";
 
 export function pullUsers(users: string): ImportedJiraUser[] {
-  const jiraUsersObject = CSV.parse(users, { output: "objects" });
+  const jiraUsersObject = Papa.parse(users, { header: true, skipEmptyLines: true }).data;
   return removeArrayObjSpaces(jiraUsersObject) as ImportedJiraUser[];
 }
 

@@ -1,12 +1,12 @@
 "use client";
 
 import type { FC } from "react";
+// assets
+import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import emptyIssue from "@/public/empty-state/issue.svg";
 
 type TEpicEmptyStateProps = {
   workspaceSlug: string;

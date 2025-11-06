@@ -10,8 +10,8 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
-import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
-import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
+import CustomerUpgradeDark from "@/app/assets/empty-state/customers/customer-upgrade-dark.webp?url";
+import CustomerUpgradeLight from "@/app/assets/empty-state/customers/customer-upgrade-light.webp?url";
 // local imports
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 

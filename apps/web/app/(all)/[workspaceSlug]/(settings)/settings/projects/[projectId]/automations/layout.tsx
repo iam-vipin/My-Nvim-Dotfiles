@@ -1,30 +1,19 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { Outlet } from "react-router";
 // plane web imports
 import { AutomationsListWrapper } from "@/plane-web/components/automations/list/wrapper";
+import type { Route } from "./+types/layout";
 
-type Props = {
-  params: {
-    projectId: string;
-    workspaceSlug: string;
-  };
-  children: React.ReactNode;
-};
-
-const AutomationsListLayout: React.FC<Props> = observer((props) => {
-  const {
-    params: { projectId: projectIdParam, workspaceSlug: workspaceSlugParam },
-    children,
-  } = props;
-  const projectId = projectIdParam?.toString();
-  const workspaceSlug = workspaceSlugParam?.toString();
+function AutomationsListLayout({ params }: Route.ComponentProps) {
+  const { projectId, workspaceSlug } = params;
 
   return (
     <AutomationsListWrapper projectId={projectId} workspaceSlug={workspaceSlug}>
-      {children}
+      <Outlet />
     </AutomationsListWrapper>
   );
-});
+}
 
-export default AutomationsListLayout;
+export default observer(AutomationsListLayout);

@@ -4,6 +4,10 @@ import Image from "next/image";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
+import importsCta1Dark from "@/app/assets/upcoming-features/imports-cta-1-dark.png?url";
+import importsCta1Light from "@/app/assets/upcoming-features/imports-cta-1-light.png?url";
+import importsCta2Dark from "@/app/assets/upcoming-features/imports-cta-2-dark.png?url";
+import importsCta2Light from "@/app/assets/upcoming-features/imports-cta-2-light.png?url";
 
 export type ImportersEmptyStateProps = {
   theme: string;
@@ -46,20 +50,10 @@ export const ImportersEmptyState: FC<ImportersEmptyStateProps> = observer((props
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image
-              src={`/upcoming-features/imports-cta-1-${isDarkMode ? "dark" : "light"}.png`}
-              height={420}
-              width={420}
-              alt="cta-1"
-            />
+            <Image src={isDarkMode ? importsCta1Dark : importsCta1Light} height={420} width={420} alt="cta-1" />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image
-              src={`/upcoming-features/imports-cta-2-${isDarkMode ? "dark" : "light"}.png`}
-              height={210}
-              width={280}
-              alt="cta-2"
-            />
+            <Image src={isDarkMode ? importsCta2Dark : importsCta2Light} height={210} width={280} alt="cta-2" />
           </span>
         </div>
       </div>

@@ -1,13 +1,17 @@
 "use client";
 
 import type { FC } from "react";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { ISearchIssueResponse } from "@plane/types";
+// assets
+import issuesDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import issuesLight from "@/app/assets/empty-state/search/issues-light.webp?url";
+import searchDark from "@/app/assets/empty-state/search/search-dark.webp?url";
+import searchLight from "@/app/assets/empty-state/search/search-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {
   issues: ISearchIssueResponse[];
@@ -19,9 +23,10 @@ type Props = {
 export const EpicSearchModalEmptyState: FC<Props> = ({ issues, searchTerm, debouncedSearchTerm, isSearching }) => {
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // derived values
-  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
-  const epicsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
+  const searchResolvedPath = resolvedTheme === "light" ? searchLight : searchDark;
+  const epicsResolvedPath = resolvedTheme === "light" ? issuesLight : issuesDark;
 
   const EmptyStateContainer = ({ children }: { children: React.ReactNode }) => (
     <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>

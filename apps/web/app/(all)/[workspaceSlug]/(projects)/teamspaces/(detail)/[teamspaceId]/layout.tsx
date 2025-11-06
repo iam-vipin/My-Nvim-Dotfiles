@@ -1,11 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
 
-export default function TeamspaceDetailLayout({ children }: { children: ReactNode }) {
+export default function TeamspaceDetailLayout() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
   // store hooks
@@ -35,5 +35,5 @@ export default function TeamspaceDetailLayout({ children }: { children: ReactNod
     }
   );
 
-  return <>{children}</>;
+  return <Outlet />;
 }

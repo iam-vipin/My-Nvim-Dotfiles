@@ -22,7 +22,7 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 
-const IntegrationsListPage = observer(() => {
+function WorkspaceIntegrationsPage() {
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -75,6 +75,6 @@ const IntegrationsListPage = observer(() => {
       </section>
     </>
   );
-});
+}
 
-export default IntegrationsListPage;
+export default observer(WorkspaceIntegrationsPage);

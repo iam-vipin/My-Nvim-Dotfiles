@@ -11,14 +11,14 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
+// assets
+import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 import { Logo } from "@/components/common/logo";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-// public images
-import GitlabLogo from "@/public/services/gitlab.svg";
 
 type TEntityConnectionItem = {
   entityConnection: TGitlabEntityConnection;
@@ -85,7 +85,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       if (!project) return <></>;
       return <Logo logo={project.logo_props} size={14} />;
     } else if (entityconnection.type === EConnectionType.ENTITY) {
-      return <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />;
+      return <Image src={GitlabLogo} fill alt="Gitlab Logo" />;
     }
     return <></>;
   };

@@ -1,24 +1,23 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import type { StaticImageData } from "next/image";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web components
 import type { E_INTEGRATION_KEYS } from "@plane/types";
+// assets
+import GitHubLogo from "@/app/assets/services/github.svg?url";
+import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
+import SentryLogo from "@/app/assets/services/sentry.svg?url";
+import SlackLogo from "@/app/assets/services/slack.png?url";
+// plane web imports
 import { IntegrationListItem } from "@/plane-web/components/integrations";
-// plane web types
 import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
-// logos
-import GitHubLogo from "@/public/services/github.svg";
-import GitlabLogo from "@/public/services/gitlab.svg";
-import SentryLogo from "@/public/services/sentry.svg";
-import SlackLogo from "@/public/services/slack.png";
 
 export type IntegrationProps = {
   flag: TFeatureFlags;
   urlSlug: string;
   title: string;
   key: string;
-  logo: StaticImageData;
+  logo: string;
   beta: boolean;
 };
 

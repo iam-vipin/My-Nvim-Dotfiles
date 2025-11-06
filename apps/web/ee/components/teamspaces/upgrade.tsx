@@ -11,11 +11,11 @@ import { TEAMSPACE_UPGRADE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
+// assets
+import TeamsUpgradeDark from "@/app/assets/empty-state/teams/dark-upgrade.webp?url";
+import TeamsUpgradeLight from "@/app/assets/empty-state/teams/light-upgrade.webp?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import TeamsUpgradeDark from "@/public/empty-state/teams/dark-upgrade.webp";
-import TeamsUpgradeLight from "@/public/empty-state/teams/light-upgrade.webp";
 
 export const TeamspaceUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();

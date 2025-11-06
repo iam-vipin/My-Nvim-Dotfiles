@@ -17,7 +17,6 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
@@ -42,7 +41,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const noProjectResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/draft/draft-issues-empty" });
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);

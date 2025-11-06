@@ -1,12 +1,13 @@
 import { Layers3 } from "lucide-react";
+// assets
+import ConfluenceLogo from "@/app/assets/services/confluence.svg?url";
+import NotionLogo from "@/app/assets/services/notion.svg?url";
 // components
 import { UploadZip } from "@/plane-web/components/importers/zip-importer";
 // plane web types
 import { SelectDestination } from "@/plane-web/components/importers/zip-importer/steps/select-destination";
 import type { TImporterStep } from "@/plane-web/types/importers/zip-importer";
 import { E_IMPORTER_STEPS, EZipDriverType } from "@/plane-web/types/importers/zip-importer";
-import ConfluenceLogo from "@/public/services/confluence.svg";
-import NotionLogo from "@/public/services/notion.svg";
 
 export const NOTION_IMPORTER_STEPS: TImporterStep[] = [
   {

@@ -12,8 +12,12 @@ import { useTranslation } from "@plane/i18n";
 import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import ffInsideDark from "@/app/assets/empty-state/dashboards/feature-flag/inside-dark.webp?url";
+import ffInsideLight from "@/app/assets/empty-state/dashboards/feature-flag/inside-light.webp?url";
+import ffOutsideDark from "@/app/assets/empty-state/dashboards/feature-flag/outside-dark.webp?url";
+import ffOutsideLight from "@/app/assets/empty-state/dashboards/feature-flag/outside-light.webp?url";
 // plane web imports
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 const CARDS_LIST = [
@@ -54,8 +58,8 @@ export const DashboardsFeatureFlagFallback = observer(() => {
   const { resolvedTheme } = useTheme();
   // derived values
   const isDarkMode = resolvedTheme === "dark";
-  const insideAssetPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/feature-flag/inside" });
-  const outsideAssetPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/feature-flag/outside" });
+  const insideAssetPath = resolvedTheme === "light" ? ffInsideLight : ffInsideDark;
+  const outsideAssetPath = resolvedTheme === "light" ? ffOutsideLight : ffOutsideDark;
 
   return (
     <ContentWrapper>

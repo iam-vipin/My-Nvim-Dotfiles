@@ -101,7 +101,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
+    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll animate-in fade-in duration-200">
       <CustomMenu
         customButton={
           <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">

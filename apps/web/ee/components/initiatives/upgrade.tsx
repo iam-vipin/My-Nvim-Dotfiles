@@ -12,13 +12,13 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
+// assets
+import InitiativesUpgradeDark from "@/app/assets/empty-state/initiatives/upgrade-dark.webp";
+import InitiativesUpgradeLight from "@/app/assets/empty-state/initiatives/upgrade-light.webp";
 // hooks
 import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-// assets
-import InitiativesUpgradeDark from "@/public/empty-state/initiatives/upgrade-dark.webp";
-import InitiativesUpgradeLight from "@/public/empty-state/initiatives/upgrade-light.webp";
 
 type Props = {
   workspaceSlug: string;

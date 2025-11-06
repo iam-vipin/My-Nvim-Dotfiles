@@ -1,7 +1,6 @@
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { toJS } from "mobx";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane constants
 import { CHART_COLOR_PALETTES } from "@plane/constants";
@@ -11,7 +10,7 @@ import type { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@p
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const PieChart = dynamic(() =>
+const PieChart = lazy(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({
     default: mod.PieChart,
   }))
@@ -108,39 +107,41 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
   if (!widget) return null;
 
   return (
-    <PieChart
-      className="size-full"
-      margin={{
-        top: 20,
-        right: 16,
-        bottom: 20,
-        left: 16,
-      }}
-      data={pieParsedData}
-      dataKey="count"
-      cells={cells}
-      legend={
-        showLegends
-          ? {
-              align: legendPosition === "right" ? "right" : "center",
-              verticalAlign: legendPosition === "right" ? "middle" : "bottom",
-              layout: legendPosition === "right" ? "vertical" : "horizontal",
-            }
-          : undefined
-      }
-      showTooltip={!!widgetConfig?.show_tooltip}
-      tooltipLabel={
-        widgetConfig?.value_type === "percentage"
-          ? t("dashboards.widget.chart_types.pie_chart.value_type.percentage")
-          : t("dashboards.widget.chart_types.pie_chart.value_type.count")
-      }
-      showLabel={showLabels}
-      customLabel={(val) => {
-        if (widgetConfig?.value_type === "percentage") {
-          return `${val}%`;
+    <Suspense fallback={<></>}>
+      <PieChart
+        className="size-full"
+        margin={{
+          top: 20,
+          right: 16,
+          bottom: 20,
+          left: 16,
+        }}
+        data={pieParsedData}
+        dataKey="count"
+        cells={cells}
+        legend={
+          showLegends
+            ? {
+                align: legendPosition === "right" ? "right" : "center",
+                verticalAlign: legendPosition === "right" ? "middle" : "bottom",
+                layout: legendPosition === "right" ? "vertical" : "horizontal",
+              }
+            : undefined
         }
-        return val;
-      }}
-    />
+        showTooltip={!!widgetConfig?.show_tooltip}
+        tooltipLabel={
+          widgetConfig?.value_type === "percentage"
+            ? t("dashboards.widget.chart_types.pie_chart.value_type.percentage")
+            : t("dashboards.widget.chart_types.pie_chart.value_type.count")
+        }
+        showLabel={showLabels}
+        customLabel={(val) => {
+          if (widgetConfig?.value_type === "percentage") {
+            return `${val}%`;
+          }
+          return val;
+        }}
+      />
+    </Suspense>
   );
 });

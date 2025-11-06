@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type {
@@ -11,11 +12,13 @@ import type {
 import { Loader, Row } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
+// assets
+import activeCycleDark from "@/app/assets/empty-state/cycle/active-dark.webp?url";
+import activeCycleLight from "@/app/assets/empty-state/cycle/active-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import ActiveCycleChart from "./cycle-chart/chart";
 import { formatActiveCycle } from "./formatter";
@@ -33,6 +36,8 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   const [containerWidth, setContainerWidth] = useState<number>(0);
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { plotType, estimatedType, getCycleById, currentProjectActiveCycleId } = useCycle();
   const { currentProjectEstimateType } = useProjectEstimates();
@@ -47,7 +52,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
   // derived values
   const computedPlotType: TCyclePlotType = (activeCycle.id && plotType[activeCycle.id]) || "burndown";
   const cycleEstimateType: TCycleEstimateType = (activeCycle.id && estimatedType[activeCycle.id]) || "issues";
-  const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
+  const activeCycleResolvedPath = resolvedTheme === "light" ? activeCycleLight : activeCycleDark;
   const projectEstimateType =
     cycleEstimateType === "issues" ? "issues" : (currentProjectEstimateType as TCycleEstimateSystemAdvanced);
 

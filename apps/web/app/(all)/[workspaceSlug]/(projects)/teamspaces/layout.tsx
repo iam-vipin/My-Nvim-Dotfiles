@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
+import { Outlet } from "react-router";
 // hooks
 import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -11,7 +11,7 @@ import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
-const TeamspacesLayout = observer(({ children }: { children: ReactNode }) => {
+const TeamspacesLayout = observer(() => {
   // store
   const { currentWorkspace } = useWorkspace();
   // plane web stores
@@ -30,7 +30,7 @@ const TeamspacesLayout = observer(({ children }: { children: ReactNode }) => {
       ) : (
         <>
           <PageHead title={pageTitle} />
-          {children}
+          <Outlet />
         </>
       )}
     </WorkspaceAccessWrapper>

@@ -1,8 +1,7 @@
 "use client";
 import type { FC } from "react";
-import React, { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 // hooks
 import { useFlag } from "@/plane-web/hooks/store";
 
@@ -19,22 +18,21 @@ export const SidebarChartRoot: FC<Props> = observer((props) => {
 
   const SidebarChart = useMemo(
     () =>
-      dynamic(
-        () =>
-          isFeatureEnabled
-            ? import(`ee/components/cycles/analytics-sidebar/base`).then((module) => ({
-                default: module["SidebarChart"],
-              }))
-            : import("@/ce/components/cycles/analytics-sidebar/base").then((module) => ({
-                default: module["SidebarChart"],
-              })),
-        {
-          // TODO: Add loading component
-          loading: () => <></>,
-        }
+      lazy(() =>
+        isFeatureEnabled
+          ? import(`ee/components/cycles/analytics-sidebar/base`).then((module) => ({
+              default: module["SidebarChart"] ?? null,
+            }))
+          : import("@/ce/components/cycles/analytics-sidebar/base").then((module) => ({
+              default: module["SidebarChart"],
+            }))
       ),
     [isFeatureEnabled]
   );
 
-  return <SidebarChart workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />;
+  return (
+    <Suspense fallback={<></>}>
+      <SidebarChart workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+    </Suspense>
+  );
 });

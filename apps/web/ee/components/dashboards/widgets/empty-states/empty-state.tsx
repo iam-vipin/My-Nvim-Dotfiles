@@ -1,17 +1,17 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // plane web stores
 import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import { CHART_ASSET_MAP } from "./helper";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
@@ -23,17 +23,17 @@ export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
   const { activeBreakpoint, dashboardId, widget } = props;
   // store hooks
   const { getDashboardById } = useDashboards();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { isViewModeEnabled } = dashboardDetails ?? {};
   const { canCurrentUserEditWidget, chart_type, height, fetchWidgetData } = widget;
   const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
+  const theme = resolvedTheme === "light" ? "light" : "dark";
+  const resolvedPath = chart_type ? CHART_ASSET_MAP[chart_type]?.[theme] : undefined;
   // translation
   const { t } = useTranslation();
-  // resolved asset
-  const resolvedPath = useResolvedAssetPath({
-    basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
-  });
 
   const handleRefresh = useCallback(async () => {
     await fetchWidgetData?.();

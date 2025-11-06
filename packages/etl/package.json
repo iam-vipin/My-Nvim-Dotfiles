@@ -11,62 +11,62 @@
   "exports": {
     "./asana": {
       "types": "./dist/asana/index.d.ts",
-      "import": "./dist/asana/index.js",
+      "import": "./dist/asana/index.mjs",
       "require": "./dist/asana/index.js"
     },
     "./core": {
       "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js",
+      "import": "./dist/core/index.mjs",
       "require": "./dist/core/index.js"
     },
     "./github": {
       "types": "./dist/github/index.d.ts",
-      "import": "./dist/github/index.js",
+      "import": "./dist/github/index.mjs",
       "require": "./dist/github/index.js"
     },
     "./gitlab": {
       "types": "./dist/gitlab/index.d.ts",
-      "import": "./dist/gitlab/index.js",
+      "import": "./dist/gitlab/index.mjs",
       "require": "./dist/gitlab/index.js"
     },
     "./jira": {
       "types": "./dist/jira/index.d.ts",
-      "import": "./dist/jira/index.js",
+      "import": "./dist/jira/index.mjs",
       "require": "./dist/jira/index.js"
     },
     "./jira-server": {
       "types": "./dist/jira-server/index.d.ts",
-      "import": "./dist/jira-server/index.js",
+      "import": "./dist/jira-server/index.mjs",
       "require": "./dist/jira-server/index.js"
     },
     "./linear": {
       "types": "./dist/linear/index.d.ts",
-      "import": "./dist/linear/index.js",
+      "import": "./dist/linear/index.mjs",
       "require": "./dist/linear/index.js"
     },
     "./slack": {
       "types": "./dist/slack/index.d.ts",
-      "import": "./dist/slack/index.js",
+      "import": "./dist/slack/index.mjs",
       "require": "./dist/slack/index.js"
     },
     "./flatfile": {
       "types": "./dist/flatfile/index.d.ts",
-      "import": "./dist/flatfile/index.js",
+      "import": "./dist/flatfile/index.mjs",
       "require": "./dist/flatfile/index.js"
     },
     "./sentry": {
       "types": "./dist/sentry/index.d.ts",
-      "import": "./dist/sentry/index.js",
+      "import": "./dist/sentry/index.mjs",
       "require": "./dist/sentry/index.js"
     },
     "./clickup": {
       "types": "./dist/clickup/index.d.ts",
-      "import": "./dist/clickup/index.js",
+      "import": "./dist/clickup/index.mjs",
       "require": "./dist/clickup/index.js"
     },
     "./parser": {
       "types": "./dist/parser/index.d.ts",
-      "import": "./dist/parser/index.js",
+      "import": "./dist/parser/index.mjs",
       "require": "./dist/parser/index.js"
     }
   },
@@ -90,21 +90,22 @@
     "@plane/types": "workspace:*",
     "asana": "^3.0.11",
     "axios": "catalog:",
-    "csv-string": "^4.1.1",
     "jira.js": "^4.0.1",
     "marked": "^15.0.4",
     "node-html-parser": "^6.1.13",
+    "papaparse": "^5.4.1",
     "tsdown": "catalog:",
-    "turndown": "^7.2.0",
     "uuid": "catalog:",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "turndown": "^7.2.0",
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/marked": "^6.0.0",
     "@types/node": "catalog:",
+    "@types/papaparse": "^5.3.15",
     "@types/turndown": "^5.0.5"
   }
 }

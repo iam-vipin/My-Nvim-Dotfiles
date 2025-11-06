@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
@@ -9,7 +10,7 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
-export default function WorkspaceDashboardsLayout({ children }: { children: React.ReactNode }) {
+export default function WorkspaceDashboardsLayout() {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -29,7 +30,7 @@ export default function WorkspaceDashboardsLayout({ children }: { children: Reac
         flag="DASHBOARDS"
         workspaceSlug={workspaceSlug?.toString() ?? ""}
       >
-        {children}
+        <Outlet />
       </WithFeatureFlagHOC>
     </WorkspaceAccessWrapper>
   );

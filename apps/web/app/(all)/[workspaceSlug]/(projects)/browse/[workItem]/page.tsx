@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -10,6 +9,9 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
+// assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { JoinProject } from "@/components/auth-screens/project/join-project";
 import { EmptyState } from "@/components/common/empty-state";
@@ -26,16 +28,14 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
-// assets
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
+import type { Route } from "./+types/page";
 
-const IssueDetailsPage = observer(() => {
+function IssueDetailsPage({ params }: Route.ComponentProps) {
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
+  const { workspaceSlug, workItem } = params;
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -47,15 +47,11 @@ const IssueDetailsPage = observer(() => {
   const { getProjectById, getProjectByIdentifier } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
+  const [projectIdentifier, sequence_id] = workItem.split("-");
 
   // fetching issue details
-  const { data, isLoading, error } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
+  const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`, () =>
+    fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
   );
 
   // derived values
@@ -102,7 +98,7 @@ const IssueDetailsPage = observer(() => {
       {renderPrivateProjectEmptyState ? (
         <JoinProject projectId={projectId} isPrivateProject />
       ) : (
-        <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId}>
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
           {error ? (
             <EmptyState
               image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
@@ -159,6 +155,6 @@ const IssueDetailsPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default IssueDetailsPage;
+export default observer(IssueDetailsPage);

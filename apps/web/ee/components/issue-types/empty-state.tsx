@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { WORK_ITEM_TYPE_TRACKER_ELEMENTS, WORK_ITEM_TYPE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -8,11 +9,13 @@ import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
+// assets
+import issueTypeDark from "@/app/assets/empty-state/issue-types/issue-type-dark.png?url";
+import issueTypeLight from "@/app/assets/empty-state/issue-types/issue-type-light.png?url";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -24,6 +27,8 @@ type TIssueTypeEmptyState = {
 export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // props
   const { workspaceSlug, projectId } = props;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -36,7 +41,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
     subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPES");
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/issue-types/issue-type", extension: "png" });
+  const resolvedPath = resolvedTheme === "light" ? issueTypeLight : issueTypeDark;
 
   // handlers
   const handleEnableIssueTypes = async () => {

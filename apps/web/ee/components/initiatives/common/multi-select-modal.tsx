@@ -14,7 +14,6 @@ import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 import searchDark from "@/app/assets/empty-state/search/search-dark.webp?url";
 import searchLight from "@/app/assets/empty-state/search/search-light.webp?url";
-// components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks

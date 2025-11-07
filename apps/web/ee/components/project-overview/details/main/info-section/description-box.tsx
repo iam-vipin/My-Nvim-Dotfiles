@@ -26,7 +26,7 @@ export const DescriptionBox = observer((props: TProps) => {
   // store hooks
   const { data: currentUser } = useUser();
   // derived values
-  const isDescriptionLoading = project.description_html === null || project.description_html === undefined;
+  const isDescriptionLoading = project.description_html === undefined;
 
   return (
     <div className="flex flex-col gap-4 w-full pt-4 px-10">

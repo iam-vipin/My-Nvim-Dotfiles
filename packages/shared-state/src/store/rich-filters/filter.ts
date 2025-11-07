@@ -161,7 +161,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       id: observable,
       initialFilterExpression: observable,
       expression: observable,
-      expressionOptions: observable,
+      expressionOptions: observable.struct,
       adapter: observable,
       configManager: observable,
       // computed

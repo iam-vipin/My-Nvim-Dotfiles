@@ -10,6 +10,7 @@ import { usePageFallback } from "@/hooks/use-page-fallback";
 import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
+import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
 import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
@@ -172,6 +173,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
           restoreEnabled={isContentEditable}
           storeType={storeType}
         />
+        <NestedPagesDownloadBanner page={page} storeType={storeType} workspaceSlug={workspaceSlug} />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
           isNavigationPaneOpen={isNavigationPaneOpen}

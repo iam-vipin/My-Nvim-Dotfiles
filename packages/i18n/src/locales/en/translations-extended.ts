@@ -3383,4 +3383,30 @@ export default {
       go_to_advanced_search: "Go to advanced search",
     },
   },
+  wiki: {
+    upgrade_flow: {
+      title: "Upgrade to unlock Wiki",
+      description:
+        "Unlock public pages, version history, shared pages, real-time collaboration, and workspace pages for wikis, company-wide docs, and knowledge bases with Plane Pro.",
+      upgrade_button: {
+        text: "Upgrade",
+      },
+      learn_more_button: {
+        text: "Learn more",
+      },
+      download_button: {
+        text: "Download data",
+        loading: "Downloading",
+      },
+      tabs: {
+        nested_pages: "Nested Pages",
+        add_embeds: "Add embeds",
+        publish_pages: "Publish pages",
+        comments: "Comments",
+      },
+    },
+    nested_pages_download_banner: {
+      title: "Nested pages require a paid plan. Upgrade to unlock.",
+    },
+  },
 };

@@ -75,6 +75,7 @@ class WorkspacePageViewSet(BaseViewSet):
         user_pages = PageUser.objects.filter(
             user_id=self.request.user.id,
             workspace__slug=self.kwargs.get("slug"),
+            page__is_global=True,
         ).values_list("page_id", flat=True)
         return self.filter_queryset(
             super()

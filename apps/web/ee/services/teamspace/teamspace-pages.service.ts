@@ -328,4 +328,12 @@ export class TeamspacePageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async downloadPage(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

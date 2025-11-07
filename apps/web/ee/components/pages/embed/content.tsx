@@ -38,13 +38,6 @@ type PageDisplayState = {
 
 // Component that renders page embed content once embedPageId is defined
 export const PageEmbedContent: React.FC<Props> = observer((props) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [draggedInside, setDraggedInside] = useState(false);
-  const [hasMouseMoved, setHasMouseMoved] = useState(false);
-  const dropTargetRef = useRef<HTMLDivElement>(null);
-  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dragCountRef = useRef(0); // Used to track enter/leave events for nested elements
   const {
     embedPageId,
     previewDisabled = false,
@@ -54,18 +47,24 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     isDroppable = true,
     pageDetails,
   } = props;
-
-  // params
+  // states
+  const [openModal, setOpenModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [draggedInside, setDraggedInside] = useState(false);
+  const [hasMouseMoved, setHasMouseMoved] = useState(false);
+  // refs
+  const dropTargetRef = useRef<HTMLDivElement>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragCountRef = useRef(0); // Used to track enter/leave events for nested elements
+  // navigation
   const { workspaceSlug } = useParams();
   const router = useAppRouter();
-
   // store hooks - only use store if subPageDetail is not available
   const storePageData = usePage({ pageId: embedPageId, storeType });
   const { fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
 
   // Use subPageDetail if available, otherwise use store data
   const page = pageDetails || storePageData;
-
   // derived values
   const { logo_props, name, archived_at, is_description_empty, description_html } = page ?? {};
 
@@ -83,7 +82,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     if (!embedPageId || !workspaceSlug || pageDetails) return;
 
     const getPage = async () => {
-      if (storeType === EPageStoreType.WORKSPACE && isNestedPagesEnabled(workspaceSlug?.toString() ?? "")) {
+      if (storeType === EPageStoreType.WORKSPACE) {
         // @ts-expect-error - fix this
         await fetchPageDetails(embedPageId, {
           shouldFetchSubPages: false,
@@ -94,17 +93,10 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     if (!storePageData) {
       getPage();
     }
-  }, [embedPageId, workspaceSlug, storePageData, fetchPageDetails, storeType, pageDetails, isNestedPagesEnabled]);
+  }, [embedPageId, workspaceSlug, storePageData, fetchPageDetails, storeType, pageDetails]);
 
   useEffect(() => {
     const getDisplayState = (): PageDisplayState => {
-      if (!isNestedPagesEnabled(workspaceSlug?.toString()))
-        return {
-          text: "Upgrade your plan to view this nested page",
-          logo: <RestrictedPageIcon className="size-4" />,
-          modalTitle: "Upgrade plan",
-          modalDescription: "Please upgrade your plan to view this nested page",
-        };
       if (archived_at && hasAccess) {
         return {
           text: getPageName(name),
@@ -124,7 +116,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     };
 
     setDisplayState(getDisplayState());
-  }, [name, archived_at, page?.id, hasAccess, description_html, isNestedPagesEnabled, workspaceSlug]);
+  }, [name, archived_at, page?.id, hasAccess, description_html, workspaceSlug]);
 
   // Function to determine the appropriate logo to display
   const pageEmbedLogo = useMemo(() => {
@@ -275,7 +267,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     [isDroppable, onPageDrop, embedPageId, page?.archived_at]
   );
 
-  if (page?.name == null) {
+  if (page?.name === null) {
     return <PlaceholderEmbed />;
   }
 

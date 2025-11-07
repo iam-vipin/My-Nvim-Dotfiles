@@ -228,4 +228,12 @@ export class ProjectPageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async downloadPage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

@@ -77,7 +77,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     name,
   } = page ?? {};
 
-  const isNestedPagesDisabledForPage = useMemo(
+  const shouldHideListItem = useMemo(
     () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
     [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
   );
@@ -105,11 +105,9 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const pageContent = useMemo(() => {
     const baseName = getPageName(name);
     const isRestricted = !canCurrentUserAccessPage;
-    const needsUpgrade = isNestedPagesDisabledForPage;
     const isArchived = !!archived_at;
 
     const displayName = (() => {
-      if (needsUpgrade) return "Please upgrade to view";
       if (isRestricted) return "Restricted Access";
       return baseName;
     })();
@@ -117,7 +115,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     return {
       tooltipText: baseName,
       logo: (() => {
-        if (isRestricted || needsUpgrade) {
+        if (isRestricted) {
           return <RestrictedPageIcon className="size-3.5" />;
         }
         if (logo_props?.in_use) {
@@ -130,13 +128,12 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
       })(),
       status: {
         isRestricted,
-        needsUpgrade,
         isArchived,
-        hasAccess: !isRestricted && !needsUpgrade,
+        hasAccess: !isRestricted,
       },
       displayName,
     };
-  }, [canCurrentUserAccessPage, isNestedPagesDisabledForPage, archived_at, logo_props, isDescriptionEmpty, name]);
+  }, [canCurrentUserAccessPage, archived_at, logo_props, isDescriptionEmpty, name]);
 
   // Memoize event handlers to prevent recreation
   const handleMouseEnter = useCallback(() => setIsHovering(true), []);

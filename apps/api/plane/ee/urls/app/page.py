@@ -1,30 +1,35 @@
 from django.urls import path
 
 from plane.ee.views import (
-    ProjectPagePublishEndpoint,
+    # workspace level
     WorkspacePagePublishEndpoint,
     WorkspacePageViewSet,
     WorkspacePagesDescriptionViewSet,
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
-    PagesLiveServerDescriptionViewSet,
-    PagesLiveServerSubPagesViewSet,
     WorkspacePageRestoreEndpoint,
     WorkspacePageUserViewSet,
     WorkspacePageCommentViewSet,
     WorkspacePageCommentReactionViewSet,
+    WorkspacePageExportViewSet,
+    MovePageEndpoint,
+    # project level
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
     ProjectPageUserViewSet,
     ProjectPageRestoreEndpoint,
+    ProjectPageExportViewSet,
+    ProjectPagePublishEndpoint,
+    # live server
+    PagesLiveServerDescriptionViewSet,
+    PagesLiveServerSubPagesViewSet,
     PageExtendedViewSet,
     PageFavoriteExtendedViewSet,
     PagesDescriptionExtendedViewSet,
     PageDuplicateExtendedEndpoint,
     PageVersionExtendedEndpoint,
     WorkspacePageLiveServerEndpoint,
-    MovePageEndpoint,
 )
 
 
@@ -41,9 +46,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/",
-        WorkspacePageViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        WorkspacePageViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-pages",
     ),
     path(
@@ -74,9 +77,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/description/",
-        WorkspacePagesDescriptionViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update"}
-        ),
+        WorkspacePagesDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
     ),
     path(
@@ -106,9 +107,7 @@ urlpatterns = [
     ),
     path(
         "pages/<uuid:page_id>/description/",
-        PagesLiveServerDescriptionViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update"}
-        ),
+        PagesLiveServerDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-secret-description",
     ),
     path(
@@ -128,9 +127,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/share/<uuid:user_id>/",
-        WorkspacePageUserViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy"}
-        ),
+        WorkspacePageUserViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
         name="workspace-shared-page",
     ),
     path(
@@ -150,9 +147,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/pages/<uuid:page_id>/comments/<uuid:comment_id>/",
-        WorkspacePageCommentViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy", "get": "list"}
-        ),
+        WorkspacePageCommentViewSet.as_view({"patch": "partial_update", "delete": "destroy", "get": "list"}),
         name="workspace-page-comments",
     ),
     path(
@@ -182,6 +177,17 @@ urlpatterns = [
         name="workspace-page-live-server",
     ),
     ## End Comment Reactions
+    # Workspace Page Export
+    path(
+        "workspaces/<str:slug>/pages-export/",
+        WorkspacePageExportViewSet.as_view({"post": "create"}),
+        name="workspace-page-export",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/exports/",
+        WorkspacePageExportViewSet.as_view({"post": "create"}),
+        name="workspace-page-export",
+    ),
     # community urls which are overwritten in EE
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
@@ -195,9 +201,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/",
-        PageExtendedViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        PageExtendedViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-pages",
     ),
     # archived pages
@@ -226,9 +230,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/description/",
-        PagesDescriptionExtendedViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update"}
-        ),
+        PagesDescriptionExtendedViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
     ),
     path(
@@ -274,9 +276,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/",
-        ProjectPageCommentViewSet.as_view(
-            {"get": "list", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectPageCommentViewSet.as_view({"get": "list", "patch": "partial_update", "delete": "destroy"}),
         name="project-page-comments",
     ),
     path(
@@ -299,6 +299,11 @@ urlpatterns = [
         ProjectPageCommentViewSet.as_view({"get": "replies"}),
         name="project-page-comments-replies",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/exports/",
+        ProjectPageExportViewSet.as_view({"post": "create"}),
+        name="project-page-export",
+    ),
     # # Comment Reactions
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/comments/<uuid:comment_id>/reactions/",
@@ -318,9 +323,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/share/<uuid:user_id>/",
-        ProjectPageUserViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectPageUserViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
         name="project-page-shared",
     ),
     # move pages

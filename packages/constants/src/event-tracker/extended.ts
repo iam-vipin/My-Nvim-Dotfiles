@@ -56,6 +56,8 @@ export const LICENSE_TRACKER_ELEMENTS = {
   MODAL_UPGRADE_BUTTON: "modal_upgrade_button",
   BILLING_PAGE_COMPARISON_SECTION_UPGRADE_BUTTON: "billing_page_comparison_section_upgrade_button",
   BILLING_PAGE_PLAN_CARD_UPGRADE_BUTTON: "billing_page_plan_card_upgrade_button",
+  NESTED_PAGE_DOWNLOAD_BANNER: "nested_pages_download_banner",
+  WIKI_UPGRADE_SCREEN: "wiki_upgrade_screen",
 };
 
 export const PROJECT_GROUPING_TRACKER_EVENTS = {
@@ -345,6 +347,15 @@ export const PLANE_INTELLIGENCE_TRACKER_ELEMENTS = {
   SETTINGS_PAGE_TOGGLE_BUTTON: "plane_intelligence_settings_page_toggle_button",
   HIGHER_SUBSCRIPTION_BUTTON: "plane_intelligence_higher_subscription_button",
   UPGRADE_BUTTON: "plane_intelligence_upgrade_button",
+};
+
+export const WIKI_TRACKER_EVENTS = {
+  TOGGLE: "wiki_toggled",
+};
+export const WIKI_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_TOGGLE_BUTTON: "wiki_settings_page_toggle_button",
+  HIGHER_SUBSCRIPTION_BUTTON: "wiki_higher_subscription_button",
+  UPGRADE_BUTTON: "wiki_upgrade_button",
 };
 
 export const IMPORTER_TRACKER_ELEMENTS = {

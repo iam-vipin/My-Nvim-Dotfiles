@@ -4,10 +4,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
-import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { Logo } from "@/components/common/logo";
 import { PagePreviewEditor } from "./editor";
 
 type Props = {

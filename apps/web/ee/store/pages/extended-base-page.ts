@@ -41,6 +41,10 @@ export type TDeletePageModalState = {
   pages: TPageInstance[];
 };
 
+export type TExtendedBasePageServices = {
+  download: () => Promise<void>;
+};
+
 export type TExtendedPageInstance = TPageExtended & {
   asJSONExtended: TPageExtended;
   // computed
@@ -61,6 +65,7 @@ export type TExtendedPageInstance = TPageExtended & {
   updateSharedUserAccess: (userId: string, access: EPageSharedUserAccess) => void;
   addSharedUser: (userId: string, access?: EPageSharedUserAccess) => void;
   setSharedAccess: (value: EPageSharedUserAccess | null) => void;
+  download: () => Promise<void>;
   // modal actions
   openDeletePageModal: (pages: TPageInstance[]) => void;
   closeDeletePageModal: () => void;
@@ -141,6 +146,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       updateSharedUserAccess: action,
       addSharedUser: action,
       setSharedAccess: action,
+      download: action,
       // modal actions
       openDeletePageModal: action,
       closeDeletePageModal: action,
@@ -261,6 +267,10 @@ export class ExtendedBasePage implements TExtendedPageInstance {
     runInAction(() => {
       this.shared_access = value;
     });
+  };
+
+  download = async () => {
+    await this.services.download();
   };
 
   /**

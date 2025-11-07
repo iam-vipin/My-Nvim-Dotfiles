@@ -21,6 +21,8 @@ export const isAppRailFeatureEnabled = (featureKey: string) => {
       return (
         isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)
       );
+    case "wiki":
+      return store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WIKI_ENABLED);
     default:
       return isFeatureFlagEnabled;
   }

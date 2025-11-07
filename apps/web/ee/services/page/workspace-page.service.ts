@@ -202,4 +202,20 @@ export class WorkspacePageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async downloadWikiDirectory(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async downloadPage(workspaceSlug: string, pageId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

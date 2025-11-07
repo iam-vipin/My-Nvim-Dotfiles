@@ -5,7 +5,11 @@ import { EPageAccess } from "@plane/constants";
 import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 // plane web store
-import type { TExtendedBasePagePermissions, TExtendedPageInstance } from "@/plane-web/store/pages/extended-base-page";
+import type {
+  TExtendedBasePagePermissions,
+  TExtendedBasePageServices,
+  TExtendedPageInstance,
+} from "@/plane-web/store/pages/extended-base-page";
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
@@ -88,7 +92,7 @@ export type TBasePageServices = {
   }>;
   restore: () => Promise<void>;
   duplicate: () => Promise<TPage>;
-};
+} & TExtendedBasePageServices;
 
 export type TPageInstance = TBasePage &
   TExtendedPageInstance &

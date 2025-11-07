@@ -1,5 +1,6 @@
 # Python imports
 import json
+from datetime import datetime
 
 
 # Third Party imports
@@ -7,9 +8,10 @@ from celery import shared_task
 
 # Django imports
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
-from plane.db.models import Project, Workspace
+from plane.db.models import Project, Workspace, Issue
 from plane.ee.models import (
     Initiative,
     InitiativeActivity,
@@ -18,10 +20,12 @@ from plane.ee.models import (
     InitiativeCommentReaction,
     InitiativeLabel,
 )
-from plane.db.models import Issue
+from plane.ee.serializers import InitiativeActivitySerializer
+from plane.ee.bgtasks.notification_task import workspace_notifications
 
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from plane.db.models.notification import EntityName
 
 
 # Track Changes in name
@@ -124,12 +128,20 @@ def track_end_date(
     epoch,
 ):
     if current_instance.get("end_date") != requested_data.get("end_date"):
+        # Only save the date similar to new_value
+        old_value = isoformat = (
+            datetime.fromisoformat(current_instance.get("end_date"))
+            if current_instance.get("end_date") is not None
+            else ""
+        )
+        old_value = isoformat.date()
+
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=(current_instance.get("end_date") if current_instance.get("end_date") is not None else ""),
+                old_value=old_value,
                 new_value=(requested_data.get("end_date") if requested_data.get("end_date") is not None else ""),
                 field="end_date",
                 workspace_id=workspace_id,
@@ -150,14 +162,20 @@ def track_start_date(
     epoch,
 ):
     if current_instance.get("start_date") != requested_data.get("start_date"):
+        # Only save the date similar to new_value
+        old_value = isoformat = (
+            datetime.fromisoformat(current_instance.get("start_date"))
+            if current_instance.get("start_date") is not None
+            else ""
+        )
+        old_value = isoformat.date()
+
         initiative_activities.append(
             InitiativeActivity(
                 initiative_id=initiative_id,
                 actor_id=actor_id,
                 verb="updated",
-                old_value=(
-                    current_instance.get("start_date") if current_instance.get("start_date") is not None else ""
-                ),
+                old_value=old_value,
                 new_value=(requested_data.get("start_date") if requested_data.get("start_date") is not None else ""),
                 field="start_date",
                 workspace_id=workspace_id,
@@ -863,9 +881,20 @@ def initiative_activity(
                 epoch=epoch,
             )
 
-        # Save all the values to database
-        _ = InitiativeActivity.objects.bulk_create(initiative_activities)
+        # Bulk create the initiative activities
+        initiative_activities_created = InitiativeActivity.objects.bulk_create(initiative_activities)
 
+        if notification:
+            workspace_notifications(
+                workspace_id=workspace_id,
+                entity_name=EntityName.INITIATIVE.value,
+                entity_identifier=initiative_id,
+                actor_id=actor_id,
+                activities_created=json.dumps(
+                    InitiativeActivitySerializer(initiative_activities_created, many=True).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
         return
     except Exception as e:
         log_exception(e)

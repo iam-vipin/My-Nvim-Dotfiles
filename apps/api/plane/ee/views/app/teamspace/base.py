@@ -44,9 +44,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             Teamspace.objects.annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        TeamspaceProject.objects.filter(
-                            team_space=OuterRef("pk"), workspace__slug=slug
-                        )
+                        TeamspaceProject.objects.filter(team_space=OuterRef("pk"), workspace__slug=slug)
                         .values("team_space")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -56,9 +54,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             )
             .annotate(
                 is_member=Exists(
-                    TeamspaceMember.objects.filter(
-                        team_space=OuterRef("pk"), member_id=self.request.user.id
-                    )
+                    TeamspaceMember.objects.filter(team_space=OuterRef("pk"), member_id=self.request.user.id)
                 )
             )
             .get(workspace__slug=slug, pk=team_space_id, is_member=True)
@@ -77,9 +73,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             .annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        TeamspaceProject.objects.filter(
-                            team_space=OuterRef("pk"), workspace__slug=slug
-                        )
+                        TeamspaceProject.objects.filter(team_space=OuterRef("pk"), workspace__slug=slug)
                         .values("team_space")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -90,9 +84,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             .distinct()
         )
 
-    def get_add_remove_team_space_projects(
-        self, slug, team_space_id, request_project_ids
-    ):
+    def get_add_remove_team_space_projects(self, slug, team_space_id, request_project_ids):
         # Update team space projects
         existing_project_ids = [
             str(project_id)
@@ -108,9 +100,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
 
         return project_ids_to_be_added, project_ids_to_be_removed
 
-    @allow_permission(
-        level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
-    )
+    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id=None):
         # Get team space by pk
@@ -146,9 +136,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                 )
 
                 # Add the lead to the team space if provided and not the creating user
-                if request.data.get("lead_id") and str(
-                    request.data.get("lead_id")
-                ) != str(request.user.id):
+                if request.data.get("lead_id") and str(request.data.get("lead_id")) != str(request.user.id):
                     TeamspaceMember.objects.create(
                         team_space=team_space,
                         workspace=workspace,
@@ -173,9 +161,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -188,14 +174,10 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             # Get workspace
             workspace = Workspace.objects.get(slug=slug)
 
-            current_instance = json.dumps(
-                TeamspaceSerializer(team_space).data, cls=DjangoJSONEncoder
-            )
+            current_instance = json.dumps(TeamspaceSerializer(team_space).data, cls=DjangoJSONEncoder)
             requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
 
-            serializer = TeamspaceSerializer(
-                team_space, data=request.data, partial=True
-            )
+            serializer = TeamspaceSerializer(team_space, data=request.data, partial=True)
             if serializer.is_valid():
                 team_space = serializer.save()
 
@@ -204,14 +186,9 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                 # Add the lead to the team space if provided and not the creating user
                 if (
                     lead_id
-                    and TeamspaceMember.objects.filter(
-                        team_space=team_space, member_id=lead_id
-                    ).exists()
-                    is False
+                    and TeamspaceMember.objects.filter(team_space=team_space, member_id=lead_id).exists() is False
                 ):
-                    TeamspaceMember.objects.create(
-                        team_space=team_space, workspace=workspace, member_id=lead_id
-                    )
+                    TeamspaceMember.objects.create(team_space=team_space, workspace=workspace, member_id=lead_id)
 
                 # Get the list of project ids for request if it exists
                 if "project_ids" in request.data:
@@ -219,10 +196,8 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                     project_ids = request.data.pop("project_ids", [])
 
                     # Update team space projects
-                    project_ids_to_be_added, project_ids_to_be_removed = (
-                        self.get_add_remove_team_space_projects(
-                            slug, team_space.pk, project_ids
-                        )
+                    project_ids_to_be_added, project_ids_to_be_removed = self.get_add_remove_team_space_projects(
+                        slug, team_space.pk, project_ids
                     )
 
                     # Create team space projects
@@ -253,6 +228,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                     requested_data=requested_data,
                     actor_id=str(request.user.id),
                     team_space_id=str(team_space_id),
+                    notification=True,
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                 )
@@ -263,9 +239,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Teamspace.DoesNotExist:
-            return Response(
-                {"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
@@ -275,9 +249,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
         """
         try:
             # The current deleting user should be part of the team space
-            if not TeamspaceMember.objects.filter(
-                team_space_id=team_space_id, member_id=request.user
-            ).exists():
+            if not TeamspaceMember.objects.filter(team_space_id=team_space_id, member_id=request.user).exists():
                 return Response(
                     {"error": "You are not part of the team space"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -300,6 +272,4 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             team_space.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Teamspace.DoesNotExist:
-            return Response(
-                {"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Team space not found"}, status=status.HTTP_404_NOT_FOUND)

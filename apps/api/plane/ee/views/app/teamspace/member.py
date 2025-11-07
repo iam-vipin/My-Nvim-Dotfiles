@@ -31,29 +31,21 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
     def get(self, request, slug, team_space_id=None, pk=None):
         # Get team space member by pk
         if pk:
-            team_space_member = TeamspaceMember.objects.get(
-                workspace__slug=slug, team_space_id=team_space_id, pk=pk
-            )
+            team_space_member = TeamspaceMember.objects.get(workspace__slug=slug, team_space_id=team_space_id, pk=pk)
             serializer = TeamspaceMemberSerializer(team_space_member)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all team space members for a team space
         if team_space_id:
-            team_space_members = TeamspaceMember.objects.filter(
-                workspace__slug=slug, team_space_id=team_space_id
-            )
+            team_space_members = TeamspaceMember.objects.filter(workspace__slug=slug, team_space_id=team_space_id)
             serializer = TeamspaceMemberSerializer(team_space_members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all team spaces for the use
-        team_spaces = Teamspace.objects.filter(
-            workspace__slug=slug, members__member_id=self.request.user.id
-        )
+        team_spaces = Teamspace.objects.filter(workspace__slug=slug, members__member_id=self.request.user.id)
 
         # Get all team space members for users team spaces
-        workspace_team_space_members = TeamspaceMember.objects.filter(
-            workspace__slug=slug, team_space__in=team_spaces
-        )
+        workspace_team_space_members = TeamspaceMember.objects.filter(workspace__slug=slug, team_space__in=team_spaces)
         serializer = TeamspaceMemberSerializer(workspace_team_space_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -73,15 +65,11 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             ).values_list("member_id", flat=True)
         )
 
-        current_instance = json.dumps(
-            {"member_ids": current_members}, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps({"member_ids": current_members}, cls=DjangoJSONEncoder)
 
         # Get the list of team space members
         team_space_members = (
-            TeamspaceMember.objects.filter(
-                workspace__slug=slug, member_id__in=member_ids
-            )
+            TeamspaceMember.objects.filter(workspace__slug=slug, member_id__in=member_ids)
             .values("member_id", "sort_order")
             .order_by("sort_order")
         )
@@ -122,13 +110,9 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Create team space members
-        TeamspaceMember.objects.bulk_create(
-            bulk_team_space_members, ignore_conflicts=True, batch_size=100
-        )
+        TeamspaceMember.objects.bulk_create(bulk_team_space_members, ignore_conflicts=True, batch_size=100)
 
-        team_space_members = TeamspaceMember.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        )
+        team_space_members = TeamspaceMember.objects.filter(workspace__slug=slug, team_space_id=team_space_id)
 
         # Create activity
         team_space_activity.delay(
@@ -137,6 +121,7 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             team_space_id=str(team_space.id),
+            notification=True,
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
         )
@@ -147,9 +132,7 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         # Get team space member
-        team_space_member = TeamspaceMember.objects.get(
-            workspace__slug=slug, team_space_id=team_space_id, pk=pk
-        )
+        team_space_member = TeamspaceMember.objects.get(workspace__slug=slug, team_space_id=team_space_id, pk=pk)
 
         # Get team space
         team_space = Teamspace.objects.get(workspace__slug=slug, pk=team_space_id)
@@ -162,16 +145,9 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Check if the team space has only one member
-        if (
-            TeamspaceMember.objects.filter(
-                workspace__slug=slug, team_space_id=team_space_id
-            ).count()
-            == 1
-        ):
+        if TeamspaceMember.objects.filter(workspace__slug=slug, team_space_id=team_space_id).count() == 1:
             return Response(
-                {
-                    "error": "Cannot delete the last member from team. Delete the team instead."
-                },
+                {"error": "Cannot delete the last member from team. Delete the team instead."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -180,20 +156,16 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
-        current_instance = json.dumps(
-            {"member_ids": list(current_team_space_members)}, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps({"member_ids": list(current_team_space_members)}, cls=DjangoJSONEncoder)
 
         # Get the list of team space members
         requested_team_space_members = list(
-            TeamspaceMember.objects.filter(
-                ~Q(pk=pk), workspace__slug=slug, team_space_id=team_space_id
-            ).values_list("member_id", flat=True)
+            TeamspaceMember.objects.filter(~Q(pk=pk), workspace__slug=slug, team_space_id=team_space_id).values_list(
+                "member_id", flat=True
+            )
         )
 
-        requested_data = json.dumps(
-            {"member_ids": requested_team_space_members}, cls=DjangoJSONEncoder
-        )
+        requested_data = json.dumps({"member_ids": requested_team_space_members}, cls=DjangoJSONEncoder)
 
         # Create activity
         team_space_activity.delay(
@@ -202,6 +174,7 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
             requested_data=requested_data,
             actor_id=str(request.user.id),
             team_space_id=str(team_space.id),
+            notification=True,
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
         )

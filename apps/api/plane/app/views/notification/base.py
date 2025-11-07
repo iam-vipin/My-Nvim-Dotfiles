@@ -18,6 +18,7 @@ from plane.db.models import (
     UserNotificationPreference,
     WorkspaceMember,
 )
+from plane.db.models.notification import EntityName
 from plane.utils.paginator import BasePaginator
 from plane.app.permissions import allow_permission, ROLE
 
@@ -58,7 +59,14 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
         notifications = (
             Notification.objects.filter(workspace__slug=slug, receiver_id=request.user.id)
-            .filter(entity_name__in=["issue", "epic"])
+            .filter(
+                entity_name__in=[
+                    EntityName.ISSUE.value,
+                    EntityName.EPIC.value,
+                    EntityName.INITIATIVE.value,
+                    EntityName.TEAMSPACE.value,
+                ]
+            )
             .annotate(is_inbox_issue=Exists(intake_issue))
             .annotate(is_intake_issue=Exists(intake_issue))
             .annotate(

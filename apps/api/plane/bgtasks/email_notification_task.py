@@ -14,10 +14,12 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 
 # Module imports
-from plane.db.models import EmailNotificationLog, Issue, User
+from plane.db.models import EmailNotificationLog, Issue, User, IssueSubscriber, UserNotificationPreference
+
 from plane.license.utils.instance_value import get_email_configuration
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
+from django.conf import settings
 
 
 def remove_unwanted_characters(input_text):
@@ -50,7 +52,7 @@ def stack_email_notification():
     # Convert to unique receivers list
     receivers = list(set([str(notification.get("receiver_id")) for notification in email_notifications]))
     processed_notifications = []
-    # Loop through all the issues to create the emails
+
     for receiver_id in receivers:
         # Notification triggered for the receiver
         receiver_notifications = [
@@ -59,6 +61,7 @@ def stack_email_notification():
         # create payload for all issues
         payload = {}
         email_notification_ids = []
+
         for receiver_notification in receiver_notifications:
             payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
@@ -85,7 +88,8 @@ def create_payload(notification_data):
     data = {}
     for actor_id, changes in notification_data.items():
         for change in changes:
-            issue_activity = change.get("issue_activity")
+            issue_activity = change.get("issue_activity", None)
+            epic_update = change.get("epic_update", None)
             if issue_activity:  # Ensure issue_activity is not None
                 field = issue_activity.get("field")
                 old_value = str(issue_activity.get("old_value"))
@@ -102,7 +106,6 @@ def create_payload(notification_data):
                         else None
                     )
 
-                # Append new_value if it's not empty and not already in the list
                 if new_value:
                     (
                         data.setdefault(actor_id, {})
@@ -120,7 +123,65 @@ def create_payload(notification_data):
                         )
                     )
 
+            elif epic_update:
+                field = str(epic_update.get("field", ""))
+                status = str(epic_update.get("status", ""))
+                description = str(epic_update.get("description", ""))
+                activity_time = str(epic_update.get("activity_time", ""))
+                total_workitems = epic_update.get("total_workitems", 0)
+                completed_workitems = epic_update.get("completed_workitems", 0)
+                if completed_workitems > 0 and total_workitems > 0:
+                    progress = round((completed_workitems / total_workitems) * 100)
+                else:
+                    progress = 0
+
+                data[actor_id] = {
+                    "status": status,
+                    "field": field,
+                    "description": description,
+                    "activity_time": datetime.fromisoformat(activity_time).strftime("%d %b, %Y"),
+                    "total_workitems": str(total_workitems),
+                    "completed_workitems": str(completed_workitems),
+                    "progress": str(progress),
+                }
+
     return data
+
+
+@shared_task
+def create_emaillogs_for_epic_updates(epic_entity_update, actor_id, origin, verb):
+    # Check for user preference notification
+    epic_id = epic_entity_update["epic"]
+    subscriber_ids = IssueSubscriber.objects.filter(issue_id=epic_id).values_list("subscriber_id", flat=True)
+
+    for subscriber_id in subscriber_ids:
+        preference = UserNotificationPreference.objects.get(user_id=subscriber_id)
+
+        if preference.comment:
+            EmailNotificationLog.objects.create(
+                triggered_by_id=actor_id,
+                receiver_id=subscriber_id,
+                entity_identifier=epic_id,
+                entity_name="epic",
+                data={
+                    "epic": {
+                        "id": str(epic_id),
+                        "name": str(epic_entity_update["epic_name"]),
+                        "identifier": str(epic_entity_update["project_identifier"]),
+                        "sequence_id": str(epic_entity_update["epic_sequence_id"]),
+                    },
+                    "epic_update": {
+                        "id": str(epic_entity_update["id"]),
+                        "verb": verb,
+                        "field": "epic_update",
+                        "description": str(epic_entity_update["description"]),
+                        "status": str(epic_entity_update["status"]),
+                        "total_workitems": epic_entity_update["total_issues"],
+                        "completed_workitems": epic_entity_update["completed_issues"],
+                        "activity_time": str(epic_entity_update["created_at"]),
+                    },
+                },
+            )
 
 
 def process_mention(mention_component):
@@ -155,9 +216,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
     # acquire the lock for sending emails
     try:
         if acquire_lock(lock_id=lock_id):
-            # get the redis instance
-            ri = redis_instance()
-            base_api = ri.get(str(issue_id)).decode() if ri.get(str(issue_id)) else None
+            base_api = settings.WEB_URL
 
             # Skip if base api is not present
             if not base_api:
@@ -188,6 +247,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             total_changes = 0
             comments = []
             actors_involved = []
+
             for actor_id, changes in data.items():
                 actor = User.objects.get(pk=actor_id)
                 total_changes = total_changes + len(changes)
@@ -219,8 +279,17 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         }
                     )
                 activity_time = changes.pop("activity_time")
-                # Parse the input string into a datetime object
-                formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+
+                field = changes.pop("field")
+
+                if field == "epic_update":
+                    summary = "Updates were added to the Epic"
+                    template_name = "emails/notifications/epic_updates.html"
+                    formatted_time = activity_time
+                else:
+                    summary = "Updates were made to the issue by"
+                    template_name = "emails/notifications/issue-updates.html"
+                    formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
 
                 if changes:
                     template_data.append(
@@ -239,7 +308,6 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         }
                     )
 
-            summary = "Updates were made to the issue by"
             issue_identifier = f"{str(issue.project.identifier)}-{str(issue.sequence_id)}"
 
             # Send the mail
@@ -262,7 +330,8 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 "comments": comments,
                 "entity_type": entity_type,
             }
-            html_content = render_to_string("emails/notifications/issue-updates.html", context)
+
+            html_content = render_to_string(template_name, context)
             text_content = strip_tags(html_content)
 
             try:
@@ -282,8 +351,10 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     to=[receiver.email],
                     connection=connection,
                 )
+
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
+
                 logging.getLogger("plane.worker").info("Email Sent Successfully")
 
                 # Update the logs

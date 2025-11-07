@@ -136,7 +136,7 @@ export class InitiativeService extends APIService {
     linkId: string,
     payload: Partial<TInitiativeLink>
   ): Promise<void> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/links/${linkId}`, payload)
+    return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/links/${linkId}/`, payload)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -271,8 +271,8 @@ export class InitiativeService extends APIService {
     initiativeId: string,
     params:
       | {
-          created_at__gt: string;
-        }
+        created_at__gt: string;
+      }
       | object = {}
   ): Promise<TInitiativeActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/activities/`, {

@@ -109,9 +109,35 @@ export class ProjectLinkStore implements IProjectLinkStore {
       this.links[projectId] = [response.id, ...this.links[projectId]];
       set(this.linkMap, response.id, response);
     });
+
+    await this._scheduleRefreshLinks(workspaceSlug, projectId, 200);
     // fetching activity
     // this.rootProjectDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return response;
+  };
+
+  /**
+   * Schedules a background refresh of project links to asynchronously update link metadata.
+   * @param workspaceSlug - The slug of the workspace
+   * @param projectId - The id of the project
+   * @param duration - The duration to wait before running the task
+   * @returns void
+   */
+  _scheduleRefreshLinks = async (workspaceSlug: string, projectId: string, duration: number): Promise<void> => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, duration));
+
+      const updatedLinks = await this.projectService.fetchProjectLinks(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.links[projectId] = updatedLinks.map((link) => link.id);
+        updatedLinks.forEach((link) => {
+          set(this.linkMap, link.id, link);
+        });
+      });
+    } catch (error) {
+      console.error("Error while refreshing project links:", error);
+    }
   };
 
   updateLink = async (workspaceSlug: string, projectId: string, linkId: string, data: Partial<TProjectLink>) => {

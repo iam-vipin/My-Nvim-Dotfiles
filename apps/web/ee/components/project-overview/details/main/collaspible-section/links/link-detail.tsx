@@ -31,6 +31,9 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
+  const faviconUrl: string | undefined = linkDetail.metadata?.favicon;
+  const linkTitle: string | undefined = linkDetail.metadata?.title;
+
   const toggleProjectLinkModal = (modalToggle: boolean) => {
     toggleLinkModal(modalToggle);
     setLinkData(linkDetail);
@@ -49,16 +52,22 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <LinkIcon className="h-3 w-3 flex-shrink-0" />
+              {faviconUrl ? (
+                <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
+              ) : (
+                <LinkIcon className="h-3 w-3 flex-shrink-0 text-custom-text-350" />
+              )}
             </span>
-            <Tooltip
-              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              isMobile={isMobile}
-            >
-              <span className="truncate text-xs">
-                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              </span>
-            </Tooltip>
+            <div className="flex flex-col gap-0.5 truncate">
+              <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+                <span className="truncate text-xs">
+                  {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                </span>
+              </Tooltip>
+              {linkTitle && linkTitle !== "" && (
+                <span className="text-custom-text-400 text-xs truncate">{linkTitle}</span>
+              )}
+            </div>
           </div>
 
           {!isNotAllowed && (

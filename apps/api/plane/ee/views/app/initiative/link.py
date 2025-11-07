@@ -21,6 +21,7 @@ from plane.ee.permissions import WorkspaceEntityPermission
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
+from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
 class InitiativeLinkViewSet(BaseViewSet):
@@ -57,6 +58,8 @@ class InitiativeLinkViewSet(BaseViewSet):
                 workspace_id=workspace.id,
                 initiative_id=initiative_id,
             )
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "initiative")
+
             initiative_activity.delay(
                 type="link.activity.created",
                 slug=slug,
@@ -90,11 +93,10 @@ class InitiativeLinkViewSet(BaseViewSet):
             InitiativeLinkSerializer(initiative_link).data,
             cls=DjangoJSONEncoder,
         )
-        serializer = InitiativeLinkSerializer(
-            initiative_link, data=request.data, partial=True
-        )
+        serializer = InitiativeLinkSerializer(initiative_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "initiative")
             initiative_activity.delay(
                 type="link.activity.updated",
                 slug=slug,

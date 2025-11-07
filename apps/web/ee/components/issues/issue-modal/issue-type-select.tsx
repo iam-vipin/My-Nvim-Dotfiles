@@ -82,7 +82,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
                       handleFormChange?.();
                     }}
                     isInitializing={workItemTypeLoader === "init-loader"}
-                    issueTypeId={value}
+                    issueTypeId={value?.toString() || null}
                     placeholder={placeholder}
                     projectId={projectId}
                     variant={variant}

@@ -1248,7 +1248,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         serializer = IssueLinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(serializer.instance.id, serializer.instance.url)
+            crawl_work_item_link_title.delay(serializer.instance.id, serializer.instance.url, "issue")
             link = IssueLink.objects.get(pk=serializer.instance.id)
             link.created_by_id = request.data.get("created_by", request.user.id)
             link.save(update_fields=["created_by"])
@@ -1363,7 +1363,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,

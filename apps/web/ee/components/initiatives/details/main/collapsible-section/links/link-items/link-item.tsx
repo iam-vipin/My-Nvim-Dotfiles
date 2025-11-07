@@ -24,7 +24,7 @@ type TInitiativeLinkItem = {
   isNotAllowed: boolean;
 };
 
-export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
+export const InitiativeLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
   // props
   const { link, linkOperations, isNotAllowed } = props;
   // hooks
@@ -39,7 +39,10 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
 
   if (!link) return <></>;
 
-  const toggleIssueLinkModal = (modalToggle: boolean) => {
+  const faviconUrl: string | undefined = link.metadata?.favicon;
+  const linkTitle: string | undefined = link.metadata?.title;
+
+  const toggleInitiativeLinkModal = (modalToggle: boolean) => {
     setIsLinkModalOpen(modalToggle);
     setLinkData(link);
   };
@@ -51,15 +54,20 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
         className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-custom-border-200 rounded"
       >
         <div className="flex items-center gap-2.5 truncate flex-grow">
-          <LinkIcon className="size-4 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200" />
+          {faviconUrl ? (
+            <img src={faviconUrl} alt="favicon" className="size-4 flex-shrink-0" />
+          ) : (
+            <LinkIcon className="size-4 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200" />
+          )}
           <Tooltip tooltipContent={link.url} isMobile={isMobile}>
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm cursor-pointer flex-grow"
+              className="truncate text-sm cursor-pointer flex-grow flex items-center gap-3"
             >
               {link.title && link.title !== "" ? link.title : link.url}
+              {linkTitle && linkTitle !== "" && <span className="text-custom-text-400 text-xs">{linkTitle}</span>}
             </a>
           </Tooltip>
         </div>
@@ -90,7 +98,7 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
               onClick={() => {
-                toggleIssueLinkModal(true);
+                toggleInitiativeLinkModal(true);
               }}
             >
               <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />

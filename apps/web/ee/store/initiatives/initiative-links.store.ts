@@ -90,10 +90,33 @@ export class InitiativeLinkStore implements IInitiativeLinkStore {
         this.initiativeLinksMap[initiativeId].push(response);
       });
 
+      this._scheduleRefreshLinks(workspaceSlug, initiativeId, 200);
+
       return response;
     } catch (e) {
       console.log("error while creating initiative Link", e);
       throw e;
+    }
+  };
+
+  /**
+   * Schedules a background refresh of initiative links to asynchronously update link metadata.
+   * @param workspaceSlug - The slug of the workspace
+   * @param initiativeId - The id of the initiative
+   * @param duration - The duration to wait before running the task
+   * @returns void
+   */
+  _scheduleRefreshLinks = async (workspaceSlug: string, initiativeId: string, duration: number) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, duration));
+
+      const updatedLinks = await this.initiativeStore.initiativeService.getInitiativeLinks(workspaceSlug, initiativeId);
+
+      runInAction(() => {
+        this.initiativeLinksMap[initiativeId] = updatedLinks;
+      });
+    } catch (error) {
+      console.error("error while refreshing initiative links for metadata", error);
     }
   };
 

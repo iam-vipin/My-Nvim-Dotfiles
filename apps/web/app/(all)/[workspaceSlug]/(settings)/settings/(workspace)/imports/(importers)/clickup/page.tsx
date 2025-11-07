@@ -27,9 +27,6 @@ const ClickUpImporter: FC = observer(() => {
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
 
-  // feature flag
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CLICKUP_IMPORTER) || false;
-
   // validating the importer is authenticated or not
   const { isLoading: importerAuthIsLoading } = useSWR(
     workspaceSlug && userId && !currentAuth ? `IMPORTER_AUTHENTICATION_CLICKUP_${workspaceSlug}_${user?.id}` : null,
@@ -46,16 +43,6 @@ const ClickUpImporter: FC = observer(() => {
       resetImporterData();
     };
   }, [workspaceId, userId, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData, workspaceSlug]);
-
-  if (!isFeatureEnabled) {
-    return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
-        <div className="flex flex-col items-center justify-center">
-          <div className="text-custom-text-200 text-2xl font-medium">ClickUp Importer is not enabled</div>
-        </div>
-      </div>
-    );
-  }
 
   if (importerAuthIsLoading) return <DashboardLoaderRoot />;
 

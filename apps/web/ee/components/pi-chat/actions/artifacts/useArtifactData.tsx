@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash-es";
-import type { TIssue, TIssuePriorities } from "@plane/types";
+import type { TIssue, TIssuePriorities, TPage } from "@plane/types";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 
@@ -34,6 +34,24 @@ export const useWorkItemData = (artifactId: string): Partial<TIssue> => {
       };
 };
 
+export const usePageData = (artifactId: string): Partial<TPage> => {
+  const {
+    artifactsStore: { getArtifact, getArtifactByVersion },
+  } = usePiChat();
+
+  const originalData = getArtifact(artifactId);
+  const updatedData = getArtifactByVersion(artifactId, "updated");
+  const parameters = originalData?.parameters;
+
+  return !isEmpty(updatedData as Partial<TPage>)
+    ? (updatedData as Partial<TPage>)
+    : {
+        name: parameters?.name,
+        description_html: parameters?.description || parameters?.description_html || "",
+        logo_props: parameters?.logo_props,
+      };
+};
+
 export const useTemplateData = (artifactId: string): TArtifact | undefined => {
   const {
     artifactsStore: { getArtifact },
@@ -45,9 +63,12 @@ export const useTemplateData = (artifactId: string): TArtifact | undefined => {
 export const useArtifactData = (artifactId: string, artifactType?: string): TUpdatedArtifact => {
   const issueData = useWorkItemData(artifactId);
   const templateData = useTemplateData(artifactId);
+  const pageData = usePageData(artifactId);
   switch (artifactType) {
     case "workitem":
       return issueData;
+    case "page":
+      return pageData;
     case "epic":
       return issueData;
     default:

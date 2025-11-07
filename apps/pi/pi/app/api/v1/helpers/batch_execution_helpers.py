@@ -8,6 +8,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Set
 from uuid import UUID
 
 from sqlalchemy import select
@@ -21,9 +22,27 @@ from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.batch_action_orchestrator import BatchActionOrchestrator
 from pi.services.chat.helpers.batch_execution_context import BatchExecutionContext
 from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
+from pi.services.chat.helpers.tool_utils import classify_tool
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
 
 log = logging.getLogger(__name__)
+
+# Registry to handle project/workspace id for entities during manual edits.
+# HOW IT WORKS:
+# 1. During planning, if project_id is missing, user gets clarification prompt
+# 2. For workspace-scope entities, clarification includes "Workspace level" option
+# 3. User selects either "Workspace level" or a specific project
+# 4. Artifact stores project_id as either "__workspace_scope__" or a UUID
+# 5. During execution, the tool checks project_id and routes accordingly:
+#    - "__workspace_scope__" → calls workspace-level API (e.g., create_workspace_page)
+#    - UUID → calls project-level API (e.g., create_project_page)
+#
+# EDITED ARTIFACTS:
+# When user edits an artifact, the resolved project_id must be preserved.
+# The _extract_project_id_from_artifact() helper extracts it from planning data.
+WORKSPACE_SCOPE_ENTITIES: Set[str] = {
+    "page",  # Pages: workspace wiki OR project pages
+}
 
 
 def _is_valid_uuid(uuid_string: str) -> bool:
@@ -33,6 +52,39 @@ def _is_valid_uuid(uuid_string: str) -> bool:
         return True
     except (ValueError, TypeError):
         return False
+
+
+def _extract_project_id_from_artifact(artifact_data: Dict[str, Any]) -> Optional[str]:
+    """Extract project_id from artifact data, checking multiple possible locations.
+
+    This handles the various ways project_id can be stored in artifact data:
+    1. In tool_args (most direct)
+    2. In planning_data.parameters (from planning phase)
+    3. In planning_data.parameters.project.id (nested structure)
+
+    Returns:
+        project_id as string (can be UUID or "__workspace_scope__"), or None if not found
+    """
+    # Try tool_args first (most direct)
+    tool_args = artifact_data.get("tool_args", {})
+    if isinstance(tool_args, dict) and tool_args.get("project_id"):
+        return str(tool_args["project_id"])
+
+    # Try planning_data structure
+    planning_data = artifact_data.get("planning_data", {})
+    if isinstance(planning_data, dict):
+        parameters = planning_data.get("parameters", {})
+        if isinstance(parameters, dict):
+            # Direct project_id in parameters
+            if parameters.get("project_id"):
+                return str(parameters["project_id"])
+
+            # Nested project object with id
+            project_obj = parameters.get("project")
+            if isinstance(project_obj, dict) and project_obj.get("id"):
+                return str(project_obj["id"])
+
+    return None
 
 
 def _extract_tool_args_from_artifact_data(artifact_data: dict, entity_type: str) -> dict:
@@ -154,6 +206,25 @@ async def prepare_execution_data(request: ActionBatchExecutionRequest, user_id: 
 
                 # For edited artifacts, use the provided action_data directly
                 tool_args = artifact_item.action_data.copy()
+                current_project_id = tool_args.get("project_id")
+
+                # Check if project_id is missing or invalid (needs to be preserved from original)
+                needs_project_id = (
+                    not current_project_id
+                    or current_project_id == "NEEDS_CLARIFICATION"
+                    or (isinstance(current_project_id, str) and current_project_id.startswith("<id of"))
+                )
+
+                if needs_project_id:
+                    # Extract project_id from original artifact data
+                    original_artifact_data = artifact.data or {}
+                    original_project_id = _extract_project_id_from_artifact(original_artifact_data)
+
+                    if original_project_id:
+                        tool_args["project_id"] = original_project_id
+                    else:
+                        # No project_id found in original artifact - this might be okay for some entities
+                        log.warning(f"No project_id found in original artifact {artifact_item.artifact_id} (entity: {entity_type})")
 
                 # Resolve project_id to full project object for UI display
                 try:
@@ -424,12 +495,24 @@ def format_execution_response(context: BatchExecutionContext) -> Dict[str, Any]:
 
 
 def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Create clean action results without duplicate entity information."""
+    """Create clean action results without duplicate entity information.
+
+    Filters out retrieval/search tools and only includes actual modifying actions.
+    """
+
     clean_actions = []
 
     for action in executed_actions:
         # Extract action from tool name (e.g., "workitems_create" -> "create")
         tool_name = action.get("tool_name", "")
+
+        # Filter out retrieval tools - only show actual actions to frontend
+        if tool_name:
+            is_retrieval, is_action = classify_tool(tool_name)
+            if is_retrieval and not is_action:
+                log.debug(f"Filtering out retrieval tool from actions response: {tool_name}")
+                continue
+
         action_name = "unknown"
         if tool_name and "_" in tool_name:
             action_name = tool_name.split("_", 1)[1]  # Get everything after the first underscore

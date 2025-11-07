@@ -1,4 +1,4 @@
-import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse } from "@plane/types";
+import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage } from "@plane/types";
 
 export enum EFeedback {
   POSITIVE = "positive",
@@ -80,7 +80,7 @@ export type TActions = {
   }[];
 };
 
-export type TUpdatedArtifact = Partial<TIssue> | Partial<TProject> | TArtifact | undefined;
+export type TUpdatedArtifact = Partial<TIssue> | Partial<TProject> | Partial<TPage> | TArtifact | undefined;
 
 export type TArtifact = {
   artifact_id: string;
@@ -101,6 +101,7 @@ export type TArtifact = {
     };
     logo_props?: TLogoProps;
     description?: string;
+    description_html?: string;
     properties: {
       [key: string]: {
         name: string;
@@ -252,4 +253,4 @@ export type TPiAttachmentIdMap = {
 };
 
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic"];
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page"];

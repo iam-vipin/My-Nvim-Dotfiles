@@ -1,5 +1,6 @@
 "use-client";
 
+import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
@@ -23,15 +24,15 @@ export const Header = observer((props: { artifact: TArtifact }) => {
   } = usePiChat();
   const artifacts = getArtifactsByChatId(activeChatId);
   return (
-    <Row className="h-header flex gap-2 w-full items-center rounded-tl-lg rounded-tr-lg">
-      <HeaderUI className="bg-custom-background-90">
+    <Row className={cn("h-header flex gap-2 w-full items-center rounded-tl-lg rounded-tr-lg flex-shrink-0")}>
+      <HeaderUI className="bg-transparent">
         <HeaderUI.LeftItem>
           <CustomSelect
             value={artifact}
             label={
               <Tooltip position="bottom" className="ml-4 max-w-[200px] font-medium text-custom-text-300">
                 <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
-                  {getIcon(artifact.artifact_type)}
+                  <div className="flex-shrink-0"> {getIcon(artifact.artifact_type)}</div>
                   <div className="truncate">{artifact.parameters?.name || "Unknown"}</div>
                 </div>
               </Tooltip>
@@ -50,14 +51,14 @@ export const Header = observer((props: { artifact: TArtifact }) => {
             <div className="flex flex-col divide-y divide-custom-border-100 space-y-2 max-w-[192px] max-h-full">
               <div>
                 {artifacts &&
-                  artifacts.map((artifactData) => (
+                  uniqBy(artifacts, "artifact_id").map((artifactData) => (
                     <CustomSelect.Option
                       key={artifactData?.artifact_id}
                       value={artifactData}
                       className="text-sm text-custom-text-200 font-medium"
                     >
                       <div className="flex gap-2 items-center text-sm font-medium overflow-hidden">
-                        {getIcon(artifactData?.artifact_type || "")}
+                        <div className="flex-shrink-0"> {getIcon(artifactData?.artifact_type || "")}</div>
                         <div className="truncate">{artifactData?.parameters?.name || "Unknown"}</div>
                       </div>
                     </CustomSelect.Option>

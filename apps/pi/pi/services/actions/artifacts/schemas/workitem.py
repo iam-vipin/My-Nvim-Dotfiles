@@ -22,7 +22,6 @@ WORKITEM_FIELDS = [
     "cycles",
     "module_ids",
     "modules",
-    "parent_id",
     "parent",
 ]
 
@@ -45,7 +44,6 @@ class WorkitemProperties(BaseModel):
     label_ids: Optional[List[str]] = None
     cycle_ids: Optional[List[str]] = None
     module_ids: Optional[List[str]] = None
-    parent_id: Optional[str] = None
 
 
 class WorkitemArtifact(BaseModel):

@@ -74,7 +74,7 @@ export const FollowUpDetail = observer((props: TProps) => {
       {/* Follow Up input */}
       {!isThinking && !showAlert && (
         <div className="flex justify-between items-end gap-2 w-[300px]">
-          <div className="max-h-[35px] overflow-scroll my-auto flex-1">
+          <div className="max-h-[100px] overflow-scroll my-auto flex-1">
             <PiChatEditorWithRef
               setEditorCommand={(command) => {
                 setEditorCommands({ ...command });
@@ -99,14 +99,14 @@ export const FollowUpDetail = observer((props: TProps) => {
       )}
       {/* thinking */}
       {isThinking && (
-        <div className="flex items-center gap-2 p-1">
+        <div className="flex items-center gap-2 p-1 w-full text-nowrap">
           <div className="w-2 h-4 rounded-[1px] pi-cursor animate-vertical-scale" />
           <div className="flex gap-2 items-center shimmer">Taking required actions</div>
         </div>
       )}
       {/* alert */}
       {showAlert && (
-        <div className="flex justify-center items-center gap-2 text-base text-custom-text-200 p-1">
+        <div className="w-full flex justify-center items-center gap-2 text-base text-custom-text-200 p-1 text-nowrap">
           {error ? (
             <FilledCross width={16} height={16} />
           ) : (

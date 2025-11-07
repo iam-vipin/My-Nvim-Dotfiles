@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
+import { Card, cn } from "@plane/ui";
 import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
 import { IssueFormRoot } from "@/components/issues/issue-modal/form";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
@@ -71,9 +72,16 @@ export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
 
   return (
     projectId && (
-      <IssueModalProvider>
-        <IssueFormRoot {...commonIssueModalProps} />
-      </IssueModalProvider>
+      <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
+        <IssueModalProvider>
+          <IssueFormRoot {...commonIssueModalProps} />
+        </IssueModalProvider>
+        <div
+          className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
+            hidden: data.is_editable,
+          })}
+        />
+      </Card>
     )
   );
 });

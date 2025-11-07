@@ -2074,19 +2074,25 @@ async def get_page_details_for_artifact(page_id: str) -> Optional[Dict[str, Any]
     SELECT
         p.id,
         p.name,
-        p.description_stripped AS description,
+        p.description_stripped,
         p.access,
         p.workspace_id,
         p.owned_by_id,
         p.parent_id,
         p.is_global,
         p.is_locked,
-        u.display_name AS owned_by
+        p.logo_props,
+        p.view_props,
+        u.display_name AS owned_by,
+        proj.id AS project_id,
+        proj.identifier AS project_identifier
     FROM pages p
     LEFT JOIN users u ON p.owned_by_id = u.id AND u.is_active = true AND u.is_bot = false
+    LEFT JOIN projects proj ON p.workspace_id = proj.workspace_id
     WHERE
         p.id = $1
         AND p.deleted_at IS NULL
+    LIMIT 1;
     """
 
     try:

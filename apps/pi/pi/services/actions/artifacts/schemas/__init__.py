@@ -18,6 +18,9 @@ from .epic import EpicProperties
 from .module import MODULE_FIELDS
 from .module import ModuleArtifact
 from .module import ModuleProperties
+from .page import PAGE_FIELDS
+from .page import PageArtifact
+from .page import PageProperties
 from .project import PROJECT_FIELDS
 from .project import ProjectArtifact
 from .project import ProjectProperties
@@ -52,6 +55,10 @@ __all__ = [
     "ModuleArtifact",
     "ModuleProperties",
     "MODULE_FIELDS",
+    # Page schemas
+    "PageArtifact",
+    "PageProperties",
+    "PAGE_FIELDS",
     # Comment schemas
     "CommentArtifact",
     "CommentProperties",

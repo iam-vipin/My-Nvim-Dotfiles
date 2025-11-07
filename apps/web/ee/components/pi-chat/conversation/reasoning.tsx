@@ -16,7 +16,7 @@ export const ReasoningBlock = (props: TProps) => {
     <div className={cn("flex flex-col")}>
       {!isThinking && (
         <button className="flex items-center gap-2" onClick={() => setIsOpen(!isOpen)}>
-          <Brain className="w-4 h-4 text-custom-text-200" />
+          <Brain className="w-4 h-4 text-custom-text-200 flex-shrink-0" />
           <span className="text-base text-custom-text-200 font-medium">Thought for a few seconds</span>
           <ChevronDownIcon
             className={`w-4 h-4 transition-transform duration-500 ease-in-out ${isOpen ? "transform rotate-180" : ""}`}

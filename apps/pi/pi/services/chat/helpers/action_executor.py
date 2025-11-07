@@ -99,6 +99,15 @@ async def _enhance_action_summary_with_complete_data(action_summary: dict, tool_
             entity_type = "epic" if tool_name == "epics_update" else "workitem"
             current_params = action_summary.get("parameters", {})
 
+            # Ensure properties exists
+            if "properties" not in current_params:
+                current_params["properties"] = {}
+
+            # Explicitly add parent from cleaned_args if present (it might not be in action_summary yet)
+            if "parent" in cleaned_args:
+                current_params["properties"]["parent"] = cleaned_args["parent"]
+                log.info(f"Added parent {cleaned_args["parent"]} to current_params before merge")
+
             # Fetch complete workitem data and merge with LLM updates
             complete_data = await merge_llm_updates_with_existing_data(entity_type, str(issue_id), current_params)
 

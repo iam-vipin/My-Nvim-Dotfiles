@@ -14,10 +14,12 @@ export class InitiativesTimeLineStore extends BaseTimeLineStore implements IInit
 
     autorun(() => {
       // Access blockIds to make autorun reactive to blockIds changes
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      if (!this.rootStore.initiativeStore) return;
+      // MobX autorun only tracks observables accessed directly in the function
+      // Even though updateBlocks uses this.blockIds internally, we need to access it here
+      // for MobX to track it and re-run the autorun when blockIds changes
+      if (!this.blockIds) return;
 
-      // Access initiativesMap to track initiative data changes
+      // Access filteredInitiativesMap to track initiative data changes
       const initiativesMap = this.rootStore.initiativeStore.filteredInitiativesMap;
 
       // Create a getter that transforms initiatives to include sort_order and target_date

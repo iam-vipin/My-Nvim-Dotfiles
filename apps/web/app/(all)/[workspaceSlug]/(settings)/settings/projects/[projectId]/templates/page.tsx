@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 // component
@@ -22,26 +20,28 @@ import {
   TemplatesUpgrade,
   ProjectTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
-import { useFlag, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const TemplatesProjectSettingsPage = observer(() => {
-  // router
-  const { workspaceSlug, projectId } = useParams();
+const TemplatesProjectSettingsPage = observer((props: Route.ComponentProps) => {
+  const { params } = props;
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
   const { isAnyWorkItemTemplatesAvailableForProject } = useWorkItemTemplates();
+  const { isAnyPageTemplatesAvailableForProject } = usePageTemplates();
   // derived values
-  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const isWorkItemTemplatesAvailableForProject = isAnyWorkItemTemplatesAvailableForProject(
-    workspaceSlug?.toString(),
-    projectId?.toString()
-  );
-  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled;
-  const isAnyTemplatesAvailableForProject = isWorkItemTemplatesAvailableForProject;
-  const currentProjectDetails = getProjectById(projectId?.toString());
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug, "WORKITEM_TEMPLATES");
+  const isPageTemplatesEnabled = useFlag(workspaceSlug, "PAGE_TEMPLATES");
+  const isWorkItemTemplatesAvailableForProject = isAnyWorkItemTemplatesAvailableForProject(workspaceSlug, projectId);
+  const isPageTemplatesAvailableForProject = isAnyPageTemplatesAvailableForProject(workspaceSlug, projectId);
+  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled || isPageTemplatesEnabled;
+  const isAnyTemplatesAvailableForProject =
+    isWorkItemTemplatesAvailableForProject || isPageTemplatesAvailableForProject;
+  const currentProjectDetails = getProjectById(projectId);
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.templates")}`
     : undefined;
@@ -66,8 +66,8 @@ const TemplatesProjectSettingsPage = observer(() => {
         showButton={isAnyTemplatesEnabled && isAnyTemplatesAvailableForProject && hasAdminPermission}
         customButton={
           <CreateTemplatesButton
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             currentLevel={ETemplateLevel.PROJECT}
             buttonSize="sm"
             variant="settings"
@@ -77,9 +77,9 @@ const TemplatesProjectSettingsPage = observer(() => {
       <WithFeatureFlagHOC
         flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
         fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
-        workspaceSlug={workspaceSlug?.toString()}
+        workspaceSlug={workspaceSlug}
       >
-        <ProjectTemplatesSettingsRoot workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+        <ProjectTemplatesSettingsRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );

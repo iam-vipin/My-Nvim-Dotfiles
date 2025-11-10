@@ -232,7 +232,7 @@ export const CreateUpdatePageTemplate: React.FC<Props> = observer((props) => {
     router.back();
   };
 
-  if (loader === "init-loader" || isApplyingTemplate) {
+  if (loader === "init-loader" || isApplyingTemplate || (templateId && !preloadedData)) {
     return <PageTemplateLoader />;
   }
 

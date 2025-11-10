@@ -328,7 +328,7 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     router.back();
   };
 
-  if (loader === "init-loader" || isApplyingTemplate) {
+  if (loader === "init-loader" || isApplyingTemplate || (templateId && !preloadedData)) {
     return <WorkItemTemplateLoader />;
   }
 

@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import { Extensions, getSchema } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";

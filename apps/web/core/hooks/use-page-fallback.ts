@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
-import { getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+import { convertBinaryDataToBase64String, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane propel
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane types
@@ -54,7 +54,7 @@ export const usePageFallback = (args: TArgs) => {
       editor.setProviderDocument(latestDecodedDescription);
       const { binary, html, json } = editor.getDocument();
       if (!binary || !json) return;
-      const encodedBinary = Buffer.from(binary).toString("base64");
+      const encodedBinary = convertBinaryDataToBase64String(binary);
 
       await updatePageDescription({
         description_binary: encodedBinary,

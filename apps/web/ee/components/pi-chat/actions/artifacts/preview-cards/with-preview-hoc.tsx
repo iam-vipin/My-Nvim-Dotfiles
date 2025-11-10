@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -16,6 +17,8 @@ interface IPreviewHOC {
 
 export const WithPreviewHOC = observer((props: IPreviewHOC) => {
   const { children, artifactId, shouldToggleSidebar = true, showEdited = true } = props;
+  // router
+  const pathname = usePathname();
   // store hooks
   const {
     togglePiArtifactsDrawer,
@@ -26,6 +29,7 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
   // derived
   const updatedArtifact = getArtifactByVersion(artifactId, "updated");
   const originalArtifact = getArtifact(artifactId);
+  const isFullScreen = pathname.split("/").includes("pi-chat");
   return (
     <button
       className={cn(
@@ -34,7 +38,7 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
           "border-custom-primary-100": artifactId === artifactIdInUse,
         }
       )}
-      disabled={!shouldToggleSidebar}
+      disabled={!shouldToggleSidebar || !isFullScreen}
       onClick={() => {
         togglePiArtifactsDrawer(artifactId ?? "");
         toggleSidebar(true);

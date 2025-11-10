@@ -17,7 +17,6 @@ from django.utils.html import strip_tags
 from plane.db.models import EmailNotificationLog, Issue, User, IssueSubscriber, UserNotificationPreference
 
 from plane.license.utils.instance_value import get_email_configuration
-from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.db.models.notification import EntityName
 from plane.ee.models import Teamspace, Initiative
@@ -61,7 +60,11 @@ def stack_email_notification():
 
             entity_name = receiver_notification.get("entity_name")
 
-            if entity_name == EntityName.ISSUE.value or entity_name == EntityName.EPIC.value:
+            if (
+                entity_name == EntityName.ISSUE.value
+                or entity_name == EntityName.EPIC.value
+                or entity_name == EntityName.EPIC_UPDATE.value
+            ):
                 # Create emails for all the issues
                 for issue_id, notification_data in payload.items():
                     send_email_notification.delay(
@@ -69,6 +72,7 @@ def stack_email_notification():
                         notification_data=notification_data,
                         receiver_id=receiver_id,
                         email_notification_ids=email_notification_ids,
+                        entity_name=entity_name,
                     )
             else:
                 for entity_id, notification_data in payload.items():
@@ -89,7 +93,11 @@ def create_payload(notification_data, entity_name):
     data = {}
     for actor_id, changes in notification_data.items():
         for change in changes:
+            if entity_name == "epic":
+                entity_name = "issue"
+
             entity_activity = change.get(f"{entity_name}_activity", None)
+
             epic_update = change.get("epic_update", None)
 
             if entity_activity:
@@ -164,7 +172,7 @@ def create_emaillogs_for_epic_updates(epic_entity_update, actor_id, origin, verb
                 triggered_by_id=actor_id,
                 receiver_id=subscriber_id,
                 entity_identifier=epic_id,
-                entity_name="epic",
+                entity_name="epic-update",
                 data={
                     "epic": {
                         "id": str(epic_id),
@@ -209,7 +217,7 @@ def process_html_content(content):
 
 
 @shared_task
-def send_email_notification(issue_id, notification_data, receiver_id, email_notification_ids):
+def send_email_notification(issue_id, notification_data, receiver_id, email_notification_ids, entity_name):
     try:
         base_api = settings.WEB_URL
 
@@ -217,9 +225,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
         if not base_api:
             return
 
-        data = create_payload(
-            notification_data=notification_data,
-        )
+        data = create_payload(notification_data=notification_data, entity_name=entity_name)
 
         # Get email configurations
 
@@ -267,15 +273,14 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         },
                     }
                 )
+
             activity_time = changes.pop("activity_time")
 
-            field = changes.pop("field")
-
-            if field == "epic_update":
+            if entity_name == EntityName.EPIC_UPDATE.value:
                 summary = "Updates were added to the Epic"
                 template_name = "emails/notifications/epic_updates.html"
                 formatted_time = activity_time
-            else:
+            elif entity_name == EntityName.ISSUE.value or entity_name == EntityName.EPIC.value:
                 summary = "Updates were made to the issue by"
                 template_name = "emails/notifications/issue-updates.html"
                 formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
@@ -297,7 +302,6 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     }
                 )
 
-        summary = "Updates were made to the issue by"
         issue_identifier = f"{str(issue.project.identifier)}-{str(issue.sequence_id)}"
 
         # Send the mail
@@ -320,7 +324,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
             "comments": comments,
             "entity_type": entity_type,
         }
-        html_content = render_to_string("emails/notifications/issue-updates.html", context)
+        html_content = render_to_string(template_name, context)
         text_content = strip_tags(html_content)
 
         try:

@@ -1,5 +1,4 @@
-"use client";
-import React from "react";
+import { EPillVariant, EPillSize, ERadius, Pill } from "@plane/propel/pill";
 import { generateIconColors } from "@plane/utils";
 
 export const BetaBadge = () => {
@@ -7,11 +6,14 @@ export const BetaBadge = () => {
   const textColor = color ? color.foreground : "transparent";
   const backgroundColor = color ? color.background : "transparent";
   return (
-    <div
-      className="w-fit h-[20px] rounded text-center font-medium outline-none text-xs px-2 py-0.5 my-auto"
+    <Pill
+      variant={EPillVariant.WARNING}
+      size={EPillSize.SM}
+      radius={ERadius.SQUARE}
+      className="border-none "
       style={{ color: textColor, backgroundColor: backgroundColor }}
     >
       Beta
-    </div>
+    </Pill>
   );
 };

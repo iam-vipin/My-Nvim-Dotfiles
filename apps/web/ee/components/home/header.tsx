@@ -5,10 +5,10 @@ import { useParams } from "next/navigation";
 import { Maximize } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { BetaBadge } from "@plane/ui";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { BetaBadge } from "../common/beta";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { InputBox } from "../pi-chat/input";
 

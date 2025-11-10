@@ -8,12 +8,13 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { HomeIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { BetaBadge, Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
+import { Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { BetaBadge } from "../../common/beta";
 import { isSidebarToggleVisible } from "../../desktop";
 import { ModelsDropdown } from "./models-dropdown";
 
@@ -54,7 +55,7 @@ export const Header = observer((props: THeaderProps) => {
             <Breadcrumbs.Item
               component={
                 <div className="flex rounded gap-2 items-center">
-                  <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
+                  {isFullScreen && <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />}
                   {models?.length > 1 ? (
                     <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
                   ) : (

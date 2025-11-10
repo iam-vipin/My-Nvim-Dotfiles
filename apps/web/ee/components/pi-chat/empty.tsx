@@ -8,7 +8,6 @@ import { Crown } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { BetaBadge } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
 import PiDark from "@/app/assets/empty-state/pi/chat-dark.webp?url";
@@ -17,6 +16,7 @@ import PiChatLogo from "@/app/assets/logos/pi.png?url";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { BetaBadge } from "../common/beta";
 
 export const EmptyPiChat = observer(() => {
   // store hooks

@@ -6,11 +6,11 @@ import { Info } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { BetaBadge } from "@plane/ui";
 // plane web components
 import type { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { BetaBadge } from "../common/beta";
 
 export type IntegrationListItemProps = {
   provider: IntegrationProps;

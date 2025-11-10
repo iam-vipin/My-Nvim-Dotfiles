@@ -3,10 +3,10 @@
 import type { FC } from "react";
 // hooks
 // ui
-import { Pencil, Trash2, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, ExternalLink, Link } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import { copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // icons
 // types
 // helpers
@@ -36,7 +36,8 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
-  const Icon = getIconForLink(linkDetail.url);
+  const faviconUrl: string | undefined = linkDetail.metadata?.favicon;
+  const linkTitle: string | undefined = linkDetail.metadata?.title;
 
   const toggleIssueLinkModal = (modalToggle: boolean) => {
     toggleIssueLinkModalStore(modalToggle);
@@ -61,16 +62,22 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+              {faviconUrl ? (
+                <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
+              ) : (
+                <Link className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+              )}
             </span>
-            <Tooltip
-              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              isMobile={isMobile}
-            >
-              <span className="truncate text-xs">
-                {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              </span>
-            </Tooltip>
+            <div className="flex flex-col gap-0.5 truncate">
+              <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
+                <span className="truncate text-xs">
+                  {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+                </span>
+              </Tooltip>
+              {linkTitle && linkTitle !== "" && (
+                <span className="text-custom-text-400 text-xs truncate">{linkTitle}</span>
+              )}
+            </div>
           </div>
 
           {!isNotAllowed && (

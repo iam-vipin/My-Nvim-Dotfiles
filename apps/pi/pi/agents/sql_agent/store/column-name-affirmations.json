@@ -1,0 +1,11 @@
+{
+    "users": [
+        "If you are using one of the columns: `first_name` or `last_name` in the query, note the presence of underscore."
+    ],
+    "issues": [
+        "Note that the 'created_by_id' column doesn't indicate issue ownership."
+    ],
+    "issue_worklogs": [
+        "The 'duration' field stores time in minutes, not hours or seconds."
+    ]
+}

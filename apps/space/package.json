@@ -17,6 +17,8 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@bprogress/core": "catalog:",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -49,6 +51,7 @@
     "mobx-utils": "catalog:",
     "morgan": "^1.10.1",
     "next-themes": "^0.2.1",
+    "raf-schd": "^4.0.3",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^14.2.3",

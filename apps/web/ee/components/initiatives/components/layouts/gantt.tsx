@@ -28,7 +28,13 @@ export const InitiativeGanttLayout = observer(() => {
   const { workspaceSlug } = useParams();
 
   const {
-    initiative: { filteredInitiativesMap, currentGroupedFilteredInitiativeIds, updateInitiative, getInitiativesLabels },
+    initiative: {
+      filteredInitiativesMap,
+      currentGroupedFilteredInitiativeIds,
+      updateInitiative,
+      getInitiativesLabels,
+      initiativeTimelineItems,
+    },
     initiativeFilters,
   } = useInitiatives();
 
@@ -153,21 +159,9 @@ export const InitiativeGanttLayout = observer(() => {
 
   if (!filteredInitiativesMap || !currentGroupedFilteredInitiativeIds) return null;
 
-  // Transform initiatives to match gantt requirements
-  const itemsWithDates = useMemo(() => {
-    const transformed: Record<string, TInitiative & { target_date?: string | null }> = {};
-    Object.entries(filteredInitiativesMap).forEach(([id, initiative]) => {
-      transformed[id] = {
-        ...initiative,
-        target_date: initiative.end_date,
-      };
-    });
-    return transformed;
-  }, [filteredInitiativesMap]);
-
   return (
     <BaseGanttLayout
-      items={itemsWithDates}
+      items={initiativeTimelineItems}
       groupedItemIds={currentGroupedFilteredInitiativeIds}
       groups={groups}
       renderBlock={renderBlock}

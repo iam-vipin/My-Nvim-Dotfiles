@@ -52,6 +52,7 @@ export interface IInitiativeStore {
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>>;
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
+  initiativeTimelineItems: Record<string, TInitiative & { target_date?: string | null }>;
 
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
@@ -221,6 +222,19 @@ export class InitiativeStore implements IInitiativeStore {
     if (!workspaceSlug) return;
 
     return this.getGroupedInitiativeIds(workspaceSlug, false);
+  }
+
+  get initiativeTimelineItems() {
+    const filteredInitiativesMap = this.filteredInitiativesMap;
+    if (!filteredInitiativesMap) return {};
+    const timelineItemsWithDates: Record<string, TInitiative & { target_date?: string | null }> = {};
+    Object.values(filteredInitiativesMap).forEach((initiative) => {
+      timelineItemsWithDates[initiative.id] = {
+        ...initiative,
+        target_date: initiative.end_date,
+      };
+    });
+    return timelineItemsWithDates;
   }
 
   get currentGroupedFilteredInitiativeIds() {

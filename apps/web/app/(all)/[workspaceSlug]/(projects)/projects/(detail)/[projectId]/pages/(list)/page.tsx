@@ -14,14 +14,12 @@ import lightPagesAsset from "@/app/assets/empty-state/disabled-feature/pages-lig
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { PagesListRoot } from "@/components/pages/list/root";
-import { PagesListView } from "@/components/pages/pages-list-view";
+import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 
 const getPageType = (pageType?: string | null): TPageNavigationTabs => {
@@ -50,7 +48,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   const resolvedPath = resolvedTheme === "light" ? lightPagesAsset : darkPagesAsset;
   const pageType = getPageType(type);
 
-  // No access to cycle
+  // No access to page
   if (currentProjectDetails?.page_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -71,14 +69,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <PagesListView
-        pageType={pageType}
-        projectId={projectId}
-        storeType={EPageStoreType.PROJECT}
-        workspaceSlug={workspaceSlug}
-      >
-        <PagesListRoot pageType={pageType} storeType={EPageStoreType.PROJECT} />
-      </PagesListView>
+      <ProjectPagesListView pageType={pageType} projectId={projectId} workspaceSlug={workspaceSlug} />
     </>
   );
 }

@@ -17,7 +17,7 @@ export type TProperties = {
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";
-type TProjectOtherFeatureKeys = "is_time_tracking_enabled";
+export type TProjectOtherFeatureKeys = "is_time_tracking_enabled";
 
 type TBaseFeatureList = {
   [key in TProjectBaseFeatureKeys]: TProperties;

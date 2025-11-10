@@ -16,7 +16,6 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
   const { fetchWorkspaceModules } = useModule();
 
   const { fetchWorkspaceCycles } = useCycle();
-
   // fetch workspace Modules
   useSWR(
     workspaceSlug ? WORKSPACE_MODULES(workspaceSlug.toString()) : null,

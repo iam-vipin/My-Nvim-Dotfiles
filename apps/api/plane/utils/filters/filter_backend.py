@@ -1,8 +1,12 @@
+# Python imports
 import json
 
+# Django imports
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http import QueryDict
+
+# Third party imports
 from django_filters.utils import translate_validation
 from rest_framework import filters
 
@@ -96,6 +100,19 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             if field not in allowed_fields:
                 raise ValidationError(f"Filtering on field '{field}' is not allowed")
 
+    def _transform_field_name_for_validation(self, field_name):
+        """Hook: Transform a field name before validation.
+
+        Override this in subclasses to handle special field naming conventions.
+
+        Args:
+            field_name: The original field name from the filter data
+
+        Returns:
+            The transformed field name to validate against the FilterSet
+        """
+        return field_name
+
     def _extract_field_names(self, filter_data):
         """Extract all field names from a nested filter structure"""
         if isinstance(filter_data, dict):
@@ -112,8 +129,9 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
                         for item in value:
                             fields.extend(self._extract_field_names(item))
                 else:
-                    # This is a field name
-                    fields.append(key)
+                    # This is a field name - apply transformation hook
+                    transformed_field = self._transform_field_name_for_validation(key)
+                    fields.append(transformed_field)
             return fields
         return []
 
@@ -171,6 +189,23 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         # Leaf dict: evaluate via FilterSet to get a Q object
         return self._build_leaf_q(node, view, queryset)
 
+    def _preprocess_leaf_conditions(self, leaf_conditions, view, queryset):
+        """Hook: Preprocess leaf conditions before building Q object.
+
+        Override this in subclasses to transform filter keys/values.
+        For example, custom property filters might need to be transformed
+        from 'customproperty_<id>__<lookup>' to 'customproperty_value__<lookup>'.
+
+        Args:
+            leaf_conditions: Dict of field filters
+            view: The view instance
+            queryset: The queryset being filtered
+
+        Returns:
+            Dict of transformed field filters
+        """
+        return leaf_conditions
+
     def _build_leaf_q(self, leaf_conditions, view, queryset):
         """Build a Q object from leaf filter conditions using the view's FilterSet.
 
@@ -188,9 +223,12 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
         if not filterset_class:
             raise ValidationError("Filtering requires a filterset_class to be defined on the view")
 
+        # Apply preprocessing hook
+        processed_conditions = self._preprocess_leaf_conditions(leaf_conditions, view, queryset)
+
         # Build a QueryDict from the leaf conditions
         qd = QueryDict(mutable=True)
-        for key, value in leaf_conditions.items():
+        for key, value in processed_conditions.items():
             # Default serialization to string; QueryDict expects strings
             if isinstance(value, list):
                 # Repeat key for list values (e.g., __in)

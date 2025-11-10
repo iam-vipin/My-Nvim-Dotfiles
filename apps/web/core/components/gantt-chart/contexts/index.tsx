@@ -5,6 +5,7 @@ export enum ETimeLineTypeType {
   MODULE = "MODULE",
   PROJECT = "PROJECT",
   GROUPED = "GROUPED",
+  INITIATIVE = "INITIATIVE",
 }
 
 export const TimeLineTypeContext = createContext<ETimeLineTypeType | undefined>(undefined);

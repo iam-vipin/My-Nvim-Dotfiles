@@ -1,0 +1,157 @@
+import type { FC } from "react";
+import { useState } from "react";
+import { observer } from "mobx-react";
+import { LayersIcon, PlusIcon } from "lucide-react";
+import { Card } from "@plane/propel/card";
+import { MilestoneIcon } from "@plane/propel/icons";
+import { Pill, EPillSize } from "@plane/propel/pill";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { ISearchIssueResponse } from "@plane/types";
+import { Button, CircularProgressIndicator, cn, Collapsible, CollapsibleButton } from "@plane/ui";
+import { renderFormattedPayloadDate } from "@plane/utils";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { RichTextEditor } from "@/components/editor/rich-text";
+import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { getMilestoneVariant, MilestoneQuickActionButton } from "./helper";
+import { MilestoneWorkItemsList } from "./milestone-work-items";
+import { MilestoneWorkItemActionButton } from "./quick-action-button";
+
+type Props = {
+  milestoneId: string;
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const MilestoneCard: FC<Props> = observer((props) => {
+  const { milestoneId, workspaceSlug, projectId } = props;
+  // state
+  const [isLinkedWorkItemsOpen, setIsLinkedWorkItemsOpen] = useState(false);
+  // store hooks
+  const { updateMilestone, addWorkItemsToMilestone, getMilestoneById } = useMilestones();
+
+  const milestone = getMilestoneById(projectId, milestoneId);
+
+  if (!milestone) return null;
+
+  const handleUpdateDate = async (date: Date) => {
+    await updateMilestone(workspaceSlug, projectId, milestoneId, {
+      target_date: date ? renderFormattedPayloadDate(date) : null,
+    }).catch((error) => {
+      console.error(error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to update milestone date. Please try again.",
+      });
+    });
+  };
+
+  const handleAddWorkItems = async (data: ISearchIssueResponse[]) => {
+    const workItemIds = data.map((item) => item.id).filter((id) => id !== null);
+    await addWorkItemsToMilestone(workspaceSlug, projectId, milestoneId, workItemIds).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to add work items to milestone. Please try again.",
+      });
+    });
+  };
+
+  return (
+    <Card className="!shadow-none p-4">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2 items-center">
+          <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-4" />
+          <span className="text-base text-custom-text-100 font-medium">{milestone.title}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <DateDropdown
+            value={milestone.target_date}
+            isClearable={false}
+            onChange={(date) => {
+              if (date) {
+                handleUpdateDate(date);
+              }
+            }}
+            buttonVariant="border-with-text"
+          />
+          <MilestoneQuickActionButton workspaceSlug={workspaceSlug} milestoneId={milestoneId} projectId={projectId} />
+        </div>
+      </div>
+      {milestone.description?.description_html ? (
+        <RichTextEditor
+          editable={false}
+          id={milestoneId}
+          initialValue={milestone.description?.description_html ?? ""}
+          value={milestone.description?.description_html ?? ""}
+          workspaceId={milestone.workspace_id ?? ""}
+          workspaceSlug={workspaceSlug}
+          containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
+          editorClassName="px-0"
+          displayConfig={{
+            fontSize: "small-font",
+          }}
+        />
+      ) : (
+        <div className="py-1" />
+      )}
+      {/* Linked Work items collapsible */}
+      <div className="border-t border-custom-border-200 pt-1">
+        {milestone.progress.total_items ? (
+          <Collapsible
+            isOpen={isLinkedWorkItemsOpen}
+            onToggle={() => setIsLinkedWorkItemsOpen(!isLinkedWorkItemsOpen)}
+            title={
+              <CollapsibleButton
+                isOpen={isLinkedWorkItemsOpen}
+                title={"Linked Work items"}
+                indicatorElement={
+                  <Pill size={EPillSize.SM} className="border-none">
+                    <div className="flex items-center gap-1">
+                      <CircularProgressIndicator
+                        size={16}
+                        percentage={milestone.progress_percentage}
+                        strokeWidth={3}
+                        strokeColor={cn(
+                          milestone.progress_percentage >= 100 ? "stroke-green-400" : "stroke-custom-primary-100"
+                        )}
+                      />
+                      <span className="text-xs text-custom-text-100 font-medium">{milestone.progress_percentage}%</span>
+                    </div>
+                  </Pill>
+                }
+                actionItemElement={
+                  <MilestoneWorkItemActionButton
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug}
+                    customButton={<PlusIcon className="size-4 text-custom-text-200" />}
+                    handleSubmit={handleAddWorkItems}
+                  />
+                }
+                titleClassName="text-sm"
+                className="border-none h-min px-0"
+              />
+            }
+            buttonClassName="w-full"
+          >
+            <MilestoneWorkItemsList milestoneId={milestoneId} workspaceSlug={workspaceSlug} projectId={projectId} />
+          </Collapsible>
+        ) : (
+          <div className="pt-2">
+            <MilestoneWorkItemActionButton
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              customButton={
+                <Button variant="neutral-primary" size="sm" className="text-custom-text-200 text-xs">
+                  <LayersIcon className="size-3" />
+                  Link work items
+                </Button>
+              }
+              handleSubmit={handleAddWorkItems}
+            />
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+});

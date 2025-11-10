@@ -73,6 +73,9 @@ from pi.services.retrievers.pg_store import retrieve_chat_history
 from pi.services.retrievers.pg_store import soft_delete_chat
 from pi.services.retrievers.pg_store import unfavorite_chat
 from pi.services.retrievers.pg_store import update_message_feedback
+from pi.services.retrievers.pg_store.message import get_message_by_id
+from pi.services.retrievers.pg_store.message import mark_assistant_response_as_replaced
+from pi.services.retrievers.pg_store.message import reconstruct_chat_request_from_message
 from pi.services.retrievers.pg_store.message import upsert_message
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
 
@@ -819,7 +822,10 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
     """Second phase of two-step flow.
     Looks up the queued ChatRequest by token (message_id), deletes the queue
     entry, and then re-uses the existing /get-answer/ logic to start the SSE
-    stream via a pure GET endpoint."""
+    stream via a pure GET endpoint.
+
+    Also handles REGENERATE when called with an existing user message ID
+    (no QUEUE flow step present)."""
     try:
         auth = await is_valid_session(session)
         if not auth.user:
@@ -838,53 +844,89 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
     flow_step: MessageFlowStep | None = res.scalar_one_or_none()
 
     if not flow_step:
-        return JSONResponse(status_code=404, content={"detail": "Unknown or expired stream token"})
+        # REGENERATE FLOW: No QUEUE flow step means this is regenerate
+        log.info(f"No QUEUE flow step found for token {token}. Treating as regenerate request.")
+        # 1. Get the user message
+        user_message = await get_message_by_id(db, token)
 
-    # Parse the stored ChatRequest
-    try:
-        raw_data = flow_step.execution_data or {}
-        # Check if this is an OAuth message (has oauth_required field)
-        if flow_step.oauth_required:
-            # This is an OAuth message - check if OAuth is now complete
-            # by looking at the oauth_completed column
-            if flow_step.oauth_completed:
-                # OAuth is now complete! Process the request normally
-                log.info(f"OAuth completed for message {token}. Processing request.")
+        if not user_message:
+            log.warning(f"Message not found for token {token}")
+            return JSONResponse(status_code=404, content={"detail": "Message not found"})
 
-                # Control continues to the normal processing code below
-            else:
-                # OAuth is still required
-                return JSONResponse(
-                    status_code=401,
-                    content={
-                        "detail": "OAuth authorization still required. Please complete OAuth authentication first.",
-                        "error_code": "OAUTH_REQUIRED",
-                    },
-                )
+        # 2. Mark old assistant response as replaced BEFORE generating new one
+        # This ensures retrieve_chat_history() won't include it in context for new generation
+        marked = await mark_assistant_response_as_replaced(db, user_message.id)
+        if marked:
+            log.info(f"Marked old assistant response(s) as replaced for message {token}")
+        else:
+            log.info(f"No existing assistant response found for message {token} (first generation or already replaced)")
 
-        # Convert empty-string UUIDs to None so pydantic validation passes
-        for field in ["project_id", "workspace_id", "chat_id"]:
-            if field in raw_data and raw_data[field] == "":
-                raw_data[field] = None
-        raw_data["user_id"] = user_id
-        queued_request = ChatRequest.parse_obj(raw_data)
+        # 4. Reconstruct ChatRequest from user message
+        try:
+            queued_request = await reconstruct_chat_request_from_message(db, user_message, user_id)
+        except Exception as e:
+            log.error(f"Error reconstructing ChatRequest from message {token}: {e}")
+            return JSONResponse(status_code=500, content={"detail": "Failed to reconstruct request"})
 
-    except Exception as e:
-        log.error(f"Malformed execution_data for token {token}: {e!s}")
-        return JSONResponse(status_code=500, content={"detail": "Corrupted queued request"})
+        # 5. Pass token_id so new assistant message reuses same user message as parent
+        try:
+            queued_request.context["token_id"] = str(token)
+        except Exception as e:
+            log.warning(f"Failed to attach token_id to regenerate request context: {e!s}")
 
-    # Consume the queue entry so the token is single-use
-    await db.delete(flow_step)
-    await db.commit()
+        log.info(f"Regenerating response for message {token}")
 
-    # Pass the token/message_id forward so downstream processing reuses the same Message row
-    try:
-        queued_request.context["token_id"] = str(token)
-    except Exception as e:
-        log.warning(f"Failed to attach token_id to queued request context: {e!s}")
+        # 6. Stream new response (get_answer will call process_query_stream)
+        #    When process_query_stream calls retrieve_chat_history,
+        #    it will NOT see the old response because is_replaced=True
+        return await get_answer(data=queued_request, session=session)
 
-    # Delegate to existing get_answer for streaming
-    return await get_answer(data=queued_request, session=session)
+    else:
+        # NORMAL FLOW: QUEUE flow step exists, this is first generation
+        # Parse the stored ChatRequest
+        try:
+            raw_data = flow_step.execution_data or {}
+            # Check if this is an OAuth message (has oauth_required field)
+            if flow_step.oauth_required:
+                # This is an OAuth message - check if OAuth is now complete
+                # by looking at the oauth_completed column
+                if flow_step.oauth_completed:
+                    # OAuth is now complete! Process the request normally
+                    log.info(f"OAuth completed for message {token}. Processing request.")
+                    # Control continues to the normal processing code below
+                else:
+                    # OAuth is still required
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "detail": "OAuth authorization still required. Please complete OAuth authentication first.",
+                            "error_code": "OAUTH_REQUIRED",
+                        },
+                    )
+
+            # Convert empty-string UUIDs to None so pydantic validation passes
+            for field in ["project_id", "workspace_id", "chat_id"]:
+                if field in raw_data and raw_data[field] == "":
+                    raw_data[field] = None
+            raw_data["user_id"] = user_id
+            queued_request = ChatRequest.parse_obj(raw_data)
+
+        except Exception as e:
+            log.error(f"Malformed execution_data for token {token}: {e!s}")
+            return JSONResponse(status_code=500, content={"detail": "Corrupted queued request"})
+
+        # Consume the queue entry so the token is single-use (for normal flow)
+        await db.delete(flow_step)
+        await db.commit()
+
+        # Pass the token/message_id forward so downstream processing reuses the same Message row
+        try:
+            queued_request.context["token_id"] = str(token)
+        except Exception as e:
+            log.warning(f"Failed to attach token_id to queued request context: {e!s}")
+
+        # Delegate to existing get_answer for streaming
+        return await get_answer(data=queued_request, session=session)
 
 
 @router.post("/execute-action/")

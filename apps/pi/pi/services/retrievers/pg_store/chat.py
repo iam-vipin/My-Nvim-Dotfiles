@@ -387,8 +387,13 @@ async def retrieve_chat_history(
         user_chat_preference_result = await db.execute(user_chat_preference_query)
         user_chat_preference = user_chat_preference_result.scalar_one_or_none()
 
-        # Step 4: Get messages for this chat ordered by sequence
-        message_query = select(Message).where(Message.chat_id == chat_id).order_by(Message.sequence)  # type: ignore[arg-type]
+        # Step 4: Get messages for this chat ordered by sequence (exclude replaced messages)
+        message_query = (
+            select(Message)
+            .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
+            .order_by(Message.sequence)  # type: ignore[arg-type]
+        )
         message_result = await db.execute(message_query)
         messages = list(message_result.scalars().all())
 
@@ -398,11 +403,12 @@ async def retrieve_chat_history(
         message_flow_steps_result = await db.execute(message_flow_steps_query)
         message_flow_steps = list(message_flow_steps_result.scalars().all())
 
-        # Step 5: Get most recent assistant message to extract LLM model
+        # Step 5: Get most recent assistant message to extract LLM model (exclude replaced messages)
         last_assistant_message_query = (
             select(Message)
             .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
             .where(Message.user_type == UserTypeChoices.ASSISTANT.value)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
             .order_by(desc(Message.created_at))  # type: ignore[arg-type]
             .limit(1)
         )

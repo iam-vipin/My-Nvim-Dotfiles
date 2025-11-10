@@ -94,6 +94,8 @@ export const AiMessage = observer((props: TProps) => {
             id={id}
             workspaceId={workspaceId}
             feedback={feedback}
+            queryId={query_id}
+            isLatest={!!isLatest}
             handleConvertToPage={handleConvertToPage}
           />
         )}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, FilePlus2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Copy, FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, Tooltip } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
@@ -13,16 +13,18 @@ export type TProps = {
   id: string;
   workspaceId: string | undefined;
   feedback: EFeedback | undefined;
+  queryId: string | undefined;
+  isLatest: boolean;
   handleConvertToPage?: () => void;
 };
 
 export const Feedback = (props: TProps) => {
   // props
-  const { answer, activeChatId, id, workspaceId, feedback, handleConvertToPage } = props;
+  const { answer, activeChatId, id, workspaceId, feedback, queryId, isLatest, handleConvertToPage } = props;
   // states
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   // store
-  const { sendFeedback } = usePiChat();
+  const { sendFeedback, regenerateAnswer } = usePiChat();
   // handlers
   const handleCopyLink = () => {
     copyTextToClipboard(answer).then(() => {
@@ -47,6 +49,14 @@ export const Feedback = (props: TProps) => {
         title: "Feedback failed!",
         message: "Feedback failed!",
       });
+    }
+  };
+  const handleRewrite = async () => {
+    try {
+      if (!queryId || !workspaceId) return;
+      await regenerateAnswer(activeChatId, queryId, workspaceId);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -98,10 +108,14 @@ export const Feedback = (props: TProps) => {
         onSubmit={(feedbackMessage) => handleFeedback(EFeedback.NEGATIVE, feedbackMessage)}
       />
 
-      {/* Rewrite will be available in the future */}
-      {/* <div className="flex text-sm font-medium gap-1 cursor-pointer">
-            <Repeat2 size={20} onClick={() => console.log()} className="my-auto cursor-pointer" /> Rewrite
-          </div> */}
+      {/* Rewrite */}
+      {isLatest && (
+        <Tooltip tooltipContent="Rewrite" position="bottom" className="mb-4">
+          <button onClick={handleRewrite}>
+            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-pi-700 transition-colors" />
+          </button>
+        </Tooltip>
+      )}
 
       {/* Convert to page */}
       <div className="flex text-sm font-medium gap-1 cursor-pointer">

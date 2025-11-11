@@ -1,9 +1,8 @@
-import { Issue, IssueLabel, User, Document } from "@linear/sdk";
-import { ExCycle, ExIssueAttachment, ExIssueComment, ExPage, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import { Issue, IssueLabel, User } from "@linear/sdk";
+import { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
 import { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
-import { getFormattedDate, getTargetState, getContentParser } from "../helpers";
-import { LinearContentParserConfig } from "../types";
+import { getFormattedDate, getTargetState } from "../helpers";
 
 export const transformIssue = async (
   issue: Issue,
@@ -124,19 +123,6 @@ export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
   created_at: getFormattedDate(cycle.cycle.createdAt.toString()),
   issues: cycle.issues.map((issue) => issue.id),
 });
-
-export const transformDocument = async (
-  document: Document,
-  options: LinearContentParserConfig
-): Promise<Partial<ExPage>> => {
-  const content = document.content ?? "<p></p>";
-  const linearContentParser = getContentParser(options);
-  const contentHtml = await linearContentParser.toPlaneHtml(content);
-  return {
-    name: document.title,
-    description_html: contentHtml,
-  };
-};
 
 const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string | undefined> => {
   // @ts-expect-error

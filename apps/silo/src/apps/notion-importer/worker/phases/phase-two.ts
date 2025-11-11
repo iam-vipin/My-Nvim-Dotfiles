@@ -1,5 +1,5 @@
 import { E_JOB_STATUS } from "@plane/etl/core";
-import { ContentParser } from "@plane/etl/parser";
+import { ContentParser } from "@/lib/parser";
 import { logger } from "@plane/logger";
 import { TImportJob, TPage } from "@plane/types";
 import { env } from "@/env";

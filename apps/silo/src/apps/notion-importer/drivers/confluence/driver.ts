@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { parse, HTMLElement } from "node-html-parser";
-import { ContentParser, IParserExtension } from "@plane/etl/parser";
 import { logger } from "@plane/logger";
+import { ContentParser, IParserExtension } from "@/lib/parser";
 import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { EZipNodeType } from "@/lib/zip-manager/types";
 import { TDocContentParserConfig } from "../../types";
@@ -192,6 +192,7 @@ export class ConfluenceImportDriver implements IZipImportDriver {
               const attachmentNode: TZipFileNode = {
                 id: crypto.randomUUID(),
                 name: attachmentPath.split("/").pop() || attachmentPath,
+                depth: child.depth + 1,
                 type: EZipNodeType.FILE,
                 path: attachmentPath,
                 children: [],

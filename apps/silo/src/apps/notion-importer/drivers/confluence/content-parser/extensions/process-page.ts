@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import { IParserExtension } from "@/lib/parser";
 import { NotionPageParserExtension } from "../../../common/content-parser";
 
 export class ConfluencePageParserExtension extends NotionPageParserExtension implements IParserExtension {

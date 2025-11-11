@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import { IParserExtension } from "@/lib/parser";
 import { logger } from "@plane/logger";
 import { TAssetInfo } from "@/apps/notion-importer/types";
 

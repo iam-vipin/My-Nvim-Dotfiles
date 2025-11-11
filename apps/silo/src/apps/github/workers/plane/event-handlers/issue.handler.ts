@@ -1,5 +1,5 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { GithubIssue, GithubService, transformPlaneIssue, WebhookGitHubUser } from "@plane/etl/github";
+import { GithubIssue, GithubService, WebhookGitHubUser } from "@plane/etl/github";
 import { logger } from "@plane/logger";
 import { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
+import { transformPlaneIssue } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
@@ -174,6 +175,7 @@ const createOrUpdateGitHubIssue = async (
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
     workspace_id: workspaceConnection.workspace_id,
     user_id: issue.updated_by != null ? issue.updated_by : issue.created_by,
+    // @ts-expect-error
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
   });
 

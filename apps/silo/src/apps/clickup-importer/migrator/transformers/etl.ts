@@ -1,6 +1,5 @@
 import {
   transformComment,
-  transformTask,
   transformUser,
   transformList,
   transformTag,
@@ -16,7 +15,6 @@ import {
   TClickUpListsWithTasks,
   TClickUpUser,
   TClickUpCustomTaskType,
-  ClickUpContentParserConfig,
   ClickupAPIService,
   TClickUpCustomFieldWithTaskType,
   transformCustomField,
@@ -48,6 +46,8 @@ import { createProjects, enableIssueTypeForProject } from "@/etl/migrator/projec
 import { createStates } from "@/etl/migrator/states.migrator";
 import { processBatchPromises } from "@/helpers/methods";
 import { APIClient, getAPIClient } from "@/services/client";
+import { ClickUpContentParserConfig } from "../../helpers/get-content-parser";
+import { transformTask } from "../../helpers/transform";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Clickup entities, responsible

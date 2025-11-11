@@ -1,4 +1,4 @@
-import { ContentParser } from "@plane/etl/parser";
+import { ContentParser } from "@/lib/parser";
 import { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";

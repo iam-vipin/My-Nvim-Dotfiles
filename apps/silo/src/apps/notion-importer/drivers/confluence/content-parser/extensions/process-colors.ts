@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import { IParserExtension } from "@/lib/parser";
 
 const CONFLUENCE_STATUS_COLOR_MAP = new Map([
   ["complete", "light-blue"],

@@ -1,8 +1,20 @@
-import { E_IMPORTER_KEYS } from "@/core";
-import { ContentParser } from "@/parser";
-import { ExternalFileParserExtension } from "@/parser/extensions/external/file-parser";
-import { ExternalImageParserExtension } from "@/parser/extensions/external/image-parser";
-import { ClickUpContentParserConfig } from "../types";
+import { ClickupAPIService } from "@plane/etl/clickup";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { Client } from "@plane/sdk";
+import { ContentParser } from "@/lib/parser";
+import { ExternalFileParserExtension } from "@/lib/parser/extensions/external/file-parser";
+import { ExternalImageParserExtension } from "@/lib/parser/extensions/external/image-parser";
+
+export type ClickUpContentParserConfig = {
+  planeClient: Client;
+  clickupService: ClickupAPIService;
+  workspaceSlug: string;
+  projectId: string;
+  fileDownloadHeaders: Record<string, string>;
+  apiBaseUrl: string;
+  appBaseUrl?: string;
+  userMap: Map<string, string>;
+};
 
 export const getClickUpContentParser = (config: ClickUpContentParserConfig) => {
   const fileHelperConfig = {

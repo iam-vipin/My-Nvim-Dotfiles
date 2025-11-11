@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import { IParserExtension } from "@/lib/parser";
 
 export class ConfluenceIconParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {

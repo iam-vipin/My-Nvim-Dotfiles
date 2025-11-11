@@ -1,9 +1,4 @@
-import {
-  EGithubEntityConnectionType,
-  GithubWebhookPayload,
-  transformGitHubComment,
-  WebhookGitHubComment,
-} from "@plane/etl/github";
+import { EGithubEntityConnectionType, GithubWebhookPayload, WebhookGitHubComment } from "@plane/etl/github";
 import { logger } from "@plane/logger";
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
 import {
@@ -14,7 +9,7 @@ import {
 } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
-
+import { transformGitHubComment } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";

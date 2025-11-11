@@ -3,7 +3,7 @@ import {
   ExternalMentionParserExtension,
   IParserExtension,
   PlaneMentionParserExtension,
-} from "@plane/etl/parser";
+} from "@/lib/parser";
 
 export type TSlackContentParserConfig = {
   userMap: Map<string, string>;

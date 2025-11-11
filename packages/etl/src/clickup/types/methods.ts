@@ -1,7 +1,6 @@
 // add types which will be used in methods
 
-import { Client, ExProject, ExState } from "@plane/sdk";
-import { ClickupAPIService } from "../services";
+import { ExProject, ExState } from "@plane/sdk";
 import {
   TClickUpFolder,
   TClickUpSpace,
@@ -70,17 +69,6 @@ export type TClickUpAuthState = {
   userId: string;
   personalAccessToken: string;
   appInstallationId: string;
-};
-
-export type ClickUpContentParserConfig = {
-  planeClient: Client;
-  clickupService: ClickupAPIService;
-  workspaceSlug: string;
-  projectId: string;
-  fileDownloadHeaders: Record<string, string>;
-  apiBaseUrl: string;
-  appBaseUrl?: string;
-  userMap: Map<string, string>;
 };
 
 export type TClickUpTaskRelation = {

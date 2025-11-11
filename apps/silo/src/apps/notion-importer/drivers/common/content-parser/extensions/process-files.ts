@@ -1,6 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
-import { IParserExtension } from "@plane/etl/parser";
+import { IParserExtension } from "@/lib/parser";
 import { TAssetInfo } from "@/apps/notion-importer/types";
 
 export interface NotionFileParserConfig {

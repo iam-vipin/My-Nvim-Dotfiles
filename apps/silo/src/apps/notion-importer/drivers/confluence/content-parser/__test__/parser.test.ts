@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
-import { ContentParser, IParserExtension } from "@plane/etl/parser";
+import { ContentParser, IParserExtension } from "@/lib/parser";
 import {
   NotionBlockColorParserExtension,
   NotionHighlightParserExtension,

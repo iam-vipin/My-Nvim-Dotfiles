@@ -1,5 +1,5 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { ContentParser, GithubService } from "@plane/etl/github";
+import { GithubService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
 import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
 import {
@@ -9,6 +9,7 @@ import {
   TWorkspaceCredential,
 } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
+import { GithubContentParser } from "@/apps/github/helpers/content-parser";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getAPIClient } from "@/services/client";
@@ -166,10 +167,11 @@ const createOrUpdateGitHubComment = async (
 
   const htmlToRemove = /Comment (updated|created) on GitHub By \[(.*?)\]\((.*?)\)/gim;
   const cleanHtml = comment.comment_html.replace(htmlToRemove, "");
-  const markdown = ContentParser.toMarkdown(cleanHtml, assetImagePrefix);
+  const markdown = GithubContentParser.toMarkdown(cleanHtml, assetImagePrefix);
 
   // Find the credentials for the comment creator
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    // @ts-expect-error
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
     workspace_id: entityConnection.workspace_id,
     user_id: comment.updated_by || comment.created_by,

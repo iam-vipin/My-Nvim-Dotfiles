@@ -7,8 +7,6 @@ import {
   LinearConfig,
   LinearEntity,
   LinearDocument,
-  transformDocument,
-  LinearContentParserConfig,
   LinearService,
 } from "@plane/etl/linear";
 import {
@@ -25,6 +23,7 @@ import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { getRandomColor } from "@/helpers/generic-helpers";
 import { getJobCredentials } from "@/helpers/job";
+import { getContentParser, LinearContentParserConfig } from "../../helpers/content-parser";
 /* ------------------ Transformers ----------------------
 This file contains transformers for Linear entities, responsible
 for converting the given Linear entities into Plane entities. The
@@ -32,6 +31,19 @@ transformation depends on the types exported by the source core,
 and the core types need to be maintained to get the correct
 transformation results.
 --------------------- Transformers ---------------------- */
+
+const transformDocument = async (
+  document: LinearDocument,
+  options: LinearContentParserConfig
+): Promise<Partial<ExPage>> => {
+  const content = document.content ?? "<p></p>";
+  const linearContentParser = getContentParser(options);
+  const contentHtml = await linearContentParser.toPlaneHtml(content);
+  return {
+    name: document.title,
+    description_html: contentHtml,
+  };
+};
 
 export const getTransformedIssues = async (
   job: TImportJob<LinearConfig>,

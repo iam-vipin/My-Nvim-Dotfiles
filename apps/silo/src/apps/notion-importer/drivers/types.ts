@@ -1,4 +1,4 @@
-import { ContentParser } from "@plane/etl/parser";
+import { ContentParser } from "@/lib/parser";
 import { TZipFileNode } from "@/lib/zip-manager";
 import { TDocContentParserConfig } from "../types";
 

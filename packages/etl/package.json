@@ -63,11 +63,6 @@
       "types": "./dist/clickup/index.d.ts",
       "import": "./dist/clickup/index.mjs",
       "require": "./dist/clickup/index.js"
-    },
-    "./parser": {
-      "types": "./dist/parser/index.d.ts",
-      "import": "./dist/parser/index.mjs",
-      "require": "./dist/parser/index.js"
     }
   },
   "scripts": {
@@ -91,7 +86,6 @@
     "asana": "^3.0.11",
     "axios": "catalog:",
     "jira.js": "^4.0.1",
-    "marked": "^15.0.4",
     "node-html-parser": "^6.1.13",
     "papaparse": "^5.4.1",
     "tsdown": "catalog:",
@@ -99,13 +93,10 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "turndown": "^7.2.0",
     "@octokit/openapi-webhooks-types": "^8.3.0",
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/marked": "^6.0.0",
     "@types/node": "catalog:",
-    "@types/papaparse": "^5.3.15",
-    "@types/turndown": "^5.0.5"
+    "@types/papaparse": "^5.3.15"
   }
 }

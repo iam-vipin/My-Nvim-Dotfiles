@@ -1,9 +1,9 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { LinearService } from "@plane/etl/linear";
 import { Client, ExIssue, ExModule } from "@plane/sdk";
-import { E_IMPORTER_KEYS } from "@/core";
-import { LinearService } from "@/linear/services";
-import { IParserExtension } from "@/parser";
+import { IParserExtension } from "@/lib/parser";
 
 const LINEAR_ISSUE_LINK_REGEX = /https:\/\/linear\.app\/([\w.-]+)\/issue\/([\w.-]+)/;
 

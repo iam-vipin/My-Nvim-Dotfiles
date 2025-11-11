@@ -1,4 +1,4 @@
-import { ContentParser, IParserExtension, PTagCustomComponentExtension } from "@plane/etl/parser";
+import { ContentParser, IParserExtension, PTagCustomComponentExtension } from "@/lib/parser";
 import { EZipNodeType, TZipFileNode } from "@/lib/zip-manager/types";
 import { ZipManager } from "@/lib/zip-manager/zip-manager";
 import { TDocContentParserConfig } from "../../types";

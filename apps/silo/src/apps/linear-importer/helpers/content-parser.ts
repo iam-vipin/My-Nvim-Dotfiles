@@ -1,13 +1,25 @@
-import { E_IMPORTER_KEYS } from "@/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { LinearService } from "@plane/etl/linear";
+import { Client } from "@plane/sdk";
 import {
   ContentParser,
   ExternalImageParserExtension,
   ExternalMentionParserExtension,
   ExternalFileParserExtension,
-} from "@/parser";
-import { LinearContentParserConfig } from "../types";
+} from "@/lib/parser";
 import { LinearIssueMentionParserExtension, LinearProjectMentionParserExtension } from "./extensions";
 import { LinearSectionParserExtension } from "./extensions/sections";
+
+export type LinearContentParserConfig = {
+  planeClient: Client;
+  linearService: LinearService;
+  workspaceSlug: string;
+  projectId: string;
+  fileDownloadHeaders: Record<string, string>;
+  apiBaseUrl: string;
+  appBaseUrl?: string;
+  userMap: Map<string, string>;
+};
 
 export const getContentParser = (config: LinearContentParserConfig) => {
   const fileHelperConfig = {

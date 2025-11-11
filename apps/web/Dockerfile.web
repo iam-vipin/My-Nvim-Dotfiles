@@ -41,6 +41,11 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
+# Don't run production as root
+# RUN addgroup --system --gid 1001 nextjs
+# RUN adduser --system --uid 1001 web
+# USER web
+
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
@@ -65,10 +70,22 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
+ARG NEXT_PUBLIC_SILO_BASE_URL=""
+ENV NEXT_PUBLIC_SILO_BASE_URL=$NEXT_PUBLIC_SILO_BASE_URL
+
+ARG NEXT_PUBLIC_SILO_BASE_PATH="/silo"
+ENV NEXT_PUBLIC_SILO_BASE_PATH=$NEXT_PUBLIC_SILO_BASE_PATH
+
+ARG NEXT_PUBLIC_PI_BASE_URL=""
+ENV NEXT_PUBLIC_PI_BASE_URL=$NEXT_PUBLIC_PI_BASE_URL
+
+ARG NEXT_PUBLIC_PI_BASE_PATH="/pi"
+ENV NEXT_PUBLIC_PI_BASE_PATH=$NEXT_PUBLIC_PI_BASE_PATH
+
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN pnpm turbo run build --filter=web
+RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm turbo run build --filter=web
 
 # *****************************************************************************
 # STAGE 3: Serve with nginx

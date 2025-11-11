@@ -11,6 +11,7 @@ from .state import (
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,
+    IssueAttachmentServerEndpoint,
     IssueListCreateAPIEndpoint,
     IssueDetailAPIEndpoint,
     LabelListCreateAPIEndpoint,
@@ -23,6 +24,8 @@ from .issue import (
     IssueActivityDetailAPIEndpoint,
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
+    IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
 )
 
@@ -43,7 +46,21 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint
+from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint, ProjectMemberSiloEndpoint
+from .user import UserEndpoint
+
+from .customer import (
+    CustomerAPIEndpoint,
+    CustomerDetailAPIEndpoint,
+    CustomerRequestAPIEndpoint,
+    CustomerRequestDetailAPIEndpoint,
+    CustomerIssuesAPIEndpoint,
+    CustomerIssueDetailAPIEndpoint,
+    CustomerPropertiesAPIEndpoint,
+    CustomerPropertyDetailAPIEndpoint,
+    CustomerPropertyValuesAPIEndpoint,
+    CustomerPropertyValueDetailAPIEndpoint,
+)
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
@@ -52,6 +69,7 @@ from .intake import (
 
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
+from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
 from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset

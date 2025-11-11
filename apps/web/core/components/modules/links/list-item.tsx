@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
-import { Copy, Pencil, Trash2 } from "lucide-react";
+import { Copy, Pencil, Trash2, Link } from "lucide-react";
 // plane types
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ILinkDetails } from "@plane/types";
 // plane ui
-import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
+import { copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
 //
 // hooks
@@ -29,7 +29,8 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
   // platform os
   const { isMobile } = usePlatformOS();
 
-  const Icon = getIconForLink(link.url);
+  const faviconUrl: string | undefined = link.metadata?.favicon;
+  const linkTitle: string | undefined = link.metadata?.title;
 
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
@@ -46,13 +47,22 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+            {faviconUrl ? (
+              <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
+            ) : (
+              <Link className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+            )}
           </span>
-          <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-xs">
-              {link.title && link.title !== "" ? link.title : link.url}
-            </a>
-          </Tooltip>
+          <div className="flex flex-col gap-0.5 truncate">
+            <Tooltip tooltipContent={link.url} isMobile={isMobile}>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-xs">
+                {link.title && link.title !== "" ? link.title : link.url}
+              </a>
+            </Tooltip>
+            {linkTitle && linkTitle !== "" && (
+              <span className="text-custom-text-400 text-xs truncate">{linkTitle}</span>
+            )}
+          </div>
         </div>
 
         <div className="z-[1] flex flex-shrink-0 items-center">

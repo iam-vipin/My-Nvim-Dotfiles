@@ -4,10 +4,10 @@ import { index, layout, route } from "@react-router/dev/routes";
 export default [
   index("./page.tsx"),
   route(":workspaceSlug/:projectId", "./[workspaceSlug]/[projectId]/page.tsx"),
-  layout("./issues/[anchor]/client-layout.tsx", [route("issues/:anchor", "./issues/[anchor]/page.tsx")]),
-  layout("./views/[anchor]/client-layout.tsx", [route("views/:anchor", "./views/[anchor]/page.tsx")]),
-  layout("./pages/[anchor]/client-layout.tsx", [route("pages/:anchor", "./pages/[anchor]/page.tsx")]),
-  layout("./intake/[anchor]/client-layout.tsx", [route("intake/:anchor", "./intake/[anchor]/page.tsx")]),
+  layout("./issues/[anchor]/layout.tsx", [route("issues/:anchor", "./issues/[anchor]/page.tsx")]),
+  layout("./views/[anchor]/layout.tsx", [route("views/:anchor", "./views/[anchor]/page.tsx")]),
+  layout("./pages/[anchor]/layout.tsx", [route("pages/:anchor", "./pages/[anchor]/page.tsx")]),
+  layout("./intake/[anchor]/layout.tsx", [route("intake/:anchor", "./intake/[anchor]/page.tsx")]),
   // Catch-all route for 404 handling
   route("*", "./not-found.tsx"),
 ] satisfies RouteConfig;

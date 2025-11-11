@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
 import CreateIssueModal from "@/plane-web/components/intake/create/create-issue-modal";
-import type { Route } from "./+types/client-layout";
+import type { Route } from "./+types/layout";
 
 const IssuesPage = observer((props: Route.ComponentProps) => {
   const { params } = props;

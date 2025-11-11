@@ -47,9 +47,23 @@ class BulkOperationHooks:
         Custom update method to trigger a signal with
         all the updated objs on bulk update.
         """
+        # Check if this is a soft deletion (deleted_at is being set)
+        is_soft_delete = "deleted_at" in kwargs and kwargs["deleted_at"] is not None
+
+        if is_soft_delete:
+            # Capture PKs before update to handle soft deletion case
+            # where self queryset will become empty after deleted_at is set
+            deleted_pks = list(self.values_list("pk", flat=True))
+
         rows = super().update(**kwargs)
         if rows:
-            post_bulk_update.send(sender=self.__class__, model=self.model, objs=self)
+            if is_soft_delete:
+                # Use all_objects to get unfiltered queryset including soft-deleted records
+                objs = self.model.all_objects.filter(pk__in=deleted_pks)
+            else:
+                # For regular updates, use the current queryset
+                objs = self
+            post_bulk_update.send(sender=self.__class__, model=self.model, objs=objs)
         return rows
 
     @transaction.atomic

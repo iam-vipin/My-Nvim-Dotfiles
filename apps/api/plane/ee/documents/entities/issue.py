@@ -128,11 +128,11 @@ class IssueDocument(BaseDocument):
 
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, Project):
-            qs = related_instance.project_issue(manager="objects").all()
+            qs = related_instance.project_issue(manager="all_objects").all()
         elif isinstance(related_instance, ProjectMember):
-            qs = related_instance.project.project_issue(manager="objects").all()
+            qs = related_instance.project.project_issue(manager="all_objects").all()
         else:
-            qs = self.django.model.objects.none()
+            qs = self.django.model.all_objects.none()
         return self.apply_related_to_queryset(qs)
 
     def prepare_project_is_archived(self, instance):

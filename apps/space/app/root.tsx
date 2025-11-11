@@ -6,6 +6,7 @@ import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import siteWebmanifest from "@/app/assets/favicon/site.webmanifest?url";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
 // types
 import type { Route } from "./+types/root";
@@ -71,7 +72,11 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
-  return null;
+  return (
+    <div className="relative flex h-screen w-full items-center justify-center">
+      <LogoSpinner />
+    </div>
+  );
 }
 
 export function ErrorBoundary() {

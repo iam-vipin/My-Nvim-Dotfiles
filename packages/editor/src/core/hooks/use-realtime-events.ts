@@ -9,9 +9,9 @@ export const useRealtimeEvents = (props: {
   provider: HocuspocusProvider;
   id: string;
   updatePageProperties: ICollaborativeDocumentEditorProps["updatePageProperties"];
-  setForceCloseReceived: (value: boolean) => void;
+  signalForcedClose: (value: boolean) => void;
 }) => {
-  const { editor, updatePageProperties, provider, id, setForceCloseReceived } = props;
+  const { editor, updatePageProperties, provider, id, signalForcedClose } = props;
 
   useEffect(() => {
     if (!editor) return;
@@ -24,7 +24,7 @@ export const useRealtimeEvents = (props: {
         // CRITICAL: Check for force_close message FIRST (before other event handling)
         if ((event as any).type === "force_close") {
           // Mark this as a forced close for the onClose handler
-          setForceCloseReceived(true);
+          signalForcedClose(true);
 
           return; // Don't process as normal event
         }

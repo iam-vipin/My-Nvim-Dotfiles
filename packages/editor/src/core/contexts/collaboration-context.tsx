@@ -13,10 +13,9 @@ type CollabProviderProps = Parameters<typeof useYjsSetup>[0] & {
 
 export function CollaborationProvider({ fallback = null, children, ...args }: CollabProviderProps) {
   const setup = useYjsSetup(args);
-  console.log("setup", setup);
 
   // Only wait for provider setup, not content ready
-  // Consumers can check status.isEditorContentReady to gate content rendering
+  // Consumers can check state.isDocReady to gate content rendering
   if (!setup) {
     return <>{fallback}</>;
   }

@@ -1,12 +1,12 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 // react
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // yjs
 import * as Y from "yjs";
 // types
-import type { CollaborationState, ConnectionStatus, SyncStatus } from "@/types/collaboration";
+import type { CollaborationState, CollabStage, CollaborationError } from "@/types/collaboration";
 
 // Helper to check if a close code indicates a forced close
 const isForcedCloseCode = (code: number | undefined): boolean => {
@@ -15,100 +15,85 @@ const isForcedCloseCode = (code: number | undefined): boolean => {
   return code >= 4000 && code <= 4003;
 };
 
-// Collaboration state type
-type CollaborationStore = {
-  connectionStatus: ConnectionStatus;
-  syncStatus: SyncStatus;
-  error?: CollaborationState["error"];
-  isContentInIndexedDb: boolean;
-  isIndexedDbSynced: boolean;
-};
-
 type UseYjsSetupArgs = {
-  id: string;
-  url: string;
-  token: string;
-  serverHandler?: {
-    onStateChange: (state: CollaborationState) => void;
-  };
+  docId: string;
+  serverUrl: string;
+  authToken: string;
+  onStateChange?: (state: CollaborationState) => void;
   options?: {
     maxConnectionAttempts?: number;
   };
 };
 
-export const useYjsSetup = ({ id, url, token, serverHandler, options }: UseYjsSetupArgs) => {
-  const maxConnectionAttempts = options?.maxConnectionAttempts ?? 3;
+const DEFAULT_MAX_RETRIES = 3;
 
-  // Use useReducer for stable dispatch
-  const [collaborationState, dispatch] = useReducer(
-    (state: CollaborationStore, patch: Partial<CollaborationStore>) => ({ ...state, ...patch }),
-    {
-      connectionStatus: "initial",
-      syncStatus: "syncing",
-      error: undefined,
-      isContentInIndexedDb: false,
-      isIndexedDbSynced: false,
-    }
-  );
+export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseYjsSetupArgs) => {
+  // Current collaboration stage
+  const [stage, setStage] = useState<CollabStage>({ kind: "initial" });
+
+  // Cache readiness state
+  const [hasCachedContent, setHasCachedContent] = useState(false);
+  const [isCacheReady, setIsCacheReady] = useState(false);
 
   // Provider and Y.Doc in state (nullable until effect runs)
-  const [setup, setSetup] = useState<{ provider: HocuspocusProvider; ydoc: Y.Doc } | null>(null);
+  const [yjsSession, setYjsSession] = useState<{ provider: HocuspocusProvider; ydoc: Y.Doc } | null>(null);
 
   // Use refs for values that need to be mutated from callbacks
-  const connectionAttemptsRef = useRef(0);
-  const forceCloseReceivedRef = useRef(false);
+  const retryCountRef = useRef(0);
+  const forcedCloseSignalRef = useRef(false);
+  const isDisposedRef = useRef(false);
 
   // Create/destroy provider in effect (not during render)
   useEffect(() => {
-    let stopped = false;
+    // Reset refs when creating new provider (e.g., document switch)
+    retryCountRef.current = 0;
+    isDisposedRef.current = false;
 
     const provider = new HocuspocusProvider({
-      name: id,
-      token,
-      url,
+      name: docId,
+      token: authToken,
+      url: serverUrl,
       onAuthenticationFailed: () => {
-        if (stopped) return;
-        console.log("[useYjsSetup] Authentication failed");
-        dispatch({
-          connectionStatus: "disconnected",
-          syncStatus: "syncing",
-          error: { type: "auth-failed", message: "Authentication failed" },
-        });
+        if (isDisposedRef.current) return;
+        const error: CollaborationError = { type: "auth-failed", message: "Authentication failed" };
+        setStage({ kind: "disconnected", error });
       },
       onConnect: () => {
-        if (stopped) return;
-        connectionAttemptsRef.current = 0;
-        dispatch({ connectionStatus: "connected", error: undefined });
+        if (isDisposedRef.current) {
+          provider?.disconnect();
+          return;
+        }
+        retryCountRef.current = 0;
+        // After successful connection, transition to awaiting-sync (onSynced will move to synced)
+        setStage({ kind: "awaiting-sync" });
       },
-      onStatus: (status) => {
-        if (stopped) return;
-        if (status.status === "connecting") {
-          const isReconnecting = connectionAttemptsRef.current > 0;
-          dispatch({
-            connectionStatus: isReconnecting ? "reconnecting" : "connecting",
-            syncStatus: "syncing",
-          });
-        } else if (status.status === "disconnected") {
-          dispatch({
-            connectionStatus: "disconnected",
-            syncStatus: "syncing",
-            error: { type: "network-error", message: "Connection lost" },
-          });
-        } else if (status.status === "connected") {
-          dispatch({ connectionStatus: "connected", error: undefined });
+      onStatus: ({ status: providerStatus }) => {
+        if (isDisposedRef.current) return;
+        if (providerStatus === "connecting") {
+          // Derive whether this is initial connect or reconnection from retry count
+          const isReconnecting = retryCountRef.current > 0;
+          setStage(isReconnecting ? { kind: "reconnecting", attempt: retryCountRef.current } : { kind: "connecting" });
+        } else if (providerStatus === "disconnected") {
+          // Do not transition here; let handleClose decide the final stage
+        } else if (providerStatus === "connected") {
+          // Connection succeeded, move to awaiting-sync
+          setStage({ kind: "awaiting-sync" });
         }
       },
       onSynced: () => {
-        if (stopped) return;
-        connectionAttemptsRef.current = 0;
-        dispatch({ syncStatus: "synced", error: undefined });
+        if (isDisposedRef.current) return;
+        retryCountRef.current = 0;
+        // Document sync complete
+        setStage({ kind: "synced" });
 
         let workspaceSlug: string | null = null;
         let projectId: string | null = null;
+        let teamspaceId: string | null = null;
         try {
-          const urlParams = new URL(url);
+          const urlParams = new URL(serverUrl);
           workspaceSlug = urlParams.searchParams.get("workspaceSlug");
           projectId = urlParams.searchParams.get("projectId");
+          teamspaceId = urlParams.searchParams.get("teamspaceId");
         } catch {
           // Ignore malformed URL
         }
@@ -117,159 +102,187 @@ export const useYjsSetup = ({ id, url, token, serverHandler, options }: UseYjsSe
             action: "synced",
             workspaceSlug,
             projectId,
+            teamspaceId,
           })
         );
       },
     });
 
-    const handleClose = (event: { event?: { code?: number; reason?: string } }) => {
-      if (stopped) return;
+    const permanentlyStopProvider = () => {
+      isDisposedRef.current = true;
 
-      const closeCode = event.event?.code;
-      const isForcedClose = isForcedCloseCode(closeCode) || forceCloseReceivedRef.current;
-
-      if (isForcedClose) {
-        dispatch({
-          connectionStatus: "disconnected",
-          syncStatus: "syncing",
-          error: {
-            type: "forced-close",
-            code: closeCode || 0,
-            message: "Server forced connection close",
-          },
-        });
-
-        connectionAttemptsRef.current = 0;
-        forceCloseReceivedRef.current = false;
-        stopped = true;
-        provider.destroy();
-      } else {
-        connectionAttemptsRef.current++;
-
-        if (connectionAttemptsRef.current >= maxConnectionAttempts) {
-          dispatch({
-            connectionStatus: "disconnected",
-            syncStatus: "syncing",
-            error: {
-              type: "max-retries",
-              message: `Failed to connect after ${maxConnectionAttempts} attempts`,
-            },
-          });
-
-          stopped = true;
-          provider.destroy();
-        } else {
-          dispatch({
-            connectionStatus: "reconnecting",
-            syncStatus: "syncing",
-            error: { type: "network-error", message: "Connection lost, reconnecting..." },
-          });
+      const wsProvider = provider.configuration.websocketProvider;
+      if (wsProvider) {
+        try {
+          wsProvider.shouldConnect = false;
+          wsProvider.disconnect();
+          wsProvider.destroy();
+        } catch (error) {
+          console.error(`Error tearing down websocketProvider:`, error);
         }
       }
-    };
-
-    provider.on("close", handleClose);
-
-    setSetup({ provider, ydoc: provider.document as Y.Doc });
-
-    return () => {
-      stopped = true;
       try {
         provider.destroy();
       } catch (error) {
         console.error(`Error destroying provider:`, error);
       }
     };
-  }, [id, url, token, maxConnectionAttempts]);
+
+    const handleClose = (closeEvent: { event?: { code?: number; reason?: string } }) => {
+      if (isDisposedRef.current) return;
+
+      const closeCode = closeEvent.event?.code;
+      const isForcedClose = isForcedCloseCode(closeCode) || forcedCloseSignalRef.current;
+
+      if (isForcedClose) {
+        // Server forced close: terminal error
+        const error: CollaborationError = {
+          type: "forced-close",
+          code: closeCode || 0,
+          message: "Server forced connection close",
+        };
+        setStage({ kind: "disconnected", error });
+
+        retryCountRef.current = 0;
+        forcedCloseSignalRef.current = false;
+        permanentlyStopProvider();
+      } else {
+        // Transient connection loss: attempt reconnection
+        retryCountRef.current++;
+
+        if (retryCountRef.current >= DEFAULT_MAX_RETRIES) {
+          // Exceeded max retry attempts
+          const error: CollaborationError = {
+            type: "max-retries",
+            message: `Failed to connect after ${DEFAULT_MAX_RETRIES} attempts`,
+          };
+          setStage({ kind: "disconnected", error });
+
+          permanentlyStopProvider();
+        } else {
+          // Still have retries left, move to reconnecting
+          setStage({ kind: "reconnecting", attempt: retryCountRef.current });
+        }
+      }
+    };
+
+    provider.on("close", handleClose);
+
+    setYjsSession({ provider, ydoc: provider.document as Y.Doc });
+
+    return () => {
+      try {
+        provider.off("close", handleClose);
+      } catch (error) {
+        console.error(`Error unregistering close handler:`, error);
+      }
+      permanentlyStopProvider();
+    };
+  }, [docId, serverUrl, authToken]);
 
   // IndexedDB persistence lifecycle
   useEffect(() => {
-    if (!setup) return;
+    if (!yjsSession) return;
 
-    const localProvider = new IndexeddbPersistence(id, setup.provider.document);
+    const idbPersistence = new IndexeddbPersistence(docId, yjsSession.provider.document);
 
-    const handleIndexedDbSync = () => {
-      const yFragment = localProvider.doc.getXmlFragment("default");
+    const onIdbSynced = () => {
+      const yFragment = idbPersistence.doc.getXmlFragment("default");
       const docLength = yFragment?.length ?? 0;
-      dispatch({
-        isIndexedDbSynced: true,
-        isContentInIndexedDb: docLength > 0,
-      });
+      setIsCacheReady(true);
+      setHasCachedContent(docLength > 0);
     };
 
-    localProvider.on("synced", handleIndexedDbSync);
+    idbPersistence.on("synced", onIdbSynced);
 
     return () => {
-      localProvider.off("synced", handleIndexedDbSync);
+      idbPersistence.off("synced", onIdbSynced);
       try {
-        localProvider.destroy();
+        idbPersistence.destroy();
       } catch (error) {
         console.error(`Error destroying local provider:`, error);
       }
     };
-  }, [id, setup]);
+  }, [docId, yjsSession]);
 
-  // Clear IndexedDB after server sync when document is empty
+  // Observe Y.Doc content changes to update hasCachedContent (catches fallback scenario)
   useEffect(() => {
-    if (!setup) return;
-    if (!collaborationState.isIndexedDbSynced || collaborationState.syncStatus !== "synced") return;
+    if (!yjsSession || !isCacheReady) return;
 
-    const yFragment = setup.ydoc.getXmlFragment("default");
-    const docLength = yFragment?.length ?? 0;
+    const fragment = yjsSession.ydoc.getXmlFragment("default");
+    let lastHasContent = false;
 
-    if (docLength === 0) {
-      dispatch({ isContentInIndexedDb: false });
-      // Note: Actual IndexedDB deletion deferred to avoid conflicts with active persistence
-      // IndexedDB will be cleaned up naturally when user navigates away
-    } else {
-      dispatch({ isContentInIndexedDb: true });
-    }
-  }, [setup, collaborationState.isIndexedDbSynced, collaborationState.syncStatus, id]);
+    const updateCachedContentFlag = () => {
+      const len = fragment?.length ?? 0;
+      const hasContent = len > 0;
 
-  // Notify server handler of state changes (use ref to avoid dependency on handler)
-  const serverHandlerRef = useRef(serverHandler);
-  serverHandlerRef.current = serverHandler;
+      // Only update state if the boolean value actually changed
+      if (hasContent !== lastHasContent) {
+        lastHasContent = hasContent;
+        setHasCachedContent(hasContent);
+      }
+    };
+    // Initial check (handles fallback content loaded before this effect runs)
+    updateCachedContentFlag();
+
+    // Use observeDeep to catch nested changes (keystrokes modify Y.XmlText inside Y.XmlElement)
+    fragment.observeDeep(updateCachedContentFlag);
+
+    return () => {
+      try {
+        fragment.unobserveDeep(updateCachedContentFlag);
+      } catch (error) {
+        console.error("Error unobserving fragment:", error);
+      }
+    };
+  }, [yjsSession, isCacheReady]);
+
+  // Notify state changes callback (use ref to avoid dependency on handler)
+  const stateChangeCallbackRef = useRef(onStateChange);
+  stateChangeCallbackRef.current = onStateChange;
 
   useEffect(() => {
-    if (!serverHandlerRef.current) return;
+    if (!stateChangeCallbackRef.current) return;
+
+    const isServerSynced = stage.kind === "synced";
+    const isServerDisconnected = stage.kind === "disconnected";
 
     const state: CollaborationState = {
-      connectionStatus: collaborationState.connectionStatus,
-      syncStatus: collaborationState.syncStatus,
-      error: collaborationState.error,
+      stage,
+      isServerSynced,
+      isServerDisconnected,
     };
 
-    serverHandlerRef.current.onStateChange(state);
-  }, [collaborationState.connectionStatus, collaborationState.syncStatus, collaborationState.error]);
+    stateChangeCallbackRef.current(state);
+  }, [stage]);
 
-  // Derived values
-  const hasServerSynced = collaborationState.syncStatus === "synced";
-  const hasServerConnectionFailed = collaborationState.connectionStatus === "disconnected";
-  const isEditorContentReady =
-    hasServerSynced ||
-    hasServerConnectionFailed ||
-    (collaborationState.isIndexedDbSynced && collaborationState.isContentInIndexedDb);
+  // Derived values for convenience
+  const isServerSynced = stage.kind === "synced";
+  const isServerDisconnected = stage.kind === "disconnected";
+  const isDocReady = isServerSynced || isServerDisconnected || (isCacheReady && hasCachedContent);
 
-  const setForceCloseReceived = useCallback((value: boolean) => {
-    forceCloseReceivedRef.current = value;
+  const signalForcedClose = useCallback((value: boolean) => {
+    forcedCloseSignalRef.current = value;
   }, []);
 
   // Don't return anything until provider is ready - guarantees non-null provider
-  if (!setup) {
+  if (!yjsSession) {
     return null;
   }
 
   return {
-    provider: setup.provider,
-    ydoc: setup.ydoc,
-    status: {
-      ...collaborationState,
-      hasServerSynced,
-      hasServerConnectionFailed,
-      isEditorContentReady,
+    provider: yjsSession.provider,
+    ydoc: yjsSession.ydoc,
+    state: {
+      stage,
+      hasCachedContent,
+      isCacheReady,
+      isServerSynced,
+      isServerDisconnected,
+      isDocReady,
     },
     actions: {
-      setForceCloseReceived,
+      signalForcedClose,
     },
   };
 };

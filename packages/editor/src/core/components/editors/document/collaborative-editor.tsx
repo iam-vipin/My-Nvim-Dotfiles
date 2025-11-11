@@ -53,7 +53,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
   } = props;
 
   // Get non-null provider from context
-  const { provider, status, actions } = useCollaboration();
+  const { provider, state, actions } = useCollaboration();
 
   // Editor initialization with guaranteed non-null provider
   const { editor, titleEditor } = useCollaborativeEditor({
@@ -90,14 +90,13 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     containerClassName,
   });
 
-  // Show loader ONLY when IndexedDB is known empty and server hasn't synced yet
-  const shouldShowSyncLoader = status.isIndexedDbSynced && !status.isContentInIndexedDb && !status.hasServerSynced;
-  const shouldWaitForFallbackBinary =
-    isFetchingFallbackBinary && !status.isContentInIndexedDb && status.hasServerConnectionFailed;
+  // Show loader ONLY when cache is known empty and server hasn't synced yet
+  const shouldShowSyncLoader = state.isCacheReady && !state.hasCachedContent && !state.isServerSynced;
+  const shouldWaitForFallbackBinary = isFetchingFallbackBinary && !state.hasCachedContent && state.isServerDisconnected;
   const isLoading = shouldShowSyncLoader || shouldWaitForFallbackBinary || pageRestorationInProgress;
 
-  // Gate content rendering on isEditorContentReady to prevent empty editor flash
-  const showContentSkeleton = !status.isEditorContentReady;
+  // Gate content rendering on isDocReady to prevent empty editor flash
+  const showContentSkeleton = !state.isDocReady;
 
   if (!editor || !titleEditor) return null;
 
@@ -144,7 +143,12 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   const token = useMemo(() => JSON.stringify(user), [user]);
 
   return (
-    <CollaborationProvider id={id} url={realtimeConfig.url} token={token} serverHandler={serverHandler}>
+    <CollaborationProvider
+      docId={id}
+      serverUrl={realtimeConfig.url}
+      authToken={token}
+      onStateChange={serverHandler?.onStateChange}
+    >
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>
   );

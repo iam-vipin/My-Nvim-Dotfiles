@@ -23,7 +23,7 @@ export const usePageFallback = (args: TArgs) => {
   const [isFetchingFallbackBinary, setIsFetchingFallbackBinary] = useState(false);
 
   // Derive connection failure from collaboration state
-  const hasConnectionFailed = collaborationState?.connectionStatus === "disconnected";
+  const hasConnectionFailed = collaborationState?.stage.kind === "disconnected";
 
   const handleUpdateDescription = useCallback(async () => {
     if (!hasConnectionFailed) return;
@@ -65,7 +65,7 @@ export const usePageFallback = (args: TArgs) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
-        message: error?.detail || "Failed to update description using backup mechanism.",
+        message: `Failed to update description using backup mechanism, ${error?.message}`,
       });
     } finally {
       setIsFetchingFallbackBinary(false);

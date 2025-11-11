@@ -26,7 +26,7 @@ type UseCollaborativeEditorArgs = Omit<TCollaborativeEditorHookProps, "realtimeC
   provider: HocuspocusProvider;
   user: TCollaborativeEditorHookProps["user"];
   actions: {
-    setForceCloseReceived: (value: boolean) => void;
+    signalForcedClose: (value: boolean) => void;
   };
 };
 
@@ -155,7 +155,7 @@ export const useCollaborativeEditor = (props: UseCollaborativeEditorArgs) => {
     provider,
     id,
     updatePageProperties,
-    setForceCloseReceived: actions.setForceCloseReceived,
+    signalForcedClose: actions.signalForcedClose,
   });
 
   const titleExtensions = useMemo(

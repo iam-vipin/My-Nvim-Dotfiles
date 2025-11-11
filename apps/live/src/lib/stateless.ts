@@ -58,6 +58,7 @@ export const onStateless = async ({ payload, document, connection }: onStateless
     const parsedPayload = parseResult.data as {
       workspaceSlug?: string;
       projectId?: string;
+      teamspaceId?: string;
       action?: string;
     };
 

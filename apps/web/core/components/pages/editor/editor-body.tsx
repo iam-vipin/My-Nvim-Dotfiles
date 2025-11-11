@@ -148,8 +148,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   useEffect(() => {
     setSyncingStatus("syncing");
     onCollaborationStateChange?.({
-      connectionStatus: "connecting",
-      syncStatus: "syncing",
+      stage: { kind: "connecting" },
+      isServerSynced: false,
+      isServerDisconnected: false,
     });
   }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
@@ -172,13 +173,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         // Pass full state to parent
         onCollaborationStateChange?.(state);
 
-        // Update local syncing status for UI
-        if (state.connectionStatus === "disconnected") {
+        // Map collaboration stage to UI syncing status
+        // Stage → UI mapping: disconnected → error | synced → synced | all others → syncing
+        if (state.stage.kind === "disconnected") {
           setSyncingStatus("error");
-        } else if (state.connectionStatus === "connected" && state.syncStatus === "synced") {
+        } else if (state.stage.kind === "synced") {
           setSyncingStatus("synced");
         } else {
-          // Handles "connecting", "reconnecting", "connected but not synced", etc.
+          // initial, connecting, awaiting-sync, reconnecting → show as syncing
           setSyncingStatus("syncing");
         }
       },

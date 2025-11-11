@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,16 +18,17 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web constants
 import { ProjectUpdatesUpgrade } from "@/plane-web/components/project-overview/upgrade";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import type { Route } from "./+types/page";
 
-const UpdatesSettingsPage = observer(() => {
+function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { getProjectFeatures, toggleProjectFeatures } = useProjectAdvanced();
   const { t } = useTranslation();
   // derived values
-  const currentProjectDetails = getProjectFeatures(projectId?.toString());
+  const currentProjectDetails = getProjectFeatures(projectId);
   const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!canPerformProjectAdminActions) {
@@ -51,7 +50,7 @@ const UpdatesSettingsPage = observer(() => {
     const settingsPayload = {
       is_project_updates_enabled: !currentProjectDetails?.["is_project_updates_enabled"],
     };
-    const updateProjectPromise = toggleProjectFeatures(workspaceSlug.toString(), projectId.toString(), settingsPayload);
+    const updateProjectPromise = toggleProjectFeatures(workspaceSlug, projectId, settingsPayload);
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {
@@ -72,11 +71,7 @@ const UpdatesSettingsPage = observer(() => {
           title={t("project_settings.project_updates.heading")}
           description={t("project_settings.project_updates.description")}
         />
-        <WithFeatureFlagHOC
-          flag="PROJECT_UPDATES"
-          fallback={<ProjectUpdatesUpgrade />}
-          workspaceSlug={workspaceSlug?.toString()}
-        >
+        <WithFeatureFlagHOC flag="PROJECT_UPDATES" fallback={<ProjectUpdatesUpgrade />} workspaceSlug={workspaceSlug}>
           <>
             <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100">
               <div className="flex items-center gap-4">
@@ -104,6 +99,6 @@ const UpdatesSettingsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default UpdatesSettingsPage;
+export default observer(UpdatesSettingsPage);

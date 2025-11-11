@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components
@@ -11,13 +10,14 @@ import { PageHead } from "@/components/core/page-title";
 import { TeamspaceDetailHeader } from "@/plane-web/components/teamspaces/headers/detail-header";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/layout";
 
-export default function TeamspacePagesLayout() {
-  const { teamspaceId } = useParams();
+export default function TeamspacePagesLayout({ params }: Route.ComponentProps) {
+  const { teamspaceId } = params;
   // store hooks
   const { getTeamspaceById } = useTeamspaces();
   // derived values
-  const currentTeam = getTeamspaceById(teamspaceId?.toString());
+  const currentTeam = getTeamspaceById(teamspaceId);
   const pageTitle = currentTeam?.name ? `Teamspace ${currentTeam?.name} - Pages` : undefined;
 
   return (

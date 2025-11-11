@@ -1,9 +1,9 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components components
@@ -23,8 +23,9 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 
-const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
+function GitHubEnterpriseIntegration() {
   // hooks
+  const searchParams = useSearchParams();
   const { resolvedTheme } = useTheme();
   const {
     workspace,
@@ -64,7 +65,7 @@ const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = ob
   );
 
   // error message
-  const errorCode = searchParams?.error;
+  const errorCode = searchParams?.get("error");
   useEffect(() => {
     if (!errorCode) {
       return;
@@ -133,6 +134,6 @@ const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = ob
       {organization && <IntegrationRoot isEnterprise />}
     </div>
   );
-});
+}
 
-export default GitHubEnterpriseIntegration;
+export default observer(GitHubEnterpriseIntegration);

@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -13,11 +12,12 @@ import { PiChatLayout } from "@/plane-web/components/pi-chat/layout";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/layout";
 import { PiAppSidebar } from "./sidebar";
 
-function PiLayout() {
+function PiLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   return (

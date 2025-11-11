@@ -2,7 +2,6 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH, E_FEATURE_FLAGS } from "@plane/constants";
@@ -12,10 +11,11 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IntegrationsEmptyState } from "@/plane-web/components/integrations";
+import type { Route } from "./+types/layout";
 
-const IntegrationLayout = observer(() => {
+function IntegrationLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug: workspaceSlugParam } = useParams();
+  const { workspaceSlug } = params;
 
   // hooks
   const { currentWorkspace } = useWorkspace();
@@ -24,12 +24,11 @@ const IntegrationLayout = observer(() => {
 
   // derived values
   const siloBaseUrl = encodeURI(SILO_BASE_URL + SILO_BASE_PATH) || undefined;
-  const workspaceSlug = workspaceSlugParam?.toString() || undefined;
   const workspaceId = currentWorkspace?.id || undefined;
   const userId = currentUser?.id || undefined;
 
   // check if workspace exists
-  if (!workspaceSlug || !workspaceId || !userId || !siloBaseUrl) return null;
+  if (!workspaceId || !userId || !siloBaseUrl) return null;
 
   return (
     <WithFeatureFlagHOC
@@ -53,6 +52,6 @@ const IntegrationLayout = observer(() => {
       </SettingsContentWrapper>
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default IntegrationLayout;
+export default observer(IntegrationLayout);

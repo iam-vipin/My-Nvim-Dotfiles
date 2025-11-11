@@ -6,15 +6,14 @@ import Image from "next/image";
 // components
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
+// assets
+import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import type { TProjectMap } from "@/plane-web/types/integrations";
-import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 
 type TEntityForm = {
   value: TProjectMap;

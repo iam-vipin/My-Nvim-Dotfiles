@@ -8,7 +8,7 @@ import { CustomerUpgrade } from "@/plane-web/components/customers";
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-const CustomersLayout = observer(() => {
+function CustomersLayout() {
   // hooks
   const { loader, isCustomersFeatureEnabled } = useCustomers();
   // derived values
@@ -30,6 +30,6 @@ const CustomersLayout = observer(() => {
       )}
     </WorkspaceAccessWrapper>
   );
-});
+}
 
-export default CustomersLayout;
+export default observer(CustomersLayout);

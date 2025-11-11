@@ -2,14 +2,14 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import type { Route } from "./+types/layout";
 
-const TemplatesLayout = observer(() => {
+function TemplatesLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
 
   return (
     <SettingsContentWrapper>
@@ -25,6 +25,6 @@ const TemplatesLayout = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default TemplatesLayout;
+export default observer(TemplatesLayout);

@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -9,14 +8,13 @@ import { FlatfileDashboardRoot } from "@/plane-web/components/importers/flatfile
 import { StepsRoot } from "@/plane-web/components/importers/flatfile/steps";
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
 
-const FlatfileImporter: FC = observer(() => {
+function FlatfileImporter() {
   const {
     // Properties
     workspace,
     user,
     externalApiToken,
     dashboardView,
-
     // Actions
     fetchProjects,
     fetchExternalApiToken,
@@ -83,6 +81,6 @@ const FlatfileImporter: FC = observer(() => {
     );
 
   return <Fragment>{dashboardView ? <FlatfileDashboardRoot /> : <StepsRoot />}</Fragment>;
-});
+}
 
-export default FlatfileImporter;
+export default observer(FlatfileImporter);

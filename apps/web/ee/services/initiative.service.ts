@@ -271,8 +271,8 @@ export class InitiativeService extends APIService {
     initiativeId: string,
     params:
       | {
-        created_at__gt: string;
-      }
+          created_at__gt: string;
+        }
       | object = {}
   ): Promise<TInitiativeActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/activities/`, {

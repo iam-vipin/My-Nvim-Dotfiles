@@ -1,23 +1,22 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { ProjectEpicsLayoutRoot } from "@/plane-web/components/issues/issue-layouts/epic-layout-root";
+import type { Route } from "./+types/page";
 
-const ProjectEpicsPage = observer(() => {
+function ProjectEpicsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = params;
   // store hooks
   const { getProjectById } = useProject();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
-  if (!workspaceSlug || !projectId) return <></>;
 
   return (
     <>
@@ -29,6 +28,6 @@ const ProjectEpicsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectEpicsPage;
+export default observer(ProjectEpicsPage);

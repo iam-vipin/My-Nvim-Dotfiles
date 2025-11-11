@@ -1,9 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 // components
-import { Logo } from "@/components/common/logo";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane web imports
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage } from "@/plane-web/hooks/store";
 
 type Props = {
   pageId: string;

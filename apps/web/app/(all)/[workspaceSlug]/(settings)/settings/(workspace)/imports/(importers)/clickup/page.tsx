@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -12,7 +11,7 @@ import { ClickUpDashboardRoot } from "@/plane-web/components/importers/clickup/d
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { useClickUpImporter, useFlag } from "@/plane-web/hooks/store";
 
-const ClickUpImporter: FC = observer(() => {
+function ClickUpImporter() {
   const {
     user,
     workspace,
@@ -62,6 +61,6 @@ const ClickUpImporter: FC = observer(() => {
       )}
     </Fragment>
   );
-});
+}
 
-export default ClickUpImporter;
+export default observer(ClickUpImporter);

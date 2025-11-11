@@ -3,7 +3,6 @@
 import { observer } from "mobx-react";
 
 // component
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -16,23 +15,21 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ApplicationInstallationDetails } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const ApplicationInstallPage: React.FC = observer(() => {
+function ApplicationInstallPage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { appSlug } = useParams();
+  const { appSlug } = params;
   const { getApplicationBySlug, fetchApplication } = useApplications();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Install Application` : undefined;
 
-  const application = getApplicationBySlug(appSlug?.toString() || "");
-  const { data, isLoading } = useSWR(
-    appSlug ? APPLICATION_DETAILS(appSlug.toString()) : null,
-    appSlug ? async () => fetchApplication(appSlug.toString()) : null
-  );
+  const application = getApplicationBySlug(appSlug);
+  const { data, isLoading } = useSWR(APPLICATION_DETAILS(appSlug), () => fetchApplication(appSlug));
 
   if (!data || !application || isLoading) {
     return <EmailSettingsLoader />;
@@ -48,6 +45,6 @@ const ApplicationInstallPage: React.FC = observer(() => {
       <ApplicationInstallationDetails app={application} />
     </>
   );
-});
+}
 
-export default ApplicationInstallPage;
+export default observer(ApplicationInstallPage);

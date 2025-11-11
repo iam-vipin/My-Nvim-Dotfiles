@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
@@ -26,6 +25,7 @@ import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
+import type { Route } from "./+types/page";
 // services
 const workspaceService = new WorkspaceService();
 const workspacePageService = new WorkspacePageService();
@@ -33,29 +33,25 @@ const workspacePageVersionService = new WorkspacePageVersionService();
 
 const storeType = EPageStoreType.WORKSPACE;
 
-const PageDetailsPage = observer(() => {
+function PageDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, pageId } = useParams();
+  const { workspaceSlug, pageId } = params;
   // flag
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
   const page = usePage({
-    pageId: pageId?.toString() ?? "",
+    pageId,
     storeType,
   });
   const { uploadEditorAsset } = useEditorAsset();
   // derived values
-  const workspaceId = useMemo(
-    () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "") : ""),
-    [getWorkspaceBySlug, workspaceSlug]
-  );
+  const workspaceId = useMemo(() => getWorkspaceBySlug(workspaceSlug)?.id ?? "", [getWorkspaceBySlug, workspaceSlug]);
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
-    async (payload: TSearchEntityRequestPayload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", payload),
+    async (payload: TSearchEntityRequestPayload) => await workspaceService.searchEntity(workspaceSlug ?? "", payload),
     [workspaceSlug]
   );
   // editor config
@@ -74,22 +70,16 @@ const PageDetailsPage = observer(() => {
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
       create: createPage,
-      fetchAllVersions: async (pageId) => {
-        if (!workspaceSlug) return;
-        return await workspacePageVersionService.fetchAllVersions(workspaceSlug.toString(), pageId);
-      },
+      fetchAllVersions: async (pageId) => await workspacePageVersionService.fetchAllVersions(workspaceSlug, pageId),
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !id) return;
-        return await workspacePageService.fetchDescriptionBinary(workspaceSlug.toString(), id);
+        if (!id) return;
+        return await workspacePageService.fetchDescriptionBinary(workspaceSlug, id);
       },
       fetchEntity: fetchEntityCallback,
-      fetchVersionDetails: async (pageId, versionId) => {
-        if (!workspaceSlug) return;
-        return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
-      },
+      fetchVersionDetails: async (pageId, versionId) =>
+        await workspacePageVersionService.fetchVersionById(workspaceSlug, pageId, versionId),
       restoreVersion: async (pageId, versionId) => {
-        if (!workspaceSlug) return;
-        await workspacePageVersionService.restoreVersion(workspaceSlug.toString(), pageId, versionId);
+        await workspacePageVersionService.restoreVersion(workspaceSlug, pageId, versionId);
       },
       getRedirectionLink: (pageId) => {
         if (pageId) {
@@ -114,12 +104,12 @@ const PageDetailsPage = observer(() => {
               entity_identifier: id ?? "",
               entity_type: EFileAssetType.PAGE_DESCRIPTION,
             },
-            workspaceSlug: workspaceSlug?.toString() ?? "",
+            workspaceSlug,
           });
           return asset_id;
         },
         workspaceId,
-        workspaceSlug: workspaceSlug?.toString() ?? "",
+        workspaceSlug,
       }),
     }),
     [getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
@@ -128,7 +118,7 @@ const PageDetailsPage = observer(() => {
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
     () => ({
       documentType: "workspace_page",
-      workspaceSlug: workspaceSlug?.toString() ?? "",
+      workspaceSlug,
     }),
     [workspaceSlug]
   );
@@ -146,7 +136,7 @@ const PageDetailsPage = observer(() => {
       </div>
     );
 
-  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
+  if (!isNestedPagesEnabled(workspaceSlug) && page?.parent_id)
     return (
       <div className="size-full flex flex-col items-center justify-center">
         <h3 className="text-lg font-semibold text-center">Please upgrade your plan to view this nested page</h3>
@@ -185,7 +175,7 @@ const PageDetailsPage = observer(() => {
             page={page}
             storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
-            workspaceSlug={workspaceSlug.toString()}
+            workspaceSlug={workspaceSlug}
           />
           <IssuePeekOverview />
           <EpicPeekOverview />
@@ -193,6 +183,6 @@ const PageDetailsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default PageDetailsPage;
+export default observer(PageDetailsPage);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+// layouts
 import { Outlet } from "react-router";
 // components
 import { EUserPermissions } from "@plane/constants";
@@ -12,21 +12,22 @@ import { WikiAppPowerKProvider } from "@/plane-web/components/command-palette/wi
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
 import { WikiUpgradeScreen } from "@/plane-web/components/wiki/upgrade-screen";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
-// local imports
+// local components
+import type { Route } from "./+types/layout";
 import { PagesAppSidebar } from "./_sidebar";
 
-export default function WikiLayout() {
+export default function WikiLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
 
   return (
     <AuthenticationWrapper>
       <WikiAppPowerKProvider />
       <WorkspaceAuthWrapper>
         <WithFeatureFlagHOC
-          workspaceSlug={workspaceSlug?.toString()}
+          workspaceSlug={workspaceSlug}
           flag="WORKSPACE_PAGES"
-          fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug?.toString()} />}
+          fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug} />}
         >
           <WorkspaceAccessWrapper
             pageKey="pages"

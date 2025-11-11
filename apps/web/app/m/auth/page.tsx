@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import type { TInstanceConfig } from "@plane/types";
 // hooks
@@ -13,7 +12,7 @@ export const meta: Route.MetaFunction = () => [
   { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1" },
 ];
 
-const MobileAuth = observer(() => {
+function MobileAuth() {
   // hooks
   const { config } = useInstance();
 
@@ -26,6 +25,6 @@ const MobileAuth = observer(() => {
       </div>
     </div>
   );
-});
+}
 
-export default MobileAuth;
+export default observer(MobileAuth);

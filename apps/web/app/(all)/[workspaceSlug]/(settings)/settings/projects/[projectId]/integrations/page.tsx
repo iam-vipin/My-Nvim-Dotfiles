@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -20,27 +19,26 @@ import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys"
 // services
 import { IntegrationService } from "@/services/integrations";
 import { ProjectService } from "@/services/project";
+import type { Route } from "./+types/page";
 
 // services
 const integrationService = new IntegrationService();
 const projectService = new ProjectService();
 
-const ProjectIntegrationsPage = observer(() => {
+function ProjectIntegrationsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // theme hook
   const { resolvedTheme } = useTheme();
   // fetch project details
-  const { data: projectDetails } = useSWR<IProject>(
-    workspaceSlug && projectId ? PROJECT_DETAILS(workspaceSlug?.toString(), projectId?.toString()) : null,
-    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
+  const { data: projectDetails } = useSWR<IProject>(PROJECT_DETAILS(workspaceSlug, projectId), () =>
+    projectService.getProject(workspaceSlug, projectId)
   );
   // fetch Integrations list
-  const { data: workspaceIntegrations } = useSWR(
-    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
+  const { data: workspaceIntegrations } = useSWR(WORKSPACE_INTEGRATIONS(workspaceSlug), () =>
+    integrationService.getWorkspaceIntegrationsList(workspaceSlug)
   );
   // derived values
   const isAdmin = projectDetails?.member_role === 20;
@@ -76,6 +74,6 @@ const ProjectIntegrationsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectIntegrationsPage;
+export default observer(ProjectIntegrationsPage);

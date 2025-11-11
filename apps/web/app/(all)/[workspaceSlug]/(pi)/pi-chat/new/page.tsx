@@ -11,7 +11,7 @@ import { useUser } from "@/hooks/store/user/user-user";
 import { NewConversation } from "@/plane-web/components/pi-chat/conversation/new-converstaion";
 import { InputBox } from "@/plane-web/components/pi-chat/input";
 
-const NewChatPage = observer(() => {
+function NewChatPage() {
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -27,6 +27,6 @@ const NewChatPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default NewChatPage;
+export default observer(NewChatPage);

@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -14,17 +13,18 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web imports
 import { EpicsEmptyState } from "@/plane-web/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import type { Route } from "./+types/layout";
 
-const EpicsLayout = observer(() => {
+function EpicsLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { getProjectById } = useProject();
   const { getProjectFeatures } = useProjectAdvanced();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = getProjectById(projectId?.toString());
-  const projectFeatures = getProjectFeatures(projectId?.toString());
+  const project = getProjectById(projectId);
+  const projectFeatures = getProjectFeatures(projectId);
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   const pageTitle = project?.name ? `${project?.name} - Epics` : undefined;
@@ -32,7 +32,7 @@ const EpicsLayout = observer(() => {
   if (project && !isEpicsEnabled)
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EpicsEmptyState workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} redirect />
+        <EpicsEmptyState workspaceSlug={workspaceSlug} projectId={projectId} redirect />
       </div>
     );
 
@@ -58,6 +58,6 @@ const EpicsLayout = observer(() => {
       <Outlet />
     </>
   );
-});
+}
 
-export default EpicsLayout;
+export default observer(EpicsLayout);

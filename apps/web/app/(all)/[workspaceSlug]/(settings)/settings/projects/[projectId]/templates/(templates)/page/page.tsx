@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // plane web imports
@@ -9,9 +9,10 @@ import { useTranslation } from "@plane/i18n";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdatePageTemplate } from "@/plane-web/components/templates/settings/page";
-const CreateProjectLevelPageTemplatePage = observer(() => {
+import type { Route } from "./+types/page";
+function CreateProjectLevelPageTemplatePage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   const searchParams = useSearchParams();
   // derived values
   const templateId = searchParams.get("templateId");
@@ -19,7 +20,7 @@ const CreateProjectLevelPageTemplatePage = observer(() => {
 
   return (
     <WithFeatureFlagHOC
-      workspaceSlug={workspaceSlug?.toString()}
+      workspaceSlug={workspaceSlug}
       flag={E_FEATURE_FLAGS.PAGE_TEMPLATES}
       fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.PAGE_TEMPLATES} />}
     >
@@ -29,13 +30,13 @@ const CreateProjectLevelPageTemplatePage = observer(() => {
         </div>
       </div>
       <CreateUpdatePageTemplate
-        workspaceSlug={workspaceSlug?.toString()}
+        workspaceSlug={workspaceSlug}
         currentLevel={ETemplateLevel.PROJECT}
-        projectId={projectId?.toString()}
+        projectId={projectId}
         templateId={templateId ?? undefined}
       />
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default CreateProjectLevelPageTemplatePage;
+export default observer(CreateProjectLevelPageTemplatePage);

@@ -199,7 +199,7 @@ class PlaneOAuthService {
    */
   getPlaneOAuthRedirectUrl(clientId: string, redirectUri: string, state: string): string {
     try {
-      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL
+      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL;
       const data = new URLSearchParams({
         client_id: clientId,
         response_type: "code",

@@ -23,8 +23,8 @@ import {
 import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 
-const TemplatesProjectSettingsPage = observer((props: Route.ComponentProps) => {
-  const { params } = props;
+function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
+  // router
   const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ const TemplatesProjectSettingsPage = observer((props: Route.ComponentProps) => {
     EUserPermissionsLevel.PROJECT
   );
 
-  if (!workspaceSlug || !currentProjectDetails?.id) return <></>;
+  if (!currentProjectDetails?.id) return <></>;
 
   if (workspaceUserInfo && !hasMemberLevelPermission) {
     return <NotAuthorizedView section="settings" isProjectView />;
@@ -83,6 +83,6 @@ const TemplatesProjectSettingsPage = observer((props: Route.ComponentProps) => {
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default TemplatesProjectSettingsPage;
+export default observer(TemplatesProjectSettingsPage);

@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
 
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
+import type { Route } from "./+types/layout";
 
-const IntegrationLayout = () => {
-  const { workspaceSlug } = useParams();
+function IntegrationLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   return (
     <div className="w-full h-full">
       <Link
@@ -19,6 +19,6 @@ const IntegrationLayout = () => {
       <Outlet />
     </div>
   );
-};
+}
 
 export default IntegrationLayout;

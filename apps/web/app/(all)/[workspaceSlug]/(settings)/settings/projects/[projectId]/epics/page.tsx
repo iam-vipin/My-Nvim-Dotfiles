@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
@@ -16,10 +15,11 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { EpicsRoot } from "@/plane-web/components/epics/settings";
 import { EpicsUpgrade } from "@/plane-web/components/epics/upgrade";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import type { Route } from "./+types/page";
 
-const EpicsSettingsPage = observer(() => {
+function EpicsSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
@@ -35,12 +35,12 @@ const EpicsSettingsPage = observer(() => {
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className={`w-full h-full overflow-hidden `}>
-        <WithFeatureFlagHOC flag="EPICS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
+        <WithFeatureFlagHOC flag="EPICS" fallback={<EpicsUpgrade />} workspaceSlug={workspaceSlug}>
           <EpicsRoot />
         </WithFeatureFlagHOC>
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default EpicsSettingsPage;
+export default observer(EpicsSettingsPage);

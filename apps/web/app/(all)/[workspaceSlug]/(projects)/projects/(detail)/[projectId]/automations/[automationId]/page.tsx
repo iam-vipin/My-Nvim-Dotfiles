@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -13,19 +12,11 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web components
 import { AutomationDetailsMainContentRoot } from "@/plane-web/components/automations/details/main-content/root";
 import { AutomationDetailsSidebarRoot } from "@/plane-web/components/automations/details/sidebar/root";
+import type { Route } from "./+types/page";
 
-type Props = {
-  params: {
-    automationId: string;
-  };
-};
-
-const AutomationDetailsPage: React.FC<Props> = observer((props) => {
+function AutomationDetailsPage({ params }: Route.ComponentProps) {
   // params
-  const {
-    params: { automationId: automationIdParam },
-  } = props;
-  const automationId = automationIdParam?.toString();
+  const { automationId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails } = useProject();
@@ -46,6 +37,6 @@ const AutomationDetailsPage: React.FC<Props> = observer((props) => {
       </div>
     </>
   );
-});
+}
 
-export default AutomationDetailsPage;
+export default observer(AutomationDetailsPage);

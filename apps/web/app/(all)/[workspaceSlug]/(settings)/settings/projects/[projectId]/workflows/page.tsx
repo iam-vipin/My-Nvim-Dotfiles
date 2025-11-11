@@ -26,10 +26,11 @@ import { StateWorkflowRoot } from "@/plane-web/components/workflow/page/root";
 import { WorkflowUpgrade } from "@/plane-web/components/workflow/page/upgrade";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import type { Route } from "./+types/page";
 
-const WorkflowsSettingsPage = observer(() => {
+function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store
@@ -41,24 +42,20 @@ const WorkflowsSettingsPage = observer(() => {
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} - ${t("common.workflows")}`
     : undefined;
-  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
-  const isWorkflowEnabled = isProjectFeatureEnabled(projectId?.toString(), "is_workflow_enabled");
+  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug, "WORKFLOWS");
+  const isWorkflowEnabled = isProjectFeatureEnabled(projectId, "is_workflow_enabled");
   const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   // fetch project states
   const { isLoading } = useSWR(
-    workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
+    `PROJECT_STATES_${workspaceSlug}_${projectId}`,
+    () => fetchProjectStates(workspaceSlug, projectId),
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch project workflows
   useSWR(
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? `PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())
-      : null,
+    isWorkflowFeatureFlagEnabled ? `PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}` : null,
+    isWorkflowFeatureFlagEnabled ? () => fetchWorkflowStates(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -68,7 +65,7 @@ const WorkflowsSettingsPage = observer(() => {
 
   const handleEnableDisableWorkflow = async () => {
     const featureState = !isWorkflowEnabled;
-    const featureTogglePromise = toggleProjectFeatures(workspaceSlug?.toString(), projectId?.toString(), {
+    const featureTogglePromise = toggleProjectFeatures(workspaceSlug, projectId, {
       is_workflow_enabled: featureState,
     })
       .then(() => {
@@ -130,10 +127,7 @@ const WorkflowsSettingsPage = observer(() => {
                     disabled={isLoading}
                     data-ph-element={WORKFLOW_TRACKER_ELEMENTS.WORK_FLOW_ENABLE_DISABLE_BUTTON}
                   />
-                  <WorkflowSettingsQuickActions
-                    projectId={projectId?.toString()}
-                    workspaceSlug={workspaceSlug?.toString()}
-                  />
+                  <WorkflowSettingsQuickActions projectId={projectId} workspaceSlug={workspaceSlug} />
                 </div>
               )}
             </>
@@ -141,13 +135,13 @@ const WorkflowsSettingsPage = observer(() => {
         />
 
         <div className="flex-1">
-          <WithFeatureFlagHOC flag="WORKFLOWS" fallback={<WorkflowUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
-            <StateWorkflowRoot workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <WithFeatureFlagHOC flag="WORKFLOWS" fallback={<WorkflowUpgrade />} workspaceSlug={workspaceSlug}>
+            <StateWorkflowRoot workspaceSlug={workspaceSlug} projectId={projectId} />
           </WithFeatureFlagHOC>
         </div>
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkflowsSettingsPage;
+export default observer(WorkflowsSettingsPage);

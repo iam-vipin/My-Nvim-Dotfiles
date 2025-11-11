@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -25,10 +24,11 @@ import { InitiativeLabelList } from "@/plane-web/components/initiatives/componen
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/page";
 
-const InitiativesSettingsPage = observer(() => {
+function InitiativesSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -36,12 +36,12 @@ const InitiativesSettingsPage = observer(() => {
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Initiatives` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
 
-  if (!workspaceSlug || !currentWorkspace?.id) return <></>;
+  if (!currentWorkspace?.id) return <></>;
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
@@ -53,7 +53,7 @@ const InitiativesSettingsPage = observer(() => {
       const payload = {
         [EWorkspaceFeatures.IS_INITIATIVES_ENABLED]: !isInitiativesFeatureEnabled,
       };
-      const toggleInitiativesFeaturePromise = updateWorkspaceFeature(workspaceSlug.toString(), payload);
+      const toggleInitiativesFeaturePromise = updateWorkspaceFeature(workspaceSlug, payload);
       setPromiseToast(toggleInitiativesFeaturePromise, {
         loading: t("project_settings.initiatives.toast.updating"),
         success: {
@@ -95,8 +95,8 @@ const InitiativesSettingsPage = observer(() => {
         />
         <WithFeatureFlagHOC
           flag="INITIATIVES"
-          fallback={<InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />}
-          workspaceSlug={workspaceSlug?.toString()}
+          fallback={<InitiativesUpgrade workspaceSlug={workspaceSlug} redirect />}
+          workspaceSlug={workspaceSlug}
         >
           <div className=" py-6 flex items-center justify-between gap-2 w-full">
             <div className="flex items-center gap-4">
@@ -120,6 +120,6 @@ const InitiativesSettingsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default InitiativesSettingsPage;
+export default observer(InitiativesSettingsPage);

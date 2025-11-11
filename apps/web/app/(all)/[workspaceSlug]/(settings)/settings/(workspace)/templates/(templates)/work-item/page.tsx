@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -10,10 +10,11 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdateWorkItemTemplate } from "@/plane-web/components/templates/settings/work-item";
+import type { Route } from "./+types/page";
 
-const CreateWorkspaceLevelWorkItemTemplatePage = observer(() => {
+function CreateWorkspaceLevelWorkItemTemplatePage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   const searchParams = useSearchParams();
   // store hooks
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ const CreateWorkspaceLevelWorkItemTemplatePage = observer(() => {
 
   return (
     <WithFeatureFlagHOC
-      workspaceSlug={workspaceSlug?.toString()}
+      workspaceSlug={workspaceSlug}
       flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
       fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
     >
@@ -33,13 +34,13 @@ const CreateWorkspaceLevelWorkItemTemplatePage = observer(() => {
       </div>
       <IssueModalProvider>
         <CreateUpdateWorkItemTemplate
-          workspaceSlug={workspaceSlug?.toString()}
+          workspaceSlug={workspaceSlug}
           currentLevel={ETemplateLevel.WORKSPACE}
           templateId={templateId ?? undefined}
         />
       </IssueModalProvider>
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default CreateWorkspaceLevelWorkItemTemplatePage;
+export default observer(CreateWorkspaceLevelWorkItemTemplatePage);

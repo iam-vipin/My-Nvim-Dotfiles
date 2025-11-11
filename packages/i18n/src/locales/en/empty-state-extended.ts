@@ -22,52 +22,62 @@ export default {
     },
     active_cycles: {
       title: "No active cycles",
-      description: "You don't have any ongoing cycles right now. Active cycles appear here when they include today's date.",
+      description:
+        "You don't have any ongoing cycles right now. Active cycles appear here when they include today's date.",
     },
     teamspaces: {
       title: "With teamspaces unlock better organization and tracking",
-      description: "Create a dedicated surface for every real-world team, separate from all other work surfaces in Plane, and customize them to suit how your team works.",
+      description:
+        "Create a dedicated surface for every real-world team, separate from all other work surfaces in Plane, and customize them to suit how your team works.",
       cta_primary: "Create a new Teamspace",
     },
     initiatives: {
       title: "Track projects and epics from one place",
-      description: "Use initiatives to group and monitor related projects and epics. View progress, priorities, and outcomes—all from a single screen.",
+      description:
+        "Use initiatives to group and monitor related projects and epics. View progress, priorities, and outcomes—all from a single screen.",
       cta_primary: "Create an Initiative",
     },
     customers: {
       title: "Manage work by what's important to your customers",
-      description: "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
+      description:
+        "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
       cta_primary: "Create customer record",
     },
     dashboard: {
       title: "Visualize your progress with dashboards",
-      description: "Build customizable dashboards to track metrics, measure outcomes, and present insights effectively.",
+      description:
+        "Build customizable dashboards to track metrics, measure outcomes, and present insights effectively.",
       cta_primary: "Create new dashboard",
     },
     wiki: {
       title: "Write a note, a doc, or a full knowledge base.",
-      description: "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context.",
+      description:
+        "Pages are thought spotting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context.",
       cta_primary: "Create your page",
     },
   },
   settings_empty_state: {
     teamspace: {
       title: "No teamspace yet",
-      description: "Bring together your members in a teamspace to track progress, workload, and activity - effortlessly.. Learn more",
+      description:
+        "Bring together your members in a teamspace to track progress, workload, and activity - effortlessly.. Learn more",
       cta_primary: "Add teamspace",
     },
     work_item_types: {
       title: "Create and customize work item types",
-      description: "Define unique work item types for your project. Each type can have its own properties, workflows, and fields - tailored to your project and team's needs.",
+      description:
+        "Define unique work item types for your project. Each type can have its own properties, workflows, and fields - tailored to your project and team's needs.",
       cta_primary: "Enable",
     },
     work_item_type_properties: {
-      title: "Define the property and details you want to capture for this work item type. Customize it to match your project's workflow.",
+      title:
+        "Define the property and details you want to capture for this work item type. Customize it to match your project's workflow.",
       cta_secondary: "Add property",
     },
     epic_setting: {
       title: "Enable Epics",
-      description: "Group related work items into larger bodies that span multiple cycles and modules - perfect for tracking big-picture progress.",
+      description:
+        "Group related work items into larger bodies that span multiple cycles and modules - perfect for tracking big-picture progress.",
       cta_primary: "Enable",
     },
     templates: {
@@ -90,7 +100,8 @@ export default {
     },
     template_setting: {
       title: "No templates yet",
-      description: "Reduce setup time by creating templates for projects, work items, and pages — and start new work in seconds.",
+      description:
+        "Reduce setup time by creating templates for projects, work items, and pages — and start new work in seconds.",
       cta_primary: "Create template",
     },
     webhooks: {

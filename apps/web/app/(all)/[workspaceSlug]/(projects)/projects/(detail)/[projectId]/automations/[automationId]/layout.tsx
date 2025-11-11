@@ -12,13 +12,8 @@ import { AutomationsListWrapper } from "@/plane-web/components/automations/list/
 import type { Route } from "./+types/layout";
 import { ProjectAutomationDetailsHeader } from "./header";
 
-const AutomationDetailsLayout: React.FC<Route.ComponentProps> = observer((props) => {
-  const {
-    params: { automationId: automationIdParam, projectId: projectIdParam, workspaceSlug: workspaceSlugParam },
-  } = props;
-  const automationId = automationIdParam?.toString();
-  const projectId = projectIdParam?.toString();
-  const workspaceSlug = workspaceSlugParam?.toString();
+function AutomationDetailsLayout({ params }: Route.ComponentProps) {
+  const { automationId, projectId, workspaceSlug } = params;
 
   return (
     <AutomationsListWrapper projectId={projectId} workspaceSlug={workspaceSlug}>
@@ -38,6 +33,6 @@ const AutomationDetailsLayout: React.FC<Route.ComponentProps> = observer((props)
       </AutomationsDetailsWrapper>
     </AutomationsListWrapper>
   );
-});
+}
 
-export default AutomationDetailsLayout;
+export default observer(AutomationDetailsLayout);

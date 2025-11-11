@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components
@@ -12,13 +11,14 @@ import { PageHead } from "@/components/core/page-title";
 import { TeamspaceDetailHeader } from "@/plane-web/components/teamspaces/headers/detail-header";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/layout";
 
-const TeamspaceProjectsLayout = observer(() => {
-  const { teamspaceId } = useParams();
+function TeamspaceProjectsLayout({ params }: Route.ComponentProps) {
+  const { teamspaceId } = params;
   // store hooks
   const { getTeamspaceById } = useTeamspaces();
   // derived values
-  const currentTeam = getTeamspaceById(teamspaceId?.toString());
+  const currentTeam = getTeamspaceById(teamspaceId);
   const pageTitle = currentTeam?.name ? `Teamspace ${currentTeam?.name} - Projects` : undefined;
 
   return (
@@ -30,6 +30,6 @@ const TeamspaceProjectsLayout = observer(() => {
       </ContentWrapper>
     </>
   );
-});
+}
 
-export default TeamspaceProjectsLayout;
+export default observer(TeamspaceProjectsLayout);

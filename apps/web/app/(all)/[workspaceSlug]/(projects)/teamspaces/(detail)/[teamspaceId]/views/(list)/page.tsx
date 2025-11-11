@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
@@ -11,11 +10,10 @@ import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // plane web imports
 import { TeamspaceViewsList } from "@/plane-web/components/teamspaces/views/views-list";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const TeamspaceViewsPage = observer(() => {
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug!.toString();
-  const teamspaceId = routerTeamSpaceId!.toString();
+function TeamspaceViewsPage({ params }: Route.ComponentProps) {
+  const { teamspaceId } = params;
   // store hooks
   const { getTeamspaceViewsFilters, updateFilters, clearAllFilters } = useTeamspaceViews();
   // derived values
@@ -43,8 +41,6 @@ const TeamspaceViewsPage = observer(() => {
     [teamspaceId, teamspaceViewsFilters?.filters, updateFilters]
   );
 
-  if (!workspaceSlug || !teamspaceId) return <></>;
-
   return (
     <div className="flex flex-col w-full h-full">
       {isFiltersApplied && (
@@ -62,6 +58,6 @@ const TeamspaceViewsPage = observer(() => {
       </div>
     </div>
   );
-});
+}
 
-export default TeamspaceViewsPage;
+export default observer(TeamspaceViewsPage);

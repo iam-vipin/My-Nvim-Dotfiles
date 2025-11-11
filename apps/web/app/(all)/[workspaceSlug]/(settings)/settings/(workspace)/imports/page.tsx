@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -15,10 +14,11 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { ImportersList } from "@/plane-web/components/importers";
+import type { Route } from "./+types/page";
 
-function ImportsPage() {
+function ImportsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -37,7 +37,7 @@ function ImportsPage() {
           title={t("workspace_settings.settings.imports.heading")}
           description={t("workspace_settings.settings.imports.description")}
         />
-        {workspaceSlug && <ImportersList workspaceSlug={workspaceSlug.toString()} />}
+        <ImportersList workspaceSlug={workspaceSlug} />
       </section>
     </SettingsContentWrapper>
   );

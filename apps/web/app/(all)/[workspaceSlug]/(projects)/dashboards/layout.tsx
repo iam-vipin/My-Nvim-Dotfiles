@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // plane web components
@@ -9,19 +8,17 @@ import { DashboardsFeatureFlagFallback } from "@/plane-web/components/dashboards
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/layout";
 
-export default function WorkspaceDashboardsLayout() {
+export default function WorkspaceDashboardsLayout({ params }: Route.ComponentProps) {
   // navigation
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const {
     workspaceDashboards: { fetchDashboards },
   } = useDashboards();
 
-  useSWR(
-    workspaceSlug ? `WORKSPACE_DASHBOARDS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => fetchDashboards() : null
-  );
+  useSWR(`WORKSPACE_DASHBOARDS_LIST_${workspaceSlug}`, () => fetchDashboards());
 
   return (
     <WorkspaceAccessWrapper pageKey="dashboards">

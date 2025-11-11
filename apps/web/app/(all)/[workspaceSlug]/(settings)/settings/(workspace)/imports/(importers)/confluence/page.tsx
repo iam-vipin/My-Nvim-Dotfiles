@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -14,14 +13,13 @@ import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-import
 import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
 
-const ConfluenceImporter: FC = observer(() => {
+function ConfluenceImporter() {
   const {
     // Properties
     workspace,
     user,
     externalApiToken,
     dashboardView,
-
     // Actions
     fetchExternalApiToken,
     verifyAndAddCredentials,
@@ -97,6 +95,6 @@ const ConfluenceImporter: FC = observer(() => {
   };
 
   return <Fragment>{dashboardView ? <ZipImporterDashboard {...props} /> : <StepsRoot {...props} />}</Fragment>;
-});
+}
 
-export default ConfluenceImporter;
+export default observer(ConfluenceImporter);

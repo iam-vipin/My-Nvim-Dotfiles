@@ -98,7 +98,7 @@ export const transformComment = (
   created_by: comment.author?.name,
   comment_html: comment.renderedBody ?? "<p></p>",
   actor: comment.author?.name,
-  issue: `${projectId}_${resourceId}_${comment.issue_id}`
+  issue: `${projectId}_${resourceId}_${comment.issue_id}`,
 });
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
@@ -150,7 +150,7 @@ export const transformIssueType = (
     is_epic: isEpic,
     external_id: `${projectId}_${resourceId}_${issueType.id}`,
     external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  }
+  };
 };
 
 export const transformIssueFields = (

@@ -11,7 +11,7 @@ import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
-const TeamspacesLayout = observer(() => {
+function TeamspacesLayout() {
   // store
   const { currentWorkspace } = useWorkspace();
   // plane web stores
@@ -35,6 +35,6 @@ const TeamspacesLayout = observer(() => {
       )}
     </WorkspaceAccessWrapper>
   );
-});
+}
 
-export default TeamspacesLayout;
+export default observer(TeamspacesLayout);

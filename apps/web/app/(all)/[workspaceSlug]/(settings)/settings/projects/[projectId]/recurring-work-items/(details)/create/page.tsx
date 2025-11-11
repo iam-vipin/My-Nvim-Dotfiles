@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -10,12 +9,11 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateRecurringWorkItem } from "@/plane-web/components/recurring-work-items/settings/create-update/root";
 import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
+import type { Route } from "./+types/page";
 
-const CreateRecurringWorkItemPage = observer(() => {
+function CreateRecurringWorkItemPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const projectId = routerProjectId?.toString();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
 
@@ -35,6 +33,6 @@ const CreateRecurringWorkItemPage = observer(() => {
       </IssueModalProvider>
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default CreateRecurringWorkItemPage;
+export default observer(CreateRecurringWorkItemPage);

@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 // component
@@ -20,12 +18,11 @@ import { RecurringWorkItemsSettingsRoot } from "@/plane-web/components/recurring
 import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import type { Route } from "./+types/page";
 
-const RecurringWorkItemsProjectSettingsPage = observer(() => {
+function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const projectId = routerProjectId?.toString();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -63,6 +60,6 @@ const RecurringWorkItemsProjectSettingsPage = observer(() => {
       </WithFeatureFlagHOC>
     </>
   );
-});
+}
 
-export default RecurringWorkItemsProjectSettingsPage;
+export default observer(RecurringWorkItemsProjectSettingsPage);

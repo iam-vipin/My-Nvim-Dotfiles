@@ -102,8 +102,8 @@ export class IframelyController {
             errorCode = "TIMEOUT";
             break;
           default:
-              errorMessage = "An unexpected error occurred";
-              errorCode = "SERVER_ERROR";
+            errorMessage = "An unexpected error occurred";
+            errorCode = "SERVER_ERROR";
         }
 
         return res.status(status).json({

@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -23,11 +21,12 @@ import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/page";
 
-const InitiativeDetailsPage = observer(() => {
+function InitiativeDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, initiativeId } = useParams();
+  const { workspaceSlug, initiativeId } = params;
 
   // hooks
   const { t } = useTranslation();
@@ -42,20 +41,17 @@ const InitiativeDetailsPage = observer(() => {
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   // fetching issue details
-  const { isLoading, error } = useSWR(
-    workspaceSlug && initiativeId ? `INITIATIVE_DETAIL_${workspaceSlug}_${initiativeId}` : null,
-    workspaceSlug && initiativeId
-      ? () => fetchInitiativeDetails(workspaceSlug.toString(), initiativeId.toString())
-      : null
+  const { isLoading, error } = useSWR(`INITIATIVE_DETAIL_${workspaceSlug}_${initiativeId}`, () =>
+    fetchInitiativeDetails(workspaceSlug, initiativeId)
   );
 
   // derived values
-  const initiativeDetails = getInitiativeById(initiativeId.toString());
+  const initiativeDetails = getInitiativeById(initiativeId);
   const loader = !initiativeDetails || isLoading;
   const pageTitle = initiativeDetails ? `Initiative - ${initiativeDetails.name}` : "Initiative";
+  const isProjectGroupingFeatureFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
-    useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFeatureFlagEnabled;
 
   // fetch initiative project analytics count
   useSWR(
@@ -72,18 +68,12 @@ const InitiativeDetailsPage = observer(() => {
   );
   // fetch initiative project attributes
   useSWR(
-    workspaceSlug &&
-      isProjectGroupingEnabled &&
-      initiativeDetails?.project_ids &&
-      initiativeDetails?.project_ids.length > 0
+    isProjectGroupingEnabled && initiativeDetails?.project_ids && initiativeDetails?.project_ids.length > 0
       ? ["initiativeProjectAttributes", workspaceSlug, isProjectGroupingEnabled, ...initiativeDetails?.project_ids]
       : null,
-    workspaceSlug &&
-      isProjectGroupingEnabled &&
-      initiativeDetails?.project_ids &&
-      initiativeDetails?.project_ids.length > 0
+    isProjectGroupingEnabled && initiativeDetails?.project_ids && initiativeDetails?.project_ids.length > 0
       ? () =>
-          fetchProjectAttributes(workspaceSlug.toString(), {
+          fetchProjectAttributes(workspaceSlug, {
             project_ids: initiativeDetails?.project_ids?.join(","),
           })
       : null
@@ -118,13 +108,10 @@ const InitiativeDetailsPage = observer(() => {
           </div>
         </Loader>
       ) : (
-        workspaceSlug &&
-        initiativeDetails && (
-          <InitiativeDetailRoot workspaceSlug={workspaceSlug.toString()} initiativeId={initiativeId.toString()} />
-        )
+        <InitiativeDetailRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
       )}
     </>
   );
-});
+}
 
-export default InitiativeDetailsPage;
+export default observer(InitiativeDetailsPage);

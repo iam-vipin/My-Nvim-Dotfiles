@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import {
   E_FEATURE_FLAGS,
@@ -28,10 +26,11 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { PiChatUpgrade } from "@/plane-web/components/pi-chat/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/page";
 
-const PlaneIntelligenceSettingsPage = observer(() => {
+function PlaneIntelligenceSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -39,12 +38,12 @@ const PlaneIntelligenceSettingsPage = observer(() => {
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Plane Intelligence` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isPlaneIntelligenceFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
 
-  if (!workspaceSlug || !currentWorkspace?.id) return <></>;
+  if (!currentWorkspace?.id) return <></>;
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
@@ -56,7 +55,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
       const payload = {
         [EWorkspaceFeatures.IS_PI_ENABLED]: !isPlaneIntelligenceFeatureEnabled,
       };
-      const toggleTeamsFeaturePromise = updateWorkspaceFeature(workspaceSlug.toString(), payload);
+      const toggleTeamsFeaturePromise = updateWorkspaceFeature(workspaceSlug, payload);
       setPromiseToast(toggleTeamsFeaturePromise, {
         loading: "Updating Plane Intelligence feature...",
         success: {
@@ -72,7 +71,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
       captureSuccess({
         eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
         payload: {
-          workspace_slug: workspaceSlug.toString(),
+          workspace_slug: workspaceSlug,
           type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
         },
       });
@@ -81,7 +80,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
       captureError({
         eventName: PLANE_INTELLIGENCE_TRACKER_EVENTS.TOGGLE,
         payload: {
-          workspace_slug: workspaceSlug.toString(),
+          workspace_slug: workspaceSlug,
           type: isPlaneIntelligenceFeatureEnabled ? "disable" : "enable",
         },
       });
@@ -95,7 +94,7 @@ const PlaneIntelligenceSettingsPage = observer(() => {
       <WithFeatureFlagHOC
         flag={E_FEATURE_FLAGS.PI_CHAT || E_FEATURE_FLAGS.PI_DEDUPE || E_FEATURE_FLAGS.EDITOR_AI_OPS}
         fallback={<PiChatUpgrade />}
-        workspaceSlug={workspaceSlug?.toString()}
+        workspaceSlug={workspaceSlug}
       >
         <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
           <div className="flex items-center gap-4">
@@ -117,6 +116,6 @@ const PlaneIntelligenceSettingsPage = observer(() => {
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default PlaneIntelligenceSettingsPage;
+export default observer(PlaneIntelligenceSettingsPage);

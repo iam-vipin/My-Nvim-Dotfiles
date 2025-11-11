@@ -3,7 +3,6 @@
 import { observer } from "mobx-react";
 // plane imports
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -13,10 +12,11 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useUserPermissions } from "@/hooks/store/user";
+import type { Route } from "./+types/layout";
 
-const ProjectLevelTemplatesLayout = observer(() => {
+function ProjectLevelTemplatesLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   // derived values
@@ -42,6 +42,6 @@ const ProjectLevelTemplatesLayout = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ProjectLevelTemplatesLayout;
+export default observer(ProjectLevelTemplatesLayout);

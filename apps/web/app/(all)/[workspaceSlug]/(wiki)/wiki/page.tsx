@@ -11,11 +11,12 @@ import { UserGreetingsView } from "@/components/user";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web components
+import type { Route } from "./+types/page";
 import { PagesAppDashboardHeader } from "./header";
 
-export default function WorkspacePagesPage() {
+export default function WorkspacePagesPage({ params }: Route.ComponentProps) {
   // navigation
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { data: currentUser } = useUser();
 
@@ -26,20 +27,18 @@ export default function WorkspacePagesPage() {
         className={cn("gap-6 bg-custom-background-100 max-w-[800px] mx-auto scrollbar-hide px-page-x lg:px-0")}
       >
         {currentUser && <UserGreetingsView user={currentUser} />}
-        {workspaceSlug && (
-          <div className="size-full divide-y-[1px] divide-custom-border-100">
-            <div className="py-4">
-              <RecentActivityWidget
-                workspaceSlug={workspaceSlug.toString()}
-                presetFilter="workspace_page"
-                showFilterSelect={false}
-              />
-            </div>
-            <div className="py-4">
-              <StickiesWidget />
-            </div>
+        <div className="size-full divide-y-[1px] divide-custom-border-100">
+          <div className="py-4">
+            <RecentActivityWidget
+              workspaceSlug={workspaceSlug}
+              presetFilter="workspace_page"
+              showFilterSelect={false}
+            />
           </div>
-        )}
+          <div className="py-4">
+            <StickiesWidget />
+          </div>
+        </div>
       </ContentWrapper>
     </>
   );

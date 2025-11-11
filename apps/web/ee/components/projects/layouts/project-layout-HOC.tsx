@@ -7,10 +7,10 @@ import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constant
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // assets
-import allFiltersDarkSvg from "@/app/assets/empty-state/project/all-filters-dark.svg?url";
-import allFiltersLightSvg from "@/app/assets/empty-state/project/all-filters-light.svg?url";
 import projectsDark from "@/app/assets/empty-state/onboarding/projects-dark.webp?url";
 import projectsLight from "@/app/assets/empty-state/onboarding/projects-light.webp?url";
+import allFiltersDarkSvg from "@/app/assets/empty-state/project/all-filters-dark.svg?url";
+import allFiltersLightSvg from "@/app/assets/empty-state/project/all-filters-light.svg?url";
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";

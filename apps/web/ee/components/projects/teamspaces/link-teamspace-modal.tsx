@@ -15,7 +15,6 @@ import noResultsDark from "@/app/assets/empty-state/teams/no-results-dark.webp?u
 import noResultsLight from "@/app/assets/empty-state/teams/no-results-light.webp?url";
 import noTeamspacesDark from "@/app/assets/empty-state/teams/no-teamspace-dark.webp?url";
 import noTeamspacesLight from "@/app/assets/empty-state/teams/no-teamspaces-light.webp?url";
-// components
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 

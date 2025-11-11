@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 // component
@@ -23,9 +21,11 @@ import {
   WorkspaceTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
 import { useFlag, useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
-const TemplatesWorkspaceSettingsPage = observer(() => {
+import type { Route } from "./+types/page";
+
+function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -35,19 +35,19 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
   const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
   const { isAnyPageTemplatesAvailable } = usePageTemplates();
   // derived values
-  const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
-  const isProjectTemplatesAvailable = isAnyProjectTemplatesAvailable(workspaceSlug?.toString());
-  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug?.toString());
-  const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
-  const isPageTemplatesAvailable = isAnyPageTemplatesAvailable(workspaceSlug?.toString());
+  const isProjectTemplatesEnabled = useFlag(workspaceSlug, "PROJECT_TEMPLATES");
+  const isProjectTemplatesAvailable = isAnyProjectTemplatesAvailable(workspaceSlug);
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug, "WORKITEM_TEMPLATES");
+  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug);
+  const isPageTemplatesEnabled = useFlag(workspaceSlug, "PAGE_TEMPLATES");
+  const isPageTemplatesAvailable = isAnyPageTemplatesAvailable(workspaceSlug);
   const isAnyTemplatesEnabled = isProjectTemplatesEnabled || isWorkItemTemplatesEnabled || isPageTemplatesEnabled;
   const isAnyTemplatesAvailable =
     isProjectTemplatesAvailable || isWorkItemTemplatesAvailable || isPageTemplatesAvailable;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
   const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  if (!workspaceSlug || !currentWorkspace?.id) return <></>;
+  if (!currentWorkspace?.id) return <></>;
 
   if (workspaceUserInfo && !hasAdminPermission) {
     return <NotAuthorizedView section="settings" />;
@@ -63,7 +63,7 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
           <>
             {isAnyTemplatesEnabled && isAnyTemplatesAvailable && hasAdminPermission && (
               <CreateTemplatesButton
-                workspaceSlug={workspaceSlug?.toString()}
+                workspaceSlug={workspaceSlug}
                 currentLevel={ETemplateLevel.WORKSPACE}
                 buttonSize="sm"
                 variant="settings"
@@ -75,12 +75,12 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
       <WithFeatureFlagHOC
         flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
         fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
-        workspaceSlug={workspaceSlug?.toString()}
+        workspaceSlug={workspaceSlug}
       >
-        <WorkspaceTemplatesSettingsRoot workspaceSlug={workspaceSlug?.toString()} />
+        <WorkspaceTemplatesSettingsRoot workspaceSlug={workspaceSlug} />
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default TemplatesWorkspaceSettingsPage;
+export default observer(TemplatesWorkspaceSettingsPage);

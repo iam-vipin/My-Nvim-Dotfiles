@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 // plane web components
 import TeamspacesListRoot from "@/plane-web/components/teamspaces/list/root";
 
-const TeamspacesListPage = observer(() => <TeamspacesListRoot />);
+function TeamspacesListPage() {
+  return <TeamspacesListRoot />;
+}
 
-export default TeamspacesListPage;
+export default observer(TeamspacesListPage);

@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
 // component
@@ -16,35 +14,33 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/plane-web/components/worklogs";
 import { useFlag } from "@/plane-web/hooks/store";
-const WorklogsPage = observer(() => {
+import type { Route } from "./+types/page";
+
+function WorklogsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "ISSUE_WORKLOG");
+  const isFeatureEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
 
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Worklogs` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
-  if (!workspaceSlug || !currentWorkspace) return <></>;
+  if (!currentWorkspace) return <></>;
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper size={isFeatureEnabled ? "lg" : "md"}>
       <PageHead title={pageTitle} />
-      <WithFeatureFlagHOC
-        workspaceSlug={workspaceSlug?.toString()}
-        flag="ISSUE_WORKLOG"
-        fallback={<WorkspaceWorklogsUpgrade />}
-      >
-        <WorkspaceWorklogRoot workspaceSlug={workspaceSlug.toString()} workspaceId={currentWorkspace.id} />
+      <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ISSUE_WORKLOG" fallback={<WorkspaceWorklogsUpgrade />}>
+        <WorkspaceWorklogRoot workspaceSlug={workspaceSlug} workspaceId={currentWorkspace.id} />
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorklogsPage;
+export default observer(WorklogsPage);

@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // plane web imports
@@ -10,10 +10,11 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdateWorkItemTemplate } from "@/plane-web/components/templates/settings/work-item";
+import type { Route } from "./+types/page";
 
-const CreateProjectLevelWorkItemTemplatePage = observer(() => {
+function CreateProjectLevelWorkItemTemplatePage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   const searchParams = useSearchParams();
   // plane hooks
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ const CreateProjectLevelWorkItemTemplatePage = observer(() => {
 
   return (
     <WithFeatureFlagHOC
-      workspaceSlug={workspaceSlug?.toString()}
+      workspaceSlug={workspaceSlug}
       flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
       fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
     >
@@ -33,14 +34,14 @@ const CreateProjectLevelWorkItemTemplatePage = observer(() => {
       </div>
       <IssueModalProvider>
         <CreateUpdateWorkItemTemplate
-          workspaceSlug={workspaceSlug?.toString()}
+          workspaceSlug={workspaceSlug}
           templateId={templateId ?? undefined}
-          projectId={projectId?.toString()}
+          projectId={projectId}
           currentLevel={ETemplateLevel.PROJECT}
         />
       </IssueModalProvider>
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default CreateProjectLevelWorkItemTemplatePage;
+export default observer(CreateProjectLevelWorkItemTemplatePage);

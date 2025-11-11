@@ -1404,7 +1404,13 @@ class IssueDetailEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        filters = issue_filters(request.query_params, "GET")
+        # Create a mutable copy of query params to remove sub_issue (EE specific logic)
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", "false")
+        query_params.pop("sub_issue", None)
+        # EE logic ends here
+
+        filters = issue_filters(query_params, "GET")
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features  # noqa: E501
         #  if it is true then show all the issues else show only the issues created by the user  # noqa: E501
@@ -1436,6 +1442,12 @@ class IssueDetailEndpoint(BaseAPIView):
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
         )
+
+        ## EE specific logic to show sub issues
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue = issue.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
+        # EE logic ends here
 
         project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
         if (

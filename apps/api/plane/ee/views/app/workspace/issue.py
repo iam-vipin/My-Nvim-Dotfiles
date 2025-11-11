@@ -138,10 +138,19 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def get(self, request, slug):
-        filters = issue_filters(request.query_params, "GET")
+        # Create a mutable copy of query params to remove sub_issue
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", "false")
+        query_params.pop("sub_issue", None)
+
+        filters = issue_filters(query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
         queryset = self.get_queryset()
+
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            queryset = queryset.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)

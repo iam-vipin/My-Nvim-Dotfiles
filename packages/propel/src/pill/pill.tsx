@@ -17,6 +17,13 @@ export enum EPillSize {
   XS = "xs",
 }
 
+export enum ERadius {
+  SQUARE = "square",
+  CIRCLE = "circle",
+}
+
+export type TRadius = ERadius.SQUARE | ERadius.CIRCLE;
+
 export type TPillVariant =
   | EPillVariant.DEFAULT
   | EPillVariant.PRIMARY
@@ -31,6 +38,7 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: TPillSize;
   className?: string;
   children: React.ReactNode;
+  radius?: TRadius;
 }
 
 const pillVariants = {
@@ -49,8 +57,16 @@ const pillSizes = {
   [EPillSize.LG]: "px-3 py-1.5 text-base",
 };
 
+const pillRadius = {
+  [ERadius.SQUARE]: "rounded",
+  [ERadius.CIRCLE]: "rounded-full",
+};
+
 const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
-  ({ variant = EPillVariant.DEFAULT, size = EPillSize.MD, className, children, ...props }, ref) => (
+  (
+    { variant = EPillVariant.DEFAULT, size = EPillSize.MD, radius = ERadius.CIRCLE, className, children, ...props },
+    ref
+  ) => (
     <span
       ref={ref}
       className={cn(
@@ -60,6 +76,8 @@ const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
         pillVariants[variant],
         // Size styles
         pillSizes[size],
+        // Radius styles
+        pillRadius[radius],
         className
       )}
       {...props}

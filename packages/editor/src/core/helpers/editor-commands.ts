@@ -192,3 +192,16 @@ export const openEmojiPicker = (editor: Editor, range?: Range) => {
   emojiStorage.forceOpen = true;
   editor.chain().focus().insertContent(":").run();
 };
+
+export const insertPageEmbed = (
+  data: {
+    pageId: string;
+    position?: number;
+    workspaceSlug: string;
+  },
+  editor: Editor,
+  range?: Range
+) => {
+  if (range) editor.chain().focus().deleteRange(range).insertPageEmbed(data).run();
+  else editor.chain().focus().insertPageEmbed(data).run();
+};

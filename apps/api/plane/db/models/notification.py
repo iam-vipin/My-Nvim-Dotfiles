@@ -1,9 +1,19 @@
+# Python imports
+from enum import Enum
+
 # Django imports
 from django.conf import settings
 from django.db import models
 
 # Module imports
 from .base import BaseModel
+
+
+class EntityName(Enum):
+    EPIC = "epic"
+    ISSUE = "issue"
+    INITIATIVE = "initiative"
+    TEAMSPACE = "teamspace"
 
 
 class Notification(BaseModel):

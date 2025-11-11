@@ -7,6 +7,11 @@ import type { TInstanceConfig } from "@plane/types";
 import { useInstance } from "@/hooks/store/use-instance";
 // components
 import { AuthRoot } from "@/plane-web/components/mobile";
+import type { Route } from "./+types/page";
+
+export const meta: Route.MetaFunction = () => [
+  { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1" },
+];
 
 const MobileAuth = observer(() => {
   // hooks

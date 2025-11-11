@@ -14,6 +14,7 @@ class EntityName(Enum):
     ISSUE = "issue"
     INITIATIVE = "initiative"
     TEAMSPACE = "teamspace"
+    EPIC_UPDATE = "epic-update"
 
 
 class Notification(BaseModel):

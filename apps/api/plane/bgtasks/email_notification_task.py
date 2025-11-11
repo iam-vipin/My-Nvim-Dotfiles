@@ -379,17 +379,24 @@ def send_workspace_level_email_notification(
         receiver = User.objects.get(pk=receiver_id)
         context = {
             "data": template_data,
-            "summary": f"Updates were to the {entity_name} by",
+            "summary": f"Updates were made to the {entity_name} by",
             "actors_involved": len(set(actors_involved)),
             entity_name: {
                 f"{entity}_name": entity.name,
-                # f"{entity}_url": f"{base_api}/{str(entity.workspace.slug)}/browse/{}",
+                "entity_url": f"{base_api}/{str(entity.workspace.slug)}/{str(entity_name)}s/{entity.id}/",
             },
             "receiver": {"email": receiver.email},
+            "entity_url": f"{base_api}/{str(entity.workspace.slug)}/{str(entity_name)}s/{entity.id}/",
+            "user_preference": f"{base_api}/{str(entity.workspace.slug)}/settings/account/notifications/",
             "workspace": str(entity.workspace.slug),
         }
 
-        html_content = render_to_string("emails/notifications/issue-updates.html", context)
+        if entity_name == EntityName.INITIATIVE.value:
+            template_name = "emails/notifications/initiative-updates.html"
+        elif entity_name == EntityName.TEAMSPACE.value:
+            template_name = "emails/notifications/teamspace-updates.html"
+
+        html_content = render_to_string(template_name, context)
         text_content = strip_tags(html_content)
 
         try:

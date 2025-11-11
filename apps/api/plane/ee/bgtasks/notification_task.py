@@ -20,19 +20,22 @@ def workspace_notifications(workspace_id, entity_name, entity_identifier, actor_
 
         if entity_name == EntityName.TEAMSPACE.value:
             entity = Teamspace.objects.prefetch_related("members").get(id=entity_identifier, workspace_id=workspace_id)
-            receivers = [entity_member.member for entity_member in entity.members.all()]
+            receivers = [entity_member.member_id for entity_member in entity.members.all()]
 
         elif entity_name == EntityName.INITIATIVE.value:
             entity = Initiative.objects.get(id=entity_identifier, workspace_id=workspace_id)
-            receivers = [entity.lead] if entity.lead else []
+            receivers = [entity.lead_id] if entity.lead_id else []
 
         bulk_notifications = []
         bulk_email_notifications = []
 
-        for receiver in receivers:
+        for receiver_id in receivers:
             for activity in activities:
                 # User notification preference check
-                preference = UserNotificationPreference.objects.get(user_id=receiver)
+                try:
+                    preference = UserNotificationPreference.objects.get(user_id=receiver_id)
+                except UserNotificationPreference.DoesNotExist:
+                    continue
 
                 # Do not send notification for descriiption changes
                 if activity.get("field") == "description":
@@ -57,7 +60,7 @@ def workspace_notifications(workspace_id, entity_name, entity_identifier, actor_
                             entity_name=entity_name,
                             title=activity.get("comment"),
                             triggered_by_id=actor_id,
-                            receiver_id=receiver.id,
+                            receiver_id=receiver_id,
                             data=build_data(entity, entity_name, activity),
                         )
                     )
@@ -65,7 +68,7 @@ def workspace_notifications(workspace_id, entity_name, entity_identifier, actor_
                     bulk_email_notifications.append(
                         EmailNotificationLog(
                             triggered_by_id=actor_id,
-                            receiver_id=receiver.id,
+                            receiver_id=receiver_id,
                             entity_identifier=entity_identifier,
                             entity_name=entity_name,
                             data=build_data(entity, entity_name, activity),

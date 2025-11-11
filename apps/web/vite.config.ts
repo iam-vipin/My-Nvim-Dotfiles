@@ -15,7 +15,6 @@ const publicEnv = Object.keys(process.env)
   }, {});
 
 export default defineConfig(() => ({
-  base: "/",
   define: {
     "process.env": JSON.stringify(publicEnv),
   },

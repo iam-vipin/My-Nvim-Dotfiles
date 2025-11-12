@@ -27,7 +27,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   const { anchor } = params;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/anchor/${anchor}/views/meta/`);
+    const response = await fetch(`${process.env.VITE_API_BASE_URL}/api/public/anchor/${anchor}/views/meta/`);
 
     if (!response.ok) {
       return { metadata: null };

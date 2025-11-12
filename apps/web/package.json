@@ -45,6 +45,7 @@
     "@posthog/react": "^1.4.0",
     "@react-pdf/renderer": "^3.4.5",
     "@react-router/node": "^7.9.3",
+    "@sentry/react-router": "catalog:",
     "@tanstack/react-table": "^8.21.3",
     "@todesktop/client-core": "^1.12.4",
     "axios": "catalog:",

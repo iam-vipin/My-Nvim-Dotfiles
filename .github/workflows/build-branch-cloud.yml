@@ -149,22 +149,22 @@ jobs:
               BUILD_ARGS="$BUILD_ARGS $1=$2"
             fi
           }
-          add_build_arg "NEXT_PUBLIC_API_BASE_URL" "${{ env.NEXT_PUBLIC_API_BASE_URL }}"
-          add_build_arg "NEXT_PUBLIC_API_BASE_PATH" "${{ env.NEXT_PUBLIC_API_BASE_PATH }}"
+          add_build_arg "VITE_API_BASE_URL" "${{ env.VITE_API_BASE_URL }}"
+          add_build_arg "VITE_API_BASE_PATH" "${{ env.VITE_API_BASE_PATH }}"
 
-          add_build_arg "NEXT_PUBLIC_ADMIN_BASE_URL" "${{ env.NEXT_PUBLIC_ADMIN_BASE_URL }}"
-          add_build_arg "NEXT_PUBLIC_ADMIN_BASE_PATH" "${{ env.NEXT_PUBLIC_ADMIN_BASE_PATH }}"
+          add_build_arg "VITE_ADMIN_BASE_URL" "${{ env.VITE_ADMIN_BASE_URL }}"
+          add_build_arg "VITE_ADMIN_BASE_PATH" "${{ env.VITE_ADMIN_BASE_PATH }}"
 
-          add_build_arg "NEXT_PUBLIC_SPACE_BASE_URL" "${{ env.NEXT_PUBLIC_SPACE_BASE_URL }}"
-          add_build_arg "NEXT_PUBLIC_SPACE_BASE_PATH" "${{ env.NEXT_PUBLIC_SPACE_BASE_PATH }}"
+          add_build_arg "VITE_SPACE_BASE_URL" "${{ env.VITE_SPACE_BASE_URL }}"
+          add_build_arg "VITE_SPACE_BASE_PATH" "${{ env.VITE_SPACE_BASE_PATH }}"
 
-          add_build_arg "NEXT_PUBLIC_LIVE_BASE_URL" "${{ env.NEXT_PUBLIC_LIVE_BASE_URL }}"
-          add_build_arg "NEXT_PUBLIC_LIVE_BASE_PATH" "${{ env.NEXT_PUBLIC_LIVE_BASE_PATH }}"
+          add_build_arg "VITE_LIVE_BASE_URL" "${{ env.VITE_LIVE_BASE_URL }}"
+          add_build_arg "VITE_LIVE_BASE_PATH" "${{ env.VITE_LIVE_BASE_PATH }}"
 
-          add_build_arg "NEXT_PUBLIC_SILO_BASE_URL" "${{ env.NEXT_PUBLIC_SILO_BASE_URL }}"
-          add_build_arg "NEXT_PUBLIC_SILO_BASE_PATH" "${{ env.NEXT_PUBLIC_SILO_BASE_PATH }}"
+          add_build_arg "VITE_SILO_BASE_URL" "${{ env.VITE_SILO_BASE_URL }}"
+          add_build_arg "VITE_SILO_BASE_PATH" "${{ env.VITE_SILO_BASE_PATH }}"
 
-          add_build_arg "NEXT_PUBLIC_WEB_BASE_URL" "${{ env.NEXT_PUBLIC_WEB_BASE_URL }}"
+          add_build_arg "VITE_WEB_BASE_URL" "${{ env.VITE_WEB_BASE_URL }}"
 
           add_build_arg "SENTRY_AUTH_TOKEN" "${{ secrets.SENTRY_AUTH_TOKEN }}"
 

@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
 // plane imports
-import type { EditorRefApi } from "@plane/editor";
+import type { CollaborationState, EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
+import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
-import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
+import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
+import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageNavigationPaneRoot } from "../navigation-pane";
+import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
+import { ContentLimitBanner } from "./content-limit-banner";
 import { PageEditorBody } from "./editor-body";
 import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
@@ -23,7 +28,7 @@ import { PageEditorToolbarRoot } from "./toolbar";
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchDescriptionBinary: () => Promise<any>;
+  fetchDescriptionBinary: () => Promise<ArrayBuffer>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   restoreVersion: (pageId: string, versionId: string) => Promise<void>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
@@ -37,29 +42,37 @@ type TPageRootProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
-  // states
+  const {
+    config,
+    handlers,
+    page,
+    projectId,
+    storeType,
+    webhookConnectionParams,
+    workspaceSlug,
+    customRealtimeEventHandlers,
+  } = props;
   const [editorReady, setEditorReady] = useState(false);
-  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
-  // refs
+  const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
+  const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useAppRouter();
-  // derived values
+
+  const { isNestedPagesEnabled } = usePageStore(storeType);
   const {
     isContentEditable,
     editor: { setEditorRef },
   } = page;
-  // page fallback
-  usePageFallback({
+
+  const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
-    hasConnectionFailed,
+    collaborationState,
     updatePageDescription: handlers.updateDescription,
   });
 
@@ -91,6 +104,25 @@ export const PageRoot = observer((props: TPageRootProps) => {
     editorRef,
   });
 
+  // Type-safe error handler for content too large errors
+  const errorHandler: PageUpdateHandler<"error"> = (params) => {
+    const { data } = params;
+
+    // Check if it's content too large error
+    if (data.error_code === "content_too_large") {
+      setShowContentTooLargeBanner(true);
+    }
+
+    // Call original error handler if exists
+    customRealtimeEventHandlers?.error?.(params);
+  };
+
+  // Merge custom event handlers with content too large handler
+  const mergedCustomEventHandlers: TCustomEventHandlers = {
+    ...customRealtimeEventHandlers,
+    error: errorHandler,
+  };
+
   // Get extended editor extensions configuration
   const extendedEditorProps = useExtendedEditorProps({
     workspaceSlug,
@@ -102,15 +134,27 @@ export const PageRoot = observer((props: TPageRootProps) => {
     projectId,
   });
 
+  const searchParams = useSearchParams();
+
+  const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
+
   const handleRestoreVersion = useCallback(
     async (descriptionHTML: string) => {
-      editorRef.current?.clearEditor();
-      editorRef.current?.setEditorValue(descriptionHTML);
+      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setRestorationStatus(true);
+        updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        if (page.id) {
+          await handlers.restoreVersion(page.id, version);
+        }
+      } else {
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(descriptionHTML);
+      }
     },
-    [editorRef]
+    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
   );
 
-  // reset editor ref on unmount
   useEffect(
     () => () => {
       setEditorRef(null);
@@ -129,16 +173,18 @@ export const PageRoot = observer((props: TPageRootProps) => {
           restoreEnabled={isContentEditable}
           storeType={storeType}
         />
+        <NestedPagesDownloadBanner page={page} storeType={storeType} workspaceSlug={workspaceSlug} />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
           isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
+        {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
         <PageEditorBody
           config={config}
+          customRealtimeEventHandlers={mergedCustomEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
-          handleConnectionStatus={setHasConnectionFailed}
           handleEditorReady={handleEditorReady}
           handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
@@ -149,6 +195,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
           extendedEditorProps={extendedEditorProps}
+          isFetchingFallbackBinary={isFetchingFallbackBinary}
+          onCollaborationStateChange={setCollaborationState}
         />
       </div>
       <PageNavigationPaneRoot

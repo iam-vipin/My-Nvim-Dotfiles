@@ -1,7 +1,7 @@
+# Python imports
 import logging
 import re
 from datetime import datetime
-
 from bs4 import BeautifulSoup
 
 # Third party imports
@@ -34,59 +34,69 @@ def stack_email_notification():
     # get all email notifications
     email_notifications = EmailNotificationLog.objects.filter(processed_at__isnull=True).order_by("receiver").values()
 
-    # Create the below format for each of the issues
-    # {"issue_id" : { "actor_id1": [ { data }, { data } ], "actor_id2": [ { data }, { data } ] }}
-
-    # Convert to unique receivers list
-    receivers = list(set([str(notification.get("receiver_id")) for notification in email_notifications]))
+    # Group by receiver_id AND entity_name to handle different entity types separately
+    receivers_entities = list(set([
+        (str(notification.get("receiver_id")), notification.get("entity_name")) 
+        for notification in email_notifications
+    ]))
+    
     processed_notifications = []
 
-    for receiver_id in receivers:
-        # Notification triggered for the receiver
+    for receiver_id, entity_name in receivers_entities:
+        # Get notifications for this specific receiver AND entity_name combination
         receiver_notifications = [
-            notification for notification in email_notifications if str(notification.get("receiver_id")) == receiver_id
+            notification for notification in email_notifications 
+            if str(notification.get("receiver_id")) == receiver_id 
+            and notification.get("entity_name") == entity_name
         ]
-        # create payload for all issues
+        
+        # Create payload for this entity type only
         payload = {}
-        email_notification_ids = []
+        entity_notification_ids = {}
+
 
         for receiver_notification in receiver_notifications:
+            entity_identifier = receiver_notification.get("entity_identifier")
             payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
             ).append(receiver_notification.get("data"))
-            # append processed notifications
+            
+            # Track processed notifications and IDs
+            entity_notification_ids.setdefault(entity_identifier, []).append(
+                receiver_notification.get("id")
+            )
+
+            # Track processed notifications for this entity
             processed_notifications.append(receiver_notification.get("id"))
-            email_notification_ids.append(receiver_notification.get("id"))
 
-            entity_name = receiver_notification.get("entity_name")
-
-            if (
-                entity_name == EntityName.ISSUE.value
-                or entity_name == EntityName.EPIC.value
-                or entity_name == EntityName.EPIC_UPDATE.value
-            ):
-                # Create emails for all the issues
-                for issue_id, notification_data in payload.items():
-                    send_email_notification.delay(
-                        issue_id=issue_id,
-                        notification_data=notification_data,
-                        receiver_id=receiver_id,
-                        email_notification_ids=email_notification_ids,
-                        entity_name=entity_name,
-                    )
-            else:
-                for entity_id, notification_data in payload.items():
-                    send_workspace_level_email_notification.delay(
-                        entity_id=entity_id,
-                        entity_name=entity_name,
-                        notification_data=notification_data,
-                        receiver_id=receiver_id,
-                        email_notification_ids=email_notification_ids,
-                    )
+        # send emails after processing all notifications for this receiver+entity combo
+        if (
+            entity_name == EntityName.ISSUE.value
+            or entity_name == EntityName.EPIC.value
+            or entity_name == EntityName.EPIC_UPDATE.value
+        ):
+            # Create emails for all the issues
+            for issue_id, notification_data in payload.items():
+                send_email_notification.delay(
+                    issue_id=issue_id,
+                    notification_data=notification_data,
+                    receiver_id=receiver_id,
+                    email_notification_ids=entity_notification_ids[issue_id],
+                    entity_name=entity_name,
+                )
+        else:
+            # Handle workspace-level entities (TEAMSPACE, INITIATIVE, etc.)
+            for entity_id, notification_data in payload.items():
+                send_workspace_level_email_notification.delay(
+                    entity_id=entity_id,
+                    entity_name=entity_name,
+                    notification_data=notification_data,
+                    receiver_id=receiver_id,
+                    email_notification_ids=entity_notification_ids[entity_id],
+                )
 
     # Update the email notification log
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
-
 
 def create_payload(notification_data, entity_name):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
@@ -281,7 +291,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 template_name = "emails/notifications/epic_updates.html"
                 formatted_time = activity_time
             elif entity_name == EntityName.ISSUE.value or entity_name == EntityName.EPIC.value:
-                summary = "Updates were made to the issue by"
+                summary = f"Updates were made to the {entity_name} by"
                 template_name = "emails/notifications/issue-updates.html"
                 formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
 
@@ -350,7 +360,13 @@ def send_workspace_level_email_notification(
 
         ENTITY_MAPPER = {EntityName.TEAMSPACE.value: Teamspace, EntityName.INITIATIVE.value: Initiative}
 
-        entity = ENTITY_MAPPER.get(entity_name).objects.get(pk=entity_id)
+        try:
+            entity = ENTITY_MAPPER.get(entity_name).objects.get(pk=entity_id)
+        except (Teamspace.DoesNotExist, Initiative.DoesNotExist):
+            logging.getLogger("plane.worker").warning(f"Entity not found: {entity_id} for entity name: {entity_name}")
+            return
+
+
 
         actors_involved = []
         template_data = []
@@ -442,5 +458,4 @@ def send_email(subject, text_content, receiver, html_content, email_notification
     msg.send()
     logging.getLogger("plane.worker").info("Email Sent Successfully")
 
-    # Update the logs
     EmailNotificationLog.objects.filter(pk__in=email_notification_ids).update(sent_at=timezone.now())

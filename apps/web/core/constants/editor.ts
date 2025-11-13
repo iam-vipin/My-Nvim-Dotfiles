@@ -140,7 +140,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListLayoutIcon,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },

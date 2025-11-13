@@ -1,8 +1,8 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Editor } from "@tiptap/react";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Editor } from "@tiptap/react";
 import { useEffect } from "react";
 // types
-import { EventToPayloadMap, ICollaborativeDocumentEditorProps, BroadcastedEventUnion } from "@/types";
+import type { EventToPayloadMap, ICollaborativeDocumentEditorProps, BroadcastedEventUnion } from "@/types";
 
 export const useRealtimeEvents = (props: {
   editor: Editor | null;

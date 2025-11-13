@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 // types
-import { DrawioIframeRef } from "../components/iframe";
-import { TDrawioBlockAttributes, TDrawioExtension } from "../types";
+import type { DrawioIframeRef } from "../components/iframe";
+import type { TDrawioBlockAttributes, TDrawioExtension } from "../types";
 // utils
 import { DRAWIO_EMPTY_CONTENT_LENGTH } from "../utils/constants";
 import { validateDrawioMessage, createSecureMessageSender } from "../utils/message-validation";

@@ -1,9 +1,10 @@
-import axios, { AxiosHeaders, AxiosInstance, AxiosRequestConfig } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosHeaders } from "axios";
 // types
 import { logger } from "@plane/logger";
 import { wait } from "@/helpers/delay";
 import HMACSigner from "@/helpers/hmac-sign";
-import { ClientOptions } from "@/types";
+import type { ClientOptions } from "@/types";
 
 export abstract class APIService {
   private axiosInstance: AxiosInstance;

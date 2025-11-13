@@ -1,13 +1,10 @@
 // plane imports
 import { PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
-import { PartialDeep, TProjectTemplateForm } from "@plane/types";
+import type { PartialDeep, TProjectTemplateForm } from "@plane/types";
 // local imports
 import { mockCreateDefaultProjectStates } from "./state";
-import {
-  mockCreateDefaultWorkItemTypeInstance,
-  mockCreateProjectEpicWorkItemTypeInstance,
-  TMockCreateDefaultWorkItemTypeInstanceParams,
-} from "./work-item-type";
+import type { TMockCreateDefaultWorkItemTypeInstanceParams } from "./work-item-type";
+import { mockCreateDefaultWorkItemTypeInstance, mockCreateProjectEpicWorkItemTypeInstance } from "./work-item-type";
 
 type TGenerateAdditionalProjectTemplateFormDataParams = TMockCreateDefaultWorkItemTypeInstanceParams;
 

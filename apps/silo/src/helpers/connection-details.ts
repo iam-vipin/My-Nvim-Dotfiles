@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import {
+import type {
   TWorkspaceCredential,
   E_INTEGRATION_KEYS,
   TWorkspaceConnection,

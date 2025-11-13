@@ -1,4 +1,5 @@
-import { createLogger, format, LoggerOptions, transports } from "winston";
+import type { LoggerOptions } from "winston";
+import { createLogger, format, transports } from "winston";
 
 const isDevelopment = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "local";
 

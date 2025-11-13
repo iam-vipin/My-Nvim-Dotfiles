@@ -1,5 +1,5 @@
 import { parse } from "node-html-parser";
-import { ExIssue } from "@plane/sdk";
+import type { ExIssue } from "@plane/sdk";
 import { E_MENTION_COMPONENT_ATTRIBUTES } from "./constants";
 
 export interface IssueReference {

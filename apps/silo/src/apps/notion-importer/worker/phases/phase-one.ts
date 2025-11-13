@@ -1,22 +1,21 @@
 import mimetics from "mimetics";
 import { logger } from "@plane/logger";
-import { ExPage } from "@plane/sdk";
-import { TImportJob, TPage } from "@plane/types";
+import type { ExPage } from "@plane/sdk";
+import type { TImportJob, TPage } from "@plane/types";
+import type { TAssetInfo, TDocImporterJobConfig, TNotionMigratorData } from "@/apps/notion-importer/types";
 import {
   EDocImporterDestinationType,
   ENotionImporterKeyType,
   ENotionMigrationType,
-  TAssetInfo,
-  TDocImporterJobConfig,
-  TNotionMigratorData,
 } from "@/apps/notion-importer/types";
 import { protect } from "@/lib/errors";
-import { TZipFileNode } from "@/lib/zip-manager";
+import type { TZipFileNode } from "@/lib/zip-manager";
 import { getAPIClientInternal } from "@/services/client";
-import { TaskHeaders } from "@/types";
+import type { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
-import { EZipDriverType } from "../../drivers";
-import { NotionMigratorBase, PhaseProcessingContext } from "./base";
+import type { EZipDriverType } from "../../drivers";
+import type { PhaseProcessingContext } from "./base";
+import { NotionMigratorBase } from "./base";
 
 const apiClient = getAPIClientInternal();
 

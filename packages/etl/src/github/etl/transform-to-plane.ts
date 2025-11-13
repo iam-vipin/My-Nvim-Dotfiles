@@ -1,6 +1,6 @@
-import { ExCycle, ExIssueLabel } from "@plane/sdk";
+import type { ExCycle, ExIssueLabel } from "@plane/sdk";
 import { E_INTEGRATION_KEYS } from "@plane/types";
-import { WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
+import type { WebhookGitHubLabel, WebhookGitHubMilestone } from "../types";
 
 export const transformGitHubLabel = (label: WebhookGitHubLabel): Partial<ExIssueLabel> => ({
   name: label.name,

@@ -2,8 +2,8 @@ import axios from "axios";
 import { marked } from "marked";
 import { parse, HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
-import { GithubService } from "@plane/etl/github";
-import { PlaneUser, Client as PlaneClient } from "@plane/sdk";
+import type { GithubService } from "@plane/etl/github";
+import type { PlaneUser, Client as PlaneClient } from "@plane/sdk";
 
 interface ImageComponent {
   assetId: string;

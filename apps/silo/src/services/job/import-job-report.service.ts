@@ -1,9 +1,9 @@
 import { logger } from "@plane/logger";
-import { TImportReport } from "@plane/types";
+import type { TImportReport } from "@plane/types";
 import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions } from "@/types";
+import type { ClientOptions } from "@/types";
 
 export class ImportReportAPIService extends APIService {
   constructor(options: ClientOptions) {

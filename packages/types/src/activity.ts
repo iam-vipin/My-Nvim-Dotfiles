@@ -1,4 +1,4 @@
-import { TBaseActivityVerbsExtended } from "./activity-extended";
+import type { TBaseActivityVerbsExtended } from "./activity-extended";
 
 export type TBaseActivity<TFieldKey extends string = string, TVerbKey extends string = string> = {
   id: string;

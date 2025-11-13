@@ -1,24 +1,14 @@
-import {
-  AsanaConfig,
-  AsanaEntity,
-  pullUsers,
-  pullTasks,
-  pullTags,
-  AsanaTask,
-  pullCustomFields,
-  AsanaTaskWithChildren,
-  pullAttachments,
-  pullComments,
-} from "@plane/etl/asana";
-import { PlaneEntities } from "@plane/etl/core";
-import { TImportJob } from "@plane/types";
+import type { AsanaConfig, AsanaEntity, AsanaTask, AsanaTaskWithChildren } from "@plane/etl/asana";
+import { pullUsers, pullTasks, pullTags, pullCustomFields, pullAttachments, pullComments } from "@plane/etl/asana";
+import type { PlaneEntities } from "@plane/etl/core";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 // silo engine
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getJobData, resetJobIfStarted, getJobCredentials, updateJobWithReport } from "@/helpers/job";
 import { getAPIClient } from "@/services/client";
-import { MQ, Store } from "@/worker/base";
-import { TBatch } from "@/worker/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TBatch } from "@/worker/types";
 import { createAsanaClient } from "../helpers/migration-helpers";
 import {
   getTransformedTasks,

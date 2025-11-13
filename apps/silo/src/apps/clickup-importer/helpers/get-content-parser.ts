@@ -1,6 +1,6 @@
-import { ClickupAPIService } from "@plane/etl/clickup";
+import type { ClickupAPIService } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { Client } from "@plane/sdk";
+import type { Client } from "@plane/sdk";
 import { ContentParser } from "@/lib/parser";
 import { ExternalFileParserExtension } from "@/lib/parser/extensions/external/file-parser";
 import { ExternalImageParserExtension } from "@/lib/parser/extensions/external/image-parser";

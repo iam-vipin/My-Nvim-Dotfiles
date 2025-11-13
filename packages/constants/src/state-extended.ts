@@ -1,4 +1,4 @@
-import { TStateAnalytics } from "@plane/types";
+import type { TStateAnalytics } from "@plane/types";
 
 export const STATE_ANALYTICS_DETAILS: {
   key: keyof TStateAnalytics;

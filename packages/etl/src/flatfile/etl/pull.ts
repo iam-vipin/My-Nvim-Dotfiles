@@ -1,6 +1,6 @@
-import { RecordWithLinks } from "@flatfile/api/api";
-import { FlatfileService } from "../services/api.service";
-import { TExtractedRecord } from "../types";
+import type { RecordWithLinks } from "@flatfile/api/api";
+import type { FlatfileService } from "../services/api.service";
+import type { TExtractedRecord } from "../types";
 import { extractRecord } from "./transform";
 
 /**

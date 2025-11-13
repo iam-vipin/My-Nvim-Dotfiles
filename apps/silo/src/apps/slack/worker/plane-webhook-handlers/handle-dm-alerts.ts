@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { PlaneWebhookPayload } from "@plane/sdk";
+import type { PlaneWebhookPayload } from "@plane/sdk";
 import { Store } from "@/worker/base";
 import { getConnectionDetailsForWorkspace } from "../../helpers/connection-details";
 import { getPlaneToSlackUserMapFromWC } from "../../helpers/user";

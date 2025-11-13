@@ -1,6 +1,6 @@
-import { TSlackIssueEntityData } from "@plane/etl/slack";
+import type { TSlackIssueEntityData } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
+import type { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { getSlackMarkdownFromPlaneHtml } from "../../helpers/parse-plane-resources";
 import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";

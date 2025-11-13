@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { ExState, Client as PlaneClient } from "@plane/sdk";
+import type { ExState, Client as PlaneClient } from "@plane/sdk";
 import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 

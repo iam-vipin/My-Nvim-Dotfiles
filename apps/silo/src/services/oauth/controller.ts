@@ -1,7 +1,8 @@
-import { Response } from "express";
+import type { Response } from "express";
 import { E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { PlaneUser } from "@plane/sdk";
-import { TWorkspaceConnection, E_INTEGRATION_KEYS } from "@plane/types";
+import type { PlaneUser } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
@@ -10,7 +11,8 @@ import { EOAuthGrantType } from "@/types/oauth";
 import { planeOAuthService } from "./auth";
 import { convertIntegrationKeyToProvider } from "./helpers";
 import { OAuthStrategyManager } from "./strategy-manager";
-import { OAuthState, OAuthConnectionStatus, E_INTEGRATION_DISCONNECT_SOURCE, IntegrationUserMap } from "./types";
+import type { OAuthState, OAuthConnectionStatus, IntegrationUserMap } from "./types";
+import { E_INTEGRATION_DISCONNECT_SOURCE } from "./types";
 
 const PLANE_OAUTH_SUPPORTED_PROVIDERS = [
   E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,

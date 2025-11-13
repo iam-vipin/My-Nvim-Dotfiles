@@ -1,9 +1,9 @@
 // This file is a wrapper for the db connection for silo tables in plane
 // this accepts data in single format for all integrations/importers and returns the data in single format
-import { TClickUpRelationMap } from "@plane/etl/clickup";
+import type { TClickUpRelationMap } from "@plane/etl/clickup";
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import {
+import type {
   E_INTEGRATION_KEYS,
   TImportJob,
   TImportReport,
@@ -11,7 +11,8 @@ import {
   TWorkspaceCredential,
   TWorkspaceEntityConnection,
 } from "@plane/types";
-import { APIClient, getAPIClient } from "@/services/client";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
 class IntegrationConnectionHelper {
   private apiClient: APIClient;
   constructor() {

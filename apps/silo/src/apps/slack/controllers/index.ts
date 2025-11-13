@@ -1,9 +1,7 @@
-import { Request, RequestHandler, Response } from "express";
+import type { Request, RequestHandler, Response } from "express";
 import { Controller, Delete, Get, Middleware, Post, Put } from "@plane/decorators";
 import { E_ENTITY_CONNECTION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
-import {
-  E_SLACK_ENTITY_TYPE,
-  isUserMessage,
+import type {
   SlackAuthState,
   SlackPlaneOAuthState,
   SlackUserAuthState,
@@ -12,14 +10,10 @@ import {
   TSlackPayload,
   TSlackUserAlertsConfig,
 } from "@plane/etl/slack";
+import { E_SLACK_ENTITY_TYPE, isUserMessage } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import {
-  E_PLANE_WEBHOOK_ACTION,
-  E_PLANE_WEBHOOK_EVENT,
-  ExIssue,
-  ExIssueComment,
-  PlaneWebhookPayloadBase,
-} from "@plane/sdk";
+import type { ExIssue, ExIssueComment, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_PLANE_WEBHOOK_ACTION, E_PLANE_WEBHOOK_EVENT } from "@plane/sdk";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";

@@ -1,4 +1,4 @@
-import {
+import type {
   Attachment,
   Comment,
   Cycle,
@@ -12,7 +12,7 @@ import {
   Project,
   Document,
 } from "@linear/sdk";
-import { ExProject, ExState } from "@plane/sdk";
+import type { ExProject, ExState } from "@plane/sdk";
 
 export type LinearAuthState = {
   workspaceId: string;

@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import {
+import type {
   AttachmentResponse,
   ClientOptions,
   ExcludedProps,

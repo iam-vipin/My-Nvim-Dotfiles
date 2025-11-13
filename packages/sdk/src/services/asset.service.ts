@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExAsset, AssetUploadResponse } from "@/types/types";
+import type { ClientOptions, ExAsset, AssetUploadResponse } from "@/types/types";
 
 interface AssetResponse {
   asset_id: string;

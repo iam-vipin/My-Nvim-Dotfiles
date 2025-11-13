@@ -1,7 +1,5 @@
+import type { TClickUpTask, TClickUpStateConfig, TClickUpPriorityConfig } from "@plane/etl/clickup";
 import {
-  TClickUpTask,
-  TClickUpStateConfig,
-  TClickUpPriorityConfig,
   CLICKUP_TASK_URL,
   CLICKUP_TASK_EXTERNAL_ID,
   CLICKUP_TASK_TYPE_EXTERNAL_ID,
@@ -10,8 +8,9 @@ import {
   getTargetAttachments,
 } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS, getFormattedDateFromTimestamp } from "@plane/etl/core";
-import { ExIssue as PlaneIssue } from "@plane/sdk";
-import { ClickUpContentParserConfig, getClickUpContentParser } from "./get-content-parser";
+import type { ExIssue as PlaneIssue } from "@plane/sdk";
+import type { ClickUpContentParserConfig } from "./get-content-parser";
+import { getClickUpContentParser } from "./get-content-parser";
 
 export const transformTask = async (
   spaceId: string,

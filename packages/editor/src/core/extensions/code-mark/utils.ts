@@ -1,5 +1,6 @@
 import type { MarkType, Node } from "@tiptap/pm/model";
-import { type EditorState, PluginKey } from "@tiptap/pm/state";
+import { PluginKey } from "@tiptap/pm/state";
+import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { Options } from "./types";
 

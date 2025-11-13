@@ -1,5 +1,6 @@
 import type { MarkType } from "@tiptap/pm/model";
-import { type PluginSpec, type Transaction, Plugin, TextSelection } from "@tiptap/pm/state";
+import { Plugin, TextSelection } from "@tiptap/pm/state";
+import type { PluginSpec, Transaction } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { Options } from "./types";
 import { getMarkType, MAX_MATCH } from "./utils";

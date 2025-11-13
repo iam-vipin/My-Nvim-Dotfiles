@@ -1,12 +1,14 @@
-import { ContentParser } from "@/lib/parser";
-import { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
+import type { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
+import type { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { downloadFile } from "@/helpers/utils";
-import { APIClient, getAPIClient } from "@/services/client";
+import type { ContentParser } from "@/lib/parser";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { getSlackContentParser } from "../../helpers/content-parser";
@@ -14,13 +16,9 @@ import { createSlackFormParser } from "../../helpers/field-parser/field-parser";
 import { parseLinkWorkItemFormData, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { getSlackThreadUrl } from "../../helpers/urls";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
-import { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
-import {
-  E_MESSAGE_ACTION_TYPES,
-  ShortcutActionPayload,
-  SlackPrivateMetadata,
-  TSlackConnectionDetails,
-} from "../../types/types";
+import type { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
+import type { ShortcutActionPayload, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { createSlackIntakeLinkback } from "../../views/intake-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";

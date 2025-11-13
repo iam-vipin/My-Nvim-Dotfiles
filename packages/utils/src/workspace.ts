@@ -1,6 +1,6 @@
 // plane imports
 import { EProductSubscriptionTier } from "@plane/constants";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 
 export const orderWorkspacesList = (workspaces: IWorkspace[]): IWorkspace[] =>
   workspaces.sort((a, b) => {

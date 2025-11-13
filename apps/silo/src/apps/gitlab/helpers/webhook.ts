@@ -1,4 +1,4 @@
-import { GitlabMergeRequestEvent, MergeRequestEvent } from "@plane/etl/gitlab";
+import type { GitlabMergeRequestEvent, MergeRequestEvent } from "@plane/etl/gitlab";
 import { env } from "@/env";
 
 // Implement this function to verify the GitLab webhook token

@@ -1,4 +1,4 @@
-import { IIssueDisplayProperties, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
+import type { IIssueDisplayProperties, TIssueGroupByOptions, TIssueOrderByOptions } from "@plane/types";
 
 export const ISSUE_ADDITIONAL_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
   "customer_request_count",

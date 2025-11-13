@@ -1,5 +1,5 @@
-import { RichTextElement, RichTextSection, RichTextList, RichTextBlockElement, RichTextBlock } from "@slack/types";
-import { ParsedIssueData, ParsedLinkWorkItemData } from "../types/types";
+import type { RichTextElement, RichTextSection, RichTextList, RichTextBlockElement, RichTextBlock } from "@slack/types";
+import type { ParsedIssueData, ParsedLinkWorkItemData } from "../types/types";
 
 export const parseIssueFormData = (values: any): ParsedIssueData => {
   const parsed: ParsedIssueData = {

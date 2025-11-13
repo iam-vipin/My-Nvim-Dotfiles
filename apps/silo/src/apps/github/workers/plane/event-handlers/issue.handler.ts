@@ -1,13 +1,9 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { GithubIssue, GithubService, WebhookGitHubUser } from "@plane/etl/github";
+import type { GithubIssue, GithubService, WebhookGitHubUser } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { transformPlaneIssue } from "@/apps/github/helpers/transform";
@@ -15,8 +11,8 @@ import { env } from "@/env";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
-import { TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 
 const apiClient = getAPIClient();
 

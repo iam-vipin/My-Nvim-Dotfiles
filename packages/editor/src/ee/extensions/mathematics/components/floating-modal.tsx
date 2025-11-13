@@ -8,10 +8,11 @@ import {
   FloatingOverlay,
   FloatingPortal,
 } from "@floating-ui/react";
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 // types
 import { UpgradeNowModal } from "@/plane-editor/components/modal/upgrade-modal";
-import { TMathModalBaseProps } from "../types";
+import type { TMathModalBaseProps } from "../types";
 // components
 import { MathInputModal } from "./input-modal";
 

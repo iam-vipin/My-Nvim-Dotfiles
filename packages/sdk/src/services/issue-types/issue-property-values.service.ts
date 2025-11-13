@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExIssuePropertyValue } from "@/types";
+import type { ClientOptions, ExIssuePropertyValue } from "@/types";
 
 export class IssuePropertyValueService extends APIService {
   constructor(options: ClientOptions) {

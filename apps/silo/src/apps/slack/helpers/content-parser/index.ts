@@ -1,9 +1,5 @@
-import {
-  ContentParser,
-  ExternalMentionParserExtension,
-  IParserExtension,
-  PlaneMentionParserExtension,
-} from "@/lib/parser";
+import type { IParserExtension } from "@/lib/parser";
+import { ContentParser, ExternalMentionParserExtension, PlaneMentionParserExtension } from "@/lib/parser";
 
 export type TSlackContentParserConfig = {
   userMap: Map<string, string>;

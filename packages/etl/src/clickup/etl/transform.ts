@@ -1,4 +1,4 @@
-import {
+import type {
   ExIssueComment,
   ExIssueLabel,
   ExIssueProperty,
@@ -23,9 +23,10 @@ import {
   CLICKUP_STATE_EXTERNAL_ID,
 } from "@/clickup/helpers";
 
-import { E_IMPORTER_KEYS, getRandomColor, getFormattedDateFromTimestamp, TPropertyValuesPayload } from "@/core";
+import type { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS, getRandomColor, getFormattedDateFromTimestamp } from "@/core";
 import { getPropertyAttributes, getPropertyValues } from "../helpers/custom-field-etl";
-import {
+import type {
   TClickUpTask,
   TClickUpComment,
   TClickUpUser,

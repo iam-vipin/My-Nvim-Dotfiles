@@ -1,5 +1,5 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";

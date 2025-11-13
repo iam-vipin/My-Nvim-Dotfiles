@@ -1,5 +1,5 @@
-import { TIssue } from "./issue";
-import { TIssueRelationTypesExtended } from "./issue_relation_extended";
+import type { TIssue } from "./issue";
+import type { TIssueRelationTypesExtended } from "./issue_relation_extended";
 
 export type TIssueRelation = Record<TIssueRelationTypes, TIssue[]>;
 

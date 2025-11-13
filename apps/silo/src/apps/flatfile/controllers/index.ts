@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { createOrUpdateCredentials } from "@/helpers/credential";

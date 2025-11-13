@@ -1,5 +1,5 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-import { EPageAccess } from "@plane/constants";
+import type { EPageAccess } from "@plane/constants";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export type PageEmbedExtensionAttributes = {

@@ -1,4 +1,4 @@
-import { SlackTokenRefreshResponse } from "../types";
+import type { SlackTokenRefreshResponse } from "../types";
 import { SlackService } from "./api.service";
 import { SlackAuthService } from "./auth.service";
 

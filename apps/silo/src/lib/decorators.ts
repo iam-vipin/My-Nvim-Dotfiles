@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import "reflect-metadata";
 // external middlewares
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { checkIntegrationAvailability } from "@/helpers/app";
 import { validateUserAuthentication } from "@/middleware/auth.middleware";
 

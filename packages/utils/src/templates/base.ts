@@ -1,6 +1,7 @@
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
-import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
+import type { TBaseTemplateWithData } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 // local imports
 import { joinUrlPath } from "../string";
 

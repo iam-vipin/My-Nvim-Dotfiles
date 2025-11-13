@@ -1,5 +1,6 @@
 import { orderBy } from "lodash-es";
-import { EProductSubscriptionEnum, IPaymentProduct, IPaymentProductPrice } from "@plane/types";
+import type { IPaymentProduct, IPaymentProductPrice } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 
 /**
  * Retrieves a subscription product based on the subscription type

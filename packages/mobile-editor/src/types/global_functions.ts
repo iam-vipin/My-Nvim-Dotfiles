@@ -1,5 +1,5 @@
-import { TEditorCommands } from "@plane/editor";
-import { TEditorParams } from "@/types/editor";
+import type { TEditorCommands } from "@plane/editor";
+import type { TEditorParams } from "@/types/editor";
 
 declare global {
   interface Window {

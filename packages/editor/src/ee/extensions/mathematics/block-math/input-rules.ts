@@ -1,5 +1,5 @@
 import { InputRule } from "@tiptap/core";
-import { NodeType } from "@tiptap/pm/model";
+import type { NodeType } from "@tiptap/pm/model";
 // types
 import { EMathAttributeNames } from "../types";
 

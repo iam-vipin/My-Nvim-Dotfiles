@@ -1,4 +1,4 @@
-import { StorageProvider } from "./storage-provider";
+import type { StorageProvider } from "./storage-provider";
 
 export class ZipStream {
   private storageProvider: StorageProvider;

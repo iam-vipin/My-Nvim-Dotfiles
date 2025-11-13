@@ -1,5 +1,6 @@
 import axios from "axios";
-import { HTMLElement, parse } from "node-html-parser";
+import type { HTMLElement } from "node-html-parser";
+import { parse } from "node-html-parser";
 import { validate as uuidValidate } from "uuid";
 
 import { logger } from "@plane/logger";

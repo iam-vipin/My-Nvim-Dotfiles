@@ -1,12 +1,7 @@
-import {
-  EIssuePropertyRelationType,
-  EIssuePropertyType,
-  ExIssueProperty,
-  ExIssuePropertyValue,
-  TPropertyValue,
-} from "@plane/sdk";
+import type { ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
+import { EIssuePropertyRelationType, EIssuePropertyType } from "@plane/sdk";
 import { E_IMPORTER_KEYS, getFormattedDateFromTimestamp, getTextPropertySettings } from "@/core";
-import { TClickUpCustomField, TClickUpCustomFieldKeys, TClickUpUser } from "../types";
+import type { TClickUpCustomField, TClickUpCustomFieldKeys, TClickUpUser } from "../types";
 import { CLICKUP_TASK_CUSTOM_FIELD_OPTION_EXTERNAL_ID, CLICKUP_USER_EXTERNAL_ID } from "./key";
 
 export type TSupportedClickUpCustomFieldTypes = Extract<

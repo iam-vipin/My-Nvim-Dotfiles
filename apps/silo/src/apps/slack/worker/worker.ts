@@ -1,8 +1,9 @@
-import { TSlackPayload } from "@plane/etl/slack";
+import type { TSlackPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { captureException } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { handleBlockActions } from "./handlers/block-actions";
 import { handleCommand } from "./handlers/handle-command";
 import { handleSlackEvent } from "./handlers/handle-message";

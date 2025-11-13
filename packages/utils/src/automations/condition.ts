@@ -1,5 +1,6 @@
 import { DEFAULT_AUTOMATION_CONDITION_CONFIG } from "@plane/constants";
-import { EConditionNodeHandlerName, TCreateConditionPayload } from "@plane/types";
+import type { TCreateConditionPayload } from "@plane/types";
+import { EConditionNodeHandlerName } from "@plane/types";
 
 type TGenerateConditionPayload = {
   triggerHandlerName?: string;

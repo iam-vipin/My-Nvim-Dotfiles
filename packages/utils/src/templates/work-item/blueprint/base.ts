@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { TWorkItemBlueprintFormData } from "@plane/types";
+import type { TWorkItemBlueprintFormData } from "@plane/types";
 
 type TMockCreateWorkItemBlueprintParams = {
   workspaceSlug: string;

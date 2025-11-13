@@ -1,21 +1,23 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EMathAttributeNames, type TMathAttributes } from "../types";
+import { EMathAttributeNames } from "../types";
+import type { TMathAttributes } from "../types";
 // utils
 import { DEFAULT_MATH_ATTRIBUTES } from "../utils/math-attributes";
 // commands
 import { inlineMathCommands } from "./commands";
 // components
-import { InlineMathNodeView, type InlineMathNodeViewProps } from "./components/node-view";
+import { InlineMathNodeView } from "./components/node-view";
+import type { InlineMathNodeViewProps } from "./components/node-view";
 // input rules
 import { inlineMathInputRules } from "./input-rules";
 // types
-import {
+import type {
   TInlineMathSetCommandOptions,
   TInlineMathUnsetCommandOptions,
   TInlineMathUpdateCommandOptions,

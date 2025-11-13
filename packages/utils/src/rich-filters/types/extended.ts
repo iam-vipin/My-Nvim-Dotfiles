@@ -1,11 +1,11 @@
-import {
-  LOGICAL_OPERATOR,
+import type {
   TFilterExpression,
   TFilterGroupNode,
   TFilterNotGroupNode,
   TFilterOrGroupNode,
   TFilterProperty,
 } from "@plane/types";
+import { LOGICAL_OPERATOR } from "@plane/types";
 
 /**
  * Type guard to check if a group node is an OR group.

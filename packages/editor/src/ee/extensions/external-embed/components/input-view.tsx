@@ -1,5 +1,6 @@
 import { find } from "linkifyjs";
-import { type CSSProperties, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import type { CSSProperties } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -7,7 +8,7 @@ import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
-import { ExternalEmbedNodeViewProps } from "@/types";
+import type { ExternalEmbedNodeViewProps } from "@/types";
 
 type ExternalEmbedInputViewProps = {
   style: CSSProperties;

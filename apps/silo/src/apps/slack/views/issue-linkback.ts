@@ -1,4 +1,4 @@
-import { IssueWithExpanded } from "@plane/sdk";
+import type { IssueWithExpanded } from "@plane/sdk";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
 import {

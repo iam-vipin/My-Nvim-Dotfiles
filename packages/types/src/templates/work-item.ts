@@ -1,6 +1,6 @@
 // local imports
-import { ETemplateType, TBaseTemplate } from "./base";
-import { TWorkItemBlueprint, TWorkItemBlueprintFormData } from "./blueprint/work-item";
+import type { ETemplateType, TBaseTemplate } from "./base";
+import type { TWorkItemBlueprint, TWorkItemBlueprintFormData } from "./blueprint/work-item";
 
 export type TWorkItemTemplateData = TWorkItemBlueprint & {
   sub_workitems: TWorkItemBlueprint[];

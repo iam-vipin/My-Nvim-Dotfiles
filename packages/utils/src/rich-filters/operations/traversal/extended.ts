@@ -1,5 +1,5 @@
 // plane imports
-import { TFilterExpression, TFilterProperty } from "@plane/types";
+import type { TFilterExpression, TFilterProperty } from "@plane/types";
 // local imports
 import { isNotGroupNode } from "../../types/extended";
 import { findImmediateParent } from "./core";

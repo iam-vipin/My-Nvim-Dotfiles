@@ -1,7 +1,7 @@
 import { CLICKUP_TASK_EXTERNAL_ID } from "../helpers";
 import { CLICKUP_ALLOWED_CUSTOM_FIELD_TYPES } from "../helpers/constants";
-import { ClickupAPIService } from "../services/api.service";
-import {
+import type { ClickupAPIService } from "../services/api.service";
+import type {
   TClickUpComment,
   TClickUpCustomField,
   TClickUpCustomTaskType,

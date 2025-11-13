@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { AppError } from "@/lib/errors";
-import { type TPageDescriptionPayload } from "./core.service";
+import type { TPageDescriptionPayload } from "./core.service";
 import { PageService } from "./extended.service";
 
 export class SyncAgentPageService extends PageService {

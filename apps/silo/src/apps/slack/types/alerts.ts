@@ -1,4 +1,4 @@
-import { ExIssue, ExIssueComment } from "@plane/sdk";
+import type { ExIssue, ExIssueComment } from "@plane/sdk";
 
 export enum ESlackDMAlertActivityType {
   ASSIGNEE = "assignee",

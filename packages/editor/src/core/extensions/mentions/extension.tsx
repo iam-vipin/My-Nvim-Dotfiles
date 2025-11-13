@@ -1,12 +1,13 @@
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node as NodeType } from "@tiptap/pm/model";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as NodeType } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // extension config
 import { CustomMentionExtensionConfig } from "./extension-config";
 // node view
-import { MentionNodeView, MentionNodeViewProps } from "./mention-node-view";
+import type { MentionNodeViewProps } from "./mention-node-view";
+import { MentionNodeView } from "./mention-node-view";
 // types
 import { EMentionComponentAttributeNames } from "./types";
 // utils

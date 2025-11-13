@@ -1,6 +1,8 @@
-import { onStatelessPayload } from "@hocuspocus/server";
-import { TDocumentEventsServer, EventToPayloadMap, createRealtimeEvent } from "@plane/editor";
+import type { onStatelessPayload } from "@hocuspocus/server";
+import { createRealtimeEvent } from "@plane/editor";
+import type { EventToPayloadMap } from "@plane/editor";
 import { DocumentCollaborativeEvents } from "@plane/editor/lib";
+import type { TDocumentEventsServer } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
 

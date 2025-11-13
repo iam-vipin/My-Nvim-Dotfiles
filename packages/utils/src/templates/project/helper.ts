@@ -1,5 +1,5 @@
 import { STATE_GROUPS } from "@plane/constants";
-import {
+import type {
   EIssuePropertyType,
   IIssueLabel,
   IIssueProperty,

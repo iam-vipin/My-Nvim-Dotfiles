@@ -1,5 +1,6 @@
-import { HTMLElement } from "node-html-parser";
-import { NotionFileParserConfig, NotionFileParserExtension } from "../../../common/content-parser";
+import type { HTMLElement } from "node-html-parser";
+import type { NotionFileParserConfig } from "../../../common/content-parser";
+import { NotionFileParserExtension } from "../../../common/content-parser";
 
 export class ConfluenceFileParserExtension extends NotionFileParserExtension {
   constructor(config: NotionFileParserConfig) {

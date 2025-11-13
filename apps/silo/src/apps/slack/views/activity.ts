@@ -7,7 +7,7 @@ import {
   E_MUTATION_CONTEXT_ITEM_TYPE,
 } from "../helpers/blocks";
 import { ACTIONS, IGNORED_FIELD_UPDATES } from "../helpers/constants";
-import { ActivityForSlack } from "../types/types";
+import type { ActivityForSlack } from "../types/types";
 
 type ActivityProps = {
   // Activites to showcase in the linkback

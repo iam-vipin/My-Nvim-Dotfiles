@@ -1,7 +1,9 @@
 // plane imports
-import { EXTENDED_FILTER_FIELD_TYPE, TFilterValue } from "@plane/types";
+import type { TFilterValue } from "@plane/types";
+import { EXTENDED_FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
-import { createFilterFieldConfig, TCreateFilterConfigParams } from "./shared";
+import type { TCreateFilterConfigParams } from "./shared";
+import { createFilterFieldConfig } from "./shared";
 
 // ------------ Boolean filters ------------
 

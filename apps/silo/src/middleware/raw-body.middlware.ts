@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 export const setRawBodyOnRequest = (req: Request, res: Response, buf: Buffer) => {
   // added this to set rawBody on the request

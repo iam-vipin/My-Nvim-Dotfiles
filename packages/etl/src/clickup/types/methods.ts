@@ -1,7 +1,7 @@
 // add types which will be used in methods
 
-import { ExProject, ExState } from "@plane/sdk";
-import {
+import type { ExProject, ExState } from "@plane/sdk";
+import type {
   TClickUpFolder,
   TClickUpSpace,
   TClickUpStatus,

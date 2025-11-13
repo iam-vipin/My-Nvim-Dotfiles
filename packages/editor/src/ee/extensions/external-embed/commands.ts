@@ -3,7 +3,8 @@ import type { NodeType } from "@tiptap/pm/model";
 import tldjs from "tldjs";
 import { v4 as uuidv4 } from "uuid";
 // types
-import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, TExternalEmbedBlockAttributes } from "@/types";
+import type { TExternalEmbedBlockAttributes } from "@/types";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@/types";
 // local imports
 import { useModifiedEmbedUrl } from "./utils/url-modify";
 

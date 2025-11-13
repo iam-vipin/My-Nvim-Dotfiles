@@ -1,5 +1,5 @@
 // types
-import { TLogoProps } from "../common";
+import type { TLogoProps } from "../common";
 
 // Issue property dropdown options
 export type TIssuePropertyOption = {

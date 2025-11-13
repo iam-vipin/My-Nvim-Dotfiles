@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 // etl
 import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { JiraResource } from "@plane/etl/jira";
-import { createJiraService, JiraProject, JiraV2Service } from "@plane/etl/jira-server";
+import type { JiraResource } from "@plane/etl/jira";
+import type { JiraProject, JiraV2Service } from "@plane/etl/jira-server";
+import { createJiraService } from "@plane/etl/jira-server";
 // db
 // helpers
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";

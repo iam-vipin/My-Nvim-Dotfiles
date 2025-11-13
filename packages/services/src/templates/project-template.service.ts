@@ -1,6 +1,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { ETemplateType, TProjectTemplate } from "@plane/types";
+import type { TProjectTemplate } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 // local imports
 import { WorkspaceLevelTemplateServiceBase } from "./workspace-level-base.service";
 

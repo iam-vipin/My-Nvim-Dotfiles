@@ -1,7 +1,7 @@
-import { TInboxIssueStatus, TInboxIssueWithPagination } from "@plane/types";
+import type { TInboxIssueStatus, TInboxIssueWithPagination } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
-import { ExIntakeIssue, ExIssue } from "@/types/types";
+import type { ExIntakeIssue, ExIssue } from "@/types/types";
 // constants
 
 export type IntakeIssueCreatePayload = {

@@ -1,5 +1,5 @@
-import { ExcludedProps, ExPage } from "@plane/sdk";
-import { ClientOptions } from "@/types";
+import type { ExcludedProps, ExPage } from "@plane/sdk";
+import type { ClientOptions } from "@/types";
 import { APIService } from "../api.service";
 
 export class PageAPIService extends APIService {

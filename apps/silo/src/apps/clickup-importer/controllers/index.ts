@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get, Post } from "@plane/decorators";
 import { createClickUpService } from "@plane/etl/clickup";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";

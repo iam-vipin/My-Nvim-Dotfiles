@@ -1,11 +1,11 @@
-import { EUpdateStatus } from "../enums";
-import { TIssuePriorities } from "../issues";
-import { TIssuePublicComment } from "./activity/issue_comment";
-import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
-import { TIssueAttachment } from "./issue_attachment";
-import { TIssueLink } from "./issue_link";
-import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes } from "./issue_relation";
+import type { EUpdateStatus } from "../enums";
+import type { TIssuePriorities } from "../issues";
+import type { TIssuePublicComment } from "./activity/issue_comment";
+import type { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
+import type { TIssueAttachment } from "./issue_attachment";
+import type { TIssueLink } from "./issue_link";
+import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
+import type { TIssueRelationTypes } from "./issue_relation";
 
 export enum EIssueLayoutTypes {
   LIST = "list",

@@ -1,13 +1,14 @@
-import {
+import type {
   Issue as IJiraIssue,
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version3/models";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint, JiraService } from "@plane/etl/jira";
-import { ExIssueAttachment, ExState } from "@plane/sdk";
-import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@plane/etl/jira";
+import { JiraService } from "@plane/etl/jira";
+import type { ExIssueAttachment, ExState } from "@plane/sdk";
+import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getAPIClient } from "@/services/client";
 import { jiraAuth } from "../auth/auth";

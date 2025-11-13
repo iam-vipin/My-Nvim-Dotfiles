@@ -1,8 +1,5 @@
 // plane imports
-import {
-  COLLECTION_OPERATOR,
-  EQUALITY_OPERATOR,
-  LOGICAL_OPERATOR,
+import type {
   SingleOrArray,
   TSupportedOperators,
   TFilterExpression,
@@ -11,6 +8,7 @@ import {
   TFilterProperty,
   TExternalFilter,
 } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR, LOGICAL_OPERATOR } from "@plane/types";
 import {
   createAndGroupNode,
   createConditionNode,

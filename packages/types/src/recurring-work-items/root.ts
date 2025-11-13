@@ -1,4 +1,4 @@
-import { TWorkItemBlueprint, TWorkItemBlueprintFormData } from "../templates/blueprint/work-item";
+import type { TWorkItemBlueprint, TWorkItemBlueprintFormData } from "../templates/blueprint/work-item";
 
 export enum ERecurringWorkItemIntervalType {
   DAILY = "daily",

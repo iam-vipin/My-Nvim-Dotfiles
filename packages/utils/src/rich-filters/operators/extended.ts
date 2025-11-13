@@ -1,5 +1,5 @@
 // plane imports
-import { TSupportedOperators, TAllAvailableOperatorsForDisplay } from "@plane/types";
+import type { TSupportedOperators, TAllAvailableOperatorsForDisplay } from "@plane/types";
 
 // -------- OPERATOR HELPER UTILITIES --------
 

@@ -1,4 +1,4 @@
-import { TCustomPropertyFilterKey } from "./work-item-types";
+import type { TCustomPropertyFilterKey } from "./work-item-types";
 
 export interface IExtendedIssueDisplayProperties {
   customer_request_count?: boolean;

@@ -1,5 +1,6 @@
 // taken from https://github.com/curvenote/editor/tree/main/packages/prosemirror-codemark
-import { type PluginSpec, Plugin } from "@tiptap/pm/state";
+import { Plugin } from "@tiptap/pm/state";
+import type { PluginSpec } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import {
   onArrowLeft,

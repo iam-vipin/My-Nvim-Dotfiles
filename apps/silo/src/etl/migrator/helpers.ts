@@ -1,5 +1,5 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { getJobCredentials } from "@/helpers/job";
 import { getAPIClient } from "@/services/client";
 

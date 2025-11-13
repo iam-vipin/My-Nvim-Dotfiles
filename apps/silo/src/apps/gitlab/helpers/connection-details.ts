@@ -1,13 +1,9 @@
-import {
-  EConnectionType,
-  gitlabEntityConnectionSchema,
-  GitlabMergeRequestEvent,
-  gitlabWorkspaceConnectionSchema,
-} from "@plane/etl/gitlab";
+import type { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
+import { EConnectionType, gitlabEntityConnectionSchema, gitlabWorkspaceConnectionSchema } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
 import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
-import { GitlabConnectionDetails } from "../types";
+import type { GitlabConnectionDetails } from "../types";
 
 const apiClient = getAPIClient();
 

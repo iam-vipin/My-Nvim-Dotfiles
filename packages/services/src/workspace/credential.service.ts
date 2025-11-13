@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TWorkspaceCredential, TWorkspaceCredentialVerification } from "@plane/types";
+import type { TWorkspaceCredential, TWorkspaceCredentialVerification } from "@plane/types";
 import { APIService } from "../api.service";
 
 export class WorkspaceCredentialService extends APIService {

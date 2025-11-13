@@ -1,4 +1,4 @@
-import { TIntegrationConfig } from "@plane/types";
+import type { TIntegrationConfig } from "@plane/types";
 
 // A singleton class that holds the configuration for the app
 export class Config {

@@ -1,6 +1,6 @@
 import { GitLabService as GitLabAPIService } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
-import { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
+import type { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
 
 export class GitlabIntegrationService implements IPullRequestService {
   private apiService: GitLabAPIService;

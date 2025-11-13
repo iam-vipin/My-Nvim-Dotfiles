@@ -1,7 +1,7 @@
 import { E_SILO_ERROR_CODES } from "@plane/etl/core";
-import { SentryAuthService, SentryAuthState } from "@plane/etl/sentry";
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
-import { OAuthState, OAuthStrategy, OAuthTokenResponse } from "../types";
+import type { SentryAuthService, SentryAuthState } from "@plane/etl/sentry";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { OAuthState, OAuthStrategy, OAuthTokenResponse } from "../types";
 
 export class SentryOAuthStrategy implements OAuthStrategy {
   constructor(private readonly sentryAuth: SentryAuthService) {}

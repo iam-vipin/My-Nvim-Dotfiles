@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import {
   AlignCenter,
   AlignLeft,
@@ -15,14 +16,14 @@ import {
   Italic,
   ListOrdered,
   ListTodo,
-  LucideIcon,
   Strikethrough,
   Table,
   TextQuote,
   Underline,
 } from "lucide-react";
-import { ISvgIcons, ListLayoutIcon } from "@plane/propel/icons";
-import { TCommandExtraProps, TEditorCommands } from "@/types/editor";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ListLayoutIcon } from "@plane/propel/icons";
+import type { TCommandExtraProps, TEditorCommands } from "@/types/editor";
 
 export type TEditorTypes = "lite" | "document";
 

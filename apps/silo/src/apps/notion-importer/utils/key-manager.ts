@@ -3,7 +3,7 @@
  * This ensures consistent key formatting and naming across the application
  */
 
-import { ENotionImporterKeyType } from "../types";
+import type { ENotionImporterKeyType } from "../types";
 
 // Key prefixes
 const KEY_PREFIX = "SILO_NOTION_IMPORTER";

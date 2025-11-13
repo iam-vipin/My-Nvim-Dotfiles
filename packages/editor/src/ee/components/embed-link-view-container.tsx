@@ -1,5 +1,7 @@
-import { type Editor, useEditorState } from "@tiptap/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { useEditorState } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 // local imports
 import { EmbedLinkModal } from "./embed-link-modal";
 

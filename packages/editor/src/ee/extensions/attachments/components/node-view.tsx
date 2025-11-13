@@ -1,7 +1,8 @@
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
-import { type AttachmentExtension, type TAttachmentBlockAttributes } from "../types";
+import type { AttachmentExtension, TAttachmentBlockAttributes } from "../types";
 import { CustomAttachmentBlock } from "./block";
 import { CustomAttachmentFlaggedState } from "./flagged-state";
 import { CustomAttachmentUploader } from "./uploader";

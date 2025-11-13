@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, PlaneUser, UploadData, UserCreatePayload, UserResponsePayload } from "@/types/types";
+import type { ClientOptions, PlaneUser, UploadData, UserCreatePayload, UserResponsePayload } from "@/types/types";
 
 export type TTempPlaneUser = {
   id: string;

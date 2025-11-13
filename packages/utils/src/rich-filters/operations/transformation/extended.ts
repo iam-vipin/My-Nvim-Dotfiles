@@ -1,8 +1,9 @@
 // plane imports
-import { TFilterGroupNode, TFilterNotGroupNode, TFilterProperty } from "@plane/types";
+import type { TFilterGroupNode, TFilterNotGroupNode, TFilterProperty } from "@plane/types";
 // local imports
 import { unwrapGroupIfNeeded } from "../manipulation/core";
-import { TTreeTransformFn, TTreeTransformResult, transformExpressionTree } from "./core";
+import type { TTreeTransformFn, TTreeTransformResult } from "./core";
+import { transformExpressionTree } from "./core";
 
 /**
  * Helper function to create a consistent transformation result for group nodes.

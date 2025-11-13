@@ -1,6 +1,6 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { LinearService } from "@plane/etl/linear";
-import { Client } from "@plane/sdk";
+import type { LinearService } from "@plane/etl/linear";
+import type { Client } from "@plane/sdk";
 import {
   ContentParser,
   ExternalImageParserExtension,

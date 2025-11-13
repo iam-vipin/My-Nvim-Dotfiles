@@ -1,6 +1,6 @@
 "use client";
 import { useCallback } from "react";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 import { TOOLBAR_ITEMS } from "@/constants/editor";
 import { callNative } from "@/helpers/flutter-callback.helper";

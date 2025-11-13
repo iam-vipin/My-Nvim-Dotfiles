@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { env } from "@/env";
 
 // Middleware to verify Sentry signature

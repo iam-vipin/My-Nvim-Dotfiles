@@ -1,4 +1,4 @@
-import { TProjectBaseActivity } from "./activity";
+import type { TProjectBaseActivity } from "./activity";
 
 export interface IStateTransition {
   transition_state_id: string;

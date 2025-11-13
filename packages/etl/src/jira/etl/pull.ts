@@ -1,4 +1,4 @@
-import {
+import type {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
   Comment as JComment,
@@ -9,8 +9,8 @@ import {
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
 import Papa from "papaparse";
-import { JiraService } from "@/jira/services";
-import {
+import type { JiraService } from "@/jira/services";
+import type {
   ImportedJiraUser,
   JiraComment,
   JiraComponent,

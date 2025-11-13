@@ -1,4 +1,4 @@
-import { ExIssueLabel, ExState, Client as PlaneClient, PlaneUser } from "@plane/sdk";
+import type { ExIssueLabel, ExState, Client as PlaneClient, PlaneUser } from "@plane/sdk";
 
 export type PlaneProjectAssets = {
   states: ExState[];

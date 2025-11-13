@@ -1,6 +1,7 @@
+import type { EPageAccess } from "@plane/constants";
 // plane imports
-import { EPageAccess } from "@plane/constants";
-import { EPageSharedUserAccess, type TCollaborator, type TMovePageActions, type TPage } from "@plane/types";
+import type { TPage, TMovePageActions, TCollaborator, EPageSharedUserAccess } from "@plane/types";
+// types
 import type { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.

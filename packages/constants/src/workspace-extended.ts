@@ -1,5 +1,5 @@
 import { EUserWorkspaceRoles } from "@plane/types";
-import { IWorkspaceSidebarNavigationItem } from "./workspace";
+import type { IWorkspaceSidebarNavigationItem } from "./workspace";
 
 export const EXTENDED_WORKSPACE_SETTINGS = {
   integrations: {

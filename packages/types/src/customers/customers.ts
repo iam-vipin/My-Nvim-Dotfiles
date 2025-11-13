@@ -1,6 +1,6 @@
-import { TPaginationInfo } from "../common";
-import { TFileSignedURLResponse } from "../file";
-import { TIssue } from "../issues/issue";
+import type { TPaginationInfo } from "../common";
+import type { TFileSignedURLResponse } from "../file";
+import type { TIssue } from "../issues/issue";
 
 export type TCustomerContractStatus = "active" | "pre_contract" | "signed" | "inactive";
 

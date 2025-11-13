@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
-import { E_FEATURE_FLAGS, PlaneEntities, E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { PlaneEntities } from "@plane/etl/core";
+import { E_FEATURE_FLAGS, E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import {
-  EIssuePropertyType,
+import type {
   ExCycle,
   ExIssue,
   ExIssueComment,
@@ -14,7 +14,8 @@ import {
   ExProject,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import { EIssuePropertyType } from "@plane/sdk";
+import type { TImportJob } from "@plane/types";
 import {
   IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY,
   IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY,

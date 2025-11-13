@@ -1,6 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
-import { IParserExtension } from "@/lib/parser";
+import type { IParserExtension } from "@/lib/parser";
 
 export interface NotionPageParserConfig {
   // Required for retrieving assets from cache

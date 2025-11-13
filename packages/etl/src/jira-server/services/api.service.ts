@@ -1,10 +1,10 @@
 // services
 import axios from "axios";
-import { Paginated } from "jira.js";
+import type { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
-import { Board } from "jira.js/out/agile/models";
+import type { Board } from "jira.js/out/agile/models";
 import { Version2Client } from "jira.js/out/version2";
-import {
+import type {
   CustomFieldContextOption,
   FieldDetails,
   Issue,
@@ -12,8 +12,9 @@ import {
   JiraStatus,
   Project,
 } from "jira.js/out/version2/models";
-import { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
-import { fetchPaginatedData, JiraApiUser, JiraProps } from "..";
+import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
+import type { JiraApiUser, JiraProps } from "..";
+import { fetchPaginatedData } from "..";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;

@@ -10,7 +10,7 @@ import {
 } from "@floating-ui/react";
 // components
 import { UpgradeNowModal } from "@/plane-editor/components/modal/upgrade-modal";
-import { ExternalEmbedNodeViewProps } from "@/types";
+import type { ExternalEmbedNodeViewProps } from "@/types";
 import { ExternalEmbedInputView } from "./input-view";
 
 type ExternalEmbedInputModalProps = {

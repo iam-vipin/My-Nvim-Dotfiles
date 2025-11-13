@@ -1,8 +1,8 @@
-import { TWorkspaceBaseActivity, TBaseActivityVerbs } from "../activity";
-import { TLogoProps } from "../common";
-import { TIssue } from "../issues/issue";
-import { TStateGroups } from "../state";
-import { IUserLite } from "../users";
+import type { TWorkspaceBaseActivity, TBaseActivityVerbs } from "../activity";
+import type { TLogoProps } from "../common";
+import type { TIssue } from "../issues/issue";
+import type { TStateGroups } from "../state";
+import type { IUserLite } from "../users";
 
 export type TTeamspace = {
   id: string;

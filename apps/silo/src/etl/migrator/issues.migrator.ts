@@ -1,8 +1,10 @@
 /* ----------------------------- Issue Creation Utilities ----------------------------- */
-import { HTMLElement, parse } from "node-html-parser";
-import { E_IMPORTER_KEYS, TIssuePropertyValuesPayload, TPropertyValuesPayload } from "@plane/etl/core";
+import type { HTMLElement } from "node-html-parser";
+import { parse } from "node-html-parser";
+import type { TIssuePropertyValuesPayload, TPropertyValuesPayload } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import {
+import type {
   AttachmentResponse,
   ExIssue,
   ExIssueComment,
@@ -18,13 +20,13 @@ import {
   TIssuePropertyTypeKeys,
   UploadData,
 } from "@plane/sdk";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { wait } from "@/helpers/delay";
 import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
 import { AssertAPIErrorResponse, protect } from "@/lib";
-import { BulkIssuePayload } from "@/types";
-import { IssueCreatePayload, IssueWithParentPayload } from "./types";
+import type { BulkIssuePayload } from "@/types";
+import type { IssueCreatePayload, IssueWithParentPayload } from "./types";
 // A wrapper for better readability
 export const createOrphanIssues = async (payload: IssueCreatePayload): Promise<ExIssue[]> =>
   await createIssues(payload);

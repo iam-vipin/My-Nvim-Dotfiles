@@ -1,7 +1,8 @@
 import zlib from "zlib";
 import { logger } from "@plane/logger";
-import { TZipFileNode, EZipNodeType } from "./types";
-import { ZipStream } from "./zip-stream";
+import type { TZipFileNode } from "./types";
+import { EZipNodeType } from "./types";
+import type { ZipStream } from "./zip-stream";
 
 // ======================= CONSTANTS ======================= //
 /**

@@ -1,13 +1,14 @@
-import {
+import type {
   WebhookGitHubIssue,
   GithubService,
   WebhookGitHubComment,
   GithubIssue,
-  transformPlaneLabel,
   WebhookGitHubUser,
 } from "@plane/etl/github";
-import { Client, PlaneUser, ExIssue as PlaneIssue, ExIssueComment, ExIssueLabel } from "@plane/sdk";
-import { TIssueStateMap, E_INTEGRATION_KEYS, E_ISSUE_STATE_MAP_KEYS } from "@plane/types";
+import { transformPlaneLabel } from "@plane/etl/github";
+import type { Client, PlaneUser, ExIssue as PlaneIssue, ExIssueComment, ExIssueLabel } from "@plane/sdk";
+import type { TIssueStateMap } from "@plane/types";
+import { E_INTEGRATION_KEYS, E_ISSUE_STATE_MAP_KEYS } from "@plane/types";
 import { GithubContentParser } from "./content-parser";
 
 export const replaceMentionedGhUsers = (

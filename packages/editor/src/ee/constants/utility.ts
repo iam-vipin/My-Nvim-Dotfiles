@@ -1,5 +1,6 @@
 // ce imports
-import { NODE_FILE_MAP as CORE_NODE_FILE_MAP, type NodeFileMapType } from "src/ce/constants/utility";
+import { NODE_FILE_MAP as CORE_NODE_FILE_MAP } from "src/ce/constants/utility";
+import type { NodeFileMapType } from "src/ce/constants/utility";
 // local imports
 import { ADDITIONAL_EXTENSIONS } from "./extensions";
 

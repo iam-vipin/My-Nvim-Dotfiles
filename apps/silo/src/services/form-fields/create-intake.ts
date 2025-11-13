@@ -1,5 +1,5 @@
-import { FormField } from "@/types/form/base/fields";
-import { CreateIntakeFormFieldsMetadata } from "@/types/form/intake-form";
+import type { FormField } from "@/types/form/base/fields";
+import type { CreateIntakeFormFieldsMetadata } from "@/types/form/intake-form";
 import { StaticFormFieldsService } from "./static-fields";
 
 export const getCreateIntakeFormFields = async (

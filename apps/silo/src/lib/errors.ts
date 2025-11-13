@@ -1,4 +1,5 @@
-import { AxiosError, RawAxiosResponseHeaders } from "axios";
+import type { RawAxiosResponseHeaders } from "axios";
+import { AxiosError } from "axios";
 import { logger } from "@plane/logger";
 import { wait } from "@/helpers/delay";
 import { captureException } from "@/logger";

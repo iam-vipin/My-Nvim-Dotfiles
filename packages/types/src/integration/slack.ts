@@ -1,4 +1,4 @@
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
 
 // slack entity connection config
 export type TSlackEntityConnectionConfig = object;

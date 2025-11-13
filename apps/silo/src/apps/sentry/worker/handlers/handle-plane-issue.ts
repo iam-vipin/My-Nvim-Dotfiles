@@ -1,10 +1,11 @@
-import { SentryIssue } from "@plane/etl/sentry";
+import type { SentryIssue } from "@plane/etl/sentry";
 import { logger } from "@plane/logger";
-import { ExIssue, ExState, PlaneWebhookPayload } from "@plane/sdk";
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { ExIssue, ExState, PlaneWebhookPayload } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
-import { APIClient, getAPIClient } from "@/services/client";
-import { Store } from "@/worker/base";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
+import type { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";
 import {
   getSentryIssueDelinkMessage,
@@ -13,7 +14,8 @@ import {
   getSentryMarkedUnresolvedMessage,
 } from "../../helpers/constants";
 import { getProjectStateMappings } from "../../helpers/state";
-import { ESentryEntityConnectionType, TSentryServices } from "../../types";
+import type { TSentryServices } from "../../types";
+import { ESentryEntityConnectionType } from "../../types";
 
 /**
  * Plane Issue Handler is responsible for handling plane issue webhook

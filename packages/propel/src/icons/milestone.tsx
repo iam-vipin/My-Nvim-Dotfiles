@@ -1,4 +1,4 @@
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 export type MilestoneIconVariant =
   | "default"
   | "done"

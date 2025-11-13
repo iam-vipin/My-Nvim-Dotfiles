@@ -1,11 +1,11 @@
-import { Hocuspocus } from "@hocuspocus/server";
-import * as Y from "yjs";
+import type { Hocuspocus } from "@hocuspocus/server";
+import type * as Y from "yjs";
 // plane imports
 import { createRealtimeEvent } from "@plane/editor";
 import type { TPage } from "@plane/types";
 // core
 import { getPageService } from "@/services/page/handler";
-import { HocusPocusServerContext } from "@/types";
+import type { HocusPocusServerContext } from "@/types";
 import { findAllElementsRecursive } from "@/utils";
 // local imports
 import { broadcastMessageToPage } from "@/utils/broadcast-message";

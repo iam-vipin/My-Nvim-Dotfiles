@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 // ce imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";

@@ -1,5 +1,5 @@
-import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
-import { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
+import type { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+import type { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
 import type { DrawioExtensionOptions } from "../extensions/drawio/types";
 import type { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
 import type { MathematicsExtensionOptions } from "../extensions/mathematics/types";

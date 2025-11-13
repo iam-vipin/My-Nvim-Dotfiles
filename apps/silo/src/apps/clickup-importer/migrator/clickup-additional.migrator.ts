@@ -1,9 +1,7 @@
-import {
+import type {
   ClickupAPIService,
-  ClickUpPullService,
   TClickUpConfig,
   TClickUpEntity,
-  getUniqueTasks,
   TClickUpTaskWithComments,
   TClickUpUser,
   TClickUpListsWithTasks,
@@ -12,22 +10,28 @@ import {
   TClickUpTag,
   TClickUpPriority,
   TClickUpCustomFieldWithTaskType,
-  E_CLICKUP_ADDITIONAL_DATA_MIGRATOR_STEPS,
   TClickUpTask,
+} from "@plane/etl/clickup";
+import {
+  ClickUpPullService,
+  getUniqueTasks,
+  E_CLICKUP_ADDITIONAL_DATA_MIGRATOR_STEPS,
   E_CLICKUP_IMPORT_PHASE,
 } from "@plane/etl/clickup";
-import { E_IMPORTER_KEYS, E_JOB_STATUS, PlaneEntities } from "@plane/etl/core";
+import type { PlaneEntities } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_JOB_STATUS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { migrateToPlane } from "@/etl/migrator/migrator";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getAPIClient } from "@/services/client";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { Lock } from "@/worker/base/lock";
-import { TBatch } from "@/worker/types";
+import type { TBatch } from "@/worker/types";
 import { getClickUpClient } from "../helpers/clickup-client";
 import { ClickUpBulkTransformer } from "./transformers/etl";
 

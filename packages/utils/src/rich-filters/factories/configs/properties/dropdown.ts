@@ -1,15 +1,11 @@
 // plane imports
-import {
-  COLLECTION_OPERATOR,
-  EQUALITY_OPERATOR,
-  TFilterProperty,
-  TIssuePropertyOption,
-  TSupportedOperators,
-} from "@plane/types";
+import type { TFilterProperty, TIssuePropertyOption, TSupportedOperators } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getMultiSelectConfig } from "../core";
-import { createFilterConfig, createOperatorConfigEntry, TCreateFilterConfig } from "../shared";
-import { TCustomPropertyFilterParams } from "./shared";
+import type { TCreateFilterConfig } from "../shared";
+import { createFilterConfig, createOperatorConfigEntry } from "../shared";
+import type { TCustomPropertyFilterParams } from "./shared";
 
 /**
  * Dropdown property filter specific params

@@ -1,19 +1,16 @@
-import { EGithubEntityConnectionType, GithubWebhookPayload, WebhookGitHubComment } from "@plane/etl/github";
+import type { GithubWebhookPayload, WebhookGitHubComment } from "@plane/etl/github";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 import { transformGitHubComment } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { Store } from "@/worker/base";
+import type { Store } from "@/worker/base";
 import { shouldSync } from "./issue.handler";
 
 export type GithubCommentAction = "created" | "edited" | "deleted";

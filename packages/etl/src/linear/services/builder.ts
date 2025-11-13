@@ -1,4 +1,5 @@
-import LinearService, { LinearProps } from "./api.service";
+import type { LinearProps } from "./api.service";
+import LinearService from "./api.service";
 import { LinearAuth } from "./auth.service";
 
 export const createLinearAuthService = (

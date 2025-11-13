@@ -1,13 +1,15 @@
-import { SentryIssue, SentryIssueWebhook } from "@plane/etl/sentry";
+import type { SentryIssue, SentryIssueWebhook } from "@plane/etl/sentry";
 import { logger } from "@plane/logger";
-import { ExIssue, ExState } from "@plane/sdk";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
-import { APIClient, getAPIClient } from "@/services/client";
-import { Store } from "@/worker/base";
+import type { ExIssue, ExState } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
+import type { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";
 import { getStatusBacklogMessage, getStatusDoneMessage } from "../../helpers/constants";
 import { getProjectStateMappings } from "../../helpers/state";
-import { ESentryEntityConnectionType, ISentryTaskHandler, TSentryServices } from "../../types";
+import type { ISentryTaskHandler, TSentryServices } from "../../types";
+import { ESentryEntityConnectionType } from "../../types";
 
 /**
  * Sentry Issue Handler is responsible for handling Sentry issue webhooks

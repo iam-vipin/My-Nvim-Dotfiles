@@ -1,11 +1,6 @@
-import {
-  AppAuthParams,
-  createGithubService,
-  GithubApiProps,
-  GithubService as GithubAPIService,
-  GithubIssueComment,
-} from "@plane/etl/github";
-import { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
+import type { AppAuthParams, GithubService as GithubAPIService, GithubIssueComment } from "@plane/etl/github";
+import { createGithubService, GithubApiProps } from "@plane/etl/github";
+import type { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
 
 /**
  * Service connected with octokit and facilitating github data

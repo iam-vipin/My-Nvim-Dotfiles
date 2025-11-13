@@ -1,6 +1,7 @@
-import { HTMLElement } from "node-html-parser";
-import { FileHelper, FileHelperConfig } from "../../helpers";
-import { IParserExtension } from "../../types";
+import type { HTMLElement } from "node-html-parser";
+import type { FileHelperConfig } from "../../helpers";
+import { FileHelper } from "../../helpers";
+import type { IParserExtension } from "../../types";
 
 export type ExternalFileParserConfig = FileHelperConfig & {
   /*

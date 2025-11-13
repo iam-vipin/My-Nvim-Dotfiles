@@ -2,7 +2,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EExternalEmbedAttributeNames, type TExternalEmbedBlockAttributes } from "@/plane-editor/types/external-embed";
+import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+import type { TExternalEmbedBlockAttributes } from "@/plane-editor/types/external-embed";
 import type { ExternalEmbedExtension, ExternalEmbedExtensionStorage, InsertExternalEmbedCommandProps } from "./types";
 // utils
 import { DEFAULT_EXTERNAL_EMBED_ATTRIBUTES } from "./utils/attribute";

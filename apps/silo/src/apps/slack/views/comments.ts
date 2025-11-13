@@ -2,8 +2,9 @@ import { encapsulateInQuoteBlock } from "@/helpers/utils";
 import { getCommentDmAlertText } from "../helpers/activity";
 import { ACTIONS, ENTITIES } from "../helpers/constants";
 import { getUserMarkdown } from "../helpers/user";
-import { TSlackDMBlockFormationCtx } from "../types/alerts";
-import { E_MESSAGE_ACTION_TYPES, MetadataPayloadShort } from "../types/types";
+import type { TSlackDMBlockFormationCtx } from "../types/alerts";
+import type { MetadataPayloadShort } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 type TSlackCommentLinkbackProps = {
   blockFormationCtx: TSlackDMBlockFormationCtx;

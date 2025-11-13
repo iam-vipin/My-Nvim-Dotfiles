@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import { TFeatureFlags } from "@/core/types";
+import type { TFeatureFlags } from "@/core/types";
 
 export class FeatureFlagService {
   public axiosInstance: AxiosInstance;

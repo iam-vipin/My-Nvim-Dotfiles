@@ -9,11 +9,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
 import { MentionsDropdownSection } from "./mentions-dropdown-section";
-import {
-  EPiChatEditorAttributeNames,
-  type PiChatEditorMentionAttributes,
-  type PiChatMentionSearchCallbackResponse,
-} from "./types";
+import { EPiChatEditorAttributeNames } from "./types";
+import type { PiChatEditorMentionAttributes, PiChatMentionSearchCallbackResponse } from "./types";
 
 export type PiChatEditorMentionsDropdownProps = SuggestionProps<
   PiChatMentionSearchCallbackResponse,

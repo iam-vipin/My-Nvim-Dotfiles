@@ -1,4 +1,5 @@
-import { EActionNodeHandlerName, TActionNodeHandlerName } from "@plane/types";
+import type { TActionNodeHandlerName } from "@plane/types";
+import { EActionNodeHandlerName } from "@plane/types";
 
 export type TAutomationActionHandlerIconKey = "message-circle" | "circle-chevron-down";
 

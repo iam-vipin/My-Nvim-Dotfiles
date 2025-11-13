@@ -1,5 +1,6 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import { findChildren, type Editor } from "@tiptap/core";
+import { findChildren } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
 // components

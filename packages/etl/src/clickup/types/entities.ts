@@ -1,4 +1,4 @@
-import { TClickUpSpaceFeatures } from "./space-features";
+import type { TClickUpSpaceFeatures } from "./space-features";
 
 // clickup hierarchy TEAM -> SPACE -> FOLDER -> LIST -> TASK
 

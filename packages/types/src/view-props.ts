@@ -1,13 +1,13 @@
-import { EIssueLayoutTypes, TIssue } from "./issues/issue";
-import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
-import { CompleteOrEmpty } from "./utils";
-import {
+import type { TIssue } from "./issues/issue";
+import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
+import type { CompleteOrEmpty } from "./utils";
+import type {
   IExtendedIssueDisplayProperties,
   TExtendedIssueGroupByOptions,
   TExtendedIssueOrderByOptions,
   TExtendedWorkItemFilterProperty,
-  WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED,
 } from "./view-props-extended";
+import { WORK_ITEM_FILTER_PROPERTY_KEYS_EXTENDED } from "./view-props-extended";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 

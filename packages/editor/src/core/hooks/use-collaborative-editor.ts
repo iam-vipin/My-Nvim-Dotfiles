@@ -1,8 +1,9 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Extensions } from "@tiptap/core";
 import Collaboration from "@tiptap/extension-collaboration";
 // react
-import React, { useEffect, useMemo } from "react";
+import type React from "react";
+import { useEffect, useMemo } from "react";
 // extensions
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
@@ -11,12 +12,12 @@ import { useRealtimeEvents } from "@/hooks/use-realtime-events";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import {
-  EditorTitleRefApi,
+import type {
+  TCollaborativeEditorHookProps,
   ICollaborativeDocumentEditorProps,
   IEditorPropsExtended,
-  TCollaborativeEditorHookProps,
   TEditorHookProps,
+  EditorTitleRefApi,
 } from "@/types";
 // local imports
 import { useEditorNavigation } from "./use-editor-navigation";

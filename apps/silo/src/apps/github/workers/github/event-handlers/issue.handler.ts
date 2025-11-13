@@ -1,16 +1,18 @@
-import { EGithubEntityConnectionType, GithubIssueDedupPayload, WebhookGitHubIssue } from "@plane/etl/github";
+import type { GithubIssueDedupPayload, WebhookGitHubIssue } from "@plane/etl/github";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import type { ExIssue } from "@plane/sdk";
+import type { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
+import { transformGitHubIssue } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
 import { GITHUB_LABEL } from "@/helpers/constants";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
-import { transformGitHubIssue } from "@/apps/github/helpers/transform";
-import { Store } from "@/worker/base";
+import type { Store } from "@/worker/base";
 
 export type IssueWebhookActions =
   | "assigned"

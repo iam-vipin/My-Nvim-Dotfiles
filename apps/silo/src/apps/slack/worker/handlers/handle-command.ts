@@ -1,4 +1,4 @@
-import { TSlackCommandPayload } from "@plane/etl/slack";
+import type { TSlackCommandPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { CONSTANTS } from "@/helpers/constants";
 import { getConnectionDetails } from "../../helpers/connection-details";

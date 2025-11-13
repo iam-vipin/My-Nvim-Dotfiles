@@ -1,5 +1,6 @@
 import { FloatingOverlay } from "@floating-ui/react";
-import { ReactRenderer, type Editor } from "@tiptap/react";
+import { ReactRenderer } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +9,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { cn, CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
+import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
 import type { TEmbedItem } from "@/types";
 

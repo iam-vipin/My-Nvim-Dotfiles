@@ -1,5 +1,5 @@
-import { TIssuePropertyValuesPayload } from "@plane/etl/core";
-import {
+import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type {
   ExIssueLabel,
   PlaneUser,
   ExIssue,
@@ -8,7 +8,7 @@ import {
   ExIssueProperty,
   Client as PlaneClient,
 } from "@plane/sdk";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 
 export type IssuePayload = {
   jobId: string;

@@ -1,5 +1,5 @@
-import { E_INTEGRATION_KEYS } from "@plane/types";
-import { OAuthStrategy } from "./types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
+import type { OAuthStrategy } from "./types";
 
 export class OAuthStrategyManager {
   private static instance: OAuthStrategyManager;

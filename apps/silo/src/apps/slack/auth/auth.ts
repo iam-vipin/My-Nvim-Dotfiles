@@ -1,5 +1,5 @@
 import { isValidSlackRequest } from "@slack/bolt";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { createSlackAuth } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { env } from "@/env";

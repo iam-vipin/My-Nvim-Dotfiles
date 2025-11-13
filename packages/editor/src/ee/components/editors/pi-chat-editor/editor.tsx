@@ -1,12 +1,13 @@
 import { EditorContent, useEditor } from "@tiptap/react";
-import { forwardRef, MutableRefObject, useImperativeHandle } from "react";
+import type { MutableRefObject } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // plane editor imports
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { PiChatEditorExtensions } from "@/plane-editor/extensions/pi-chat-editor/extensions";
-import { EditorRefApi } from "@/types";
+import type { EditorRefApi } from "@/types";
 
 type IItem = {
   id: string;

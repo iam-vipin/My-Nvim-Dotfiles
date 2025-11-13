@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { PartialDeep, TRecurringWorkItem, TRecurringWorkItemActivity } from "@plane/types";
+import type { PartialDeep, TRecurringWorkItem, TRecurringWorkItemActivity } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
 

@@ -1,9 +1,11 @@
 // plane imports
-import { EQUALITY_OPERATOR, TFilterProperty } from "@plane/types";
+import type { TFilterProperty } from "@plane/types";
+import { EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getTextConfig } from "../extended";
-import { createFilterConfig, createOperatorConfigEntry, TCreateFilterConfig } from "../shared";
-import { TCustomPropertyFilterParams } from "./shared";
+import type { TCreateFilterConfig } from "../shared";
+import { createFilterConfig, createOperatorConfigEntry } from "../shared";
+import type { TCustomPropertyFilterParams } from "./shared";
 
 /**
  * Text property filter specific params

@@ -1,10 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 // components
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 // local imports
 import { WorkspaceGanttChart } from "./workspace-gantt-chart";
-import { GANTT_TIMELINE_TYPE } from "@plane/types";
 
 type Props = {
   isLoading?: boolean;

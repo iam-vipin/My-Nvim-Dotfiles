@@ -1,9 +1,10 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { ETemplateType, PartialDeep, TBaseTemplateWithData } from "@plane/types";
+import type { ETemplateType, PartialDeep, TBaseTemplateWithData } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
-import { buildWorkspaceLevelTemplateApiUrl, TCopyTemplateResponse } from "./utils";
+import type { TCopyTemplateResponse } from "./utils";
+import { buildWorkspaceLevelTemplateApiUrl } from "./utils";
 /**
  * Service class for managing workspace level templates
  * @extends {APIService}

@@ -1,7 +1,7 @@
 import { logger } from "@plane/logger";
 import DB from "@/db/client";
 import { decryptAES } from "@/helpers/decrypt";
-import { TApplicationSecret } from "@/types/dbquery";
+import type { TApplicationSecret } from "@/types/dbquery";
 
 // get the db instance
 const db = DB.getInstance();

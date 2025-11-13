@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@plane/utils";
 // types
-import { MathNodeVariant, TMathComponentProps } from "../../types";
+import type { MathNodeVariant, TMathComponentProps } from "../../types";
 
 type TInlineMathContainerProps = TMathComponentProps & {
   children: React.ReactNode;

@@ -1,4 +1,5 @@
-import { type Editor, useEditorState } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Code, Link, Bookmark } from "lucide-react";
 import { useCallback } from "react";
 // constants
@@ -7,7 +8,8 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // plane imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { IEditorProps, EExternalEmbedAttributeNames } from "@/types";
+import type { IEditorProps } from "@/types";
+import { EExternalEmbedAttributeNames } from "@/types";
 
 type useBlockMenuProps = {
   editor: Editor;

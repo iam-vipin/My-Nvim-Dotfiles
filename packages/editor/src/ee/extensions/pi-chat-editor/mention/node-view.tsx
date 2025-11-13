@@ -1,4 +1,5 @@
-import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";

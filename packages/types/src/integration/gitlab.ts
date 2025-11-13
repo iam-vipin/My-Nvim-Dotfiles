@@ -1,5 +1,5 @@
-import { TWorkspaceEntityConnection, TWorkspaceConnection } from "../workspace";
-import { TStateMap } from "./common";
+import type { TWorkspaceEntityConnection, TWorkspaceConnection } from "../workspace";
+import type { TStateMap } from "./common";
 
 export type TGitlabMergeRequestEvent =
   | "DRAFT_MR_OPENED"

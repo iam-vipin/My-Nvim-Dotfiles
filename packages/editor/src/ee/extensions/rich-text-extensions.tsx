@@ -1,11 +1,12 @@
-import { AnyExtension, Extensions } from "@tiptap/core";
+import type { AnyExtension, Extensions } from "@tiptap/core";
 import { Paperclip } from "lucide-react";
 // root
-import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
+import type { TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
+import { SlashCommands } from "@/extensions/slash-commands/root";
 // types
-import { TExtensions } from "@/types";
+import type { TExtensions } from "@/types";
 // core imports
-import {
+import type {
   TRichTextEditorAdditionalExtensionsProps,
   TRichTextEditorAdditionalExtensionsRegistry,
 } from "src/ce/extensions/rich-text-extensions";

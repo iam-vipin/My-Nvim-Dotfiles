@@ -1,9 +1,11 @@
-import { EGithubEntityConnectionType, GithubPullRequestDedupPayload } from "@plane/etl/github";
+import type { GithubPullRequestDedupPayload } from "@plane/etl/github";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { E_INTEGRATION_KEYS, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import type { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 import { GithubIntegrationService } from "@/apps/github/services/github.service";
-import { PullRequestWebhookActions } from "@/apps/github/types";
+import type { PullRequestWebhookActions } from "@/apps/github/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";

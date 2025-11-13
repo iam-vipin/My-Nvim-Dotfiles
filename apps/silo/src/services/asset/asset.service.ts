@@ -1,5 +1,5 @@
-import { ExAsset, AssetUploadResponse } from "@plane/sdk";
-import { ClientOptions } from "@/types";
+import type { ExAsset, AssetUploadResponse } from "@plane/sdk";
+import type { ClientOptions } from "@/types";
 import { APIService } from "../api.service";
 
 interface AssetResponse {

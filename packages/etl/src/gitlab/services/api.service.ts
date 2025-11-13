@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import { GitlabUser } from "@/gitlab/types";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { GitlabUser } from "@/gitlab/types";
 
 export class GitLabService {
   client: AxiosInstance;

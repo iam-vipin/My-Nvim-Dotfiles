@@ -1,8 +1,8 @@
-import { PlaneWebhookPayloadBase, ExIssue, ExIssueComment } from "@plane/sdk";
+import type { PlaneWebhookPayloadBase, ExIssue, ExIssueComment } from "@plane/sdk";
 import { getIssueUrlFromSequenceId, getUserProfileUrl } from "@/helpers/urls";
 import { titleCase, isUUID } from "@/helpers/utils";
-import { ESlackDMAlertActivityAction } from "../types/alerts";
-import { ActivityForSlack } from "../types/types";
+import type { ESlackDMAlertActivityAction } from "../types/alerts";
+import type { ActivityForSlack } from "../types/types";
 import { getUserMarkdown } from "./user";
 
 type ActivityFormatterContext = {

@@ -1,4 +1,4 @@
-import { ExModule, ExProject, TModuleStatus } from "@plane/sdk";
+import type { ExModule, ExProject, TModuleStatus } from "@plane/sdk";
 import { getModuleUrl, getPlaneLogoUrl } from "@/helpers/urls";
 import { ACTIONS } from "../helpers/constants";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";

@@ -1,6 +1,6 @@
-import { TSlackUserAlertsConfig } from "@plane/etl/slack";
-import { TWorkspaceConnection } from "@plane/types";
-import { TSlackWorkspaceConnectionConfig } from "../types/types";
+import type { TSlackUserAlertsConfig } from "@plane/etl/slack";
+import type { TWorkspaceConnection } from "@plane/types";
+import type { TSlackWorkspaceConnectionConfig } from "../types/types";
 
 /*
  * The function takes the workspace connection and the plane user id

@@ -1,4 +1,4 @@
-import { PlaneUser } from "@plane/sdk";
+import type { PlaneUser } from "@plane/sdk";
 
 export type EmailUser =
   | {

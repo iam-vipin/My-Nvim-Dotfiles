@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get, Post } from "@plane/decorators";
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { validateImporterCredentials } from "@/apps/jira-importer/helpers/controller-helpers";
 import { responseHandler } from "@/helpers/response-handler";
 import { useValidateUserAuthentication } from "@/lib/decorators";

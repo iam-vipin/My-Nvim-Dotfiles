@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get, Post } from "@plane/decorators";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";

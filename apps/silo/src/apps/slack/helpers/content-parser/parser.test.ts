@@ -1,4 +1,5 @@
-import { getSlackContentParser, TSlackContentParserConfig } from ".";
+import type { TSlackContentParserConfig } from ".";
+import { getSlackContentParser } from ".";
 
 describe("Slack Content Parser", () => {
   const mockConfig: TSlackContentParserConfig = {

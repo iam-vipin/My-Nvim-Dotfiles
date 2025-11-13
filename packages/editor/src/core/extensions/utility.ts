@@ -1,9 +1,9 @@
 import { Extension } from "@tiptap/core";
 // helpers
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
-import { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
+import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";

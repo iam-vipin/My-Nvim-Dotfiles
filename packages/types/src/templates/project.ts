@@ -1,12 +1,12 @@
-import { TInboxForm } from "../inbox";
-import { IIssueLabel } from "../issues";
-import { TProject, TProjectPriority, TProjectState } from "../project";
-import { IState } from "../state";
-import { IUserLite } from "../users";
-import { CompleteOrEmpty } from "../utils";
-import { IIssueType, TIssueType } from "../work-item-types";
-import { ETemplateType, TBaseTemplate } from "./base";
-import {
+import type { TInboxForm } from "../inbox";
+import type { IIssueLabel } from "../issues";
+import type { TProject, TProjectPriority, TProjectState } from "../project";
+import type { IState } from "../state";
+import type { IUserLite } from "../users";
+import type { CompleteOrEmpty } from "../utils";
+import type { IIssueType, TIssueType } from "../work-item-types";
+import type { ETemplateType, TBaseTemplate } from "./base";
+import type {
   TCustomPropertyBlueprint,
   TWorkItemBlueprint,
   TWorkItemBlueprintFormData,

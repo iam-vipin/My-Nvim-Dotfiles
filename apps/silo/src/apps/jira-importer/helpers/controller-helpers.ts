@@ -1,10 +1,10 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { TImporterCredentialValidation } from "@plane/types";
+import type { TImporterCredentialValidation } from "@plane/types";
 import { createAsanaClient } from "@/apps/asana-importer/controllers";
 import { createClickUpClient } from "@/apps/clickup-importer/controllers";
 import { createJiraServerClient } from "@/apps/jira-server-importer/controllers";
 import { createLinearClient } from "@/apps/linear-importer/controllers";
-import { APIClient } from "@/services/client";
+import type { APIClient } from "@/services/client";
 import { createJiraClient } from "../controllers";
 
 export enum E_VALIDATION_ERRORS {

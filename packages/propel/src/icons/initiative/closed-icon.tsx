@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const ClosedIcon: React.FC<ISvgIcons> = ({
   className = "",

@@ -1,6 +1,7 @@
-import { PageResource, PageSubType, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
+import type { PageResource, SlackEventPayload, UnfurlBlock, UnfurlMap } from "@plane/etl/slack";
+import { PageSubType } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import { ExPage } from "@plane/sdk";
+import type { ExPage } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
 import { getProjectPageUrl, getPublishedPageUrl, getWorkspacePageUrl } from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
@@ -9,7 +10,7 @@ import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
-import { TSlackConnectionDetails } from "../../types/types";
+import type { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";

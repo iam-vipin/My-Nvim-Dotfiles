@@ -1,4 +1,4 @@
-import { type ActionRule } from "@/types/document-action";
+import type { ActionRule } from "@/types/document-action";
 
 /**
  * Registry of rules that determine which actions to apply based on conditions

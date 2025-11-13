@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@/lib/parser";
+import type { IParserExtension } from "@/lib/parser";
 
 export class ConfluenceTaskListParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {

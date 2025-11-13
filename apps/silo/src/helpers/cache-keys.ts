@@ -1,4 +1,4 @@
-import { TSlackDMAlertKeyProps } from "@/apps/slack/types/alerts";
+import type { TSlackDMAlertKeyProps } from "@/apps/slack/types/alerts";
 import { EOAuthGrantType } from "@/types/oauth";
 
 export const getTokenCacheKey = (

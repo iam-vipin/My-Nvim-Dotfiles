@@ -1,4 +1,4 @@
-import { SentryActor, SentryAlertFields, SentryIssue } from "./service";
+import type { SentryActor, SentryAlertFields, SentryIssue } from "./service";
 
 // Header Types
 export interface SentryWebhookHeaders {

@@ -1,6 +1,6 @@
 import type { Node, Editor } from "@tiptap/core";
 // plane editor imports
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import type { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export enum EMathAttributeNames {
   LATEX = "latex",

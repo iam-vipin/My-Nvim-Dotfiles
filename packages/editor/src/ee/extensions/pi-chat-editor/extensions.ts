@@ -1,4 +1,5 @@
-import { Extension, type Extensions } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";

@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { convertIntegrationKeyToProvider } from "@/services/oauth/helpers";
 

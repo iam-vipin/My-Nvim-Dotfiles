@@ -1,12 +1,12 @@
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
-import { TUserPermissions } from "./enums";
-import { EProductSubscriptionEnum } from "./payment";
-import { TProjectMembership } from "./project";
+import type { TUserPermissions } from "./enums";
+import type { EProductSubscriptionEnum } from "./payment";
+import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { IWorkspaceViewProps } from "./view-props";
 // extended imports
-import { TWorkspaceExtendedResultEntities } from "./workspace-extended";
+import type { TWorkspaceExtendedResultEntities } from "./workspace-extended";
 
 export enum EUserWorkspaceRoles {
   ADMIN = 20,

@@ -1,6 +1,6 @@
 import axios from "axios";
 // types
-import { AsanaAuthProps, AsanaAuthState } from "@/asana/types";
+import type { AsanaAuthProps, AsanaAuthState } from "@/asana/types";
 
 export type AsanaTokenResponse = {
   access_token: string;

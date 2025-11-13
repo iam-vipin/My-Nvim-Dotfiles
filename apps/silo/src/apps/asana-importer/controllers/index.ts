@@ -1,14 +1,13 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 // silo asana
 import { Controller, Get, Post } from "@plane/decorators";
-import {
-  createAsanaService,
+import type {
   AsanaCustomField,
   PaginationPayload,
   AsanaCustomFieldSettings,
   PaginatedResponse,
-  pullUsers,
 } from "@plane/etl/asana";
+import { createAsanaService, pullUsers } from "@plane/etl/asana";
 // silo asana auth
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";

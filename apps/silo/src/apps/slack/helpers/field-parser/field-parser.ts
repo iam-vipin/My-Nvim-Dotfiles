@@ -1,12 +1,8 @@
 import { getCreateIntakeFormFields, getCreateWorkItemFormFields } from "@/services/form-fields";
-import { E_KNOWN_FIELD_KEY, FormField } from "@/types/form/base";
-import {
-  TFormParserContext,
-  TParsedFormResult,
-  TWorkItemFormResult,
-  TIntakeFormResult,
-  TFormType,
-} from "../../types/fields";
+import type { FormField } from "@/types/form/base";
+import { E_KNOWN_FIELD_KEY } from "@/types/form/base";
+import type { TFormParserContext, TParsedFormResult, TWorkItemFormResult, TIntakeFormResult } from "../../types/fields";
+import { TFormType } from "../../types/fields";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { richTextBlockToMrkdwn } from "../parse-issue-form";
 import { removePrefixIfExists } from "../slack-options";

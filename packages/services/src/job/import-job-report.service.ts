@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TImportReport } from "@plane/types";
+import type { TImportReport } from "@plane/types";
 import { APIService } from "../api.service";
 // types
 

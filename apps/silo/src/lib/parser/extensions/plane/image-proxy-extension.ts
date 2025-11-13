@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "../../types";
+import type { IParserExtension } from "../../types";
 
 const IMAGE_COMPONENT_SELECTOR = "image-component";
 

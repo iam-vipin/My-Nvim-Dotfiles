@@ -1,9 +1,11 @@
-import { SentryWebhookPayload } from "@plane/etl/sentry";
+import type { SentryWebhookPayload } from "@plane/etl/sentry";
 import { logger } from "@plane/logger";
-import { PlaneWebhookPayload } from "@plane/sdk";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
-import { ESentryWebhookType, ISentryTaskHandler } from "../types";
+import type { PlaneWebhookPayload } from "@plane/sdk";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
+import type { ISentryTaskHandler } from "../types";
+import { ESentryWebhookType } from "../types";
 import { SentryIssueHandler, SentryAlertHandler, SentryInstallationHandler, PlaneIssueHandler } from "./handlers";
 
 export class SentryWebhookHandler extends TaskHandler {

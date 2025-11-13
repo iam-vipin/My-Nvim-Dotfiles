@@ -1,14 +1,11 @@
 // plane imports
-import {
-  ERecurringWorkItemIntervalType,
-  TRecurringWorkItem,
-  TRecurringWorkItemForm,
-  TWorkItemBlueprintFormData,
-} from "@plane/types";
+import type { TRecurringWorkItem, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
+import { ERecurringWorkItemIntervalType } from "@plane/types";
 // local imports
 import { joinUrlPath } from "../string";
-import { buildWorkItemBlueprint, TBuildWorkItemBlueprintBaseParams } from "../templates/work-item/blueprint/build";
-import {
+import type { TBuildWorkItemBlueprintBaseParams } from "../templates/work-item/blueprint/build";
+import { buildWorkItemBlueprint } from "../templates/work-item/blueprint/build";
+import type {
   TSanitizeWorkItemFormDataParams,
   TWorkItemSanitizationResult,
 } from "../templates/work-item/blueprint/sanitize";

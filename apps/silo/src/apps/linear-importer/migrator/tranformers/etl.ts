@@ -1,16 +1,7 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import {
-  transformComment,
-  transformCycle,
-  transformIssue,
-  transformUser,
-  LinearConfig,
-  LinearEntity,
-  LinearDocument,
-  LinearService,
-} from "@plane/etl/linear";
-import {
-  Client,
+import type { LinearConfig, LinearEntity, LinearDocument, LinearService } from "@plane/etl/linear";
+import { transformComment, transformCycle, transformIssue, transformUser } from "@plane/etl/linear";
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -19,11 +10,13 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import { Client } from "@plane/sdk";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { getRandomColor } from "@/helpers/generic-helpers";
 import { getJobCredentials } from "@/helpers/job";
-import { getContentParser, LinearContentParserConfig } from "../../helpers/content-parser";
+import type { LinearContentParserConfig } from "../../helpers/content-parser";
+import { getContentParser } from "../../helpers/content-parser";
 /* ------------------ Transformers ----------------------
 This file contains transformers for Linear entities, responsible
 for converting the given Linear entities into Plane entities. The

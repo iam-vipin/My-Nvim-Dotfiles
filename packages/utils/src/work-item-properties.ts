@@ -1,6 +1,6 @@
 // plane imports
 import { DROPDOWN_ATTRIBUTES, ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
-import {
+import type {
   EIssuePropertyRelationType,
   EIssuePropertyType,
   IIssueProperty,

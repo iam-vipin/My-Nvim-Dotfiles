@@ -1,8 +1,8 @@
 // types
-import { TLogoProps } from "../common";
-import { TLoader } from "../issues/base";
-import { EIssuePropertyType, TIssueProperty, IIssueProperty, TIssuePropertyPayload } from "./work-item-properties";
-import { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
+import type { TLogoProps } from "../common";
+import type { TLoader } from "../issues/base";
+import type { EIssuePropertyType, TIssueProperty, IIssueProperty, TIssuePropertyPayload } from "./work-item-properties";
+import type { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
 
 export enum EWorkItemTypeEntity {
   WORK_ITEM = "WORK_ITEM",

@@ -1,4 +1,4 @@
-import { IProjectView } from "../views";
+import type { IProjectView } from "../views";
 
 export type TTeamspaceView = IProjectView & {
   project?: string | null;

@@ -1,7 +1,8 @@
 import * as dotenvx from "@dotenvx/dotenvx";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Application, Request, Response, NextFunction } from "express";
+import type { Application, Request, Response, NextFunction } from "express";
+import express from "express";
 
 // lib
 import expressWinston from "express-winston";
@@ -40,7 +41,7 @@ import { APIError } from "./lib";
 // types
 import { setRawBodyOnRequest } from "./middleware/raw-body.middlware";
 import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
-import { APIErrorResponse } from "./types";
+import type { APIErrorResponse } from "./types";
 
 export default class Server {
   private readonly app: Application;

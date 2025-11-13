@@ -1,7 +1,7 @@
-import { Issue, IssueLabel, User } from "@linear/sdk";
-import { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import type { Issue, IssueLabel, User } from "@linear/sdk";
+import type { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
+import type { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
 import { getFormattedDate, getTargetState } from "../helpers";
 
 export const transformIssue = async (

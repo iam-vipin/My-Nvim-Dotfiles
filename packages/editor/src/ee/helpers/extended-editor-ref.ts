@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import { getCommentSelector } from "../extensions/comments";
-import { TExtendedEditorRefApi } from "../types";
+import type { TExtendedEditorRefApi } from "../types";
 
 type TArgs = {
   editor: Editor | null;

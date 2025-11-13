@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { ExCycle, ExIssue, Client as PlaneClient } from "@plane/sdk";
+import type { ExCycle, ExIssue, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 

@@ -1,20 +1,10 @@
-import {
-  ExIssue,
-  ExIssueComment,
-  PlaneWebhookPayloadBase,
-  E_PLANE_WEBHOOK_EVENT,
-  E_PLANE_WEBHOOK_ACTION,
-} from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import type { ExIssue, ExIssueComment, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_PLANE_WEBHOOK_EVENT, E_PLANE_WEBHOOK_ACTION } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
 import { E_KNOWN_FIELD_KEY } from "@/types/form/base";
 import { Store } from "@/worker/base";
-import {
-  TSlackDMAlert,
-  TSlackDMAlertActivity,
-  ESlackDMAlertActivityType,
-  ESlackDMAlertActivityAction,
-  ESlackDMAlertType,
-} from "../../types/alerts";
+import type { TSlackDMAlert, TSlackDMAlertActivity } from "../../types/alerts";
+import { ESlackDMAlertActivityType, ESlackDMAlertActivityAction, ESlackDMAlertType } from "../../types/alerts";
 import {
   extractSlackDMAlertsFromWebhook,
   setSlackDMAlert,

@@ -1,4 +1,4 @@
-import { ExIssue, ExIssueComment, PlaneUser } from "./types";
+import type { ExIssue, ExIssueComment, PlaneUser } from "./types";
 
 // Common types
 type UUID = string;

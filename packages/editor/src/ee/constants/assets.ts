@@ -1,7 +1,8 @@
 // helpers
-import { TAssetMetaDataRecord } from "@/helpers/assets";
+import type { TAssetMetaDataRecord } from "@/helpers/assets";
 // local imports
-import { EAttachmentBlockAttributeNames, TAttachmentBlockAttributes } from "../extensions/attachments/types";
+import type { TAttachmentBlockAttributes } from "../extensions/attachments/types";
+import { EAttachmentBlockAttributeNames } from "../extensions/attachments/types";
 import { getAttachmentBlockId } from "../extensions/attachments/utils";
 import { ADDITIONAL_EXTENSIONS } from "./extensions";
 

@@ -1,4 +1,5 @@
-import { Hocuspocus, Server } from "@hocuspocus/server";
+import type { Hocuspocus } from "@hocuspocus/server";
+import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
 // env
 import { logger } from "@plane/logger";

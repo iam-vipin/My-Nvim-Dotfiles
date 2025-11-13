@@ -9,8 +9,9 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { JSONContent } from "@tiptap/core";
-import { type Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import type { Editor } from "@tiptap/react";
+import type { LucideIcon } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
@@ -21,7 +22,8 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // hooks
 import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
-import { EExternalEmbedAttributeNames, type IEditorProps } from "@/types";
+import { EExternalEmbedAttributeNames } from "@/types";
+import type { IEditorProps } from "@/types";
 // components
 import { getNodeOptions } from "./block-menu-options";
 

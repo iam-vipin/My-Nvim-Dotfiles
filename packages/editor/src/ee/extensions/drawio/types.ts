@@ -1,6 +1,6 @@
 import type { Node as ProseMirrorNode } from "@tiptap/core";
 import type { Range } from "@tiptap/react";
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 
 // Core Enums
 export enum EDrawioAttributeNames {

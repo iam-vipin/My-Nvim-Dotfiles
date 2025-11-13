@@ -1,5 +1,5 @@
-import { ExIssueAttachment, ExIssuePropertyValue, ExState, TPropertyValue } from "@plane/sdk";
-import {
+import type { ExIssueAttachment, ExIssuePropertyValue, ExState, TPropertyValue } from "@plane/sdk";
+import type {
   AsanaAttachment,
   AsanaCustomField,
   AsanaTaskComment,

@@ -1,4 +1,4 @@
-import { TDescription } from "./common";
+import type { TDescription } from "./common";
 
 export type TMilestoneProgress = {
   total_items: number;

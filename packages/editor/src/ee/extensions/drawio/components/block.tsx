@@ -9,10 +9,11 @@ import { EDrawioAttributeNames, EDrawioMode } from "../types";
 // constants
 import { DRAWIO_DIAGRAM_URL, DRAWIO_BOARD_URL } from "../utils/constants";
 // components
-import { DrawioIframe, DrawioIframeRef } from "./iframe";
+import type { DrawioIframeRef } from "./iframe";
+import { DrawioIframe } from "./iframe";
 import { DrawioInputBlock } from "./input-block";
 import { DrawioIframeLoading } from "./loading";
-import { DrawioNodeViewProps } from "./node-view";
+import type { DrawioNodeViewProps } from "./node-view";
 import { DrawioDialogWrapper } from "./wrapper";
 
 export const DrawioBlock: React.FC<DrawioNodeViewProps> = memo((props) => {

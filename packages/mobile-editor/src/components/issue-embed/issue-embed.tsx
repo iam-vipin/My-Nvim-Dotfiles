@@ -1,6 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { IssueIdentifier } from "@/components/issue-embed/issue-identifier";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";

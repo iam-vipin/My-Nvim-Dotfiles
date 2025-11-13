@@ -1,4 +1,5 @@
-import { ETriggerNodeHandlerName, TTriggerNodeHandlerName } from "@plane/types";
+import type { TTriggerNodeHandlerName } from "@plane/types";
+import { ETriggerNodeHandlerName } from "@plane/types";
 
 export type TAutomationTriggerIconKey = "LayersIcon" | "DoubleCircleIcon" | "Users" | "MessageCircle";
 

@@ -1,6 +1,6 @@
-import { Issue, IssueLabel, User } from "@linear/sdk";
-import { LinearService } from "@/linear/services";
-import { LinearComment, LinearCycle, LinearIssueAttachment, LinearProject } from "@/linear/types";
+import type { Issue, IssueLabel, User } from "@linear/sdk";
+import type { LinearService } from "@/linear/services";
+import type { LinearComment, LinearCycle, LinearIssueAttachment, LinearProject } from "@/linear/types";
 
 export async function pullUsers(client: LinearService, teamId: string): Promise<User[]> {
   const members = await client.getTeamMembers(teamId);

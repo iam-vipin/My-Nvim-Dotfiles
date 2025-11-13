@@ -1,9 +1,10 @@
 // silo db
 // silo asana
-import { AsanaConfig, AsanaService, createAsanaService } from "@plane/etl/asana";
+import type { AsanaConfig, AsanaService } from "@plane/etl/asana";
+import { createAsanaService } from "@plane/etl/asana";
 // silo core
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 // auth
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { asanaAuth } from "../auth/auth";

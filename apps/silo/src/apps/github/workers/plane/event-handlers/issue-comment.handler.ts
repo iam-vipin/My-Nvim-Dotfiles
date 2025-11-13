@@ -1,20 +1,16 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { GithubService } from "@plane/etl/github";
+import type { GithubService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { GithubContentParser } from "@/apps/github/helpers/content-parser";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getAPIClient } from "@/services/client";
-import { TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { imagePrefix } from "./issue.handler";
 
 const apiClient = getAPIClient();

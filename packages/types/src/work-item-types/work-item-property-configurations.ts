@@ -1,5 +1,5 @@
-import { TLogoProps } from "../common";
-import { EIssuePropertyRelationType, EIssuePropertyType } from "./work-item-properties";
+import type { TLogoProps } from "../common";
+import type { EIssuePropertyRelationType, EIssuePropertyType } from "./work-item-properties";
 
 // Issue property operation modes
 export type TOperationMode = "create" | "update";

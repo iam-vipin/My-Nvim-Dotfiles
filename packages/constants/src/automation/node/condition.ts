@@ -1,4 +1,4 @@
-import { TAutomationConditionFilterExpression, TAutomationConditionNodeConfig } from "@plane/types";
+import type { TAutomationConditionFilterExpression, TAutomationConditionNodeConfig } from "@plane/types";
 
 export const DEFAULT_AUTOMATION_CONDITION_FILTER_EXPRESSION: TAutomationConditionFilterExpression = undefined;
 

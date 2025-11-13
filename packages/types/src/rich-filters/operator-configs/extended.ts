@@ -1,12 +1,12 @@
-import { TFilterValue } from "../expression";
-import {
+import type { TFilterValue } from "../expression";
+import type {
   TDateFilterFieldConfig,
   TTextFilterFieldConfig,
   TNumberFilterFieldConfig,
   TBooleanFilterFieldConfig,
   TNumberRangeFilterFieldConfig,
 } from "../field-types";
-import { EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "../operators";
+import type { EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "../operators";
 
 // ----------------------------- EXACT Operator -----------------------------
 export type TExtendedExactOperatorConfigs<V extends TFilterValue> =

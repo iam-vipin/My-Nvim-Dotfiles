@@ -1,10 +1,12 @@
 import crypto from "crypto";
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 import { Controller, Get, Middleware, Post } from "@plane/decorators";
-import { createGithubService, GithubInstallation, GithubRepository, GithubWebhookPayload } from "@plane/etl/github";
+import type { GithubInstallation, GithubRepository, GithubWebhookPayload } from "@plane/etl/github";
+import { createGithubService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayloadBase } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TGithubAppConfig, TGithubWorkspaceConnection } from "@plane/types";
+import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayloadBase } from "@plane/sdk";
+import type { TGithubAppConfig, TGithubWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { GITHUB_LABEL, PLANE_LABEL } from "@/helpers/constants";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";

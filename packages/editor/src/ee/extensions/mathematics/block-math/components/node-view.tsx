@@ -1,4 +1,5 @@
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // components
@@ -6,7 +7,8 @@ import { FloatingMathModal } from "../../components/floating-modal";
 // hooks
 import { useMathNodeView } from "../../hooks/use-math-node-view";
 // types
-import { EMathAttributeNames, type TMathAttributes } from "../../types";
+import { EMathAttributeNames } from "../../types";
+import type { TMathAttributes } from "../../types";
 // local types
 import type { BlockMathExtensionType } from "../types";
 // local components

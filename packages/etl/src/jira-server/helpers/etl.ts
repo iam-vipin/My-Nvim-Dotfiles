@@ -1,11 +1,11 @@
-import {
+import type {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version2/models";
-import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
+import type { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
+import type { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 

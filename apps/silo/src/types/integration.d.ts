@@ -1,4 +1,4 @@
-import {
+import type {
   E_INTEGRATION_KEYS,
   TGithubWorkspaceConnection,
   TGitlabWorkspaceConnection,

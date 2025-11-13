@@ -1,5 +1,6 @@
 // plane imports
-import { API_BASE_URL, E_FEATURE_FLAGS } from "@plane/constants";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 // local imports
 import { APIService } from "../api.service";
 

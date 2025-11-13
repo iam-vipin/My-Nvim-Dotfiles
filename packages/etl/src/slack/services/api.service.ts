@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import {
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type {
   SlackConversationHistoryResponse,
   SlackMessageResponse,
   SlackTokenRefreshResponse,
@@ -7,7 +8,7 @@ import {
   SlackUserResponse,
   UnfurlMap,
 } from "../types";
-import { SlackAuthService } from "./auth.service";
+import type { SlackAuthService } from "./auth.service";
 
 export class SlackService {
   private client: AxiosInstance;

@@ -2,7 +2,7 @@
 // Configuration Types
 // ----------------------------------------
 
-import { IGitComment, IPullRequestDetails } from "./base";
+import type { IGitComment, IPullRequestDetails } from "./base";
 
 // ----------------------------------------
 // Event Data Types

@@ -1,8 +1,8 @@
-import { TProjectTemplateFormData } from "@plane/types";
+import type { TProjectTemplateFormData } from "@plane/types";
 import { isValidId, partitionValidIds } from "../../common";
 import { sanitizeMultipleWorkItemFormDataBlueprints } from "../work-item";
 import { projectTemplateFormGettersHelpers } from "./helper";
-import { TMockCreateWorkItemTypeInstanceParams } from "./work-item-type";
+import type { TMockCreateWorkItemTypeInstanceParams } from "./work-item-type";
 
 export type TSanitizeProjectCreationFormParams = {
   workspaceSlug: string;

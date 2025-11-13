@@ -1,5 +1,5 @@
-import { components } from "@octokit/openapi-webhooks-types";
-import { RestEndpointMethodTypes } from "@octokit/rest";
+import type { components } from "@octokit/openapi-webhooks-types";
+import type { RestEndpointMethodTypes } from "@octokit/rest";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type GithubEntity = {}; // TODO: add expected type

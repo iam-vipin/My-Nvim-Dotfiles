@@ -1,12 +1,16 @@
-import { AnyExtension, Extensions } from "@tiptap/core";
+import type { AnyExtension, Extensions } from "@tiptap/core";
 import { Paperclip, PenTool, Presentation } from "lucide-react";
 // plane imports
 import { LayersIcon, PageIcon } from "@plane/propel/icons";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 // ce imports
-import { TDocumentEditorAdditionalExtensionsProps, TDocumentEditorAdditionalExtensionsRegistry } from "@/ce/extensions";
+import type {
+  TDocumentEditorAdditionalExtensionsProps,
+  TDocumentEditorAdditionalExtensionsRegistry,
+} from "@/ce/extensions";
 // extensions
-import { SlashCommands, TSlashCommandAdditionalOption, WorkItemEmbedExtension } from "@/extensions";
+import type { TSlashCommandAdditionalOption } from "@/extensions";
+import { SlashCommands, WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
@@ -16,7 +20,7 @@ import {
   PageEmbedExtension,
 } from "@/plane-editor/extensions";
 // types
-import { TExtensions } from "@/types";
+import type { TExtensions } from "@/types";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";

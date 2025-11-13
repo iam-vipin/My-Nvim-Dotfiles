@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useMemo } from "react";
 // plane imports

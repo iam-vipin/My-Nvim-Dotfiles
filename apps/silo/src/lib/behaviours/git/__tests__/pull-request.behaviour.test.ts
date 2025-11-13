@@ -1,7 +1,7 @@
 import { logger } from "@plane/logger";
-import { Client as PlaneClient } from "@plane/sdk";
+import type { Client as PlaneClient } from "@plane/sdk";
 import { CONSTANTS } from "@/helpers/constants";
-import { IGitComment, IPullRequestDetails } from "@/types/behaviours/git";
+import type { IGitComment, IPullRequestDetails } from "@/types/behaviours/git";
 import { PullRequestBehaviour } from "../pull-request.behaviour";
 
 // Mock dependencies

@@ -1,14 +1,14 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
-import { IParserExtension } from "@/lib/parser";
 import { logger } from "@plane/logger";
-import { TAssetInfo, TDocContentParserConfig } from "@/apps/notion-importer/types";
+import type { TAssetInfo, TDocContentParserConfig } from "@/apps/notion-importer/types";
 import {
   CONFLUENCE_DRAWIO_CONTAINER_CLASS,
   CONFLUENCE_DRAWIO_CONTAINER_ID_PREFIXES,
   CONFLUENCE_DRAWIO_SCRIPT_SELECTOR,
 } from "@/apps/notion-importer/utils/html-helpers";
-import { TConfluenceAttachmentConfig } from "./extract-attachments-config";
+import type { IParserExtension } from "@/lib/parser";
+import type { TConfluenceAttachmentConfig } from "./extract-attachments-config";
 
 enum EDrawioMode {
   DIAGRAM = "diagram",

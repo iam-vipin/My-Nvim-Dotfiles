@@ -1,4 +1,4 @@
-import { SlackTokenRefreshResponse } from "@plane/etl/slack";
+import type { SlackTokenRefreshResponse } from "@plane/etl/slack";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 

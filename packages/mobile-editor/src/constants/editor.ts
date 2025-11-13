@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import {
   Bold,
   CaseSensitive,
@@ -12,14 +13,13 @@ import {
   Italic,
   ListOrdered,
   ListTodo,
-  LucideIcon,
   Quote,
   Strikethrough,
   Table,
   Underline,
 } from "lucide-react";
 // editor
-import { TEditorCommands, TEditorFontStyle } from "@plane/editor";
+import type { TEditorCommands, TEditorFontStyle } from "@plane/editor";
 // ui
 import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 

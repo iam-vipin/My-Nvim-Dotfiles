@@ -1,9 +1,9 @@
-import { RecordWithLinks } from "@flatfile/api/api";
+import type { RecordWithLinks } from "@flatfile/api/api";
 import { v4 as uuidv4 } from "uuid";
-import { ExCycle, ExIssue, ExIssueLabel, ExIssueType, ExModule, PlaneUser } from "@plane/sdk";
+import type { ExCycle, ExIssue, ExIssueLabel, ExIssueType, ExModule, PlaneUser } from "@plane/sdk";
 import { getFormattedDate } from "@/jira";
 import { getRandomColor } from "../helpers/strings";
-import {
+import type {
   TExtractedRecord,
   TFlatfileRecord,
   TFlatfileEntity,

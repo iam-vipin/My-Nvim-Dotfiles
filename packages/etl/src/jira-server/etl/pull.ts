@@ -1,11 +1,11 @@
-import {
+import type {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
 } from "jira.js/out/version2/models";
-import {
+import type {
   ImportedJiraUser,
   JiraComment,
   JiraComponent,

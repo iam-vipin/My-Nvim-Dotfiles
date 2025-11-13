@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Client } from "@plane/sdk";
+import type { Client } from "@plane/sdk";
 
 export type FileHelperConfig = {
   planeClient?: Client; // Type should match your actual client type

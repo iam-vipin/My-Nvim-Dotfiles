@@ -1,4 +1,4 @@
-import { TLogoProps } from "@plane/types";
+import type { TLogoProps } from "@plane/types";
 
 export enum ESearchFilterKeys {
   ALL = "all",

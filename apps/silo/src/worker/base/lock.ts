@@ -1,4 +1,4 @@
-import { Store } from ".";
+import type { Store } from ".";
 
 export type LockConfig = (
   | {

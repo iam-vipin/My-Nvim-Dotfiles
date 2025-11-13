@@ -1,5 +1,5 @@
-import { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version2/models";
-import {
+import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version2/models";
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -10,7 +10,8 @@ import {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
-import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
+import type { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS } from "@/core";
 import {
   getFormattedDate,
   getPropertyAttributes,
@@ -21,7 +22,7 @@ import {
   getTargetState,
   SUPPORTED_CUSTOM_FIELD_ATTRIBUTES,
 } from "../helpers";
-import {
+import type {
   IJiraIssue,
   ImportedJiraUser,
   IPriorityConfig,

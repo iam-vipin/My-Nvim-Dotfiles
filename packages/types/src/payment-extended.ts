@@ -1,4 +1,4 @@
-import { EProductSubscriptionEnum, TBillingFrequency } from "./payment";
+import type { EProductSubscriptionEnum, TBillingFrequency } from "./payment";
 
 export type IWorkspaceProductSubscription = {
   product: EProductSubscriptionEnum;

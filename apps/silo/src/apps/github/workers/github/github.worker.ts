@@ -1,9 +1,10 @@
-import { GithubWebhookPayload } from "@plane/etl/github";
+import type { GithubWebhookPayload } from "@plane/etl/github";
 import { logger } from "@plane/logger";
 import { CONSTANTS } from "@/helpers/constants";
 import { captureException } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { handleInstallationEvents } from "./event-handlers/installation.handler";
 import { handleIssueComment } from "./event-handlers/issue-comment.handler";
 import { handleIssueEvents } from "./event-handlers/issue.handler";

@@ -1,6 +1,6 @@
 // extensions
 import { FileCode2, Sigma, SquareRadical } from "lucide-react";
-import { TSlashCommandAdditionalOption } from "@/extensions";
+import type { TSlashCommandAdditionalOption } from "@/extensions";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { CommandProps, IEditorProps, TExtensions } from "@/types";

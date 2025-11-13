@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
+import type { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
@@ -11,12 +11,12 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION, ENTITIES } from "../../helpers/constants";
 import { refreshLinkback } from "../../helpers/linkback";
 import { createIntakeModal, createWorkItemModal, patchSlackView } from "../../helpers/modal";
-import {
-  E_MESSAGE_ACTION_TYPES,
+import type {
   SlackPrivateMetadata,
   TSlackConnectionDetails,
   TSlackWorkItemOrIntakeModalParams,
 } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { createReplyCommentModal } from "../../views/comments";
 import { createWebLinkModal } from "../../views/create-weblink-modal";

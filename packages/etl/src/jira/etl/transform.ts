@@ -1,5 +1,5 @@
-import { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
-import {
+import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -10,8 +10,9 @@ import {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
-import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
-import {
+import type { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS } from "@/core";
+import type {
   IJiraIssue,
   ImportedJiraUser,
   IPriorityConfig,

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
+import type {
   CompleteOrEmpty,
   IIssueLabel,
   IIssueType,
@@ -14,11 +14,8 @@ import { extractIds, isComplete } from "../../common";
 import { extractWorkItemFormDataBlueprint } from "../work-item";
 import { mockCreateOrUpdateLabel } from "./label";
 import { mockCreateOrUpdateState } from "./state";
-import {
-  mockCreateCustomProperty,
-  mockCreateWorkItemTypeInstance,
-  TMockCreateWorkItemTypeInstanceParams,
-} from "./work-item-type";
+import type { TMockCreateWorkItemTypeInstanceParams } from "./work-item-type";
+import { mockCreateCustomProperty, mockCreateWorkItemTypeInstance } from "./work-item-type";
 
 type TExtractProjectCreationFormDataParams = {
   projectData: TProjectTemplate["template_data"];

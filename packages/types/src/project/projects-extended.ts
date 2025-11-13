@@ -1,4 +1,4 @@
-import { EUpdateStatus } from "../enums";
+import type { EUpdateStatus } from "../enums";
 
 export enum EProjectPriority {
   NONE = "none",

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
-import { MergeRequestEvent } from "../helpers/helpers";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { MergeRequestEvent } from "../helpers/helpers";
 
 const webhooksUserSchema = z.object({
   avatar_url: z.string().url().optional(),

@@ -1,5 +1,5 @@
-import { ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
-import { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabUser } from "../types";
+import type { ExCycle, ExIssueLabel, ExIssue as PlaneIssue } from "@plane/sdk";
+import type { GitlabIssue, GitlabLabel, GitlabMilestone, GitlabUser } from "../types";
 
 export const transformPlaneIssue = (
   issue: PlaneIssue,

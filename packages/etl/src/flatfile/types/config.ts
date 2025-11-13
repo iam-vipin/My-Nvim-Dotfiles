@@ -1,6 +1,6 @@
 /* ----------- Importer Utility ----------- */
 
-import {
+import type {
   TExtractedCycle,
   TExtractedIssue,
   TExtractedIssueType,

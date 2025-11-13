@@ -18,7 +18,6 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  type LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
@@ -28,6 +27,7 @@ import {
   SquareRadical,
   FileCode2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers

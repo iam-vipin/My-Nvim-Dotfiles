@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get } from "@plane/decorators";
-import { E_IMPORTER_KEYS, E_SILO_ERROR_CODES, TAppKeys } from "@plane/etl/core";
+import type { TAppKeys } from "@plane/etl/core";
+import { E_IMPORTER_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";

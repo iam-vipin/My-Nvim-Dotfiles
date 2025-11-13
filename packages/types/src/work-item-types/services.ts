@@ -1,12 +1,12 @@
-import { TEpicAnalytics, TEpicStats } from "../epics";
-import {
+import type { TEpicAnalytics, TEpicStats } from "../epics";
+import type {
   EIssuePropertyType,
   TIssueProperty,
   TIssuePropertyPayload,
   TIssuePropertyResponse,
 } from "./work-item-properties";
-import { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
-import { TIssueType } from "./work-item-types";
+import type { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
+import type { TIssueType } from "./work-item-types";
 
 // -------------------------- ISSUE TYPES --------------------------
 

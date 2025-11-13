@@ -1,12 +1,10 @@
 import Mention from "@tiptap/extension-mention";
 import { mergeAttributes, ReactNodeViewRenderer } from "@tiptap/react";
 // local imports
-import { PiChatEditorMentionNodeView, PiChatEditorMentionNodeViewProps } from "./node-view";
-import {
-  EPiChatEditorAttributeNames,
-  type PiChatEditorMentionOptions,
-  type PiChatMentionSearchCallbackResponse,
-} from "./types";
+import type { PiChatEditorMentionNodeViewProps } from "./node-view";
+import { PiChatEditorMentionNodeView } from "./node-view";
+import { EPiChatEditorAttributeNames } from "./types";
+import type { PiChatEditorMentionOptions, PiChatMentionSearchCallbackResponse } from "./types";
 import { renderPiChatEditorMentionsDropdown } from "./utils";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { TSlackConnectionDetails } from "../types/types";
+import type { TSlackConnectionDetails } from "../types/types";
 import { createSlackLinkback } from "../views/issue-linkback";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "./user";
 

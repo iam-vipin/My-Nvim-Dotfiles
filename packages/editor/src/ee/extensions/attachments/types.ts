@@ -1,10 +1,10 @@
-import { Node } from "@tiptap/core";
+import type { Node } from "@tiptap/core";
 // extensions
-import { InsertImageComponentProps, UploadEntity } from "@/extensions/custom-image/types";
+import type { InsertImageComponentProps, UploadEntity } from "@/extensions/custom-image/types";
 // helpers
-import { EFileError } from "@/helpers/file";
+import type { EFileError } from "@/helpers/file";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 
 export enum EAttachmentBlockAttributeNames {
   ID = "id",

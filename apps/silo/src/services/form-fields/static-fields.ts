@@ -1,6 +1,6 @@
 import { RelationTypeEnum } from "@makeplane/plane-node-sdk";
-import { SelectOption } from "@/types/form/base/field-options";
-import { RelationField, SelectField, TextField } from "@/types/form/base/fields";
+import type { SelectOption } from "@/types/form/base/field-options";
+import type { RelationField, SelectField, TextField } from "@/types/form/base/fields";
 
 export class StaticFormFieldsService {
   getTitleField(orderInFormFields: number, required?: boolean, visible?: boolean): TextField {

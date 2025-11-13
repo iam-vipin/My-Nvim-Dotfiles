@@ -3,7 +3,8 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 // local imports
 import { ADDITIONAL_EXTENSIONS } from "../../../constants/extensions";
-import { COMMENT_MARK_SELECTORS, ECommentAttributeNames, type TCommentClickPayload } from "../types";
+import { COMMENT_MARK_SELECTORS, ECommentAttributeNames } from "../types";
+import type { TCommentClickPayload } from "../types";
 
 export type TClickHandlerPluginOptions = {
   onCommentClick?: (payload: TCommentClickPayload) => void;

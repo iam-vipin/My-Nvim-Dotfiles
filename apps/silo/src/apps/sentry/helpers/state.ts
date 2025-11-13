@@ -1,6 +1,6 @@
-import { TSentryConfig } from "@plane/etl/sentry";
-import { Client, ExState } from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import type { TSentryConfig } from "@plane/etl/sentry";
+import type { Client, ExState } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
 import { EPlaneStates } from "../types";
 
 export const getProjectStateMappings = async (

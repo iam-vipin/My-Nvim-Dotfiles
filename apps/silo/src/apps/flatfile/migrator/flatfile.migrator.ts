@@ -1,9 +1,8 @@
-import { PlaneEntities } from "@plane/etl/core";
+import type { PlaneEntities } from "@plane/etl/core";
+import type { FlatfileConfig, TFlatfileEntity } from "@plane/etl/flatfile";
 import {
   extractFlatfileEntity,
-  FlatfileConfig,
   pullSheetRecords,
-  TFlatfileEntity,
   transformCycle,
   transformIssue,
   transformIssueType,
@@ -12,11 +11,11 @@ import {
   transformUser,
 } from "@plane/etl/flatfile";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getJobData, resetJobIfStarted } from "@/helpers/job";
-import { MQ, Store } from "@/worker/base";
-import { TBatch } from "@/worker/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TBatch } from "@/worker/types";
 import { flatfileClient } from "../helpers/client";
 
 export class FlatfileMigrator extends BaseDataMigrator<FlatfileConfig, TFlatfileEntity> {

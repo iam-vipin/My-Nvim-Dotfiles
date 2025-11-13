@@ -1,5 +1,6 @@
 // UUID generation is handled in commands.ts when needed
-import { EDrawioAttributeNames, EDrawioMode, TDrawioBlockAttributes } from "../types";
+import type { TDrawioBlockAttributes } from "../types";
+import { EDrawioAttributeNames, EDrawioMode } from "../types";
 
 export const DEFAULT_DRAWIO_ATTRIBUTES: TDrawioBlockAttributes = {
   [EDrawioAttributeNames.ID]: null, // Will be generated when needed

@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  TDisplayConfig,
-  TExtensions,
-  TRealtimeConfig,
-  TServerHandler,
-} from "@plane/editor";
+import type { EditorRefApi, TDisplayConfig, TExtensions, TRealtimeConfig, TServerHandler } from "@plane/editor";
+import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type { TWebhookConnectionQueryParams } from "@plane/types";
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageContentLoader } from "@/components";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";

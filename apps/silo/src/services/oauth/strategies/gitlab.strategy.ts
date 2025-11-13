@@ -1,14 +1,7 @@
 import { E_SILO_ERROR_CODES } from "@plane/etl/core";
-import {
-  createGitLabAuth,
-  createGitLabService,
-  GitlabEnterpriseEntityType,
-  GitlabEntityData,
-  GitLabAuthorizeState,
-  GitLabAuthService,
-  GitLabService,
-} from "@plane/etl/gitlab";
-import {
+import type { GitlabEntityData, GitLabAuthorizeState, GitLabAuthService, GitLabService } from "@plane/etl/gitlab";
+import { createGitLabAuth, createGitLabService, GitlabEnterpriseEntityType } from "@plane/etl/gitlab";
+import type {
   E_INTEGRATION_KEYS,
   TWorkspaceConnection,
   TWorkspaceCredential,
@@ -20,7 +13,7 @@ import { getGitlabClientService } from "@/apps/gitlab/services";
 import { getGitlabAuthCallbackURL, GITLAB_ENTERPRISE_CONFIG_KEY } from "@/apps/gitlab-enterprise/helpers";
 import { getIntegrationPageUrl } from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
-import { OAuthStrategy, OAuthState, OAuthTokenResponse } from "@/services/oauth/types";
+import type { OAuthStrategy, OAuthState, OAuthTokenResponse } from "@/services/oauth/types";
 import { ESourceAuthorizationType } from "@/types/oauth";
 import { Store } from "@/worker/base/store";
 

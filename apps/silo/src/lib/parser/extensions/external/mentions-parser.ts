@@ -1,6 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
-import { IParserExtension } from "../../types";
+import type { IParserExtension } from "../../types";
 
 export type ExternalMentionParserConfig = {
   // The symbol to use for mentions

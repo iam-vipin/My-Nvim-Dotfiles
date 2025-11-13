@@ -1,26 +1,24 @@
-import { Issue, Issue as LinearIssue } from "@linear/sdk";
-import { PlaneEntities } from "@plane/etl/core";
+import type { Issue, Issue as LinearIssue } from "@linear/sdk";
+import type { PlaneEntities } from "@plane/etl/core";
+import type { TLinearIssueWithChildren, LinearConfig, LinearEntity } from "@plane/etl/linear";
 import {
   pullComments,
   pullCycles,
   pullLabels,
   pullProjects,
   pullUsers,
-  TLinearIssueWithChildren,
-  LinearConfig,
-  LinearEntity,
   pullIssues,
   E_LinearDocsMigratorStep,
   E_LINEAR_IMPORT_PHASE,
 } from "@plane/etl/linear";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getRandomColor } from "@/helpers/generic-helpers";
 import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
 import { importTaskManger } from "@/worker";
-import { MQ, Store } from "@/worker/base";
-import { TBatch } from "@/worker/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TBatch } from "@/worker/types";
 import { createLinearClient, filterCyclesForIssues } from "../helpers/migration-helpers";
 import {
   getTransformedComments,

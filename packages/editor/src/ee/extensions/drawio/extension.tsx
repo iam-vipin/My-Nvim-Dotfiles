@@ -1,9 +1,10 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // commands
 import { drawioCommands } from "./commands";
 // components
-import { DrawioNodeView, DrawioNodeViewProps } from "./components/node-view";
+import type { DrawioNodeViewProps } from "./components/node-view";
+import { DrawioNodeView } from "./components/node-view";
 // config
 import { DrawioExtensionConfig } from "./extension-config";
 

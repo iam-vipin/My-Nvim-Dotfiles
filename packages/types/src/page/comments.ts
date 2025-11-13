@@ -1,6 +1,6 @@
 import type { JSONContent } from "../editor";
-import { IUserLite } from "../users";
-import { IWorkspaceLite } from "../workspace";
+import type { IUserLite } from "../users";
+import type { IWorkspaceLite } from "../workspace";
 
 export type TPageCommentReaction = {
   id: string;

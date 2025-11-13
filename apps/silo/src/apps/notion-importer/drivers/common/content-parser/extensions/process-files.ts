@@ -1,7 +1,7 @@
 import { HTMLElement } from "node-html-parser";
 import { v4 as uuidv4 } from "uuid";
-import { IParserExtension } from "@/lib/parser";
-import { TAssetInfo } from "@/apps/notion-importer/types";
+import type { TAssetInfo } from "@/apps/notion-importer/types";
+import type { IParserExtension } from "@/lib/parser";
 
 export interface NotionFileParserConfig {
   // Required for retrieving assets from cache

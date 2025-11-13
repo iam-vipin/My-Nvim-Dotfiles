@@ -1,13 +1,12 @@
 // plane web types
-import {
-  EIssuePropertyRelationType,
-  EIssuePropertyType,
+import type {
   TDropdownAttributeOptions,
   TIssuePropertySettingsConfigurationsDetails,
   TIssuePropertySettingsMap,
   TIssuePropertyTypeDetails,
   TIssuePropertyTypeKeys,
 } from "@plane/types";
+import { EIssuePropertyRelationType, EIssuePropertyType } from "@plane/types";
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
   Record<TIssuePropertyTypeKeys, TIssuePropertyTypeDetails<EIssuePropertyType>>

@@ -2,12 +2,12 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
-import {
-  type AttachmentExtension,
+import { EAttachmentBlockAttributeNames } from "./types";
+import type {
   AttachmentExtensionStorage,
-  EAttachmentBlockAttributeNames,
-  type InsertAttachmentComponentProps,
-  type TAttachmentBlockAttributes,
+  AttachmentExtension,
+  InsertAttachmentComponentProps,
+  TAttachmentBlockAttributes,
 } from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES } from "./utils";
 

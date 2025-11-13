@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
-import { EditorRefApi, TEditorCommands } from "@plane/editor";
+import type React from "react";
+import { useCallback } from "react";
+import type { EditorRefApi, TEditorCommands } from "@plane/editor";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 import { callNative } from "@/helpers/flutter-callback.helper";
 

@@ -1,4 +1,4 @@
-import { FormFieldsMetadata } from "./base";
+import type { FormFieldsMetadata } from "./base";
 
 export interface CreateWorkItemFormFieldsMetadata extends FormFieldsMetadata {
   slug: string;

@@ -1,9 +1,9 @@
-import { TLogoProps } from "../common";
-import { TUserPermissions } from "../enums";
-import { TStateGroups } from "../state";
+import type { TLogoProps } from "../common";
+import type { TUserPermissions } from "../enums";
+import type { TStateGroups } from "../state";
 import type { IUser, IUserLite } from "../users";
 import type { IWorkspace } from "../workspace";
-import { TProjectExtended, TProjectIssuesSearchParamsExtended } from "./projects-extended";
+import type { TProjectExtended, TProjectIssuesSearchParamsExtended } from "./projects-extended";
 
 export enum EUserProjectRoles {
   ADMIN = 20,

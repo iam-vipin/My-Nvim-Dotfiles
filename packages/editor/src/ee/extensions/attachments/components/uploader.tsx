@@ -12,7 +12,7 @@ import { uploadFirstFileAndInsertRemaining, useDropZone, useUploader } from "@/h
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
 import { getAttachmentExtensionErrorMap, getAttachmentExtensionFileMap } from "../utils";
-import { CustomAttachmentNodeViewProps } from "./node-view";
+import type { CustomAttachmentNodeViewProps } from "./node-view";
 import { CustomAttachmentUploaderDetails } from "./uploader-details";
 
 export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> = (props) => {

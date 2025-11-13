@@ -1,6 +1,6 @@
 // plane imports
-import { TBaseTemplateWithData } from "../templates/base";
-import { PartialDeep } from "../utils";
+import type { TBaseTemplateWithData } from "../templates/base";
+import type { PartialDeep } from "../utils";
 
 export interface IBaseTemplateActionCallbacks<T extends TBaseTemplateWithData> {
   create: (template: PartialDeep<T>) => Promise<T>;

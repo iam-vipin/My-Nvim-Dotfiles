@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import { ClientOptions } from "@/types/types";
+import type { ClientOptions } from "@/types/types";
 
 export abstract class APIService {
   private axiosInstance: AxiosInstance;

@@ -1,4 +1,4 @@
-import { SentryAuthConfig } from "../types";
+import type { SentryAuthConfig } from "../types";
 import { SentryApiService } from "./api.service";
 import { SentryAuthService } from "./auth.service";
 

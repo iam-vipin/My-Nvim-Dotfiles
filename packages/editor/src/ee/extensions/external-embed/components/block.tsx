@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState, memo, useCallback } from "react";
 // import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
-import { ExternalEmbedNodeViewProps } from "@/types";
+import type { ExternalEmbedNodeViewProps } from "@/types";
 import { ExternalEmbedInputModal } from "./floating-input-modal";
 
 export const ExternalEmbedBlock: React.FC<ExternalEmbedNodeViewProps> = memo((externalEmbedProps) => {

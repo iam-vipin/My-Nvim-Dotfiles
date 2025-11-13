@@ -1,9 +1,10 @@
 // services
-import axios, { AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import axios from "axios";
 import { Board } from "jira.js/out/agile";
 import { Version3Client } from "jira.js/out/version3";
-import { FieldDetails, PageString } from "jira.js/out/version3/models";
-import { JiraProps, JiraResource } from "@/jira/types";
+import type { FieldDetails, PageString } from "jira.js/out/version3/models";
+import type { JiraProps, JiraResource } from "@/jira/types";
 
 export class JiraService {
   private jiraClient: Version3Client;

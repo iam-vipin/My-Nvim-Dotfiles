@@ -1,7 +1,7 @@
 import { marked } from "marked";
 import { parse, HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
-import { IParserExtension } from "./types";
+import type { IParserExtension } from "./types";
 
 export class ContentParser {
   private readonly MARKDOWN_IMAGE_PATTERN = /\!\[(.*?)\]\((.*?)\)/gim;

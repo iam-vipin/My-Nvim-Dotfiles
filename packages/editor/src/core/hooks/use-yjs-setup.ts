@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // yjs
-import * as Y from "yjs";
+import type * as Y from "yjs";
 // types
 import type { CollaborationState, CollabStage, CollaborationError } from "@/types/collaboration";
 

@@ -2,7 +2,7 @@ import type { RawCommands } from "@tiptap/core";
 import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
 // local imports
-import { PageEmbedExtensionAttributes } from "./extension-config";
+import type { PageEmbedExtensionAttributes } from "./extension-config";
 
 export const pageEmbedCommands = (nodeType: NodeType): Partial<RawCommands> => ({
   insertPageEmbed:

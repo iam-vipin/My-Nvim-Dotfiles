@@ -1,5 +1,5 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 
 export const getValidCredentials = async (workspaceId: string, userId: string, source: string) => {

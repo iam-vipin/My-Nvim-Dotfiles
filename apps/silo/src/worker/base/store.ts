@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
-import { createClient, RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
+import type { RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
+import { createClient } from "redis";
 import { logger } from "@plane/logger";
 import { env } from "@/env";
 

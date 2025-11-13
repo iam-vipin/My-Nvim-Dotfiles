@@ -1,4 +1,4 @@
-import { TCreateUpdateCustomerModal, TCustomerContractStatus, TCustomerStage } from "@plane/types";
+import type { TCreateUpdateCustomerModal, TCustomerContractStatus, TCustomerStage } from "@plane/types";
 
 export const CUSTOMER_CONTRACT_STATUS: {
   i18n_name: string;

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { EIconSize, INITIATIVE_STATES } from "@plane/constants";
-import { TInitiativeStates } from "@plane/types";
+import type { TInitiativeStates } from "@plane/types";
 
 import { ActiveIcon } from "./active-icon";
 import { ClosedIcon } from "./closed-icon";

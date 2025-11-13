@@ -1,4 +1,4 @@
-import { ExIssueType } from "./issue-types";
+import type { ExIssueType } from "./issue-types";
 
 // service types
 export type ClientOptions = {

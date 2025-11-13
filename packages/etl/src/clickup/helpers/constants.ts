@@ -1,4 +1,4 @@
-import { TClickUpCustomFieldKeys } from "../types";
+import type { TClickUpCustomFieldKeys } from "../types";
 import { CLICKUP_SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 
 export enum EClickUpPriority {

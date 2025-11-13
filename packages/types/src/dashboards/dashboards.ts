@@ -1,5 +1,5 @@
 // local types
-import { TLogoProps } from "../common";
+import type { TLogoProps } from "../common";
 
 export type TDashboardLevel = "workspace";
 

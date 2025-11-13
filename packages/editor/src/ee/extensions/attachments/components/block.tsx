@@ -5,7 +5,7 @@ import { convertBytesToSize } from "@plane/utils";
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
 import { getAttachmentBlockId } from "../utils";
-import { CustomAttachmentNodeViewProps } from "./node-view";
+import type { CustomAttachmentNodeViewProps } from "./node-view";
 
 type Props = CustomAttachmentNodeViewProps & {
   resolvedSource: string;

@@ -1,8 +1,10 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import type { S3Client } from "@aws-sdk/client-s3";
 import { logger } from "@plane/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
-import { ENotionMigrationType, TNotionMigratorData } from "../types";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TNotionMigratorData } from "../types";
+import { ENotionMigrationType } from "../types";
 import { NotionPhaseOneMigrator } from "./phases/phase-one";
 import { NotionPhaseTwoMigrator } from "./phases/phase-two";
 

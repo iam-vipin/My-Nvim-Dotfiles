@@ -1,6 +1,6 @@
 import type { JSONContent } from "../editor";
-import { EIssueCommentAccessSpecifier, EUpdateEntityType, EUpdateStatus } from "../enums";
-import {
+import type { EIssueCommentAccessSpecifier, EUpdateEntityType, EUpdateStatus } from "../enums";
+import type {
   TIssueActivityIssueDetail,
   TIssueActivityProjectDetail,
   TIssueActivityUserDetail,

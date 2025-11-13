@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn } from "@plane/utils";

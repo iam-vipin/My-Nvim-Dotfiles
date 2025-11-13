@@ -1,5 +1,6 @@
 import { env } from "@/env";
-import { E_MESSAGE_ACTION_TYPES, TSlackConnectionDetails } from "../types/types";
+import type { TSlackConnectionDetails } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export const getAccountConnectionBlocks = (details: TSlackConnectionDetails) => [
   {

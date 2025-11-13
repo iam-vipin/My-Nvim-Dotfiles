@@ -52,8 +52,10 @@ const storeDocument = async ({
   try {
     const service = getPageService(context.documentType, context);
     // convert binary data to all formats
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromDocumentEditorBinaryData(pageBinaryData);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      pageBinaryData,
+      true
+    );
     // create payload
     const payload = {
       description_binary: contentBinaryEncoded,

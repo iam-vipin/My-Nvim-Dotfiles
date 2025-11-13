@@ -252,7 +252,7 @@ export class TeamProjectWorkItemsFilter extends IssueFilterHelperStore implement
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.teamProjectWorkItems.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.teamProjectWorkItems.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

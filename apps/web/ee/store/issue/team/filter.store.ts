@@ -260,7 +260,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.teamIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.teamIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

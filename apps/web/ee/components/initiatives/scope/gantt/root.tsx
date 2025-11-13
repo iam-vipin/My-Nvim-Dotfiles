@@ -2,10 +2,11 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // assets
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import initiativesGanttDark from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-dark.webp?url";
 import initiativesGanttLight from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { TimeLineTypeContext, ETimeLineTypeType } from "@/components/gantt-chart/contexts";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { AddScopeButton } from "../../common/add-scope-button";
 import { ScopeGanttChartRoot } from "./chart/chart-root";
 
@@ -46,7 +47,7 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
     );
 
   return (
-    <TimeLineTypeContext.Provider value={ETimeLineTypeType.GROUPED}>
+    <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.GROUPED}>
       <ScopeGanttChartRoot
         epicIds={epicIds}
         projectIds={projectIds}

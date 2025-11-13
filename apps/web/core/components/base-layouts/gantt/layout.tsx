@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type {
   IBaseLayoutsGanttItem,
   IBaseLayoutsGanttProps,
@@ -9,7 +10,7 @@ import type {
   IBlockUpdateDependencyData,
 } from "@plane/types";
 import { cn } from "@plane/utils";
-import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { BaseGanttSidebar } from "./sidebar";
 
@@ -38,7 +39,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
     loadMoreItems,
     isLoading: _isLoading,
     className,
-    timelineType = ETimeLineTypeType.ISSUE,
+    timelineType = GANTT_TIMELINE_TYPE.ISSUE,
   } = props;
 
   // Flatten all grouped item IDs into a single array for gantt
@@ -83,8 +84,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
     [renderSidebar, renderBlock, items, loadMoreItems]
   );
 
-  // Map timeline type string to enum value
-  const timelineTypeEnum = useMemo(() => ETimeLineTypeType[timelineType], [timelineType]);
+  const timelineTypeEnum = useMemo(() => GANTT_TIMELINE_TYPE[timelineType], [timelineType]);
 
   // Date update handler - transforms IBlockUpdateDependencyData to TGanttDateUpdate
   const handleDateUpdate = useCallback(

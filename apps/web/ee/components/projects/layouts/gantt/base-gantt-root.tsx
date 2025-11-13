@@ -4,10 +4,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
+import { EUserProjectRoles, GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { GanttChartRoot } from "@/components/gantt-chart";
-import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -57,7 +57,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
 
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE}>
-      <TimeLineTypeContext.Provider value={ETimeLineTypeType.PROJECT}>
+      <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.PROJECT}>
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}

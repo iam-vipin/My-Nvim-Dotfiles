@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import type { IBaseLayoutsBaseItem, IBaseLayoutsBaseProps } from "./base";
+import type { IBaseLayoutsBaseItem, IBaseLayoutsBaseProps } from "../base";
+import { CORE_GANTT_TIMELINE_TYPE } from "./core";
+import { EXTENDED_GANTT_TIMELINE_TYPE } from "./extended";
 
 // Gantt-specific item with date fields
 export interface IBaseLayoutsGanttItem extends IBaseLayoutsBaseItem {
@@ -41,10 +43,6 @@ export interface IGanttCapabilities {
   enableDependency?: boolean | ((itemId: string) => boolean);
 }
 
-// Timeline type options
-// TODO: Remove this, domain specific type should not be here
-export type TTimelineType = "ISSUE" | "MODULE" | "PROJECT" | "GROUPED" | "INITIATIVE";
-
 // Gantt display options
 export type TGanttDisplayOptions = {
   showAllBlocks?: boolean; // Show blocks even without dates
@@ -68,3 +66,13 @@ export interface IBaseLayoutsGanttProps<T extends IBaseLayoutsGanttItem>
   // Handler for bulk date updates (dependencies, etc.)
   onDateUpdate?: (updates: TGanttDateUpdate[]) => void | Promise<void>;
 }
+
+export const GANTT_TIMELINE_TYPE = {
+  ...CORE_GANTT_TIMELINE_TYPE,
+  ...EXTENDED_GANTT_TIMELINE_TYPE,
+} as const;
+
+export type TTimelineTypeCore = (typeof CORE_GANTT_TIMELINE_TYPE)[keyof typeof CORE_GANTT_TIMELINE_TYPE];
+export type TTimelineType =
+  | TTimelineTypeCore
+  | (typeof EXTENDED_GANTT_TIMELINE_TYPE)[keyof typeof EXTENDED_GANTT_TIMELINE_TYPE];

@@ -32,12 +32,9 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project__archived_at__isnull=True)
             .order_by("-created_at")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 
@@ -45,7 +42,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -72,7 +69,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"), "issue")
 
             issue_activity.delay(
                 type="link.activity.updated",

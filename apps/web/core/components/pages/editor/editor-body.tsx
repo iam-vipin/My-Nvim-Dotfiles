@@ -1,11 +1,12 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type {
+  CollaborationState,
   EditorRefApi,
+  EditorTitleRefApi,
   TAIMenuProps,
   TDisplayConfig,
   TFileHandler,
@@ -14,17 +15,21 @@ import type {
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+// plane ui
 import { ERowVariant, Row } from "@plane/ui";
-import { cn, generateRandomColor, hslToHex } from "@plane/utils";
+import { cn, generateRandomColor, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
+import { EditorMentionsRoot } from "@/components/editor/embeds/mentions/root";
 import { useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web imports
+import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+// plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -35,12 +40,14 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
-import { PageEditorTitle } from "./title";
+// types
 
+// Add a CSS keyframe animation
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
 };
 
+// Define the structure of action-specific data
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   getRedirectionLink: (pageId?: string) => string;
@@ -50,25 +57,26 @@ type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
   editorForwardRef: React.RefObject<EditorRefApi>;
-  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
-
+  customRealtimeEventHandlers?: TCustomEventHandlers;
+  // Extended editor extensions configuration
   extendedEditorProps: TExtendedEditorExtensionsConfig;
+  isFetchingFallbackBinary?: boolean;
+  onCollaborationStateChange?: (state: CollaborationState) => void;
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
     editorForwardRef,
-    handleConnectionStatus,
     handleEditorReady,
     handleOpenNavigationPane,
     handlers,
@@ -78,21 +86,31 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     webhookConnectionParams,
     projectId,
     workspaceSlug,
+    customRealtimeEventHandlers,
     extendedEditorProps,
+    isFetchingFallbackBinary,
+    onCollaborationStateChange,
   } = props;
+
+  // states
+  const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
+  // refs
+  const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
+
   // derived values
   const {
     id: pageId,
-    name: pageTitle,
     isContentEditable,
-    updateTitle,
     editor: { editorRef, updateAssetsList },
+    setSyncingStatus,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
+  const isTitleEmpty = !page.name || page.name.trim() === "";
+
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
@@ -106,6 +124,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // translation
   const { t } = useTranslation();
+
   // derived values
   const displayConfig: TDisplayConfig = useMemo(
     () => ({
@@ -115,6 +134,25 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     [fontSize, fontStyle, isFullWidth]
   );
+
+  // Use the new hook to handle page events
+  const { updatePageProperties } = useRealtimePageEvents({
+    storeType,
+    page,
+    getUserDetails,
+    customRealtimeEventHandlers,
+    handlers,
+  });
+
+  // Set syncing status when page changes and reset collaboration state
+  useEffect(() => {
+    setSyncingStatus("syncing");
+    onCollaborationStateChange?.({
+      stage: { kind: "connecting" },
+      isServerSynced: false,
+      isServerDisconnected: false,
+    });
+  }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -129,20 +167,25 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     [editorRef, workspaceId, workspaceSlug]
   );
 
-  const handleServerConnect = useCallback(() => {
-    handleConnectionStatus(false);
-  }, [handleConnectionStatus]);
-
-  const handleServerError = useCallback(() => {
-    handleConnectionStatus(true);
-  }, [handleConnectionStatus]);
-
   const serverHandler: TServerHandler = useMemo(
     () => ({
-      onConnect: handleServerConnect,
-      onServerError: handleServerError,
+      onStateChange: (state) => {
+        // Pass full state to parent
+        onCollaborationStateChange?.(state);
+
+        // Map collaboration stage to UI syncing status
+        // Stage → UI mapping: disconnected → error | synced → synced | all others → syncing
+        if (state.stage.kind === "disconnected") {
+          setSyncingStatus("error");
+        } else if (state.stage.kind === "synced") {
+          setSyncingStatus("synced");
+        } else {
+          // initial, connecting, awaiting-sync, reconnecting → show as syncing
+          setSyncingStatus("syncing");
+        }
+      },
     }),
-    [handleServerConnect, handleServerError]
+    [setSyncingStatus, onCollaborationStateChange]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -187,11 +230,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
+
+  if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
-      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -215,45 +260,55 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-        <div className="page-header-container group/page-header">
-          <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot page={page} projectId={projectId} />
-            <PageEditorTitle
-              editorRef={editorRef}
-              readOnly={!isContentEditable}
-              title={pageTitle}
-              updateTitle={updateTitle}
-            />
+        <div>
+          <div className="page-header-container group/page-header">
+            <div className={blockWidthClassName}>
+              <PageEditorHeaderRoot
+                isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
+                isPageLoading={isPageLoading}
+                page={page}
+                projectId={projectId}
+                titleEditorRef={titleEditorRef}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
           </div>
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={config.fileHandler}
+            handleEditorReady={handleEditorReady}
+            ref={editorForwardRef}
+            titleRef={titleEditorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+            }}
+            onAssetChange={updateAssetsList}
+            onChange={(_json, html) => {
+              setIsDescriptionEmpty(isCommentEmpty(html));
+            }}
+            updatePageProperties={updatePageProperties}
+            pageRestorationInProgress={page.restoration.inProgress}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={documentEditorExtensions.disabled}
+            flaggedExtensions={documentEditorExtensions.flagged}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+            extendedEditorProps={extendedEditorProps}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+          />
         </div>
-        <CollaborativeDocumentEditorWithRef
-          editable={isContentEditable}
-          id={pageId}
-          fileHandler={config.fileHandler}
-          handleEditorReady={handleEditorReady}
-          ref={editorForwardRef}
-          containerClassName="h-full p-0 pb-64"
-          displayConfig={displayConfig}
-          mentionHandler={{
-            searchCallback: async (query) => {
-              const res = await fetchMentions(query);
-              if (!res) throw new Error("Failed in fetching mentions");
-              return res;
-            },
-            renderComponent: (props) => <EditorMentionsRoot {...props} />,
-            getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-          }}
-          realtimeConfig={realtimeConfig}
-          serverHandler={serverHandler}
-          user={userConfig}
-          disabledExtensions={documentEditorExtensions.disabled}
-          flaggedExtensions={documentEditorExtensions.flagged}
-          aiHandler={{
-            menu: getAIMenu,
-          }}
-          onAssetChange={updateAssetsList}
-          extendedEditorProps={extendedEditorProps}
-        />
       </div>
     </Row>
   );

@@ -16,7 +16,6 @@ import {
   Heading6,
   Image,
   Italic,
-  List,
   ListOrdered,
   ListTodo,
   Strikethrough,
@@ -26,7 +25,8 @@ import {
 } from "lucide-react";
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
@@ -40,7 +40,7 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
   itemKey: T;
   renderKey: string;
   name: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   shortcut?: string[];
   editors: TEditorTypes[];
   extraProps?: ExtraPropsForCommand<T>;

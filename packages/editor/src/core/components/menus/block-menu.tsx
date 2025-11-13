@@ -9,8 +9,8 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { JSONContent } from "@tiptap/core";
-import { type Editor, useEditorState } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2, Link, Code, Bookmark } from "lucide-react";
+import { type Editor } from "@tiptap/react";
+import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
@@ -21,12 +21,21 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // hooks
 import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
-import { EExternalEmbedAttributeNames, IEditorProps } from "@/types";
+import { EExternalEmbedAttributeNames, type IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 export type MenuItem = {
@@ -175,7 +184,7 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const CORE_MENU_ITEMS: MenuItem[] = [
+  const MENU_ITEMS: MenuItem[] = [
     {
       icon: Trash2,
       key: "delete",
@@ -245,9 +254,10 @@ export const BlockMenu = (props: Props) => {
         }
       },
     },
+    ...getNodeOptions(editor),
   ];
 
-  const MENU_ITEMS = [...additionalMenuItems, ...CORE_MENU_ITEMS];
+  const ALL_MENU_ITEMS = [...additionalMenuItems, ...MENU_ITEMS];
 
   if (!isOpen) {
     return null;
@@ -273,7 +283,7 @@ export const BlockMenu = (props: Props) => {
         )}
         {...getFloatingProps()}
       >
-        {MENU_ITEMS.map((item) => {
+        {ALL_MENU_ITEMS.map((item) => {
           if (item.isDisabled) return null;
 
           return (

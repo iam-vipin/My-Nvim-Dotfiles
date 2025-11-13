@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
 import type { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { Button } from "@plane/propel/button";
@@ -120,7 +119,7 @@ export const ConnectionItem: React.FC<ConnectionItemProps> = ({ connection, onEd
               >
                 {/* Slack Logo */}
                 <div className="h-5 w-5 flex-shrink-0 relative">
-                  <Image src={SlackLogo} fill alt="Slack" />
+                  <img src={SlackLogo} alt="Slack" className="w-full h-full object-cover" />
                 </div>
 
                 {/* Channel Info */}

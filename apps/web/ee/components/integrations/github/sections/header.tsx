@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 // assets
@@ -13,7 +12,7 @@ export const GithubHeader = () => {
   return (
     <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
       <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-        <Image src={githubLogo} fill alt="GitHub Logo" />
+        <img src={githubLogo} alt="GitHub Logo" className="w-full h-full object-cover" />
       </div>
       <div>
         <div className="text-lg font-medium">GitHub</div>

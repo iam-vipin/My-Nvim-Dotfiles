@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { ArrowRight, Hash } from "lucide-react";
 
 // Plane components
@@ -123,7 +122,7 @@ export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((p
           <div className="flex-1 space-y-1 min-w-[100px]">
             <div className="flex items-center gap-1.5 ml-2">
               <div className="w-3.5 h-3.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-                <Image src={SlackLogo} alt="Slack" width={12} height={12} />
+                <img src={SlackLogo} alt="Slack" className="w-full h-full object-cover" />
               </div>
               <div className="text-sm font-medium text-custom-text-200">
                 {t("slack_integration.project_updates.project_updates_form.channel_dropdown.label")}

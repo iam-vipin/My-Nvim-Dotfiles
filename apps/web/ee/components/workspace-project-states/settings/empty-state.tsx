@@ -1,7 +1,6 @@
 "use client";
 
 import type { FC } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";
 
@@ -23,14 +22,12 @@ export const WorkspaceProjectStatesEmptyState: FC<Props> = ({ toggleProjectGroup
           States below, set states for your projects, and start tracking progress.{" "}
         </p>
       </div>
-      <Image
+      <img
         src={resolvedEmptyStatePath}
         alt={"States empty state"}
-        className="my-4"
         width={384}
         height={250}
-        layout="responsive"
-        lazyBoundary="100%"
+        className="my-4 w-full h-full object-cover"
       />
       <Button onClick={toggleProjectGroupingFeature} className="m-auto">
         Enable

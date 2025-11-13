@@ -38,7 +38,6 @@ export default defineConfig(() => ({
         "@atlaskit/pragmatic-drag-and-drop/dist/esm/entry-point/private/get-element-from-point-without-honey-pot.js"
       ),
       // Next.js compatibility shims used within space
-      "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },

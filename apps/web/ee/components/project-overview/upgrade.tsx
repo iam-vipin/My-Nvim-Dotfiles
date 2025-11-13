@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // ui
@@ -65,9 +64,9 @@ export const ProjectUpdatesUpgrade = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? ProjectUpdatesUpgradeDark : ProjectUpdatesUpgradeLight}
-          alt=""
+          alt="Project updates upgrade"
           className="max-h-[320px] max-w-[430px] self-end flex p-5 pb-0 xl:p-0 w-auto"
         />
       </div>

@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
@@ -55,9 +54,9 @@ export const ApplicationsUpgrade: FC = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? TemplatesUpgradeDark : TemplatesUpgradeLight}
-          alt=""
+          alt="Templates upgrade"
           className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0 w-auto"
         />
       </div>

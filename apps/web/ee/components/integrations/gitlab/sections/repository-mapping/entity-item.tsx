@@ -3,7 +3,6 @@
 import type { FC, ReactElement } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane web components
 import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
@@ -85,7 +84,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       if (!project) return <></>;
       return <Logo logo={project.logo_props} size={14} />;
     } else if (entityconnection.type === EConnectionType.ENTITY) {
-      return <Image src={GitlabLogo} fill alt="Gitlab Logo" />;
+      return <img src={GitlabLogo} alt="Gitlab Logo" className="w-full h-full object-cover" />;
     }
     return <></>;
   };

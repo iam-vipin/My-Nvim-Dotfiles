@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
@@ -84,7 +83,7 @@ const InstanceSAMLAuthenticationPage = observer<React.FC<Route.ComponentProps>>(
             name="SAML"
             description="Authenticate your users via Security Assertion Markup Language
           protocol."
-            icon={<Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
+            icon={<img src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableSAMLConfig))}

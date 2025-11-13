@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
@@ -39,9 +38,9 @@ export const CustomerUpgrade: FC = observer(() => {
               </div>
             </div>
           </div>
-          <Image
+          <img
             src={resolvedTheme === "dark" ? CustomerUpgradeDark : CustomerUpgradeLight}
-            alt=""
+            alt="Customer upgrade"
             className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0"
           />
         </div>

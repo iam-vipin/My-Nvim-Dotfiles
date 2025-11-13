@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // components
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
@@ -66,7 +65,7 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
           onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
           iconExtractor={() => (
             <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-              <Image src={GitlabLogo} fill alt="Gitlab Logo" />
+              <img src={GitlabLogo} alt="Gitlab Logo" className="w-full h-full object-cover" />
             </div>
           )}
           queryExtractor={(option) => option.name}

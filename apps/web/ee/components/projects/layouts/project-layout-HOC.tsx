@@ -1,6 +1,5 @@
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
@@ -101,7 +100,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
+          <img src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
           <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}

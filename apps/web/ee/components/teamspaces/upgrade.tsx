@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
@@ -78,9 +77,9 @@ export const TeamspaceUpgrade: FC = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? TeamsUpgradeDark : TeamsUpgradeLight}
-          alt=""
+          alt="Teamspaces upgrade"
           className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain"
         />
       </div>

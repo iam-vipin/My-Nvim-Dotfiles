@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
@@ -31,7 +30,7 @@ export const EmptyPiChat = observer(() => {
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>
       <div className="flex justify-between h-8">
         <div className="flex gap-1">
-          <Image width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto" />
+          <img width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto w-full h-full object-cover" />
           <span className="font-medium text-sm my-auto "> Plane AI</span>
           <BetaBadge />
         </div>
@@ -43,7 +42,7 @@ export const EmptyPiChat = observer(() => {
             Whether you need quick guidance, task updates, or help brainstorming ideas, this intelligent assistant is
             here 24/7 to make managing work easier{" "}
           </p>
-          <Image
+          <img
             src={resolvedTheme?.includes("dark") ? PiDark : PiLight}
             className="w-full max-h-[400px]"
             alt="Project empty state"

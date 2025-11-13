@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
@@ -17,10 +16,12 @@ import { useIntake } from "@/plane-web/hooks/store/use-intake";
 import IntakeInfo from "../info";
 import IssueForm from "./form";
 import FormSuccess from "./success";
+
 type TProps = {
   project: Partial<IProject>;
   anchor: string;
 };
+
 export type TFormData = {
   email: string;
   username: string;

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -224,9 +223,9 @@ export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={debouncedSearchQuery.length > 0 ? nameFilterResolvedPath : allFiltersResolvedPath}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto object-cover"
             alt="No matching pages"
           />
           <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>

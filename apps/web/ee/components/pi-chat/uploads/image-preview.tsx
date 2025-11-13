@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { CircularProgressIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { ImageToolbarRoot } from "@/plane-web/components/common/image-toolbar";
@@ -45,7 +44,7 @@ export const ImagePreview = (props: Props) => {
             <CircularProgressIndicator size={20} strokeWidth={3} percentage={displayStatus ?? 0} />
           </div>
         )}
-        <Image
+        <img
           src={attachment.attachment_url}
           alt={attachment.filename}
           width={58}

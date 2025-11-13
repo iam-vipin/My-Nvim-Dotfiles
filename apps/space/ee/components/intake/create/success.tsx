@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
@@ -14,7 +13,7 @@ const FormSuccess = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col m-auto justify-center space-y-4">
-      <Image
+      <img
         src={resolvedTheme?.includes("dark") ? SuccessDark : SuccessLight}
         alt="Success"
         height={205}

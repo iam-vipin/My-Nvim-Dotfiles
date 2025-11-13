@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CircleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -104,13 +103,13 @@ export const AppConsent = observer(
       <div className="flex flex-col gap-y-4 justify-center items-center">
         <div className="flex items-center space-x-4">
           {application?.logo_url ? (
-            <Image src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
+            <img src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
           ) : (
             <div className="w-10 h-10 flex items-center justify-center rounded-md bg-custom-primary-500 text-white capitalize">
               {application?.name?.[0] ?? "..."}
             </div>
           )}
-          <Image src={ConnectSvg} alt="Connect" className="w-5 h-5" />
+          <img src={ConnectSvg} alt="Connect" className="w-5 h-5" />
           <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
         </div>
         <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application?.name })}</h1>

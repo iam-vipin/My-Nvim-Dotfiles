@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -58,7 +57,7 @@ export const AutomationsUpgrade: FC<TAutomationsUpgradeProps> = observer((props:
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? AutomationsUpgradeDark : AutomationsUpgradeLight}
           alt="Automations upgrade empty state"
           className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0 w-auto"

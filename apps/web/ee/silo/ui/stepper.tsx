@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment } from "react";
-import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // helpers
@@ -24,7 +23,7 @@ export const Stepper = <T,>(props: TStepper<T>) => {
         <div className="flex-shrink-0 relative flex items-center gap-6">
           {logo && (
             <div className="flex-shrink-0 w-12 h-12 bg-custom-background-90 relative flex justify-center items-center rounded overflow-hidden">
-              <Image src={logo} objectFit="contain" alt={`Importer Logo`} className="w-8 h-8" />
+              <img src={logo} alt={`Importer Logo`} className="w-8 h-8 object-contain" />
             </div>
           )}
 

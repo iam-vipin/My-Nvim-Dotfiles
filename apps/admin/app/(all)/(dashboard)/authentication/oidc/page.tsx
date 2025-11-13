@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
@@ -83,7 +82,7 @@ const InstanceOIDCAuthenticationPage = observer<React.FC<Route.ComponentProps>>(
           <AuthenticationMethodCard
             name="OIDC"
             description="Authenticate your users via the OpenID connect protocol."
-            icon={<Image src={OIDCLogo} height={24} width={24} alt="OIDC Logo" />}
+            icon={<img src={OIDCLogo} height={24} width={24} alt="OIDC Logo" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableOIDCConfig))}

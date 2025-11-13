@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { PieChart, ChartNoAxesCombined, MonitorSmartphone, Download } from "lucide-react";
@@ -89,10 +87,10 @@ export const DashboardsFeatureFlagFallback = observer(() => {
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute -bottom-px -right-px rounded-br-xl overflow-hidden">
-            <Image src={insideAssetPath} height={420} width={500} alt="r-1" />
+            <img src={insideAssetPath} height={420} width={500} alt="r-1" className="w-full h-full object-cover" />
           </span>
           <span className="absolute -bottom-4 right-1/2">
-            <Image src={outsideAssetPath} height={210} width={280} alt="r-2" />
+            <img src={outsideAssetPath} height={210} width={280} alt="r-2" className="w-full h-full object-cover" />
           </span>
         </div>
       </div>

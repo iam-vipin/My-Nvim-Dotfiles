@@ -3,7 +3,6 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { Crown } from "lucide-react";
@@ -63,9 +62,9 @@ export const EpicsUpgrade: FC = observer(() => {
             <div className="flex gap-4 flex-wrap">{getUpgradeButton()}</div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? EpicsUpgradeDark : EpicsUpgradeLight}
-          alt=""
+          alt="Epics upgrade"
           className="max-h-[320px] self-end flex pb-0 xl:p-0 w-auto"
         />
       </div>

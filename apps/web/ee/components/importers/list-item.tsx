@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -31,7 +30,7 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
       className="flex flex-col w-full md:w-[30%] justify-between gap-2 rounded-md border border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0 overflow-hidden"
     >
       <div className="relative h-12 w-12 flex-shrink-0 bg-custom-background-90 rounded flex items-center justify-center">
-        <Image src={provider.logo} width={32} height={32} alt={`${provider.title} Logo`} />
+        <img src={provider.logo} alt={`${provider.title} Logo`} className="w-full h-full object-cover" />
       </div>
       <div className="relative flex items-center gap-2">
         <h3 className="flex items-center gap-4 text-sm font-medium">{provider.title}</h3>

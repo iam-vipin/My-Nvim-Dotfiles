@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // components
 import { useTranslation } from "@plane/i18n";
@@ -59,7 +58,7 @@ export const SelectGithubRepository: FC<TSelectGithubRepository> = observer((pro
         onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
         iconExtractor={() => (
           <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-            <Image src={githubLogo} fill alt="GitHub Logo" />
+            <img src={githubLogo} alt="GitHub Logo" className="w-full h-full object-cover" />
           </div>
         )}
         queryExtractor={(option) => option.name}

@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane imports
 import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
@@ -72,7 +71,7 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={searchQuery.trim() === "" ? resolvedAllFiltersImage : resolvedNameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching teamspace"

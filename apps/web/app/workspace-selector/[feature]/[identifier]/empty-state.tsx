@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
@@ -25,7 +24,7 @@ export const WorkspaceSelectorEmptyState = observer(() => {
       </div>
       <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10 w-full md:w-fit">
         <div className="w-full flex flex-col gap-2 items-center md:w-[450px]">
-          <Image src={image} alt="empty workspace" width={384} height={250} />
+          <img src={image} alt="empty workspace" width={384} height={250} />
           <div className="flex gap-2 flex-col md:flex-row">
             <a
               href="https://docs.plane.so/core-concepts/workspaces/overview"

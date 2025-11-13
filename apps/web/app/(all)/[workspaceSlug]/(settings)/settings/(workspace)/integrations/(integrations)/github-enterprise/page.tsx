@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -119,7 +118,7 @@ function GitHubEnterpriseIntegration() {
       {/* header */}
       <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
         <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={githubLogo} fill alt="GitHub Logo" />
+          <img src={githubLogo} alt="GitHub Logo" />
         </div>
         <div>
           <div className="text-lg font-medium">GitHub Enterprise Server</div>

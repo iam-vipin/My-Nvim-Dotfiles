@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 // constants
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -50,20 +49,10 @@ export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = observer(
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image
-              src={isDarkMode ? integrationsCta1Dark : integrationsCta1Light}
-              height={420}
-              width={420}
-              alt="cta-1"
-            />
+            <img src={isDarkMode ? integrationsCta1Dark : integrationsCta1Light} height={420} width={420} alt="cta-1" />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image
-              src={isDarkMode ? integrationsCta2Dark : integrationsCta2Light}
-              height={210}
-              width={280}
-              alt="cta-2"
-            />
+            <img src={isDarkMode ? integrationsCta2Dark : integrationsCta2Light} height={210} width={280} alt="cta-2" />
           </span>
         </div>
       </div>

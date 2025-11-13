@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -49,9 +48,9 @@ export const WorkflowUpgrade: FC = observer(() => {
           </div>
         </div>
       </div>
-      <Image
+      <img
         src={resolvedTheme === "dark" ? WorkflowsUpgradeDark : WorkflowsUpgradeLight}
-        alt=""
+        alt="Workflows upgrade"
         className="max-h-[300px] self-end flex p-5 pb-0 xl:p-0"
       />
     </div>

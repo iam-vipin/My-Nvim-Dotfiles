@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // plane imports
@@ -76,9 +75,9 @@ export const PiChatUpgrade: FC = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? PiUpgradeDark : PiUpgradeLight}
-          alt=""
+          alt="Pi chat upgrade"
           className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain rounded-br-xl"
         />
       </div>

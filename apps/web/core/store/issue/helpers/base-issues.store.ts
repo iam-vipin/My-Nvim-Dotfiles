@@ -121,6 +121,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   cycle: "cycle_id",
   module: "module_ids",
   team_project: "project_id",
+  milestone: "milestone_id",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -135,6 +136,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   assignees: "assignee_ids",
   target_date: "target_date",
   team_project: "project_id",
+  milestone: "milestone_id",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on
@@ -168,6 +170,10 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-attachment_count": "attachment_count",
   sub_issues_count: "sub_issues_count",
   "-sub_issues_count": "sub_issues_count",
+  customer_count: "customer_ids",
+  "-customer_count": "customer_ids",
+  customer_request_count: "customer_request_ids",
+  "-customer_request_count": "customer_request_ids",
 };
 
 export abstract class BaseIssuesStore implements IBaseIssuesStore {

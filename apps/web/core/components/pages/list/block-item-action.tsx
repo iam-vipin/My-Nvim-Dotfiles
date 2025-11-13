@@ -79,6 +79,7 @@ export const BlockItemAction: FC<Props> = observer((props) => {
 
       {/* quick actions dropdown */}
       <PageActions
+        realtimeEvents={false}
         optionsOrder={[
           "open-in-new-tab",
           "copy-link",

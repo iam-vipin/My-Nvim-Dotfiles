@@ -1509,7 +1509,7 @@ export default {
     },
     project_updates: {
       title: "Project Notifications",
-      description: "Configure slack channels for project notifications",
+      description: "Configure Slack channels for project notifications",
       add_new_project_update: "Add new project notifications",
       project_updates_empty_state: "Projects connected with Slack Channels will appear here.",
       project_updates_form: {

@@ -10,12 +10,14 @@ import { getSlackContentParser } from "../../helpers/content-parser";
 import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
+import slackConnectionService from "../../services/connection.service";
 import type { TSlackConnectionDetails } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
 import { createPageLinkback } from "../../views/page-linkback";
 import { createProjectLinkback } from "../../views/project-linkback";
+import { handleAppMentionEvent } from "./message-handlers/app-mention";
 
 const apiClient = getAPIClient();
 
@@ -28,10 +30,20 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
       case "link_shared":
         await handleLinkSharedEvent(data);
         break;
+      case "app_uninstalled":
+        await handleAppUninstallEvent(data);
+        break;
+      case "app_mention":
+        await handleAppMentionEvent(data);
+        break;
       default:
         break;
     }
   } catch (error: any) {
+    if (data.event.type === "app_uninstalled") {
+      logger.error("[SLACK] App uninstalled event", { data });
+      return;
+    }
     const details = await getConnectionDetails(data.team_id, {
       id: data.event.user,
     });
@@ -264,4 +276,13 @@ export const getPageLinkback = async (
 
   const linkBack = createPageLinkback(page, pageURL);
   return linkBack;
+};
+
+/**
+ * Slack App Uninstalled Event. We need to handle this event and disconnect slack integration
+ * on Plane side.
+ * @param data
+ */
+export const handleAppUninstallEvent = async (data: SlackEventPayload) => {
+  await slackConnectionService.disconnectAppWithTeamId(data.team_id);
 };

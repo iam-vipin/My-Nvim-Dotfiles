@@ -16,6 +16,8 @@ from starlette.status import HTTP_503_SERVICE_UNAVAILABLE
 from pi import logger
 from pi import settings
 from pi.app.schemas.auth import AuthResponse
+from pi.app.schemas.auth import User
+from pi.services.actions.plane_sdk_adapter import PlaneSDKAdapter
 
 log = logger.getChild("dependencies")
 session_check_url = settings.plane_api.SESSION_CHECK
@@ -181,3 +183,43 @@ async def validate_jwt_token(credentials: HTTPAuthorizationCredentials | None) -
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Empty JWT token")
 
     return await is_jwt_valid(credentials.credentials)
+
+
+async def validate_plane_token(token_header: str) -> AuthResponse:
+    if not token_header:
+        log.error("Missing or empty Plane token")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Missing or invalid Plane token")
+
+    # Replace bearer if available
+    token = token_header.replace("Bearer ", "")
+    kwargs = {
+        "base_url": settings.plane_api.HOST,
+    }
+
+    # API Key authentication
+    if token.startswith("plane_api"):
+        kwargs["api_key"] = token
+    else:
+        kwargs["access_token"] = token
+
+    plane_sdk_adapter = PlaneSDKAdapter(**kwargs)
+
+    # Use the adapter's wrapper method which returns a dict
+    user = plane_sdk_adapter.get_current_user()
+    if not user:
+        log.error("Invalid or expired Plane token")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid or expired Plane token")
+
+    # Extract user ID from dict
+    user_id = user.get("id")
+    if not user_id:
+        log.error("User ID not found in user data")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid user data")
+
+    # Convert to UUID if it's a string
+    from uuid import UUID as UUIDType
+
+    if isinstance(user_id, str):
+        user_id = UUIDType(user_id)
+
+    return AuthResponse(is_authenticated=True, user=User(id=user_id), plane_token=token)

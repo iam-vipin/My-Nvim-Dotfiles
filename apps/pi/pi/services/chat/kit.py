@@ -45,11 +45,14 @@ from .utils import format_message_with_attachments
 
 log = logger.getChild(__name__)
 NON_PLANE_TEMPERATURE = settings.llm_config.CONTEXT_OFF_TEMPERATURE
+DEFAULT_LLM = settings.llm_model.DEFAULT
 
 
 class ChatKit(AttachmentMixin):
-    def __init__(self, switch_llm: str = "gpt-4o") -> None:
+    def __init__(self, switch_llm: str = DEFAULT_LLM, token: str | None = None) -> None:
         """Initializes ChatKit with LLM models and retrieval components."""
+
+        self.token = token
 
         # Use factory to create tracked tool LLM
         from pi.services.llm.llms import LLMConfig
@@ -472,6 +475,9 @@ Provide concise, relevant context from the attachment(s):"""
     async def _get_oauth_token_for_user(self, db: AsyncSession, user_id: str, workspace_id: str) -> Optional[str]:
         """Get OAuth token for user, attempting refresh if needed."""
         try:
+            if self.token:
+                return self.token
+
             from uuid import UUID
 
             from pi.services.actions.oauth_service import PlaneOAuthService
@@ -1495,7 +1501,11 @@ Provide concise, relevant context from the attachment(s):"""
         else:
             system_prompt = f"{system_prompt}\n\n{date_time_context}\n\n{user_only_context}"
 
-        recent_history = [(m.type, m.content) for m in conv_history]
+        # Filter out any non-BaseMessage objects (defensive check)
+        valid_conv_history = [m for m in conv_history if isinstance(m, BaseMessage)]
+        if len(valid_conv_history) != len(conv_history):
+            log.warning(f"[GENERIC_QUERY_STREAM] Filtered out {len(conv_history) - len(valid_conv_history)} non-BaseMessage items from conv_history")
+        recent_history = [(m.type, m.content) for m in valid_conv_history]
 
         # Format message content with attachments if present
         message_content = query if not attachment_blocks else format_message_with_attachments(query, attachment_blocks)
@@ -1711,6 +1721,7 @@ Provide concise, relevant context from the attachment(s):"""
         last_name = user_meta.get("last_name") or user_meta.get("lastName", "")
 
         user_only_context = f"**User's Firstname**: {first_name} and Lastname: {last_name}"
+
         if conversation_history:
             # to avoid LLM addressing with 'hi' in the follow-ups
             system_prompt = f"{system_prompt}\n\n{date_time_context}"

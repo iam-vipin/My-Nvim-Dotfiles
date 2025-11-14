@@ -373,4 +373,39 @@ export class SlackService {
       };
     }
   }
+
+  async addReaction(channel: string, ts: string, emojiName: string) {
+    await this.client.post("reactions.add", {
+      channel,
+      timestamp: ts,
+      name: emojiName,
+    });
+  }
+
+  async removeReaction(channel: string, ts: string, emojiName: string) {
+    await this.client.post("reactions.remove", {
+      channel,
+      timestamp: ts,
+      name: emojiName,
+    });
+  }
+
+  async fetchPreviousMessagesInThread(channel: string, threadTs: string): Promise<Message[]> {
+    try {
+      const response = await this.client.get("conversations.replies", {
+        params: {
+          channel: channel,
+          ts: threadTs,
+          limit: 20,
+        },
+      });
+
+      const threadedMessagesResponse: SlackConversationHistoryResponse = response.data;
+
+      return threadedMessagesResponse.messages || [];
+    } catch (error) {
+      console.error("Error fetching all messages in thread:", error);
+      throw error;
+    }
+  }
 }

@@ -161,7 +161,7 @@ export const createSlackLinkback = (
       elements: [
         {
           type: "mrkdwn",
-          text: ":information_source: All slack messages in this thread will be synced to Plane work item as comments",
+          text: ":information_source: All Slack messages in this thread will be synced to Plane work item as comments",
         },
       ],
     });

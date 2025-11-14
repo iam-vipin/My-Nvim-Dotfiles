@@ -47,6 +47,7 @@ from .templates import preset_question_flow
 
 # from .multi_tool_orch import agent_chaining_order
 from .utils import StandardAgentResponse
+from .utils import conv_history_from_app_query
 from .utils import is_model_enabled_for_workspace
 from .utils import mask_uuids_in_text
 from .utils import process_conv_history
@@ -64,9 +65,9 @@ PI_ACTION_EXECUTION = settings.feature_flags.PI_ACTION_EXECUTION
 
 
 class PlaneChatBot(ChatKit):
-    def __init__(self, llm: str = "gpt-4.1"):
+    def __init__(self, llm: str = "gpt-4.1", token: str | None = None):
         """Initializes PlaneChatBot with specified LLM model."""
-        super().__init__(switch_llm=llm)
+        super().__init__(switch_llm=llm, token=token)
         self.chat_title = None
 
     @llm_error_handler(fallback_message="TOOL_ORCHESTRATION_FAILURE", max_retries=2, log_context="[TOOL_ORCHESTRATION]")
@@ -546,12 +547,18 @@ class PlaneChatBot(ChatKit):
         log.info(f"ChatID: {chat_id} - LLM: {switch_llm}")
 
         # Handle case where conversation_history_dict might be None or a list
-        if conversation_history_dict is None or isinstance(conversation_history_dict, list):
-            conversation_history = []
-            enhanced_conversation_history = ""
+        if data.source == "app":
+            query, enhanced_conversation_history, conversation_history = conv_history_from_app_query(query)
+            parsed_query = query
+            # As of now, no attachments from external app queries are supported.
+            enhanced_query_for_processing = query
         else:
-            conversation_history = conversation_history_dict["langchain_conv_history"]
-            enhanced_conversation_history = conversation_history_dict["enhanced_conv_history"]
+            if conversation_history_dict is None or isinstance(conversation_history_dict, list):
+                conversation_history = []
+                enhanced_conversation_history = ""
+            else:
+                conversation_history = conversation_history_dict["langchain_conv_history"]
+                enhanced_conversation_history = conversation_history_dict["enhanced_conv_history"]
 
         if not data.is_new:
             try:
@@ -1014,7 +1021,6 @@ class PlaneChatBot(ChatKit):
                                 break
                         if preset_sql_query:
                             break
-
                 base_stream, error = await self._execute_single_agent(
                     selected_agents[0].agent,
                     selected_agents[0].query,
@@ -1066,6 +1072,7 @@ class PlaneChatBot(ChatKit):
                         final_response = chunk[len("__FINAL_RESPONSE__") :]
                     else:
                         yield chunk
+
             else:
                 # Stream selected agents
                 reasoning_chunk = "🎯 Planning to execute the below steps:\n\n"

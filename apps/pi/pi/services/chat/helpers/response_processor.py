@@ -20,6 +20,9 @@ async def process_response(base_stream, chat_id, query_id, response_id, switch_l
     except asyncio.CancelledError:
         log.info(f"ChatID: {chat_id} - Stream processing was cancelled.")
         raise
+    except Exception as e:
+        log.error(f"ChatID: {chat_id} - Error in process response: {e}", exc_info=True)
+        raise
 
     final_response = "".join(final_response_)
 

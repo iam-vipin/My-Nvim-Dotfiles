@@ -12,6 +12,7 @@ from uuid import uuid4
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from pydantic import UUID4
@@ -21,6 +22,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.api.v1.dependencies import cookie_schema
 from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
@@ -34,6 +36,7 @@ from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import MessageFlowStep
 from pi.app.schemas.chat import ActionBatchExecutionRequest
+from pi.app.schemas.chat import ArtifactData
 from pi.app.schemas.chat import ChatFeedback
 from pi.app.schemas.chat import ChatInitializationRequest
 from pi.app.schemas.chat import ChatRequest
@@ -92,6 +95,117 @@ BATCH_EXECUTION_ERRORS = {
     "INVALID_SESSION": "Invalid Session",
     "INTERNAL_ERROR": "Internal server error",
 }
+
+
+@router.post("/slack/answer/")
+async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSession = Depends(get_async_session)):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return JSONResponse(status_code=401, content={"detail": "Missing Authorization header"})
+        auth_response = await validate_plane_token(auth_header)
+        access_token = auth_response.plane_token
+    except Exception as e:
+        log.error(f"Error validating plane token: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
+
+    chatbot = PlaneChatBot(llm=data.llm, token=access_token)
+
+    final_response = ""
+    actions_data = {}
+    clarification_data = {}
+    formatted_context = {}
+    response_type = "response"
+
+    # listen to all the stream chunks, join the chunks and return the complete response
+    # as json object
+    async with get_streaming_db_session() as stream_db:
+        base_iter = chatbot.process_query_stream(data, db=stream_db)
+        async for chunk in base_iter:
+            # Ignore all intermediate chunks
+            if chunk.startswith("πspecial reasoning block"):
+                continue
+            if chunk.startswith("πspecial actions blockπ: "):
+                response_type = "actions"
+                actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+            elif chunk.startswith("πspecial clarification blockπ: "):
+                response_type = "clarification"
+                clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
+            final_response += chunk
+
+    if actions_data:
+        # Validate required fields before creating ActionBatchExecutionRequest
+        workspace_id = data.workspace_id
+        chat_id = data.chat_id
+        message_id_raw = actions_data.get("message_id")
+        artifact_id_raw = actions_data.get("artifact_id")
+        user_id = data.user_id
+
+        if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
+            )
+
+        # Convert message_id to UUID if it's a string
+        if isinstance(message_id_raw, str):
+            message_id = UUID(message_id_raw)
+        elif isinstance(message_id_raw, UUID):
+            message_id = message_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+
+        # Convert artifact_id to UUID if it's a string
+        if isinstance(artifact_id_raw, str):
+            artifact_id = UUID(artifact_id_raw)
+        elif isinstance(artifact_id_raw, UUID):
+            artifact_id = artifact_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+
+        execution_data = await prepare_execution_data(
+            ActionBatchExecutionRequest(
+                workspace_id=workspace_id,
+                chat_id=chat_id,
+                message_id=message_id,
+                artifact_data=[ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data)],
+                access_token=access_token,
+            ),
+            user_id,
+            db,
+        )
+        if not execution_data:
+            # Determine the specific error based on what failed
+            if not await get_planned_actions_for_execution(message_id, chat_id, db):
+                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_PLANNED_ACTIONS"]})
+            elif not await get_original_user_query(message_id, db):
+                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_ORIGINAL_QUERY"]})
+            else:
+                # OAuth or workspace issue
+                return JSONResponse(
+                    status_code=401,
+                    content={
+                        "detail": BATCH_EXECUTION_ERRORS["OAUTH_REQUIRED"],
+                        "error_code": "OAUTH_REQUIRED",
+                        "workspace_id": str(data.workspace_id),
+                        "user_id": str(data.user_id),
+                    },
+                )
+
+        # Execute batch actions
+        context = await execute_batch_actions(execution_data, db)
+        formatted_context = format_execution_response(context)
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "response": final_response,
+            "actions_data": actions_data,
+            "context": formatted_context,
+            "response_type": response_type,
+            "clarification_data": clarification_data,
+        },
+    )
 
 
 @router.post("/get-answer/")

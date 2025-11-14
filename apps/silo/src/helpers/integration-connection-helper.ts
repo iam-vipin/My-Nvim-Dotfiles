@@ -96,10 +96,7 @@ class IntegrationConnectionHelper {
     disconnect_meta?: object;
     deleted_by?: string;
   }): Promise<TWorkspaceConnection> {
-    return this.apiClient.workspaceConnection.deleteWorkspaceConnection(connection_id, {
-      disconnect_meta,
-      deleted_by,
-    });
+    return this.apiClient.workspaceConnection.deleteWorkspaceConnection(connection_id, disconnect_meta, deleted_by);
   }
 
   // workspace entity connection

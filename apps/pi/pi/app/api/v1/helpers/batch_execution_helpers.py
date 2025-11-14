@@ -361,7 +361,7 @@ async def prepare_execution_data(request: ActionBatchExecutionRequest, user_id: 
 
         # Get OAuth token for the user
         chatbot = PlaneChatBot()
-        access_token = await chatbot._get_oauth_token_for_user(db, str(user_id), str(request.workspace_id))
+        access_token = request.access_token or await chatbot._get_oauth_token_for_user(db, str(user_id), str(request.workspace_id))
 
         if not access_token:
             log.error(f"No valid OAuth token found for user {user_id} and workspace {request.workspace_id}")
@@ -420,7 +420,7 @@ async def execute_batch_actions(execution_data: dict, db: AsyncSession) -> Batch
         )
 
         # Create orchestrator and execute batch
-        chatbot = PlaneChatBot()
+        chatbot = PlaneChatBot("gpt-4.1", execution_data["access_token"])
         orchestrator = BatchActionOrchestrator(chatbot, db)
 
         context = await orchestrator.execute_planned_actions(

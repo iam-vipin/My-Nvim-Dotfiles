@@ -339,7 +339,8 @@ export interface MessageFile {
 }
 
 export interface ResponseMetadata {
-  warnings: string[];
+  warnings?: string[];
+  next_cursor?: string | null;
 }
 
 export interface SlackConversationHistoryResponse {
@@ -392,7 +393,11 @@ export interface SlackEventPayload {
   event_context: string;
 }
 
-export type SlackEvent<TBlocks = any[]> = SlackMessageEvent<TBlocks> | SlackLinkSharedEvent;
+export type SlackEvent<TBlocks = any[]> =
+  | SlackMessageEvent<TBlocks>
+  | SlackLinkSharedEvent
+  | SlackAppUninstallEvent
+  | SlackAppMentionEvent;
 
 export interface SlackMessageEvent<TBlocks = any[]> {
   type: "message";
@@ -423,6 +428,24 @@ export interface SlackLinkSharedEvent {
   is_bot_user_member: boolean;
   event_ts: string;
   links: { url: string; domain: string }[];
+}
+
+export interface SlackAppUninstallEvent {
+  type: "app_uninstalled";
+  event_ts: string;
+}
+
+export interface SlackAppMentionEvent {
+  type: "app_mention";
+  user: string;
+  ts: string;
+  thread_ts?: string;
+  client_msg_id: string;
+  text: string;
+  team: string;
+  blocks: ISlackBlock[];
+  channel: string;
+  event_ts: string;
 }
 
 // Common types used within conversations

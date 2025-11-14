@@ -4,15 +4,12 @@ import logging
 import zipfile
 from typing import List
 from uuid import UUID
-
-import boto3
-from botocore.client import Config
+import os
 
 # Third party imports
 from celery import shared_task
 
 # Django imports
-from django.conf import settings
 from django.db.models import Prefetch
 from django.utils import timezone
 
@@ -24,9 +21,46 @@ from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.issue_filters import issue_filters
 from plane.settings.storage import S3Storage
+from plane.utils.host import base_host
 
 # Logger
 logger = logging.getLogger("plane.worker")
+
+
+class _FakeDjangoRequest:
+    def __init__(self):
+        from django.http import QueryDict
+        from urllib.parse import urlparse
+        
+        self.GET = QueryDict(mutable=True)
+        
+        # Get the public URL from environment variables
+        web_url = base_host(is_app=True)
+        parsed_url = urlparse(web_url)
+        
+        # Add scheme and host attributes needed by S3Storage
+        self.scheme = parsed_url.scheme or "http"
+        self._host = parsed_url.netloc or "localhost"
+    
+    def get_host(self):
+        return self._host
+
+
+class _FakeDRFRequest:
+    def __init__(self):
+        self._request = _FakeDjangoRequest()
+
+    @property
+    def query_params(self):
+        return self._request.GET
+
+
+class _ExportFilterView:
+    filterset_class = IssueFilterSet
+
+    def __init__(self, request):
+        self.request = request
+
 
 
 def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
@@ -67,6 +101,10 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
         logger.error("Failed to upload export file to S3")
         return
 
+    # Generate a presigned URL for the uploaded file
+    fake_request = _FakeDjangoRequest()
+    storage = S3Storage(request=fake_request)
+
     presigned_url = storage.generate_presigned_url(
         file_name,
         expiration=expires_in,
@@ -95,27 +133,6 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
     exporter_instance.save(update_fields=["status", "url", "key"])
 
 
-class _FakeDjangoRequest:
-    def __init__(self):
-        from django.http import QueryDict
-
-        self.GET = QueryDict(mutable=True)
-
-
-class _FakeDRFRequest:
-    def __init__(self):
-        self._request = _FakeDjangoRequest()
-
-    @property
-    def query_params(self):
-        return self._request.GET
-
-
-class _ExportFilterView:
-    filterset_class = IssueFilterSet
-
-    def __init__(self, request):
-        self.request = request
 
 
 @shared_task

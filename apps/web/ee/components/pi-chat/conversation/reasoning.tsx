@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { Brain, ChevronDownIcon } from "lucide-react";
 import { cn } from "@plane/utils";
@@ -10,7 +10,7 @@ type TProps = {
 
 export const ReasoningBlock = (props: TProps) => {
   const { reasoning, isThinking } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className={cn("flex flex-col")}>

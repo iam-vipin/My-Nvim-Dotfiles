@@ -112,7 +112,7 @@ export const Feedback = (props: TProps) => {
       {isLatest && (
         <Tooltip tooltipContent="Rewrite" position="bottom" className="mb-4">
           <button onClick={handleRewrite}>
-            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-pi-700 transition-colors" />
+            <Repeat2 strokeWidth={1.5} size={20} className="my-auto text-custom-text-300 transition-colors" />
           </button>
         </Tooltip>
       )}

@@ -37,9 +37,9 @@ export const Header = observer((props: THeaderProps) => {
   const { t } = useTranslation();
   return (
     <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100 rounded-tl-lg rounded-tr-lg">
+      {isSidebarToggleVisible() && sidebarCollapsed && shouldRenderSidebarToggle && <AppSidebarToggleButton />}
       <HeaderUI>
         <HeaderUI.LeftItem>
-          {isSidebarToggleVisible() && sidebarCollapsed && shouldRenderSidebarToggle && <AppSidebarToggleButton />}
           <Breadcrumbs onBack={router.back}>
             {isProjectLevel && isFullScreen && (
               <Breadcrumbs.Item

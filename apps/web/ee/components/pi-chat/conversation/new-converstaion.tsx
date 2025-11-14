@@ -34,19 +34,19 @@ export const NewConversation = observer((props: TProps) => {
 
   return (
     <div
-      className={cn("m-auto", {
+      className={cn("m-auto pb-[180px]", {
         "mt-[40%]": !isFullScreen,
       })}
     >
       <div className={cn("text-center text-3xl font-bold text-custom-text-200", { "text-2xl": !isFullScreen })}>
         Hey, {currentUser?.display_name}!
       </div>
-      <div className={cn("text-center text-2xl font-semibold text-custom-text-400", { "text-lg": !isFullScreen })}>
+      <div className={cn("text-center text-2xl font-semibold text-custom-text-400 pb-2", { "text-lg": !isFullScreen })}>
         How can I help you today?
       </div>
       {/* Templates */}
       {isLoading ? (
-        <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">
+        <div className="flex gap-4 flex-wrap justify-center">
           <Loader className="flex flex-wrap m-auto justify-center gap-6">
             <Loader.Item width="250px" height="90px" />
             <Loader.Item width="250px" height="90px" />
@@ -54,7 +54,7 @@ export const NewConversation = observer((props: TProps) => {
           </Loader>
         </div>
       ) : (
-        <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">
+        <div className="flex gap-4 flex-wrap justify-center ">
           {templates?.map((prompt, index) => (
             <SystemPrompts
               key={index}

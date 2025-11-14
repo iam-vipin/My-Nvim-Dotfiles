@@ -240,6 +240,22 @@ const mobileAuthErrorCodeMessages: {
     title: `Mobile sign up disabled`,
     message: () => `Mobile sign up disabled. Please contact your administrator.`,
   },
+  [EMobileAuthErrorCodes.OIDC_NOT_CONFIGURED]: {
+    title: `OIDC not configured`,
+    message: () => `OIDC not configured. Please contact your administrator.`,
+  },
+  [EMobileAuthErrorCodes.OIDC_PROVIDER_ERROR]: {
+    title: `OIDC provider error`,
+    message: () => `OIDC provider error. Please try again.`,
+  },
+  [EMobileAuthErrorCodes.SAML_NOT_CONFIGURED]: {
+    title: `SAML not configured`,
+    message: () => `SAML not configured. Please contact your administrator.`,
+  },
+  [EMobileAuthErrorCodes.SAML_PROVIDER_ERROR]: {
+    title: `SAML provider error`,
+    message: () => `SAML provider error. Please try again.`,
+  },
 };
 
 export const mobileAuthErrorHandler = (
@@ -300,6 +316,10 @@ export const mobileAuthErrorHandler = (
     EMobileAuthErrorCodes.USER_NOT_ONBOARDED,
     EMobileAuthErrorCodes.TOKEN_NOT_SET,
     EMobileAuthErrorCodes.MOBILE_SIGNUP_DISABLED,
+    EMobileAuthErrorCodes.OIDC_NOT_CONFIGURED,
+    EMobileAuthErrorCodes.OIDC_PROVIDER_ERROR,
+    EMobileAuthErrorCodes.SAML_NOT_CONFIGURED,
+    EMobileAuthErrorCodes.SAML_PROVIDER_ERROR,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))

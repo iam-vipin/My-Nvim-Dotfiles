@@ -33,24 +33,18 @@ class MobileSessionTokenCheckEndpoint(APIView):
 
             # Check if token is empty
             if not token or token == "":
-                return Response(
-                    {"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Validate the token
             session_token = ValidateAuthToken(token)
             token_exists = session_token.token_exists()
             if not token_exists:
-                return Response(
-                    {"error": "Invalid token"}, status=status.HTTP_403_FORBIDDEN
-                )
+                return Response({"error": "Invalid token"}, status=status.HTTP_403_FORBIDDEN)
 
             # Get the session id
             session_details = session_token.get_value()
             if not session_details:
-                return Response(
-                    {"error": "Invalid token"}, status=status.HTTP_403_FORBIDDEN
-                )
+                return Response({"error": "Invalid token"}, status=status.HTTP_403_FORBIDDEN)
 
             # Remove the token
             session_token.remove_token()
@@ -61,18 +55,14 @@ class MobileSessionTokenCheckEndpoint(APIView):
             user = User.objects.filter(id=user_id).first()
             # Check if user exists
             if not user:
-                return Response(
-                    {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Get the tokens
             response = self.get_tokens_for_user(user)
             # Return the tokens
             return Response(response, status=status.HTTP_200_OK)
         except Exception:
-            return Response(
-                {"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MobileTokenEndpoint(APIView):
@@ -92,9 +82,7 @@ class MobileTokenEndpoint(APIView):
             # Return the tokens
             return Response(response, status=status.HTTP_200_OK)
         except Exception:
-            return Response(
-                {"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MobileSessionTokenEndpoint(APIView):
@@ -113,9 +101,7 @@ class MobileSessionTokenEndpoint(APIView):
                 status=status.HTTP_200_OK,
             )
         except Exception:
-            return Response(
-                {"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # mobile refresh token endpoint

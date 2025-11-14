@@ -144,20 +144,11 @@ async def oauth_callback(
             log.info("Processing OAuth callback without state parameter")
 
         # Exchange code for tokens
-        # token_data = await oauth_service.exchange_code_for_tokens(code=code, app_installation_id=app_installation_id)
         token_data = await oauth_service.exchange_code_for_tokens(code=code)
 
         # Get app installation details to fetch workspace info
-        installation_details = None
         workspace_id = oauth_state.workspace_id if oauth_state else None
         workspace_slug = oauth_state.workspace_slug if oauth_state and oauth_state.workspace_slug else "unknown"
-
-        installation_details = await oauth_service.get_app_installation_details(access_token=token_data["access_token"])
-
-        if installation_details:
-            workspace_info = installation_details["workspace_detail"]
-            workspace_id = UUID(workspace_info["id"])
-            workspace_slug = workspace_info["slug"]
 
         # Ensure we have a valid workspace_id
         if not workspace_id:
@@ -168,9 +159,6 @@ async def oauth_callback(
         user_id_for_token = None
         if oauth_state:
             user_id_for_token = oauth_state.user_id
-        elif installation_details and installation_details.get("installed_by"):
-            # Use installer user id from Plane response
-            user_id_for_token = UUID(installation_details["installed_by"])
 
         if not user_id_for_token:
             log.error("Unable to determine user_id for token storage")
@@ -184,7 +172,7 @@ async def oauth_callback(
             workspace_slug=workspace_slug,
             token_data=token_data,
             app_installation_id=app_installation_id,
-            app_bot_user_id=installation_details.get("app_bot") if installation_details else None,
+            app_bot_user_id=None,
         )
 
         # Mark state as used only after successful completion

@@ -291,11 +291,8 @@ export const transformPlaneIssue = async (
     .pop();
 
   const allAssignees = issue.assignees;
-  const allLabels = issue.labels;
-  let issueLabels = labels.filter((label) => allLabels.includes(label.id));
-
   // If there is a github label, remove it and add a plane label
-  issueLabels = issueLabels.filter((label) => label.name.toLowerCase() !== "github");
+  const issueLabels = labels.filter((label) => label.name.toLowerCase() !== "github");
 
   const assignees =
     allAssignees?.map((assignee) => userMap[assignee]?.login).filter((assignee) => assignee != undefined) || [];

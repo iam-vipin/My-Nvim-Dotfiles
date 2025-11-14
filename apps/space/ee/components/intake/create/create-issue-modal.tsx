@@ -88,7 +88,7 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
 
   return (
     <div className="w-full h-full flex flex-col bg-custom-background-100 ">
-      {!success && <Image src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
+      {!success && <img src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
       <div className="flex justify-between pt-6 px-page-x z-10">
         <div className="flex gap-2 items-center">
           <PlaneLogo className="h-6 w-auto text-custom-text-100" />

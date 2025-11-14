@@ -29,39 +29,35 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchWorkflowStates } = useProjectState();
   const { fetchMilestones, isMilestonesEnabled } = useMilestones();
   // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
-  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
-  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
-  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
+  const isEpicEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
+  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug, "WORKFLOWS");
+  const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   // fetching all work item types and properties
   useSWR(
     workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug.toString(), projectId.toString())
+      ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId)
       : null,
     workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId)
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching all epic types and properties
   useSWR(
+    workspaceSlug && projectId && isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
     workspaceSlug && projectId && isEpicEnabled
-      ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug.toString(), projectId.toString())
-      : null,
-    workspaceSlug && projectId && isEpicEnabled
-      ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
+      ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId)
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching project level workflow states
   useSWR(
+    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(workspaceSlug, projectId) : null,
     workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? PROJECT_WORKFLOWS(workspaceSlug.toString(), projectId.toString())
-      : null,
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())
+      ? () => fetchWorkflowStates(workspaceSlug, projectId)
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

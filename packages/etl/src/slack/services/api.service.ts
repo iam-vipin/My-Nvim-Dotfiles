@@ -1,6 +1,7 @@
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import type {
+  Message,
   SlackConversationHistoryResponse,
   SlackMessageResponse,
   SlackTokenRefreshResponse,

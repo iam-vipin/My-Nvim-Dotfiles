@@ -3,7 +3,6 @@ import type { LucideIcon } from "lucide-react";
 // plane imports
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPageNavigationTabs } from "@plane/types";
-import { TPage } from "@plane/types";
 
 // Basic section details type
 export type SectionDetails = {

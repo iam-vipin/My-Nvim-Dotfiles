@@ -469,7 +469,7 @@ class IntegrationConnectionHelper {
     // If the source identifier is provided, check for the user credentials
     if (source_identifier) {
       const [planeUserCredentials] = await this.apiClient.workspaceCredential.listWorkspaceCredentials({
-        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[source],
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[source as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
         source_identifier: source_identifier,
       });
       if (planeUserCredentials) {

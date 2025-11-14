@@ -1,5 +1,6 @@
 import type { ICycle } from "./cycle";
 import type { TIssue } from "./issues/issue";
+import type { TLinkMetadata } from "./issues/issue_link";
 import type { IModule } from "./module";
 import type { IProjectLite } from "./project";
 import type { IStateLite } from "./state";
@@ -55,14 +56,6 @@ export interface IIssueLink {
   title: string;
   url: string;
 }
-
-export type TLinkMetadata = {
-  title?: string;
-  favicon?: string;
-  favicon_url?: string;
-  url?: string;
-  error?: string;
-};
 
 export interface ILinkDetails {
   created_at: Date;

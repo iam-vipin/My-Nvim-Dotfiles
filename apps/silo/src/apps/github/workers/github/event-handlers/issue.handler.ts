@@ -188,11 +188,13 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         })
         .filter((l) => l !== undefined) as string[];
       // add the already existing labels to the plane issue
-      labels?.filter((l) => l.name.toLowerCase() !== "plane").forEach((l) => {
-        if (planeIssue.labels && !planeIssue.labels.includes(l.id)) {
-          planeIssue.labels?.push(l.id);
-        }
-      });
+      labels
+        ?.filter((l) => l.name.toLowerCase() !== "plane")
+        .forEach((l) => {
+          if (planeIssue.labels && !planeIssue.labels.includes(l.id)) {
+            planeIssue.labels?.push(l.id);
+          }
+        });
     }
 
     if (planeIssue.assignees) {

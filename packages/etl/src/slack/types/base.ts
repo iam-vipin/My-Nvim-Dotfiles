@@ -433,6 +433,7 @@ export interface SlackLinkSharedEvent {
 export interface SlackAppUninstallEvent {
   type: "app_uninstalled";
   event_ts: string;
+  bot_id?: string;
 }
 
 export interface SlackAppMentionEvent {
@@ -446,6 +447,7 @@ export interface SlackAppMentionEvent {
   blocks: ISlackBlock[];
   channel: string;
   event_ts: string;
+  bot_id?: string;
 }
 
 // Common types used within conversations

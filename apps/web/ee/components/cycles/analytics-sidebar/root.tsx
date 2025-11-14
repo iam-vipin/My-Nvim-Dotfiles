@@ -21,7 +21,7 @@ export const SidebarChartRoot: FC<Props> = observer((props) => {
       lazy(() =>
         isFeatureEnabled
           ? import(`ee/components/cycles/analytics-sidebar/base`).then((module) => ({
-              default: module["SidebarChart"] ?? null,
+              default: module["SidebarChart"],
             }))
           : import("@/ce/components/cycles/analytics-sidebar/base").then((module) => ({
               default: module["SidebarChart"],

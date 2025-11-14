@@ -217,7 +217,7 @@ export class OAuthController {
       await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
         workspace_id: authState.workspace_id,
         user_id: authState.user_id,
-        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
         source_access_token: response.access_token,
         source_refresh_token: response.refresh_token || "",
         target_access_token: authState.plane_api_token,
@@ -371,7 +371,7 @@ export class OAuthController {
       await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
         workspace_id: authState.workspace_id,
         user_id: authState.user_id,
-        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
         source_access_token: response.access_token,
         source_refresh_token: response.refresh_token || "",
         source_identifier: response.identifier as string,
@@ -460,7 +460,7 @@ export class OAuthController {
     const credentials = await integrationConnectionHelper.getUserWorkspaceCredentials({
       workspace_id: workspaceId,
       user_id: userId,
-      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
     });
 
     return {
@@ -473,7 +473,7 @@ export class OAuthController {
     const credentials = await integrationConnectionHelper.getUserWorkspaceCredentials({
       workspace_id: workspaceId,
       user_id: userId,
-      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
     });
 
     if (!credentials.length) return;

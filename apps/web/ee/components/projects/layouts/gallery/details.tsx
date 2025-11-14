@@ -118,7 +118,7 @@ export const Details: React.FC<Props> = observer((props) => {
     },
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}),
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),

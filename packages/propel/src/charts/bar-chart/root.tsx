@@ -21,8 +21,6 @@ import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
 
-const DEFAULT_BAR_FILL_COLOR = "#000000";
-
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
     data,

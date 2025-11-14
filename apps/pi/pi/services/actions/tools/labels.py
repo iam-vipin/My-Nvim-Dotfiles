@@ -126,15 +126,16 @@ def get_label_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
+        # Build update data with only non-None values
+        update_data = {k: v for k, v in {"name": name, "color": color, "description": description}.items() if v is not None}
+
         result = await method_executor.execute(
             "labels",
             "update",
             label_id=label_id,
-            name=name,
-            color=color,
-            description=description,
             project_id=project_id,
             workspace_slug=workspace_slug,
+            **update_data,
         )
 
         if result["success"]:

@@ -35,7 +35,7 @@ class _FakeDjangoRequest:
         self.GET = QueryDict(mutable=True)
         
         # Get the public URL from environment variables
-        web_url = base_host(is_app=True)
+        web_url = base_host(is_app=True, request=None)
         parsed_url = urlparse(web_url)
         
         # Add scheme and host attributes needed by S3Storage

@@ -23,6 +23,7 @@ from plane.utils.exception_logger import log_exception
 from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.issue_filters import issue_filters
+from plane.settings.storage import S3Storage
 
 # Logger
 logger = logging.getLogger("plane.worker")
@@ -54,78 +55,25 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
 
     expires_in = 7 * 24 * 60 * 60
 
+    storage = S3Storage(request=None)
 
-    if settings.USE_MINIO:
-        logger.info("Uploading export file to MinIO", {
-            "file_name": file_name,
-        })
+    # Upload the file to S3
+    is_uploaded = storage.upload_file(
+        file_obj=zip_file,
+        object_name=file_name,
+        content_type="application/zip",
+    )
+    if not is_uploaded:
+        logger.error("Failed to upload export file to S3")
+        return
 
-        upload_s3 = boto3.client(
-            "s3",
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(signature_version="s3v4"),
-        )
-        upload_s3.upload_fileobj(
-            zip_file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
-        )
-
-        # Generate presigned url for the uploaded file with different base
-        presign_s3 = boto3.client(
-            "s3",
-            endpoint_url=(
-                f"{settings.AWS_S3_URL_PROTOCOL}//{str(settings.AWS_S3_CUSTOM_DOMAIN).replace('/uploads', '')}/"
-            ),
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(signature_version="s3v4"),
-        )
-
-        presigned_url = presign_s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
-            ExpiresIn=expires_in,
-        )
-    else:
-        logger.info("Uploading export file to S3", {
-            "file_name": file_name,
-        })
-        # If endpoint url is present, use it
-        if settings.AWS_S3_ENDPOINT_URL:
-            s3 = boto3.client(
-                "s3",
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                config=Config(signature_version="s3v4"),
-            )
-        else:
-            s3 = boto3.client(
-                "s3",
-                region_name=settings.AWS_REGION,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                config=Config(signature_version="s3v4"),
-            )
-
-        # Upload the file to S3
-        s3.upload_fileobj(
-            zip_file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            file_name,
-            ExtraArgs={"ContentType": "application/zip"},
-        )
-
-        # Generate presigned url for the uploaded file
-        presigned_url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
-            ExpiresIn=expires_in,
-        )
+    presigned_url = storage.generate_presigned_url(
+        file_name,
+        expiration=expires_in,
+        http_method="GET",
+        disposition="inline",
+        filename=file_name,
+    )
 
     exporter_instance = ExporterHistory.objects.get(token=token_id)
 

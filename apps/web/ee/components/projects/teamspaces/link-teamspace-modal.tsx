@@ -35,7 +35,7 @@ const EmptyState = (props: EmptyStateProps) => {
   const { assetPath, title, description } = props;
   return (
     <div className="text-center flex flex-col items-center text-custom-text-300">
-      <img src={assetPath} alt={title} width={320} height={180} className="w-full h-full object-cover" />
+      <img src={assetPath} alt={title} width={320} height={180} />
       <h3 className={cn("text-base font-semibold")}>{title}</h3>
       <p className="text-sm whitespace-pre-line">{description}</p>
     </div>

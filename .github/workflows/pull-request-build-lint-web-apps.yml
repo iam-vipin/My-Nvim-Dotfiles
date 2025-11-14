@@ -54,3 +54,5 @@ jobs:
 
       - name: Build Affected
         run: pnpm turbo run build --affected
+      # - name: Build Affected
+      #   run: pnpm turbo run build --affected

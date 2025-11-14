@@ -56,11 +56,19 @@ export interface IIssueLink {
   url: string;
 }
 
+export type TLinkMetadata = {
+  title?: string;
+  favicon?: string;
+  favicon_url?: string;
+  url?: string;
+  error?: string;
+};
+
 export interface ILinkDetails {
   created_at: Date;
   created_by: string;
   id: string;
-  metadata: any;
+  metadata: TLinkMetadata;
   title: string;
   url: string;
 }
@@ -188,7 +196,8 @@ export type GroupByColumnTypes =
   | "labels"
   | "assignees"
   | "created_by"
-  | "team_project";
+  | "team_project"
+  | "milestone";
 
 export type TGetColumns = {
   isWorkspaceLevel?: boolean;

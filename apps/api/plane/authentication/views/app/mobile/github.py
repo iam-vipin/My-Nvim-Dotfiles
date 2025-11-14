@@ -33,37 +33,23 @@ class MobileGitHubOauthInitiateEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
             invitation_id = request.GET.get("invitation_id")
-            scheme = (
-                "https"
-                if settings.IS_HEROKU
-                else "https"
-                if request.is_secure()
-                else "http"
-            )
-            redirect_uri = (
-                f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
-            )
+            scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
 
             state = uuid.uuid4().hex
-            provider = GitHubOAuthProvider(
-                request=request, state=state, redirect_uri=redirect_uri
-            )
+            provider = GitHubOAuthProvider(request=request, state=state, redirect_uri=redirect_uri)
             request.session["state"] = state
             request.session["invitation_id"] = invitation_id
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -99,16 +85,8 @@ class MobileGitHubCallbackEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
-            scheme = (
-                "https"
-                if settings.IS_HEROKU
-                else "https"
-                if request.is_secure()
-                else "http"
-            )
-            redirect_uri = (
-                f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
-            )
+            scheme = "https" if settings.IS_HEROKU else "https" if request.is_secure() else "http"
+            redirect_uri = f"""{scheme}://{request.get_host()}/auth/mobile/github/callback/"""
             provider = GitHubOAuthProvider(
                 request=request,
                 code=code,
@@ -127,16 +105,12 @@ class MobileGitHubCallbackEndpoint(View):
             # if invitation_id is present
             if invitation_id != "" and user_email:
                 # check the invitation is valid
-                invitation = WorkspaceMemberInvite.objects.filter(
-                    id=invitation_id, email=user_email
-                ).first()
+                invitation = WorkspaceMemberInvite.objects.filter(id=invitation_id, email=user_email).first()
 
                 # if not invitation.responded_at and invitation.accepted:
                 if invitation and not invitation.responded_at and invitation.accepted:
                     # check the workspace is valid
-                    workspace = Workspace.objects.filter(
-                        id=invitation.workspace_id
-                    ).first()
+                    workspace = Workspace.objects.filter(id=invitation.workspace_id).first()
 
                     if workspace:
                         invitation.responded_at = timezone.now()
@@ -151,9 +125,7 @@ class MobileGitHubCallbackEndpoint(View):
                         workspace_member.save()
 
             # redirect to referrer path
-            url = urljoin(
-                base_host, "m/auth/?" + urlencode({"token": session_token.token})
-            )
+            url = urljoin(base_host, "m/auth/?" + urlencode({"token": session_token.token}))
 
             return HttpResponseRedirect(url)
         except AuthenticationException as e:

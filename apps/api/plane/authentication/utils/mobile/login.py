@@ -13,11 +13,7 @@ from plane.authentication.utils.host import base_host
 
 
 def generate_random_string(length=64):
-    return "".join(
-        random.choices(
-            string.ascii_uppercase + string.ascii_lowercase + string.digits, k=length
-        )
-    )
+    return "".join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=length))
 
 
 class ValidateAuthToken:
@@ -41,9 +37,7 @@ class ValidateAuthToken:
 
     def set_value(self, session_key):
         if self.token and self.ri:
-            self.ri.set(
-                self.token, json.dumps({"session_id": session_key}), ex=self.expiry
-            )
+            self.ri.set(self.token, json.dumps({"session_id": session_key}), ex=self.expiry)
         else:
             raise ValueError("Token or Redis instance not set")
 
@@ -89,9 +83,7 @@ def mobile_user_login(request, user, is_app=False, is_admin=False, is_space=Fals
     device_info = {
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
         "ip_address": request.META.get("REMOTE_ADDR", ""),
-        "domain": base_host(
-            request=request, is_app=is_app, is_admin=is_admin, is_space=is_space
-        ),
+        "domain": base_host(request=request, is_app=is_app, is_admin=is_admin, is_space=is_space),
     }
     request.session["device_info"] = device_info
     request.session.save()

@@ -34,9 +34,7 @@ class MobileSignUpAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             # Base URL join
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         # Get request payload
@@ -55,16 +53,12 @@ class MobileSignUpAuthEndpoint(View):
         if email == "" or password == "":
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_IN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         # Validate email
@@ -77,9 +71,7 @@ class MobileSignUpAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         # Check if user already exists
@@ -91,9 +83,7 @@ class MobileSignUpAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
@@ -115,16 +105,12 @@ class MobileSignUpAuthEndpoint(View):
             # if invitation_id is present
             if invitation_id != "":
                 # check the invitation is valid
-                invitation = WorkspaceMemberInvite.objects.filter(
-                    id=invitation_id, email=email
-                ).first()
+                invitation = WorkspaceMemberInvite.objects.filter(id=invitation_id, email=email).first()
 
                 # if not invitation.responded_at and invitation.accepted:
                 if invitation and not invitation.responded_at and invitation.accepted:
                     # check the workspace is valid
-                    workspace = Workspace.objects.filter(
-                        id=invitation.workspace_id
-                    ).first()
+                    workspace = Workspace.objects.filter(id=invitation.workspace_id).first()
 
                     if workspace:
                         invitation.responded_at = timezone.now()
@@ -146,9 +132,7 @@ class MobileSignUpAuthEndpoint(View):
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
         except ValueError as e:
             log_exception(e)
@@ -158,9 +142,7 @@ class MobileSignUpAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -176,9 +158,7 @@ class MobileSignInAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             # Base URL join
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         # Get request payload
@@ -197,16 +177,12 @@ class MobileSignInAuthEndpoint(View):
         if email == "" or password == "":
             # Redirection params
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES[
-                    "REQUIRED_EMAIL_PASSWORD_SIGN_IN"
-                ],
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         # Validate email
@@ -220,9 +196,7 @@ class MobileSignInAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         existing_user = User.objects.filter(email=email).first()
@@ -233,9 +207,7 @@ class MobileSignInAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
@@ -257,16 +229,12 @@ class MobileSignInAuthEndpoint(View):
             # if invitation_id is present
             if invitation_id != "":
                 # check the invitation is valid
-                invitation = WorkspaceMemberInvite.objects.filter(
-                    id=invitation_id, email=email
-                ).first()
+                invitation = WorkspaceMemberInvite.objects.filter(id=invitation_id, email=email).first()
 
                 # if not invitation.responded_at and invitation.accepted:
                 if invitation and not invitation.responded_at and invitation.accepted:
                     # check the workspace is valid
-                    workspace = Workspace.objects.filter(
-                        id=invitation.workspace_id
-                    ).first()
+                    workspace = Workspace.objects.filter(id=invitation.workspace_id).first()
 
                     if workspace:
                         invitation.responded_at = timezone.now()
@@ -288,9 +256,7 @@ class MobileSignInAuthEndpoint(View):
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)
         except ValueError as e:
             log_exception(e)
@@ -300,7 +266,5 @@ class MobileSignInAuthEndpoint(View):
                 payload=response_payload_params,
             )
             params = exc.get_error_dict()
-            url = urljoin(
-                base_host(request=request, is_app=True), "m/auth/?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "m/auth/?" + urlencode(params))
             return HttpResponseRedirect(url)

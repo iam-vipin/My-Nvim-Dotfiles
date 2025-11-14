@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
+import { Monitor, Smartphone, Cable } from "lucide-react";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -97,7 +98,7 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
     },
   ];
 
-  const SAML_SERVICE_DETAILS: TCopyField[] = [
+  const SAML_WEB_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Metadata_Information",
       label: "Entity ID | Audience | Metadata information",
@@ -121,6 +122,40 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/saml/logout/`,
+      description: (
+        <>
+          We will generate this <CodeBlock darkerShade>http-redirect request</CodeBlock> URL that you should paste into
+          your <CodeBlock darkerShade>SLS URL</CodeBlock> or <CodeBlock darkerShade>Logout URL</CodeBlock>
+          field on your IdP.
+        </>
+      ),
+    },
+  ];
+
+  const SAML_MOBILE_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "mobile_metadata_information",
+      label: "Entity ID | Audience | Metadata information",
+      url: `${originURL}/auth/mobile/saml/metadata/`,
+      description:
+        "We will generate this bit of the metadata that identifies this Plane app as an authorized service on your IdP.",
+    },
+    {
+      key: "mobile_callback_uri",
+      label: "Callback URI",
+      url: `${originURL}/auth/mobile/saml/callback/`,
+      description: (
+        <>
+          We will generate this <CodeBlock darkerShade>http-post request</CodeBlock> URL that you should paste into your{" "}
+          <CodeBlock darkerShade>ACS URL</CodeBlock> or <CodeBlock darkerShade>Sign-in call back URL</CodeBlock> field
+          on your IdP.
+        </>
+      ),
+    },
+    {
+      key: "mobile_logout_uri",
+      label: "Logout URI",
+      url: `${originURL}/auth/mobile/saml/logout/`,
       description: (
         <>
           We will generate this <CodeBlock darkerShade>http-redirect request</CodeBlock> URL that you should paste into
@@ -220,15 +255,45 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
               </div>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
-              {SAML_SERVICE_DETAILS.map((field) => (
-                <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-              ))}
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm text-custom-text-200 font-medium">Mapping</h4>
-                <SAMLAttributeMappingTable />
+          <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
+            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+
+            <div className="flex flex-col gap-y-4">
+              {/* web service details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Monitor className="w-3 h-3" />
+                  Web
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                  {SAML_WEB_SERVICE_DETAILS.map((field) => (
+                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                  ))}
+                </div>
+              </div>
+
+              {/* mobile service details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Smartphone className="w-3 h-3" />
+                  Mobile
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                  {SAML_MOBILE_SERVICE_DETAILS.map((field) => (
+                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                  ))}
+                </div>
+              </div>
+
+              {/* mapping details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Cable className="w-3 h-3" />
+                  Mapping
+                </div>
+                <div className="px-6 py-4 bg-custom-background-80">
+                  <SAMLAttributeMappingTable />
+                </div>
               </div>
             </div>
           </div>

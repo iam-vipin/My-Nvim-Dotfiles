@@ -24,12 +24,6 @@ export default defineConfig(() => ({
   plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
     alias: {
-      "@atlaskit/pragmatic-drag-and-drop/combine": import.meta.resolve(
-        "@atlaskit/pragmatic-drag-and-drop/dist/esm/entry-point/combine.js"
-      ),
-      "@atlaskit/pragmatic-drag-and-drop/element/adapter": import.meta.resolve(
-        "@atlaskit/pragmatic-drag-and-drop/dist/esm/entry-point/element/adapter.js"
-      ),
       // Next.js compatibility shims used within web
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),

@@ -57,7 +57,7 @@ class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
                 )
             )
             .filter(
-                Q(issue_milestone__milestone_id=milestone_id)
+                Q(issue_milestone__milestone_id=milestone_id) | Q(active_milestones=0)
                 if milestone_id
                 else Q(active_milestones=0)
             )

@@ -14,7 +14,12 @@ export class FeatureFlagService {
   async featureFlags(payload: { workspace_slug: string; user_id: string; flag_key: TFeatureFlags }): Promise<boolean> {
     return this.axiosInstance
       .post(`/api/feature-flags/`, payload)
-      .then((response) => response?.data?.value)
-      .catch(() => false);
+      .then((response) =>
+        response.data.values ? response.data.values[payload.flag_key] ?? false : response.data.value ?? false
+      )
+      .catch((error) => {
+        console.error(`Error getting feature flag`, { payload, error: error });
+        return false;
+      });
   }
 }

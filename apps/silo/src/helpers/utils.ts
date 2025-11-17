@@ -58,6 +58,11 @@ export const downloadFile = async (url: string, authToken?: string | undefined):
       },
     });
 
+    if (!response.data) {
+      logger.error("Asset download failed with status code:", response.status);
+      return
+    }
+
     const buffer = Buffer.from(response.data);
     const blob = new Blob([buffer], { type: response.headers["content-type"] });
     return blob;

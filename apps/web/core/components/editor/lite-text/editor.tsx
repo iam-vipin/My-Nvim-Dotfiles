@@ -74,6 +74,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const isLiteVariant = variant === "lite";
   const isFullVariant = variant === "full";
   const [isFocused, setIsFocused] = useState(isFullVariant ? showToolbarInitially : true);
+  const [editorRef, setEditorRef] = useState<EditorRefApi | null>(null);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -99,7 +100,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+
   return (
     <div
       className={cn(
@@ -127,6 +128,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
               workspaceId,
               workspaceSlug,
             })}
+            handleEditorReady={(ready) => {
+              if (ready) {
+                setEditorRef(isMutableRefObject<EditorRefApi>(ref) ? ref.current : null);
+              }
+            }}
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);

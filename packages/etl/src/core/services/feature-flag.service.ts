@@ -15,7 +15,7 @@ export class FeatureFlagService {
     return this.axiosInstance
       .post(`/api/feature-flags/`, payload)
       .then((response) =>
-        response.data.values ? response.data.values[payload.flag_key] ?? false : response.data.value ?? false
+        response.data.values ? (response.data.values[payload.flag_key] ?? false) : (response.data.value ?? false)
       )
       .catch((error) => {
         console.error(`Error getting feature flag`, { payload, error: error });

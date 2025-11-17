@@ -1,4 +1,4 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/react";
 import type { FC, ReactNode } from "react";
 import { useCallback, useEffect, useRef } from "react";
@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
-import { TCollabValue } from "@/contexts";
+import type { TCollabValue } from "@/contexts";
 import { LinkContainer } from "@/plane-editor/components/link-container";
 // plugins
 import { nodeHighlightPluginKey } from "@/plugins/highlight";

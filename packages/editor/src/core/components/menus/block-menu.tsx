@@ -31,6 +31,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon;
@@ -72,7 +73,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor, flaggedExtensions, disabledExtensions } = props;
+  const { editor, workItemIdentifier, flaggedExtensions, disabledExtensions } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);

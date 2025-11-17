@@ -22,6 +22,7 @@ type RichTextEditorWrapperProps = MakeOptional<
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
+  issueSequenceId?: number;
 } & (
     | {
         editable: false;

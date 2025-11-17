@@ -1,21 +1,22 @@
 from django.urls import path
 
 from plane.api.views import (
-    IssueListCreateAPIEndpoint,
-    IssueDetailAPIEndpoint,
-    IssueLinkListCreateAPIEndpoint,
-    IssueLinkDetailAPIEndpoint,
-    IssueCommentListCreateAPIEndpoint,
-    IssueCommentDetailAPIEndpoint,
-    IssueActivityListAPIEndpoint,
     IssueActivityDetailAPIEndpoint,
-    IssueAttachmentListCreateAPIEndpoint,
+    IssueActivityListAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
-    WorkspaceIssueAPIEndpoint,
+    IssueAttachmentListCreateAPIEndpoint,
+    IssueAttachmentServerEndpoint,
+    IssueCommentDetailAPIEndpoint,
+    IssueCommentListCreateAPIEndpoint,
+    IssueDetailAPIEndpoint,
+    IssueLinkDetailAPIEndpoint,
+    IssueLinkListCreateAPIEndpoint,
+    IssueListCreateAPIEndpoint,
     IssueRelationListCreateAPIEndpoint,
     IssueRelationRemoveAPIEndpoint,
-    IssueAttachmentServerEndpoint,
     IssueSearchEndpoint,
+    WorkItemAdvancedSearchEndpoint,
+    WorkspaceIssueAPIEndpoint,
 )
 
 # Deprecated url patterns
@@ -110,7 +111,7 @@ new_url_patterns = [
         name="work-item-search",
     ),
     path(
-        "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
+        "workspaces/<str:slug>/work-items/<str:project_identifier>-<int:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="work-item-by-identifier",
     ),
@@ -186,4 +187,12 @@ new_url_patterns = [
     ),
 ]
 
-urlpatterns = old_url_patterns + new_url_patterns
+advanced_search_url_patterns = [
+    path(
+        "workspaces/<str:slug>/work-items/advanced-search/",
+        WorkItemAdvancedSearchEndpoint.as_view(http_method_names=["post"]),
+        name="work-item-advanced-search",
+    ),
+]
+
+urlpatterns = old_url_patterns + new_url_patterns + advanced_search_url_patterns

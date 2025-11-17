@@ -62,3 +62,8 @@ from .asset import (
 )
 from .invite import WorkspaceInviteSerializer
 from .member import ProjectMemberSerializer
+
+from .work_item_search import (
+    WorkItemAdvancedSearchRequestSerializer,
+    WorkItemAdvancedSearchResponseSerializer,
+)

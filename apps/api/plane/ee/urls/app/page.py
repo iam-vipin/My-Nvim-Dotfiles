@@ -30,6 +30,8 @@ from plane.ee.views import (
     PageDuplicateExtendedEndpoint,
     PageVersionExtendedEndpoint,
     WorkspacePageLiveServerEndpoint,
+    PageEmbedEndpoint,
+    PageMentionEndpoint,
 )
 
 
@@ -333,4 +335,16 @@ urlpatterns = [
         name="move-page",
     ),
     # end move pages
+    # embed pages
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/embeds/",
+        PageEmbedEndpoint.as_view(),
+        name="page-embed",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/mentions/",
+        PageMentionEndpoint.as_view(),
+        name="page-mention",
+    ),
+    # end embed pages
 ]

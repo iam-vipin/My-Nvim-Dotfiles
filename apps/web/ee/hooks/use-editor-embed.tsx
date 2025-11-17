@@ -39,11 +39,11 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
   const fetchIssues = useCallback(
     async (searchQuery: string): Promise<TEmbedItem[]> => {
       const response = await fetchEmbedSuggestions?.({
-        query_type: ["issue"],
+        query_type: ["issue_mention"],
         query: searchQuery,
         count: 10,
       });
-      const structuredIssues: TEmbedItem[] = (response?.issue ?? []).map((issue) => ({
+      const structuredIssues: TEmbedItem[] = (response?.issue_mention ?? []).map((issue) => ({
         id: issue.id,
         subTitle: `${issue.project__identifier}-${issue.sequence_id}`,
         title: issue.name,

@@ -59,6 +59,14 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
         if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
         await workspacePageService.downloadPage(workspaceSlug, page.id);
       },
+      fetchEmbeds: async (embedType) => {
+        if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
+        return await workspacePageService.fetchEmbeds(workspaceSlug, page.id, embedType);
+      },
+      fetchMentions: async (mentionType, entityId) => {
+        if (!workspaceSlug || !page.id) throw new Error("Missing required fields.");
+        return await workspacePageService.fetchMentions(workspaceSlug, page.id, mentionType, entityId);
+      },
     });
 
     makeObservable(this, {

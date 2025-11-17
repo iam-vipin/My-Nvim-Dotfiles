@@ -110,6 +110,7 @@ from plane.ee.views.app.workspace.connection import (
 from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
 from plane.ee.views.app.workspace.issue import (
     WorkspaceIssueDetailEndpoint,
+    WorkspaceIssueRetrieveEndpoint,
     WorkspaceIssueBulkUpdateDateEndpoint,
 )
 
@@ -143,6 +144,7 @@ from plane.ee.views.app.page.live import (
     PagesLiveServerSubPagesViewSet,
 )
 from plane.ee.views.app.page.move import MovePageEndpoint
+from plane.ee.views.app.page.entities import PageEmbedEndpoint, PageMentionEndpoint
 
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
 

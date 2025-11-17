@@ -54,8 +54,6 @@ export type TPageFilters = {
   filters?: TPageFilterProps;
 };
 
-export type TPageEmbedType = "mention" | "issue";
-
 export type TPageVersion = {
   created_at: string;
   created_by: string;

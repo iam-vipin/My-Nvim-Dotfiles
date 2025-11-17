@@ -1,6 +1,15 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TDocumentPayload, TMovePagePayload, TPage, TPagesSummary } from "@plane/types";
+import type {
+  TDocumentPayload,
+  TMovePagePayload,
+  TPage,
+  TEditorEmbedsResponse,
+  TEditorEmbedType,
+  TEditorMentionsResponse,
+  TEditorMentionType,
+  TPagesSummary,
+} from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -231,6 +240,44 @@ export class ProjectPageService extends APIService {
 
   async downloadPage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchEmbeds(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    embedType: TEditorEmbedType
+  ): Promise<TEditorEmbedsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/embeds/`, {
+      params: {
+        project_id: projectId,
+        embed_type: embedType,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchMentions(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    mentionType: TEditorMentionType,
+    entityId?: string
+  ): Promise<TEditorMentionsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
+      params: {
+        project_id: projectId,
+        mention_type: mentionType,
+        entity_id: entityId,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

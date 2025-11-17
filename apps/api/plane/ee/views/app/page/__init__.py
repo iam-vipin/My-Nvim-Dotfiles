@@ -1,5 +1,6 @@
 from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet
 from .move import MovePageEndpoint
+from .entities import PageEmbedEndpoint, PageMentionEndpoint
 
 # workspace level
 from .workspace.publish import WorkspacePagePublishEndpoint

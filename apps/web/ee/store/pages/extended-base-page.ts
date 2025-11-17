@@ -1,4 +1,7 @@
+import { uniqBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+// plane imports
 import { EPageSharedUserAccess } from "@plane/types";
 import type {
   TPageCommentDescription,
@@ -7,9 +10,17 @@ import type {
   TPageExtended,
   TPageSharedUser,
   JSONContent,
+  TEditorMentionType,
+  TEditorEmbedType,
+  TEditorEmbedsResponse,
+  TEditorMentionsResponse,
+  TEditorMentionItem,
 } from "@plane/types";
+// plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
+// store
 import type { TBasePageServices, TPageInstance } from "@/store/pages/base-page";
+// local imports
 import { CommentStore } from "./comments/comment.store";
 
 // Define PageWithConfig interface to match comment store expectations
@@ -43,10 +54,18 @@ export type TDeletePageModalState = {
 
 export type TExtendedBasePageServices = {
   download: () => Promise<void>;
+  fetchEmbeds: (embedType: TEditorEmbedType) => Promise<TEditorEmbedsResponse>;
+  fetchMentions: (mentionType: TEditorMentionType, entityId?: string) => Promise<TEditorMentionsResponse>;
+};
+
+export type TPageEmbedsAndMentionsInfo = {
+  embeds?: Record<Partial<TEditorEmbedType>, TEditorEmbedsResponse | undefined>;
+  mentions?: Record<Partial<TEditorMentionType>, TEditorMentionsResponse | undefined>;
 };
 
 export type TExtendedPageInstance = TPageExtended & {
   asJSONExtended: TPageExtended;
+  embedsAndMentionsInfo: TPageEmbedsAndMentionsInfo | undefined;
   // computed
   currentUserSharedAccess: EPageSharedUserAccess | null;
   hasSharedAccess: boolean;
@@ -66,6 +85,8 @@ export type TExtendedPageInstance = TPageExtended & {
   addSharedUser: (userId: string, access?: EPageSharedUserAccess) => void;
   setSharedAccess: (value: EPageSharedUserAccess | null) => void;
   download: () => Promise<void>;
+  fetchEmbedsAndMentions: () => Promise<void>;
+  getMentionDetails: (mentionType: TEditorMentionType, entityId: string) => TEditorMentionItem | undefined;
   // modal actions
   openDeletePageModal: (pages: TPageInstance[]) => void;
   closeDeletePageModal: () => void;
@@ -87,7 +108,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
   sort_order: number | undefined;
   sharedUsers: TPageSharedUser[];
   comments: CommentStore;
-
+  embedsAndMentionsInfo: TPageEmbedsAndMentionsInfo | undefined;
   // modals state
   deletePageModal: TDeletePageModalState;
 
@@ -106,7 +127,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
     this.anchor = page?.anchor || undefined;
     this.sort_order = page?.sort_order || undefined;
     this.sharedUsers = [];
-
+    this.embedsAndMentionsInfo = undefined;
     // Initialize modals state
     this.deletePageModal = {
       visible: false,
@@ -130,6 +151,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       anchor: observable.ref,
       sort_order: observable.ref,
       sharedUsers: observable,
+      embedsAndMentionsInfo: observable,
       // modals state
       deletePageModal: observable,
       // computed
@@ -147,6 +169,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
       addSharedUser: action,
       setSharedAccess: action,
       download: action,
+      fetchEmbedsAndMentions: action,
       // modal actions
       openDeletePageModal: action,
       closeDeletePageModal: action,
@@ -272,6 +295,33 @@ export class ExtendedBasePage implements TExtendedPageInstance {
   download = async () => {
     await this.services.download();
   };
+
+  fetchEmbedsAndMentions = async () => {
+    try {
+      // const workItemEmbeds = await this.services.fetchEmbeds("issue");
+      const workItemMentions = await this.services.fetchMentions("issue_mention");
+      const existingWorkItemMentions = this.embedsAndMentionsInfo?.mentions?.issue_mention || [];
+      const uniqueWorkItemMentions = uniqBy([...existingWorkItemMentions, ...workItemMentions], "id");
+
+      runInAction(() => {
+        this.embedsAndMentionsInfo = {
+          ...this.embedsAndMentionsInfo,
+          mentions: {
+            ...this.embedsAndMentionsInfo?.mentions,
+            issue_mention: uniqueWorkItemMentions,
+          },
+        };
+      });
+    } catch (error) {
+      console.error("Failed to fetch embeds and mentions", error);
+    }
+  };
+
+  getMentionDetails: TExtendedPageInstance["getMentionDetails"] = computedFn((mentionType, entityId) => {
+    const existingMentionsOfType = this.embedsAndMentionsInfo?.mentions?.[mentionType] ?? [];
+    const existingMention = existingMentionsOfType.find((m) => m.id === entityId);
+    return existingMention;
+  });
 
   /**
    * @description opens the delete page modal with specified pages

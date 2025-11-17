@@ -1,6 +1,16 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TDocumentPayload, TIssuePage, TMovePagePayload, TPage, TPagesSummary } from "@plane/types";
+import type {
+  TDocumentPayload,
+  TIssuePage,
+  TMovePagePayload,
+  TPage,
+  TEditorEmbedsResponse,
+  TEditorEmbedType,
+  TEditorMentionsResponse,
+  TEditorMentionType,
+  TPagesSummary,
+} from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -213,6 +223,40 @@ export class WorkspacePageService extends APIService {
 
   async downloadPage(workspaceSlug: string, pageId: string): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchEmbeds(
+    workspaceSlug: string,
+    pageId: string,
+    embedType: TEditorEmbedType
+  ): Promise<TEditorEmbedsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/embeds/`, {
+      params: {
+        embed_type: embedType,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchMentions(
+    workspaceSlug: string,
+    pageId: string,
+    mentionType: TEditorMentionType,
+    entityId?: string
+  ): Promise<TEditorMentionsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
+      params: {
+        mention_type: mentionType,
+        entity_id: entityId,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,6 +1,14 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TPage, TDocumentPayload, TMovePagePayload } from "@plane/types";
+import type {
+  TPage,
+  TDocumentPayload,
+  TMovePagePayload,
+  TEditorEmbedType,
+  TEditorEmbedsResponse,
+  TEditorMentionsResponse,
+  TEditorMentionType,
+} from "@plane/types";
 import type { TTeamspacePagesSummary } from "@/plane-web/store/teamspace/pages/teamspace-page.store";
 // helpers;
 import { APIService } from "@/services/api.service";
@@ -331,6 +339,44 @@ export class TeamspacePageService extends APIService {
 
   async downloadPage(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/exports/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchEmbeds(
+    workspaceSlug: string,
+    teamspaceId: string,
+    pageId: string,
+    embedType: TEditorEmbedType
+  ): Promise<TEditorEmbedsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/embeds/`, {
+      params: {
+        teamspace_id: teamspaceId,
+        embed_type: embedType,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchMentions(
+    workspaceSlug: string,
+    teamspaceId: string,
+    pageId: string,
+    mentionType: TEditorMentionType,
+    entityId?: string
+  ): Promise<TEditorMentionsResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
+      params: {
+        teamspace_id: teamspaceId,
+        mention_type: mentionType,
+        entity_id: entityId,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

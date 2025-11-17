@@ -107,6 +107,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     isContentEditable,
     editor: { editorRef, updateAssetsList },
     setSyncingStatus,
+    getMentionDetails,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
@@ -237,7 +238,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <Row
-      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -289,7 +290,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 if (!res) throw new Error("Failed in fetching mentions");
                 return res;
               },
-              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              renderComponent: (props) => <EditorMentionsRoot {...props} getMentionDetails={getMentionDetails} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}
             onAssetChange={updateAssetsList}

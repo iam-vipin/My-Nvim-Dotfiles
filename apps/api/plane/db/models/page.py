@@ -166,6 +166,7 @@ class PageLog(BaseModel):
         ("cycle", "Cycle"),
         ("module", "Module"),
         ("page_mention", "Page Mention"),
+        ("issue_mention", "Issue Mention"),
         ("user_mention", "User Mention"),
         (
             "sub_page",

@@ -91,6 +91,7 @@ type Props = {
  */
 export const DescriptionInput: React.FC<Props> = observer((props) => {
   const {
+    issueSequenceId,
     containerClassName,
     disabled,
     disabledExtensions,

@@ -29,6 +29,7 @@ type TInfoSectionProps = {
   identifierElement?: React.ReactNode;
   iconElement?: React.ReactNode;
   titleElement?: React.ReactNode;
+  issueSequenceId?: number;
 };
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
@@ -48,6 +49,7 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
     identifierElement,
     iconElement,
     titleElement,
+    issueSequenceId,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -85,6 +87,7 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
         {indicatorElement && <>{indicatorElement}</>}
       </div>
       <DescriptionInput
+        issueSequenceId={issueSequenceId}
         containerClassName="-ml-3 border-none min-h-[88px]"
         disabled={disabled}
         editorRef={editorRef}

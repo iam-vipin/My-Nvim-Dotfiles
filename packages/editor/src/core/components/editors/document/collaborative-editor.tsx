@@ -130,6 +130,8 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
           isLoading={isLoading}
           isTouchDevice={!!isTouchDevice}
           tabIndex={tabIndex}
+          provider={provider}
+          state={state}
         />
       </div>
     </>

@@ -2,9 +2,9 @@ import React, { createContext, useContext } from "react";
 // hooks
 import { useYjsSetup } from "@/hooks/use-yjs-setup";
 
-type CollabValue = NonNullable<ReturnType<typeof useYjsSetup>>;
+export type TCollabValue = NonNullable<ReturnType<typeof useYjsSetup>>;
 
-const CollabContext = createContext<CollabValue | null>(null);
+const CollabContext = createContext<TCollabValue | null>(null);
 
 type CollabProviderProps = Parameters<typeof useYjsSetup>[0] & {
   fallback?: React.ReactNode;
@@ -23,7 +23,7 @@ export function CollaborationProvider({ fallback = null, children, ...args }: Co
   return <CollabContext.Provider value={setup}>{children}</CollabContext.Provider>;
 }
 
-export function useCollaboration(): CollabValue {
+export function useCollaboration(): TCollabValue {
   const ctx = useContext(CollabContext);
   if (!ctx) {
     throw new Error("useCollaboration must be used inside <CollaborationProvider>");

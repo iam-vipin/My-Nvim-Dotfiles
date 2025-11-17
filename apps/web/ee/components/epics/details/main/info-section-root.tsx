@@ -70,6 +70,7 @@ export const EpicInfoSection: FC<Props> = observer((props) => {
         <IssueIdentifier issueId={epicId} projectId={projectId} size="md" enableClickToCopyIdentifier />
       }
       disabled={disabled}
+      issueSequenceId={issue.sequence_id}
     />
   );
 });

@@ -1,5 +1,6 @@
 import type { EUpdateStatus } from "../enums";
 import type { TIssuePriorities } from "../issues";
+import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
 import type { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
 import type { TIssueAttachment } from "./issue_attachment";
@@ -96,7 +97,7 @@ export type TIssue = TBaseIssue &
     tempId?: string;
     // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
     sourceIssueId?: string;
-    state__group?: string | null;
+    state__group?: TStateGroups | null;
     update_status?: EUpdateStatus | undefined;
   };
 

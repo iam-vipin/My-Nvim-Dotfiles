@@ -14,7 +14,6 @@ import {
   Heading6,
   Image,
   Italic,
-  List,
   ListOrdered,
   ListTodo,
   Strikethrough,
@@ -22,6 +21,8 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ListLayoutIcon } from "@plane/propel/icons";
 import type { TCommandExtraProps, TEditorCommands } from "@/types/editor";
 
 export type TEditorTypes = "lite" | "document";
@@ -35,7 +36,7 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
   itemKey: T;
   renderKey: string;
   name: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   shortcut?: string[];
   editors: TEditorTypes[];
   extraProps?: ExtraPropsForCommand<T>;
@@ -127,7 +128,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListLayoutIcon,
     shortcut: ["Cmd", "Shift", "7"],
     editors: ["lite", "document"],
   },

@@ -37,9 +37,7 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
             {menuItems.map((item) => (
               <CustomMenu.MenuItem
                 key={item.key}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   item.action();
                 }}
                 className={cn("flex items-center gap-2 w-full ", {

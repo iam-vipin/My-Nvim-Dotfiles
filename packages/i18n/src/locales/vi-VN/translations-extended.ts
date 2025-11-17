@@ -729,7 +729,11 @@ export default {
         app_short_description_error: "Mô tả ngắn ứng dụng là bắt buộc",
         app_description_title: {
           label: "Mô tả dài",
-          placeholder: "Viết mô tả dài cho marketplace. Nhấn ‘/’ để xem lệnh.",
+          placeholder: "Viết mô tả dài cho marketplace. Nhấn '/' để xem lệnh.",
+        },
+        authorization_grant_type: {
+          title: "Loại kết nối",
+          description: "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ",
         },
         app_description_error: "Mô tả ứng dụng là bắt buộc",
         app_slug_title: "Slug ứng dụng",

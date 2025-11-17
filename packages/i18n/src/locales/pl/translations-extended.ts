@@ -741,7 +741,11 @@ export default {
         app_short_description_error: "Krótki opis aplikacji jest wymagany",
         app_description_title: {
           label: "Długi opis",
-          placeholder: "Napisz długi opis dla marketplace. Naciśnij ‘/’, aby zobaczyć polecenia.",
+          placeholder: "Napisz długi opis dla marketplace. Naciśnij '/', aby zobaczyć polecenia.",
+        },
+        authorization_grant_type: {
+          title: "Typ połączenia",
+          description: "Wybierz, czy Twoja aplikacja ma być zainstalowana raz dla obszaru roboczego, czy pozwolić każdemu użytkownikowi na połączenie własnego konta",
         },
         app_description_error: "Opis aplikacji jest wymagany",
         app_slug_title: "Slug aplikacji",

@@ -49,6 +49,11 @@ function OAuthPage() {
     return acc;
   }, {} as any);
 
+  const workspaceAppInstallations = data?.applicationPermissions?.reduce((acc: any, curr: any) => {
+    acc[curr.workspace_id] = curr.is_installed;
+    return acc;
+  }, {} as any);
+
   if (isLoading) {
     return <EmailSettingsLoader />;
   }
@@ -93,6 +98,7 @@ function OAuthPage() {
                     state,
                     claims,
                   }}
+                  workspaceAppInstallations={workspaceAppInstallations}
                   workspacePermissions={applicationPermissions}
                 />
               </div>

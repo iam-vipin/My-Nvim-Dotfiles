@@ -737,7 +737,11 @@ export default {
         app_description_title: {
           label: "詳細な説明",
           placeholder:
-            "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには ‘/’ を押してください。",
+            "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには '/' を押してください。",
+        },
+        authorization_grant_type: {
+          title: "接続タイプ",
+          description: "アプリをワークスペースに一度インストールするか、各ユーザーが自分のアカウントを接続できるようにするかを選択してください",
         },
         app_description_error: "アプリの説明は必須です",
         app_slug_title: "アプリのスラッグ",

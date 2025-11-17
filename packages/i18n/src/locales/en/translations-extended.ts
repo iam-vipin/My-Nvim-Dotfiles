@@ -847,6 +847,10 @@ export default {
           label: "Long Description",
           placeholder: "Write a long description for marketplace. Press ‘/’ for commands.",
         },
+        authorization_grant_type: {
+          title: "Connection Type",
+          description: "Choose if your app should be installed once for the workspace or let every user connect their own account",
+        },
         website: {
           title: "Website",
           description: "Link to your app's website.",
@@ -867,6 +871,11 @@ export default {
           description:
             "This is where we will send webhook events and updates from the workspaces where your app is installed.",
           placeholder: "https://example.com/webhook",
+        },
+        webhook_secret: {
+          label: "Webhook Secret",
+          description: "Secret used to verify incoming webhook requests.",
+          placeholder: "Enter a random secret key",
         },
         redirect_uris: {
           label: "Redirect URIs (space separated)",

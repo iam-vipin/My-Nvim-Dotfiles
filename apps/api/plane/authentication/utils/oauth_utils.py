@@ -1,9 +1,7 @@
 def is_pkce_required(client_id: str) -> bool:
     from plane.authentication.models import Application
 
-    if Application.objects.filter(
-        client_id=client_id, client_type=Application.CLIENT_PUBLIC
-    ).exists():
+    if Application.objects.filter(client_id=client_id, client_type=Application.CLIENT_PUBLIC).exists():
         return True
     return False
 
@@ -31,17 +29,11 @@ def update_bot_user_type(
 
     with transaction.atomic():
         for application in application_model.objects.all():
-            workspace_app_installations = (
-                workspace_app_installation_model.objects.filter(application=application)
-            )
+            workspace_app_installations = workspace_app_installation_model.objects.filter(application=application)
             for workspace_app_installation in workspace_app_installations:
                 bot_user = workspace_app_installation.app_bot
                 if bot_user:
-                    bot_user.bot_type = (
-                        BotTypeEnum.APP_BOT.value
-                        if application.is_mentionable
-                        else None
-                    )
+                    bot_user.bot_type = BotTypeEnum.APP_BOT.value if application.is_mentionable else None
                     bot_user.save()
 
 
@@ -99,6 +91,23 @@ def add_app_bots_to_existing_projects(
                         role=ROLE.MEMBER.value,
                     )
                 )
-            project_member_model.objects.bulk_create(
-                project_members, ignore_conflicts=True
-            )
+            project_member_model.objects.bulk_create(project_members, ignore_conflicts=True)
+
+
+def create_bot_user_avatar_asset(file_asset, user):
+    from plane.db.models import FileAsset
+
+    if file_asset:
+        user_avatar_asset = FileAsset(
+            asset=file_asset.asset,
+            attributes=file_asset.attributes,
+            storage_metadata=file_asset.storage_metadata,
+            size=file_asset.size,
+            user=user,
+            entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
+            is_uploaded=True,
+        )
+
+        user_avatar_asset.save()
+        return user_avatar_asset
+    return None

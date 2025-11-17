@@ -741,7 +741,11 @@ export default {
         app_short_description_error: "Krátký popis aplikace je povinný",
         app_description_title: {
           label: "Dlouhý popis",
-          placeholder: "Napište dlouhý popis pro tržiště. Stiskněte ‘/’ pro příkazy.",
+          placeholder: "Napište dlouhý popis pro tržiště. Stiskněte '/' pro příkazy.",
+        },
+        authorization_grant_type: {
+          title: "Typ připojení",
+          description: "Vyberte, zda má být vaše aplikace nainstalována jednou pro pracovní prostor nebo zda má každý uživatel připojit svůj vlastní účet",
         },
         app_description_error: "Popis aplikace je povinný",
         app_slug_title: "Slug aplikace",

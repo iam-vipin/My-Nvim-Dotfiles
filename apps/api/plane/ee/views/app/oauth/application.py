@@ -99,6 +99,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "logo_asset",
             "company_name",
             "webhook_url",
+            "webhook_secret",
             "redirect_uris",
             "allowed_origins",
             "attachments",
@@ -534,8 +535,7 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
         )
         # create a map of workspace id and installation
         workspace_app_installations_map = {
-            workspace_app_installation.workspace_id: True
-            for workspace_app_installation in workspace_app_installations
+            workspace_app_installation.workspace_id: workspace_app_installation for workspace_app_installation in workspace_app_installations
         }
 
         # check the role of the user in the workspace
@@ -547,21 +547,36 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
 
         for workspace_id in workspace_ids:
             user_workspace_member = workspace_members_map.get(workspace_id)
-            is_installed = workspace_app_installations_map.get(workspace_id)
+            workspace_app_installation = workspace_app_installations_map.get(workspace_id)
+            is_installed = workspace_app_installation is not None
             installation_state = WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
-            if user_workspace_member["role"] == ROLE.ADMIN.value:
+            is_token_present = False
+            if user_workspace_member["role"] == ROLE.ADMIN.value or (
+              user_workspace_member["role"] == ROLE.MEMBER.value and is_installed
+            ):
                 installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
-            elif user_workspace_member["role"] == ROLE.MEMBER.value and is_installed:
-                installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
-            else:
-                installation_state = (
-                    WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
+
+            # get token user based on application authorization grant type
+            if workspace_app_installation:
+                token_user = (
+                    workspace_app_installation.app_bot
+                    if application.authorization_grant_type == Application.GRANT_CLIENT_CREDENTIALS
+                    else request.user
                 )
+                # check if access token is already present for the token user
+                if AccessToken.objects.filter(
+                    application=application,
+                    workspace=workspace_id,
+                    user=token_user,
+                    expires__gt=timezone.now(),
+                ).exists():
+                    is_token_present = True
 
             workspace_app_installations_data.append(
                 {
                     "workspace_id": workspace_id,
                     "state": installation_state,
+                    "is_installed": is_token_present,
                 }
             )
 

@@ -749,7 +749,11 @@ export default {
         app_short_description_error: "Kurze App-Beschreibung ist erforderlich",
         app_description_title: {
           label: "Lange Beschreibung",
-          placeholder: "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie ‘/’ für Befehle.",
+          placeholder: "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie '/' für Befehle.",
+        },
+        authorization_grant_type: {
+          title: "Verbindungstyp",
+          description: "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll",
         },
         app_description_error: "App-Beschreibung ist erforderlich",
         app_slug_title: "App-Slug",

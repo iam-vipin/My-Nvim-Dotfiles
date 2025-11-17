@@ -740,7 +740,11 @@ export default {
         app_short_description_error: "La breve descrizione dell'app è obbligatoria",
         app_description_title: {
           label: "Descrizione lunga",
-          placeholder: "Scrivi una descrizione lunga per il marketplace. Premi ‘/’ per i comandi.",
+          placeholder: "Scrivi una descrizione lunga per il marketplace. Premi '/' per i comandi.",
+        },
+        authorization_grant_type: {
+          title: "Tipo di connessione",
+          description: "Scegli se la tua app deve essere installata una volta per il workspace o permettere a ogni utente di collegare il proprio account",
         },
         app_description_error: "La descrizione dell'app è obbligatoria",
         app_slug_title: "Slug dell'app",

@@ -28,7 +28,7 @@ function ApplicationCreatePage({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Create Application` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Build your own app` : undefined;
 
   useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 

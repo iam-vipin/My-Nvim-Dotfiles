@@ -744,7 +744,11 @@ export default {
         app_description_title: {
           label: "Description longue",
           placeholder:
-            "Rédigez une longue description pour la place de marché. Appuyez sur ‘/’ pour afficher les commandes.",
+            "Rédigez une longue description pour la place de marché. Appuyez sur '/' pour afficher les commandes.",
+        },
+        authorization_grant_type: {
+          title: "Type de connexion",
+          description: "Choisissez si votre application doit être installée une fois pour l'espace de travail ou permettre à chaque utilisateur de connecter son propre compte",
         },
         app_description_error: "La description de l'application est requise",
         app_slug_title: "Slug de l'application",

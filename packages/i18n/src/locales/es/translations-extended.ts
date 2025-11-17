@@ -744,7 +744,11 @@ export default {
         app_short_description_error: "La descripción corta de la aplicación es obligatoria",
         app_description_title: {
           label: "Descripción larga",
-          placeholder: "Escriba una descripción larga para el mercado. Presione ‘/’ para ver los comandos.",
+          placeholder: "Escriba una descripción larga para el mercado. Presione '/' para ver los comandos.",
+        },
+        authorization_grant_type: {
+          title: "Tipo de conexión",
+          description: "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta",
         },
         app_description_error: "La descripción de la aplicación es obligatoria",
         app_slug_title: "Slug de la aplicación",

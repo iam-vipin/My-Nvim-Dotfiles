@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { CircleAlert } from "lucide-react";
@@ -27,6 +27,7 @@ type TAppConsentProps = {
   application: Partial<TUserApplication>;
   consentParams: TConsentParams;
   workspaceSlug: string;
+  workspaceAppInstallations: Record<string, boolean>;
   workspacePermissions: Record<string, "allowed" | "not_allowed">;
   disableDropdown: boolean;
 };
@@ -36,10 +37,11 @@ const applicationService = new ApplicationService();
 const authService = new AuthService();
 
 export const AppConsent = observer(
-  ({ application, consentParams, workspaceSlug, workspacePermissions = {}, disableDropdown }: TAppConsentProps) => {
+  ({ application, consentParams, workspaceSlug, workspacePermissions = {}, workspaceAppInstallations = {}, disableDropdown }: TAppConsentProps) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { userSettings } = useUser();
+    const workspaceSlugFromParams = workspaceSlug;
 
     // if workspaceSlug is not available in URL, pick last visited workspace's slug from settings
     if (!workspaceSlug) {
@@ -55,6 +57,10 @@ export const AppConsent = observer(
     const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 
     const hasPermissions = workspacePermissions?.[selectedWorkspace?.id?.toString() ?? ""] === "allowed";
+    const isInstalled = useMemo(
+      () => workspaceAppInstallations?.[selectedWorkspace?.id?.toString() ?? ""] ?? false,
+      [workspaceAppInstallations, selectedWorkspace]
+    );
     const handleWorkspaceChange = (workspace: IWorkspace) => {
       setSelectedWorkspace(workspace);
     };
@@ -97,7 +103,11 @@ export const AppConsent = observer(
       if (csrfToken === undefined) {
         fetchCsrfToken();
       }
-    }, [csrfToken]);
+      // redirect only if the workspace slug is available from the params
+      if (isInstalled && workspaceSlugFromParams) {
+        handleAccept();
+      }
+    }, [csrfToken, isInstalled]);
 
     return (
       <div className="flex flex-col gap-y-4 justify-center items-center">

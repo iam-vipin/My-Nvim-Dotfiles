@@ -722,7 +722,11 @@ export default {
         app_short_description_error: "应用简短描述为必填项",
         app_description_title: {
           label: "详细描述",
-          placeholder: "为市场编写详细描述。按 ‘/’ 查看命令。",
+          placeholder: "为市场编写详细描述。按 '/' 查看命令。",
+        },
+        authorization_grant_type: {
+          title: "连接类型",
+          description: "选择您的应用程序应该为工作区安装一次，还是让每个用户连接自己的账户",
         },
         app_description_error: "应用描述为必填项",
         app_slug_title: "应用别名",

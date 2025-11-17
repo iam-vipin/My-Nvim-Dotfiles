@@ -14,8 +14,10 @@ export type TApplication = {
   client_secret?: string;
   client_id?: string;
   redirect_uris: string;
+  authorization_grant_type?: string;
   allowed_origins: string;
   webhook_url?: string;
+  webhook_secret?: string;
   contact_email?: string;
   attachments: string[];
   categories: string[];

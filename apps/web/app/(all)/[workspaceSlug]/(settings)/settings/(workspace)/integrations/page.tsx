@@ -33,7 +33,7 @@ function WorkspaceIntegrationsPage() {
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Applications` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
   const applications = getApplicationsForWorkspace(workspaceSlug || "");
 
   const { data, isLoading } = useSWR(

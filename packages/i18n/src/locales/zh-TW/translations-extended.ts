@@ -721,7 +721,11 @@ export default {
         app_short_description_error: "應用簡短描述為必填項",
         app_description_title: {
           label: "詳細描述",
-          placeholder: "為市集撰寫詳細描述。按 ‘/’ 查看指令。",
+          placeholder: "為市集撰寫詳細描述。按 '/' 查看指令。",
+        },
+        authorization_grant_type: {
+          title: "連接類型",
+          description: "選擇您的應用程式應該為工作區安裝一次，還是讓每個使用者連接自己的帳戶",
         },
         app_description_error: "應用描述為必填項",
         app_slug_title: "應用別名",

@@ -745,7 +745,11 @@ export default {
         app_short_description_error: "Descrierea scurtă a aplicației este obligatorie",
         app_description_title: {
           label: "Descriere lungă",
-          placeholder: "Scrieți o descriere lungă pentru piață. Apăsați ‘/’ pentru comenzi.",
+          placeholder: "Scrieți o descriere lungă pentru piață. Apăsați '/' pentru comenzi.",
+        },
+        authorization_grant_type: {
+          title: "Tipul conexiunii",
+          description: "Alege dacă aplicația ta trebuie instalată o dată pentru spațiul de lucru sau să permită fiecărui utilizator să își conecteze propriul cont",
         },
         app_description_error: "Descrierea aplicației este obligatorie",
         app_slug_title: "Slug-ul aplicației",

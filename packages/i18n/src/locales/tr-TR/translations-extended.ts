@@ -756,7 +756,11 @@ export default {
         app_short_description_error: "Aplikasyon kısa açıklaması gerekli",
         app_description_title: {
           label: "Uzun açıklama",
-          placeholder: "Pazar yeri için uzun bir açıklama yazın. Komutlar için ‘/’ tuşuna basın.",
+          placeholder: "Pazar yeri için uzun bir açıklama yazın. Komutlar için '/' tuşuna basın.",
+        },
+        authorization_grant_type: {
+          title: "Bağlantı türü",
+          description: "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin",
         },
         app_description_error: "Aplikasyon açıklaması gerekli",
         app_slug_title: "Aplikasyon slag",

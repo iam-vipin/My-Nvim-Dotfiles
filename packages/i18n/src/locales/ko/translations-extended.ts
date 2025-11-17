@@ -735,7 +735,11 @@ export default {
         app_short_description_error: "앱 간단 설명은 필수입니다",
         app_description_title: {
           label: "긴 설명",
-          placeholder: "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 ‘/’ 키를 누르세요.",
+          placeholder: "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 '/' 키를 누르세요.",
+        },
+        authorization_grant_type: {
+          title: "연결 유형",
+          description: "앱을 워크스페이스에 한 번 설치할지, 각 사용자가 자신의 계정을 연결할 수 있도록 할지 선택하세요",
         },
         app_description_error: "앱 설명은 필수입니다",
         app_slug_title: "앱 슬러그",

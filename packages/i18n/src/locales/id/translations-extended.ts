@@ -743,7 +743,11 @@ export default {
         app_short_description_error: "Deskripsi aplikasi singkat diperlukan",
         app_description_title: {
           label: "Deskripsi panjang",
-          placeholder: "Tulis deskripsi panjang untuk marketplace. Tekan ‘/’ untuk perintah.",
+          placeholder: "Tulis deskripsi panjang untuk marketplace. Tekan '/' untuk perintah.",
+        },
+        authorization_grant_type: {
+          title: "Jenis Koneksi",
+          description: "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri",
         },
         app_description_error: "Deskripsi aplikasi diperlukan",
         app_slug_title: "Slug aplikasi",

@@ -28,6 +28,7 @@ type Props = {
   title: string;
   variant?: TModalVariant;
   width?: EModalWidth;
+  customIcon?: React.ReactNode;
 };
 
 const VARIANT_ICONS: Record<TModalVariant, LucideIcon> = {
@@ -62,6 +63,7 @@ export const AlertModalCore: React.FC<Props> = (props) => {
     title,
     variant = "danger",
     width = EModalWidth.XL,
+    customIcon,
   } = props;
 
   const Icon = VARIANT_ICONS[variant];
@@ -76,7 +78,7 @@ export const AlertModalCore: React.FC<Props> = (props) => {
               VARIANT_CLASSES[variant]
             )}
           >
-            <Icon className="size-5" aria-hidden="true" />
+            {customIcon ? <>{customIcon}</> : <Icon className="size-5" aria-hidden="true" />}
           </span>
         )}
         <div className="text-center sm:text-left">

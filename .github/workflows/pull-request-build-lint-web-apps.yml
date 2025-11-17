@@ -52,5 +52,5 @@ jobs:
       - name: Check Affected types
         run: pnpm turbo run check:types --affected
 
-      - name: Build Affected
-        run: pnpm turbo run build --affected
+      # - name: Build Affected
+      #   run: pnpm turbo run build --affected

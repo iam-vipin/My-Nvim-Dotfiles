@@ -541,7 +541,7 @@ export default {
       },
       not_found: {
         title: "Iniciativa neexistuje",
-        description: "Iniciativa, kterou hledáte, neexistuje nebo byla smazána.",
+        description: "Iniciativa, kterou hledáte, neexistuje, byla archivována nebo byla smazána.",
         primary_button: {
           text: "Zobrazit další iniciativy",
         },

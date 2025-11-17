@@ -543,7 +543,7 @@ export default {
       },
       not_found: {
         title: "L'initiative n'existe pas",
-        description: "L'initiative que vous recherchez n'existe pas ou a été supprimée.",
+        description: "L'initiative que vous recherchez n'existe pas, a été archivée ou a été supprimée.",
         primary_button: {
           text: "Voir les autres initiatives",
         },

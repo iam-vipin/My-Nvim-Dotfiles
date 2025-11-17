@@ -530,7 +530,7 @@ export default {
       },
       not_found: {
         title: "Sáng kiến không tồn tại",
-        description: "Sáng kiến bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+        description: "Sáng kiến bạn đang tìm kiếm không tồn tại, đã được lưu trữ hoặc đã bị xóa.",
         primary_button: {
           text: "Xem Sáng kiến khác",
         },

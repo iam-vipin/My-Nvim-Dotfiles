@@ -527,7 +527,7 @@ export default {
       },
       not_found: {
         title: "倡議不存在",
-        description: "您正在尋找的倡議不存在或已被刪除。",
+        description: "您正在尋找的倡議不存在、已被歸檔或已被刪除。",
         primary_button: {
           text: "查看其他倡議",
         },

@@ -584,7 +584,7 @@ export default {
       },
       not_found: {
         title: "Initiative does not exist",
-        description: "The Initiative you are looking for does not exist or has been deleted.",
+        description: "The initiative you are looking for does not exist, has been archived, or has been deleted.",
         primary_button: {
           text: "View other Initiatives",
         },

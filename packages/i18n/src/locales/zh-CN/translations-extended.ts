@@ -528,7 +528,7 @@ export default {
       },
       not_found: {
         title: "计划不存在",
-        description: "您要查找的计划不存在或已被删除。",
+        description: "您要查找的计划不存在、已被归档或已被删除。",
         primary_button: {
           text: "查看其他计划",
         },

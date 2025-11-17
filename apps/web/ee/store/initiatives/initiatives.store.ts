@@ -43,6 +43,11 @@ export const ALL_INITIATIVES = "All Initiatives";
 
 type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
+export type TPeekInitiative = {
+  workspaceSlug: string;
+  initiativeId: string;
+};
+
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   filteredInitiativesMap: Record<string, TInitiative> | undefined;
@@ -62,6 +67,7 @@ export interface IInitiativeStore {
   updatesStore: IUpdateStore;
   isInitiativeModalOpen: string | null;
   fetchingFilteredInitiatives: boolean;
+  peekInitiative: TPeekInitiative | undefined;
 
   initiativeLabelsService: InitiativeLabelsService;
 
@@ -72,6 +78,8 @@ export interface IInitiativeStore {
   setLastCollapsibleAction: (section: InitiativeCollapsible) => void;
   toggleOpenCollapsibleSection: (section: InitiativeCollapsible) => void;
   toggleInitiativeModal: (value?: string | null) => void;
+  setPeekInitiative: (peekInitiative: TPeekInitiative | undefined) => void;
+  getIsInitiativePeeked: (initiativeId: string) => boolean;
 
   currentGroupedInitiativeIds: Record<string, string[]> | undefined;
   currentGroupedFilteredInitiativeIds: Record<string, string[]> | undefined;
@@ -145,6 +153,7 @@ export class InitiativeStore implements IInitiativeStore {
 
   initiativesLoader: boolean = false;
   isInitiativeModalOpen: string | null = null;
+  peekInitiative: TPeekInitiative | undefined = undefined;
   openCollapsibleSection: InitiativeCollapsible[] = ["projects", "epics"];
   lastCollapsibleAction: InitiativeCollapsible | null = null;
 
@@ -172,6 +181,7 @@ export class InitiativeStore implements IInitiativeStore {
       initiativeAnalyticsMap: observable,
       initiativeLabelsMap: observable,
       isInitiativeModalOpen: observable,
+      peekInitiative: observable,
 
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
@@ -200,6 +210,7 @@ export class InitiativeStore implements IInitiativeStore {
       toggleOpenCollapsibleSection: action,
       setLastCollapsibleAction: action,
       toggleInitiativeModal: action,
+      setPeekInitiative: action,
     });
 
     this.rootStore = _rootStore;
@@ -603,6 +614,10 @@ export class InitiativeStore implements IInitiativeStore {
   };
 
   toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
+
+  setPeekInitiative = (peekInitiative: TPeekInitiative | undefined) => (this.peekInitiative = peekInitiative);
+
+  getIsInitiativePeeked = (initiativeId: string) => this.peekInitiative?.initiativeId === initiativeId;
 
   // ---------------------------------------- Label Methods -----------------------------------------
 

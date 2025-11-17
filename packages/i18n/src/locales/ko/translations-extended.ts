@@ -537,7 +537,7 @@ export default {
       },
       not_found: {
         title: "이니셔티브가 존재하지 않습니다",
-        description: "찾고 있는 이니셔티브가 존재하지 않거나 삭제되었습니다.",
+        description: "찾고 있는 이니셔티브가 존재하지 않거나, 보관되었거나, 삭제되었습니다.",
         primary_button: {
           text: "다른 이니셔티브 보기",
         },

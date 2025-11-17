@@ -542,7 +542,7 @@ export default {
       },
       not_found: {
         title: "Inicjatywa nie istnieje",
-        description: "Inicjatywa, której szukasz, nie istnieje lub została usunięta.",
+        description: "Inicjatywa, której szukasz, nie istnieje, została zarchiwizowana lub została usunięta.",
         primary_button: {
           text: "Zobacz inne Inicjatywy",
         },

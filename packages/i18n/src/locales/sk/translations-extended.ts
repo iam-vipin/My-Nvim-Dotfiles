@@ -552,7 +552,7 @@ export default {
       },
       not_found: {
         title: "Iniciatíva neexistuje",
-        description: "Iniciatíva, ktorú hľadáte, neexistuje alebo bola odstránená.",
+        description: "Iniciatíva, ktorú hľadáte, neexistuje, bola archivovaná alebo bola odstránená.",
         primary_button: {
           text: "Zobraziť iné Iniciatívy",
         },

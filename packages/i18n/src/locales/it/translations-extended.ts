@@ -540,7 +540,7 @@ export default {
       },
       not_found: {
         title: "L'iniziativa non esiste",
-        description: "L'iniziativa che stai cercando non esiste o è stata eliminata.",
+        description: "L'iniziativa che stai cercando non esiste, è stata archiviata o è stata eliminata.",
         primary_button: {
           text: "Visualizza altre iniziative",
         },

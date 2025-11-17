@@ -13,7 +13,6 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
@@ -32,10 +31,9 @@ export const InitiativeBlock = observer((props: Props) => {
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug } = useParams();
-  const router = useAppRouter();
 
   const {
-    initiative: { getInitiativeById, getInitiativeStatsById },
+    initiative: { getInitiativeById, getInitiativeStatsById, setPeekInitiative },
   } = useInitiatives();
 
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
@@ -53,6 +51,20 @@ export const InitiativeBlock = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const handleInitiativeClick = useCallback(
+    (e: React.MouseEvent) => {
+      // If command/ctrl + click, open in new tab
+      if (e.metaKey || e.ctrlKey) {
+        const url = `/${workspaceSlug}/initiatives/${initiativeId}`;
+        window.open(url, "_blank");
+        return;
+      }
+      // Otherwise open peek view
+      setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
+    },
+    [workspaceSlug, initiativeId, setPeekInitiative]
+  );
+
   return (
     <div
       ref={parentRef}
@@ -63,7 +75,7 @@ export const InitiativeBlock = observer((props: Props) => {
           "xl:flex-row xl:gap-5 xl:py-0": isSidebarCollapsed,
         }
       )}
-      onClick={() => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`)}
+      onClick={handleInitiativeClick}
     >
       <div className="relative flex w-full items-center justify-between gap-3 truncate flex-wrap md:flex-nowrap flex-shrink-0">
         <div className="flex w-full items-center gap-3 overflow-hidden">

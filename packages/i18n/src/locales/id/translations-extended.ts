@@ -543,7 +543,7 @@ export default {
       },
       not_found: {
         title: "Inisiatif tidak ada",
-        description: "Inisiatif yang Anda cari tidak ada atau telah dihapus.",
+        description: "Inisiatif yang Anda cari tidak ada, telah diarsipkan, atau telah dihapus.",
         primary_button: {
           text: "Lihat Inisiatif lain",
         },

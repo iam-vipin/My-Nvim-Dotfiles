@@ -556,7 +556,7 @@ export default {
       },
       not_found: {
         title: "İnisiyatif mevcut değil",
-        description: "Aradığınız İnisiyatif mevcut değil veya silinmiş.",
+        description: "Aradığınız İnisiyatif mevcut değil, arşivlenmiş veya silinmiş.",
         primary_button: {
           text: "Diğer İnisiyatifleri Görüntüle",
         },

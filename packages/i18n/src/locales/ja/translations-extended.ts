@@ -538,7 +538,7 @@ export default {
       },
       not_found: {
         title: "イニシアチブが存在しません",
-        description: "お探しのイニシアチブは存在しないか、削除されました。",
+        description: "お探しのイニシアチブは存在しないか、アーカイブされたか、削除されました。",
         primary_button: {
           text: "他のイニシアチブを表示",
         },

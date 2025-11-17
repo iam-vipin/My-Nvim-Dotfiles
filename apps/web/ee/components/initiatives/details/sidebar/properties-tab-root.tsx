@@ -173,7 +173,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.start_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
+            optionsClassName="z-[30]"
             showTooltip
             maxDate={getDate(initiative.end_date)}
           />
@@ -195,7 +195,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.end_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
+            optionsClassName="z-[30]"
             showTooltip
             minDate={getDate(initiative.start_date)}
           />

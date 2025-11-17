@@ -544,7 +544,7 @@ export default {
       },
       not_found: {
         title: "Iniciativa não existe",
-        description: "A Iniciativa que você está procurando não existe ou foi excluída.",
+        description: "A Iniciativa que você está procurando não existe, foi arquivada ou foi excluída.",
         primary_button: {
           text: "Ver outras Iniciativas",
         },

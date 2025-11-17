@@ -22,6 +22,7 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 // local imports
 import { InitiativeEmptyState } from "../details/empty-state";
+import { InitiativePeekOverview } from "../peek-overview";
 import { WorkspaceEpicsListModal } from "./main/collapsible-section/epics/workspace-epic-modal";
 import { InitiativeMainContentRoot } from "./main/root";
 import { InitiativeSidebarRoot } from "./sidebar/root";
@@ -167,6 +168,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
           handleAddEpicToInitiative(data.map((epic) => epic.id));
         }}
       />
+      <InitiativePeekOverview />
       <EpicPeekOverview />
     </LayoutRoot>
   );

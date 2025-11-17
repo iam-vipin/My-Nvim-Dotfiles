@@ -547,7 +547,7 @@ export default {
       },
       not_found: {
         title: "Initiative existiert nicht",
-        description: "Die Initiative, nach der Sie suchen, existiert nicht oder wurde gelöscht.",
+        description: "Die Initiative, nach der Sie suchen, existiert nicht, wurde archiviert oder wurde gelöscht.",
         primary_button: {
           text: "Andere Initiativen anzeigen",
         },

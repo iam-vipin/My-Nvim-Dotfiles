@@ -545,7 +545,7 @@ export default {
       },
       not_found: {
         title: "Inițiativa nu există",
-        description: "Inițiativa pe care o cauți nu există sau a fost ștearsă.",
+        description: "Inițiativa pe care o cauți nu există, a fost arhivată sau a fost ștearsă.",
         primary_button: {
           text: "Vezi alte Inițiative",
         },

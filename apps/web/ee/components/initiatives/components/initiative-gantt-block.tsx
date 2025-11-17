@@ -28,7 +28,7 @@ export const InitiativeGanttBlock: React.FC<Props> = observer((props) => {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const {
-    initiative: { getInitiativeById },
+    initiative: { getInitiativeById, setPeekInitiative },
   } = useInitiatives();
 
   const initiative = getInitiativeById(initiativeId);
@@ -59,8 +59,15 @@ export const InitiativeGanttBlock: React.FC<Props> = observer((props) => {
     message = `${renderFormattedDate(initiative.start_date)} to ${renderFormattedDate(initiative.end_date)}`;
   }
 
-  const handleClick = () => {
-    router.push(`/${workspaceSlug}/initiatives/${initiative.id}`);
+  const handleClick = (e: React.MouseEvent) => {
+    // If command/ctrl + click, open in new tab
+    if (e.metaKey || e.ctrlKey) {
+      const url = `/${workspaceSlug}/initiatives/${initiative.id}`;
+      window.open(url, "_blank");
+      return;
+    }
+    // Otherwise open peek view
+    setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
   };
 
   return (
@@ -101,7 +108,7 @@ export const InitiativeGanttSidebarBlock: React.FC<Props> = observer((props) => 
   const router = useAppRouter();
 
   const {
-    initiative: { getInitiativeById },
+    initiative: { getInitiativeById, setPeekInitiative },
   } = useInitiatives();
 
   const initiative = getInitiativeById(initiativeId);
@@ -111,7 +118,14 @@ export const InitiativeGanttSidebarBlock: React.FC<Props> = observer((props) => 
   const handleControlLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    router.push(`/${workspaceSlug}/initiatives/${initiative.id}`);
+    // If command/ctrl + click, open in new tab
+    if (e.metaKey || e.ctrlKey) {
+      const url = `/${workspaceSlug}/initiatives/${initiative.id}`;
+      window.open(url, "_blank");
+      return;
+    }
+    // Otherwise open peek view
+    setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
   };
 
   return (

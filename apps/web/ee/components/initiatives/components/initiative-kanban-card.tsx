@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
@@ -33,7 +33,7 @@ export const InitiativeKanbanCard = observer((props: Props) => {
   const router = useAppRouter();
 
   const {
-    initiative: { getInitiativeById, getInitiativeStatsById },
+    initiative: { getInitiativeById, getInitiativeStatsById, setPeekInitiative },
   } = useInitiatives();
 
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
@@ -51,13 +51,27 @@ export const InitiativeKanbanCard = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const handleInitiativeClick = useCallback(
+    (e: React.MouseEvent) => {
+      // If command/ctrl + click, open in new tab
+      if (e.metaKey || e.ctrlKey) {
+        const url = `/${workspaceSlug}/initiatives/${initiativeId}`;
+        window.open(url, "_blank");
+        return;
+      }
+      // Otherwise open peek view
+      setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
+    },
+    [workspaceSlug, initiativeId, setPeekInitiative]
+  );
+
   return (
     <div
       ref={parentRef}
       className={cn(
         "group/initiative-card relative flex flex-col gap-3 rounded-md border border-custom-border-200 bg-custom-background-100 p-3 text-sm transition-colors"
       )}
-      onClick={() => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`)}
+      onClick={handleInitiativeClick}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">

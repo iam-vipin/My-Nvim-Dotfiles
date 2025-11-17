@@ -2,6 +2,7 @@ from .project import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectFeatureAPIEndpoint,
 )
 
 from .state import (
@@ -79,4 +80,7 @@ from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
 
+from .sticky import StickyViewSet
+from .initiative import InitiativeViewSet, InitiativeLabelViewSet
+from .teamspace import TeamspaceViewSet
 from .work_item_search import WorkItemAdvancedSearchEndpoint

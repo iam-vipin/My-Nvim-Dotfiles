@@ -1,5 +1,5 @@
 from .user import UserLiteSerializer
-from .workspace import WorkspaceLiteSerializer
+from .workspace import WorkspaceLiteSerializer, WorkspaceFeatureSerializer
 from .project import (
     ProjectSerializer,
     ProjectLiteSerializer,
@@ -62,6 +62,10 @@ from .asset import (
 )
 from .invite import WorkspaceInviteSerializer
 from .member import ProjectMemberSerializer
+from .sticky import StickySerializer
+from .project import ProjectFeatureSerializer
+from .initiative import InitiativeSerializer, InitiativeLabelSerializer
+from .teamspace import TeamspaceSerializer
 
 from .work_item_search import (
     WorkItemAdvancedSearchRequestSerializer,

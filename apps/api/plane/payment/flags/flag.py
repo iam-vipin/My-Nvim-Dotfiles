@@ -94,6 +94,8 @@ class FeatureFlag(Enum):
     AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES"
     # Exports
     ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
+    # PI Chat
+    PI_CHAT = "PI_CHAT"
 
 
 class AdminFeatureFlag(Enum):

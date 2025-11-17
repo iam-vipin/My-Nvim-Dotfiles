@@ -34,8 +34,9 @@ from plane.api.serializers import (
     ProjectSerializer,
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
+    ProjectFeatureSerializer,
 )
-from plane.app.permissions import ProjectBasePermission
+from plane.app.permissions import ProjectBasePermission, ProjectMemberPermission
 from plane.utils.openapi import (
     project_docs,
     PROJECT_ID_PARAMETER,
@@ -57,7 +58,11 @@ from plane.utils.openapi import (
     DELETED_RESPONSE,
     ARCHIVED_RESPONSE,
     UNARCHIVED_RESPONSE,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_FEATURE_EXAMPLE,
 )
+
+from plane.ee.models import ProjectFeature
 
 
 class ProjectListCreateAPIEndpoint(BaseAPIView):
@@ -639,3 +644,75 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         project.archived_at = None
         project.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectFeatureAPIEndpoint(BaseAPIView):
+    permission_classes = [ProjectMemberPermission]
+    serializer_class = ProjectFeatureSerializer
+
+    def get_queryset(self):
+        project = Project.objects.filter(
+            workspace__slug=self.kwargs.get("slug"), id=self.kwargs.get("project_id")
+        ).first()
+        # get or create the project feature
+        project_feature, _ = ProjectFeature.objects.get_or_create(project=project)
+        is_epic_enabled = project_feature.is_epic_enabled
+        return {
+            "epics": is_epic_enabled,
+            "modules": project.module_view,
+            "cycles": project.cycle_view,
+            "views": project.issue_views_view,
+            "pages": project.page_view,
+            "intakes": project.intake_view,
+            "work_item_types": project.is_issue_type_enabled,
+        }
+
+    @project_docs(
+        operation_id="get_project_features",
+        summary="Get project features",
+        description="Get the features of a project",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Project features",
+                response=ProjectFeatureSerializer,
+                examples=[PROJECT_FEATURE_EXAMPLE],
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        project_features = self.get_queryset()
+        return Response(project_features, status=status.HTTP_200_OK)
+
+    @project_docs(
+        operation_id="update_project_features",
+        summary="Update project features",
+        description="Update the features of a project",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=ProjectFeatureSerializer,
+            examples=[PROJECT_FEATURE_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Project features updated successfully",
+                response=ProjectFeatureSerializer,
+                examples=[PROJECT_FEATURE_EXAMPLE],
+            ),
+        },
+    )
+    def patch(self, request, slug, project_id):
+        project_features = self.get_queryset()
+        serializer = ProjectFeatureSerializer(
+            project_features, data=request.data, partial=True, context={"slug": slug, "project_id": project_id}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

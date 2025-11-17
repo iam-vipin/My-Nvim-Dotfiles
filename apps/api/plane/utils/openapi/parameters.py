@@ -544,3 +544,42 @@ EXPAND_PARAMETER = OpenApiParameter(
         ),
     ],
 )
+
+INITIATIVE_ID_PARAMETER = OpenApiParameter(
+    name="initiative_id",
+    description="Initiative ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example initiative ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical initiative UUID",
+        )
+    ],
+)
+
+INITIATIVE_LABEL_ID_PARAMETER = OpenApiParameter(
+    name="initiative_label_id",
+    description="Initiative label ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example initiative label ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical initiative label UUID",
+        )
+    ],
+)
+
+
+TEAMSPACE_ID_PARAMETER = OpenApiParameter(
+    name="teamspace_id",
+    description="Teamspace ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+)

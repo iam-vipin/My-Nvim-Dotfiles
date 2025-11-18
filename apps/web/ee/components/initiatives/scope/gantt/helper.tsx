@@ -75,15 +75,12 @@ export const useGanttOperations = (workspaceSlug: string) => {
       if (!workspaceSlug) return;
 
       try {
-        const dateUpdates = updates.map(({ id, start_date, target_date, meta }) => {
-          const projectId = meta?.project_id;
-          return {
-            id,
-            start_date,
-            target_date,
-            project_id: projectId,
-          };
-        });
+        const dateUpdates = updates.map(({ id, start_date, target_date, meta }) => ({
+          id,
+          start_date,
+          target_date,
+          meta,
+        }));
 
         await issues.updateIssueDates(workspaceSlug.toString(), dateUpdates);
       } catch (error) {

@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { EmojiIconPickerTypes, EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
@@ -17,6 +18,7 @@ import { InitiativeInfoActionItems } from "./info-section/action-items";
 import { InitiativeInfoIndicatorItem } from "./info-section/indicator-item";
 
 type Props = {
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
@@ -25,7 +27,7 @@ type Props = {
 };
 
 export const InitiativeInfoSection: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled = false, toggleProjectModal, toggleEpicModal } = props;
+  const { editorRef, workspaceSlug, initiativeId, disabled = false, toggleProjectModal, toggleEpicModal } = props;
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const {
@@ -43,6 +45,7 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
 
   return (
     <InfoSection
+      editorRef={editorRef}
       workspaceSlug={workspaceSlug}
       itemId={initiativeId}
       titleValue={initiative.name}

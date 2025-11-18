@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import type { TInitiativeStates } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -52,6 +53,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   // ref
   const initiativePeekOverviewRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const {
     initiative: { isAnyModalOpen, setPeekInitiative, getInitiativeById },
@@ -67,8 +69,9 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
   usePeekOverviewOutsideClickDetector(
     initiativePeekOverviewRef,
     () => {
-      // Don't close peek overview if any modal is open
-      if (!isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen) {
+      const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
+      // Don't close peek overview if any modal is open or if any dropbar is open
+      if (!isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen && !isAnyDropbarOpen) {
         removeRoutePeekId();
       }
     },
@@ -77,8 +80,9 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
 
   const handleKeyDown = () => {
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    // Don't close peek overview if any modal is open or if input is focused
-    if (!dropdownElement && !isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen) {
+    const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
+    // Don't close peek overview if any modal is open, if input is focused, or if any dropbar is open
+    if (!dropdownElement && !isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen && !isAnyDropbarOpen) {
       removeRoutePeekId();
       const initiativeElement = document.getElementById(`initiative-${initiativeId}`);
       if (initiativeElement) initiativeElement?.focus();
@@ -131,6 +135,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
               <div className="flex h-full w-full overflow-hidden">
                 <div className="h-full w-full overflow-y-auto">
                   <InitiativeMainContentRoot
+                    editorRef={editorRef}
                     workspaceSlug={workspaceSlug}
                     initiativeId={initiativeId}
                     disabled={disabled}

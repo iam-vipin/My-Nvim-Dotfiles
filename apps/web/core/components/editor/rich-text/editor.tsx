@@ -9,7 +9,6 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
-import { useProject } from "@/hooks/store/use-project";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
 import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
@@ -23,7 +22,7 @@ type RichTextEditorWrapperProps = MakeOptional<
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
-  issueSequenceId?: number;
+  workItemUrl?: string;
 } & (
     | {
         editable: false;
@@ -43,6 +42,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     workspaceId,
     projectId,
     disabledExtensions: additionalDisabledExtensions = [],
+    workItemUrl,
     ...rest
   } = props;
   // store hooks
@@ -50,7 +50,6 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
-  const { getProjectIdentifierById } = useProject();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -62,18 +61,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
 
-  const workItemIdentifier = useMemo(() => {
-    const projectIdentifier = getProjectIdentifierById(projectId);
-    if (!projectIdentifier || !props.issueSequenceId) {
-      return null;
-    }
-    const origin = window.location.origin;
-    return `${origin}/${workspaceSlug}/browse/${projectIdentifier}-${props.issueSequenceId}/`;
-  }, [projectId, workspaceSlug, props.issueSequenceId, getProjectIdentifierById]);
-
   return (
     <RichTextEditorWithRef
-      workItemIdentifier={workItemIdentifier}
       ref={ref}
       disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
       editable={editable}
@@ -100,6 +89,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         embedHandler: {
           externalEmbedComponent: { widgetCallback: EmbedHandler },
         },
+        workItemUrl,
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "lint": "eslint .",
+    "lint-mobile": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 28",
-    "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:lint-mobile": "eslint . --max-warnings 28",
+    "check:types-mobile": "tsc --noEmit",
+    "check:format-mobile": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint-mobile": "eslint . --fix",
+    "fix:format-mobile": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
     "@plane/editor": "workspace:*",

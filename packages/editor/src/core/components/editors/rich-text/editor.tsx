@@ -18,7 +18,6 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     fileHandler,
     flaggedExtensions,
     extendedEditorProps,
-    workItemIdentifier,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -48,7 +47,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
             editor={editor}
             flaggedExtensions={flaggedExtensions}
             disabledExtensions={disabledExtensions}
-            workItemIdentifier={workItemIdentifier}
+            workItemUrl={extendedEditorProps?.workItemUrl}
           />
         </>
       )}

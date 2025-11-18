@@ -12,4 +12,5 @@ export type TExtensions =
   | "comments"
   | "mathematics"
   | "drawio"
-  | "copy-block-link";
+  | "copy-block-link"
+  | "unique-id";

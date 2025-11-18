@@ -18,6 +18,7 @@ export type IEditorPropsExtended = {
   commentConfig?: TCommentConfig;
   isSmoothCursorEnabled: boolean;
   logoSpinner?: React.ComponentType;
+  workItemUrl?: string | null;
 };
 
 export type ICollaborativeDocumentEditorPropsExtended = unknown;

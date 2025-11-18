@@ -24,7 +24,7 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
 import { EExternalEmbedAttributeNames } from "@/types";
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, IEditorPropsExtended } from "@/types";
 // components
 import { getNodeOptions } from "./block-menu-options";
 
@@ -32,7 +32,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  workItemIdentifier?: IEditorProps["workItemIdentifier"];
+  workItemUrl?: IEditorPropsExtended["workItemUrl"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon;
@@ -74,7 +74,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor, flaggedExtensions, disabledExtensions, workItemIdentifier } = props;
+  const { editor, flaggedExtensions, disabledExtensions, workItemUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -210,9 +210,9 @@ export const BlockMenu = (props: Props) => {
 
         let urlToCopy: string;
         const currentPageUrl = window.location.href.split("#")[0];
-        const workItemUrl = workItemIdentifier;
-        if (workItemUrl) {
-          urlToCopy = nodeId ? `${workItemUrl}#${nodeId}` : workItemUrl;
+        const baseWorkItemUrl = workItemUrl;
+        if (baseWorkItemUrl) {
+          urlToCopy = nodeId ? `${baseWorkItemUrl}#${nodeId}` : baseWorkItemUrl;
         } else {
           urlToCopy = nodeId ? `${currentPageUrl}#${nodeId}` : currentPageUrl;
         }

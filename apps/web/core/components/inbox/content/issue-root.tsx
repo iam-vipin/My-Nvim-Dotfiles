@@ -195,7 +195,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           <DescriptionInputLoader />
         ) : (
           <DescriptionInput
-            issueSequenceId={issue.sequence_id}
             containerClassName="-ml-3 border-none"
             disabled={!isEditable}
             editorRef={editorRef}

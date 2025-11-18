@@ -7,6 +7,7 @@ import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
 import { transformGitHubIssue } from "@/apps/github/helpers/transform";
+import { IssueWebhookActions } from "@/apps/github/types";
 import { env } from "@/env";
 import { GITHUB_LABEL } from "@/helpers/constants";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
@@ -14,27 +15,9 @@ import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import type { Store } from "@/worker/base";
 
-export type IssueWebhookActions =
-  | "assigned"
-  | "closed"
-  | "deleted"
-  | "demilestoned"
-  | "edited"
-  | "labeled"
-  | "locked"
-  | "milestoned"
-  | "opened"
-  | "pinned"
-  | "reopened"
-  | "transferred"
-  | "unassigned"
-  | "unlabeled"
-  | "unlocked"
-  | "unpinned";
-
 const SYNC_LABEL = "plane";
 
-export const handleIssueEvents = async (store: Store, action: IssueWebhookActions, data: unknown) => {
+export const handleIssueEvents = async (store: Store, action: string, data: unknown) => {
   // If the issue number exist inside the store, skip it
   // @ts-expect-error
   if (data && data.issueNumber) {
@@ -49,14 +32,14 @@ export const handleIssueEvents = async (store: Store, action: IssueWebhookAction
     }
   }
 
-  await syncIssueWithPlane(store, data as GithubIssueDedupPayload);
+  await syncIssueWithPlane(store, action as IssueWebhookActions, data as GithubIssueDedupPayload);
   return true;
 };
 
 export const shouldSync = (labels: { name: string }[]): boolean =>
   labels.some((label) => label.name.toLowerCase() === SYNC_LABEL);
 
-export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPayload) => {
+export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActions, data: GithubIssueDedupPayload) => {
   try {
     const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
     logger.info(`${ghIntegrationKey}[ISSUE] Received webhook event from github 🐱 --------- [CREATE|UPDATE]`);
@@ -149,8 +132,18 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         .results;
       const githubLabel = labels.find((l) => l.name.toLowerCase() === GITHUB_LABEL);
 
+      // if the github label exists, add it to the plane issue
       if (githubLabel) {
         planeIssue.labels.push(githubLabel.name);
+      } else {
+        // create the github label
+        const createdGithubLabel = await planeClient.label.create(
+          entityConnection.workspace_slug,
+          entityConnection.project_id ?? "",
+          { name: GITHUB_LABEL, color: "#003773" }
+        );
+        labels.push(createdGithubLabel);
+        planeIssue.labels.push(createdGithubLabel.name);
       }
 
       if (
@@ -179,6 +172,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         labels.push(...createdLabels);
       }
 
+      // add the labels to the plane issue by finding it from the created labels array
       planeIssue.labels = planeIssue.labels
         .map((label) => {
           const l = labels.find((l) => l.name === label);
@@ -205,6 +199,11 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       if (user) {
         planeIssue.created_by = user.id;
       }
+    }
+
+    // only update issue state if action is "opened" or "closed" or "reopened"
+    if (![IssueWebhookActions.OPENED, IssueWebhookActions.CLOSED, IssueWebhookActions.REOPENED].includes(action)) {
+      delete planeIssue["state"];
     }
 
     if (issue) {

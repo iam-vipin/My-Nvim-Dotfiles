@@ -94,3 +94,22 @@ export enum E_GITHUB_DISCONNECT_SOURCE {
   ROUTE_DISCONNECT = "route-disconnect",
   WEBHOOK_DISCONNECT = "webhook-disconnect",
 }
+
+export enum IssueWebhookActions {
+  ASSIGNED = "assigned",
+  CLOSED = "closed",
+  DELETED = "deleted",
+  DEMILestoned = "demilestoned",
+  EDITED = "edited",
+  LABELED = "labeled",
+  LOCKED = "locked",
+  MILESTONED = "milestoned",
+  OPENED = "opened",
+  PINNED = "pinned",
+  REOPENED = "reopened",
+  TRANSFERRED = "transferred",
+  UNASSIGNED = "unassigned",
+  UNLABELED = "unlabeled",
+  UNLOCKED = "unlocked",
+  UNPINNED = "unpinned",
+}

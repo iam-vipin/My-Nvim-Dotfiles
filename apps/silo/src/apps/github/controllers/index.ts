@@ -721,6 +721,7 @@ export default class GithubController {
             repositoryName: issuePayload.repository.name,
             issueNumber: issuePayload.issue.number,
             eventActorId: issuePayload?.sender?.id,
+            action: issuePayload.action,
           },
           Number(env.DEDUP_INTERVAL)
         );

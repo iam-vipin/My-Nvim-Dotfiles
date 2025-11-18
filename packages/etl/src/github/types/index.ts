@@ -80,6 +80,7 @@ export type BaseDedupPayload = {
   repositoryName: string;
   isEnterprise: boolean;
   eventActorId: string;
+  action: string;
 };
 
 export type GithubIssueDedupPayload = BaseDedupPayload & {

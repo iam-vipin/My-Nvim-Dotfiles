@@ -196,6 +196,7 @@ export default class GithubEnterpriseController {
             issueNumber: issuePayload.issue.number,
             isEnterprise: true,
             eventActorId: issuePayload?.sender?.id,
+            action: issuePayload.action,
           },
           Number(env.DEDUP_INTERVAL)
         );

@@ -28,6 +28,7 @@ export default {
     overview: "概览",
     workflows: "工作流",
     members_and_teamspaces: "成员和团队空间",
+    open_in_full_screen: "在全屏中打开{page}",
   },
   updates: {
     add_update: "添加更新",

@@ -12,7 +12,6 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
@@ -30,7 +29,6 @@ export const InitiativeKanbanCard = observer((props: Props) => {
   const { initiativeId } = props;
   const parentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug } = useParams();
-  const router = useAppRouter();
 
   const {
     initiative: { getInitiativeById, getInitiativeStatsById, setPeekInitiative },

@@ -29,6 +29,7 @@ export default {
     workflows: "工作流程",
     templates: "模板",
     members_and_teamspaces: "成員和團隊空間",
+    open_in_full_screen: "以全螢幕開啟{page}",
   },
   updates: {
     add_update: "新增更新",

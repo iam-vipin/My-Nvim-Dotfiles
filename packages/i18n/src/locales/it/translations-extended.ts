@@ -29,6 +29,7 @@ export default {
     overview: "Panoramica",
     workflows: "Flussi di lavoro",
     members_and_teamspaces: "Membri e teamspaces",
+    open_in_full_screen: "Apri {page} a schermo intero",
   },
   updates: {
     add_update: "Aggiungi aggiornamento",

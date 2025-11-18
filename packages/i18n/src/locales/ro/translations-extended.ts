@@ -31,6 +31,7 @@ export default {
     workflows: "Fluxuri de lucru",
     templates: "Șabloane",
     members_and_teamspaces: "Membri și spații de echipă",
+    open_in_full_screen: "Deschide {page} pe tot ecranul",
   },
   updates: {
     add_update: "Adaugă actualizare",

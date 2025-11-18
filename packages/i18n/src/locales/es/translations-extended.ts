@@ -30,6 +30,7 @@ export default {
     overview: "Resumen",
     workflows: "Flujos de trabajo",
     members_and_teamspaces: "Miembros y espacios de equipo",
+    open_in_full_screen: "Abrir {page} en pantalla completa",
   },
   updates: {
     add_update: "Agregar actualización",

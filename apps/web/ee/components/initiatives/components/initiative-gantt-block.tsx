@@ -25,7 +25,6 @@ type Props = {
 export const InitiativeGanttBlock: React.FC<Props> = observer((props) => {
   const { initiativeId } = props;
   const { isMobile } = usePlatformOS();
-  const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const {
     initiative: { getInitiativeById, setPeekInitiative },

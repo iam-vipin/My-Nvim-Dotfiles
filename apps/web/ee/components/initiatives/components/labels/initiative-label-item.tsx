@@ -28,7 +28,6 @@ export const InitiativeLabelItem: React.FC<Props> = observer((props) => {
     handleLabelDelete,
     setIsUpdating,
     isParentDragging,
-    isChild,
     isLastChild,
     onDrop,
     labelOperationsCallbacks,

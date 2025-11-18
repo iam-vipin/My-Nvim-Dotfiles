@@ -26,6 +26,10 @@ export const InitiativeAttachmentRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    initiative: { toggleDeleteAttachmentModal: toggleDeleteAttachmentModalAction },
+  } = useInitiatives();
+
   const [attachmentDeleteModalId, setAttachmentDeleteModalId] = useState<string | null>(null);
   // store hooks
   const attachmentHelpers = useAttachmentOperations(workspaceSlug, initiativeId);
@@ -87,6 +91,7 @@ export const InitiativeAttachmentRoot: FC<Props> = observer((props) => {
   });
 
   const toggleDeleteAttachmentModal = (attachmentId: string | null) => {
+    toggleDeleteAttachmentModalAction(Boolean(attachmentId));
     setAttachmentDeleteModalId(attachmentId);
   };
 

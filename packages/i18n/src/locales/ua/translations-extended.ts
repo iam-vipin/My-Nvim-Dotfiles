@@ -30,6 +30,7 @@ export default {
     workflows: "Воркфлоус",
     templates: "Темплейти",
     members_and_teamspaces: "Члени та командних просторів",
+    open_in_full_screen: "Відкрити {page} на повний екран",
   },
   updates: {
     add_update: "Додати оновлення",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -65,6 +65,7 @@ export const InitiativeDeleteModal: React.FC<IInitiativeDelete> = observer((prop
         })
         .finally(() => handleClose());
     } catch (error) {
+      console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Warning!",

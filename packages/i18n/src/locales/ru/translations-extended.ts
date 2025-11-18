@@ -28,6 +28,7 @@ export default {
     overview: "Обзор",
     workflows: "Рабочие процессы",
     members_and_teamspaces: "Участники и командные пространства",
+    open_in_full_screen: "Открыть {page} в полном экране",
   },
   updates: {
     add_update: "Добавить обновление",

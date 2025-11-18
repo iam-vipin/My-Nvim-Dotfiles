@@ -30,6 +30,7 @@ export default {
     workflows: "Vorkflou",
     templates: "Šablóny",
     members_and_teamspaces: "Členovia a tímspejse",
+    open_in_full_screen: "Otvoriť {page} na celú obrazovku",
   },
   updates: {
     add_update: "Pridať aktualizáciu",

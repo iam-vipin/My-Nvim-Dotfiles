@@ -28,6 +28,7 @@ export default {
     overview: "概要",
     workflows: "ワークフロー",
     members_and_teamspaces: "メンバーとチームスペース",
+    open_in_full_screen: "{page}をフルスクリーンで開く",
   },
   updates: {
     add_update: "更新を追加",

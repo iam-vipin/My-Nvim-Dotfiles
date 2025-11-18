@@ -29,6 +29,7 @@ export default {
     workflows: "워크플로우",
     templates: "템플릿",
     members_and_teamspaces: "멤버와 팀스페이스",
+    open_in_full_screen: "전체 화면으로 {page} 열기",
   },
   updates: {
     add_update: "업데이트 추가",

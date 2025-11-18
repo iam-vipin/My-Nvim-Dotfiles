@@ -17,6 +17,7 @@ export default {
     members_and_teamspaces: "Members & Teamspaces",
     recurring_work_items: "Recurring work items",
     milestones: "Milestones",
+    open_in_full_screen: "Open {page} in full screen",
   },
   issue: {
     relation: {

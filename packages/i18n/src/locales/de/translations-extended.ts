@@ -31,6 +31,7 @@ export default {
     workflows: "Arbeitsabläufe",
     templates: "Vorlagen",
     members_and_teamspaces: "Mitglieder & Teamspaces",
+    open_in_full_screen: "{page} im Vollbild öffnen",
   },
   updates: {
     add_update: "Aktualisieren",

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon, BriefcaseIcon } from "lucide-react";
 // plane imports
@@ -26,11 +25,10 @@ type Props = {
 export const AddScopeButton = observer((props: Props) => {
   const { customButton, disabled, workspaceSlug, initiativeId } = props;
 
-  // states
-  const [isProjectsOpen, setIsProjectsOpen] = useState(false);
-  const [isEpicModalOpen, setIsEpicModalOpen] = useState(false);
-
   // store hooks
+  const {
+    initiative: { isProjectsModalOpen, isEpicModalOpen, toggleProjectsModal, toggleEpicModal },
+  } = useInitiatives();
   const { t } = useTranslation();
   const {
     initiative: {
@@ -92,12 +90,12 @@ export const AddScopeButton = observer((props: Props) => {
     {
       i18n_label: "common.epics",
       icon: <EpicIcon className="h-3 w-3" />,
-      onClick: () => setIsEpicModalOpen(true),
+      onClick: () => toggleEpicModal(true),
     },
     {
       i18n_label: "common.projects",
       icon: <BriefcaseIcon className="h-3 w-3" />,
-      onClick: () => setIsProjectsOpen(true),
+      onClick: () => toggleProjectsModal(true),
     },
   ];
 
@@ -129,8 +127,8 @@ export const AddScopeButton = observer((props: Props) => {
       </CustomMenu>
       {/* Quick add modals */}
       <ProjectMultiSelectModal
-        isOpen={isProjectsOpen}
-        onClose={() => setIsProjectsOpen(false)}
+        isOpen={isProjectsModalOpen}
+        onClose={() => toggleProjectsModal(false)}
         onSubmit={handleProjectsUpdate}
         selectedProjectIds={initiative?.project_ids ?? []}
         projectIds={workspaceProjectIds ?? []}
@@ -140,7 +138,7 @@ export const AddScopeButton = observer((props: Props) => {
         isOpen={isEpicModalOpen}
         searchParams={{}}
         selectedEpicIds={initiativeEpics ?? []}
-        handleClose={() => setIsEpicModalOpen(false)}
+        handleClose={() => toggleEpicModal(false)}
         handleOnSubmit={async (data) => {
           handleAddEpicToInitiative(data.map((epic) => epic.id));
         }}

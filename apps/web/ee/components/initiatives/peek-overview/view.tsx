@@ -54,7 +54,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
   const initiativePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
   const {
-    initiative: { setPeekInitiative, getInitiativeById },
+    initiative: { isAnyModalOpen, setPeekInitiative, getInitiativeById },
   } = useInitiatives();
 
   const initiative = getInitiativeById(initiativeId);
@@ -68,7 +68,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
     initiativePeekOverviewRef,
     () => {
       // Don't close peek overview if any modal is open
-      if (!isProjectsModalOpen && !isEpicModalOpen) {
+      if (!isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen) {
         removeRoutePeekId();
       }
     },
@@ -78,7 +78,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
   const handleKeyDown = () => {
     const dropdownElement = document.activeElement?.tagName === "INPUT";
     // Don't close peek overview if any modal is open or if input is focused
-    if (!dropdownElement && !isProjectsModalOpen && !isEpicModalOpen) {
+    if (!dropdownElement && !isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen) {
       removeRoutePeekId();
       const initiativeElement = document.getElementById(`initiative-${initiativeId}`);
       if (initiativeElement) initiativeElement?.focus();

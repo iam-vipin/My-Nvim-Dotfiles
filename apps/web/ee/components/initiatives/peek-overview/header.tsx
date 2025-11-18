@@ -53,12 +53,10 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
   const { t } = useTranslation();
   // store hooks
   const {
-    initiative: { getInitiativeById, setPeekInitiative, getIsInitiativePeeked },
+    initiative: { setPeekInitiative, getIsInitiativePeeked },
   } = useInitiatives();
   // hooks
   const { isMobile } = usePlatformOS();
-
-  const initiative = getInitiativeById(initiativeId);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -67,7 +65,7 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: t("toast.link_copied"),
+        message: t("initiatives.toast.link_copied"),
       });
     });
   };
@@ -76,7 +74,7 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
     setPeekInitiative(undefined);
   };
 
-  const isIssuePeeked = getIsInitiativePeeked(initiativeId);
+  const isInitiativePeeked = getIsInitiativePeeked(initiativeId);
 
   return (
     <div
@@ -98,19 +96,9 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
             <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
           </button>
         </Tooltip>
-        {isIssuePeeked && (
+        {isInitiativePeeked && (
           <Link href={`/${workspaceSlug}/initiatives/${initiativeId}`} onClick={redirectToInitiative}>
-            <Tooltip
-              tooltipContent={
-                <span>
-                  {t("common.open_detail_page")}{" "}
-                  <span className="hidden sm:inline">
-                    {isMobile ? `(${t("common.tap")})` : `(${t("common.ctrl_cmd")} + ${t("common.k")})`}
-                  </span>
-                </span>
-              }
-              isMobile={isMobile}
-            >
+            <Tooltip tooltipContent={t("common.open_in_full_screen", { page: "Initiative" })} isMobile={isMobile}>
               <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
             </Tooltip>
           </Link>

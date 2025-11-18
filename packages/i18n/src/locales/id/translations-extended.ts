@@ -31,6 +31,7 @@ export default {
     workflows: "Alur Kerja",
     templates: "Templat",
     members_and_teamspaces: "Anggota & Teamspaces",
+    open_in_full_screen: "Buka {page} dalam layar penuh",
   },
   updates: {
     add_update: "Tambahkan update",

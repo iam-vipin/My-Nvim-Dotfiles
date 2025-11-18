@@ -30,6 +30,7 @@ export default {
     workflows: "Workflowy",
     templates: "Szablony",
     members_and_teamspaces: "Członkowie i tymacz",
+    open_in_full_screen: "Otwórz {page} na pełnym ekranie",
   },
   updates: {
     add_update: "Dodaj aktualizację",

@@ -29,6 +29,7 @@ export default {
     workflows: "İş Akışları",
     templates: "Şablonlar",
     members_and_teamspaces: "Üyeler ve Takım Alanları",
+    open_in_full_screen: "{page} öğesini tam ekranda aç",
   },
   updates: {
     add_update: "Güncelleme Ekle",

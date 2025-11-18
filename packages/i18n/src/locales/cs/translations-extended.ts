@@ -30,6 +30,7 @@ export default {
     workflows: "Workflow",
     templates: "Šablony",
     members_and_teamspaces: "Členové a týmové prostory",
+    open_in_full_screen: "Otevřít {page} na celou obrazovku",
   },
   updates: {
     progress: {

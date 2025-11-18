@@ -29,6 +29,7 @@ export default {
     workflows: "Quy trình làm việc",
     templates: "Mẫu",
     members_and_teamspaces: "Thành viên và không gian nhóm",
+    open_in_full_screen: "Mở {page} trong chế độ toàn màn hình",
   },
   updates: {
     add_update: "Thêm cập nhật",

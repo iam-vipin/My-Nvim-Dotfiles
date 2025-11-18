@@ -31,6 +31,7 @@ export default {
     workflows: "Fluxos de trabalho",
     templates: "Modelos",
     members_and_teamspaces: "Membros e espaços de equipe",
+    open_in_full_screen: "Abrir {page} em tela cheia",
   },
   updates: {
     add_update: "Adicionar atualização",

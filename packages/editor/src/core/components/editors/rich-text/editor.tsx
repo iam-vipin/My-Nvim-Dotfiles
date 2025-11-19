@@ -47,7 +47,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
             editor={editor}
             flaggedExtensions={flaggedExtensions}
             disabledExtensions={disabledExtensions}
-            workItemUrl={extendedEditorProps?.workItemUrl}
+            originUrl={extendedEditorProps?.originUrl}
           />
         </>
       )}

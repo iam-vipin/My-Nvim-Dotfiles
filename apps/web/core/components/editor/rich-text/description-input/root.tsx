@@ -99,6 +99,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     entityId,
     fileAssetType,
     initialValue,
+    issueSequenceId,
     onSubmit,
     placeholder,
     projectId,
@@ -188,14 +189,17 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   );
 
   const { getProjectIdentifierById } = useProject();
-  const workItemUrl = useMemo(() => {
+  const originUrl = useMemo(() => {
     const projectIdentifier = getProjectIdentifierById(projectId);
-    if (!projectIdentifier || !props.issueSequenceId) {
+
+    if (!projectIdentifier || !issueSequenceId) {
+      if (entityId && window.location.href.includes("initiatives")) {
+        return `${window.location.href}${entityId}`;
+      }
       return undefined;
     }
-    const origin = window.location.origin;
-    return `${origin}/${workspaceSlug}/browse/${projectIdentifier}-${props.issueSequenceId}/`;
-  }, [projectId, workspaceSlug, props.issueSequenceId, getProjectIdentifierById]);
+    return `${window.location.origin}/${workspaceSlug}/browse/${projectIdentifier}-${issueSequenceId}/`;
+  }, [projectId, workspaceSlug, issueSequenceId, getProjectIdentifierById, entityId]);
 
   if (!workspaceDetails) return null;
 
@@ -210,7 +214,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
               editable={!disabled}
               ref={editorRef}
               id={entityId}
-              workItemUrl={workItemUrl}
+              originUrl={originUrl}
               disabledExtensions={disabledExtensions}
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}

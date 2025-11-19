@@ -6,6 +6,7 @@ import { restorePublicImages } from "@/helpers/image-helpers";
 import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
+import { NodeHighlightPlugin } from "@/plugins/highlight";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // prosemirror plugins
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
@@ -77,6 +78,7 @@ export const UtilityExtension = (props: Props) => {
           disabledExtensions,
           editor: this.editor,
         }),
+        NodeHighlightPlugin(),
       ];
     },
 

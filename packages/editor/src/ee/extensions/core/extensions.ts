@@ -1,16 +1,15 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 // ce imports
+import type { TCoreAdditionalExtensionsProps } from "src/ce/extensions";
 import { UniqueID } from "@/extensions/unique-id/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
 import type { TExternalEmbedConfig } from "@/types";
-import type { TCoreAdditionalExtensionsProps } from "src/ce/extensions";
 // local imports
 import { ExternalEmbedExtension } from "../external-embed/extension";
 import { MathematicsExtension } from "../mathematics/extension";
-import { NodeHighlightExtension } from "../node-highlight/extension";
 import { SmoothCursorExtension } from "../smooth-cursor";
 
 type Props = TCoreAdditionalExtensionsProps & { extendedEditorProps?: IEditorPropsExtended } & {
@@ -37,9 +36,6 @@ export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
   }
   if (isSmoothCursorEnabled) {
     extensions.push(SmoothCursorExtension);
-  }
-  if (!disabledExtensions?.includes("unique-id") && !disabledExtensions?.includes("copy-block-link")) {
-    extensions.push(NodeHighlightExtension);
   }
 
   if (!disabledExtensions?.includes("unique-id")) {

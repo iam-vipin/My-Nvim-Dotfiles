@@ -32,7 +32,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  workItemUrl?: IEditorPropsExtended["workItemUrl"];
+  originUrl?: IEditorPropsExtended["originUrl"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon;
@@ -74,7 +74,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor, flaggedExtensions, disabledExtensions, workItemUrl } = props;
+  const { editor, flaggedExtensions, disabledExtensions, originUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -193,7 +193,7 @@ export const BlockMenu = (props: Props) => {
       icon: Link2,
       key: "copy-link",
       label: "Copy link",
-      isDisabled: disabledExtensions?.includes("copy-block-link"),
+      isDisabled: disabledExtensions?.includes("copy-block-link") || disabledExtensions?.includes("unique-id"),
       onClick: () => {
         const { selection, tr } = editor.state;
         const selectedNode = selection.content().content.firstChild;
@@ -210,7 +210,7 @@ export const BlockMenu = (props: Props) => {
 
         let urlToCopy: string;
         const currentPageUrl = window.location.href.split("#")[0];
-        const baseWorkItemUrl = workItemUrl;
+        const baseWorkItemUrl = originUrl;
         if (baseWorkItemUrl) {
           urlToCopy = nodeId ? `${baseWorkItemUrl}#${nodeId}` : baseWorkItemUrl;
         } else {

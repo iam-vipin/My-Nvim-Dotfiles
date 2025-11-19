@@ -36,7 +36,7 @@ export const EditorContainer: FC<Props> = (props) => {
       if (!editor) return false;
 
       const doc = editor.state.doc;
-      let pos = null;
+      let pos: number | null = null;
 
       doc.descendants((node, position) => {
         if (node.attrs && node.attrs.id === nodeId) {
@@ -49,13 +49,16 @@ export const EditorContainer: FC<Props> = (props) => {
         return false;
       }
 
+      const nodePosition = pos;
       const tr = editor.state.tr.setMeta(nodeHighlightPluginKey, { nodeId });
       editor.view.dispatch(tr);
 
-      const domNode = editor.view.nodeDOM(pos);
-      if (domNode instanceof HTMLElement) {
-        domNode.scrollIntoView({ behavior: "instant", block: "center" });
-      }
+      requestAnimationFrame(() => {
+        const domNode = editor.view.nodeDOM(nodePosition);
+        if (domNode instanceof HTMLElement) {
+          domNode.scrollIntoView({ behavior: "instant", block: "center" });
+        }
+      });
 
       editor.once("focus", () => {
         const clearTr = editor.state.tr.setMeta(nodeHighlightPluginKey, { nodeId: null });

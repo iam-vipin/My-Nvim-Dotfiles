@@ -22,7 +22,7 @@ type RichTextEditorWrapperProps = MakeOptional<
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
-  workItemUrl?: string;
+  originUrl?: string;
 } & (
     | {
         editable: false;
@@ -42,7 +42,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     workspaceId,
     projectId,
     disabledExtensions: additionalDisabledExtensions = [],
-    workItemUrl,
+    originUrl,
     ...rest
   } = props;
   // store hooks
@@ -89,7 +89,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         embedHandler: {
           externalEmbedComponent: { widgetCallback: EmbedHandler },
         },
-        workItemUrl,
+        originUrl,
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

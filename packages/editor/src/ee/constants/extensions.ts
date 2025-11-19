@@ -9,7 +9,6 @@ export enum ADDITIONAL_EXTENSIONS {
   EXTERNAL_EMBED = "externalEmbedComponent",
   PAGE_LINK_COMPONENT = "pageLinkComponent",
   DRAWIO = "drawIoComponent",
-  NODE_HIGHLIGHT = "nodeHighlight",
 }
 
 export const ADDITIONAL_BLOCK_NODE_TYPES = [

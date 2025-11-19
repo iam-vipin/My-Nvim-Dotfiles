@@ -4,6 +4,8 @@ import { useTheme } from "next-themes";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
+import noProjectsDark from "@/app/assets/empty-state/project-settings/no-projects-dark.png?url";
+import noProjectsLight from "@/app/assets/empty-state/project-settings/no-projects-light.png?url";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
 const ProjectSettingsPage = () => {
@@ -11,10 +13,8 @@ const ProjectSettingsPage = () => {
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
   // derived values
-  const resolvedPath =
-    resolvedTheme === "dark"
-      ? "/empty-state/project-settings/no-projects-dark.png"
-      : "/empty-state/project-settings/no-projects-light.png";
+  const resolvedPath = resolvedTheme === "dark" ? noProjectsDark : noProjectsLight;
+
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-full max-w-[480px] mx-auto">
       <img src={resolvedPath} className="w-full h-full object-contain" alt="No projects yet" />

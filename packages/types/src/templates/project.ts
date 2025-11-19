@@ -1,4 +1,4 @@
-import type { TInboxForm } from "../inbox";
+import type { TInboxForm } from "../intake";
 import type { IIssueLabel } from "../issues";
 import type { TProject, TProjectPriority, TProjectState } from "../project";
 import type { IState } from "../state";

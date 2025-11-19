@@ -42,35 +42,37 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { richText: richTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
-    <RichTextEditorWithRef
-      mentionHandler={{
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
-        getMentionedEntityDetails: (id: string) => ({
-          display_name: getMemberById(id)?.member__display_name ?? "",
-        }),
-      }}
-      ref={ref}
-      disabledExtensions={[...richTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
-      editable={editable}
-      fileHandler={getEditorFileHandlers({
-        anchor,
-        uploadFile: editable ? props.uploadFile : async () => "",
-        workspaceId,
-      })}
-      flaggedExtensions={richTextEditorExtensions.flagged}
-      extendedEditorProps={{
-        embedHandler: {
-          externalEmbedComponent: {
-            widgetCallback: EmbedHandler,
+    <div className="border rounded-md p-3 border-custom-border-300">
+      <RichTextEditorWithRef
+        mentionHandler={{
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({
+            display_name: getMemberById(id)?.member__display_name ?? "",
+          }),
+        }}
+        ref={ref}
+        disabledExtensions={[...richTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+        editable={editable}
+        fileHandler={getEditorFileHandlers({
+          anchor,
+          uploadFile: editable ? props.uploadFile : async () => "",
+          workspaceId,
+        })}
+        flaggedExtensions={richTextEditorExtensions.flagged}
+        extendedEditorProps={{
+          embedHandler: {
+            externalEmbedComponent: {
+              widgetCallback: EmbedHandler,
+            },
           },
-        },
-        isSmoothCursorEnabled: false,
-      }}
-      containerClassName={containerClassName}
-      editorClassName="min-h-[100px] py-2 overflow-hidden"
-      displayConfig={{ fontSize: "large-font" }}
-      {...rest}
-    />
+          isSmoothCursorEnabled: false,
+        }}
+        containerClassName={containerClassName}
+        editorClassName="min-h-[100px] py-2 overflow-hidden"
+        displayConfig={{ fontSize: "large-font" }}
+        {...rest}
+      />
+    </div>
   );
 });
 

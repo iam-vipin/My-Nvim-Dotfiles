@@ -48,6 +48,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     primaryButtonText,
     isProjectSelectionDisabled = false,
     isConversionOperation = false,
+    isTypeSelectDisabled = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -420,6 +421,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
     convertToWorkItem: isConversionOperation,
+    isTypeSelectDisabled: isTypeSelectDisabled,
   };
 
   return (

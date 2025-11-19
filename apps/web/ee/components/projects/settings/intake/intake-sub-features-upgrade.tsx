@@ -110,7 +110,7 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
                               >
                                 <ToggleSwitch
                                   value={false}
-                                  onChange={(e) => {}}
+                                  onChange={() => {}}
                                   size="sm"
                                   className={isAdmin ? "opacity-30" : ""}
                                   disabled={!isAdmin}

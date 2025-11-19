@@ -3041,6 +3041,15 @@ export default {
           "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page.",
       },
     },
+    type_forms: {
+      select_types: {
+        title: "Select work item type",
+        search_placeholder: "Search for a work item type",
+      },
+      actions: {
+        select_properties: "Select properties",
+      },
+    },
   },
   recurring_work_items: {
     settings: {

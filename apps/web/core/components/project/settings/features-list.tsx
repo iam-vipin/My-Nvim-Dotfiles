@@ -112,17 +112,11 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
                 </div>
                 <ProjectFeatureToggle
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
                   featureItem={featureItem}
                   value={isFeatureEnabled(featureItemKey)}
                   handleSubmit={handleSubmit}
                   disabled={!isAdmin}
                 />
-              </div>
-              <div className="pl-14">
-                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
               </div>
             </div>
           ))}

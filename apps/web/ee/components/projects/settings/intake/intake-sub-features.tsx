@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -12,21 +12,15 @@ import { EUserProjectRoles } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // ce imports
-import type { TProperties } from "@/ce/constants/project";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
+import type { TIntakeFeatureList } from "@/plane-web/constants/project/settings/features";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { IntakeFormsRoot } from "./forms-root";
 import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
 import { RenewModal } from "./renew-modal";
 
-export type TIntakeFeatureList = {
-  [key: string]: TProperties & {
-    hasOptions: boolean;
-    hasHyperlink?: boolean;
-    canShuffle?: boolean;
-  };
-};
 type Props = {
   projectId?: string;
   allowEdit?: boolean;
@@ -41,11 +35,6 @@ const IntakeSubFeatures = observer((props: Props) => {
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
   const { isUpdatingProject } = useProject();
   const { allowPermissions } = useUserPermissions();
-  const isFeatureAllowed = {
-    email: useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL),
-    form: useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM),
-    in_app: true,
-  };
 
   // fetching intake forms
   useSWR(
@@ -59,6 +48,14 @@ const IntakeSubFeatures = observer((props: Props) => {
   if (!workspaceSlug || !projectId) return null;
 
   // Derived Values
+  const isIntakeEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
+  const isIntakeFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
+  const isFeatureAllowed = {
+    email: isIntakeEmailEnabled,
+    in_app: true,
+    form: isIntakeFormEnabled,
+  };
+
   const settings = intakeForms[projectId];
   const isAdmin = allowPermissions(
     [EUserProjectRoles.ADMIN],
@@ -112,13 +109,10 @@ const IntakeSubFeatures = observer((props: Props) => {
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {
-            const feature = featureList[featureKey];
-            const SPACE_APP_URL =
-              (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
-            const publishLink =
-              featureKey === "form"
-                ? `${SPACE_APP_URL}/intake/${settings?.anchors?.[feature.key]}`
-                : settings?.anchors?.[feature.key];
+            if (featureKey === "form") return null;
+
+            const feature = featureList[featureKey as keyof TIntakeFeatureList];
+            const publishLink = settings?.anchors?.[feature.key];
             const key = `is_${featureKey}_enabled`;
 
             if (!isFeatureAllowed[featureKey as keyof typeof isFeatureAllowed])
@@ -135,86 +129,102 @@ const IntakeSubFeatures = observer((props: Props) => {
             return (
               <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
-                  <div className="flex gap-2 w-full">
-                    <div className="flex justify-center rounded mt-1">{feature.icon}</div>
-                    <div className="w-full">
-                      <div className={cn("flex justify-between gap-4", {})}>
-                        <div className="flex-1 w-full">
-                          <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
-                          <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>
-                        </div>
-                        <div className={cn(!isTooltip && "flex items-center")}>
-                          {settings && (
-                            <Tooltip
-                              tooltipContent={`Ask your Project Admin to turn this ${settings[key as keyof TInboxForm] ? "off" : "on"}.`}
-                              position="top"
-                              className=""
-                              disabled={isAdmin}
-                            >
-                              <div>
-                                <ToggleSwitch
-                                  value={Boolean(settings[key as keyof TInboxForm])}
-                                  onChange={(e) => handleSubmit(key as keyof TInboxForm)}
-                                  disabled={!feature.isEnabled || !isAdmin}
-                                  size="sm"
+                  <div className="w-full space-y-2">
+                    <div className={cn("flex justify-between gap-4", {})}>
+                      <div className="flex-1 w-full">
+                        <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
+                        <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>
+                      </div>
+                      <div className={cn(!isTooltip && "flex items-center")}>
+                        {settings && (
+                          <Tooltip
+                            tooltipContent={`Ask your Project Admin to turn this ${settings[key as keyof TInboxForm] ? "off" : "on"}.`}
+                            position="top"
+                            className=""
+                            disabled={isAdmin}
+                          >
+                            <div>
+                              <ToggleSwitch
+                                value={Boolean(settings[key as keyof TInboxForm])}
+                                onChange={() => handleSubmit(key as keyof TInboxForm)}
+                                disabled={!feature.isEnabled || !isAdmin}
+                                size="sm"
+                              />
+                            </div>
+                          </Tooltip>
+                        )}
+                        {(!settings || (!settings && isUpdatingProject)) && (
+                          <Loader>
+                            <Loader.Item height="16px" width="24px" className="rounded-lg" />
+                          </Loader>
+                        )}
+                      </div>
+                    </div>
+
+                    {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
+                      <div className="rounded-md bg-custom-background-90 space-y-2">
+                        <div className="p-3 space-y-2">
+                          <div className="flex gap-2 rounded">
+                            {feature.icon} <span className="text-xs font-medium">{feature.fieldName}</span>
+                          </div>
+                          <div className="flex gap-2 h-[30px] w-full">
+                            {settings?.anchors[feature.key] ? (
+                              <div
+                                className={cn(
+                                  "flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 flex-1 py-1 px-2 gap-2 h-full",
+                                  {
+                                    "w-[320px]": isTooltip,
+                                  }
+                                )}
+                              >
+                                <span className="truncate flex-1 mr-4">{publishLink}</span>
+                                <Copy
+                                  className="text-custom-text-400 w-[16px] cursor-pointer"
+                                  onClick={() => copyToClipboard(publishLink)}
                                 />
+                                {feature.hasHyperlink && (
+                                  <a href={publishLink} target="_blank">
+                                    <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
+                                  </a>
+                                )}
                               </div>
-                            </Tooltip>
-                          )}
-                          {(!settings || (!settings && isUpdatingProject)) && (
-                            <Loader>
-                              <Loader.Item height="16px" width="24px" className="rounded-lg" />
-                            </Loader>
-                          )}
+                            ) : (
+                              <Loader>
+                                <Loader.Item height="30px" width="250px" className="rounded" />
+                              </Loader>
+                            )}
+                            {allowEdit && settings?.anchors[feature.key] && (
+                              <Button
+                                tabIndex={-1}
+                                size="sm"
+                                variant="accent-primary"
+                                className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
+                                onClick={() => setModalType(feature.key)}
+                              >
+                                <RefreshCcw className="w-[16px]" /> Renew
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
-
-                      {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
-                        <div className="flex gap-2 h-[30px] mt-2 w-full">
-                          {settings?.anchors[feature.key] ? (
-                            <div
-                              className={cn(
-                                "flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 w-[400px] py-1 px-2 gap-2 h-full",
-                                {
-                                  "w-[320px]": isTooltip,
-                                }
-                              )}
-                            >
-                              <span className="truncate flex-1 mr-4">{publishLink}</span>
-                              <Copy
-                                className="text-custom-text-400 w-[16px] cursor-pointer"
-                                onClick={() => copyToClipboard(publishLink)}
-                              />
-                              {feature.hasHyperlink && (
-                                <a href={publishLink} target="_blank">
-                                  <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
-                                </a>
-                              )}
-                            </div>
-                          ) : (
-                            <Loader>
-                              <Loader.Item height="30px" width="250px" className="rounded" />
-                            </Loader>
-                          )}
-                          {allowEdit && settings?.anchors[feature.key] && (
-                            <Button
-                              tabIndex={-1}
-                              size="sm"
-                              variant="accent-primary"
-                              className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
-                              onClick={() => setModalType(feature.key)}
-                            >
-                              <RefreshCcw className="w-[16px]" /> Renew
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })}
+
+        {/* Intake Forms */}
+        <IntakeFormsRoot
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId}
+          isAdmin={isAdmin}
+          isEnabled={isFeatureAllowed.form}
+          allowEdit={allowEdit}
+          isFormEnabled={settings?.is_form_enabled}
+          anchor={settings?.anchors?.intake}
+          isToolTip={isTooltip}
+        />
       </div>
     </>
   );

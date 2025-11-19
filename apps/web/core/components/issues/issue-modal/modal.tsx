@@ -26,6 +26,7 @@ export interface IssuesModalProps {
     loading: string;
   };
   isProjectSelectionDisabled?: boolean;
+  isTypeSelectDisabled?: boolean;
   templateId?: string;
   isConversionOperation?: boolean;
   allowedProjectIds?: string[];

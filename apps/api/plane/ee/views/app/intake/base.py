@@ -52,15 +52,11 @@ class IntakeSettingEndpoint(BaseAPIView):
         return new_user
 
     def get_create_api_token(self, user: User, workspace: Workspace) -> APIToken:
-        api_token = APIToken.objects.filter(
-            user=user, user_type=1, workspace_id=workspace.id
-        ).first()
+        api_token = APIToken.objects.filter(user=user, user_type=1, workspace_id=workspace.id).first()
 
         # create api token if not exists
         if not api_token:
-            api_token = APIToken.objects.create(
-                user=user, user_type=1, workspace_id=workspace.id
-            )
+            api_token = APIToken.objects.create(user=user, user_type=1, workspace_id=workspace.id)
 
         return api_token
 
@@ -79,16 +75,10 @@ class IntakeSettingEndpoint(BaseAPIView):
             ).first()
 
             if not workspace_member:
-                WorkspaceMember.objects.create(
-                    workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value
-                )
+                WorkspaceMember.objects.create(workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value)
 
             # Get all project IDs in a single query
-            project_ids = list(
-                Project.objects.filter(workspace__slug=slug).values_list(
-                    "pk", flat=True
-                )
-            )
+            project_ids = list(Project.objects.filter(workspace__slug=slug).values_list("pk", flat=True))
 
             # Create project members in bulk if they don't exist
             if project_ids:
@@ -114,9 +104,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                 ]
 
                 if new_members:
-                    ProjectMember.objects.bulk_create(
-                        new_members, batch_size=100, ignore_conflicts=True
-                    )
+                    ProjectMember.objects.bulk_create(new_members, batch_size=100, ignore_conflicts=True)
 
             return True
         except Exception as e:
@@ -127,9 +115,7 @@ class IntakeSettingEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def get(self, request, slug, project_id):
-        intake = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
         if not intake:
             return Response(
@@ -148,9 +134,7 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         # Initialize intake_setting if it doesn't exist
         if not intake_setting:
-            intake_setting = IntakeSetting.objects.create(
-                project_id=project_id, intake=intake
-            )
+            intake_setting = IntakeSetting.objects.create(project_id=project_id, intake=intake)
 
         deployboards = DeployBoard.objects.filter(
             workspace__slug=slug,
@@ -164,16 +148,10 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
-                if check_workspace_feature_flag(
-                    FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
-                ):
-                    data["anchors"]["intake_email"] = (
-                        f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
-                    )
+                if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id):
+                    data["anchors"]["intake_email"] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
             elif deployboard["entity_name"] == "intake":
-                if check_workspace_feature_flag(
-                    FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id
-                ):
+                if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id):
                     data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]
             else:
                 data["anchors"] = {}
@@ -184,14 +162,10 @@ class IntakeSettingEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def patch(self, request, slug, project_id):
-        intake = Intake.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).first()
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
         if not intake:
-            return Response(
-                {"error": "Intake does not exist"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Intake does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if the form or email is enabled
         request_data = request.data.copy()
@@ -237,9 +211,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                         workspace=workspace,
                     )
                     # create the user botß
-                self.create_intake_user_bot(
-                    workspace=workspace, request=request, slug=slug
-                )
+                self.create_intake_user_bot(workspace=workspace, request=request, slug=slug)
 
             # If the email is enabled, create a deploy board for the intake email
             if request.data.get("is_email_enabled"):
@@ -257,9 +229,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                         workspace=workspace,
                     )
                     # create the user bot
-                self.create_intake_user_bot(
-                    workspace=workspace, request=request, slug=slug
-                )
+                self.create_intake_user_bot(workspace=workspace, request=request, slug=slug)
 
         # Get the deployboards for the project
         deployboards = DeployBoard.objects.filter(
@@ -271,20 +241,13 @@ class IntakeSettingEndpoint(BaseAPIView):
         # for the intake email return the complete email address
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
-                deployboard["anchor"] = (
-                    f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
-                )
+                deployboard["anchor"] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
 
-        serializer = IntakeSettingSerializer(
-            intake_setting, data=request_data, partial=True
-        )
+        serializer = IntakeSettingSerializer(intake_setting, data=request_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             data = serializer.data
             # Serializer and return
-            data["anchors"] = {
-                deployboard["entity_name"]: deployboard["anchor"]
-                for deployboard in deployboards
-            }
+            data["anchors"] = {deployboard["entity_name"]: deployboard["anchor"] for deployboard in deployboards}
             return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

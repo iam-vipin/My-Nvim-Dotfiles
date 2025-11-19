@@ -3,6 +3,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useNavigate } from "react-router";
 import type { E_FEATURE_FLAGS } from "@plane/constants";
 import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -10,6 +11,7 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, TProjectFeaturesList } from "@plane/types";
 // components
+import { cn, joinUrlPath } from "@plane/utils";
 import { ProjectFeatureToggle } from "@/components/project/settings/helper";
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers
@@ -18,7 +20,6 @@ import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings/feature-children";
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -28,10 +29,13 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   isAdmin: boolean;
+  isCreateModal?: boolean;
 };
 
 export const ProjectFeaturesList: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, isAdmin } = props;
+  const { workspaceSlug, projectId, isAdmin, isCreateModal } = props;
+  // router
+  const navigate = useNavigate();
   // store hooks
   const { t } = useTranslation();
   const { data: currentUser } = useUser();
@@ -130,7 +134,16 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
             return (
               <div
                 key={featureItemKey}
-                className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
+                onClick={() => {
+                  if (featureItem.href) {
+                    navigate(
+                      joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem.href)
+                    );
+                  }
+                }}
+                className={cn("gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4", {
+                  "cursor-pointer": featureItem.href,
+                })}
               >
                 <div key={featureItemKey} className="flex items-center justify-between">
                   <div className="flex items-start gap-3">
@@ -153,22 +166,12 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
 
                   <ProjectFeatureToggle
-                    workspaceSlug={workspaceSlug}
-                    projectId={projectId}
                     featureItem={featureItem}
                     value={isFeatureEnabled(featureItem.property)}
                     handleSubmit={handleSubmit}
                     disabled={!isEnabled || !isAdmin}
+                    isCreateModal={isCreateModal}
                   />
-                </div>
-                <div className="pl-14">
-                  {currentProjectDetails && currentProjectDetails?.[featureItem.property as keyof IProject] && (
-                    <ProjectFeatureChildren
-                      feature={featureItemKey}
-                      currentProjectDetails={currentProjectDetails}
-                      workspaceSlug={workspaceSlug}
-                    />
-                  )}
                 </div>
               </div>
             );

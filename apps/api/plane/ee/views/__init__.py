@@ -97,6 +97,10 @@ from plane.ee.views.space.intake import (
     IntakePublishedIssueEndpoint,
     IntakeMetaPublishedIssueEndpoint,
 )
+from plane.ee.views.space.intake_form import (
+    IntakeFormSettingsEndpoint,
+    IntakeFormCreateWorkItemEndpoint,
+)
 
 # workspace connection views
 from plane.ee.views.app.workspace.credential import (

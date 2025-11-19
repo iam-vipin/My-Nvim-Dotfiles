@@ -8,6 +8,7 @@ export default [
   layout("./views/[anchor]/layout.tsx", [route("views/:anchor", "./views/[anchor]/page.tsx")]),
   layout("./pages/[anchor]/layout.tsx", [route("pages/:anchor", "./pages/[anchor]/page.tsx")]),
   layout("./intake/[anchor]/layout.tsx", [route("intake/:anchor", "./intake/[anchor]/page.tsx")]),
+  layout("./intake/custom/[anchor]/layout.tsx", [route("intake/custom/:anchor", "./intake/custom/[anchor]/page.tsx")]),
   // Catch-all route for 404 handling
   route("*", "./not-found.tsx"),
 ] satisfies RouteConfig;

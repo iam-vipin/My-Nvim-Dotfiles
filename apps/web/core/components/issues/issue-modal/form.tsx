@@ -73,6 +73,7 @@ export interface IssueFormProps {
   convertToWorkItem?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+  isTypeSelectDisabled?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -101,6 +102,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     convertToWorkItem = false,
     showActionButtons = true,
     dataResetProperties = [],
+    isTypeSelectDisabled = false,
   } = props;
 
   // states
@@ -398,7 +400,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       projectId={projectId}
                       editorRef={editorRef}
-                      disabled={!!data?.sourceIssueId}
+                      disabled={!!data?.sourceIssueId || isTypeSelectDisabled}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />

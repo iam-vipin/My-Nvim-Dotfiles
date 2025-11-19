@@ -15,11 +15,12 @@ export type TIntakeFeatureKeys = "in_app" | "email" | "form";
 
 type TProjectOtherFeatureKeys = CE_TProjectOtherFeatureKeys | "is_milestone_enabled";
 
-type TIntakeFeatureList = {
+export type TIntakeFeatureList = {
   [key in TIntakeFeatureKeys]: TProperties & {
     hasOptions: boolean;
     hasHyperlink?: boolean;
     canShuffle?: boolean;
+    fieldName?: string;
   };
 };
 
@@ -46,6 +47,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasHyperlink: false,
     canShuffle: true,
     key: "intake_email",
+    fieldName: "Email ID",
   },
   form: {
     property: "form",
@@ -59,6 +61,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasHyperlink: true,
     canShuffle: true,
     key: "intake",
+    fieldName: "Default form URL",
   },
 };
 

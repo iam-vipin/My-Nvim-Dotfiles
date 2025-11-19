@@ -496,13 +496,13 @@ class WorkspaceReuploadAssetEndpoint(BaseAPIView):
     def post(self, request, slug, asset_id):
         file_type = request.data.get("type", "image/jpeg")
         file_size = request.data.get("size")
-        
+
         if not file_size:
             return Response(
                 {"error": "Missing required 'size' parameter"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         try:
             file_size = int(file_size)
         except (ValueError, TypeError):
@@ -510,34 +510,32 @@ class WorkspaceReuploadAssetEndpoint(BaseAPIView):
                 {"error": "Invalid size parameter"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         # Find asset in workspace or project within workspace
         try:
             from django.db.models import Q
-            asset = FileAsset.objects.get(
-                Q(workspace__slug=slug),
-                id=asset_id
-            )
+
+            asset = FileAsset.objects.get(Q(workspace__slug=slug), id=asset_id)
         except FileAsset.DoesNotExist:
             return Response(
                 {"error": f"Asset with ID {asset_id} does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        
+
         if not asset.asset or not asset.asset.name:
             return Response(
                 {"error": "Asset has no associated file"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         try:
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_post(
-                object_name=asset.asset.name, 
-                file_type=file_type, 
-                file_size=min(file_size, settings.FILE_SIZE_LIMIT)
+                object_name=asset.asset.name,
+                file_type=file_type,
+                file_size=min(file_size, settings.FILE_SIZE_LIMIT),
             )
-            
+
             return Response(
                 {
                     "upload_data": presigned_url,
@@ -551,6 +549,7 @@ class WorkspaceReuploadAssetEndpoint(BaseAPIView):
                 {"error": f"Error generating upload URL: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class StaticFileAssetEndpoint(BaseAPIView):
     """This endpoint is used to get the signed URL for a static asset."""
@@ -628,6 +627,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         if entity_type in [
             FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
         ]:
             return {"issue_id": entity_id}
 
@@ -676,6 +676,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
             FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
         }
 
         # Map entity type category to allowed types and error message
@@ -789,18 +790,19 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
 
+
 class ProjectReuploadAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, asset_id):
         file_type = request.data.get("type", "image/jpeg")
         file_size = request.data.get("size")
-        
+
         if not file_size:
             return Response(
                 {"error": "Missing required 'size' parameter"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         try:
             file_size = int(file_size)
         except (ValueError, TypeError):
@@ -808,7 +810,7 @@ class ProjectReuploadAssetEndpoint(BaseAPIView):
                 {"error": "Invalid size parameter"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         try:
             asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, project_id=project_id)
         except FileAsset.DoesNotExist:
@@ -816,21 +818,21 @@ class ProjectReuploadAssetEndpoint(BaseAPIView):
                 {"error": f"Asset with ID {asset_id} does not exist in this project"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        
+
         if not asset.asset or not asset.asset.name:
             return Response(
                 {"error": "Asset has no associated file"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         try:
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_post(
-                object_name=asset.asset.name, 
-                file_type=file_type, 
-                file_size=min(file_size, settings.FILE_SIZE_LIMIT)
+                object_name=asset.asset.name,
+                file_type=file_type,
+                file_size=min(file_size, settings.FILE_SIZE_LIMIT),
             )
-            
+
             return Response(
                 {
                     "upload_data": presigned_url,
@@ -844,6 +846,7 @@ class ProjectReuploadAssetEndpoint(BaseAPIView):
                 {"error": f"Error generating upload URL: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class ProjectBulkAssetEndpoint(BaseAPIView):
     def save_project_cover(self, asset, project_id):
@@ -970,7 +973,6 @@ class ProjectAssetDownloadEndpoint(BaseAPIView):
         return HttpResponseRedirect(signed_url)
 
 
-
 class WorkspaceFileAssetServerEndpoint(BaseAPIView):
     """
     This endpoint is used to upload cover images/logos
@@ -1008,9 +1010,7 @@ class ProjectAssetServerEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, asset_id):
         # get the asset id
-        asset = FileAsset.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=asset_id
-        )
+        asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=asset_id)
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -1029,4 +1029,3 @@ class ProjectAssetServerEndpoint(BaseAPIView):
         )
         # Redirect to the signed URL
         return HttpResponseRedirect(signed_url)
-

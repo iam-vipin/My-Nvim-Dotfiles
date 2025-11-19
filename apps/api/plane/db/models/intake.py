@@ -44,6 +44,7 @@ class IntakeIssueStatus(models.IntegerChoices):
     ACCEPTED = 1
     DUPLICATE = 2
 
+
 class IntakeIssue(ProjectBaseModel):
     intake = models.ForeignKey("db.Intake", related_name="issue_intake", on_delete=models.CASCADE)
     issue = models.ForeignKey("db.Issue", related_name="issue_intake", on_delete=models.CASCADE)

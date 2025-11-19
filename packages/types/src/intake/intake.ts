@@ -1,7 +1,15 @@
 // plane types
-import type { TPaginationInfo } from "./common";
-import type { TIssuePriorities } from "./issues";
-import type { TIssue } from "./issues/issue";
+import type { TPaginationInfo } from "../common";
+import type { TIssuePriorities } from "../issues";
+import type { TIssue } from "../issues/issue";
+import type { TIntakeIssueExtended } from "./intake-extended";
+
+export type TIntakeIssueForm = {
+  name: string;
+  email: string;
+  username: string;
+  description_html: string;
+};
 
 export enum EInboxIssueCurrentTab {
   OPEN = "open",
@@ -31,7 +39,7 @@ export type TInboxIssue = {
   snoozed_till: Date | null;
   duplicate_to: string | undefined;
   source: EInboxIssueSource | undefined;
-  issue: TIssue;
+  issue: (TIssue & TIntakeIssueExtended) | undefined;
   created_by: string;
   duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
 };
@@ -115,3 +123,22 @@ export type TInboxIssueForm = {
   username: string;
   email: string;
 };
+
+export interface IInboxIssueStore extends TInboxIssue {
+  isLoading: boolean;
+  id: string;
+  status: TInboxIssueStatus;
+  issue: (TIssue & TIntakeIssueExtended) | undefined;
+  snoozed_till: Date | null;
+  source: EInboxIssueSource | undefined;
+  duplicate_to: string | undefined;
+  created_by: string;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
+  // actions
+  updateInboxIssueStatus: (status: TInboxIssueStatus) => Promise<void>; // accept, decline
+  updateInboxIssueDuplicateTo: (issueId: string) => Promise<void>; // connecting the inbox issue to the project existing issue
+  updateInboxIssueSnoozeTill: (date: Date | undefined) => Promise<void>; // snooze the issue
+  updateIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  updateProjectIssue: (issue: Partial<TIssue>) => Promise<void>; // updating the issue
+  fetchIssueActivity: () => Promise<void>; // fetching the issue activity
+}

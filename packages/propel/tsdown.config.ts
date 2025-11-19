@@ -35,6 +35,8 @@ export default defineConfig({
     "src/tooltip/index.ts",
     "src/utils/index.ts",
     "src/icons/index.ts",
+    "src/domain/work-item-types/property-inputs/index.ts",
+    "src/domain/intake-form/index.ts",
   ],
   outDir: "dist",
   format: ["esm", "cjs"],

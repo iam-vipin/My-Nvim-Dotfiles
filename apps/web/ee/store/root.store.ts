@@ -54,6 +54,9 @@ import type { IInitiativeFilterStore } from "./initiatives/initiatives-filter.st
 import { InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
 import type { IInitiativeStore } from "./initiatives/initiatives.store";
 import { InitiativeStore } from "./initiatives/initiatives.store";
+// intake type forms
+import { IntakeTypeFormStore } from "./intake-type-form.store";
+import type { IIntakeTypeFormStore } from "./intake-type-form.store";
 // integrations
 import type {
   ISlackStore,
@@ -160,6 +163,8 @@ export class RootStore extends CoreRootStore {
   automationsRoot: IAutomationsRootStore;
   // milestones
   milestone: IMilestoneStore;
+  // intake type forms
+  intakeTypeForms: IIntakeTypeFormStore;
 
   constructor() {
     super();
@@ -221,6 +226,8 @@ export class RootStore extends CoreRootStore {
     this.automationsRoot = new AutomationsRootStore(this);
     // milestones
     this.milestone = new MilestoneStore(this);
+    // intake type forms
+    this.intakeTypeForms = new IntakeTypeFormStore(this);
   }
 
   resetOnSignOut() {
@@ -279,5 +286,7 @@ export class RootStore extends CoreRootStore {
     this.automationsRoot = new AutomationsRootStore(this);
     // milestones
     this.milestone = new MilestoneStore(this);
+    // intake type forms
+    this.intakeTypeForms = new IntakeTypeFormStore(this);
   }
 }

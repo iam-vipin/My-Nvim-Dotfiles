@@ -30,7 +30,6 @@ export * from "./file";
 export * from "./home";
 export * from "./import-job-types";
 export * from "./importer";
-export * from "./inbox";
 export * from "./initiatives";
 export * from "./instance";
 export * from "./intake";

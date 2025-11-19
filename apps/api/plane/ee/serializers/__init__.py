@@ -130,6 +130,11 @@ from .space.page import (
 )
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
+from .space.intake_form import (
+    IntakeFormSettingsSerializer,
+    IntakeFormFieldSerializer,
+    IntakeWorkItemTypeFormCreateSerializer,
+)
 
 
 # job

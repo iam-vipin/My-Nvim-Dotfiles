@@ -18,6 +18,12 @@ interface IntakeMetadata {
   description?: string;
   cover_image?: string;
 }
+type Props = {
+  children: React.ReactNode;
+  params: {
+    anchor: string;
+  };
+};
 
 // Loader function runs on the server and fetches metadata
 export async function loader({ params }: Route.LoaderArgs) {

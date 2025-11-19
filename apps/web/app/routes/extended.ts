@@ -502,6 +502,11 @@ export const extendedRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/projects/:projectId/features/cycles",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
           ),
+          // Project Features - Intake
+          route(
+            ":workspaceSlug/settings/projects/:projectId/features/intake",
+            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
+          ),
           // Recurring Work Items
           layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/layout.tsx", [
             route(

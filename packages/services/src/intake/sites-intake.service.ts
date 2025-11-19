@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { TIntakeIssueForm } from "@plane/types";
+import type { TIntakeIssueForm, TIntakeFormSettingsResponse, TIntakeFormSubmitPayload } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
@@ -24,6 +24,35 @@ export class SitesIntakeService extends APIService {
    */
   async publishForm(anchor: string, data: Partial<TIntakeIssueForm>): Promise<TIntakeIssueForm> {
     return this.post(`/api/public/anchor/${anchor}/intake/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Fetches intake form settings for a given anchor.
+   * @param {string} anchor - The anchor identifier
+   * @returns {Promise<TIntakeFormSettingsResponse>} The form settings data
+   * @throws {Error} If the API request fails
+   */
+  async fetchFormSettings(anchor: string): Promise<TIntakeFormSettingsResponse> {
+    return this.get(`/api/public/anchor/${anchor}/intake/form/settings/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Submits a type form with user data.
+   * @param {string} anchor - The anchor identifier
+   * @param {Record<string, any>} data - The form submission data
+   * @returns {Promise<void>}
+   * @throws {Error} If the API request fails
+   */
+  async submitTypeForm(anchor: string, data: TIntakeFormSubmitPayload): Promise<void> {
+    return this.post(`/api/public/anchor/${anchor}/intake/form/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

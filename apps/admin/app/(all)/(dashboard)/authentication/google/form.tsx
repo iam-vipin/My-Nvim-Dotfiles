@@ -226,10 +226,10 @@ export const InstanceGoogleConfigForm: React.FC<Props> = (props) => {
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
                 </div>
-
-                {/* mobile service details */}
-                <GoogleMobileForm />
               </div>
+
+              {/* mobile service details */}
+              <GoogleMobileForm />
             </div>
           </div>
         </div>

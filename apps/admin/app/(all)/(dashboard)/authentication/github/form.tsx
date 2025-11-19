@@ -240,10 +240,10 @@ export const InstanceGithubConfigForm: React.FC<Props> = (props) => {
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
                 </div>
-
-                {/* mobile service details */}
-                <GithubMobileForm />
               </div>
+
+              {/* mobile service details */}
+              <GithubMobileForm />
             </div>
           </div>
         </div>

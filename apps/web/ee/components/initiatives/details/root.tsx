@@ -168,7 +168,6 @@ export const InitiativeDetailRoot = observer((props: Props) => {
           handleAddEpicToInitiative(data.map((epic) => epic.id));
         }}
       />
-      <InitiativePeekOverview />
       <EpicPeekOverview />
     </LayoutRoot>
   );

@@ -87,11 +87,9 @@ export const InitiativeBlock = observer((props: Props) => {
                 <InitiativeIcon className="h-4 w-4 text-custom-text-300" />
               )}
             </span>
-            <Link href={`/${workspaceSlug}/initiatives/${initiative.id}`} className="w-full truncate cursor-pointer">
-              <Tooltip tooltipContent={initiative.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-sm">{initiative.name}</span>
-              </Tooltip>
-            </Link>
+            <Tooltip tooltipContent={initiative.name} position="top" isMobile={isMobile}>
+              <span className="truncate text-sm">{initiative.name}</span>
+            </Tooltip>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 h-full">

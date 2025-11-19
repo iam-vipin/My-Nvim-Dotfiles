@@ -85,13 +85,17 @@ const CreateTypeFormModal = ({ formSettings, anchor }: TProps) => {
       setIsSubmitting(true);
 
       // Transform property fields to values object
-      const values: Record<string, string | string[]> = {};
+      const values: Record<string, string | string[] | boolean> = {};
       Object.keys(formData).forEach((key) => {
         if (key.startsWith("property_")) {
           const propertyId = key.replace("property_", "");
           const value = formData[key as keyof TFormSubmitData];
           if (value !== null && value !== undefined) {
-            values[propertyId] = Array.isArray(value) ? value.map(String) : String(value);
+            if (typeof value === "boolean") {
+              values[propertyId] = value;
+            } else {
+              values[propertyId] = Array.isArray(value) ? value.map(String) : String(value);
+            }
           }
         }
       });

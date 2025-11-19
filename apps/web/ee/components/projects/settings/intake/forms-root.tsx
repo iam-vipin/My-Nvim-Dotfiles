@@ -77,7 +77,7 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
           projectId={projectId}
           isOpen={isRenewModalOpen}
           onClose={() => setIsRenewModalOpen(false)}
-          source="form"
+          source="intake"
           handleSubmit={regenerateIntakeForms}
         />
       )}
@@ -169,7 +169,9 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
                           variant="link-neutral"
                           size="sm"
                           className="px-0 flex items-center gap-1"
-                          onClick={() => {}}
+                          onClick={() => {
+                            window.open(`/${workspaceSlug}/projects/${projectId}/settings/features/intake`, "_blank");
+                          }}
                         >
                           <span>Manage forms</span>
                           <ExternalLink className="size-3" />

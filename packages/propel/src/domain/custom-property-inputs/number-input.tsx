@@ -16,7 +16,7 @@ export const NumberInput: React.FC<TNumberInputProps> = ({ property, isPreview =
     formState: { errors },
   } = useFormContext();
 
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const error = errors[fieldName];
 
   return (

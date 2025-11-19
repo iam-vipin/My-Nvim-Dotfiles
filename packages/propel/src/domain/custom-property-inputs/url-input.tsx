@@ -16,7 +16,7 @@ export const UrlInput: React.FC<TUrlInputProps> = ({ property, isPreview = false
     formState: { errors },
   } = useFormContext();
 
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const error = errors[fieldName];
 
   return (

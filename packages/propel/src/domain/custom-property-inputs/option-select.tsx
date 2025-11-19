@@ -24,7 +24,7 @@ export const OptionSelect: React.FC<TOptionSelectProps> = ({
     formState: { errors },
   } = useFormContext();
 
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const error = errors[fieldName];
   const isMulti = property.is_multi;
 

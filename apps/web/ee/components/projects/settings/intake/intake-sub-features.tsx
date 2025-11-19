@@ -197,7 +197,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                               <Button
                                 tabIndex={-1}
                                 size="sm"
-                                variant="accent-primary"
+                                variant="neutral-primary"
                                 className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
                                 onClick={() => setModalType(feature.key)}
                               >

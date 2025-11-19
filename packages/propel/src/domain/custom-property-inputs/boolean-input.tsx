@@ -15,7 +15,7 @@ export const BooleanInput: React.FC<TBooleanInputProps> = ({ property, isPreview
     formState: { errors },
   } = useFormContext();
 
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const error = errors[fieldName];
 
   return (
@@ -37,7 +37,7 @@ export const BooleanInput: React.FC<TBooleanInputProps> = ({ property, isPreview
             </div>
             <Switch
               value={value === "true" || value === true}
-              onChange={(checked) => onChange(checked ? "true" : "false")}
+              onChange={(checked) => onChange(checked)}
               size="sm"
               disabled={isPreview}
             />

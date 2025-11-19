@@ -18,7 +18,7 @@ export const DateSelect: React.FC<TDateSelectProps> = ({ property, isPreview = f
   } = useFormContext();
 
   const [isOpen, setIsOpen] = useState(false);
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const error = errors[fieldName];
 
   const formatDate = (dateString: string) => {

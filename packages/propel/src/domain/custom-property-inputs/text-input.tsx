@@ -16,7 +16,7 @@ export const TextInput: React.FC<TTextInputProps> = ({ property, isPreview = fal
     formState: { errors },
   } = useFormContext();
 
-  const fieldName = `${property.id}`;
+  const fieldName = `property_${property.id}`;
   const displayFormat = property.settings?.display_format || "single-line";
   const isMultiLine = displayFormat === "multi-line";
   const error = errors[fieldName];

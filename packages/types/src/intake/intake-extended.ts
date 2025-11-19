@@ -27,7 +27,7 @@ export type TIntakeFormSubmitPayload = {
   email: string;
   name: string;
   description_html: string;
-  values: Record<string, string | string[]>;
+  values: Record<string, string | string[] | boolean>;
   attachment_ids: string[];
 };
 

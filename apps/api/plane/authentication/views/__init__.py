@@ -72,5 +72,16 @@ from .app.mobile.github import (
     MobileGitHubOauthInitiateEndpoint,
     MobileGitHubCallbackEndpoint,
 )
+from .app.mobile.oidc import (
+    MobileOIDCAuthInitiateEndpoint,
+    MobileOIDCallbackEndpoint,
+    MobileOIDCLogoutEndpoint,
+)
+from .app.mobile.saml import (
+    MobileSAMLAuthInitiateEndpoint,
+    MobileSAMLCallbackEndpoint,
+    MobileSAMLLogoutEndpoint,
+    MobileSAMLMetadataEndpoint,
+)
 
 from .oauth import CustomAuthorizationView

@@ -50,9 +50,7 @@ class OIDCAuthInitiateEndpoint(View):
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -63,23 +61,29 @@ class OIDCallbackEndpoint(View):
         host = request.session.get("host")
         try:
             if state != request.session.get("state", ""):
-                logger.warning("State mismatch in OIDC authentication", extra={
-                    "error_code": "OIDC_PROVIDER_ERROR",
-                    "error_message": "OIDC_PROVIDER_ERROR",
-                })
+                logger.warning(
+                    "State mismatch in OIDC authentication",
+                    extra={
+                        "error_code": AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                        "error_message": AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                    },
+                )
                 raise AuthenticationException(
-                    error_code="OIDC_PROVIDER_ERROR",
-                    error_message="OIDC_PROVIDER_ERROR",
+                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                    error_message=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
                 )
 
             if not code:
-                logger.warning("Code not found in OIDC authentication", extra={
-                    "error_code": "OIDC_PROVIDER_ERROR",
-                    "error_message": "OIDC_PROVIDER_ERROR",
-                })
+                logger.warning(
+                    "Code not found in OIDC authentication",
+                    extra={
+                        "error_code": AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                        "error_message": AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                    },
+                )
                 raise AuthenticationException(
-                    error_code="OIDC_PROVIDER_ERROR",
-                    error_message="OIDC_PROVIDER_ERROR",
+                    error_code=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
+                    error_message=AUTHENTICATION_ERROR_CODES["OIDC_PROVIDER_ERROR"],
                 )
 
             provider = OIDCOAuthProvider(request=request, code=code)

@@ -1,6 +1,7 @@
 # Python imports
-import os
 import logging
+import os
+from typing import Optional
 
 # Django imports
 from django.conf import settings
@@ -9,13 +10,15 @@ from django.conf import settings
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 
 # Module imports
-from plane.license.utils.instance_value import get_configuration_value
-from .base import Adapter
 from plane.authentication.adapter.error import (
-    AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
 )
+from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
+
+# local module imports
+from .base import Adapter
 
 logger = logging.getLogger("plane.authentication")
 
@@ -25,25 +28,28 @@ class SAMLAdapter(Adapter):
     auth = None
     saml_config = {}
 
-    def __init__(self, request):
-        (SAML_ENTITY_ID, SAML_SSO_URL, SAML_LOGOUT_URL, SAML_CERTIFICATE) = (
-            get_configuration_value(
-                [
-                    {
-                        "key": "SAML_ENTITY_ID",
-                        "default": os.environ.get("SAML_ENTITY_ID"),
-                    },
-                    {"key": "SAML_SSO_URL", "default": os.environ.get("SAML_SSO_URL")},
-                    {
-                        "key": "SAML_LOGOUT_URL",
-                        "default": os.environ.get("SAML_LOGOUT_URL"),
-                    },
-                    {
-                        "key": "SAML_CERTIFICATE",
-                        "default": os.environ.get("SAML_CERTIFICATE"),
-                    },
-                ]
-            )
+    def __init__(
+        self,
+        request,
+        entity_uri: Optional[str] = None,
+        redirect_uri: Optional[str] = None,
+    ):
+        (SAML_ENTITY_ID, SAML_SSO_URL, SAML_LOGOUT_URL, SAML_CERTIFICATE) = get_configuration_value(
+            [
+                {
+                    "key": "SAML_ENTITY_ID",
+                    "default": os.environ.get("SAML_ENTITY_ID"),
+                },
+                {"key": "SAML_SSO_URL", "default": os.environ.get("SAML_SSO_URL")},
+                {
+                    "key": "SAML_LOGOUT_URL",
+                    "default": os.environ.get("SAML_LOGOUT_URL"),
+                },
+                {
+                    "key": "SAML_CERTIFICATE",
+                    "default": os.environ.get("SAML_CERTIFICATE"),
+                },
+            ]
         )
 
         if not (SAML_ENTITY_ID and SAML_SSO_URL and SAML_CERTIFICATE):
@@ -60,6 +66,8 @@ class SAMLAdapter(Adapter):
             sso_url=SAML_SSO_URL,
             logout_url=SAML_LOGOUT_URL,
             idp_certificate=SAML_CERTIFICATE,
+            entity_uri=entity_uri,
+            redirect_uri=redirect_uri,
         )
 
         # Generate configuration
@@ -68,15 +76,28 @@ class SAMLAdapter(Adapter):
         self.auth = auth
 
     def generate_saml_configuration(
-        self, request, entity_id, sso_url, logout_url, idp_certificate
+        self,
+        request,
+        entity_id,
+        sso_url,
+        logout_url,
+        idp_certificate,
+        entity_uri: Optional[str] = None,
+        redirect_uri: Optional[str] = None,
     ):
+        if entity_uri is None:
+            entity_uri = f"{request.scheme}://{request.get_host()}/auth/saml/metadata/"
+
+        if redirect_uri is None:
+            redirect_uri = f"{request.scheme}://{request.get_host()}/auth/saml/callback/"
+
         return {
             "strict": True,
             "debug": settings.DEBUG,
             "sp": {
-                "entityId": f"{request.scheme}://{request.get_host()}/auth/saml/metadata/",
+                "entityId": entity_uri,
                 "assertionConsumerService": {
-                    "url": f"{request.scheme}://{request.get_host()}/auth/saml/callback/",
+                    "url": redirect_uri,
                     "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
                 },
             },
@@ -149,19 +170,16 @@ class SAMLAdapter(Adapter):
             )
         attributes = self.auth.get_attributes()
 
-        email = (
-            attributes.get("email")[0]
-            if attributes.get("email") and len(attributes.get("email"))
-            else None
-        )
+        email = attributes.get("email")[0] if attributes.get("email") and len(attributes.get("email")) else None
 
         if not email:
             logger.warning(
-                "Email not found in SAML attributes", extra={
+                "Email not found in SAML attributes",
+                extra={
                     "error_code": AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
                     "error_message": "SAML_PROVIDER_ERROR",
                     "attributes": attributes,
-                }
+                },
             )
             raise AuthenticationException(
                 error_message=AUTHENTICATION_ERROR_CODES["SAML_PROVIDER_ERROR"],
@@ -175,9 +193,7 @@ class SAMLAdapter(Adapter):
         )
 
         last_name = (
-            attributes.get("last_name")[0]
-            if attributes.get("last_name") and len(attributes.get("last_name"))
-            else ""
+            attributes.get("last_name")[0] if attributes.get("last_name") and len(attributes.get("last_name")) else ""
         )
 
         super().set_user_data(

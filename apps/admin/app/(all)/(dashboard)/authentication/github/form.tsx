@@ -21,6 +21,8 @@ import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
+// local components
+import { GithubMobileForm } from "./mobile-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -238,6 +240,9 @@ export const InstanceGithubConfigForm: React.FC<Props> = (props) => {
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
                 </div>
+
+                {/* mobile service details */}
+                <GithubMobileForm />
               </div>
             </div>
           </div>

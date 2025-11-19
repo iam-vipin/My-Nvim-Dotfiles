@@ -39,6 +39,10 @@ const OAUTH_ERROR_CODES = [
   EMobileAuthErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
   EMobileAuthErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
   EMobileAuthErrorCodes.MOBILE_SIGNUP_DISABLED,
+  EMobileAuthErrorCodes.OIDC_NOT_CONFIGURED,
+  EMobileAuthErrorCodes.OIDC_PROVIDER_ERROR,
+  EMobileAuthErrorCodes.SAML_NOT_CONFIGURED,
+  EMobileAuthErrorCodes.SAML_PROVIDER_ERROR,
 ];
 
 type TAuthRoot = {
@@ -118,9 +122,6 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
           <MobileAuthBanner bannerData={errorInfo} handleBannerData={handleErrorInfo} />
         )}
 
-        {/* oauth */}
-        <OAuthRoot invitationDetails={invitationDetails} config={config} />
-
         {/* auth content */}
         <div>
           {authStep === EMobileAuthSteps.EMAIL && (
@@ -155,6 +156,9 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
             />
           )}
         </div>
+
+        {/* oauth */}
+        <OAuthRoot invitationDetails={invitationDetails} config={config} />
 
         {/* terms and conditions */}
         <MobileTermsAndConditions />

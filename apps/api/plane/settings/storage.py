@@ -7,7 +7,7 @@ import hashlib
 import json
 import hmac
 from datetime import datetime
-
+from urllib.parse import urlparse
 # Third party imports
 import boto3
 from botocore.exceptions import ClientError
@@ -17,7 +17,7 @@ from urllib.parse import quote
 from django.conf import settings
 from plane.utils.exception_logger import log_exception
 from storages.backends.s3boto3 import S3Boto3Storage
-
+from plane.utils.host import base_host
 
 class S3Storage(S3Boto3Storage):
     file_overwrite = True
@@ -123,9 +123,15 @@ class S3Storage(S3Boto3Storage):
             # Encode the original S3 URL and pass it to proxy
             encoded_s3_url = base64.urlsafe_b64encode(original_s3_url.encode()).decode()
 
+            if self.request:
+                scheme = self.request.scheme
+                host = self.request.get_host()
+            else:
+                url = urlparse(base_host(self.request))
+                scheme = url.scheme
+                host = url.netloc
+
             # Build proxy URL
-            scheme = self.request.scheme if self.request else "https"
-            host = self.request.get_host() if self.request else "localhost"
             proxy_url = f"{scheme}://{host}/api/assets/proxy-upload/{encoded_s3_url}/"
 
             # Replace only the URL with proxy URL, keep all AWS fields intact
@@ -146,8 +152,13 @@ class S3Storage(S3Boto3Storage):
 
     def _generate_proxy_download_url(self, object_name, expiration=3600, disposition="inline", filename=None):
         """Generate a proxy download URL"""
-        if not self.request:
-            return None
+        if self.request:
+            scheme = self.request.scheme
+            host = self.request.get_host()
+        else:
+            url = urlparse(base_host(self.request))
+            scheme = url.scheme
+            host = url.netloc
 
         # Create download parameters
         download_params = {
@@ -165,9 +176,7 @@ class S3Storage(S3Boto3Storage):
         # Base64 encode the parameters
         encoded_params = base64.urlsafe_b64encode(json.dumps(download_params).encode()).decode()
 
-        # Build proxy URL
-        scheme = self.request.scheme if self.request else "https"
-        host = self.request.get_host() if self.request else "localhost"
+
         return f"{scheme}://{host}/api/assets/proxy-download/{encoded_params}/"
 
     def generate_presigned_url(

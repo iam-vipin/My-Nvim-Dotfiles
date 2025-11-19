@@ -1612,6 +1612,7 @@ export default {
         exporting: "Mengeskpor",
         previous_exports: "Ekspor sebelumnya",
         export_separate_files: "Ekspor data ke file terpisah",
+        filters_info: "Terapkan filter untuk mengekspor item kerja tertentu berdasarkan kriteria Anda.",
         modal: {
           title: "Ekspor ke",
           toasts: {

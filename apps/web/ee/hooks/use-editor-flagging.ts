@@ -28,8 +28,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorCopyBlockLinkEnabled = useFlag(workspaceSlug, "EDITOR_COPY_BLOCK_LINK");
-  // const isEditorUniqueIdEnabled = useFlag(workspaceSlug, "EDITOR_UNIQUE_ID");
-  const isEditorUniqueIdEnabled = true;
+  const isEditorUniqueIdEnabled = useFlag(workspaceSlug, "EDITOR_UNIQUE_ID");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
   // check integrations

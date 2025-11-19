@@ -1,5 +1,4 @@
 import { Extension } from "@tiptap/core";
-import codemark from "prosemirror-codemark";
 // helpers
 import type { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
@@ -8,8 +7,9 @@ import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/ut
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
+// prosemirror plugins
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
+import { codemark } from "./code-mark";
 
 type TActiveDropbarExtensions =
   | CORE_EXTENSIONS.MENTION

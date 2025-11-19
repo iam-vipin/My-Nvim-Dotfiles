@@ -445,11 +445,13 @@ Key features:
 ### 📝 ExportSchema
 
 **`__init__(context=None)`**
+- `context`: Optional dict passed to field transformations and preparers
+
+# **`serialize(obj)`**
 
 - `context`: Optional dict accessible in preparer methods via `self.context` for pre-fetched data
 
 **`serialize(obj, fields=None)`**
-
 - Returns: Dict of serialized field values for a single object
 
 **`serialize_queryset(queryset, fields=None)`** (class method)

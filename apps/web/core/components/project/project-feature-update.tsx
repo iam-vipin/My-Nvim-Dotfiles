@@ -34,7 +34,7 @@ export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
   return (
     <>
       <Row className="py-6">
-        <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
+        <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin isCreateModal />
       </Row>
       <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-custom-border-100">
         <div className="flex gap-1 text-sm text-custom-text-300 font-medium">

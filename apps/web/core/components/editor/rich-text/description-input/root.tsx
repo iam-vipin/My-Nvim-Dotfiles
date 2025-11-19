@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -104,7 +105,6 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     setIsSubmitting,
     swrDescription,
     workspaceSlug,
-    issueSequenceId,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState<TFormData>({
@@ -187,6 +187,16 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     []
   );
 
+  const { getProjectIdentifierById } = useProject();
+  const workItemUrl = useMemo(() => {
+    const projectIdentifier = getProjectIdentifierById(projectId);
+    if (!projectIdentifier || !props.issueSequenceId) {
+      return undefined;
+    }
+    const origin = window.location.origin;
+    return `${origin}/${workspaceSlug}/browse/${projectIdentifier}-${props.issueSequenceId}/`;
+  }, [projectId, workspaceSlug, props.issueSequenceId, getProjectIdentifierById]);
+
   if (!workspaceDetails) return null;
 
   return (
@@ -200,7 +210,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
               editable={!disabled}
               ref={editorRef}
               id={entityId}
-              issueSequenceId={issueSequenceId}
+              workItemUrl={workItemUrl}
               disabledExtensions={disabledExtensions}
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}

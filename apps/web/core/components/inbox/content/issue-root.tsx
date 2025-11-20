@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import type { TIssue, TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
 import { EFileAssetType, EInboxIssueSource } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
@@ -30,11 +30,11 @@ import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
+import { IntakeAdditionalInformation } from "@/plane-web/components/intake/additional-information";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
-// stores
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+
 // local imports
 import { InboxIssueContentProperties } from "./issue-properties";
 // services init
@@ -195,7 +195,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           <DescriptionInputLoader />
         ) : (
           <DescriptionInput
-            issueSequenceId={issue.sequence_id}
             containerClassName="-ml-3 border-none"
             disabled={!isEditable}
             editorRef={editorRef}
@@ -265,6 +264,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         isEditable={isEditable}
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
       />
+
+      {/* Additional Information */}
+      {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
 
       <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
     </>

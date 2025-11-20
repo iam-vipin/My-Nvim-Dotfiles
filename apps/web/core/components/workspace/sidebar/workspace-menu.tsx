@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon, InitiativeIcon, TeamsIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -22,6 +22,20 @@ export const SidebarWorkspaceMenu = observer(() => {
   const isWorkspaceMenuOpen = !!storedValue;
 
   const SIDEBAR_WORKSPACE_MENU_ITEMS = [
+    {
+      key: "initiatives",
+      labelTranslationKey: "sidebar.initiatives",
+      href: `/${workspaceSlug}/initiatives/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+      Icon: InitiativeIcon,
+    },
+    {
+      key: "teamspaces",
+      labelTranslationKey: "sidebar.teamspaces",
+      href: `/${workspaceSlug}/teamspaces/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+      Icon: TeamsIcon,
+    },
     {
       key: "projects",
       labelTranslationKey: "sidebar.projects",

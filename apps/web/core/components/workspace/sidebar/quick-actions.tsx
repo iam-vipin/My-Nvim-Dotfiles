@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AddIcon } from "@plane/propel/icons";
+import { AddCircleIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -78,7 +78,7 @@ export const SidebarQuickActions = observer(() => {
         <SidebarAddButton
           label={
             <>
-              <AddIcon className="size-4" />
+              <AddCircleIcon className="size-4" />
               <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
             </>
           }

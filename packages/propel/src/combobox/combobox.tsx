@@ -163,7 +163,7 @@ function ComboboxOptions({
 
   return (
     <BaseCombobox.Portal>
-      <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
+      <BaseCombobox.Positioner sideOffset={8} className={positionerClassName} align="start" side="bottom">
         <BaseCombobox.Popup
           className={cn("rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-lg", className)}
           data-prevent-outside-click={dataPreventOutsideClick}

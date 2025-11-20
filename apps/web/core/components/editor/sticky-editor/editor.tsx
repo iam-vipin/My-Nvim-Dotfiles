@@ -10,9 +10,11 @@ import type { TSticky } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
+import { useUserProfile } from "@/hooks/store/user";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
@@ -63,6 +65,10 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     projectId,
     workspaceSlug,
   });
+  // store hooks
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -93,7 +99,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         mentionHandler={{
           renderComponent: () => <></>,
         }}
-        extendedEditorProps={{}}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: is_smooth_cursor_enabled,
+        }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />

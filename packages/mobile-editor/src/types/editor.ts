@@ -1,18 +1,19 @@
-type TBaseEditorParams = {
-  workspaceSlug: string;
-  workspaceId: string;
-  placeholder?: string;
-  baseApi: string;
-  variant: TEditorVariant;
-};
-export type TEditorParams = TBaseEditorParams & {
+export type TEditorParams = {
+  autoFocus: boolean;
+  currentUserId: string;
   content: string;
-  projectId?: string;
+  placeholder: string;
+  variant: TEditorVariant;
+  editable: boolean;
 };
-export type TDocumentEditorParams = TBaseEditorParams & {
+export type TDocumentEditorParams = {
+  editable: boolean;
+  isSelfHosted: boolean;
   pageId: string;
   documentType: string;
+  workspaceSlug: string;
   projectId?: string;
+  parentPageId?: string;
   userId: string;
   userDisplayName: string;
   cookie: string;
@@ -20,6 +21,7 @@ export type TDocumentEditorParams = TBaseEditorParams & {
   liveServerBasePath: string;
 };
 export enum TEditorVariant {
+  sticky = "sticky",
   lite = "lite",
   rich = "rich",
   document = "document",

@@ -1,5 +1,6 @@
 import type { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
+import type { AttachmentExtensionOptions } from "../extensions/attachments/types";
 import type { DrawioExtensionOptions } from "../extensions/drawio/types";
 import type { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
 import type { MathematicsExtensionOptions } from "../extensions/mathematics/types";
@@ -8,6 +9,7 @@ import type { TEmbedConfig } from "./issue-embed";
 
 export type IEditorExtensionOptions = {
   [ADDITIONAL_EXTENSIONS.MATHEMATICS]?: Pick<MathematicsExtensionOptions, "onClick">;
+  [ADDITIONAL_EXTENSIONS.ATTACHMENT]?: Pick<AttachmentExtensionOptions, "onClick">;
   [ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED]?: Pick<ExternalEmbedExtensionOptions, "onClick">;
   [ADDITIONAL_EXTENSIONS.DRAWIO]?: Pick<DrawioExtensionOptions, "onClick">;
 };
@@ -20,8 +22,6 @@ export type IEditorPropsExtended = {
   logoSpinner?: React.ComponentType;
   originUrl?: string | null;
 };
-
-export type ICollaborativeDocumentEditorPropsExtended = unknown;
 
 export type TExtendedEditorCommands =
   | "comment"
@@ -57,4 +57,10 @@ export type TExtendedEditorRefApi = {
   hoverCommentMarks: (commentIds: string[]) => void;
   selectCommentMark: (commentId: string | null) => void;
   scrollToCommentMark: (commentId: string) => void;
+};
+
+export type ICollaborativeDocumentEditorPropsExtended = {
+  isSelfHosted?: boolean;
+  titleContainerClassName?: string;
+  onTitleFocus?: () => void;
 };

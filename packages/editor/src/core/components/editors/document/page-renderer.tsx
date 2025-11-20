@@ -43,6 +43,7 @@ export function PageRenderer(props: Props) {
     documentLoaderClassName,
     editor,
     editorContainerClassName,
+    extendedDocumentEditorProps,
     id,
     isLoading,
     isTouchDevice,
@@ -54,6 +55,8 @@ export function PageRenderer(props: Props) {
     provider,
     state,
   } = props;
+  const { isSelfHosted, titleContainerClassName } = extendedDocumentEditorProps ?? {};
+
   return (
     <div
       className={cn("frame-renderer flex-grow w-full", {
@@ -64,14 +67,17 @@ export function PageRenderer(props: Props) {
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
-          {titleEditor && (
+          {titleEditor && !isSelfHosted && (
             <div className="relative w-full py-3">
               <EditorContainer
+                displayConfig={displayConfig}
                 editor={titleEditor}
+                editorContainerClassName={cn(
+                  "page-title-editor bg-transparent py-3 border-none",
+                  titleContainerClassName
+                )}
                 id={id + "-title"}
                 isTouchDevice={isTouchDevice}
-                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
-                displayConfig={displayConfig}
               >
                 <EditorContentWrapper
                   editor={titleEditor}

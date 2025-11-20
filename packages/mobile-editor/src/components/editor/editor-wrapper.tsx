@@ -1,13 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { EditorRefApi, TExtensions } from "@plane/editor";
-import { LiteTextEditorWithRef, RichTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, TDisplayConfig, TMentionHandler } from "@plane/editor";
+import { LiteTextEditorWithRef, RichTextEditorWithRef, TrailingNode } from "@plane/editor";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
-import { TrailingNode } from "@/extensions/trailing-node";
+// helpers
 import { callNative } from "@/helpers";
 import { getEditorFileHandlers } from "@/helpers/editor-file-asset.helper";
-import { useDisableZoom, useToolbar, useMentions, useMobileEditor } from "@/hooks";
+// hooks
+import {
+  useDisableZoom,
+  useToolbar,
+  useMobileEditor,
+  useEditorMention,
+  useEditorFlagging,
+  useInitialContentLoad,
+} from "@/hooks";
+// types
 import type { TEditorParams } from "@/types/editor";
 import { TEditorVariant } from "@/types/editor";
+// local imports
+import { EditorMentionsRoot } from "../mentions/mention-root";
 
 export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
   const editorRef = useRef<EditorRefApi>(null);
@@ -16,21 +27,14 @@ export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
   useDisableZoom();
   // It keeps the native toolbar in sync with the editor state.
   const { updateActiveStates } = useToolbar(editorRef);
-
   const { handleEditorReady, onEditorFocus } = useMobileEditor(editorRef);
-
-  const { mentionSuggestionsRef, mentionHighlightsRef } = useMentions();
-
-  const fileHandler = useMemo(
-    () =>
-      getEditorFileHandlers({
-        workspaceSlug: initialParams?.workspaceSlug ?? "",
-        workspaceId: initialParams?.workspaceId ?? "",
-        projectId: initialParams?.projectId ?? "",
-        baseApi: initialParams?.baseApi ?? "",
-      }),
-    [initialParams?.workspaceSlug, initialParams?.workspaceId, initialParams?.projectId, initialParams?.baseApi]
-  );
+  const { fetchMentions } = useEditorMention();
+  const {
+    richText: { disabled: richTextDisabledExtensions },
+    liteText: { disabled: liteTextDisabledExtensions },
+  } = useEditorFlagging();
+  const { onInitialContentLoad } = useInitialContentLoad();
+  const fileHandler = useMemo(() => getEditorFileHandlers(), []);
 
   // This is called by the native code to reset the initial params of the editor.
   const resetInitialParams = useCallback((params: TEditorParams) => {
@@ -42,58 +46,99 @@ export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
     callNative(CallbackHandlerStrings.getInitialEditorParams).then((params: TEditorParams) => setInitialParams(params));
   }, []);
 
-  // Disabled extensions for the editor.
-  const disabledExtensions: TExtensions[] = useMemo(() => ["enter-key", "slash-commands"], []);
-
   // Additional extensions for the editor.
   const externalExtensions = useMemo(() => [TrailingNode], []);
 
-  const mentionHandler = useMemo(
-    () => ({
-      suggestions: () => Promise.resolve(mentionSuggestionsRef.current),
-      highlights: () => Promise.resolve(mentionHighlightsRef.current),
-    }),
-    [mentionSuggestionsRef.current, mentionHighlightsRef.current]
-  );
-
   window.resetInitialParams = resetInitialParams;
 
-  if (!initialParams) return null;
+  const mentionHandler: TMentionHandler = useMemo(
+    () =>
+      variant !== TEditorVariant.sticky
+        ? {
+            searchCallback: async (query) => {
+              const res = await fetchMentions(query);
+              if (!res) throw new Error("Failed in fetching mentions");
+              return res;
+            },
+            renderComponent: (props) =>
+              initialParams && <EditorMentionsRoot currentUserId={initialParams.currentUserId} {...props} />,
+          }
+        : ({} as TMentionHandler),
+    [fetchMentions, initialParams, variant]
+  );
+
+  const displayConfig: TDisplayConfig = {
+    lineSpacing: "mobile-regular",
+    fontSize: "mobile-font",
+  };
+
+  const isDependencyReady = !useMemo(() => !initialParams, [initialParams]);
+
+  if (!isDependencyReady) return null;
 
   return (
-    <div className="scrollbar-hidden h-screen" onClick={onEditorFocus}>
-      {variant === TEditorVariant.lite && (
+    <div
+      className="scrollbar-hidden"
+      onClick={() => {
+        callNative(CallbackHandlerStrings.onEditorClick);
+        const resolvedEditable = initialParams?.editable ?? false;
+        if (!resolvedEditable) return;
+        onEditorFocus();
+      }}
+    >
+      {(variant === TEditorVariant.lite || variant === TEditorVariant.sticky) && (
         <LiteTextEditorWithRef
-          ref={editorRef}
           autofocus
-          disabledExtensions={disabledExtensions}
+          containerClassName="min-h-screen p-0 border-none !px-5"
+          disabledExtensions={liteTextDisabledExtensions}
+          displayConfig={displayConfig}
+          editable
+          editorClassName="pb-32"
           extensions={externalExtensions}
-          placeholder={initialParams?.placeholder}
-          onTransaction={updateActiveStates}
-          handleEditorReady={handleEditorReady}
-          editorClassName="min-h-screen pb-32"
-          containerClassName="p-0 border-none"
-          mentionHandler={mentionHandler as any}
+          extendedEditorProps={{
+            isSmoothCursorEnabled: false,
+          }}
           fileHandler={fileHandler}
-          initialValue={initialParams?.content ?? "<p></p>"}
+          flaggedExtensions={[]}
+          handleEditorReady={handleEditorReady}
           id="lite-editor"
+          initialValue={initialParams?.content ?? "<p></p>"}
+          isTouchDevice
+          mentionHandler={mentionHandler}
+          onChange={(_, html) => callNative(CallbackHandlerStrings.onContentChange, html)}
+          onTransaction={updateActiveStates}
+          placeholder={initialParams?.placeholder}
+          ref={editorRef}
         />
       )}
       {variant === TEditorVariant.rich && (
         <RichTextEditorWithRef
-          ref={editorRef}
-          extensions={externalExtensions}
-          placeholder={initialParams?.placeholder}
-          editorClassName="min-h-screen pb-32"
-          containerClassName="p-0 border-none"
+          autofocus={initialParams?.autoFocus ?? false}
           bubbleMenuEnabled={false}
-          disabledExtensions={disabledExtensions}
-          mentionHandler={mentionHandler as any}
-          onTransaction={updateActiveStates}
-          handleEditorReady={handleEditorReady}
+          containerClassName="min-h-screen p-0 border-none !px-5"
+          disabledExtensions={richTextDisabledExtensions}
+          displayConfig={displayConfig}
+          dragDropEnabled={false}
+          editable={initialParams?.editable ?? false}
+          editorClassName="pb-32"
+          extensions={externalExtensions}
+          extendedEditorProps={{
+            isSmoothCursorEnabled: false,
+          }}
           fileHandler={fileHandler}
-          initialValue={initialParams?.content ?? "<p></p>"}
+          flaggedExtensions={[]}
+          handleEditorReady={handleEditorReady}
           id="rich-editor"
+          initialValue={initialParams?.content ?? "<p></p>"}
+          isTouchDevice
+          mentionHandler={mentionHandler}
+          onChange={(_, html) => callNative(CallbackHandlerStrings.onContentChange, html)}
+          onTransaction={() => {
+            updateActiveStates();
+            onInitialContentLoad();
+          }}
+          placeholder={initialParams?.placeholder}
+          ref={editorRef}
         />
       )}
     </div>

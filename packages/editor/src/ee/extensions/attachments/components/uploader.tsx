@@ -27,6 +27,9 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
   const maxFileSize = editor.storage.attachmentComponent?.maxFileSize;
   const attachmentExtensionFileMap = useMemo(() => getAttachmentExtensionFileMap(editor), [editor]);
   const attachmentExtensionErrorMap = useMemo(() => getAttachmentExtensionErrorMap(editor), [editor]);
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
+  // extension options
+  const { onClick } = extension.options;
 
   // upload handler
   const onUpload = useCallback(
@@ -180,7 +183,8 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (editor.isEditable && !fileBeingUploaded) fileInputRef.current?.click();
+        if (isTouchDevice) onClick?.();
+        else if (editor.isEditable && !fileBeingUploaded) fileInputRef.current?.click();
       }}
       role="button"
       // aria-label={t("attachmentComponent.aria.click_to_upload")}

@@ -15,7 +15,7 @@ import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 import type { IEditorPropsExtended } from "@/types";
 import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
 
-type Props = {
+export type TUseTitleEditorProps = {
   editable?: boolean;
   provider: HocuspocusProvider;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
@@ -25,6 +25,7 @@ type Props = {
   placeholder?: string;
   updatePageProperties?: ICollaborativeDocumentEditorProps["updatePageProperties"];
   id: string;
+  onFocus?: () => void;
   extendedEditorProps?: IEditorPropsExtended;
 };
 
@@ -32,13 +33,14 @@ type Props = {
  * A hook that creates a title editor with collaboration features
  * Uses the same Y.Doc as the main editor but a different field
  */
-export const useTitleEditor = (props: Props) => {
+export const useTitleEditor = (props: TUseTitleEditorProps) => {
   const {
     editable = true,
     id,
     initialValue = "",
     extendedEditorProps,
     extensions,
+    onFocus,
     provider,
     updatePageProperties,
     titleRef,
@@ -51,6 +53,7 @@ export const useTitleEditor = (props: Props) => {
 
   const editor = useEditor(
     {
+      onFocus,
       onUpdate: () => {
         updatePageProperties?.(id, "property_updated", { name: editor?.getText() });
       },

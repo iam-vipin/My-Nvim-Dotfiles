@@ -1,15 +1,15 @@
 import type { AnyExtension, Extensions } from "@tiptap/core";
 import { Paperclip } from "lucide-react";
-// root
-import type { TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
-import { SlashCommands } from "@/extensions/slash-commands/root";
-// types
-import type { TExtensions } from "@/types";
 // core imports
 import type {
   TRichTextEditorAdditionalExtensionsProps,
   TRichTextEditorAdditionalExtensionsRegistry,
 } from "src/ce/extensions/rich-text-extensions";
+// root
+import type { TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
+import { SlashCommands } from "@/extensions/slash-commands/root";
+// types
+import type { TExtensions } from "@/types";
 // local imports
 import { insertAttachment } from "../helpers/editor-commands";
 import { CustomAttachmentExtension } from "./attachments/extension";
@@ -59,11 +59,13 @@ const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   },
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
-    getExtension: ({ flaggedExtensions, fileHandler }) =>
+    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) =>
       CustomAttachmentExtension({
         fileHandler,
         isFlagged: flaggedExtensions.includes("attachments"),
         isEditable: true,
+      }).configure({
+        onClick: extendedEditorProps?.extensionOptions?.attachmentComponent?.onClick,
       }),
   },
 ];

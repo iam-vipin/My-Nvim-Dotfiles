@@ -9,14 +9,17 @@ import type { CustomAttachmentNodeViewProps } from "./node-view";
 
 type Props = CustomAttachmentNodeViewProps & {
   resolvedSource: string;
+  isTouchDevice: boolean;
 };
 
 export const CustomAttachmentBlock: React.FC<Props> = (props) => {
-  const { extension, node, resolvedSource } = props;
+  const { extension, node, resolvedSource, isTouchDevice } = props;
   // states
   const [hasCheckedExistence, setHasCheckedExistence] = useState(false);
   // derived values
   const { src } = node.attrs;
+  // extension options
+  const { onClick } = extension.options;
 
   useEffect(() => {
     if (hasCheckedExistence || !src) return;
@@ -38,11 +41,14 @@ export const CustomAttachmentBlock: React.FC<Props> = (props) => {
   return (
     <a
       id={getAttachmentBlockId(node.attrs.id ?? "")}
-      href={resolvedSource}
+      href={isTouchDevice ? undefined : resolvedSource}
       className="py-3 px-2 rounded-lg bg-custom-background-90 hover:bg-custom-background-80 border border-custom-border-300 flex items-start gap-2 transition-colors"
       contentEditable={false}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => {
+        if (isTouchDevice) onClick?.(resolvedSource);
+      }}
     >
       <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
         <File className="flex-shrink-0 size-8 text-custom-text-300" />

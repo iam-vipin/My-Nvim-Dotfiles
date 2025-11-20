@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+// ui
 import { Loader } from "@plane/ui";
+// constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+// helpers
 import { callNative } from "@/helpers/flutter-callback.helper";
 
 type Props = {
@@ -13,7 +16,7 @@ export const IssueIdentifier: React.FC<Props> = (props) => {
   const { projectId, workspaceSlug, issueIdentifier } = props;
   const [projectIdentifier, setProjectIdentifier] = useState<string | undefined>(undefined);
 
-  // get the project identifier from the native code.
+  // Get the project identifier from the native code.
   useEffect(() => {
     if (!projectIdentifier) {
       callNative(
@@ -24,7 +27,7 @@ export const IssueIdentifier: React.FC<Props> = (props) => {
         })
       ).then((identifier: string) => setProjectIdentifier(identifier));
     }
-  }, [projectId, workspaceSlug]);
+  }, [projectId, projectIdentifier, workspaceSlug]);
 
   if (!projectIdentifier)
     return (

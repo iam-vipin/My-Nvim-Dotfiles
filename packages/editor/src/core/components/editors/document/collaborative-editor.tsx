@@ -142,7 +142,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
 
 // Outer component that provides collaboration context
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
-  const { id, realtimeConfig, serverHandler, user } = props;
+  const { id, realtimeConfig, serverHandler, user, extendedDocumentEditorProps } = props;
 
   const token = useMemo(() => JSON.stringify(user), [user]);
 
@@ -152,6 +152,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       serverUrl={realtimeConfig.url}
       authToken={token}
       onStateChange={serverHandler?.onStateChange}
+      shouldSendSyncedEvent={!extendedDocumentEditorProps?.isSelfHosted}
     >
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>

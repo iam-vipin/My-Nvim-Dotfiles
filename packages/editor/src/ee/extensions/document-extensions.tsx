@@ -233,11 +233,13 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // Attachment extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
-    getExtension: ({ flaggedExtensions, fileHandler, isEditable }) =>
+    getExtension: ({ flaggedExtensions, fileHandler, isEditable, extendedEditorProps }) =>
       CustomAttachmentExtension({
         fileHandler,
         isFlagged: flaggedExtensions.includes("attachments"),
         isEditable,
+      }).configure({
+        onClick: extendedEditorProps?.extensionOptions?.attachmentComponent?.onClick,
       }),
   },
   {

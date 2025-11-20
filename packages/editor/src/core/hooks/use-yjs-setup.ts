@@ -23,11 +23,18 @@ type UseYjsSetupArgs = {
   options?: {
     maxConnectionAttempts?: number;
   };
+  shouldSendSyncedEvent?: boolean;
 };
 
 const DEFAULT_MAX_RETRIES = 3;
 
-export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseYjsSetupArgs) => {
+export const useYjsSetup = ({
+  docId,
+  serverUrl,
+  authToken,
+  onStateChange,
+  shouldSendSyncedEvent = true,
+}: UseYjsSetupArgs) => {
   // Current collaboration stage
   const [stage, setStage] = useState<CollabStage>({ kind: "initial" });
 
@@ -109,14 +116,16 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
         } catch {
           // Ignore malformed URL
         }
-        provider.sendStateless(
-          JSON.stringify({
-            action: "synced",
-            workspaceSlug,
-            projectId,
-            teamspaceId,
-          })
-        );
+        if (shouldSendSyncedEvent) {
+          provider.sendStateless(
+            JSON.stringify({
+              action: "synced",
+              workspaceSlug,
+              projectId,
+              teamspaceId,
+            })
+          );
+        }
       },
     });
 

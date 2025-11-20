@@ -28,6 +28,7 @@ export type AttachmentExtensionOptions = {
   checkIfAttachmentExists: TFileHandler["checkIfAssetExists"];
   getAttachmentSource: TFileHandler["getAssetSrc"];
   isFlagged: boolean;
+  onClick?: (src?: string) => void;
   restoreAttachment: TFileHandler["restore"];
   uploadAttachment?: TFileHandler["upload"];
 };

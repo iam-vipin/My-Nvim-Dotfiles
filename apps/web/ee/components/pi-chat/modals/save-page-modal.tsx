@@ -3,19 +3,23 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 // types
-import { ETabIndices } from "@plane/constants";
+import { observer } from "mobx-react";
+import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, WikiIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
+import { EUserProjectRoles } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
+  workspaceSlug: string;
   isOpen: boolean;
   handleModalClose: () => void;
   handleConvertToPage: (projectId: string | undefined) => Promise<
@@ -26,8 +30,8 @@ type Props = {
   >;
 };
 
-export const SavePageModal: React.FC<Props> = (props) => {
-  const { isOpen, handleModalClose, handleConvertToPage } = props;
+export const SavePageModal: React.FC<Props> = observer((props) => {
+  const { workspaceSlug, isOpen, handleModalClose, handleConvertToPage } = props;
   // state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [query, setQuery] = useState("");
@@ -35,31 +39,41 @@ export const SavePageModal: React.FC<Props> = (props) => {
   // hooks
   const { isMobile } = usePlatformOS();
   const { workspaceProjectIds, getProjectById } = useProject();
+  const { allowPermissions } = useUserPermissions();
 
-  const options = workspaceProjectIds?.map((projectId) => {
-    const projectDetails = getProjectById(projectId);
+  const options = workspaceProjectIds
+    ?.filter((projectId) =>
+      allowPermissions(
+        [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
+        EUserPermissionsLevel.PROJECT,
+        workspaceSlug,
+        projectId
+      )
+    )
+    .map((projectId: string) => {
+      const projectDetails = getProjectById(projectId);
 
-    return {
-      value: projectDetails?.id,
-      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
-            <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-              {projectDetails?.logo_props ? (
-                <Logo logo={projectDetails?.logo_props} size={16} />
-              ) : (
-                <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                  <ProjectIcon className="h-4 w-4" />
-                </span>
-              )}
-            </span>
+      return {
+        value: projectDetails?.id,
+        query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+        content: (
+          <div className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-custom-background-80">
+              <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
+                {projectDetails?.logo_props ? (
+                  <Logo logo={projectDetails?.logo_props} size={16} />
+                ) : (
+                  <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
+                    <ProjectIcon className="h-4 w-4" />
+                  </span>
+                )}
+              </span>
+            </div>
+            <p className="text-sm font-medium">{projectDetails?.name}</p>
           </div>
-          <p className="text-sm font-medium">{projectDetails?.name}</p>
-        </div>
-      ),
-    };
-  });
+        ),
+      };
+    });
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
@@ -173,4 +187,4 @@ export const SavePageModal: React.FC<Props> = (props) => {
       </form>
     </ModalCore>
   );
-};
+});

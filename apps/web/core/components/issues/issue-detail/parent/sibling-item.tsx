@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -17,7 +16,7 @@ type TIssueParentSiblingItem = {
   issueId: string;
 };
 
-export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((props) => {
+export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(props: TIssueParentSiblingItem) {
   const { workspaceSlug, issueId } = props;
   // hooks
   const { getProjectById } = useProject();

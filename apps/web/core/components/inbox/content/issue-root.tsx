@@ -49,7 +49,7 @@ type Props = {
   setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
-export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
+export const InboxIssueMainContent = observer(function InboxIssueMainContent(props: Props) {
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -88,8 +88,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       issueId: issue?.id,
     }
   );
-
-  if (!issue) return <></>;
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -163,6 +161,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }),
     [inboxIssue]
   );
+
+  if (!issue) return <></>;
 
   if (!issue?.project_id || !issue?.id) return <></>;
 

@@ -40,10 +40,13 @@ const getInsightLabel = (
   return `${prefix}${baseTranslation}${suffix}`;
 };
 
-const TotalInsights: React.FC<{
+const TotalInsights = observer(function TotalInsights({
+  analyticsType,
+  peekView,
+}: {
   analyticsType: TAnalyticsTabsBase;
   peekView?: boolean;
-}> = observer(({ analyticsType, peekView }) => {
+}) {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();

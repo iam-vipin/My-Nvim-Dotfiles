@@ -1,10 +1,16 @@
+import { observer } from "mobx-react";
 import { WifiOff } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
+import type { TPageInstance } from "@/store/pages/base-page";
 
-export const PageOfflineBadge = () => {
+type Props = {
+  page: TPageInstance;
+};
+
+export const PageOfflineBadge = observer(function PageOfflineBadge({ page }: Props) {
   // use online status
   const { isOnline } = useOnlineStatus();
 
@@ -21,4 +27,4 @@ export const PageOfflineBadge = () => {
       </div>
     </Tooltip>
   );
-};
+});

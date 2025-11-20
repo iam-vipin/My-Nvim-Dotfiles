@@ -10,7 +10,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const SectionEmptyState: FC<Props> = (props) => {
+export function SectionEmptyState(props: Props) {
   const { title, description, icon, actionElement, customClassName } = props;
   return (
     <div
@@ -27,4 +27,4 @@ export const SectionEmptyState: FC<Props> = (props) => {
       {actionElement && <>{actionElement}</>}
     </div>
   );
-};
+}

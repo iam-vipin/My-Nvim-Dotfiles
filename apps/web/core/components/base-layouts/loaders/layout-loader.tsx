@@ -9,7 +9,7 @@ interface GenericLayoutLoaderProps {
   customLoaders?: Partial<Record<TBaseLayoutType, React.ComponentType>>;
 }
 
-export const GenericLayoutLoader = ({ layout, customLoaders }: GenericLayoutLoaderProps) => {
+export function GenericLayoutLoader({ layout, customLoaders }: GenericLayoutLoaderProps) {
   const CustomLoader = customLoaders?.[layout];
   if (CustomLoader) return <CustomLoader />;
 
@@ -24,4 +24,4 @@ export const GenericLayoutLoader = ({ layout, customLoaders }: GenericLayoutLoad
       console.warn(`Unknown layout: ${layout}`);
       return null;
   }
-};
+}

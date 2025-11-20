@@ -1,19 +1,13 @@
-"use client";
-
-import type { FC } from "react";
-// hooks
-// ui
 import { Pencil, Trash2, ExternalLink, Link } from "lucide-react";
+// plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
-// icons
-// types
-// helpers
-//
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// types
 import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
@@ -22,7 +16,7 @@ export type TIssueLinkDetail = {
   isNotAllowed: boolean;
 };
 
-export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
+export function IssueLinkDetail(props: TIssueLinkDetail) {
   // props
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks
@@ -130,4 +124,4 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
       </div>
     </div>
   );
-};
+}

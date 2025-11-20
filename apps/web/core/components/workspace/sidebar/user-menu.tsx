@@ -11,7 +11,7 @@ import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
 
-export const SidebarUserMenu = observer(() => {
+export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks

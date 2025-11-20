@@ -8,7 +8,7 @@ import noProjectsDark from "@/app/assets/empty-state/project-settings/no-project
 import noProjectsLight from "@/app/assets/empty-state/project-settings/no-projects-light.png?url";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
-const ProjectSettingsPage = () => {
+function ProjectSettingsPage() {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -37,6 +37,6 @@ const ProjectSettingsPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectSettingsPage;

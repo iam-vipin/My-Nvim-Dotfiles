@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -37,7 +36,7 @@ export interface ILeaveProjectModal {
   onClose: () => void;
 }
 
-export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
+export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILeaveProjectModal) {
   const { project, isOpen, onClose } = props;
   // router
   const router = useAppRouter();

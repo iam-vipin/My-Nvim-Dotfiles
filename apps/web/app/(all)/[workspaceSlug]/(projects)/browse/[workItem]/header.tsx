@@ -8,7 +8,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";
 
-export const ProjectWorkItemDetailsHeader = observer(() => {
+export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
   // router
   const { workItem } = useParams();
   // store hooks

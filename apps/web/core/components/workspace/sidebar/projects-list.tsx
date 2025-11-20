@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -27,7 +26,7 @@ import type { TProject } from "@/plane-web/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
 
-export const SidebarProjectsList: FC = observer(() => {
+export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // states
   const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(true);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);

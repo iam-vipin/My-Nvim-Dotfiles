@@ -26,7 +26,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   },
 ];
 
-export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
+export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   const documentExtensions: Extensions = extensionRegistry
@@ -35,4 +35,4 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return documentExtensions;
-};
+}

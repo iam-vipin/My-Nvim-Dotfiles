@@ -46,7 +46,7 @@ type TIssueDefaultPropertiesProps = {
   convertToWorkItem?: boolean;
 };
 
-export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
+export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const {
     control,
     id,

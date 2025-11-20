@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {
@@ -17,13 +16,19 @@ import {
   shouldRender,
 } from "@/plane-web/components/workspace-notifications/notification-card/content";
 
-export const NotificationContent: FC<{
+export function NotificationContent({
+  notification,
+  workspaceId,
+  workspaceSlug,
+  projectId,
+  renderCommentBox = false,
+}: {
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   renderCommentBox?: boolean;
-}> = ({ notification, workspaceId, workspaceSlug, projectId, renderCommentBox = false }) => {
+}) {
   const { data, triggered_by_details: triggeredBy } = notification;
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
@@ -112,4 +117,4 @@ export const NotificationContent: FC<{
       )}
     </>
   );
-};
+}

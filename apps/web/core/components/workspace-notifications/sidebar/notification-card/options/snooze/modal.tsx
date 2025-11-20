@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
@@ -35,7 +34,7 @@ const defaultValues: FormValues = {
 
 const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
-export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => {
+export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
   const { isOpen, onClose, onSubmit: handleSubmitSnooze } = props;
 
   const { workspaceSlug } = useParams();
@@ -260,4 +259,4 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
       </Dialog>
     </Transition.Root>
   );
-};
+}

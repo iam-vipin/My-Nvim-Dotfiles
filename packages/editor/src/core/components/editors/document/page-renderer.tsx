@@ -35,7 +35,7 @@ type Props = {
   state?: TCollabValue["state"];
 };
 
-export const PageRenderer = (props: Props) => {
+export function PageRenderer(props: Props) {
   const {
     aiHandler,
     bubbleMenuEnabled,
@@ -114,4 +114,4 @@ export const PageRenderer = (props: Props) => {
       )}
     </div>
   );
-};
+}

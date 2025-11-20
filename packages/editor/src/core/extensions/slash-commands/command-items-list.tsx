@@ -296,6 +296,7 @@ export const getSlashCommandFilteredSections =
                 title: color.label,
                 description: "Change text color",
                 searchTerms: ["color", "text", color.label],
+
                 icon: (
                   <ALargeSmall
                     className="size-3.5"
@@ -304,6 +305,7 @@ export const getSlashCommandFilteredSections =
                     }}
                   />
                 ),
+
                 command: ({ editor, range }) => toggleTextColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),
@@ -336,10 +338,12 @@ export const getSlashCommandFilteredSections =
                 description: "Change background color",
                 searchTerms: ["color", "bg", "background", color.label],
                 icon: <ALargeSmall className="size-3.5" />,
+
                 iconContainerStyle: {
                   borderRadius: "4px",
                   backgroundColor: color.backgroundColor,
                 },
+
                 command: ({ editor, range }) => toggleBackgroundColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),

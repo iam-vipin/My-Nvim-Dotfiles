@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
@@ -27,7 +26,7 @@ type Props = {
   isAdmin: boolean;
 };
 
-export const ProjectFeaturesList: FC<Props> = observer((props) => {
+export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();

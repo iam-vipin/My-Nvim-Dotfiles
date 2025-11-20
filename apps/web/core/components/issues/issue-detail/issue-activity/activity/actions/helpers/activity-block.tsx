@@ -25,7 +25,9 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = observer((props) => {
+export const IssueActivityBlockComponent = observer(function IssueActivityBlockComponent(
+  props: TIssueActivityBlockComponent
+) {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {

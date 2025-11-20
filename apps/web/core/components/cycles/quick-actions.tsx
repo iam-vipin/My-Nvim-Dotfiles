@@ -35,7 +35,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const CycleQuickActions: React.FC<Props> = observer((props) => {
+export const CycleQuickActions = observer(function CycleQuickActions(props: Props) {
   const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
@@ -117,15 +117,18 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
   const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({
-        elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      action: () => {
+        captureClick({
+          elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

@@ -41,7 +41,7 @@ type TInboxIssueActionsHeader = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
+export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader(props: TInboxIssueActionsHeader) {
   const {
     workspaceSlug,
     projectId,

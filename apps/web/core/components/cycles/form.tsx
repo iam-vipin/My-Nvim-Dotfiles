@@ -35,7 +35,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleForm: React.FC<Props> = (props) => {
+export function CycleForm(props: Props) {
   const {
     handleFormSubmit,
     handleClose,
@@ -46,6 +46,7 @@ export const CycleForm: React.FC<Props> = (props) => {
     isMobile = false,
     isBackwardDateEditEnabled = false,
   } = props;
+  // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
@@ -204,4 +205,4 @@ export const CycleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

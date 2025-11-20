@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
 import { ToggleSwitch } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -18,8 +18,8 @@ import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import type { TPageActions } from "../../dropdowns";
 import { PageActions } from "../../dropdowns";
+import type { TPageActions } from "../../dropdowns";
 import { ExportPageModal } from "../../modals/export-page-modal";
 import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM } from "../../navigation-pane";
 
@@ -28,7 +28,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
+export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: Props) {
   const { page, storeType } = props;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -109,16 +109,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
     ],
-    [
-      editorRef,
-      handleFullWidth,
-      handleStickyToolbar,
-      isContentEditable,
-      isFullWidth,
-      isStickyToolbarEnabled,
-      router,
-      updateQueryParams,
-    ]
+    []
   );
 
   return (

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { debounce } from "lodash-es";
 import { Search } from "lucide-react";
@@ -13,7 +12,7 @@ type Props = {
   updateSearchQuery: (val: string) => void;
 };
 
-export const PageSearchInput: FC<Props> = (props) => {
+export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -108,4 +107,4 @@ export const PageSearchInput: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

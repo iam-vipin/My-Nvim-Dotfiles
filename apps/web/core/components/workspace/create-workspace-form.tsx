@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, SetStateAction, FC } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ type Props = {
 
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: FC<Props> = observer((props) => {
+export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: Props) {
   const { t } = useTranslation();
   const {
     onSubmit,
@@ -244,7 +244,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
       <div className="flex items-center gap-4">
         {secondaryButton}
         <Button

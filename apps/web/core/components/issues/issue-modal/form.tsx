@@ -76,7 +76,7 @@ export interface IssueFormProps {
   isTypeSelectDisabled?: boolean;
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
     data,

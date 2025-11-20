@@ -22,7 +22,7 @@ interface AppRailProviderProps {
   children: ReactNode;
 }
 
-export const AppRailProvider = observer(({ children }: AppRailProviderProps) => {
+export const AppRailProvider = observer(function AppRailProvider({ children }: AppRailProviderProps) {
   const { workspaceSlug } = useParams();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 

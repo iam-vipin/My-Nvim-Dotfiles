@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { CycleIcon } from "@plane/propel/icons";
@@ -11,7 +10,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueCycleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
+export const IssueCycleActivity = observer(function IssueCycleActivity(props: TIssueCycleActivity) {
   const { activityId, ends } = props;
   // hooks
   const {

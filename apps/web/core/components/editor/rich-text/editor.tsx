@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from "react";
+import { forwardRef } from "react";
 // plane imports
 import { RichTextEditorWithRef } from "@plane/editor";
 import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
@@ -10,6 +10,7 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web components
 import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 // plane web hooks
@@ -17,7 +18,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -31,6 +32,7 @@ type RichTextEditorWrapperProps = MakeOptional<
         editable: true;
         searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
@@ -60,6 +62,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
 
   return (
     <RichTextEditorWithRef
@@ -70,9 +77,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
+        duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}
+      getEditorMetaData={getEditorMetaData}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);

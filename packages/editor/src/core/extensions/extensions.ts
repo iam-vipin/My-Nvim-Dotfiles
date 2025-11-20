@@ -42,6 +42,7 @@ type TArguments = Pick<
   | "disabledExtensions"
   | "flaggedExtensions"
   | "fileHandler"
+  | "getEditorMetaData"
   | "isTouchDevice"
   | "mentionHandler"
   | "placeholder"
@@ -59,6 +60,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     isTouchDevice = false,
     mentionHandler,
     placeholder,
@@ -113,6 +115,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     UtilityExtension({
       disabledExtensions,
       fileHandler,
+      getEditorMetaData,
       isEditable: editable,
       isTouchDevice,
     }),

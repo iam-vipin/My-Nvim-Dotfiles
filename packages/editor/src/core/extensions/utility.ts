@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
 // helpers
-import type { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
 import type { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
@@ -8,7 +8,8 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { NodeHighlightPlugin } from "@/plugins/highlight";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// prosemirror plugins
+// types
+import { PasteAssetPlugin } from "@/plugins/paste-asset";
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 import { codemark } from "./code-mark";
 
@@ -51,18 +52,18 @@ export type UtilityExtensionStorage = {
   isTouchDevice: boolean;
 };
 
-type Props = Pick<IEditorProps, "disabledExtensions"> & {
+type Props = Pick<IEditorProps, "disabledExtensions" | "getEditorMetaData"> & {
   fileHandler: TFileHandler;
   isEditable: boolean;
   isTouchDevice: boolean;
 };
 
 export const UtilityExtension = (props: Props) => {
-  const { disabledExtensions, fileHandler, isEditable, isTouchDevice } = props;
+  const { disabledExtensions, fileHandler, getEditorMetaData, isEditable, isTouchDevice } = props;
   const { restore } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
-    name: "utility",
+    name: CORE_EXTENSIONS.UTILITY,
     priority: 1000,
 
     addProseMirrorPlugins() {
@@ -73,11 +74,15 @@ export const UtilityExtension = (props: Props) => {
           fileHandler,
         }),
         ...codemark({ markType: this.editor.schema.marks.code }),
-        MarkdownClipboardPlugin(this.editor),
+        MarkdownClipboardPlugin({
+          editor: this.editor,
+          getEditorMetaData,
+        }),
         DropHandlerPlugin({
           disabledExtensions,
           editor: this.editor,
         }),
+        PasteAssetPlugin(),
         NodeHighlightPlugin(),
       ];
     },

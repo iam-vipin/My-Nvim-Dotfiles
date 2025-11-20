@@ -8,6 +8,7 @@ import { cn } from "@plane/utils";
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
 import { useUserProfile } from "@/hooks/store/user";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -17,7 +18,7 @@ import { EditorMentionsRoot } from "../embeds/mentions";
 
 type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "user" | "extendedEditorProps">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   extendedEditorProps?: Partial<IEditorPropsExtended>;
   workspaceSlug: string;
@@ -31,6 +32,7 @@ type DocumentEditorWrapperProps = MakeOptional<
         editable: true;
         searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
@@ -47,6 +49,11 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -82,9 +89,11 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
+        duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}
+      getEditorMetaData={getEditorMetaData}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);

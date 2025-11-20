@@ -37,8 +37,6 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
         description={t("initiatives.scope.empty_state.description")}
         customPrimaryButton={
           <AddScopeButton
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
             disabled={disabled}
             customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
           />

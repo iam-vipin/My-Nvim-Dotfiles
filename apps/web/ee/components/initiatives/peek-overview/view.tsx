@@ -27,12 +27,8 @@ interface IInitiativeView {
   isLoading?: boolean;
   isError?: boolean;
   disabled?: boolean;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (stateId: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
-  isProjectsModalOpen?: boolean;
-  isEpicModalOpen?: boolean;
 }
 
 export const InitiativeView: FC<IInitiativeView> = observer((props) => {
@@ -42,12 +38,8 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
     isLoading,
     isError,
     disabled = false,
-    toggleProjectModal,
-    toggleEpicModal,
     handleInitiativeStateUpdate,
     handleInitiativeLabelUpdate,
-    isProjectsModalOpen = false,
-    isEpicModalOpen = false,
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -71,7 +63,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
     () => {
       const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
       // Don't close peek overview if any modal is open or if any dropbar is open
-      if (!isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen && !isAnyDropbarOpen) {
+      if (!isAnyModalOpen && !isAnyDropbarOpen) {
         removeRoutePeekId();
       }
     },
@@ -82,7 +74,7 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
     const dropdownElement = document.activeElement?.tagName === "INPUT";
     const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
     // Don't close peek overview if any modal is open, if input is focused, or if any dropbar is open
-    if (!dropdownElement && !isAnyModalOpen && !isProjectsModalOpen && !isEpicModalOpen && !isAnyDropbarOpen) {
+    if (!dropdownElement && !isAnyModalOpen && !isAnyDropbarOpen) {
       removeRoutePeekId();
       const initiativeElement = document.getElementById(`initiative-${initiativeId}`);
       if (initiativeElement) initiativeElement?.focus();
@@ -139,21 +131,15 @@ export const InitiativeView: FC<IInitiativeView> = observer((props) => {
                     workspaceSlug={workspaceSlug}
                     initiativeId={initiativeId}
                     disabled={disabled}
-                    toggleEpicModal={toggleEpicModal}
-                    toggleProjectModal={toggleProjectModal}
                   />
                 </div>
-                <div className="h-full w-full min-w-[300px] border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:w-1/3 lg:min-w-80 xl:min-w-96">
-                  <InitiativeSidebarRoot
-                    workspaceSlug={workspaceSlug}
-                    initiativeId={initiativeId}
-                    disabled={disabled}
-                    toggleEpicModal={toggleEpicModal}
-                    toggleProjectModal={toggleProjectModal}
-                    handleInitiativeStateUpdate={handleInitiativeStateUpdate}
-                    handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
-                  />
-                </div>
+                <InitiativeSidebarRoot
+                  workspaceSlug={workspaceSlug}
+                  initiativeId={initiativeId}
+                  disabled={disabled}
+                  handleInitiativeStateUpdate={handleInitiativeStateUpdate}
+                  handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
+                />
               </div>
             </>
           )}

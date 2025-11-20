@@ -15,16 +15,16 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
-  toggleEpicModal: (value?: boolean) => void;
-  toggleProjectModal: (value?: boolean) => void;
 };
 
 export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal } = props;
+  const { workspaceSlug, initiativeId, disabled } = props;
 
   // store hooks
   const {
     initiative: {
+      toggleProjectsModal,
+      toggleEpicModal,
       epics: { getInitiativeEpicsById },
       getInitiativeById,
       initiativeLinks: { getInitiativeLinks },
@@ -69,7 +69,7 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
             initiativeId={initiativeId}
             projectIds={projectsIds}
             disabled={disabled}
-            toggleProjectModal={toggleProjectModal}
+            toggleProjectModal={toggleProjectsModal}
             isOpen={openCollapsibleSection.includes("projects")}
             onToggle={() => toggleOpenCollapsibleSection("projects")}
             count={projectCount}

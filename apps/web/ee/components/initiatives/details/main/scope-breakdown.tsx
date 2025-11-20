@@ -109,17 +109,17 @@ const DataCard = (props: TDataCardProps) => {
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
   disabled?: boolean;
 };
 export const ScopeBreakdown = observer((props: Props) => {
-  const { workspaceSlug, initiativeId, toggleProjectModal, toggleEpicModal, disabled } = props;
+  const { workspaceSlug, initiativeId, disabled } = props;
   const {
     initiative: {
       getInitiativeAnalyticsById,
       getInitiativeById,
       epics: { getInitiativeEpicsById },
+      toggleProjectsModal,
+      toggleEpicModal,
     },
   } = useInitiatives();
 
@@ -153,8 +153,6 @@ export const ScopeBreakdown = observer((props: Props) => {
           </Link>
           <AddScopeButton
             disabled={disabled}
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
             customButton={
               <Button
                 variant="link-neutral"
@@ -173,9 +171,7 @@ export const ScopeBreakdown = observer((props: Props) => {
           heading={t("initiatives.scope.empty_state.title")}
           subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
-          actionElement={
-            <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
-          }
+          actionElement={<AddScopeButton disabled={disabled} />}
         />
       ) : (
         <div className="grid w-full grid-cols-1 @sm:grid-cols-1 bg-custom-background-90 rounded-lg p-2 gap-2">
@@ -185,7 +181,7 @@ export const ScopeBreakdown = observer((props: Props) => {
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
               type="project"
-              onAdd={toggleProjectModal}
+              onAdd={toggleProjectsModal}
               data={initiativeAnalytics?.project}
               count={projectsCount}
             />

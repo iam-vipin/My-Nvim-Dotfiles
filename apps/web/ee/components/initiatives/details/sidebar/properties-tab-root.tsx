@@ -34,22 +34,12 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
-  toggleEpicModal: (value?: boolean) => void;
-  toggleProjectModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
-  const {
-    workspaceSlug,
-    initiativeId,
-    disabled,
-    toggleEpicModal,
-    toggleProjectModal,
-    handleInitiativeStateUpdate,
-    handleInitiativeLabelUpdate,
-  } = props;
+  const { workspaceSlug, initiativeId, disabled, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
 
   const {
     initiative: {
@@ -60,7 +50,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   } = useInitiatives();
   const { getUserDetails } = useMember();
   const {
-    initiative: { getInitiativesLabels, createInitiativeLabel },
+    initiative: { getInitiativesLabels, createInitiativeLabel, toggleEpicModal, toggleProjectsModal },
   } = useInitiatives();
 
   const { t } = useTranslation();
@@ -120,7 +110,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
           </div>
           <button
             className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
-            onClick={() => toggleProjectModal(true)}
+            onClick={() => toggleProjectsModal(true)}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
           </button>

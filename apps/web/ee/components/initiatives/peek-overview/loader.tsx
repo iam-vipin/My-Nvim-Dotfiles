@@ -17,21 +17,20 @@ export const InitiativePeekOverviewLoader: FC<TInitiativePeekOverviewLoader> = (
   const { isMobile } = usePlatformOS();
 
   return (
-    <Loader className="w-full h-screen overflow-hidden p-5 space-y-6">
+    <Loader className="w-full h-screen overflow-hidden px-4 py-3 space-y-6">
       <div className="flex justify-between items-center gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3.5">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
             <button onClick={removeRoutePeekId}>
               <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
-          <Loader.Item width="30px" height="30px" />
+          <Loader.Item width="24px" height="24px" />
+          <Loader.Item width="24px" height="24px" />
         </div>
-        <div className="flex items-center gap-2">
-          <Loader.Item width="80px" height="30px" />
-          <Loader.Item width="30px" height="30px" />
-          <Loader.Item width="30px" height="30px" />
-          <Loader.Item width="30px" height="30px" />
+        <div className="flex items-center gap-3.5">
+          <Loader.Item width="24px" height="24px" />
+          <Loader.Item width="24px" height="24px" />
         </div>
       </div>
 

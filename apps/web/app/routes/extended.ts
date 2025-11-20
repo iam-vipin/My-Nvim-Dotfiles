@@ -40,20 +40,23 @@ export const extendedRoutes: RouteConfigEntry[] = [
             route(":workspaceSlug/initiatives", "./(all)/[workspaceSlug]/(projects)/initiatives/(list)/page.tsx"),
           ]),
 
-          // Initiative Overview
-          layout("./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/(overview)/layout.tsx", [
-            route(
-              ":workspaceSlug/initiatives/:initiativeId",
-              "./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/(overview)/page.tsx"
-            ),
-          ]),
+          // Initiative Detail
+          layout("./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/layout.tsx", [
+            // Initiative Overview
+            layout("./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/(overview)/layout.tsx", [
+              route(
+                ":workspaceSlug/initiatives/:initiativeId",
+                "./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/(overview)/page.tsx"
+              ),
+            ]),
 
-          // Initiative Scope
-          layout("./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/scope/layout.tsx", [
-            route(
-              ":workspaceSlug/initiatives/:initiativeId/scope",
-              "./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/scope/page.tsx"
-            ),
+            // Initiative Scope
+            layout("./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/scope/layout.tsx", [
+              route(
+                ":workspaceSlug/initiatives/:initiativeId/scope",
+                "./(all)/[workspaceSlug]/(projects)/initiatives/(detail)/[initiativeId]/scope/page.tsx"
+              ),
+            ]),
           ]),
         ]),
 

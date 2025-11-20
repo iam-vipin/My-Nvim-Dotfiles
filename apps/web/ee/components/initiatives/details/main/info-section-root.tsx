@@ -22,12 +22,10 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
 };
 
 export const InitiativeInfoSection: FC<Props> = observer((props) => {
-  const { editorRef, workspaceSlug, initiativeId, disabled = false, toggleProjectModal, toggleEpicModal } = props;
+  const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const {
@@ -54,13 +52,7 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
       onDescriptionSubmit={async (value) => updateInitiative(workspaceSlug, initiativeId, { description_html: value })}
       indicatorElement={<InitiativeInfoIndicatorItem initiativeId={initiativeId} />}
       actionElement={
-        <InitiativeInfoActionItems
-          workspaceSlug={workspaceSlug}
-          initiativeId={initiativeId}
-          disabled={disabled}
-          toggleProjectModal={toggleProjectModal}
-          toggleEpicModal={toggleEpicModal}
-        />
+        <InitiativeInfoActionItems workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
       }
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
       disabled={disabled}

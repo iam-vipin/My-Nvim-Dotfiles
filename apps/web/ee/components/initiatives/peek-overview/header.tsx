@@ -16,6 +16,7 @@ import { copyUrlToClipboard } from "@plane/utils";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { InitiativeOverviewHeaderActions } from "../header/actions/overview-header-actions";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -81,7 +82,7 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
       ref={parentRef}
       className="relative flex h-12 w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 p-4 transition-all"
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3.5">
         <div className="flex items-center gap-x-2">
           <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
             <button onClick={removeRoutePeekId}>
@@ -89,13 +90,6 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
             </button>
           </Tooltip>
         </div>
-      </div>
-      <div className="flex items-center gap-x-4">
-        <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
-          <button type="button" onClick={handleCopyText}>
-            <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
-          </button>
-        </Tooltip>
         {isInitiativePeeked && (
           <Link href={`/${workspaceSlug}/initiatives/${initiativeId}`} onClick={redirectToInitiative}>
             <Tooltip tooltipContent={t("common.open_in_full_screen", { page: "Initiative" })} isMobile={isMobile}>
@@ -125,6 +119,14 @@ export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps>
             ))}
           </>
         </CustomSelect>
+      </div>
+      <div className="flex items-center gap-x-3.5">
+        <InitiativeOverviewHeaderActions />
+        <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
+          <button type="button" onClick={handleCopyText}>
+            <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

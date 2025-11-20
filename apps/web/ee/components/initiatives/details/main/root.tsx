@@ -20,12 +20,10 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
-  toggleEpicModal: (value?: boolean) => void;
-  toggleProjectModal: (value?: boolean) => void;
 };
 
 export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
-  const { editorRef, workspaceSlug, initiativeId, disabled = false, toggleEpicModal, toggleProjectModal } = props;
+  const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();
 
@@ -36,24 +34,10 @@ export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
         disabled={disabled}
-        toggleProjectModal={toggleProjectModal}
-        toggleEpicModal={toggleEpicModal}
       />
       <InitiativeProgressSection initiativeId={initiativeId} />
-      <ScopeBreakdown
-        workspaceSlug={workspaceSlug}
-        initiativeId={initiativeId}
-        toggleProjectModal={toggleProjectModal}
-        toggleEpicModal={toggleEpicModal}
-        disabled={disabled}
-      />
-      <InitiativeCollapsibleSection
-        workspaceSlug={workspaceSlug}
-        initiativeId={initiativeId}
-        disabled={disabled}
-        toggleEpicModal={toggleEpicModal}
-        toggleProjectModal={toggleProjectModal}
-      />
+      <ScopeBreakdown workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+      <InitiativeCollapsibleSection workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
       <InitiativeModalsRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
     </MainWrapper>
   );

@@ -4,86 +4,22 @@ import { PlusIcon, BriefcaseIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EpicIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomMenu } from "@plane/ui";
-// components
-import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
-// hooks
-import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-// local imports
-import { WorkspaceEpicsListModal } from "../details/main/collapsible-section/epics/workspace-epic-modal";
 
 type Props = {
-  workspaceSlug: string;
-  initiativeId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
 };
 
 export const AddScopeButton = observer((props: Props) => {
-  const { customButton, disabled, workspaceSlug, initiativeId } = props;
-
+  const { customButton, disabled } = props;
   // store hooks
   const {
-    initiative: { isProjectsModalOpen, isEpicModalOpen, toggleProjectsModal, toggleEpicModal },
+    initiative: { toggleProjectsModal, toggleEpicModal },
   } = useInitiatives();
   const { t } = useTranslation();
-  const {
-    initiative: {
-      epics: { addEpicsToInitiative, getInitiativeEpicsById },
-      fetchInitiativeAnalytics,
-      updateInitiative,
-      getInitiativeById,
-    },
-  } = useInitiatives();
-  const { workspaceProjectIds } = useProject();
-
-  // derived values
-  const initiative = getInitiativeById(initiativeId?.toString());
-  const initiativeEpics = getInitiativeEpicsById(initiativeId?.toString());
-
-  // handlers
-  const handleAddEpicToInitiative = async (epicIds: string[]) => {
-    try {
-      addEpicsToInitiative(workspaceSlug?.toString(), initiativeId?.toString(), epicIds).then(async () => {
-        fetchInitiativeAnalytics(workspaceSlug?.toString(), initiativeId?.toString());
-        setToast({
-          title: t("toast.success"),
-          type: TOAST_TYPE.SUCCESS,
-          message: t("initiatives.toast.epic_update_success", { count: epicIds.length }),
-        });
-      });
-    } catch {
-      setToast({
-        title: t("toast.success"),
-        type: TOAST_TYPE.ERROR,
-        message: t("initiatives.toast.epic_update_error"),
-      });
-    }
-  };
-
-  const handleProjectsUpdate = async (initiativeProjectIds: string[]) => {
-    if (!initiativeId) return;
-
-    await updateInitiative(workspaceSlug?.toString(), initiativeId?.toString(), { project_ids: initiativeProjectIds })
-      .then(async () => {
-        fetchInitiativeAnalytics(workspaceSlug?.toString(), initiativeId?.toString());
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("toast.success"),
-          message: t("initiatives.toast.project_update_success"),
-        });
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.success"),
-          message: error?.error ?? t("initiatives.toast.project_update_error"),
-        });
-      });
-  };
 
   // options
   const optionItems = [
@@ -125,24 +61,6 @@ export const AddScopeButton = observer((props: Props) => {
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      {/* Quick add modals */}
-      <ProjectMultiSelectModal
-        isOpen={isProjectsModalOpen}
-        onClose={() => toggleProjectsModal(false)}
-        onSubmit={handleProjectsUpdate}
-        selectedProjectIds={initiative?.project_ids ?? []}
-        projectIds={workspaceProjectIds ?? []}
-      />
-      <WorkspaceEpicsListModal
-        workspaceSlug={workspaceSlug?.toString()}
-        isOpen={isEpicModalOpen}
-        searchParams={{}}
-        selectedEpicIds={initiativeEpics ?? []}
-        handleClose={() => toggleEpicModal(false)}
-        handleOnSubmit={async (data) => {
-          handleAddEpicToInitiative(data.map((epic) => epic.id));
-        }}
-      />
     </>
   );
 });

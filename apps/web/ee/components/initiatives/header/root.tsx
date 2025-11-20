@@ -96,13 +96,12 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
       [EInitiativeNavigationItem.OVERVIEW]: <InitiativeOverviewHeaderActions />,
       [EInitiativeNavigationItem.SCOPE]: (
         <InitiativeScopeHeaderActions
-          workspaceSlug={workspaceSlug?.toString()}
           initiativeId={initiativeId?.toString()}
           disabled={!hasWorkspaceMemberLevelPermissions}
         />
       ),
     }),
-    [initiativeId, workspaceSlug, hasWorkspaceMemberLevelPermissions]
+    [initiativeId, hasWorkspaceMemberLevelPermissions]
   );
 
   if (!activeDetailOption) return null;

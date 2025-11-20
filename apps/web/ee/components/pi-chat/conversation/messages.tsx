@@ -144,6 +144,7 @@ export const Messages = observer((props: TProps) => {
       <div id="observer-element" />
       {/* save page modal */}
       <SavePageModal
+        workspaceSlug={workspaceSlug?.toString() || ""}
         isOpen={!!savePageQueryId}
         handleModalClose={() => setSavePageQueryId(undefined)}
         handleConvertToPage={handleConvertToPage}

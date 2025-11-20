@@ -1,7 +1,10 @@
-"use client";
-
+import React from "react";
+// plane imports
 import { cn } from "@plane/utils";
+// components
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
+// plane web components
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 
 type Props = {
   children: React.ReactNode;
@@ -12,9 +15,11 @@ export function ProfileSettingContentWrapper(props: Props) {
   const { children, className = "" } = props;
   return (
     <div className="flex h-full flex-col">
-      <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
-        <SidebarHamburgerToggle />
-      </div>
+      {isSidebarToggleVisible() && (
+        <div className="block flex-shrink-0 border-b border-custom-border-200 p-4 md:hidden">
+          <SidebarHamburgerToggle />
+        </div>
+      )}
 
       <div
         className={cn(

@@ -290,7 +290,10 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
   };
 
   const onSubmit = async (formData: FormValues) => {
+    console.log("formData", formData);
+    console.log("workspace", workspace);
     if (!workspace) return;
+    console.log("workspace", workspace);
 
     let payload = { ...formData };
     payload = { emails: payload.emails.filter((email) => email.email !== "") };
@@ -314,6 +317,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
           title: "Success!",
           message: "Invitations sent successfully.",
         });
+        console.log("nextStep");
 
         await nextStep();
       })

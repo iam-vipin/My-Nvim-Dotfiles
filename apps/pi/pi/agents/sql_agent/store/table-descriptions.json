@@ -1,0 +1,1229 @@
+{
+    "intake_issues": {
+        "about": "The 'intake_issues' table stores details about issues created in the Intake process.",
+        "contains": [
+            "Unique identifier (`id`).",
+            "Current status of the intake issue (`status`).",
+            "Snooze timing (`snoozed_till`).",
+            "Reference to the associated intake process (`intake_id`).",
+            "Reference to the related issue (`issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Detailed issue content (refer to the 'issues' table).",
+            "Intake process configurations (refer to the 'intakes' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "duplicate_to_id": "issues(id)",
+                "intake_id": "intakes(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "intakes": {
+        "about": "The 'intakes' table manages guest-created issues that can be reviewed by Admins and Members. It facilitates the intake process, ensuring proper handling of user-submitted tasks.",
+        "contains": [
+            "Unique identifier (`id`).",
+            "Name of the intake process (`name`).",
+            "Default intake flag (`is_default`).",
+            "Reference to the project (`project_id`).",
+            "Configuration settings and default statuses."
+        ],
+        "does_not_contain": [
+            "Individual issue details (refer to the 'issues' table).",
+            "Current intake issue records (refer to the 'intake_issues' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_comments": {
+        "about": "The 'issue_comments' table stores user comments related to issues. Comments are part of the activity section and can include discussions, progress updates, file attachments, and mentions of other users.",
+        "contains": [
+            "Unique identifier (`id`).",
+            "Plain text content (`comment_stripped`).",
+            "HTML-formatted content (`comment_html`).",
+            "Access level (e.g., private, public) (`access`).",
+            "Reference to the related issue (`issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Detailed issue information (refer to the 'issues' table).",
+            "Attachments linked to comments (refer to the 'issue_attachments' table).",
+            "User mentions within comment text (refer to the 'issue_mentions' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_attachments": {
+        "about": "The 'issue_attachments' table stores attachments related to issues. Attachments can include files, images, or other media associated with an issue.",
+        "contains": [
+            "Unique identifier (`id`).",
+            "Metadata and attributes in JSON format (`attributes`).",
+            "Reference to the associated issue (`issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Detailed issue descriptions (refer to the 'issues' table).",
+            "Discussions related to attachments (refer to the 'issue_comments' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "importers": {
+        "about": "The 'importers' table handles the import of issue data from external services such as GitHub and Jira into Plane projects.",
+        "contains": [
+            "Unique identifier (`id`).",
+            "External service type (e.g., GitHub, Jira) (`service`).",
+            "Import status (e.g., Pending, In Progress, Completed, Failed) (`status`).",
+            "Import process data in JSON format (`data`).",
+            "Reference to the project (`project_id`).",
+            "Reference to the API token used (`token_id`).",
+            "Imported data in JSON format (`imported_data`)."
+        ],
+        "does_not_contain": [
+            "Actual issue records imported (refer to the 'issues' table).",
+            "Media attachments related to imported issues (refer to the 'issue_attachments' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "initiated_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "token_id": "api_tokens(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "cycle_issues": {
+        "about": "The 'cycle_issues' table links issues to specific cycles within Plane. Cycles are time-bound periods, similar to sprints, where teams focus on completing assigned tasks.",
+        "contains": [
+            "Reference to the related cycle (`cycle_id`).",
+            "Reference to the associated issue (`issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Issue details (refer to the 'issues' table).",
+            "Cycle details (refer to the 'cycles' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "cycle_id": "cycles(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "estimate_points": {
+        "about": "The 'estimate_points' table defines point values used in the estimation process. These points quantify the effort needed for an issue, using predefined systems such as Linear, Fibonacci, Squares, or custom progressions.",
+        "contains": [
+            "Point key (`key`).",
+            "Description of the point (`description`).",
+            "Point value (`value`).",
+            "Reference to the parent estimate (`estimate_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Actual estimates assigned to issues (refer to the 'estimates' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "estimate_id": "estimates(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "estimates": {
+        "about": "The 'estimates' table stores configuration settings for estimating the effort required for issues in a project. It includes systems like Points and Categories for quantifying work complexity.",
+        "contains": [
+            "Name of the estimation method (`name`).",
+            "Description of the estimation method (`description`).",
+            "Type of estimation system (`type`).",
+            "Default usage flag (`last_used`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Point values (refer to the 'estimate_points' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_mentions": {
+        "about": "The 'issue_mentions' table tracks references to users within issue comments. Mentions allow users to notify or involve specific team members in discussions related to an issue.",
+        "contains": [
+            "Reference to the mentioned user (`mention_id`).",
+            "Reference to the related issue (`issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Content where the mention occurred (refer to 'issue_comments')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "mention_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_relations": {
+        "about": "The 'issue_relations' table defines connections between issues within a project. Relations include 'Blocking/Blocked by' to represent dependencies, 'Relates to' for contextual or similar issues, and 'Duplicate of' to identify redundant issues.",
+        "contains": [
+            "Type of relationship (`relation_type`).",
+            "Reference to the primary issue (`issue_id`).",
+            "Reference to the related issue (`related_issue_id`).",
+            "Reference to the project (`project_id`)."
+        ],
+        "does_not_contain": [
+            "Detailed issue content (refer to the 'issues' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "related_issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_sequences": {
+        "about": "The 'issue_sequences' table organizes issues into a specific order or sequence.",
+        "contains": [
+            "Sequence identifiers for issues to maintain order.",
+            "References to the issue and project."
+        ],
+        "does_not_contain": [
+            "Issue details or content.",
+            "Sequence history."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_subscribers": {
+        "about": "The 'issue_subscribers' table tracks users who are subscribed to specific issues. Subscribers receive notifications about updates, comments, and changes to the issues.",
+        "contains": [
+            "Information about users following issues for updates.",
+            "References to the issue, subscriber, and project."
+        ],
+        "does_not_contain": [
+            "Notification settings or preferences.",
+            "Issue content."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "assignee_id": "users(id)",
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_activities": {
+        "about": "The 'issue_activities' table records a history of actions performed on issues within a project. It tracks details such as the action (verb), changes to fields (old and new values), comments, attachments, and the users involved in the activity.",
+        "contains": [
+            "Records of actions taken on issues (e.g., status changes, comments).",
+            "Details about the change, old and new values.",
+            "References to the issue, related comments, and users involved."
+        ],
+        "does_not_contain": [
+            "Current issue state (see 'issues' table).",
+            "Activity on other entities."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "issue_comment_id": "issue_comments(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_assignees": {
+        "about": "The 'issue_assignees' table manages the assignment of users to specific issues. It links issues to their assignees.",
+        "contains": [
+            "Information about users assigned to work on issues.",
+            "References to the issue, assignee, and project."
+        ],
+        "does_not_contain": [
+            "Assignment history.",
+            "Issue details.",
+            "User details like username, first_name (see 'users' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "assignee_id": "users(id)",
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_labels": {
+        "about": "The 'issue_labels' table links issues to labels, enabling categorization and organization of tasks within projects.",
+        "contains": [
+            "Links between issues and labels for categorization.",
+            "References to the issue, label, and project."
+        ],
+        "does_not_contain": [
+            "Label definitions (see 'labels' table).",
+            "Issue content."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "label_id": "labels(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_links": {
+        "about": "The 'issue_links' table stores user-added external URLs (e.g., documentation, references, third-party tools) that are attached to issues.",
+        "contains": [
+            "External URLs and optional titles that users manually attach to issues (e.g., documentation links, reference materials, external tools).",
+            "References to the issue and project that the external link is attached to."
+        ],
+        "does_not_contain": [
+            "Issue content.",
+            "Link previews or metadata.",
+            "URLs to view the issues themselves in Plane (these are generated programmatically, not stored).",
+            "Navigation links between issues or to other Plane entities."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "cycles": {
+        "about": "The 'cycles' table represents time-bound periods in Plane, similar to sprints in Agile methodologies. It tracks details such as start and due dates.",
+        "contains": [
+            "Cycle details including name, description, start and end dates.",
+            "References to the project and owner (user)."
+        ],
+        "does_not_contain": [
+            "Issues within the cycle (see 'cycle_issues' table).",
+            "Cycle statistics."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owned_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "modules": {
+        "about": "The 'modules' stores information about modules in a project. Modules act as containers to group related tasks.",
+        "contains": [
+            "Module details including name, description, status, and dates.",
+            "References to the project and lead (user)."
+        ],
+        "does_not_contain": [
+            "Issues within the module (see 'module_issues' table).",
+            "Module members (see 'module_members' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "lead_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issues": {
+        "about": "The 'issues' table stores the fundamental units of work within a project in Plane. Issues represent tasks or objectives, with attributes such as priority, description, estimated effort, state, and type.",
+        "contains": [
+            "Issue details including name, description, priority, dates, and status.",
+            "References to the project, creator, assignees, and other attributes."
+        ],
+        "does_not_contain": [
+            "Comments on issues (see 'issue_comments' table).",
+            "Attachments (see 'issue_attachments' table).",
+            "Links (see 'issue_links' table).",
+            "Assignees (see 'issue_assignees' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "parent_id": "issues(id)",
+                "project_id": "projects(id)",
+                "state_id": "states(id)",
+                "type_id": "issue_types(id)",
+                "estimate_point_id": "estimate_points(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "module_issues": {
+        "about": "The 'module_issues' table links issues to specific modules within Plane. Modules are structural components used to group related tasks.",
+        "contains": [
+            "Links between issues and modules.",
+            "References to the issue, module, and project."
+        ],
+        "does_not_contain": [
+            "Issue or module details.",
+            "Assignment history."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "module_id": "modules(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "module_links": {
+        "about": "The 'module_links' table stores external links attached to specific modules in Plane.",
+        "contains": [
+            "URLs and titles of links associated with modules.",
+            "References to the module and project."
+        ],
+        "does_not_contain": [
+            "Module content.",
+            "Link previews or metadata."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "module_id": "modules(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "labels": {
+        "about": "The 'labels' table stores details about labels, categorization tags used to organize and filter issues in Plane.",
+        "contains": [
+            "Label details including name, description, and hierarchy.",
+            "References to parent labels for nested labeling."
+        ],
+        "does_not_contain": [
+            "Associations with issues or pages (see 'issue_labels' and 'page_labels').",
+            "Usage statistics."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "parent_id": "labels(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_views": {
+        "about": "The 'issue_views' table stores customizable saved views or filters for issues in Plane.",
+        "contains": [
+            "View configurations including name, description, and access level.",
+            "References to the owner (user) and project."
+        ],
+        "does_not_contain": [
+            "Actual issues (it defines how to filter or view them).",
+            "View usage data."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owned_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_worklogs": {
+        "about": "The 'issue_worklogs' table logs time entries for work done on specific issues in Plane. It tracks details such as duration, descriptions, and the user who logged the time.",
+        "contains": [
+            "Worklog entries with duration, description, and timestamps.",
+            "References to the issue, user who logged the time, and project."
+        ],
+        "does_not_contain": [
+            "Issue content.",
+            "Billing or invoicing information."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "logged_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "module_members": {
+        "about": "The 'module_members' table associates users with specific modules in Plane.",
+        "contains": [
+            "Information about users who are members of modules.",
+            "References to the module, member (user), and project.",
+            "Members include real users but not bots like intake bots."
+        ],
+        "does_not_contain": [
+            "Module content.",
+            "User roles or permissions."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "member_id": "users(id)",
+                "module_id": "modules(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_identifiers": {
+        "about": "The 'project_identifiers' table stores unique identifiers and names for projects in Plane. These identifiers help distinguish projects within a workspace and are used for efficient project management and API interactions.",
+        "contains": [
+            "Project identifiers used for referencing or display.",
+            "References to the project and users involved."
+        ],
+        "does_not_contain": [
+            "Project details (see 'projects' table).",
+            "Configuration settings."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "pages": {
+        "about": "The 'pages' table stores structured content or documents within Plane.",
+        "contains": [
+            "Page details including name, content (in various formats), and access levels.",
+            "References to the owner, creator, and hierarchical parent pages."
+        ],
+        "does_not_contain": [
+            "Direct associations with projects (see 'project_pages').",
+            "Page version history (see 'page_versions')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owned_by_id": "users(id)",
+                "parent_id": "pages(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "page_labels": {
+        "about": "The 'page_labels' table links labels to pages in Plane. These labels help categorize and organize pages.",
+        "contains": [
+            "Links between pages and labels for categorization.",
+            "References to the page, label, and workspace."
+        ],
+        "does_not_contain": [
+            "Label definitions (see 'labels' table).",
+            "Page content."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "label_id": "labels(id)",
+                "page_id": "pages(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_attributes": {
+        "about": "The 'project_attributes' table stores additional metadata for projects in Plane, such as priority, start and target dates, and state.",
+        "contains": [
+            "Attributes like priority, start date, target date, and state.",
+            "References to the project, state, and users."
+        ],
+        "does_not_contain": [
+            "Basic project information (see 'projects').",
+            "Issue data."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "state_id": "project_states(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_states": {
+        "about": "The 'project_states' table stores the state of the project. Examples include states like 'Draft' 'Planning' or 'Monitoring'.",
+        "contains": [
+            "Project State details including name, description, and its group.",
+            "References to the workspace and users."
+        ],
+        "does_not_contain": [
+            "Associations with specific projects (see 'project_attributes').",
+            "Issue states (see 'states' table)."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_issue_types": {
+        "about": "The 'project_issue_types' table associates customizable issue types with specific projects in Plane.",
+        "contains": [
+            "Information about which issue types are enabled in projects.",
+            "References to the project, issue type, and users."
+        ],
+        "does_not_contain": [
+            "Issue details.",
+            "Issue type definitions (see 'issue_types')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_type_id": "issue_types(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_members": {
+        "about": "The 'project_members' table tracks users who are members of projects in Plane. It includes roles, membership status, and other details to manage collaboration and access within projects.",
+        "contains": [
+            "Information about project membership, roles,  and activity status (If they are active)",
+            "References to the project and member (user).",
+            "Members include real users but not bots like intake bots."
+        ],
+        "does_not_contain": [
+            "Workspace membership (see 'workspace_members').",
+            "User permissions."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "member_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "project_pages": {
+        "about": "The 'project_pages' table associates pages with projects in Plane.",
+        "contains": [
+            "Links between projects and pages.",
+            "References to the project, page, and workspace."
+        ],
+        "does_not_contain": [
+            "Page content (see 'pages' table).",
+            "Project details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "page_id": "pages(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "users": {
+        "about": "The 'users' table stores information about user accounts in Plane. It includes details such as username, email, names, activity timestamps, and user-specific attributes like timezone and bot status.",
+        "contains": [
+            "User details including username, names, and status flags.",
+            "Timestamps for login and activity tracking.",
+            "Include both real users and bots."
+        ],
+        "does_not_contain": [
+            "User roles in projects or workspaces.",
+            "project_id",
+            "workspace_id"
+        ],
+        "relationships": {
+            "referenced_by": [
+                "Many tables via user-related foreign keys (e.g., 'created_by_id' or 'updated_by_id').",
+                "Membership related tables also reference the user via the 'member__id' field."
+            ]
+        }
+    },
+    "projects": {
+        "about": "The 'projects' table stores core information about projects in Plane. Projects act as containers for tasks, timelines, pages, and resources.",
+        "contains": [
+            "Project details including name, description, settings, public/private, and configurations.",
+            "References to the project lead, default assignee, and workspace."
+         ],
+        "does_not_contain": [
+            "Issues within the project (see 'issues' table).",
+            "Project membership (see 'project_members').",
+            "Project state name (see 'project_states').",
+            "Project start date, end date, state and priority (see 'project_attributes')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "default_assignee_id": "users(id)",
+                "project_lead_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)",
+                "default_state_id": "states(id)",
+                "estimate_id": "estimates(id)"
+            }
+        }
+    },
+    "states": {
+        "about": "The 'states' table defines possible stages or phases that tasks or issues can go through within a project in Plane. These states, such as 'To Do,' 'In Progress,' and 'Completed,' help track progress and organize workflows.",
+        "contains": [
+            "State details including name, description, sequence",
+            "References to the project and workspace.",
+            "The name of state group which state belongs to."
+        ],
+        "does_not_contain": [
+            "Associations with specific issues (see 'issues' table).",
+            "Project states (see 'project_states')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_properties": {
+        "about": "The 'issue_properties' table defines custom fields for issues in Plane. These properties allow teams to capture specific information, such as text, numbers, dates, or dropdown options, tailored to project needs.",
+        "contains": [
+            "Property definitions including name, type, default value, and requirements.",
+            "References to the issue type and workspace."
+        ],
+        "does_not_contain": [
+            "Property values for specific issues (see 'issue_property_values').",
+            "Issue details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_type_id": "issue_types(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_property_options": {
+        "about": "The 'issue_property_options' table stores selectable options for dropdown or multi-select custom properties in Plane. These options allow users to define and choose values for custom fields tailored to project needs.",
+        "contains": [
+            "Options for properties that require selection (e.g., dropdowns).",
+            "References to the property and potentially parent options."
+        ],
+        "does_not_contain": [
+            "Property definitions (see 'issue_properties').",
+            "Issue property values."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "parent_id": "issue_property_options(id)",
+                "property_id": "issue_properties(id)",
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_property_values": {
+        "about": "The 'issue_property_values' table stores the assigned values of custom properties for issues in Plane. These values capture specific information, such as text, numbers, dates, or selected options, based on the custom properties defined for an issue.",
+        "contains": [
+            "Actual values of properties for issues across various data types.",
+            "References to the issue, property, and any selected options."
+        ],
+        "does_not_contain": [
+            "Property definitions.",
+            "Issue details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "property_id": "issue_properties(id)",
+                "value_option_id": "issue_property_options(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_types": {
+        "about": "The 'issue_types' table defines various categories of issues in Plane. Issue types allow teams to classify and manage tasks based on specific needs tailored to the project.",
+        "contains": [
+            "Issue type details including name, description, and flags (e.g., is_epic).",
+            "References to the workspace and users."
+        ],
+        "does_not_contain": [
+            "Actual issues (see 'issues' table).",
+            "Issue type configurations for projects (see 'project_issue_types')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "workspaces": {
+        "about": "The 'workspaces' table stores information about workspaces in Plane, which serve as containers for organizing projects and teams.",
+        "contains": [
+            "Workspace details including name, slug, owner, and settings.",
+            "References to the owner and creator."
+        ],
+        "does_not_contain": [
+            "Projects within the workspace (see 'projects' table).",
+            "Workspace members (see 'workspace_members')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owner_id": "users(id)",
+                "updated_by_id": "users(id)"
+            }
+        }
+    },
+    "workspace_members": {
+        "about": "The 'workspace_members' table tracks users who are members of workspaces in Plane. It includes roles, membership status, and other details at workspace level.",
+        "contains": [
+            "Information about workspace membership, roles, and activity status (If they are active).",
+            "References to the member (user) and workspace.",
+            "Members include real users but not bots like intake bots."
+        ],
+        "does_not_contain": [
+            "Project membership.",
+            "User permissions."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "member_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "page_logs": {
+        "about": "The 'page_logs' table records changes and transactions made to pages in Plane. It tracks updates, edits, and actions.",
+        "contains": [
+            "Records of actions performed on pages.",
+            "References to the page, user who made the change, and workspace."
+        ],
+        "does_not_contain": [
+            "Page content.",
+            "Version history (see 'page_versions')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "page_id": "pages(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "page_versions": {
+        "about": "The 'page_versions' table stores historical versions of pages in Plane.",
+        "contains": [
+            "Archived versions of page content with timestamps.",
+            "References to the page, owner, and workspace."
+        ],
+        "does_not_contain": [
+            "Current page content (see 'pages' table).",
+            "Change logs (see 'page_logs')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owned_by_id": "users(id)",
+                "page_id": "pages(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_spaces": {
+        "about": "The 'team_spaces' table stores information about team spaces in Plane, which serve as dedicated areas for team collaboration and work tracking.",
+        "contains": [
+            "Team space details including name, description, and logo properties.",
+            "References to the lead, creator, and workspace."
+        ],
+        "does_not_contain": [
+            "Team members (see 'team_space_members').",
+            "Team projects (see 'team_space_projects')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "lead_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_space_members": {
+        "about": "The 'team_space_members' table tracks users who are members of team spaces in Plane.",
+        "contains": [
+            "Information about team space membership.",
+            "References to the team space and member (user)."
+        ],
+        "does_not_contain": [
+            "Team space details.",
+            "User permissions."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "member_id": "users(id)",
+                "team_space_id": "team_spaces(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_space_projects": {
+        "about": "The 'team_space_projects' table links projects to team spaces in Plane.",
+        "contains": [
+            "Links between projects and team spaces.",
+            "References to the project and team space."
+        ],
+        "does_not_contain": [
+            "Project details.",
+            "Team space details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "project_id": "projects(id)",
+                "team_space_id": "team_spaces(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_space_pages": {
+        "about": "The 'team_space_pages' table links pages to team spaces in Plane.",
+        "contains": [
+            "Links between pages and team spaces.",
+            "References to the page and team space."
+        ],
+        "does_not_contain": [
+            "Page content.",
+            "Team space details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "page_id": "pages(id)",
+                "team_space_id": "team_spaces(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_space_labels": {
+        "about": "The 'team_space_labels' table links labels to team spaces in Plane.",
+        "contains": [
+            "Links between labels and team spaces.",
+            "References to the label and team space."
+        ],
+        "does_not_contain": [
+            "Label definitions.",
+            "Team space details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "label_id": "labels(id)",
+                "team_space_id": "team_spaces(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "team_space_comments": {
+        "about": "The 'team_space_comments' table stores comments related to team spaces in Plane.",
+        "contains": [
+            "Comment content in various formats (plain text, HTML, JSON).",
+            "References to the team space and comment author."
+        ],
+        "does_not_contain": [
+            "Team space details.",
+            "Comment attachments."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "parent_id": "team_space_comments(id)",
+                "team_space_id": "team_spaces(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "stickies": {
+        "about": "The 'stickies' table stores personal notes and reminders in Plane.",
+        "contains": [
+            "Sticky note content and formatting.",
+            "References to the owner and workspace."
+        ],
+        "does_not_contain": [
+            "Attachments.",
+            "Comments."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "owner_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "issue_votes": {
+        "about": "The 'issue_votes' table tracks user votes on issues in Plane.",
+        "contains": [
+            "Vote value and metadata.",
+            "References to the issue and voter."
+        ],
+        "does_not_contain": [
+            "Issue details.",
+            "Vote history."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "issue_id": "issues(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiatives": {
+        "about": "The 'initiatives' table stores high-level strategic objectives and metadata for initiatives in Plane.",
+        "contains": [
+            "Initiative details including name, descriptions (plain text, HTML, stripped, and binary).",
+            "Timeline information such as start and end dates.",
+            "State of the initiative and logo properties stored as JSON.",
+            "References to the lead, creator, updater, and workspace."
+        ],
+        "does_not_contain": [
+            "Associated projects (see 'initiative_projects').",
+            "Initiative epics (see 'initiative_epics')."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "lead_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_projects": {
+        "about": "The 'initiative_projects' table links projects to initiatives in Plane.",
+        "contains": [
+            "Links between projects and initiatives.",
+            "References to the project and initiative."
+        ],
+        "does_not_contain": [
+            "Project details.",
+            "Initiative details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "initiative_id": "initiatives(id)",
+                "project_id": "projects(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_epics": {
+        "about": "The 'initiative_epics' table links epics to initiatives in Plane.",
+        "contains": [
+            "Links between epics and initiatives.",
+            "References to the epic and initiative."
+        ],
+        "does_not_contain": [
+            "Epic details.",
+            "Initiative details."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "epic_id": "issues(id)",
+                "initiative_id": "initiatives(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_labels": {
+        "about": "The 'initiative_labels' table stores label definitions used for initiatives in Plane.",
+        "contains": [
+            "Label details including name, color, and description.",
+            "References to the workspace and users who created or updated the label."
+        ],
+        "does_not_contain": [
+            "Links between initiatives and labels (this relationship no longer exists here).",
+            "Label usage mapping across initiatives."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_links": {
+        "about": "The 'initiative_links' table stores external links attached to initiatives in Plane.",
+        "contains": [
+            "URLs and metadata for links associated with initiatives.",
+            "References to the initiative and workspace."
+        ],
+        "does_not_contain": [
+            "Initiative details.",
+            "Link previews."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "created_by_id": "users(id)",
+                "initiative_id": "initiatives(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_comments": {
+        "about": "The 'initiative_comments' table stores comments related to initiatives in Plane.",
+        "contains": [
+            "Comment content in multiple formats (plain text, HTML, JSON).",
+            "Metadata such as access level, external source, and edit timestamps.",
+            "References to the initiative and comment author."
+        ],
+        "does_not_contain": [
+            "Initiative details.",
+            "Comment attachments."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "initiative_id": "initiatives(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    },
+    "initiative_activities": {
+        "about": "The 'initiative_activities' table records changes and actions performed on initiatives in Plane.",
+        "contains": [
+            "Activity details such as verb, field changes, old/new values, and comments.",
+            "References to the initiative, actor, and related comment (if any)."
+        ],
+        "does_not_contain": [
+            "Initiative details.",
+            "Activity attachments."
+        ],
+        "relationships": {
+            "foreign_keys": {
+                "actor_id": "users(id)",
+                "created_by_id": "users(id)",
+                "initiative_id": "initiatives(id)",
+                "initiative_comment_id": "initiative_comments(id)",
+                "updated_by_id": "users(id)",
+                "workspace_id": "workspaces(id)"
+            }
+        }
+    }
+}

@@ -1,0 +1,204 @@
+"use client";
+
+import React from "react";
+import { observer } from "mobx-react";
+import { useParams, useRouter } from "next/navigation";
+import { ArrowRight, Crown, Info } from "lucide-react";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { TUserApplication } from "@plane/types";
+import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/types";
+import { cn, Tooltip } from "@plane/ui";
+import { useUserPermissions } from "@/hooks/store/user";
+import { IMPORTERS_LIST } from "@/plane-web/components/importers";
+import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { OAuthService } from "@/plane-web/services/marketplace/oauth.service";
+import { AppTileLogo } from "./tile-logo";
+
+// display app details like name, logo, description
+// button and more options to edit, delete, publish
+const oauthService = new OAuthService();
+
+type AppTileProps = {
+  app: TUserApplication;
+};
+
+export const AppTile: React.FC<AppTileProps> = observer((props) => {
+  const { app } = props;
+  const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const { allowPermissions } = useUserPermissions();
+
+  // if app is internal check for it's feature flag
+  const isAppDefault = app.is_default || false;
+
+  // derived values
+  const showConfigureButton = app.is_default;
+  const showInstallButton = app.setup_url && (!app.is_installed || !app.is_default);
+  const showOptionsButton =
+    (app.is_default &&
+      app.is_owned &&
+      allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE)) ||
+    (!app.is_default &&
+      (app.is_owned ||
+        (allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE) && app.is_installed)));
+  const isNotSupported = app.is_not_supported || false;
+  const isSelfManaged = subscriptionDetail?.is_self_managed || false;
+  const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
+  const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
+  const isFeatureFlagEnabled = useFlag(
+    workspaceSlug?.toString() || "",
+    E_FEATURE_FLAGS[`${convertAppSlugToIntegrationKey(app.slug)}_INTEGRATION` as keyof typeof E_FEATURE_FLAGS]
+  );
+
+  const handleConfigure = () => {
+    if (isAppDefault) {
+      router.push(`/${workspaceSlug}/settings/integrations/${app.slug}`);
+    } else {
+      if (!app.configuration_url) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: t("workspace_settings.settings.applications.invalid_configuration_url_error"),
+        });
+        return;
+      }
+      window.open(app.configuration_url || "", "_blank");
+    }
+  };
+
+  const handleInstall = () => {
+    if (app.setup_url) {
+      window.open(app.setup_url || "", "_blank");
+    } else {
+      const redirectUri = app.redirect_uris?.split(" ")[0];
+      if (redirectUri && app.client_id) {
+        const authorizationUrl = oauthService.getAuthorizationUrl({
+          client_id: app.client_id,
+          redirect_uri: redirectUri,
+          response_type: "code",
+          scope: "read write",
+          workspace_slug: workspaceSlug?.toString(),
+        });
+        window.location.assign(authorizationUrl);
+      } else {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("workspace_settings.settings.applications.invalid_redirect_uris_error"),
+        });
+      }
+    }
+  };
+
+  // for default apps, if the feature flag is not enabled, don't show the tile, or
+  // if the app is an importer, don't show the tile, or if the app doesn't have a setup url and is not owned or is not default
+  if (
+    (isAppDefault && !isFeatureFlagEnabled) ||
+    importersSlug.includes(app.slug) ||
+    (!app.setup_url && !isAppDefault && !app.is_owned)
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col items-start justify-between border border-custom-border-100 p-4 rounded-md gap-2 h-full">
+      <div className="flex flex-col space-y-1 flex-1 w-full">
+        <div className="flex  gap-2 justify-between w-full">
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-1 justify-between">
+              <div className="rounded-md size-12 justify-center items-center flex overflow-hidden w-10 h-10 border border-custom-border-100">
+                <AppTileLogo app={app} />
+              </div>
+              {(!isFreePlan || app.is_owned) && (
+                <div className="flex gap-1 items-center h-fit">
+                  {/* Installed Badge */}
+                  {app.is_installed && !app.is_default && (
+                    <div className="px-2  text-xs font-medium bg-toast-border-success text-toast-text-success rounded-full h-fit">
+                      {t("workspace_settings.settings.applications.installed")}
+                    </div>
+                  )}
+                  {/* Internal Badge */}
+                  {app.is_owned && (
+                    <div className="px-2  text-xs font-medium text-custom-text-300 bg-custom-background-80 rounded-full h-fit">
+                      {t("workspace_settings.settings.applications.internal")}
+                    </div>
+                  )}
+                  {/* Three Dots Menu */}
+                  {showOptionsButton && (
+                    <div className="size-5">
+                      <ApplicationTileMenuOptions app={app} />{" "}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="text-lg font-medium">{app.name}</div>
+          </div>
+        </div>
+
+        <div className="text-sm text-custom-text-200 flex-1 line-clamp-2">{t(app.short_description)}</div>
+      </div>
+
+      <div className="flex items-center space-x-1 mt-3">
+        {isFreePlan && !app.is_owned ? (
+          <div
+            className="cursor-pointer flex items-center gap-1 text-sm font-medium text-custom-primary-200"
+            onClick={() => togglePaidPlanModal(true)}
+          >
+            <Crown className="h-3.5 w-3.5" />
+            <div className="mt-1">{t("common.upgrade")}</div>
+          </div>
+        ) : (
+          <>
+            {showInstallButton && (
+              <Button
+                size="sm"
+                variant={app.is_installed ? "link-neutral" : "neutral-primary"}
+                className={cn(app.is_installed && "p-0 hover:underline font-semibold text-custom-primary-200")}
+                onClick={handleInstall}
+              >
+                {app.is_installed
+                  ? t("workspace_settings.settings.applications.go_to_app")
+                  : t("workspace_settings.settings.applications.install")}
+              </Button>
+            )}
+
+            {showConfigureButton &&
+              (isNotSupported ? (
+                <Tooltip
+                  tooltipContent={
+                    isSelfManaged
+                      ? t("integrations.not_configured_message_admin", { name: app.name })
+                      : t("integrations.not_configured_message_support", {
+                          name: app.name,
+                        })
+                  }
+                >
+                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
+                    <Info size={12} />
+                    <div className="text-xs">{t("integrations.not_configured")}</div>
+                  </div>
+                </Tooltip>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="link-neutral"
+                  onClick={handleConfigure}
+                  className="p-0 hover:underline font-semibold"
+                  appendIcon={<ArrowRight size={12} />}
+                >
+                  {t("workspace_settings.settings.applications.configure")}
+                </Button>
+              ))}
+          </>
+        )}
+      </div>
+    </div>
+  );
+});

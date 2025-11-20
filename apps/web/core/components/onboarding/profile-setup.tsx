@@ -432,7 +432,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border-[0.5px] border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-[0.5px] border-custom-border-100 pr-12 placeholder:text-custom-text-400"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                             autoComplete="on"
@@ -475,7 +475,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-custom-border-100 pr-12 placeholder:text-custom-text-400"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff
@@ -521,7 +521,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
                             value === userRole ? "border-custom-primary-100" : "border-custom-border-300"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userRole)}
@@ -552,7 +552,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_DOMAIN.map((userDomain) => (
                         <div
                           key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
                             value === userDomain ? "border-custom-primary-100" : "border-custom-border-300"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userDomain)}

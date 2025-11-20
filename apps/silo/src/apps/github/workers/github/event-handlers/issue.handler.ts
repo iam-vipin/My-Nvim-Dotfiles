@@ -201,8 +201,11 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
       }
     }
 
-    // only update issue state if action is "opened" or "closed" or "reopened"
-    if (![IssueWebhookActions.OPENED, IssueWebhookActions.CLOSED, IssueWebhookActions.REOPENED].includes(action)) {
+    // only update issue state if action is "opened" or "closed" or "reopened" on existing issue
+    if (
+      ![IssueWebhookActions.OPENED, IssueWebhookActions.CLOSED, IssueWebhookActions.REOPENED].includes(action) &&
+      issue
+    ) {
       delete planeIssue["state"];
     }
 

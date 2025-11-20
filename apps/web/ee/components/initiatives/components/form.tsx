@@ -58,7 +58,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const {
     initiative: { getInitiativesLabels, createInitiativeLabel },
   } = useInitiatives();
@@ -195,7 +195,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             try {
               const { asset_id } = await uploadEditorAsset({
                 blockId,
-                workspaceSlug: workspaceSlug.toString(),
+                workspaceSlug: workspaceSlug,
                 data: {
                   entity_identifier: initiativeDetail?.id ?? "",
                   entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
@@ -206,6 +206,20 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             } catch (error) {
               console.log("Error in uploading initiative asset:", error);
               throw new Error("Asset upload failed. Please try again later.");
+            }
+          }}
+          duplicateFile={async (assetId: string) => {
+            try {
+              const { asset_id } = await duplicateEditorAsset({
+                assetId,
+                entityId: initiativeDetail?.id,
+                entityType: EFileAssetType.INITIATIVE_DESCRIPTION,
+                workspaceSlug: workspaceSlug,
+              });
+              return asset_id;
+            } catch (error) {
+              console.log("Error in duplicating initiative asset:", error);
+              throw new Error("Asset duplication failed. Please try again later.");
             }
           }}
         />

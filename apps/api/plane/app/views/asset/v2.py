@@ -990,6 +990,22 @@ class DuplicateAssetEndpoint(BaseAPIView):
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
 
+        if entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
+            return {"draft_issue_id": entity_id}
+
+        if entity_type in (
+            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_REQUEST_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.MILESTONE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
+        ):
+            return {"entity_identifier": entity_id}
         return {}
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")

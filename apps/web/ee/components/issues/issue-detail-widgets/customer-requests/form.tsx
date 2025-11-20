@@ -65,7 +65,7 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
     toggleRequestSourceModal,
   } = useCustomers();
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
@@ -302,6 +302,19 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
                           return asset_id;
                         } catch (error) {
                           throw new Error("Asset upload failed. Please try again later.");
+                        }
+                      }}
+                      duplicateFile={async (assetId: string) => {
+                        try {
+                          const { asset_id } = await duplicateEditorAsset({
+                            assetId,
+                            entityId: data?.id,
+                            entityType: EFileAssetType.CUSTOMER_REQUEST_DESCRIPTION,
+                            workspaceSlug,
+                          });
+                          return asset_id;
+                        } catch (error) {
+                          throw new Error("Asset duplication failed. Please try again later.");
                         }
                       }}
                     />

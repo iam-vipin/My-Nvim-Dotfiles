@@ -43,7 +43,7 @@ function TeamspacePageDetailsPage({ params }: Route.ComponentProps) {
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const { id, name, updateDescription } = page ?? {};
@@ -110,11 +110,20 @@ function TeamspacePageDetailsPage({ params }: Route.ComponentProps) {
           });
           return asset_id;
         },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id,
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            workspaceSlug,
+          });
+          return asset_id;
+        },
         workspaceId,
         workspaceSlug,
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
+    [duplicateEditorAsset, getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(

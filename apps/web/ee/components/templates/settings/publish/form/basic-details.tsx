@@ -150,6 +150,7 @@ export const TemplateBasicDetails = observer(
                 containerClassName="min-h-[240px] md:min-h-[120px] border-[0.5px] py-2 border-custom-border-200 rounded-md"
                 disabledExtensions={["image", "issue-embed", "attachments"]}
                 uploadFile={() => Promise.resolve("")}
+                duplicateFile={() => Promise.resolve("")}
               />
             )}
           />

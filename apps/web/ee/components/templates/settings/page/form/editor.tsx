@@ -23,7 +23,7 @@ type Props = {
 export const PageTemplateEditor = observer((props: Props) => {
   const { workspaceSlug, projectId, templateId, initialValue, onChange } = props;
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = useMemo(
     () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : ""),
@@ -46,9 +46,23 @@ export const PageTemplateEditor = observer((props: Props) => {
             entity_identifier: templateId ?? "",
             entity_type: EFileAssetType.PAGE_TEMPLATE_DESCRIPTION,
           },
-          workspaceSlug: workspaceSlug?.toString() ?? "",
+          workspaceSlug: workspaceSlug,
         });
         return asset_id;
+      }}
+      duplicateFile={async (assetId: string) => {
+        try {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: templateId ?? "",
+            entityType: EFileAssetType.PAGE_TEMPLATE_DESCRIPTION,
+            workspaceSlug: workspaceSlug,
+          });
+          return asset_id;
+        } catch (error) {
+          console.log("Error in duplicating page template asset:", error);
+          throw new Error("Asset duplication failed. Please try again later.");
+        }
       }}
       searchMentionCallback={async (payload: TSearchEntityRequestPayload) =>
         await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {

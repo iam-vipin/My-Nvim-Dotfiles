@@ -35,7 +35,7 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
   const { t } = useTranslation();
   // store hooks
   const { getTeamspaceMemberIds, updateTeamspaceNameDescriptionLoader, updateTeamspace } = useTeamspaces();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId) ?? [];
   // use editor mention search
@@ -161,6 +161,20 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
                 } catch (error) {
                   console.log("Error in uploading work item asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityId: teamspaceId,
+                    entityType: EFileAssetType.TEAM_SPACE_DESCRIPTION,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in duplicating teamspace asset:", error);
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
               containerClassName={containerClassName}

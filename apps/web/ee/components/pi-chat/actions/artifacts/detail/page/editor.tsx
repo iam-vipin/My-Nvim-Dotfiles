@@ -38,6 +38,7 @@ export const PagePreviewEditor = observer((props: Props) => {
       onChange={onChange}
       containerClassName="min-h-[120px] border-none pl-4 -ml-4"
       uploadFile={async () => ""}
+      duplicateFile={async () => ""}
       searchMentionCallback={async (payload: TSearchEntityRequestPayload) =>
         await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
           ...payload,

@@ -11,6 +11,8 @@ export const getAdditionalProjectLevelFiltersHOCProps: TGetAdditionalPropsForPro
   const isWorkItemTypeEnabled = store.issueTypes.isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
   const isEpicEnabled = store.issueTypes.isEpicEnabledForProject(workspaceSlug, projectId);
   const projectWorkItemTypeIds = store.issueTypes.getProjectIssueTypeIds(projectId);
+  const projectMilestoneIds = store.milestone.getProjectMilestoneIds(projectId);
+  const isMilestonesFeatureEnabled = store.milestone.isMilestonesEnabled(workspaceSlug, projectId);
   let customPropertyIds: string[] | undefined = undefined;
 
   // Get custom property IDs based on entity type and feature flags
@@ -28,6 +30,7 @@ export const getAdditionalProjectLevelFiltersHOCProps: TGetAdditionalPropsForPro
   return {
     ...getCoreAdditionalProjectLevelFiltersHOCProps({ entityType, workspaceSlug, projectId }),
     workItemTypeIds: isWorkItemTypeEnabled ? projectWorkItemTypeIds : undefined,
+    milestoneIds: isMilestonesFeatureEnabled ? projectMilestoneIds : undefined,
     customPropertyIds: customPropertyIds,
   };
 };

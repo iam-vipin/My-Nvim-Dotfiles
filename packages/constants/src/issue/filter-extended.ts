@@ -7,7 +7,7 @@ import {
 import type { TActivityFilters, TFiltersLayoutOptions, TIssueFiltersToDisplayByPageType } from "./filter";
 import { EActivityFilterType } from "./filter";
 
-export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone"] as const;
+export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone_id"] as const;
 
 export const ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS = ["milestone"] as const;
 

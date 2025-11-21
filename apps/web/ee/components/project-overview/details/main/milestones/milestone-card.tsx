@@ -60,9 +60,11 @@ export const MilestoneCard: FC<Props> = observer((props) => {
   return (
     <Card className="!shadow-none p-4">
       <div className="flex justify-between items-center">
-        <div className="flex gap-2 items-center">
-          <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-4" />
-          <span className="text-base text-custom-text-100 font-medium">{milestone.title}</span>
+        <div className="flex gap-2 items-center overflow-hidden">
+          <div className="size-4">
+            <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-4" />
+          </div>
+          <span className="text-base text-custom-text-100 font-medium truncate flex-shrink">{milestone.title}</span>
         </div>
         <div className="flex items-center gap-2">
           <DateDropdown

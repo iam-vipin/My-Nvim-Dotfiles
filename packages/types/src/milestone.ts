@@ -17,3 +17,20 @@ export interface TMilestone {
   updated_by: string | null;
   progress: TMilestoneProgress;
 }
+
+export interface IMilestoneInstance {
+  // observables
+  id: string;
+  title: string;
+  description?: TDescription;
+  target_date: string | null;
+  project_id: string;
+  workspace_id: string;
+  progress: TMilestoneProgress;
+  work_item_ids: string[];
+  // computed
+  progress_percentage: number;
+  // actions
+  updateProgress: (progress: TMilestoneProgress) => void;
+  update: (data: Partial<TMilestone>) => void;
+}

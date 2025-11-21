@@ -7,6 +7,7 @@ import { CustomerActivity } from "./customer-activity";
 import { CustomerRequestActivity } from "./customer-request-activity";
 import { EpicActivity } from "./epic-activity-root";
 import { IssueEstimateTimeActivity } from "./estimate-time-activity";
+import { MilestoneActivity } from "./milestone-activity-root";
 
 export const AdditionalActivityRoot: FC<TAdditionalActivityRoot> = (props) => {
   const { field, activityId, ends } = props;
@@ -22,6 +23,8 @@ export const AdditionalActivityRoot: FC<TAdditionalActivityRoot> = (props) => {
       return <WorkItemConvertActivity activityId={activityId} ends={ends} />;
     case "epic":
       return <EpicActivity activityId={activityId} ends={ends} />;
+    case "milestones":
+      return <MilestoneActivity activityId={activityId} ends={ends} />;
     default:
       return <></>;
   }

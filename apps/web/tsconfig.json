@@ -9,7 +9,8 @@
       "@/*": ["core/*"],
       "@/helpers/*": ["helpers/*"],
       "@/styles/*": ["styles/*"],
-      "@/plane-web/*": ["ce/*"]
+      "@/plane-web/*": ["ee/*"],
+      "@/ce/*": ["ce/*"]
     },
     "strictNullChecks": true
   },

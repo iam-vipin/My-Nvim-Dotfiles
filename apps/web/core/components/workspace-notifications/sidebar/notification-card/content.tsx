@@ -9,6 +9,12 @@ import {
 } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+import {
+  renderAdditionalAction,
+  renderAdditionalValue,
+  shouldShowConnector,
+  shouldRender,
+} from "@/plane-web/components/workspace-notifications/notification-card/content";
 
 export function NotificationContent({
   notification,
@@ -63,8 +69,7 @@ export function NotificationContent({
     }
     if (notificationField === "None") return null;
 
-    const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
-    return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;
+    return renderAdditionalAction(notificationField, verb);
   };
 
   const renderValue = () => {
@@ -81,27 +86,16 @@ export function NotificationContent({
       return newValue !== ""
         ? convertMinutesToHoursMinutesString(Number(newValue))
         : convertMinutesToHoursMinutesString(Number(oldValue));
-    return newValue;
+    return renderAdditionalValue(notificationField, newValue, oldValue);
   };
-
-  const shouldShowConnector = ![
-    "comment",
-    "archived_at",
-    "None",
-    "assignees",
-    "labels",
-    "start_date",
-    "target_date",
-    "parent",
-  ].includes(notificationField || "");
 
   return (
     <>
       {renderTriggerName()}
       <span className="text-custom-text-300">{renderAction()} </span>
-      {verb !== "deleted" && (
+      {shouldRender(notificationField, verb) && (
         <>
-          {shouldShowConnector && <span className="text-custom-text-300">to </span>}
+          {shouldShowConnector(notificationField) && <span className="text-custom-text-300">to </span>}
           <span className="text-custom-text-100 font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">

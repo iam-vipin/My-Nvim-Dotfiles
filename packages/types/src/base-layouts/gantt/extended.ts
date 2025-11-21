@@ -1,1 +1,3 @@
-export const EXTENDED_GANTT_TIMELINE_TYPE = {} as const;
+export const EXTENDED_GANTT_TIMELINE_TYPE = {
+  INITIATIVE: "INITIATIVE",
+} as const;

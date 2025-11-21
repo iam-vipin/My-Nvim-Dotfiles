@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/core";
+// local imports
 import { getCommentSelector } from "../extensions/comments";
 import type { TExtendedEditorRefApi } from "../types";
 

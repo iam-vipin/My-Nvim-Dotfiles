@@ -122,6 +122,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug,
+    projectId,
     storeType,
   });
   // parse content

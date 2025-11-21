@@ -32,10 +32,10 @@ class PageEmbedEndpoint(BaseAPIView):
                     {"error": "Project page not found"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-        elif request.query_params.get("team_space_id") is not None:
-            team_space_id = request.query_params.get("team_space_id")
+        elif request.query_params.get("teamspace_id") is not None:
+            teamspace_id = request.query_params.get("teamspace_id")
             if not TeamspacePage.objects.filter(
-                page_id=page_id, workspace__slug=slug, team_space_id=team_space_id
+                page_id=page_id, workspace__slug=slug, team_space_id=teamspace_id
             ).exists():
                 return Response(
                     {"error": "Teamspace page not found"},
@@ -113,10 +113,10 @@ class PageMentionEndpoint(BaseAPIView):
                     {"error": "Project page not found"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-        elif request.query_params.get("team_space_id") is not None:
-            team_space_id = request.query_params.get("team_space_id")
+        elif request.query_params.get("teamspace_id") is not None:
+            teamspace_id = request.query_params.get("teamspace_id")
             if not TeamspacePage.objects.filter(
-                page_id=page_id, workspace__slug=slug, team_space_id=team_space_id
+                page_id=page_id, workspace__slug=slug, team_space_id=teamspace_id
             ).exists():
                 return Response(
                     {"error": "Teamspace page not found"},

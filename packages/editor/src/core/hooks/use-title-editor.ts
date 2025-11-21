@@ -84,7 +84,7 @@ export const useTitleEditor = (props: TUseTitleEditorProps) => {
       editor
         ?.chain()
         .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
-        .setMeta("intentionalDeletion", true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
         .clearContent(emitUpdate)
         .run();
     },

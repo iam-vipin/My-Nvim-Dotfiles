@@ -24,23 +24,27 @@ export const MovePageModalListItem: React.FC<Props> = (props) => {
         cn(
           "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-1 text-custom-text-200 transition-colors",
           {
-            "bg-custom-background-80": active,
-            "text-custom-text-100": selected,
+            "bg-custom-background-80": active && !selected,
+            "text-custom-text-100 bg-custom-primary-100/20": selected,
+            "bg-custom-primary-100/30": selected && active,
           }
         )
       }
     >
       {({ selected }) => (
-        <div className="flex items-center gap-2 truncate">
-          <span
-            className={cn("shrink-0 size-6 grid place-items-center rounded", {
-              "bg-custom-background-80": !selected,
-            })}
-          >
-            {selected ? <Check className="size-4 text-custom-text-100" /> : item.logo}
-          </span>
-          <p className="text-sm truncate">{item.name}</p>
-        </div>
+        <>
+          <div className="flex items-center gap-2 truncate">
+            <span
+              className={cn("shrink-0 size-6 grid place-items-center rounded", {
+                "bg-custom-background-80": !selected,
+              })}
+            >
+              {item.logo}
+            </span>
+            <p className="text-sm truncate">{item.name}</p>
+          </div>
+          {selected && <Check className="shrink-0 size-4 text-custom-text-100" />}
+        </>
       )}
     </Combobox.Option>
   );

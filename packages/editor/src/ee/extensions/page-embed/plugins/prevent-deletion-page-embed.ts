@@ -3,6 +3,7 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { EditorState } from "@tiptap/pm/state";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import type { TPage } from "@plane/types";
+import { CORE_EDITOR_META } from "@/constants/meta";
 
 const pluginKey = new PluginKey("prevent-page-embed-deletion");
 
@@ -25,7 +26,7 @@ export const PreventPageEmbedDeletionPlugin = ({
       if (isEventFromOtherClient) {
         return true;
       }
-      if (transaction.getMeta("intentionalDeletion")) {
+      if (transaction.getMeta(CORE_EDITOR_META.INTENTIONAL_DELETION)) {
         return true;
       }
 

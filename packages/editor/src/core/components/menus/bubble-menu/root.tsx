@@ -25,6 +25,8 @@ import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
+// plane editor imports
+import { BubbleMenuSelectionConversion } from "@/plane-editor/components/menus/bubble-menu/selection-conversion/root";
 // types
 import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
@@ -66,11 +68,12 @@ export type EditorStateType = {
 type Props = {
   editor: Editor;
   extendedEditorProps?: IEditorPropsExtended;
-  flaggedExtensions?: TExtensions[];
+  disabledExtensions: TExtensions[];
+  flaggedExtensions: TExtensions[];
 };
 
 export const EditorBubbleMenu: FC<Props> = (props) => {
-  const { editor, extendedEditorProps, flaggedExtensions } = props;
+  const { editor, extendedEditorProps, flaggedExtensions, disabledExtensions } = props;
   // states
   const [isCommentSelectorOpen, setIsCommentSelectorOpen] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -237,6 +240,12 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
             ))}
           </div>
           <TextAlignmentSelector editor={editor} editorState={editorState} />
+          {!disabledExtensions?.includes("selection-conversion") && (
+            <BubbleMenuSelectionConversion
+              editor={editor}
+              selectionConversion={extendedEditorProps?.selectionConversion}
+            />
+          )}
         </div>
       )}
     </BubbleMenu>

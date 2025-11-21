@@ -1,4 +1,8 @@
+// plane imports
+import type { TIssue, TPartialProject } from "@plane/types";
+// plane web imports
 import type { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
+// local imports
 import type { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
 import type { AttachmentExtensionOptions } from "../extensions/attachments/types";
 import type { DrawioExtensionOptions } from "../extensions/drawio/types";
@@ -21,6 +25,16 @@ export type IEditorPropsExtended = {
   isSmoothCursorEnabled: boolean;
   logoSpinner?: React.ComponentType;
   originUrl?: string | null;
+  selectionConversion?: {
+    createWorkItemCallback: (
+      payload: Partial<Pick<TIssue, "name" | "description_html" | "parent_id">>,
+      projectId?: string
+    ) => Promise<{ id: string } | undefined>;
+    isConversionEnabled: boolean;
+    projectSelectionEnabled?: {
+      projectsList: TPartialProject[];
+    };
+  };
 };
 
 export type TExtendedEditorCommands =

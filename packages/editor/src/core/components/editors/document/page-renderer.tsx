@@ -102,6 +102,7 @@ export function PageRenderer(props: Props) {
               <div>
                 {bubbleMenuEnabled && (
                   <EditorBubbleMenu
+                    disabledExtensions={disabledExtensions}
                     flaggedExtensions={flaggedExtensions}
                     editor={editor}
                     extendedEditorProps={extendedEditorProps}

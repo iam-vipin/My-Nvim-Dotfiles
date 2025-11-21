@@ -29,6 +29,7 @@ export * from "./discord-icon";
 export * from "./display-properties";
 export * from "./done-icon";
 export * from "./dropdown-icon";
+export * from "./editor";
 export * from "./empty-page-icon";
 export * from "./favorite-folder-icon";
 export * from "./filled-check";

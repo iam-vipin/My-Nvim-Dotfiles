@@ -12,7 +12,6 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
@@ -29,7 +28,8 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug: workspaceSlug ?? "",
+    projectId,
     storeType,
   });
 

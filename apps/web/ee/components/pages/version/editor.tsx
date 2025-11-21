@@ -17,14 +17,15 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, versionDetails } = props;
   // navigation
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
   // editor flagging
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug: workspaceSlug ?? "",
+    projectId,
   });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();

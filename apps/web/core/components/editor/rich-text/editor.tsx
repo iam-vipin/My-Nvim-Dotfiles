@@ -57,7 +57,8 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
   } = useUserProfile();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({

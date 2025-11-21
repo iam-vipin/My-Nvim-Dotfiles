@@ -1,7 +1,7 @@
 "use client";
 
-// layouts
 import { Outlet } from "react-router";
+import useSWR from "swr";
 // components
 import { EUserPermissions } from "@plane/constants";
 // wrappers
@@ -10,6 +10,7 @@ import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { WikiAppPowerKProvider } from "@/plane-web/components/command-palette/wiki/provider";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
 import { WikiUpgradeScreen } from "@/plane-web/components/wiki/upgrade-screen";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import type { Route } from "./+types/layout";
 import { PagesAppSidebar } from "./_sidebar";
@@ -17,6 +18,13 @@ import { PagesAppSidebar } from "./_sidebar";
 export default function WikiLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
+  // store hooks
+  const { fetchPagesSummary } = usePageStore(EPageStoreType.WORKSPACE);
+  // fetch wiki summary
+  useSWR(workspaceSlug ? `WORKSPACE_PAGES_SUMMARY_${workspaceSlug}` : null, workspaceSlug ? fetchPagesSummary : null, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
   return (
     <>

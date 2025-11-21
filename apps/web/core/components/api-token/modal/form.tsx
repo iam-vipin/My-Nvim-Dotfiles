@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { Calendar } from "lucide-react";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CalendarLayoutIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IApiToken } from "@plane/types";
 // ui
@@ -183,7 +183,7 @@ export function CreateApiTokenForm(props: Props) {
                             }
                           )}
                         >
-                          <Calendar className="h-3 w-3" />
+                          <CalendarLayoutIcon className="h-3 w-3" />
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
@@ -211,7 +211,7 @@ export function CreateApiTokenForm(props: Props) {
                     value={customDate}
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
-                    icon={<Calendar className="h-3 w-3" />}
+                    icon={<CalendarLayoutIcon className="h-3 w-3" />}
                     buttonVariant="border-with-text"
                     placeholder="Set date"
                     disabled={neverExpires}

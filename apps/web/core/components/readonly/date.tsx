@@ -1,9 +1,9 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Calendar } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { CalendarLayoutIcon } from "@plane/propel/icons";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 
 export type TReadonlyDateProps = {
@@ -22,7 +22,7 @@ export const ReadonlyDate = observer(function ReadonlyDate(props: TReadonlyDateP
 
   return (
     <div className={cn("flex items-center gap-1 text-sm", className)}>
-      {!hideIcon && <Calendar className="size-4 flex-shrink-0" />}
+      {!hideIcon && <CalendarLayoutIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{formattedDate ?? placeholder ?? t("common.none")}</span>
     </div>
   );

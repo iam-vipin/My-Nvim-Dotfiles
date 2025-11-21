@@ -159,14 +159,15 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
     await createInboxIssue(workspaceSlug, projectId, payload)
       .then(async (res) => {
+        if (!res?.issue) return;
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.issue?.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
@@ -175,7 +176,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
         captureSuccess({
           eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
-            id: res?.issue?.id,
+            id: res.issue?.id,
           },
         });
         setToast({

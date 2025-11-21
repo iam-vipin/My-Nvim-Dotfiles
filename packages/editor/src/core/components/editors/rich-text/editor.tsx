@@ -18,7 +18,6 @@ function RichTextEditor(props: IRichTextEditorProps) {
     fileHandler,
     flaggedExtensions,
     extendedEditorProps,
-    workItemIdentifier,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -55,7 +54,7 @@ function RichTextEditor(props: IRichTextEditorProps) {
             editor={editor}
             flaggedExtensions={flaggedExtensions}
             disabledExtensions={disabledExtensions}
-            workItemIdentifier={workItemIdentifier}
+            originUrl={extendedEditorProps?.originUrl}
           />
         </>
       )}

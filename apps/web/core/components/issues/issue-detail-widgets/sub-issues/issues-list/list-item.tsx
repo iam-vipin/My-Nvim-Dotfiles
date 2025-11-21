@@ -21,6 +21,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
+// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
 
@@ -70,8 +72,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { fetchEpicAnalytics } = useEpicAnalytics();
   const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
+  const parentIssue = getIssueById(parentIssueId);
 
   // derived values
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
@@ -212,9 +216,13 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={() => {
+                    onClick={async () => {
                       if (issue.project_id)
-                        subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                        await subIssueOperations
+                          .removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id)
+                          .then(() => {
+                            if (parentIssue?.is_epic) fetchEpicAnalytics(workspaceSlug, projectId, parentIssue.id);
+                          });
                     }}
                   >
                     <div className="flex items-center gap-2">

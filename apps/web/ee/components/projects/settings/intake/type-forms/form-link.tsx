@@ -24,7 +24,7 @@ export const IntakeFormLink: React.FC<Props> = observer((props: Props) => {
   };
 
   const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
-  const publishLink = `${SPACE_APP_URL}/intake/custom/${anchor}`;
+  const publishLink = `${SPACE_APP_URL}/intake/forms/${anchor}`;
 
   return (
     <div className="flex gap-2 h-[30px] w-full">

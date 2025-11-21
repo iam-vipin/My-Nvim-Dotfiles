@@ -45,8 +45,9 @@ function RichTextEditor(props: IRichTextEditorProps) {
           {editor && bubbleMenuEnabled && (
             <EditorBubbleMenu
               disabledExtensions={disabledExtensions}
-              flaggedExtensions={flaggedExtensions}
               editor={editor}
+              extendedEditorProps={extendedEditorProps}
+              flaggedExtensions={flaggedExtensions}
             />
           )}
           <BlockMenu

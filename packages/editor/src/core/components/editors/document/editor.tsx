@@ -89,14 +89,14 @@ function DocumentEditor(props: IDocumentEditorProps) {
 
   return (
     <PageRenderer
-      extendedEditorProps={extendedEditorProps}
       bubbleMenuEnabled={bubbleMenuEnabled}
       disabledExtensions={disabledExtensions}
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
-      flaggedExtensions={flaggedExtensions}
+      extendedEditorProps={extendedEditorProps}
       id={id}
+      flaggedExtensions={flaggedExtensions}
       isTouchDevice={!!isTouchDevice}
     />
   );

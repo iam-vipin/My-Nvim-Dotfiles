@@ -18,19 +18,19 @@ import type {
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
+  disabledExtensions: IEditorProps["disabledExtensions"];
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  extendedEditorProps?: IEditorPropsExtended;
-  flaggedExtensions: IEditorProps["flaggedExtensions"];
-  disabledExtensions: IEditorProps["disabledExtensions"];
   provider?: HocuspocusProvider;
   state?: TCollabValue["state"];
 };
@@ -39,19 +39,19 @@ export function PageRenderer(props: Props) {
   const {
     aiHandler,
     bubbleMenuEnabled,
+    disabledExtensions,
     displayConfig,
     documentLoaderClassName,
     editor,
     editorContainerClassName,
-    extendedDocumentEditorProps,
-    id,
-    isLoading,
-    isTouchDevice,
-    tabIndex,
-    titleEditor,
     extendedEditorProps,
     flaggedExtensions,
-    disabledExtensions,
+    extendedDocumentEditorProps,
+    isLoading,
+    isTouchDevice,
+    id,
+    tabIndex,
+    titleEditor,
     provider,
     state,
   } = props;
@@ -103,9 +103,9 @@ export function PageRenderer(props: Props) {
                 {bubbleMenuEnabled && (
                   <EditorBubbleMenu
                     disabledExtensions={disabledExtensions}
-                    flaggedExtensions={flaggedExtensions}
                     editor={editor}
                     extendedEditorProps={extendedEditorProps}
+                    flaggedExtensions={flaggedExtensions}
                   />
                 )}
                 <BlockMenu

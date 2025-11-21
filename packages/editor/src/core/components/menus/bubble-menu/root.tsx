@@ -66,9 +66,9 @@ export type EditorStateType = {
 };
 
 type Props = {
-  editor: Editor;
-  extendedEditorProps?: IEditorPropsExtended;
   disabledExtensions: TExtensions[];
+  editor: Editor;
+  extendedEditorProps: IEditorPropsExtended;
   flaggedExtensions: TExtensions[];
 };
 

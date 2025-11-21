@@ -3,10 +3,18 @@ export type TProjectLinkEditableFields = {
   url: string;
 };
 
+export type TProjectLinkMetadata = {
+  title?: string;
+  favicon?: string;
+  favicon_url?: string;
+  url?: string;
+  error?: string;
+};
+
 export type TProjectLink = TProjectLinkEditableFields & {
   created_by_id: string;
   id: string;
-  metadata: any;
+  metadata: TProjectLinkMetadata;
   project_id: string;
 
   //need

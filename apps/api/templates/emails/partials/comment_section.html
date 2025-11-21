@@ -1,0 +1,58 @@
+{% if comments.0 %} <!-- Comments outer update Box -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 15px;">
+  <tr>
+    <td>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAFAFA; border-radius: 8px; border: 1px solid #FAFAFA;">
+        <tr>
+          <td style="padding: 20px;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td style="color: #1D1F20; font-size: 16px; font-family: 'Inter', sans-serif; font-weight: 600; line-height: 24px; padding-bottom: 12px;">
+                  Comment
+                </td>
+              </tr>
+            </table>
+            <!-- Comments -->
+            {% for comment in comments %}
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 15px;">
+              <tr>
+                <td valign="top" style="width: 30px; padding-bottom: 10px;">
+                  {% if comment.actor_detail.avatar_url %}
+                    <img src="{{ comment.actor_detail.avatar_url }}" width="25" height="25" border="0" style="border-radius: 50%; display: block;" />
+                  {% else %}
+                    <table border="0" cellpadding="0" cellspacing="0" style="background-color: #4f3422; border-radius: 50%; overflow: hidden; max-height: 28px; height: 28px; max-width: 28px; width: 28px;">
+                      <tr>
+                        <td style="text-align: center; padding: 0; height: 28px; width: 28px; vertical-align: middle;">
+                          <span style="color: white; font-weight: 500; font-size: 13px; line-height: 28px; display: inline-block;">{{ comment.actor_detail.first_name.0 }}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  {% endif %}
+                </td>
+                <td valign="top" style="padding-left: 8px; padding-bottom: 10px;">
+                  <p style="font-weight: 500; font-size: 0.8rem; color: #1c2024; margin: 0; padding: 0; font-family: 'Inter', sans-serif;">{{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}</p>
+                </td>
+              </tr>
+              {% for actor_comment in comment.actor_comments.new_value %}
+              <tr>
+                <td></td>
+                <td style="padding-left: 33px; padding-top: 5px;">
+                  <table border="0" cellpadding="0" cellspacing="0" style="padding: 8px 12px; background-color: white; border-radius: 6px; border: 1px solid #e5e7eb; max-width: 430px; word-wrap: break-word;">
+                    <tr>
+                      <td style="font-size: 0.8rem; color: #1c2024; font-family: 'Inter', sans-serif;">
+                        <p style="margin: 0; padding: 0;">{{ actor_comment|safe }}</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% endfor %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+{% endif %}

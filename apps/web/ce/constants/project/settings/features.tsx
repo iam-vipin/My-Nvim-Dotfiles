@@ -17,7 +17,7 @@ export type TProperties = {
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";
-type TProjectOtherFeatureKeys = "is_time_tracking_enabled";
+export type TProjectOtherFeatureKeys = "is_time_tracking_enabled";
 
 type TBaseFeatureList = {
   [key in TProjectBaseFeatureKeys]: TProperties;
@@ -68,6 +68,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
+    href: "/intake",
   },
 };
 

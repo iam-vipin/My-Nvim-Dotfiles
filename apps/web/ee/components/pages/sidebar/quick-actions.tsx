@@ -42,7 +42,7 @@ export const PagesAppSidebarQuickActions = observer(() => {
               state: "SUCCESS",
             },
           });
-          const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+          const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
           router.push(pageId);
         }
       })

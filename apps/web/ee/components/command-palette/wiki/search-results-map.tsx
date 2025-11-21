@@ -15,13 +15,13 @@ export const WIKI_APP_POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<
   page: {
     icon: FileText,
     itemName: (page: IWorkspaceDefaultSearchResult) => page?.name,
-    path: (page: IWorkspaceDefaultSearchResult) => `/${page?.workspace__slug}/pages/${page?.id}`,
+    path: (page: IWorkspaceDefaultSearchResult) => `/${page?.workspace__slug}/wiki/${page?.id}`,
     title: "Pages",
   },
   workspace: {
     icon: LayoutGrid,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
-    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/pages`,
+    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/wiki`,
     title: "Workspaces",
   },
 };

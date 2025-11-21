@@ -59,13 +59,13 @@ export const pagesAppCommandGroups: TCommandGroups = {
   page: {
     icon: <PageIcon className="size-3" />,
     itemName: (page: IWorkspaceDefaultSearchResult) => page?.name,
-    path: (page: IWorkspaceDefaultSearchResult) => `/${page?.workspace__slug}/pages/${page?.id}`,
+    path: (page: IWorkspaceDefaultSearchResult) => `/${page?.workspace__slug}/wiki/${page?.id}`,
     title: "Pages",
   },
   workspace: {
     icon: <DashboardIcon className="size-3" />,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
-    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/pages`,
+    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/wiki`,
     title: "Workspaces",
   },
 };

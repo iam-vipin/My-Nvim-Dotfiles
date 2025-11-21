@@ -1,5 +1,3 @@
-import React from "react";
-// plane imports
 import { cn } from "@plane/utils";
 // components
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";

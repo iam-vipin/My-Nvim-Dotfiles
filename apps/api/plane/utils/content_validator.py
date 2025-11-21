@@ -178,7 +178,16 @@ ATTRIBUTES = {
     },
     "a": {"href", "target"},
     # editor node/tag attributes
-    "image-component": {"id", "width", "height", "aspectRatio", "aspectratio", "src", "alignment", "status"},
+    "image-component": {
+        "id",
+        "width",
+        "height",
+        "aspectRatio",
+        "aspectratio",
+        "src",
+        "alignment",
+        "status",
+    },
     "img": {
         "width",
         "height",

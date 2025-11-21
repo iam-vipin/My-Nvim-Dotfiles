@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web components
 import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";

@@ -1,4 +1,3 @@
-"use client";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";

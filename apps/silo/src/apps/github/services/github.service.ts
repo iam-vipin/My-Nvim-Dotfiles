@@ -1,5 +1,5 @@
 import type { AppAuthParams, GithubService as GithubAPIService, GithubIssueComment } from "@plane/etl/github";
-import { createGithubService, GithubApiProps } from "@plane/etl/github";
+import { createGithubService } from "@plane/etl/github";
 import type { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
 
 /**

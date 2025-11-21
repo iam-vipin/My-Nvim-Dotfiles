@@ -38,8 +38,9 @@ export default defineConfig({
     "src/domain/work-item-types/property-inputs/index.ts",
     "src/domain/intake-form/index.ts",
   ],
-  outDir: "dist",
-  format: ["esm", "cjs"],
+  format: ["esm"],
+  dts: true,
+  copy: ["src/styles"],
   exports: {
     customExports: (exports) => ({
       ...exports,
@@ -49,8 +50,5 @@ export default defineConfig({
       "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
     }),
   },
-  copy: ["src/styles"],
-  dts: true,
-  clean: true,
-  sourcemap: false,
+  platform: "neutral",
 });

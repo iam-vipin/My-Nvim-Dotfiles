@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import type { AnalyticsTab } from "@plane/types";
 import { Tabs } from "@plane/ui";
 import type { TabItem } from "@plane/ui";
 // components
@@ -48,7 +49,10 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t, isAnalyticsTabsEnabled), [isAnalyticsTabsEnabled, t]);
+  const ANALYTICS_TABS = useMemo<AnalyticsTab[]>(
+    () => getAnalyticsTabs(t, isAnalyticsTabsEnabled),
+    [t, isAnalyticsTabsEnabled]
+  );
   const tabs: TabItem[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({

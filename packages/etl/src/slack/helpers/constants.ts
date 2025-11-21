@@ -19,6 +19,18 @@ const workspaceScopes: string[] = [
 
 export const getWorkspaceAuthScopes = () => workspaceScopes.join(",");
 
-const userScopes: string[] = ["chat:write", "im:read", "im:write", "mpim:read"];
+const userScopes: string[] = ["chat:write"];
 
 export const getUserAuthScopes = () => userScopes.join(",");
+
+// These are not used in the code, but are set on the application directly
+// keeping these here for reference
+const _eventSubscriptions: string[] = [
+  "app_mention",
+  "app_uninstalled",
+  "channel_left",
+  "link_shared",
+  "message.channels",
+  "message.groups",
+  "message.mpim",
+];

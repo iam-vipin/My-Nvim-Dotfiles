@@ -26,10 +26,6 @@ class MobileSignOutAuthEndpoint(APIView):
 
             # Logout user
             logout(request)
-            return Response(
-                {"message": "User sign out successfully"}, status=status.HTTP_200_OK
-            )
+            return Response({"message": "User sign out successfully"}, status=status.HTTP_200_OK)
         except Exception:
-            return Response(
-                {"message": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"message": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)

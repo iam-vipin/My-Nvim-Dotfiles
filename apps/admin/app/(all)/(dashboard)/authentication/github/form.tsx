@@ -21,6 +21,8 @@ import type { TCopyField } from "@/components/common/copy-field";
 import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
+// local components
+import { GithubMobileForm } from "./mobile-form";
 
 type Props = {
   config: IFormattedInstanceConfiguration;
@@ -239,6 +241,9 @@ export function InstanceGithubConfigForm(props: Props) {
                   ))}
                 </div>
               </div>
+
+              {/* mobile service details */}
+              <GithubMobileForm />
             </div>
           </div>
         </div>

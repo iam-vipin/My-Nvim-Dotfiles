@@ -1,27 +1,27 @@
 export const SAMLAttributeMappingTable = () => (
-  <table className="table-auto border-collapse text-custom-text-200 text-sm">
+  <table className="table-auto border-collapse text-custom-text-200 text-sm w-full">
     <thead>
-      <tr className="text-left">
-        <th className="border-b border-r border-custom-border-300 px-4 py-1.5">IdP</th>
-        <th className="border-b border-custom-border-300 px-4 py-1.5">Plane</th>
+      <tr className="text-left border-b border-custom-border-200">
+        <th className="py-2">IdP</th>
+        <th className="py-2">Plane</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td className="border-t border-r border-custom-border-300 px-4 py-1.5">Name ID format</td>
-        <td className="border-t border-custom-border-300 px-4 py-1.5">emailAddress</td>
+      <tr className="border-b border-custom-border-200">
+        <td className="py-2">Name ID format</td>
+        <td className="py-2">emailAddress</td>
       </tr>
-      <tr>
-        <td className="border-t border-r border-custom-border-300 px-4 py-1.5">first_name</td>
-        <td className="border-t border-custom-border-300 px-4 py-1.5">user.firstName</td>
+      <tr className="border-b border-custom-border-200">
+        <td className="py-2">first_name</td>
+        <td className="py-2">user.firstName</td>
       </tr>
-      <tr>
-        <td className="border-t border-r border-custom-border-300 px-4 py-1.5">last_name</td>
-        <td className="border-t border-custom-border-300 px-4 py-1.5">user.lastName</td>
+      <tr className="border-b border-custom-border-200">
+        <td className="py-2">last_name</td>
+        <td className="py-2">user.lastName</td>
       </tr>
-      <tr>
-        <td className="border-t border-r border-custom-border-300 px-4 py-1.5">email</td>
-        <td className="border-t border-custom-border-300 px-4 py-1.5">user.email</td>
+      <tr className="border-b border-custom-border-200">
+        <td className="py-2">email</td>
+        <td className="py-2">user.email</td>
       </tr>
     </tbody>
   </table>

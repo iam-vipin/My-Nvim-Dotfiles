@@ -1,24 +1,27 @@
 # Python imports
 import os
 from datetime import datetime
+from typing import Optional
 from urllib.parse import urlencode
+
+# External imports
 import pytz
 
 # Module imports
-from plane.authentication.adapter.oauth import OauthAdapter
-from plane.license.utils.instance_value import get_configuration_value
 from plane.authentication.adapter.error import (
-    AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
 )
+from plane.authentication.adapter.oauth import OauthAdapter
 from plane.db.models import Account
+from plane.license.utils.instance_value import get_configuration_value
 
 
 class OIDCOAuthProvider(OauthAdapter):
     provider = "oidc"
     scope = "openid email profile"
 
-    def __init__(self, request, code=None, state=None):
+    def __init__(self, request, code=None, state=None, redirect_uri: Optional[str] = None):
         (
             OIDC_CLIENT_ID,
             OIDC_CLIENT_SECRET,
@@ -44,19 +47,15 @@ class OIDCOAuthProvider(OauthAdapter):
             ]
         )
 
-        if not (
-            OIDC_CLIENT_ID
-            and OIDC_CLIENT_SECRET
-            and OIDC_TOKEN_URL
-            and OIDC_USERINFO_URL
-            and OIDC_AUTHORIZE_URL
-        ):
+        if not (OIDC_CLIENT_ID and OIDC_CLIENT_SECRET and OIDC_TOKEN_URL and OIDC_USERINFO_URL and OIDC_AUTHORIZE_URL):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["OIDC_NOT_CONFIGURED"],
                 error_message="OIDC_NOT_CONFIGURED",
             )
 
-        redirect_uri = f"{request.scheme}://{request.get_host()}/auth/oidc/callback/"
+        if redirect_uri is None:
+            redirect_uri = f"{request.scheme}://{request.get_host()}/auth/oidc/callback/"
+
         url_params = {
             "client_id": OIDC_CLIENT_ID,
             "response_type": "code",
@@ -86,24 +85,18 @@ class OIDCOAuthProvider(OauthAdapter):
             "redirect_uri": self.redirect_uri,
             "grant_type": "authorization_code",
         }
-        token_response = self.get_user_token(
-            data=data, headers={"Content-Type": "application/x-www-form-urlencoded"}
-        )
+        token_response = self.get_user_token(data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
         super().set_token_data(
             {
                 "access_token": token_response.get("access_token"),
                 "refresh_token": token_response.get("refresh_token", None),
                 "access_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("expires_in"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("expires_in"), tz=pytz.utc)
                     if token_response.get("expires_in")
                     else None
                 ),
                 "refresh_token_expired_at": (
-                    datetime.fromtimestamp(
-                        token_response.get("refresh_token_expired_at"), tz=pytz.utc
-                    )
+                    datetime.fromtimestamp(token_response.get("refresh_token_expired_at"), tz=pytz.utc)
                     if token_response.get("refresh_token_expired_at")
                     else None
                 ),
@@ -130,9 +123,7 @@ class OIDCOAuthProvider(OauthAdapter):
             [{"key": "OIDC_LOGOUT_URL", "default": os.environ.get("OIDC_LOGOUT_URL")}]
         )
 
-        account = Account.objects.filter(
-            user=self.request.user, provider=self.provider
-        ).first()
+        account = Account.objects.filter(user=self.request.user, provider=self.provider).first()
 
         id_token = account.id_token if account and account.id_token else None
         if OIDC_LOGOUT_URL and id_token and logout_url:

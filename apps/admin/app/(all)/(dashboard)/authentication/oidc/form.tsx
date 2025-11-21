@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { Monitor, Smartphone } from "lucide-react";
 // plane internal packages
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -138,8 +139,8 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/oidc/callback/`,
       description: (
         <>
-          We will generate this for you.Add this in the <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field of
-          your IdP.
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field
+          of your IdP.
         </>
       ),
     },
@@ -147,6 +148,38 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
       key: "Logout_URI",
       label: "Logout URI",
       url: `${originURL}/auth/oidc/logout/`,
+      description: (
+        <>
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
+          your IdP.
+        </>
+      ),
+    },
+  ];
+
+  const OIDC_MOBILE_SERVICE_DETAILS: TCopyField[] = [
+    {
+      key: "mobile_origin_uri",
+      label: "Origin URI",
+      url: `${originURL}/auth/mobile/oidc/`,
+      description:
+        "We will generate this for this Plane app. Add this as a trusted origin on your IdP's corresponding field.",
+    },
+    {
+      key: "mobile_callback_uri",
+      label: "Callback URI",
+      url: `${originURL}/auth/mobile/oidc/callback/`,
+      description: (
+        <>
+          We will generate this for you. Add this in the <CodeBlock darkerShade>Sign-in redirect URI</CodeBlock> field
+          of your IdP.
+        </>
+      ),
+    },
+    {
+      key: "mobile_logout_uri",
+      label: "Logout URI",
+      url: `${originURL}/auth/mobile/oidc/logout/`,
       description: (
         <>
           We will generate this for you. Add this in the <CodeBlock darkerShade>Logout redirect URI</CodeBlock> field of
@@ -225,12 +258,35 @@ export const InstanceOIDCConfigForm: FC<Props> = (props) => {
               </div>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
-              {OIDC_SERVICE_DETAILS.map((field) => (
-                <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-              ))}
+          <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
+            <div className="pt-2 text-xl font-medium">Plane-provided details for your IdP</div>
+
+            <div className="flex flex-col gap-y-4">
+              {/* web service details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Monitor className="w-3 h-3" />
+                  Web
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                  {OIDC_SERVICE_DETAILS.map((field) => (
+                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                  ))}
+                </div>
+              </div>
+
+              {/* mobile service details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Smartphone className="w-3 h-3" />
+                  Mobile
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                  {OIDC_MOBILE_SERVICE_DETAILS.map((field) => (
+                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

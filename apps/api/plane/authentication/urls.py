@@ -65,6 +65,13 @@ from .views import (
     MobileGoogleCallbackEndpoint,
     MobileGitHubOauthInitiateEndpoint,
     MobileGitHubCallbackEndpoint,
+    MobileOIDCAuthInitiateEndpoint,
+    MobileOIDCallbackEndpoint,
+    MobileOIDCLogoutEndpoint,
+    MobileSAMLAuthInitiateEndpoint,
+    MobileSAMLCallbackEndpoint,
+    MobileSAMLLogoutEndpoint,
+    MobileSAMLMetadataEndpoint,
 )
 
 urlpatterns = [
@@ -258,4 +265,41 @@ urlpatterns = [
     #     MobileGitlabCallbackEndpoint.as_view(),
     #     name="mobile-gitlab-callback",
     # ),
+    # mobile web view oidc
+    path(
+        "mobile/oidc/",
+        MobileOIDCAuthInitiateEndpoint.as_view(),
+        name="mobile-oidc-initiate",
+    ),
+    path(
+        "mobile/oidc/callback/",
+        MobileOIDCallbackEndpoint.as_view(),
+        name="mobile-oidc-callback",
+    ),
+    path(
+        "mobile/oidc/logout/",
+        MobileOIDCLogoutEndpoint.as_view(),
+        name="mobile-oidc-logout",
+    ),
+    # mobile web view saml
+    path(
+        "mobile/saml/",
+        MobileSAMLAuthInitiateEndpoint.as_view(),
+        name="mobile-saml-initiate",
+    ),
+    path(
+        "mobile/saml/callback/",
+        MobileSAMLCallbackEndpoint.as_view(),
+        name="mobile-saml-callback",
+    ),
+    path(
+        "mobile/saml/metadata/",
+        MobileSAMLMetadataEndpoint.as_view(),
+        name="mobile-saml-metadata",
+    ),
+    path(
+        "mobile/saml/logout/",
+        MobileSAMLLogoutEndpoint.as_view(),
+        name="mobile-saml-logout",
+    ),
 ]

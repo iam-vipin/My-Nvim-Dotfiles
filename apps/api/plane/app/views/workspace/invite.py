@@ -227,7 +227,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 # Send event
                 track_event.delay(
                     email=email,
-                    event_name="workspace_invitation_accepted",
+                    event_name="MEMBER_ACCEPTED",
                     properties={
                         "event_id": uuid.uuid4().hex,
                         "user": {"email": email, "id": str(user)},

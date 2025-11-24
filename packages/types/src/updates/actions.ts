@@ -1,7 +1,6 @@
 // plane imports
 import type { EUpdateStatus } from "../enums";
 import type { TUpdate, TUpdateComment } from "./base";
-import { TUpdateReaction } from "./base";
 
 // Define a type for the mandatory epicId in ...args
 export type InitiativeArgs = [initiativeId: string];

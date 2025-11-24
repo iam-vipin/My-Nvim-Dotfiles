@@ -85,6 +85,11 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                           disabled={tab.isDisabled}
                           size="md"
                           className="px-3"
+                          onClick={() => {
+                            if (!tab.isDisabled) {
+                              handleTabChange(tab.key);
+                            }
+                          }}
                         >
                           {tab.label}
                         </Tabs.Trigger>

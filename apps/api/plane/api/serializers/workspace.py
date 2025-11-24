@@ -2,6 +2,11 @@
 from plane.db.models import Workspace
 from .base import BaseSerializer
 
+from rest_framework import serializers
+from plane.ee.models import WorkspaceFeature
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
 
 class WorkspaceLiteSerializer(BaseSerializer):
     """
@@ -15,3 +20,77 @@ class WorkspaceLiteSerializer(BaseSerializer):
         model = Workspace
         fields = ["name", "slug", "id"]
         read_only_fields = fields
+
+
+class WorkspaceFeatureSerializer(serializers.Serializer):
+    """
+    Serializer for updating workspace features.
+    """
+
+    project_grouping = serializers.BooleanField(required=False)
+    initiatives = serializers.BooleanField(required=False)
+    teams = serializers.BooleanField(required=False)
+    customers = serializers.BooleanField(required=False)
+    wiki = serializers.BooleanField(required=False)
+    pi = serializers.BooleanField(required=False)
+
+    def validate_project_grouping(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.PROJECT_GROUPING, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Project Grouping")
+        return value
+
+    def validate_initiatives(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.INITIATIVES, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Initiatives")
+        return value
+
+    def validate_teams(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.TEAMSPACES, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Teams")
+        return value
+
+    def validate_customers(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.CUSTOMERS, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Customers")
+        return value
+
+    def validate_wiki(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.WORKSPACE_PAGES, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Wiki")
+        return value
+
+    def validate_pi(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.PI_CHAT, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable PI")
+        return value
+
+    def update(self, instance, validated_data):
+        workspace_feature_fields = {
+            "project_grouping": "is_project_grouping_enabled",
+            "initiatives": "is_initiative_enabled",
+            "teams": "is_teams_enabled",
+            "customers": "is_customer_enabled",
+            "wiki": "is_wiki_enabled",
+            "pi": "is_pi_enabled",
+        }
+
+        workspace_feature = WorkspaceFeature.objects.get(workspace_id=self.context["workspace_id"])
+
+        # teams can only be enabled
+        if validated_data.get("teams", None) is not None:
+            validated_data["teams"] = True
+
+        for field, db_field in workspace_feature_fields.items():
+            if field in validated_data:
+                setattr(workspace_feature, db_field, validated_data[field])
+
+        workspace_feature.save()
+
+        return {
+            "project_grouping": workspace_feature.is_project_grouping_enabled,
+            "initiatives": workspace_feature.is_initiative_enabled,
+            "teams": workspace_feature.is_teams_enabled,
+            "customers": workspace_feature.is_customer_enabled,
+            "wiki": workspace_feature.is_wiki_enabled,
+            "pi": workspace_feature.is_pi_enabled,
+        }

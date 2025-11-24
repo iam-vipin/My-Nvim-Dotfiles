@@ -42,7 +42,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
     control,
     formState: { isSubmitting },
     handleSubmit,
-  } = useForm<any>({
+  } = useForm<TIssuePublicComment>({
     defaultValues: { comment_html: comment.comment_html },
   });
 

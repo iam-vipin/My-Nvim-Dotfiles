@@ -15,6 +15,7 @@ import { Copy, Link2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -217,7 +218,13 @@ export const BlockMenu = (props: Props) => {
           urlToCopy = nodeId ? `${currentPageUrl}#${nodeId}` : currentPageUrl;
         }
 
-        copyUrlToClipboard(urlToCopy);
+        copyUrlToClipboard(urlToCopy).then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Link Copied!",
+            message: "Link copied to clipboard.",
+          });
+        });
       },
     },
     {

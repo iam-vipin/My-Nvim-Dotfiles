@@ -37,8 +37,8 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const { allowPermissions } = useUserPermissions();
 
   const pageTitle = currentWorkspace?.name
-  ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
-  : undefined;
+    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+    : undefined;
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(

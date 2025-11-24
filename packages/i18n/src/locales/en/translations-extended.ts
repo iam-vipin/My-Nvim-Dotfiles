@@ -3336,7 +3336,7 @@ export default {
       },
     },
   },
-  pages: {
+  page_actions: {
     move_page: {
       submit_button: {
         default: "Move",

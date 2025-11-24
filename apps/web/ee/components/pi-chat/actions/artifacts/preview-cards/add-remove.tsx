@@ -26,7 +26,7 @@ export const AddRemovePreviewCard = observer((props: TProps) => {
             <span className="text-custom-text-100 font-medium">{data.parameters?.name}</span>{" "}
             {data.action === "add" ? "to" : "from"} {artifactSubType}
             {properties && properties.length > 0 ? "s" : ""}
-            {properties &&
+            {properties && Array.isArray(properties) &&
               properties.map(
                 (
                   property: {

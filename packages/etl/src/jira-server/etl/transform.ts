@@ -1,4 +1,4 @@
-import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version2/models";
+import type { ComponentWithIssueCount, IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version2/models";
 import type {
   ExCycle,
   ExIssueComment,
@@ -83,6 +83,54 @@ export const transformIssue = (
   } as unknown as PlaneIssue;
 };
 
+export const transformIssueV2 = (
+  resourceId: string,
+  projectId: string,
+  issue: IJiraIssue,
+  resourceUrl: string,
+  stateMap: IStateConfig[],
+  priorityMap: IPriorityConfig[]
+): Partial<PlaneIssue> => {
+  const targetState = getTargetState(stateMap, issue.fields.status);
+  const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
+  const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
+  const renderedFields = (issue.renderedFields as { description: string }) ?? {
+    description: "<p></p>",
+  };
+  const links = [
+    {
+      name: "Linked Jira Issue",
+      url: `${resourceUrl}/browse/${issue.key}`,
+    },
+  ];
+  let description = renderedFields.description ?? "<p></p>";
+  if (description === "") {
+    description = "<p></p>";
+  }
+
+  issue.fields.labels.push("JIRA IMPORTED");
+
+  return {
+    assignees: issue.fields.assignee?.emailAddress ? [issue.fields.assignee.emailAddress] : [],
+    links,
+    external_id: `${projectId}_${resourceId}_${issue.id}`,
+    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    created_by: issue.fields.creator?.emailAddress,
+    name: issue.fields.summary ?? "Untitled",
+    description_html: description,
+    target_date: issue.fields.duedate,
+    start_date: issue.fields.customfield_10015,
+    created_at: issue.fields.created,
+    attachments: attachments,
+    state: targetState?.id ?? "",
+    external_source_state_id: targetState?.external_id ? `${projectId}_${resourceId}_${targetState.external_id}` : null,
+    priority: targetPriority ?? "none",
+    labels: issue.fields.labels,
+    parent: issue.fields.parent?.id ? `${projectId}_${resourceId}_${issue.fields.parent?.id}` : null,
+    type_id: issue.fields.issuetype?.id ? `${projectId}_${resourceId}_${issue.fields.issuetype?.id}` : null,
+  } as unknown as PlaneIssue;
+};
+
 export const transformLabel = (label: string): Partial<ExIssueLabel> => ({
   name: label,
   color: getRandomColor(),
@@ -96,9 +144,10 @@ export const transformComment = (
   external_id: `${projectId}_${resourceId}_${comment.id}`,
   external_source: E_IMPORTER_KEYS.JIRA_SERVER,
   created_at: getFormattedDate(comment.created),
-  created_by: comment.author?.name,
-  comment_html: comment.renderedBody ?? "<p></p>",
-  actor: comment.author?.name,
+  created_by: comment.author?.emailAddress,
+  // @ts-expect-error
+  comment_html: comment.body ?? "<p></p>",
+  actor: comment.author?.emailAddress,
   issue: `${projectId}_${resourceId}_${comment.issue_id}`,
 });
 
@@ -135,6 +184,16 @@ export const transformComponent = (
   external_source: E_IMPORTER_KEYS.JIRA_SERVER,
   name: component.component.name,
   issues: component.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
+});
+
+export const transformComponentV2 = (
+  resourceId: string,
+  projectId: string,
+  component: ComponentWithIssueCount
+): Partial<ExModule> => ({
+  external_id: `${projectId}_${resourceId}_${component.id}`,
+  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+  name: component.name,
 });
 
 export const transformIssueType = (
@@ -220,5 +279,48 @@ export const transformIssuePropertyValues = (
       );
     }
   });
+  return propertyValuesPayload;
+};
+
+export const transformDefaultPropertyValues = (
+  resourceId: string,
+  projectId: string,
+  issue: IJiraIssue,
+  issueTypeId: string
+): TPropertyValuesPayload => {
+  const propertyValuesPayload: TPropertyValuesPayload = {};
+
+  // Fix Versions
+  if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
+    const fixVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-fix-version`;
+    propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version: any) => ({
+      external_source: "JIRA_SERVER",
+      external_id: version.id ? String(version.id) : undefined,
+      value: version.name || "",
+    }));
+  }
+
+  // Affected Versions
+  if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
+    const affectedVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-affected-version`;
+    propertyValuesPayload[affectedVersionExternalId] = issue.fields.versions.map((version: any) => ({
+      external_source: "JIRA_SERVER",
+      external_id: version.id ? String(version.id) : undefined,
+      value: version.name || "",
+    }));
+  }
+
+  // Reporter
+  if (issue.fields.reporter) {
+    const reporterExternalId = `${resourceId}-${projectId}-${issueTypeId}-reporter`;
+    propertyValuesPayload[reporterExternalId] = [
+      {
+        external_source: "JIRA_SERVER",
+        external_id: issue.fields.reporter.emailAddress || issue.fields.reporter.name,
+        value: issue.fields.reporter.emailAddress || issue.fields.reporter.displayName || "",
+      },
+    ];
+  }
+
   return propertyValuesPayload;
 };

@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import type { ClientOptions, ExcludedProps, ExProject, Optional, Paginated } from "@/types/types";
+import type { ClientOptions, ExcludedProps, ExProject, Optional, Paginated, TProjectFeatures } from "@/types/types";
 
 export class ProjectService extends APIService {
   constructor(options: ClientOptions) {
@@ -60,6 +60,14 @@ export class ProjectService extends APIService {
 
   async update(slug: string, projectId: string, payload: Omit<Optional<ExProject>, ExcludedProps>) {
     return this.patch(`/api/v1/workspaces/${slug}/projects/${projectId}/`, payload)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async toggleProjectFeatures(slug: string, projectId: string, payload: Partial<TProjectFeatures>) {
+    return this.patch(`/api/v1/workspaces/${slug}/projects/${projectId}/features/`, payload)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

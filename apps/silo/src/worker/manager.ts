@@ -14,7 +14,7 @@ import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
 import { GitlabWebhookWorker } from "@/apps/gitlab";
 import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
-import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
+import { JiraServerImportOrchestrator } from "@/apps/jira-server-importer/v2/migrator/orchestrator";
 import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
 import { NotionDataMigrator } from "@/apps/notion-importer/worker";
@@ -48,7 +48,8 @@ class WorkerFactory {
       case "jira":
         return new JiraDataMigrator(mq, store);
       case "jira_server":
-        return new JiraDataCenterMigrator(mq, store);
+        // return new JiraDataCenterMigrator(mq, store);
+        return new JiraServerImportOrchestrator(mq, store);
       case "linear":
         return new LinearDataMigrator(mq, store);
       case "linear_docs":

@@ -320,6 +320,8 @@ CELERY_IMPORTS = (
     "plane.ee.bgtasks.cycle_automation_task",
     # silo tasks
     "plane.silo.bgtasks.integration_apps_task",
+    "plane.silo.bgtasks.bulk_update_issue_relations_task",
+    "plane.silo.bgtasks.bulk_update_issue_relations_task_v2",
     # event stream tasks
     "plane.event_stream.bgtasks.outbox_cleaner",
 )

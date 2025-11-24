@@ -119,3 +119,40 @@ export const createAllCycles = async (
 
   return createdCycles;
 };
+
+export const createAllCyclesV2 = async (
+  jobId: string,
+  cycles: ExCycle[],
+  planeClient: PlaneClient,
+  workspaceSlug: string,
+  projectId: string
+): Promise<{ external_id: string; id: string }[] | undefined> => {
+  const createdCycles: { external_id: string; id: string }[] = [];
+
+  for (const cycle of cycles) {
+    // Create the cycle and get the cycle id
+    try {
+      const createdCycle: ExCycle = await protect(
+        planeClient.cycles.create.bind(planeClient.cycles),
+        workspaceSlug,
+        projectId,
+        {
+          project_id: projectId,
+          ...cycle,
+        }
+      );
+      createdCycles.push(createdCycle);
+    } catch (error) {
+      if (AssertAPIErrorResponse(error)) {
+        if (error.error && error.error.includes("already exists")) {
+          logger.info(`[${jobId.slice(0, 7)}] Cycle "${cycle.name}" already exists. Skipping...`);
+          createdCycles.push({ external_id: cycle.external_id, id: error.id });
+        }
+      } else {
+        logger.error(`[${jobId.slice(0, 7)}] Error while creating the cycle: ${cycle.name}`, error);
+      }
+    }
+  }
+
+  return createdCycles;
+};

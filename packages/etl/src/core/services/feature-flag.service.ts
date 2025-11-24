@@ -22,4 +22,11 @@ export class FeatureFlagService {
         return false;
       });
   }
+
+  async getAllFeatureFlags(payload: { workspace_slug: string; user_id: string }): Promise<Record<string, boolean>> {
+    return this.axiosInstance
+      .post(`/api/feature-flags/`, payload)
+      .then((response) => response?.data?.values)
+      .catch(() => {});
+  }
 }

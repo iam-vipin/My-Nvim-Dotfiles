@@ -2,7 +2,6 @@
 import axios from "axios";
 import type { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
-import type { Board } from "jira.js/out/agile/models";
 import { Version2Client } from "jira.js/out/version2";
 import type {
   CustomFieldContextOption,
@@ -42,12 +41,14 @@ export class JiraV2Service {
     return await this.jiraClient.myself.getCurrentUser();
   }
 
-  async getJiraUsers(): Promise<JiraApiUser[]> {
+  async getJiraUsers(startAt?: number, maxResults?: number): Promise<JiraApiUser[]> {
     // @ts-expect-error
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
       // @ts-expect-error
       includeActive: true,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 1000,
     })) as JiraApiUser[];
   }
 
@@ -102,33 +103,38 @@ export class JiraV2Service {
 
   // Verified
   async getProjectComponents(projectId: string) {
-    return this.jiraClient.projectComponents.getProjectComponents({
+    return await this.jiraClient.projectComponents.getProjectComponents({
       projectIdOrKey: projectId,
     });
   }
 
   // Verified
-  async getProjectComponentIssues(componentId: string) {
+  async getProjectComponentIssues(componentId: string, startAt?: number, maxResults?: number) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: `component = "${componentId}"`,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 100,
     });
   }
 
   // Verified
-  async getBoardSprints(boardId: number) {
+  async getBoardSprints(boardId: number, startAt?: number, maxResults?: number) {
     const board = new BoardClient(this.jiraClient);
     return board.getAllSprints({
       boardId: boardId,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 50,
     });
   }
 
   // Verified
-  async getBoardSprintsIssues(boardId: number, sprintId: number, startAt: number) {
+  async getBoardSprintsIssues(boardId: number, sprintId: number, startAt: number, maxResults?: number) {
     const board = new BoardClient(this.jiraClient);
     return board.getBoardIssuesForSprint({
       boardId: boardId,
       sprintId: sprintId,
       startAt: startAt,
+      maxResults: maxResults ?? 50,
     });
   }
 
@@ -141,20 +147,13 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getProjectBoards(projectId: string) {
+  async getProjectBoards(projectId: string, startAt?: number, maxResults?: number) {
     const board = new BoardClient(this.jiraClient);
-
-    try {
-      return await fetchPaginatedData<Board>((startAt) =>
-        board.getAllBoards({
-          projectKeyOrId: projectId,
-          startAt: startAt,
-        })
-      );
-    } catch (e) {
-      console.error("error getProjectBoards", e);
-      throw e;
-    }
+    return board.getAllBoards({
+      projectKeyOrId: projectId,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 50,
+    });
   }
 
   // Verified
@@ -173,14 +172,21 @@ export class JiraV2Service {
     }
   }
 
+  async getLabelsV2(startAt?: number, maxResults?: number) {
+    return this.jiraClient.labels.getAllLabels({
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 1000,
+    });
+  }
+
   // Verified
-  async getProjectLabels(projectId: string, startAt = 0) {
+  async getProjectLabels(projectId: string, startAt = 0, maxResults = 100) {
     const response = await axios.get(`${this.hostname}/rest/api/2/search`, {
       params: {
         jql: `project = "${projectId}" AND labels is not EMPTY`,
         fields: ["labels"],
         startAt: startAt,
-        maxResults: 1000,
+        maxResults: maxResults,
       },
       headers: {
         Authorization: `Bearer ${this.patToken}`,
@@ -213,17 +219,18 @@ export class JiraV2Service {
   }
 
   // Verified
-  async getProjectIssueTypes(projectId: string) {
+  async getPaginatedIssueTypes(projectId: string, startAt?: number, maxResults?: number) {
     try {
-      return await fetchPaginatedData<IssueTypeDetails>((startAt) =>
-        axios
-          .get(`${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}`, {
+      return axios
+        .get(
+          `${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}&maxResults=${maxResults}`,
+          {
             headers: {
               Authorization: `Bearer ${this.patToken}`,
             },
-          })
-          .then((res) => res.data as Paginated<IssueTypeDetails>)
-      );
+          }
+        )
+        .then((res) => res.data as Paginated<IssueTypeDetails>);
     } catch (e) {
       console.error("error getProjectIssueTypes", e);
       throw e;
@@ -293,14 +300,15 @@ export class JiraV2Service {
     });
   }
 
-  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string) {
+  async getProjectIssues(projectKey: string, startAt = 0, createdAfter?: string, maxResults = 100) {
     return this.jiraClient.issueSearch.searchForIssuesUsingJql({
       jql: createdAfter
-        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
-        : `project = "${projectKey}"`,
+        ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}") ORDER BY created ASC`
+        : `project = "${projectKey}" ORDER BY created ASC`,
       expand: "renderedFields",
-      fields: ["*all"],
+      fields: ["*all", "sprints", "closedSprints"],
       startAt,
+      maxResults: maxResults,
     });
   }
 
@@ -318,16 +326,19 @@ export class JiraV2Service {
     return labels.total;
   }
 
-  async getProjectUsers(projectKey: string) {
+  async getProjectUsers(projectKey: string, startAt?: number, maxResults?: number) {
     return this.jiraClient.userSearch.findAssignableUsers({
       project: projectKey,
+      startAt: startAt ?? 0,
+      maxResults: maxResults ?? 100,
     });
   }
 
-  async getIssueComments(issueId: string, startAt: number) {
+  async getIssueComments(issueId: string, startAt: number, maxResults = 100) {
     return await this.jiraClient.issueComments.getComments({
       issueIdOrKey: issueId,
       startAt: startAt,
+      maxResults: maxResults,
       expand: "renderedBody",
     });
   }

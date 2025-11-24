@@ -61,7 +61,7 @@ export async function pullSprints(client: JiraV2Service, projectId: string): Pro
   const jiraSprints: JiraSprint[] = [];
   try {
     const boards = await client.getProjectBoards(projectId);
-    for (const board of boards) {
+    for (const board of boards.values) {
       const sprints = await client.getBoardSprints(board.id as number);
       for (const sprint of sprints.values) {
         const boardIssues = await fetchPaginatedDataByKey<IJiraIssue>(
@@ -86,7 +86,9 @@ export async function pullSprints(client: JiraV2Service, projectId: string): Pro
 export async function pullComponents(client: JiraV2Service, projectKey: string): Promise<JiraComponent[]> {
   const jiraComponents: JiraComponent[] = [];
   try {
-    const jiraComponentObjects: ComponentWithIssueCount[] = await client.getProjectComponents(projectKey);
+    const result = await client.getProjectComponents(projectKey);
+    if (!result.values) return [];
+    const jiraComponentObjects: ComponentWithIssueCount[] = result;
     for (const component of jiraComponentObjects) {
       const issues = await client.getProjectComponentIssues(component.id!);
       if (issues.issues) {
@@ -128,8 +130,7 @@ export const pullCommentsInBatches = async (
   return comments;
 };
 
-export const pullIssueTypes = async (client: JiraV2Service, projectId: string): Promise<JiraIssueTypeDetails[]> =>
-  await client.getProjectIssueTypes(projectId);
+export const pullIssueTypes = async (client: JiraV2Service, projectId: string): Promise<JiraIssueTypeDetails[]> => [];
 
 export const pullIssueFields = async (client: JiraV2Service, projectId: string): Promise<JiraIssueField[]> => {
   const customFields: JiraIssueField[] = [];
@@ -138,7 +139,7 @@ export const pullIssueFields = async (client: JiraV2Service, projectId: string):
     // Get custom fields directly
     const fields: FieldDetails[] = await client.getCustomFields();
     const fieldsWithCtx = await client.getCustomFieldsWithContext();
-    const projectIssueTypes = await client.getProjectIssueTypes(projectId);
+    const projectIssueTypes: JiraIssueTypeDetails[] = [];
 
     const mappedFields = fieldsWithCtx
       .map((field) => ({

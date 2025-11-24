@@ -1,5 +1,6 @@
 # Python imports
 import logging
+import random
 
 # Third party imports
 from celery import shared_task
@@ -10,14 +11,15 @@ from django.conf import settings
 from plane.utils.exception_logger import log_exception
 from plane.utils.helpers import get_boolean_value
 from plane.api.serializers.issue import IssueSerializer
-from plane.db.models.issue import Issue, IssueLink, IssueComment
+from plane.db.models.issue import Issue, IssueLink, IssueComment, IssueLabel
+from plane.db.models.label import Label
 from plane.db.models.project import Project
 from plane.db.models.cycle import CycleIssue
 from plane.db.models.module import ModuleIssue
 from plane.db.models.workspace import Workspace
 from plane.db.models.asset import FileAsset
 from plane.db.models.page import Page, ProjectPage
-from plane.ee.models import IssueProperty, IssuePropertyValue
+from plane.ee.models import IssueProperty, IssuePropertyValue, IssueWorkLog
 from plane.ee.utils.external_issue_property_validator import (
     externalIssuePropertyValueSaver,
     externalIssuePropertyValueValidator,
@@ -153,6 +155,10 @@ def process_single_issue(slug, project, user_id, issue_data):
                 cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
             # Process the main issue
             issue_data = sanitize_issue_data(issue_data)
+
+            # Extract labels before serialization (they're label names, not UUIDs)
+            labels = issue_data.pop("labels", [])
+
             serializer = IssueSerializer(
                 data=issue_data,
                 context={
@@ -213,6 +219,13 @@ def process_single_issue(slug, project, user_id, issue_data):
             # Process issue property values
             process_issue_property_values(issue, issue_data.get("issue_property_values", []))
 
+            # Process labels
+            process_issue_labels(issue, labels, user_id)
+
+            # Process worklogs
+            if issue_data.get("worklogs"):
+                process_issue_worklogs(issue, issue_data.get("worklogs"))
+
             return issue
     except Exception as e:
         logger.error(
@@ -221,6 +234,77 @@ def process_single_issue(slug, project, user_id, issue_data):
         )
         log_exception(e)
         return None
+
+
+def process_issue_worklogs(issue, worklogs):
+    # We need to filter out, if the same duration, logged_by and created_at is present, then update else create
+    existing_worklogs = IssueWorkLog.objects.filter(
+        issue=issue,
+        project_id=issue.project_id,
+        workspace_id=issue.workspace_id,
+    )
+
+    bulk_create_worklogs = []
+    bulk_update_worklogs = []
+    worklog_timestamp_map = {}  # Map to store timestamps for created worklogs
+
+    for worklog in worklogs:
+        if worklog.get("duration") and worklog.get("logged_by") and worklog.get("created_at"):
+            existing_worklog = existing_worklogs.filter(
+                duration=worklog.get("duration"),
+                logged_by_id=worklog.get("logged_by"),
+                created_at=worklog.get("created_at"),
+            ).first()
+            if existing_worklog:
+                existing_worklog.description = worklog.get("description", "")
+                existing_worklog.duration = worklog.get("duration")
+                existing_worklog.updated_at = worklog.get("updated_at", worklog.get("created_at"))
+                existing_worklog.updated_by_id = issue.created_by_id
+                bulk_update_worklogs.append(existing_worklog)
+            else:
+                new_worklog = IssueWorkLog(
+                    issue=issue,
+                    project_id=issue.project_id,
+                    workspace_id=issue.workspace_id,
+                    description=worklog.get("description", ""),
+                    duration=worklog.get("duration"),
+                    logged_by_id=worklog.get("logged_by"),
+                    created_by_id=issue.created_by_id,
+                    updated_by_id=issue.created_by_id,
+                )
+                bulk_create_worklogs.append(new_worklog)
+                # Store the timestamps to apply after creation
+                worklog_timestamp_map[id(new_worklog)] = {
+                    "created_at": worklog.get("created_at"),
+                    "updated_at": worklog.get("updated_at", worklog.get("created_at")),
+                }
+
+    # Bulk create new worklogs
+    created_worklogs = IssueWorkLog.objects.bulk_create(bulk_create_worklogs, batch_size=100, ignore_conflicts=True)
+
+    # Update timestamps for newly created worklogs
+    if created_worklogs:
+        for worklog in created_worklogs:
+            timestamps = worklog_timestamp_map.get(id(worklog))
+            if timestamps:
+                worklog.created_at = timestamps["created_at"]
+                worklog.updated_at = timestamps["updated_at"]
+
+        IssueWorkLog.objects.bulk_update(
+            created_worklogs,
+            ["created_at", "updated_at"],
+            batch_size=100,
+        )
+
+    # Bulk update existing worklogs
+    if bulk_update_worklogs:
+        IssueWorkLog.objects.bulk_update(
+            bulk_update_worklogs,
+            ["description", "duration", "updated_at", "updated_by_id"],
+            batch_size=100,
+        )
+
+    return
 
 
 def process_issue_links(issue, links):
@@ -257,6 +341,7 @@ def process_issue_comments(user_id, issue, comments):
 
     bulk_create_comments = []
     bulk_update_comments = []
+    comment_timestamp_map = {}  # Map to store timestamps for created comments
 
     # Get existing comments for this issue only
     existing_comments_map = {
@@ -284,10 +369,14 @@ def process_issue_comments(user_id, issue, comments):
             existing_comment.created_by_id = comment_actor
             existing_comment.updated_by_id = comment_actor
             existing_comment.comment_html = comment_data["comment_html"]
+            # Set updated_at if provided, otherwise use created_at or current time
+            if comment_data.get("updated_at"):
+                existing_comment.updated_at = comment_data["updated_at"]
+            elif comment_data.get("created_at"):
+                existing_comment.updated_at = comment_data["created_at"]
             bulk_update_comments.append(existing_comment)
         else:
-            # Create case
-
+            # Create case - don't set created_at/updated_at here
             comment = IssueComment(
                 issue=issue,
                 project_id=issue.project_id,
@@ -300,34 +389,58 @@ def process_issue_comments(user_id, issue, comments):
                 updated_by_id=comment_actor,
             )
             bulk_create_comments.append(comment)
+            # Store the timestamps to apply after creation
+            comment_timestamp_map[id(comment)] = {
+                "created_at": comment_data.get("created_at"),
+                "updated_at": comment_data.get("updated_at", comment_data.get("created_at")),
+            }
 
     # Bulk create new comments
     created_comments = IssueComment.objects.bulk_create(bulk_create_comments, batch_size=100, ignore_conflicts=True)
+
+    # Update timestamps for newly created comments
+    if created_comments:
+        comments_to_update_timestamps = []
+        for comment in created_comments:
+            timestamps = comment_timestamp_map.get(id(comment))
+            if timestamps and timestamps["created_at"]:
+                comment.created_at = timestamps["created_at"]
+                comment.updated_at = timestamps["updated_at"] or timestamps["created_at"]
+                comments_to_update_timestamps.append(comment)
+
+        if comments_to_update_timestamps:
+            IssueComment.objects.bulk_update(
+                comments_to_update_timestamps,
+                ["created_at", "updated_at"],
+                batch_size=100,
+            )
 
     # Bulk update existing comments
     if bulk_update_comments:
         IssueComment.objects.bulk_update(
             bulk_update_comments,
-            ["comment_html", "actor_id", "created_by_id", "updated_by_id"],
+            ["comment_html", "actor_id", "created_by_id", "updated_by_id", "updated_at"],
             batch_size=100,
         )
 
-    # Process file assets for each comment
-    for comment in created_comments:
-        comment_data = next(
-            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-            None,
-        )
-        if comment_data and comment_data.get("file_assets"):
-            process_comment_file_assets(comment, comment_data["file_assets"])
+    # Process file assets for each comment - ensure comments is not None
+    if comments and created_comments:
+        for comment in created_comments:
+            comment_data = next(
+                (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
+                None,
+            )
+            if comment_data and comment_data.get("file_assets"):
+                process_comment_file_assets(comment, comment_data["file_assets"])
 
-    for comment in bulk_update_comments:
-        comment_data = next(
-            (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
-            None,
-        )
-        if comment_data and comment_data.get("file_assets"):
-            process_comment_file_assets(comment, comment_data["file_assets"])
+    if comments and bulk_update_comments:
+        for comment in bulk_update_comments:
+            comment_data = next(
+                (c for c in comments if str(c.get("external_id")) == str(comment.external_id)),
+                None,
+            )
+            if comment_data and comment_data.get("file_assets"):
+                process_comment_file_assets(comment, comment_data["file_assets"])
 
     return
 
@@ -345,6 +458,71 @@ def process_issue_cycles(issue, cycle_ids):
                 "updated_by_id": issue.created_by_id,
             },
         )
+    return
+
+
+def process_issue_labels(issue, labels, user_id):
+    """
+    Process and assign labels to an issue.
+    Creates labels if they don't exist and assigns them to the issue.
+
+    Args:
+        issue: The issue instance to assign labels to
+        labels: List of label names (strings)
+        user_id: The user ID for created_by and updated_by fields
+    """
+    if not labels:
+        return
+
+    # Get existing labels for this project
+    existing_labels = Label.objects.filter(
+        name__in=labels,
+        project_id=issue.project_id,
+        workspace_id=issue.workspace_id,
+    )
+    existing_label_names = {label.name for label in existing_labels}
+    label_ids = [label.id for label in existing_labels]
+
+    # Identify labels that need to be created
+    labels_to_create = [name for name in labels if name not in existing_label_names]
+
+    # Bulk create missing labels
+    if labels_to_create:
+        new_labels = Label.objects.bulk_create(
+            [
+                Label(
+                    name=label_name,
+                    project_id=issue.project_id,
+                    workspace_id=issue.workspace_id,
+                    color=f"#{random.randint(0, 0xFFFFFF):06X}",
+                )
+                for label_name in labels_to_create
+            ],
+            ignore_conflicts=True,
+        )
+        label_ids.extend([label.id for label in new_labels])
+
+    # Delete existing label associations for this issue
+    IssueLabel.objects.filter(issue=issue).delete()
+
+    # Create new IssueLabel associations
+    if label_ids:
+        IssueLabel.objects.bulk_create(
+            [
+                IssueLabel(
+                    workspace_id=issue.workspace_id,
+                    project_id=issue.project_id,
+                    issue=issue,
+                    label_id=label_id,
+                    created_by_id=user_id,
+                    updated_by_id=user_id,
+                )
+                for label_id in label_ids
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
     return
 
 

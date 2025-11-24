@@ -148,20 +148,6 @@ class JiraDataCenterController {
     }
   }
 
-  @Post("/issue-types")
-  @useValidateUserAuthentication()
-  async getIssueTypes(req: Request, res: Response) {
-    const { workspaceId, userId, projectId } = req.body;
-
-    try {
-      const jiraClient = await createJiraServerClient(workspaceId, userId);
-      const statuses = await jiraClient.getProjectIssueTypes(projectId);
-      return res.json(statuses);
-    } catch (error: any) {
-      responseHandler(res, 500, error);
-    }
-  }
-
   @Get("/additional-users/:workspaceId/:workspaceSlug/:userId")
   @useValidateUserAuthentication()
   async getUserDifferential(req: Request, res: Response) {

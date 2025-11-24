@@ -7,6 +7,7 @@ import type {
   IStateConfig,
   JiraConfig,
   JiraEntity,
+  JiraIssueField,
 } from "@plane/etl/jira-server";
 import {
   OPTION_CUSTOM_FIELD_TYPES,
@@ -20,6 +21,7 @@ import {
   transformUser,
   transformIssueFields,
   transformIssuePropertyValues,
+  transformDefaultPropertyValues,
 } from "@plane/etl/jira-server";
 import type {
   ExCycle,
@@ -33,6 +35,8 @@ import type {
   PlaneUser,
 } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
+import { buildExternalId } from "../../v2/helpers/job";
+import type { TIssueTypesData } from "../../v2/types";
 
 export const getTransformedIssues = (
   job: TImportJob<JiraConfig>,
@@ -148,6 +152,65 @@ export const getTransformedIssuePropertyValues = (
         planeIssuePropertiesMap,
         jiraCustomFieldMap
       );
+    }
+  });
+  return transformedIssuePropertyValues;
+};
+
+export const getTransformedIssuePropertyValuesV2 = (
+  job: TImportJob<JiraConfig>,
+  issues: IJiraIssue[],
+  issueFields: JiraIssueField[],
+  planeIssueProperties: Partial<ExIssueProperty>[],
+  issueTypes: TIssueTypesData
+): TIssuePropertyValuesPayload => {
+  const resourceId = job.config.resource ? job.config.resource.id : uuid();
+  const projectId = job.project_id;
+  const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
+  // Get the plane issue properties map to only transform values for the properties that are present in the plane
+  const planeIssuePropertiesMap = new Map<string, Partial<ExIssueProperty>>(
+    planeIssueProperties
+      .filter((property) => property.external_id)
+      .map((property) => {
+        const customFieldKey = property.external_id?.split("_").pop();
+        return [`customfield_${customFieldKey}`, property];
+      })
+  );
+  // Get the jira custom field map to get the type of the custom field
+  const jiraCustomFieldMap = new Map<string, string>(
+    issueFields
+      .filter((property) => property.id && property.schema?.custom)
+      .map((property) => [property.id as string, property.schema?.custom as string])
+  );
+  // Transform values for each issue
+  issues.forEach((issue: IJiraIssue) => {
+    if (issue.id && issue.fields) {
+      const issueKey = `${projectId}_${resourceId}_${issue.id}`;
+      const issueTypeId = issueTypes.find(
+        (type) =>
+          issue.fields.issuetype?.id &&
+          type.external_id === buildExternalId(projectId, resourceId, issue.fields.issuetype?.id)
+      )?.id;
+
+      // Transform custom field property values
+      const customPropertyValues = transformIssuePropertyValues(
+        resourceId,
+        projectId,
+        issue,
+        planeIssuePropertiesMap,
+        jiraCustomFieldMap
+      );
+
+      // Transform default property values (fix versions, affected versions, reporter)
+      const defaultPropertyValues = issueTypeId
+        ? transformDefaultPropertyValues(resourceId, projectId, issue, issueTypeId)
+        : {};
+
+      // Merge both custom and default property values
+      transformedIssuePropertyValues[issueKey] = {
+        ...customPropertyValues,
+        ...defaultPropertyValues,
+      };
     }
   });
   return transformedIssuePropertyValues;

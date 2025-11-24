@@ -18,9 +18,11 @@ import type {
   TIssuePropertyRelationType,
   TIssuePropertyType,
   TIssuePropertyTypeKeys,
+  TWorklog,
   UploadData,
 } from "@plane/sdk";
 import type { TWorkspaceCredential } from "@plane/types";
+import type { TIssuesAssociationsData } from "@/apps/jira-server-importer/v2/types";
 import { env } from "@/env";
 import { wait } from "@/helpers/delay";
 import { downloadFile, splitStringTillPart, uploadFile } from "@/helpers/utils";
@@ -144,6 +146,43 @@ export const getAssociatedComments = async (
   return processedComments as ExIssueComment[];
 };
 
+export const getAssociatedCommentsV2 = async (
+  jobId: string,
+  credentials: TWorkspaceCredential,
+  comments: Partial<ExIssueComment>[],
+  users: PlaneUser[],
+  issueId: string,
+  planeClient: PlaneClient,
+  workspaceSlug: string
+): Promise<ExIssueComment[]> => {
+  const processedComments = await Promise.all(
+    comments
+      .filter((comment) => comment !== undefined && comment.issue === issueId)
+      .map(async (comment: Partial<ExIssueComment>) => {
+        // Process any attachments in the comment
+        const [processedComment, assetIds] = await processCommentAttachments(
+          jobId,
+          credentials,
+          comment,
+          planeClient,
+          workspaceSlug
+        );
+
+        const actor = users.find((user) => user.email === comment.actor);
+        const createdBy = users.find((user) => user.email === comment.created_by);
+
+        return {
+          ...processedComment,
+          file_assets: assetIds,
+          actor: actor?.id || null,
+          created_by: createdBy?.id || null,
+        };
+      })
+  );
+
+  return processedComments as ExIssueComment[];
+};
+
 export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Promise<ExIssue[]> => {
   const {
     jobId,
@@ -209,6 +248,126 @@ export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Pro
 
   return bulkIssuePayload;
 };
+
+export const generateIssuePayloadV2 = async (payload: {
+  jobId: string;
+  issues: ExIssue[];
+  issueComments: ExIssueComment[];
+  credentials: TWorkspaceCredential;
+  planeClient: PlaneClient;
+  workspaceSlug: string;
+
+  // Mappings (pre-loaded from storage)
+  userMap: Map<string, string>;
+  issueTypeMap: Map<string, string>;
+  cycleMap: Map<string, string>;
+  moduleMap: Map<string, string>;
+
+  associations: TIssuesAssociationsData;
+
+  // Property data (from dependencies)
+  planeIssueProperties: ExIssueProperty[];
+  planeIssuePropertiesOptions: ExIssuePropertyOption[];
+  planeIssuePropertyValues: TIssuePropertyValuesPayload;
+}): Promise<BulkIssuePayload[]> => {
+  const {
+    jobId,
+    issues,
+    issueComments,
+    credentials,
+    associations,
+    planeClient,
+    workspaceSlug,
+    userMap,
+    issueTypeMap,
+    cycleMap,
+    moduleMap,
+    planeIssueProperties,
+    planeIssuePropertiesOptions,
+    planeIssuePropertyValues,
+  } = payload;
+
+  const bulkIssuePayload: BulkIssuePayload[] = [];
+
+  // Build planeUsers array for existing functions
+  const planeUsers: PlaneUser[] = Array.from(userMap.entries()).map(
+    ([email, userId]) =>
+      ({
+        id: userId,
+        email,
+      }) as PlaneUser
+  );
+
+  for (const issue of issues) {
+    try {
+      // Process attachments first (download + upload)
+      const [processedIssue, assets] = await processAttachments(jobId, credentials, issue, planeClient, workspaceSlug);
+
+      processedIssue.created_by = userMap.get(processedIssue.created_by || "") || "";
+
+      processedIssue.assignees = (processedIssue.assignees || [])
+        .map((assignee) => userMap.get(assignee))
+        .filter(Boolean) as string[];
+
+      processedIssue.type_id = issueTypeMap.get(processedIssue.type_id || "");
+
+      // Clean up links
+      processedIssue.links = processedIssue.links ? processedIssue.links.filter((link) => link !== undefined) : [];
+
+      // Strip parent (handled in relations step)
+      processedIssue.parent = null;
+
+      // Get associated comments for this issue
+      const associatedComments = await getAssociatedCommentsV2(
+        jobId,
+        credentials,
+        issueComments,
+        planeUsers,
+        processedIssue.external_id,
+        planeClient,
+        workspaceSlug
+      );
+
+      // Get associated property values (uses existing function!)
+      const associatedIssuePropertyValues = getAssociatedIssuePropertyValues({
+        issueId: processedIssue.external_id || "",
+        planeUsers,
+        planeIssueProperties,
+        planeIssuePropertiesOptions,
+        planeIssuePropertyValues,
+      });
+
+      const associatedCycles = associations.cycles.get(processedIssue.external_id) || [];
+      const associatedModules = associations.modules.get(processedIssue.external_id) || [];
+
+      const associatedCycleIds = associatedCycles.map((cycle) => cycleMap.get(cycle)) || [];
+      const associatedModuleIds = associatedModules.map((module) => moduleMap.get(module)) || [];
+
+      const associatedWorklogs = processWorklogs(userMap, associations.worklogs.get(processedIssue.external_id) || []);
+
+      // Build BulkIssuePayload
+      bulkIssuePayload.push({
+        ...processedIssue,
+        file_assets: assets,
+        comments: associatedComments,
+        worklogs: associatedWorklogs,
+        cycles: associatedCycleIds.filter(Boolean) as string[],
+        modules: associatedModuleIds.filter(Boolean) as string[],
+        issue_property_values: associatedIssuePropertyValues,
+      });
+    } catch (error) {
+      logger.error(`[${jobId.slice(0, 7)}] Error while processing issue: ${issue.external_id}`, error);
+    }
+  }
+
+  return bulkIssuePayload;
+};
+
+const processWorklogs = (userMap: Map<string, string>, worklogs: Partial<TWorklog>[]): Partial<TWorklog>[] =>
+  worklogs.map((worklog) => ({
+    ...worklog,
+    logged_by: userMap.get(worklog.logged_by || ""),
+  }));
 
 const processAttachments = async (
   jobId: string,
@@ -861,7 +1020,7 @@ const generatePropertyValuesPayload = (
     case "RELATION_USER":
       return propertyValues
         .map((value) => {
-          const user = planeUsers.find((user) => user.display_name === value.value);
+          const user = planeUsers.find((user) => user.email === value.value);
           return user ? { ...value, value: user.id } : undefined;
         })
         .filter(Boolean);

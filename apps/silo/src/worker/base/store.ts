@@ -4,6 +4,14 @@ import { createClient } from "redis";
 import { logger } from "@plane/logger";
 import { env } from "@/env";
 
+/**
+ * Result of getting and deleting keys matching a pattern
+ */
+export interface GetAndDeleteResult {
+  count: number;
+  deletedKeys: Map<string, string>;
+}
+
 export class Store extends EventEmitter {
   private static instance: Store | null = null;
   private client!: RedisClientType<RedisDefaultModules & RedisModules, RedisFunctions, RedisScripts>;
@@ -248,11 +256,77 @@ export class Store extends EventEmitter {
   }
 
   public async del(key: string): Promise<number> {
-    const index = this.jobs.indexOf(key);
-    if (index > -1) {
-      this.jobs.splice(index, 1);
-    }
     return await this.client.del(key);
+  }
+
+  /**
+   * Gets and deletes all keys matching a pattern
+   * @param pattern Redis key pattern (e.g., "prefix:*")
+   * @returns Object containing count of deleted keys and map of key-value pairs
+   */
+  public async getAndDelete(pattern: string): Promise<GetAndDeleteResult> {
+    const keys: string[] = [];
+
+    // Use SCAN to find all matching keys (more efficient than KEYS)
+    for await (const key of this.client.scanIterator({ MATCH: pattern, COUNT: 100 })) {
+      keys.push(key);
+    }
+
+    if (keys.length === 0) {
+      return { count: 0, deletedKeys: new Map() };
+    }
+
+    // Fetch all values before deletion, handling different Redis types
+    const deletedKeys = new Map<string, string>();
+
+    for (const key of keys) {
+      try {
+        const type = await this.client.type(key);
+        let value: string | null = null;
+
+        switch (type) {
+          case "string": {
+            value = await this.client.get(key);
+            break;
+          }
+          case "list": {
+            const listValues = await this.client.lRange(key, 0, -1);
+            value = JSON.stringify(listValues);
+            break;
+          }
+          case "hash": {
+            const hashValues = await this.client.hGetAll(key);
+            value = JSON.stringify(hashValues);
+            break;
+          }
+          case "set": {
+            const setValues = await this.client.sMembers(key);
+            value = JSON.stringify(setValues);
+            break;
+          }
+          case "zset": {
+            const zsetValues = await this.client.zRange(key, 0, -1);
+            value = JSON.stringify(zsetValues);
+            break;
+          }
+          default: {
+            value = `[${type}]`;
+          }
+        }
+
+        if (value !== null) {
+          deletedKeys.set(key, value);
+        }
+      } catch (error) {
+        logger.warn(`Failed to fetch value for key ${key}`, { error });
+        deletedKeys.set(key, "[error fetching value]");
+      }
+    }
+
+    // Delete all matching keys
+    const count = await this.client.del(keys);
+
+    return { count, deletedKeys };
   }
 
   public async clean() {

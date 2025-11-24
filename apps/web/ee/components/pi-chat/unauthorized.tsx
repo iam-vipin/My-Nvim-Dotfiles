@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -54,12 +53,12 @@ export const UnauthorizedView = (props: { className?: string; imgClassName?: str
             </div>
           </div>
           {instance && !instance?.is_authorized && (
-            <Link
+            <a
               href={`${instance.oauth_url}?sidebar_open_url=${pathname}${isPiChatDrawerOpen ? "?pi_sidebar_open=true" : ""}`}
               className={cn(getButtonStyling("primary", "md"), "w-fit")}
             >
               Activate Build mode
-            </Link>
+            </a>
           )}
         </div>
       </div>

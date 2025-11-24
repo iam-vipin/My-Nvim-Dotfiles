@@ -7,5 +7,6 @@ export default defineConfig({
   dts: true,
   clean: true,
   minify: true,
+  exports: true,
   external: ["axios"],
 });

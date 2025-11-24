@@ -10,60 +10,50 @@
   ],
   "exports": {
     "./asana": {
-      "types": "./dist/asana/index.d.ts",
       "import": "./dist/asana/index.mjs",
-      "require": "./dist/asana/index.js"
-    },
-    "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.mjs",
-      "require": "./dist/core/index.js"
-    },
-    "./github": {
-      "types": "./dist/github/index.d.ts",
-      "import": "./dist/github/index.mjs",
-      "require": "./dist/github/index.js"
-    },
-    "./gitlab": {
-      "types": "./dist/gitlab/index.d.ts",
-      "import": "./dist/gitlab/index.mjs",
-      "require": "./dist/gitlab/index.js"
-    },
-    "./jira": {
-      "types": "./dist/jira/index.d.ts",
-      "import": "./dist/jira/index.mjs",
-      "require": "./dist/jira/index.js"
-    },
-    "./jira-server": {
-      "types": "./dist/jira-server/index.d.ts",
-      "import": "./dist/jira-server/index.mjs",
-      "require": "./dist/jira-server/index.js"
-    },
-    "./linear": {
-      "types": "./dist/linear/index.d.ts",
-      "import": "./dist/linear/index.mjs",
-      "require": "./dist/linear/index.js"
-    },
-    "./slack": {
-      "types": "./dist/slack/index.d.ts",
-      "import": "./dist/slack/index.mjs",
-      "require": "./dist/slack/index.js"
-    },
-    "./flatfile": {
-      "types": "./dist/flatfile/index.d.ts",
-      "import": "./dist/flatfile/index.mjs",
-      "require": "./dist/flatfile/index.js"
-    },
-    "./sentry": {
-      "types": "./dist/sentry/index.d.ts",
-      "import": "./dist/sentry/index.mjs",
-      "require": "./dist/sentry/index.js"
+      "require": "./dist/asana/index.cjs"
     },
     "./clickup": {
-      "types": "./dist/clickup/index.d.ts",
       "import": "./dist/clickup/index.mjs",
-      "require": "./dist/clickup/index.js"
-    }
+      "require": "./dist/clickup/index.cjs"
+    },
+    "./core": {
+      "import": "./dist/core/index.mjs",
+      "require": "./dist/core/index.cjs"
+    },
+    "./flatfile": {
+      "import": "./dist/flatfile/index.mjs",
+      "require": "./dist/flatfile/index.cjs"
+    },
+    "./github": {
+      "import": "./dist/github/index.mjs",
+      "require": "./dist/github/index.cjs"
+    },
+    "./gitlab": {
+      "import": "./dist/gitlab/index.mjs",
+      "require": "./dist/gitlab/index.cjs"
+    },
+    "./jira": {
+      "import": "./dist/jira/index.mjs",
+      "require": "./dist/jira/index.cjs"
+    },
+    "./jira-server": {
+      "import": "./dist/jira-server/index.mjs",
+      "require": "./dist/jira-server/index.cjs"
+    },
+    "./linear": {
+      "import": "./dist/linear/index.mjs",
+      "require": "./dist/linear/index.cjs"
+    },
+    "./sentry": {
+      "import": "./dist/sentry/index.mjs",
+      "require": "./dist/sentry/index.cjs"
+    },
+    "./slack": {
+      "import": "./dist/slack/index.mjs",
+      "require": "./dist/slack/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsdown --minify",

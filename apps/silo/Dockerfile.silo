@@ -39,6 +39,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+ENV CI=true
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --store-dir=/pnpm/store
 
 ENV TURBO_TELEMETRY_DISABLED=1
@@ -56,9 +57,10 @@ COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/silo/dist ./apps/silo/dist
 COPY --from=installer /app/apps/silo/node_modules ./apps/silo/node_modules
 COPY --from=installer /app/node_modules ./node_modules
+COPY --from=installer /app/apps/silo/package.json ./apps/silo/package.json
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
 
-CMD ["node", "apps/silo/dist/start.cjs"]
+CMD ["node", "apps/silo"]

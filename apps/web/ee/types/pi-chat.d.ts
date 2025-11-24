@@ -263,4 +263,4 @@ export type TInstanceResponse =
     };
 
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page"];
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "module"];

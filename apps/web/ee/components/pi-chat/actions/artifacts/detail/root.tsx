@@ -12,6 +12,7 @@ import { EDITABLE_ARTIFACT_TYPES } from "@/plane-web/types";
 import { EpicDetail } from "./epic";
 import { FollowUpDetail } from "./follow-up";
 import { Header } from "./header";
+import { ModuleDetail } from "./module";
 import { PageDetail } from "./page";
 import { TemplateDetail } from "./template";
 import { Toast } from "./toast";
@@ -34,6 +35,8 @@ const DetailCardRenderer = (props: {
       return <PageDetail {...props} />;
     case "epic":
       return <EpicDetail {...props} />;
+    case "module":
+      return <ModuleDetail {...props} />;
     default:
       return <TemplateDetail {...props} />;
   }

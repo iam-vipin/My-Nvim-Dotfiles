@@ -9,6 +9,7 @@ import { isCommentEmpty } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
 import { useArtifactData } from "../useArtifactData";
+import type { TUpdatedArtifact } from "@/plane-web/types";
 
 type TProps = {
   projectId: string;
@@ -18,6 +19,7 @@ type TProps = {
   artifactId: string;
   messageId: string;
   artifactType: string;
+  onSubmit?: (artifactData: TUpdatedArtifact) => void;
 };
 
 type TEditCommands = {
@@ -26,7 +28,7 @@ type TEditCommands = {
 };
 
 export const FollowUpDetail = observer((props: TProps) => {
-  const { projectId, workspaceId, artifactId, messageId, artifactType } = props;
+  const { projectId, workspaceId, artifactId, messageId, artifactType, onSubmit } = props;
   // states
   const [isThinking, setIsThinking] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -48,8 +50,11 @@ export const FollowUpDetail = observer((props: TProps) => {
     if (isThinking || !query || isCommentEmpty(query) || !workspaceId) return;
     setIsThinking(true);
     await followUp(artifactId, query, messageId, projectId, workspaceId, activeChatId, artifactType, artifactData)
-      .then(() => {
-        setShowAlert(true);
+      .then((response) => {
+        if (response.success) {
+          setShowAlert(true);
+          onSubmit?.(response.artifact_data);
+        }
       })
       .catch((error) => {
         console.error(error);

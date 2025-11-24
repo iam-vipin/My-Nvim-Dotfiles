@@ -6,44 +6,53 @@ import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
 import { IssueFormRoot } from "@/components/issues/issue-modal/form";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { useWorkItemData } from "../useArtifactData";
+import { PiChatArtifactsFooter } from "./footer";
 
 interface TWorkItemDetailProps {
   data: TArtifact;
-  isSaving: boolean;
-  setIsSaving: (isSaving: boolean) => void;
-  handleSuccess: () => void;
-  handleError: (error: string) => void;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
+  workspaceSlug: string;
+  activeChatId: string;
 }
 
 export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
   // props
-  const { data, setIsSaving, handleSuccess, handleError, updateArtifact } = props;
+  const { data, updateArtifact, workspaceSlug, activeChatId } = props;
   // state
-  const [shouldUpdateDescription, setShouldUpdateDescription] = useState(true);
-  const [description, setDescription] = useState<string | undefined>(undefined);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // hooks
   const updatedData = useWorkItemData(data.artifact_id);
   const issueTitleRef = useRef<HTMLInputElement>(null);
   // derived values
   const projectId = data.parameters?.project?.id;
 
+  const handleOnSave = () => {
+    setIsSaving(false);
+    setShowSavedToast(true);
+    setTimeout(() => {
+      setShowSavedToast(false);
+      setError(null);
+    }, 1000);
+  };
+
   const handleOnChange = async (formData: Partial<TIssue> | null) => {
     if (!formData) return;
     setIsSaving(true);
-    setShouldUpdateDescription(false);
     await updateArtifact(formData)
       .then(() => {
-        handleSuccess();
+        handleOnSave();
       })
       .catch((error) => {
         console.error(error);
-        handleError(error);
+        setError(error);
+        handleOnSave();
       });
   };
   const commonIssueModalProps = {
     issueTitleRef: issueTitleRef,
-    data: { ...updatedData, description_html: description },
+    data: updatedData,
     onChange: handleOnChange,
     onAssetUpload: () => {},
     onClose: () => {},
@@ -59,29 +68,31 @@ export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
     isProjectSelectionDisabled: false,
     convertToWorkItem: false,
     showActionButtons: false,
-    dataResetProperties: [data.artifact_id, updatedData],
   };
 
-  useEffect(() => {
-    if (shouldUpdateDescription) {
-      setDescription(updatedData.description_html);
-    } else {
-      setShouldUpdateDescription(true);
-    }
-  }, [updatedData]);
-
   return (
-    projectId && (
-      <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
-        <IssueModalProvider>
-          <IssueFormRoot {...commonIssueModalProps} />
-        </IssueModalProvider>
-        <div
-          className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
-            hidden: data.is_editable,
-          })}
-        />
-      </Card>
-    )
+    <>
+      {projectId && (
+        <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
+          <IssueModalProvider>
+            <IssueFormRoot {...commonIssueModalProps} key={data.artifact_id} />
+          </IssueModalProvider>
+          <div
+            className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
+              hidden: data.is_editable,
+            })}
+          />
+        </Card>
+      )}
+      <PiChatArtifactsFooter
+        artifactsData={data}
+        workspaceSlug={workspaceSlug}
+        activeChatId={activeChatId}
+        artifactId={data.artifact_id}
+        isSaving={isSaving}
+        showSavedToast={showSavedToast}
+        error={error}
+      />
+    </>
   );
 });

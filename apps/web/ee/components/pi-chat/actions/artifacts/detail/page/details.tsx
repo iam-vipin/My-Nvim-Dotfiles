@@ -1,26 +1,26 @@
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import type { TPage } from "@plane/types";
 // local imports
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { usePageData } from "../../useArtifactData";
+import { PiChatArtifactsFooter } from "../footer";
 import { PageFormRoot } from "./root";
 
 interface TPageDetailProps {
   data: TArtifact;
-  isSaving: boolean;
+  artifactId: string;
+  activeChatId: string;
   workspaceSlug: string;
-  setIsSaving: (isSaving: boolean) => void;
-  handleSuccess: () => void;
-  handleError: (error: string) => void;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
 }
 
 export const PageDetail: React.FC<TPageDetailProps> = observer((props) => {
-  const { data, workspaceSlug, handleError, updateArtifact } = props;
-  // store hooks
+  const { data, artifactId, activeChatId, workspaceSlug, updateArtifact } = props;
   const updatedData = usePageData(data.artifact_id);
-
+  const editorRef = useRef<EditorRefApi>(null);
   // Helper: shallow/targeted equality for the page fields you care about.
   const isSameAsUpdatedData = (incoming: Partial<TPage> | null) => {
     if (!incoming) return true;
@@ -40,20 +40,32 @@ export const PageDetail: React.FC<TPageDetailProps> = observer((props) => {
       await updateArtifact(formData as TUpdatedArtifact);
     } catch (err: any) {
       console.error(err);
-      handleError(err?.message ?? String(err));
     }
   };
 
   return (
-    <PageFormRoot
-      workspaceSlug={workspaceSlug}
-      artifactId={data.artifact_id}
-      preloadedData={{
-        description_html: updatedData.description_html,
-        logo_props: updatedData.logo_props,
-        name: updatedData.name,
-      }}
-      handleOnChange={handleOnChange}
-    />
+    <>
+      <PageFormRoot
+        key={artifactId}
+        workspaceSlug={workspaceSlug}
+        artifactId={data.artifact_id}
+        preloadedData={{
+          description_html: updatedData.description_html,
+          logo_props: updatedData.logo_props,
+          name: updatedData.name,
+        }}
+        handleOnChange={handleOnChange}
+        editorRef={editorRef}
+      />
+      <PiChatArtifactsFooter
+        artifactsData={data}
+        workspaceSlug={workspaceSlug}
+        activeChatId={activeChatId}
+        artifactId={data.artifact_id}
+        onSubmit={(artifactData) => {
+          editorRef?.current?.setEditorValue((artifactData as TPage).description_html ?? "<p></p>", true);
+        }}
+      />
+    </>
   );
 });

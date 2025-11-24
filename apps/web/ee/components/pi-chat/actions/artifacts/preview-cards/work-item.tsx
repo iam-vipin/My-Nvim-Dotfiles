@@ -36,11 +36,6 @@ export const WorkItemPreviewCard = observer((props: TProps) => {
           {/* title */}
           <div className="truncate text-sm font-medium text-start">{data.name}</div>
         </div>
-        {data.description_html && (
-          <div className="text-sm text-custom-text-300 text-start line-clamp-2">
-            {stripAndTruncateHTML(data.description_html)}
-          </div>
-        )}
         {/* properties */}
         <WithPreviewHOC.PreviewProperties>
           {data.state_id && workspaceSlug && (

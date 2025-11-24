@@ -44,7 +44,11 @@ export const SummaryBlock = observer((props: TProps) => {
   };
 
   return (
-    <div className={cn("flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out")}>
+    <div
+      className={cn(
+        "@container flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out"
+      )}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
@@ -82,7 +86,7 @@ export const SummaryBlock = observer((props: TProps) => {
                 <div className="text-base">
                   {summary.completed} successful {summary.completed > 1 ? "actions" : "action"}{" "}
                 </div>
-                <div className="grid grid-cols-3 gap-2 flex-wrap w-full">
+                <div className="grid @lg:grid-cols-3 @md:grid-cols-2 @sm:grid-cols-1 gap-2 flex-wrap w-full">
                   {groupedArtifacts.successful.map((artifact) => (
                     <PreviewBlock
                       key={artifact.artifact_id}

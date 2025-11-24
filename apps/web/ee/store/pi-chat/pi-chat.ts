@@ -19,6 +19,7 @@ import type {
   TUserThreads,
   TArtifact,
   TUpdatedArtifact,
+  TFollowUpResponse,
   TInstanceResponse,
 } from "@/plane-web/types";
 import { ESource, EExecutionStatus } from "@/plane-web/types";
@@ -103,7 +104,7 @@ export interface IPiChatStore {
     chat_id: string,
     entity_type: string,
     artifactData: TUpdatedArtifact
-  ) => Promise<void>;
+  ) => Promise<TFollowUpResponse>;
   convertToPage: (
     description: string,
     workspaceSlug: string,
@@ -958,6 +959,7 @@ export class PiChatStore implements IPiChatStore {
       } else {
         throw new Error("Failed to follow up");
       }
+      return response;
     } catch (error) {
       console.error(error);
       throw error;

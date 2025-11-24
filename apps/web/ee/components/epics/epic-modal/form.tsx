@@ -343,7 +343,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
                 )}
               </div>
             </div>
-            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg bg-custom-background-100">
+            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-lg rounded-b-lg bg-custom-background-100">
               <div className="pb-3">
                 <EpicDefaultProperties
                   control={control}

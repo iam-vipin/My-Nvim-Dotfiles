@@ -210,31 +210,35 @@ export const InputBox = observer((props: TProps) => {
                   <FocusFilter focus={focus} setFocus={setFocus} isLoading={isChatLoading && !!activeChatId} />
                 )}
                 <div className="flex items-center w-full justify-end gap-2">
-                  {/* speech recorder */}
-                  <WithFeatureFlagHOC
-                    workspaceSlug={workspaceSlug?.toString()}
-                    flag={E_FEATURE_FLAGS.PI_CONVERSE}
-                    fallback={<></>}
-                  >
-                    <AudioRecorder
-                      workspaceId={workspaceId}
-                      chatId={activeChatId}
-                      editorRef={editorRef}
-                      createNewChat={createNewChat}
-                      isProjectLevel={isProjectLevel}
-                      loader={loader}
-                      setLoader={setLoader}
-                      isFullScreen={isFullScreen}
-                      focus={focus}
-                    />
-                  </WithFeatureFlagHOC>
-                  <WithFeatureFlagHOC
-                    workspaceSlug={workspaceSlug?.toString()}
-                    flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
-                    fallback={<></>}
-                  >
-                    {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
-                  </WithFeatureFlagHOC>
+                  <div className="flex w-full justify-end">
+                    {/* speech recorder */}
+                    <WithFeatureFlagHOC
+                      workspaceSlug={workspaceSlug?.toString()}
+                      flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                      fallback={<></>}
+                    >
+                      <AudioRecorder
+                        workspaceId={workspaceId}
+                        chatId={activeChatId}
+                        editorRef={editorRef}
+                        createNewChat={createNewChat}
+                        isProjectLevel={isProjectLevel}
+                        loader={loader}
+                        setLoader={setLoader}
+                        isFullScreen={isFullScreen}
+                        focus={focus}
+                      />
+                    </WithFeatureFlagHOC>
+                    {!SPEECH_LOADERS.includes(loader) && (
+                      <WithFeatureFlagHOC
+                        workspaceSlug={workspaceSlug?.toString()}
+                        flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
+                        fallback={<></>}
+                      >
+                        {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
+                      </WithFeatureFlagHOC>
+                    )}
+                  </div>
                   {!SPEECH_LOADERS.includes(loader) && (
                     <button
                       className={cn(

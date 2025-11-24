@@ -14,10 +14,11 @@ type Props = {
   workspaceSlug: string;
   preloadedData?: Partial<TPage>;
   handleOnChange: (data: Partial<TPage> | null) => void;
+  editorRef: React.RefObject<EditorRefApi>;
 };
 
 export const PageFormRoot: React.FC<Props> = observer((props) => {
-  const { artifactId, workspaceSlug, preloadedData, handleOnChange } = props;
+  const { artifactId, workspaceSlug, preloadedData, handleOnChange, editorRef } = props;
   // states
   const [isEmojiIconPickerOpen, setIsEmojiIconPickerOpen] = useState(false);
   // form state
@@ -26,18 +27,11 @@ export const PageFormRoot: React.FC<Props> = observer((props) => {
     reValidateMode: "onChange",
   });
   const { control, reset, watch } = methods;
-  const editorRef = useRef<EditorRefApi>(null);
 
   useEffect(() => {
     if (preloadedData) {
       reset({ ...preloadedData });
     }
-    // clear editor when artifact changes
-    editorRef?.current?.clearEditor();
-    if (preloadedData?.description_html) {
-      editorRef?.current?.setEditorValue(preloadedData.description_html);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artifactId, preloadedData]);
 
   const debounceRef = useRef<number | null>(null);
@@ -106,7 +100,7 @@ export const PageFormRoot: React.FC<Props> = observer((props) => {
               />
             </div>
             {/* Page Description */}
-            <div>
+            <div className="pb-[100px]">
               <Controller
                 control={control}
                 name="description_html"

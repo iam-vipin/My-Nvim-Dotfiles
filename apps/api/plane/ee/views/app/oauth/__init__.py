@@ -10,4 +10,5 @@ from .application import (
     OAuthPublishedApplicationBySlugEndpoint,
     OAuthUserAppInstallationDetailEndpoint,
     OAuthWorkspacesCheckAppInstallationAllowedEndpoint,
+    OAuthApplicationSupportedWorkspacesEndpoint,
 )

@@ -8,6 +8,9 @@ from django.db.models import (
     Value,
     When,
     Subquery,
+    Func,
+    F,
+    Prefetch,
 )
 from django.utils import timezone
 from django.db import transaction
@@ -39,6 +42,7 @@ from plane.authentication.serializers import (
     ApplicationCategorySerializer,
 )
 from plane.db.models import Workspace, WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.ee.views.base import BaseAPIView
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
@@ -581,3 +585,44 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
             )
 
         return Response(workspace_app_installations_data, status=status.HTTP_200_OK)
+
+
+class OAuthApplicationSupportedWorkspacesEndpoint(BaseAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, client_id: str) -> Response:
+        """
+        Get workspaces that the user has access to and that are supported by the application.
+        Filters workspaces based on the application's supported_plans field.
+        """
+        # Get the application
+        application = Application.objects.filter(
+            client_id=client_id, deleted_at__isnull=True
+        ).first()
+        
+        if not application:
+            return Response(
+                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get supported plans from the application
+        supported_plans = application.supported_plans or []
+        
+        # 1. Get workspace IDs where user is an active member
+        workspace_ids = WorkspaceMember.objects.filter(
+            member=request.user, is_active=True
+        ).values_list("workspace_id", flat=True)
+        
+        # 2. Build filter dictionary based on supported_plans condition
+        filter_kwargs = {"id__in": workspace_ids}
+        if supported_plans:
+            filter_kwargs["license__plan__in"] = supported_plans
+        
+        # Filter workspaces and get only IDs (convert UUIDs to strings)
+        supported_workspace_ids = [
+            str(workspace_id)
+            for workspace_id in Workspace.objects.filter(**filter_kwargs).values_list("id", flat=True)
+        ]
+        
+        # 3. Return the workspace IDs
+        return Response({"workspace_ids": supported_workspace_ids}, status=status.HTTP_200_OK)

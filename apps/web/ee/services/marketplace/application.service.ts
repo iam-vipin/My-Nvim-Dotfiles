@@ -112,9 +112,17 @@ export class ApplicationService extends APIService {
 
   async getApplicationPermissions(
     applicationId: string
-  ): Promise<{ workspace_id: string; state: string, is_installed: boolean }[] | undefined> {
+  ): Promise<{ workspace_id: string; state: string; is_installed: boolean }[] | undefined> {
     return this.get(`/api/workspaces-check-app-installation-allowed/${applicationId}/`)
       .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getSupportedWorkspaceIds(clientId: string): Promise<string[] | undefined> {
+    return this.get(`/api/applications/${clientId}/supported-workspaces/`)
+      .then((res) => res?.data?.workspace_ids)
       .catch((err) => {
         throw err?.response?.data;
       });

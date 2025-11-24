@@ -12,6 +12,7 @@ from plane.ee.views.app.oauth import (
     OAuthPublishedApplicationBySlugEndpoint,
     OAuthUserAppInstallationDetailEndpoint,
     OAuthWorkspacesCheckAppInstallationAllowedEndpoint,
+    OAuthApplicationSupportedWorkspacesEndpoint,
 )
 
 urlpatterns = [
@@ -74,5 +75,10 @@ urlpatterns = [
         "workspaces-check-app-installation-allowed/<uuid:application_id>/",
         OAuthWorkspacesCheckAppInstallationAllowedEndpoint.as_view(),
         name="workspaces-check-app-installation-allowed",
+    ),
+    path(
+        "applications/<str:client_id>/supported-workspaces/",
+        OAuthApplicationSupportedWorkspacesEndpoint.as_view(),
+        name="application-supported-workspaces",
     ),
 ]

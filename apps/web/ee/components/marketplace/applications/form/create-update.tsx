@@ -29,6 +29,7 @@ import { InputField } from "./fields/input-field";
 import { RichTextField } from "./fields/rich-text-field";
 import { FormSection } from "./form-section";
 import { SelectCategories } from "./select-categories";
+import { SelectSupportedPlans } from "./select-supported-plans";
 import { UploadAppAttachments } from "./upload-attachments";
 
 type Props = {
@@ -63,6 +64,7 @@ const defaultFormData: Partial<TUserApplication> = {
   attachments_urls: [],
   is_mentionable: false,
   authorization_grant_type: EApplicationAuthorizationGrantType.AUTHORIZATION_CODE,
+  supported_plans: [],
 };
 
 export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
@@ -441,6 +443,17 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                 handleChange={(value) => setValue("categories", value)}
               />
             )}
+          </div>
+        </FormSection>
+        <FormSection title={t("workspace_settings.settings.applications.supported_plans")} collapsible>
+          <div tabIndex={6} className="flex flex-col gap-1">
+            <div className="text-sm text-custom-text-300">
+              {t("workspace_settings.settings.applications.supported_plans_description")}
+            </div>
+            <SelectSupportedPlans
+              value={watch("supported_plans") ?? []}
+              handleChange={(value) => setValue("supported_plans", value)}
+            />
           </div>
         </FormSection>
         <FormSection title={"Compliance & Support"} collapsible>

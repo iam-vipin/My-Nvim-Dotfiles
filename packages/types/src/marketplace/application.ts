@@ -35,6 +35,8 @@ export type TApplication = {
   is_not_supported?: boolean;
   is_hardcoded?: boolean;
   is_default?: boolean;
+  supported_plans?: string[];
+  supported_environments?: string[];
 };
 
 export type TUserApplication = TApplication & {

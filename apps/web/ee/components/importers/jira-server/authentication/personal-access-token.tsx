@@ -127,7 +127,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     <div className="space-y-6 w-full">
       <ImporterHeader
         config={{
-          serviceName: "Jira Server",
+          serviceName: "Jira Server/Data Center",
           logo: JiraLogo,
         }}
       />

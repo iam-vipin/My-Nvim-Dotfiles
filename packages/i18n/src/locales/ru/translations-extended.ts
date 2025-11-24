@@ -1594,11 +1594,11 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Импортируйте ваши данные Jira Server в проекты Plane.",
+    jira_server_importer_description: "Импортируйте ваши данные Jira Server/Data Center в проекты Plane.",
     steps: {
       title_configure_plane: "Настроить Plane",
       description_configure_plane:
-        "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Jira Server. После создания проекта выберите его здесь.",
+        "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные Jira Server/Data Center. После создания проекта выберите его здесь.",
       title_configure_jira: "Настроить Jira",
       description_configure_jira:
         "Пожалуйста, выберите рабочее пространство Jira, из которого вы хотите мигрировать ваши данные.",
@@ -1609,7 +1609,7 @@ export default {
       description_map_priorities:
         "Пожалуйста, выберите приоритеты Jira, которые вы хотите сопоставить с приоритетами проектов Plane.",
       title_summary: "Резюме",
-      description_summary: "Вот резюме данных, которые будут мигрированы из Jira Server в Plane.",
+      description_summary: "Вот резюме данных, которые будут мигрированы из Jira Server/Data Center в Plane.",
     },
   },
   notion_importer: {

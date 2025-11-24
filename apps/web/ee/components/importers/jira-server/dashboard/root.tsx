@@ -23,7 +23,7 @@ export const JiraServerDashboardRoot: FC = observer(() => {
         getWorkspaceName,
         getProjectName,
         getPlaneProject,
-        serviceName: "Jira Server",
+        serviceName: "Jira Server/Data Center",
         logo: JiraLogo,
         swrKey: "JIRA_SERVER_IMPORTER",
       }}

@@ -1607,7 +1607,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importez vos données Jira Server dans les projets Plane.",
+    jira_server_importer_description: "Importez vos données Jira Server/Data Center dans les projets Plane.",
     steps: {
       title_configure_plane: "Configurer Plane",
       description_configure_plane:

@@ -1586,7 +1586,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Impor data Jira Server Anda ke dalam projek Plane.",
+    jira_server_importer_description: "Impor data Jira Server/Data Center Anda ke dalam projek Plane.",
     steps: {
       title_configure_plane: "Konfigurasi Plane",
       description_configure_plane:

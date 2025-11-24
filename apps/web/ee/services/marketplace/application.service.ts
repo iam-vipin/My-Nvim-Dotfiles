@@ -45,8 +45,8 @@ export class ApplicationService extends APIService {
       });
   }
 
-  async deleteApplication(workspaceSlug: string, applicationId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/applications/${applicationId}/`)
+  async deleteApplication(workspaceSlug: string, appSlug: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/applications/${appSlug}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

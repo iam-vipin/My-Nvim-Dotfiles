@@ -1793,7 +1793,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Import your Jira Server data into Plane projects.",
+    jira_server_importer_description: "Import your Jira Server/Data Center data into Plane projects.",
     steps: {
       title_configure_plane: "Configure Plane",
       description_configure_plane:

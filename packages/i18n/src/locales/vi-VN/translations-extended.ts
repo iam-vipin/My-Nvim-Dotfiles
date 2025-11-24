@@ -1570,7 +1570,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Nhập dữ liệu Jira Server của bạn vào các dự án Plane.",
+    jira_server_importer_description: "Nhập dữ liệu Jira Server/Data Center của bạn vào các dự án Plane.",
     steps: {
       title_configure_plane: "Cấu hình Plane",
       description_configure_plane:

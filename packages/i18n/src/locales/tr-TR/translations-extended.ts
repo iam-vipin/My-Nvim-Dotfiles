@@ -1599,7 +1599,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Jira Server verilerinizi Plane projelerine import edin.",
+    jira_server_importer_description: "Jira Server/Data Center verilerinizi Plane projelerine import edin.",
     steps: {
       title_configure_plane: "Plane'i Yapılandır",
       description_configure_plane:

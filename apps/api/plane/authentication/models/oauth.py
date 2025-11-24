@@ -17,6 +17,7 @@ from oauth2_provider.models import (
 
 from plane.app.permissions.base import ROLE
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
+from plane.authentication.bgtasks.app_delete_updates import app_delete_updates
 from plane.authentication.bgtasks.app_logo_asset_updates import app_logo_asset_updates
 from plane.db.mixins import SoftDeleteModel, UserAuditModel
 from plane.db.models import (
@@ -151,6 +152,11 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
                 app_logo_asset_updates.delay(self.id)
 
         super(Application, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        with transaction.atomic():
+            app_delete_updates.delay(self.id)
+            super(Application, self).delete(*args, **kwargs)
 
 
 class Grant(AbstractGrant):

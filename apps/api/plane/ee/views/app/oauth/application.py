@@ -168,6 +168,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                         | Q(published_at__isnull=False)
                         | Q(slug__in=enabled_apps_slugs)
                     )
+                    .filter(deleted_at__isnull=True)
                     .select_related("logo_asset")
                     .prefetch_related("attachments", "categories")
                 )
@@ -213,6 +214,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 .select_related(
                     "logo_asset",
                 )
+                .filter(deleted_at__isnull=True)
                 .first()
             )
 
@@ -247,15 +249,10 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def delete(self, request, slug, pk):
-        application = Application.objects.filter(
-            id=pk, application_owners__workspace__slug=slug
-        ).first()
-        if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        application.delete()
+    def delete(self, request, slug, app_slug):
+        application = Application.objects.filter(slug=app_slug, application_owners__workspace__slug=slug).first()
+        if application:
+            application.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

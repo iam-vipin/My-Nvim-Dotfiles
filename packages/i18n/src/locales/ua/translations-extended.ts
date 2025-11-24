@@ -1587,7 +1587,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Імпортуйте ваші дані Jira Server у проджекти Плейн.",
+    jira_server_importer_description: "Імпортуйте ваші дані Jira Server/Data Center у проджекти Плейн.",
     steps: {
       title_configure_plane: "Налаштувати Плейн",
       description_configure_plane:

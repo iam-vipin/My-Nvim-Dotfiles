@@ -21,6 +21,7 @@ import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { ApplicationPublishModal, ApplicationTileMenuItem } from "@/plane-web/components/marketplace";
 
 import { RegenerateClientSecretModal } from "../form/regenerate-client-secret-modal";
+import { DeleteApplicationModal } from "./delete-modal";
 import { RevokeAccessModal } from "./revoke-modal";
 
 export type TPopoverMenuOptions = {
@@ -45,7 +46,7 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
   const [isRevokeAccessModalOpen, setIsRevokeAccessModalOpen] = React.useState(false);
   const [isCredentialsModalOpen, setIsCredentialsModalOpen] = React.useState(false);
-
+  const [isDeleteApplicationModalOpen, setIsDeleteApplicationModalOpen] = React.useState(false);
   const router = useRouter();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -61,6 +62,10 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
 
   const toggleCredentialsModal = (flag: boolean) => {
     setIsCredentialsModalOpen(flag);
+  };
+
+  const toggleDeleteApplicationModal = (flag: boolean) => {
+    setIsDeleteApplicationModalOpen(flag);
   };
 
   const handleEdit = () => {
@@ -102,9 +107,11 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
       key: "menu-delete",
       type: "menu-item",
       label: "Delete",
-      isActive: false,
+      isActive: app.is_owned,
       prependIcon: <Trash2 className="flex-shrink-0 h-3 w-3" />,
-      onClick: () => {},
+      onClick: () => {
+        toggleDeleteApplicationModal(true);
+      },
     },
     {
       key: "uninstall",
@@ -129,6 +136,11 @@ export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = o
         render={(item: TPopoverMenuOptions) => <ApplicationTileMenuItem {...item} />}
       />
       <ApplicationPublishModal isOpen={isPublishModalOpen} handleClose={() => togglePublishModal(false)} app={app} />
+      <DeleteApplicationModal
+        app={app}
+        isOpen={isDeleteApplicationModalOpen}
+        handleClose={() => toggleDeleteApplicationModal(false)}
+      />
       <RevokeAccessModal
         app={app}
         isOpen={isRevokeAccessModalOpen}

@@ -34,7 +34,7 @@ export const IMPORTERS_LIST: ImporterProps[] = [
   {
     flag: E_FEATURE_FLAGS.JIRA_SERVER_IMPORTER,
     key: "jira-server",
-    title: "Jira Server",
+    title: "Jira Server/Data Center",
     i18n_description: "jira_server_importer.jira_server_importer_description",
     logo: JiraLogo,
     beta: true,

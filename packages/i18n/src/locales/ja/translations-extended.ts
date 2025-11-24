@@ -1578,7 +1578,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Jira ServerのデータをPlaneプロジェクトにインポートします。",
+    jira_server_importer_description: "Jira Server/Data CenterのデータをPlaneプロジェクトにインポートします。",
     steps: {
       title_configure_plane: "Planeを設定",
       description_configure_plane:

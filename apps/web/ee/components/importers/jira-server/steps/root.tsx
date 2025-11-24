@@ -18,7 +18,7 @@ export const StepsRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden">
       <Stepper
-        serviceName="Jira Server"
+        serviceName="Jira Server/Data Center"
         logo={JiraLogo}
         steps={IMPORTER_STEPS}
         currentStepIndex={currentStepIndex}

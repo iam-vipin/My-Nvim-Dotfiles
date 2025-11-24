@@ -1528,7 +1528,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "將您的 Jira Server 數據導入到 Plane 專案中。",
+    jira_server_importer_description: "將您的 Jira Server/Data Center 數據導入到 Plane 專案中。",
     steps: {
       title_configure_plane: "配置 Plane",
       description_configure_plane: "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",

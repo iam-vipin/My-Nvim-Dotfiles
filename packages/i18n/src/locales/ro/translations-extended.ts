@@ -1600,7 +1600,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importă datele tale Jira Server în proiectele Plane.",
+    jira_server_importer_description: "Importă datele tale Jira Server/Data Center în proiectele Plane.",
     steps: {
       title_configure_plane: "Configurează Plane",
       description_configure_plane:

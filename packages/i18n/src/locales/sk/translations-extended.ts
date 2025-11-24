@@ -1601,7 +1601,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importujte vaše Jira Server dáta do projektov Plane.",
+    jira_server_importer_description: "Importujte vaše Jira Server/Data Center dáta do projektov Plane.",
     steps: {
       title_configure_plane: "Nakonfigurovať Plane",
       description_configure_plane:

@@ -36,16 +36,9 @@ type Props = {
   formData?: Partial<TUserApplication>;
   handleFormSubmit: (data: Partial<TUserApplication>) => Promise<Partial<TUserApplication> | undefined>;
 };
-
-const redirectURIsRegex =
-  /^(https?:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/\S*)?)(?:\s+(https?:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/\S*)?))*$/gim;
 const singleUrlRegex =
   /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
-const allowedOriginsRegex =
-  /^(?:(?:https?:\/\/)?(?:[\w-]+(?:\.[\w-]+)+))(?:\s+(?:(?:https?:\/\/)?(?:[\w-]+(?:\.[\w-]+)+)))*$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const relativeUrlRegex = /^(\/[a-zA-Z0-9_\-\/]+|https?:\/\/[^\s]+)$/;
-
 const defaultFormData: Partial<TUserApplication> = {
   id: undefined,
   name: "",
@@ -393,12 +386,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             description={t("workspace_settings.settings.applications.webhook_url.description")}
             placeholder={t("workspace_settings.settings.applications.webhook_url.placeholder")}
             register={register}
-            validation={{
-              pattern: {
-                value: singleUrlRegex,
-                message: t("workspace_settings.settings.applications.invalid_webhook_url_error"),
-              },
-            }}
             onChange={(value) => handleTextChange("webhook_url", value)}
             error={errors.webhook_url}
           />
@@ -421,10 +408,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             register={register}
             validation={{
               required: t("workspace_settings.settings.applications.redirect_uris_error"),
-              pattern: {
-                value: redirectURIsRegex,
-                message: t("workspace_settings.settings.applications.invalid_redirect_uris_error"),
-              },
             }}
             onChange={(value) => handleTextChange("redirect_uris", value)}
             error={errors.redirect_uris}

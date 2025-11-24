@@ -34,11 +34,16 @@ export function pullUsers(users: string): ImportedJiraUser[] {
 
 export async function pullLabels(client: JiraService): Promise<string[]> {
   const labels: string[] = [];
-  await fetchPaginatedData(
-    (startAt) => client.getResourceLabels(startAt),
-    (values) => labels.push(...(values as string[])),
-    "values"
-  );
+  try {
+    await fetchPaginatedData(
+      (startAt) => client.getResourceLabels(startAt),
+      (values) => labels.push(...(values as string[])),
+      "values"
+    );
+  } catch (error) {
+    console.log("Error while pulling labels", error);
+  }
+
   return labels;
 }
 
@@ -60,7 +65,19 @@ export async function pullIssues(client: JiraService, projectKey: string, from?:
 }
 
 export async function pullComments(issues: IJiraIssue[], client: JiraService): Promise<any[]> {
-  return await pullCommentsInBatches(issues, 20, client);
+  const comments: JiraComment[] = [];
+
+  try {
+    // Pull comments for each issue
+    for (const issue of issues) {
+      const issueComments = await pullCommentsForIssue(issue, client);
+      comments.push(...issueComments);
+    }
+  } catch (error) {
+    console.log("Error while pulling comments for issues", error);
+  }
+
+  return comments;
 }
 
 export async function pullSprints(client: JiraService, projectId: string): Promise<JiraSprint[]> {
@@ -133,22 +150,14 @@ export const pullCommentsForIssue = async (issue: IJiraIssue, client: JiraServic
   return comments;
 };
 
-export const pullCommentsInBatches = async (
-  issues: IJiraIssue[],
-  batchSize: number,
-  client: JiraService
-): Promise<JiraComment[]> => {
-  const comments: JiraComment[] = [];
-  for (let i = 0; i < issues.length; i += batchSize) {
-    const batch = issues.slice(i, i + batchSize);
-    const batchComments = await Promise.all(batch.map((issue) => pullCommentsForIssue(issue, client)));
-    comments.push(...batchComments.flat());
+export const pullIssueTypes = async (client: JiraService, projectId: string): Promise<JiraIssueTypeDetails[]> => {
+  try {
+    return await client.getProjectIssueTypes(projectId);
+  } catch (error) {
+    console.log("Error while pulling issue types", error);
+    return [];
   }
-  return comments;
 };
-
-export const pullIssueTypes = async (client: JiraService, projectId: string): Promise<JiraIssueTypeDetails[]> =>
-  await client.getProjectIssueTypes(projectId);
 
 export const pullIssueFields = async (
   client: JiraService,

@@ -112,7 +112,7 @@ export const transformComment = (
   created_by: comment.author?.displayName,
   comment_html: comment.renderedBody ?? "<p></p>",
   actor: comment.author?.displayName,
-  issue: comment.issue_id,
+  issue: `${projectId}_${resourceId}_${comment.issue_id}`,
 });
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {

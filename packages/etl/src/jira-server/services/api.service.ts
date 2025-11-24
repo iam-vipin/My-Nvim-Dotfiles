@@ -1,5 +1,5 @@
 // services
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import type { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
 import { Version2Client } from "jira.js/out/version2";
@@ -30,6 +30,24 @@ export class JiraV2Service {
         personalAccessToken: props.patToken,
       },
     });
+
+    this.jiraClient.handleFailedResponse = async (request) => {
+      const error = request as AxiosError;
+      if (error.response?.status === 429) {
+        const retryAfter = 60; // 60 seconds default
+        console.log("Rate limit exceeded ====== in jira client, waiting for", retryAfter, "seconds");
+        await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+
+        // Actually retry the request
+        const originalConfig = error.config;
+        if (originalConfig) {
+          console.log("Retrying request after rate limit...");
+          const response = await axios.request(originalConfig);
+          return response.data;
+        }
+      }
+      throw error;
+    };
   }
 
   async getServerInfo() {

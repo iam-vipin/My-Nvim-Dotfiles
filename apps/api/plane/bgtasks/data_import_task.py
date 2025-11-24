@@ -1,6 +1,7 @@
 # Python imports
 import logging
 import random
+import uuid
 
 # Third party imports
 from celery import shared_task
@@ -138,6 +139,23 @@ def update_job_batch_completion(
         log_exception(e)
 
 
+def is_valid_uuid(value):
+    """
+    Check if a value is a valid UUID string.
+
+    Args:
+        value: The value to check
+
+    Returns:
+        bool: True if the value is a valid UUID, False otherwise
+    """
+    try:
+        uuid.UUID(str(value))
+        return True
+    except (ValueError, AttributeError):
+        return False
+
+
 def sanitize_issue_data(issue_data):
     """
     Sanitize the issue data
@@ -156,8 +174,12 @@ def process_single_issue(slug, project, user_id, issue_data):
             # Process the main issue
             issue_data = sanitize_issue_data(issue_data)
 
-            # Extract labels before serialization (they're label names, not UUIDs)
-            labels = issue_data.pop("labels", [])
+            # Handle labels based on whether they are UUIDs or names
+            labels = []
+            if "labels" in issue_data:
+                label_values = issue_data.get("labels", [])
+                if label_values and not is_valid_uuid(label_values[0]):
+                    labels = issue_data.pop("labels")
 
             serializer = IssueSerializer(
                 data=issue_data,

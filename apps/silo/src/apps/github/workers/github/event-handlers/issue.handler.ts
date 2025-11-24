@@ -183,17 +183,6 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
         .filter((l) => l !== undefined) as string[];
     }
 
-    if (planeIssue.assignees) {
-      planeIssue.assignees = planeIssue.assignees
-        .map((assignee) => {
-          const user = users.find((u) => u.id === assignee);
-          if (user) {
-            return user.id;
-          }
-        })
-        .filter((u) => u !== undefined) as string[];
-    }
-
     if (planeIssue.created_by) {
       const user = users.find((u) => u.display_name === planeIssue.created_by);
       if (user) {

@@ -8,6 +8,7 @@ import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { transformPlaneIssue } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
+import { GITHUB_LABEL } from "@/helpers/constants";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
@@ -36,6 +37,9 @@ export const handleIssueWebhook = async (headers: TaskHeaders, mq: MQ, store: St
 
   await handleIssueSync(store, payload);
 };
+
+export const shouldSync = (labels: { name: string }[]): boolean =>
+  labels.some((label) => label.name.toLowerCase() === GITHUB_LABEL);
 
 const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
   try {

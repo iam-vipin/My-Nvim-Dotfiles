@@ -98,8 +98,6 @@ export const transformGitHubIssue = async (
     },
   ];
 
-  let planeAssignees: string[] = [];
-
   let creator: string | undefined;
 
   if (issue.user && issue.user.type === "User") {
@@ -141,16 +139,6 @@ export const transformGitHubIssue = async (
   // Replace the mentioned github users in the issue body
   issue_html = replaceMentionedGhUsers(issue_html, workspaceSlug, userMap, planeUsers);
 
-  if (issue.assignees) {
-    planeAssignees = issue.assignees
-      .map((assignee) => {
-        if (assignee != null) {
-          return userMap[assignee.login];
-        }
-      })
-      .filter((assignee) => assignee != undefined) as string[];
-  }
-
   let labels = issue.labels?.map((label) => (typeof label === "string" ? label : label.name)) || [];
   labels = labels.filter((label) => label.toLowerCase() !== "plane");
 
@@ -183,9 +171,7 @@ export const transformGitHubIssue = async (
     description_html: issue_html,
     created_at: issue.created_at,
     state: targetState,
-    priority: "none",
     labels: labels,
-    assignees: planeAssignees,
     links,
   };
 };
@@ -215,10 +201,10 @@ export const transformGitHubComment = async (
     }
   }
 
-  let comment_html = `<p>${comment.body || ""}</p>`;
+  let comment_html = `${commentHtml || "<p></p>"}`;
 
   if (!creator) {
-    const commentBody = (comment.body || "").trim();
+    const commentBody = (commentHtml || "<p></p>").trim();
     const currentUserReference = `<a href="${comment.user?.html_url}">${comment.user?.login}</a>`;
 
     // Regular expression to match the existing creator reference
@@ -290,7 +276,6 @@ export const transformPlaneIssue = async (
     ?.url.split("/")
     .pop();
 
-  const allAssignees = issue.assignees;
   // If there is a github label, remove it and add a plane label
   const issueLabels: ExIssueLabel[] = [];
   const allIssueLabelIds = (issue.labels || []).map((label) => (label as unknown as ExIssueLabel).id);
@@ -299,8 +284,6 @@ export const transformPlaneIssue = async (
       issueLabels.push(label);
     }
   });
-  const assignees =
-    allAssignees?.map((assignee) => userMap[assignee]?.login).filter((assignee) => assignee != undefined) || [];
 
   const ghLabels = issueLabels?.map((label) => transformPlaneLabel(label)) || [];
   ghLabels.push({
@@ -349,7 +332,6 @@ export const transformPlaneIssue = async (
     repo: repo,
     state: targetState,
     created_at: issue.created_at,
-    assignees: assignees as string[],
     labels: ghLabels,
   };
 };

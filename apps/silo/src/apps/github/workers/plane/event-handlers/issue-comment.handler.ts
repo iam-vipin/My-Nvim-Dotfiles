@@ -1,7 +1,7 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
 import type { GithubService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import type { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
+import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayload } from "@plane/sdk";
 import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
@@ -11,7 +11,7 @@ import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getAPIClient } from "@/services/client";
 import type { TaskHeaders } from "@/types";
 import type { MQ, Store } from "@/worker/base";
-import { imagePrefix } from "./issue.handler";
+import { imagePrefix, shouldSync } from "./issue.handler";
 
 const apiClient = getAPIClient();
 
@@ -93,6 +93,17 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
         project: payload.project,
         entityConnectionId: entityConnection.id,
         ghIntegrationKey,
+      });
+      return;
+    }
+
+    if (!shouldSync(issue.labels as unknown as ExIssueLabel[])) {
+      logger.info(`${ghIntegrationKey} Issue doesn't have a github label, skipping comment sync`, {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+        issueId: payload.issue,
       });
       return;
     }

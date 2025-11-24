@@ -460,6 +460,7 @@ class SearchEndpoint(BaseAPIView):
                         "priority",
                         "state_id",
                         "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
                     response_data["issue_mention"] = list(issues)
@@ -666,6 +667,7 @@ class SearchEndpoint(BaseAPIView):
                         "priority",
                         "state_id",
                         "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
 
@@ -864,6 +866,7 @@ class SearchEndpoint(BaseAPIView):
                         "priority",
                         "state_id",
                         "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
                     response_data["issue_mention"] = list(issues)

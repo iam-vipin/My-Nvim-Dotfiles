@@ -3,6 +3,11 @@ import { useParams } from "react-router";
 import useSWR from "swr";
 // plane imports
 import { Popover } from "@plane/propel/popover";
+import type { TEditorWorkItemMention } from "@plane/types";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
@@ -16,8 +21,30 @@ export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = obs
   const { entity_identifier: workItemId, getMentionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
+  // store hooks
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
+  // construct formatted work item details from store data
+  const workItemDetailsFromStore = getIssueById(workItemId);
+  const stateDetails = workItemDetailsFromStore ? getStateById(workItemDetailsFromStore?.state_id) : undefined;
+  const projectIdentifier = workItemDetailsFromStore?.project_id
+    ? getProjectIdentifierById(workItemDetailsFromStore.project_id)
+    : undefined;
+  const formattedWorkItemDetails: TEditorWorkItemMention | undefined =
+    workItemDetailsFromStore && stateDetails && projectIdentifier
+      ? {
+          ...workItemDetailsFromStore,
+          state__group: stateDetails?.group,
+          state__name: stateDetails?.name,
+          state__color: stateDetails?.color,
+          project__identifier: projectIdentifier,
+        }
+      : undefined;
   // derived values
-  const savedWorkItemDetails = getMentionDetails?.("issue_mention", workItemId);
+  const savedWorkItemDetails = formattedWorkItemDetails || getMentionDetails?.("issue_mention", workItemId);
   // fetch work item details
   const { data: fetchedWorkItemDetails, isLoading: isFetchingWorkItemDetails } = useSWR(
     workspaceSlug && !savedWorkItemDetails ? `WORK_ITEM_MENTION_DETAILS_${workItemId}` : null,

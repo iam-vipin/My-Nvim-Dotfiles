@@ -34,6 +34,7 @@ export type TIssueSearchResponse = Pick<
 > & {
   project__identifier: IProject["identifier"];
   state__group: TIssue["state__group"];
+  state__color: string;
 };
 
 export type TCycleSearchResponse = {

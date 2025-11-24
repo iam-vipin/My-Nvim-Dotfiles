@@ -46,6 +46,7 @@ export const useAdditionalEditorMention = (args: TUseAdditionalEditorMentionArgs
               <EditorWorkItemMentionLogo
                 className="shrink-0 size-4"
                 projectId={issue.project_id}
+                stateColor={issue.state__color}
                 stateGroup={issue.state__group ?? undefined}
                 workItemTypeId={issue.type_id}
               />

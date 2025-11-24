@@ -11,12 +11,13 @@ type Props = {
   className?: string;
   projectId?: TIssue["project_id"];
   showOnlyWorkItemType?: boolean;
+  stateColor?: string;
   stateGroup?: TStateGroups;
   workItemTypeId?: TIssue["type_id"];
 };
 
 export const EditorWorkItemMentionLogo: React.FC<Props> = observer((props) => {
-  const { className, projectId, showOnlyWorkItemType = false, stateGroup, workItemTypeId } = props;
+  const { className, projectId, showOnlyWorkItemType = false, stateColor, stateGroup, workItemTypeId } = props;
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -37,7 +38,7 @@ export const EditorWorkItemMentionLogo: React.FC<Props> = observer((props) => {
           containerClassName={className}
         />
       ) : (
-        <StateGroupIcon stateGroup={stateGroup ?? "backlog"} className={className} />
+        <StateGroupIcon stateGroup={stateGroup ?? "backlog"} color={stateColor} className={className} />
       )}
     </>
   );

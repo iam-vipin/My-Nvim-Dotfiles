@@ -75,6 +75,7 @@ class PageEmbedEndpoint(BaseAPIView):
                     "priority",
                     "state__group",
                     "state__name",
+                    "state__color",
                     "type_id",
                 )
             )
@@ -155,6 +156,7 @@ class PageMentionEndpoint(BaseAPIView):
                     "project_id",
                     "state__group",
                     "state__name",
+                    "state__color",
                     "type_id",
                 )
             )

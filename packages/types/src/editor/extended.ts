@@ -11,12 +11,14 @@ export type TEditorWorkItemEmbed = Pick<
   project__identifier: string;
   state__group: TStateGroups;
   state__name: string;
+  state__color: string;
 };
 
 export type TEditorWorkItemMention = Pick<TIssue, "id" | "name" | "sequence_id" | "project_id" | "type_id"> & {
   project__identifier: string;
   state__group: TStateGroups;
   state__name: string;
+  state__color: string;
 };
 
 export type TEditorEmbedItem = TEditorWorkItemEmbed;

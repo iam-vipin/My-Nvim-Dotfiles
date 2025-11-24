@@ -4,7 +4,7 @@ import { PI_URL } from "@plane/constants";
 
 // services
 import { APIService } from "@/services/api.service";
-import {
+import type {
   TFeedback,
   TQuery,
   TSearchQuery,
@@ -362,15 +362,16 @@ export class PiChatService extends APIService {
         // Handle security-related errors with better messages
         const errorData = error?.response?.data;
         const errorMessage = errorData?.detail || errorData?.message || "Upload failed";
-        
+
         throw {
           detail: errorMessage,
           message: errorMessage,
-          isSecurityError: errorMessage.includes("Malware") || 
-                          errorMessage.includes("rejected") || 
-                          errorMessage.includes("dangerous") ||
-                          errorMessage.includes("mismatch"),
-          status: error?.response?.status
+          isSecurityError:
+            errorMessage.includes("Malware") ||
+            errorMessage.includes("rejected") ||
+            errorMessage.includes("dangerous") ||
+            errorMessage.includes("mismatch"),
+          status: error?.response?.status,
         };
       });
     return response;

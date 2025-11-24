@@ -41,6 +41,7 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
       <EditorWorkItemMentionLogo
         className="shrink-0 size-3"
         projectId={workItemDetails.project_id}
+        stateColor={workItemDetails.state__color}
         stateGroup={workItemDetails.state__group}
         workItemTypeId={workItemDetails.type_id}
       />

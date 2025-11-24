@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { Copy, FilePlus2, ThumbsDown, ThumbsUp, Repeat2 } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, Tooltip } from "@plane/ui";
@@ -18,13 +19,13 @@ export type TProps = {
   handleConvertToPage?: () => void;
 };
 
-export const Feedback = (props: TProps) => {
+export const Feedback = observer((props: TProps) => {
   // props
   const { answer, activeChatId, id, workspaceId, feedback, queryId, isLatest, handleConvertToPage } = props;
   // states
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   // store
-  const { sendFeedback, regenerateAnswer } = usePiChat();
+  const { isWorkspaceAuthorized, sendFeedback, regenerateAnswer } = usePiChat();
   // handlers
   const handleCopyLink = () => {
     copyTextToClipboard(answer).then(() => {
@@ -119,12 +120,21 @@ export const Feedback = (props: TProps) => {
 
       {/* Convert to page */}
       <div className="flex text-sm font-medium gap-1 cursor-pointer">
-        <Tooltip tooltipContent="Convert to page" position="bottom" className="mb-4">
-          <button type="button" onClick={handleConvertToPage}>
-            <FilePlus2 size={16} className="my-auto text-custom-text-300 transition-colors	" />
+        <Tooltip
+          tooltipContent={isWorkspaceAuthorized ? "Convert to page" : "Authorize workspace to convert to page"}
+          position="bottom"
+          className="mb-4"
+        >
+          <button onClick={() => isWorkspaceAuthorized && handleConvertToPage?.()}>
+            <FilePlus2
+              size={16}
+              className={cn("my-auto text-custom-text-300 transition-colors", {
+                "cursor-not-allowed text-custom-text-400": !isWorkspaceAuthorized,
+              })}
+            />
           </button>
         </Tooltip>
       </div>
     </div>
   );
-};
+});

@@ -7,7 +7,9 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import type { TTemplate } from "@/plane-web/types";
 import SystemPrompts from "../system-prompts";
+import { UnauthorizedView } from "../unauthorized";
 
 type TProps = {
   currentUser: IUser | undefined;
@@ -19,19 +21,24 @@ export const NewConversation = observer((props: TProps) => {
   const { currentUser, isFullScreen, shouldRedirect = true, isProjectLevel = false } = props;
   // store hooks
   const { workspaceSlug } = useParams();
-  const { getTemplates } = usePiChat();
+  const { getInstance } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const { data: templates, isLoading } = useSWR("PI_TEMPLATES", () => getTemplates(workspaceId), {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    errorRetryCount: 0,
-  });
+  // SWR
+  const { data: instance, isLoading } = useSWR(
+    workspaceId ? `PI_STARTER_${workspaceId}` : null,
+    workspaceId ? () => getInstance(workspaceId) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
   // state
   const [isInitializing, setIsInitializing] = useState<string | null>(null);
 
   if (!currentUser) return null;
-
+  if (!isLoading && !instance?.is_authorized) return <UnauthorizedView />;
   return (
     <div
       className={cn("m-auto pb-[180px]", {
@@ -54,17 +61,18 @@ export const NewConversation = observer((props: TProps) => {
           </Loader>
         </div>
       ) : (
-        <div className="flex gap-4 flex-wrap justify-center ">
-          {templates?.map((prompt, index) => (
-            <SystemPrompts
-              key={index}
-              prompt={prompt}
-              shouldRedirect={shouldRedirect}
-              isProjectLevel={isProjectLevel}
-              isInitializing={isInitializing === prompt.text}
-              setIsInitializing={(value) => setIsInitializing(value)}
-            />
-          ))}
+        <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">
+          {instance?.is_authorized &&
+            instance?.templates?.map((prompt: TTemplate, index: number) => (
+              <SystemPrompts
+                key={index}
+                prompt={prompt}
+                shouldRedirect={shouldRedirect}
+                isProjectLevel={isProjectLevel}
+                isInitializing={isInitializing === prompt.text}
+                setIsInitializing={(value) => setIsInitializing(value)}
+              />
+            ))}
         </div>
       )}
     </div>

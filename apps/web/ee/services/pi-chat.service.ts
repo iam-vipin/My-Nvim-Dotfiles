@@ -9,7 +9,7 @@ import type {
   TFeedback,
   TQuery,
   TSearchQuery,
-  TTemplate,
+  TInstanceResponse,
   TUserThreads,
   TAiModels,
   TInitPayload,
@@ -23,9 +23,6 @@ import type {
   TPiAttachment,
 } from "../types";
 
-type TTemplateResponse = {
-  templates: TTemplate[];
-};
 type TChatHistoryResponse = {
   results: {
     chat_id: string;
@@ -123,11 +120,11 @@ export class PiChatService extends APIService {
     return r;
   }
 
-  // fetch templates
-  async listTemplates(workspaceId: string | undefined): Promise<TTemplateResponse> {
-    return this.get(`/api/v1/chat/get-templates/`, {
+  // fetch instance
+  async getInstance(workspaceId: string): Promise<TInstanceResponse> {
+    return this.get(`/api/v1/chat/start/`, {
       params: {
-        ...(workspaceId && { workspace_id: workspaceId }),
+        workspace_id: workspaceId,
       },
     })
       .then((response) => response?.data)

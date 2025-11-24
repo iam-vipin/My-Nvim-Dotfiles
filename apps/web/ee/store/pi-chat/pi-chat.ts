@@ -16,10 +16,10 @@ import type {
   TFocus,
   TInitPayload,
   TQuery,
-  TTemplate,
   TUserThreads,
   TArtifact,
   TUpdatedArtifact,
+  TInstanceResponse,
 } from "@/plane-web/types";
 import { ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
@@ -36,6 +36,7 @@ export interface IPiChatStore {
   activeModel: TAiModels | undefined;
   models: TAiModels[];
   isAuthorized: boolean;
+  isWorkspaceAuthorized: boolean;
   favoriteChats: string[];
   isLoading: boolean;
   isPiTyping: boolean;
@@ -62,7 +63,7 @@ export interface IPiChatStore {
     callbackUrl: string,
     attachmentIds: string[]
   ) => Promise<void>;
-  getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
+  getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
   sendFeedback: (
@@ -120,6 +121,7 @@ export class PiChatStore implements IPiChatStore {
   models: TAiModels[] = [];
   activeModel: TAiModels | undefined = undefined;
   isAuthorized = true;
+  isWorkspaceAuthorized = true;
   chatMap: Record<string, TChatHistory> = {};
   piThreads: string[] = [];
   projectThreads: string[] = [];
@@ -151,6 +153,7 @@ export class PiChatStore implements IPiChatStore {
       isPiTypingMap: observable,
       isLoadingMap: observable,
       isAuthorized: observable,
+      isWorkspaceAuthorized: observable,
       isLoadingThreads: observable,
       favoriteChats: observable,
       isPiChatDrawerOpen: observable.ref,
@@ -163,7 +166,7 @@ export class PiChatStore implements IPiChatStore {
       // actions
       initPiChat: action,
       getAnswer: action,
-      getTemplates: action,
+      getInstance: action,
       fetchUserThreads: action,
       searchCallback: action,
       sendFeedback: action,
@@ -355,9 +358,10 @@ export class PiChatStore implements IPiChatStore {
     return payload;
   };
 
-  getTemplates = async (workspaceId: string | undefined) => {
-    const response = await this.piChatService.listTemplates(workspaceId);
-    return response?.templates;
+  getInstance = async (workspaceId: string): Promise<TInstanceResponse> => {
+    const response = await this.piChatService.getInstance(workspaceId);
+    this.isWorkspaceAuthorized = response.is_authorized;
+    return response;
   };
 
   getStreamingAnswer = async (

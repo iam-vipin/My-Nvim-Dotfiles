@@ -11,10 +11,11 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { BetaBadge } from "../common/beta";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { InputBox } from "../pi-chat/input";
+import { UnauthorizedView } from "../pi-chat/unauthorized";
 
 export const HomePageHeader = observer(() => {
   const { workspaceSlug } = useParams();
-  const { activeChatId, initPiChat } = usePiChat();
+  const { activeChatId, isWorkspaceAuthorized, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
 
@@ -36,13 +37,20 @@ export const HomePageHeader = observer(() => {
             </Link>
           </Tooltip>
         </div>
-        <InputBox
-          isFullScreen
-          isProjectLevel
-          showProgress // Required since its taken to a whole different page
-          className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
-          activeChatId={activeChatId}
-        />
+        {isWorkspaceAuthorized ? (
+          <InputBox
+            isFullScreen
+            isProjectLevel
+            showProgress // Required since its taken to a whole different page
+            className="relative bg-transparent mt-2 max-w-[950px] mx-auto w-full"
+            activeChatId={activeChatId}
+          />
+        ) : (
+          <UnauthorizedView
+            className="border border-custom-border-100 rounded-lg p-4 mt-3 max-h-[164px] justify-start"
+            imgClassName="h-[117px]"
+          />
+        )}
       </div>
     </WithFeatureFlagHOC>
   );

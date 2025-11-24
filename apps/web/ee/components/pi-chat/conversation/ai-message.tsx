@@ -43,14 +43,11 @@ export const AiMessage = observer((props: TProps) => {
             remarkPlugins={[remarkGfm]}
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in"
             components={{
-              a: ({ children, href }) =>
-                href?.startsWith(`${PI_URL}/api/v1/oauth/authorize/`) && !isLatest ? ( // NOTE: Prev auth links shouldn't be accessible
-                  <span className="!underline !text-custom-text-350">{children}</span>
-                ) : (
-                  <a href={href || ""} rel="noopener noreferrer">
-                    {children}
-                  </a>
-                ),
+              a: ({ children, href }) => (
+                <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
               table: ({ children }) => (
                 <div className="overflow-x-auto w-full my-4 border-custom-border-200">
                   <table className="min-w-full border-collapse">{children}</table>

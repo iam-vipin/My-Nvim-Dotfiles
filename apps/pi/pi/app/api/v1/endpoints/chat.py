@@ -6,6 +6,7 @@ from typing import AsyncGenerator
 from typing import Coroutine
 from typing import Optional
 from typing import cast
+from urllib.parse import urlparse
 from uuid import UUID
 from uuid import uuid4
 
@@ -20,6 +21,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.v1.dependencies import cookie_schema
 from pi.app.api.v1.dependencies import is_valid_session
 from pi.app.api.v1.dependencies import validate_plane_token
@@ -39,6 +41,7 @@ from pi.app.schemas.chat import ActionBatchExecutionRequest
 from pi.app.schemas.chat import ArtifactData
 from pi.app.schemas.chat import ChatFeedback
 from pi.app.schemas.chat import ChatInitializationRequest
+from pi.app.schemas.chat import ChatInitResponse
 from pi.app.schemas.chat import ChatRequest
 from pi.app.schemas.chat import ChatSearchResponse
 from pi.app.schemas.chat import ChatSuggestionTemplate
@@ -57,6 +60,7 @@ from pi.app.utils.background_tasks import schedule_chat_search_upsert
 from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.actions.oauth_service import PlaneOAuthService
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.batch_execution_helpers import get_original_user_query
 from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
@@ -95,6 +99,71 @@ BATCH_EXECUTION_ERRORS = {
     "INVALID_SESSION": "Invalid Session",
     "INTERNAL_ERROR": "Internal server error",
 }
+
+
+@router.get("/start/", response_model=ChatInitResponse)
+async def chat_start(
+    workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
+    db: AsyncSession = Depends(get_async_session),
+    session: str = Depends(cookie_schema),
+):
+    """
+    Start/Bootstrap Pi chat - first API call when starting a chat session.
+    Checks OAuth authorization status and returns chat templates.
+
+    Usage: GET /api/v1/chat/start/?workspace_id=<uuid>
+
+    If authorized: returns is_authorized=true with full templates list
+    If not authorized: returns is_authorized=false with empty templates list
+    """
+    try:
+        # Validate session
+        auth = await is_valid_session(session)
+        if not auth.user:
+            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = auth.user.id
+    except Exception as e:
+        log.error(f"Error validating session: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+
+    try:
+        oauth_service = PlaneOAuthService()
+
+        # Check if user has valid OAuth token for workspace
+        access_token = await oauth_service.get_valid_token(db=db, user_id=user_id, workspace_id=workspace_id)
+
+        if access_token:
+            # User is authorized - get templates
+            templates = tiles_factory()
+            return ChatInitResponse(is_authorized=True, templates=templates, oauth_url=None)
+        else:
+            # User is not authorized - return empty templates with OAuth URL
+            from pi.services.actions.oauth_url_encoder import OAuthUrlEncoder
+
+            redirect = urlparse(settings.plane_api.OAUTH_REDIRECT_URI)
+            base_url = f"{redirect.scheme}://{redirect.netloc}"
+
+            # Include BASE_PATH if configured
+            base_path = settings.plane_api.BASE_PATH or ""
+            if base_path and not base_path.startswith("/"):
+                base_path = f"/{base_path}"
+            base_path = base_path.rstrip("/")
+
+            # Build OAuth parameters (only user_id and workspace_id)
+            oauth_params = {
+                "user_id": str(user_id),
+                "workspace_id": str(workspace_id),
+            }
+
+            # Generate clean, encrypted OAuth URL
+            oauth_encoder = OAuthUrlEncoder()
+            oauth_url = oauth_encoder.generate_clean_oauth_url(f"{base_url}{base_path}", oauth_params)
+
+            return ChatInitResponse(is_authorized=False, templates=[], oauth_url=oauth_url)
+
+    except Exception as e:
+        log.error(f"Error in chat start: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Failed to initialize chat"})
 
 
 @router.post("/slack/answer/")

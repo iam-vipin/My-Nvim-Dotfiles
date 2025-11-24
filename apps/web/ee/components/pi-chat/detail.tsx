@@ -11,6 +11,7 @@ import { Loading } from "./conversation/loading";
 import { Messages } from "./conversation/messages";
 import { scrollIntoViewHelper } from "./helper";
 import { InputBox } from "./input";
+import { UnauthorizedView } from "./unauthorized";
 
 type TProps = {
   isFullScreen?: boolean;
@@ -23,13 +24,13 @@ export const PiChatDetail = observer((props: TProps) => {
   // router
   const pathName = usePathname();
   // store hooks
-  const { isAuthorized, isLoading, activeChatId } = usePiChat();
+  const { isAuthorized: isChatAuthorized, isWorkspaceAuthorized, isLoading, activeChatId } = usePiChat();
   const { data: currentUser } = useUser();
   // derived values
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
   return (
     <>
-      {isAuthorized ? (
+      {isChatAuthorized && isWorkspaceAuthorized ? (
         <div
           className={cn(
             "px-page-x relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full",
@@ -75,8 +76,10 @@ export const PiChatDetail = observer((props: TProps) => {
             />
           </div>
         </div>
-      ) : (
+      ) : isWorkspaceAuthorized ? (
         <NotAuthorizedView className="bg-transparent" />
+      ) : (
+        <UnauthorizedView />
       )}
     </>
   );

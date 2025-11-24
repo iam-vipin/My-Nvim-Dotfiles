@@ -252,5 +252,15 @@ export type TPiAttachmentIdMap = {
   [chatId: string]: string[];
 };
 
+export type TInstanceResponse =
+  | {
+      is_authorized: true;
+      templates: TTemplate[];
+    }
+  | {
+      is_authorized: false;
+      oauth_url: string;
+    };
+
 // constants
 export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page"];

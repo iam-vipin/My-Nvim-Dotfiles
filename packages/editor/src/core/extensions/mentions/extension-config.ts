@@ -3,6 +3,8 @@ import type { MentionOptions } from "@tiptap/extension-mention";
 import Mention from "@tiptap/extension-mention";
 import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import type { Node as NodeType } from "@tiptap/pm/model";
+// plane imports
+import type { CORE_EXTENSIONS } from "@plane/utils";
 // types
 import type { TMentionHandler } from "@/types";
 // local types
@@ -13,6 +15,14 @@ export type TMentionExtensionOptions = MentionOptions & {
   renderComponent: TMentionHandler["renderComponent"];
   getMentionedEntityDetails: TMentionHandler["getMentionedEntityDetails"];
 };
+
+declare module "@tiptap/core" {
+  interface Storage {
+    [CORE_EXTENSIONS.MENTION]: {
+      mentionsOpen: boolean;
+    };
+  }
+}
 
 export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
   addAttributes() {

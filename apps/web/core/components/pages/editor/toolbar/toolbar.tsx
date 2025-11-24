@@ -45,14 +45,14 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
           })
         }
         className={cn(
-          "shrink-0 grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+          "grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 transition-all duration-200 ease-in-out",
           {
             "bg-custom-background-80 text-custom-text-100": isActive,
           }
         )}
       >
         <item.icon
-          className={cn("size-4", {
+          className={cn("size-4 transition-transform duration-200", {
             "text-custom-text-100": isActive,
           })}
         />
@@ -99,7 +99,7 @@ export function PageToolbar(props: Props) {
   );
 
   return (
-    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
+    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll animate-in fade-in duration-200">
       <CustomMenu
         customButton={
           <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // plane web components
+import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
@@ -25,11 +26,12 @@ export const PageHeaderActions = observer(function PageHeaderActions(props: Prop
   return (
     <div className="flex items-center gap-1">
       <PageArchivedBadge page={page} />
-      <PageOfflineBadge page={page} />
-      <PageLockControl page={page} />
+      <PageOfflineBadge />
+      <PageLockControl page={page} storeType={storeType} />
       <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />
       <PageFavoriteControl page={page} />
+      <PageCommentControl page={page} storeType={storeType} />
       <PageShareControl page={page} storeType={storeType} />
       <PageOptionsDropdown page={page} storeType={storeType} />
     </div>

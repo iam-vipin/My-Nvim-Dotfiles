@@ -18,6 +18,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import { useFlag } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {
@@ -41,11 +42,17 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const workspaceSlug = params.workspaceSlug;
+  const isAnalyticsTabsEnabled = useFlag(workspaceSlug.toString(), "ANALYTICS_ADVANCED");
+
   // derived values
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
-  const ANALYTICS_TABS = useMemo<AnalyticsTab[]>(() => getAnalyticsTabs(t), [t]);
+  const ANALYTICS_TABS = useMemo<AnalyticsTab[]>(
+    () => getAnalyticsTabs(t, isAnalyticsTabsEnabled),
+    [t, isAnalyticsTabsEnabled]
+  );
   const tabs: TabItem[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({

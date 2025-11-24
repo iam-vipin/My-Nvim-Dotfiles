@@ -1,6 +1,7 @@
 import type { Dispatch, ReactElement, SetStateAction } from "react";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
+import { usePlatformOS } from "@plane/hooks";
 import { cn } from "@plane/utils";
 
 interface ResizableSidebarProps {
@@ -51,7 +52,8 @@ export function ResizableSidebar({
   const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const initialWidthRef = useRef<number>(0);
   const initialMouseXRef = useRef<number>(0);
-
+  // hooks
+  const { isMobile } = usePlatformOS();
   // handlers
   const setShowPeek = useCallback(
     (value: boolean) => {
@@ -195,6 +197,7 @@ export function ResizableSidebar({
           "h-full z-20 bg-custom-background-100 border-r border-custom-sidebar-border-200",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
+          isMobile && "absolute",
           className
         )}
         style={{

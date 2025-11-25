@@ -9,6 +9,7 @@ import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-h
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 import { NotificationSidebarHeaderOptions } from "./options";
 
 type TNotificationSidebarHeader = {
@@ -26,8 +27,7 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
   return (
     <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
-        {sidebarCollapsed && <SidebarHamburgerToggle />}
-
+        {isSidebarToggleVisible() && sidebarCollapsed && <SidebarHamburgerToggle />}
         <Breadcrumbs>
           <Breadcrumbs.Item
             component={

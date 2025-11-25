@@ -1,8 +1,19 @@
+import { set, uniqBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { SitesPagePublishService } from "@plane/services";
-import type { IStateLite, TLogoProps, TPublicPageResponse } from "@plane/types";
+import type {
+  IStateLite,
+  TEditorEmbedItem,
+  TEditorEmbedsResponse,
+  TEditorEmbedType,
+  TEditorMentionItem,
+  TEditorMentionsResponse,
+  TEditorMentionType,
+  TLogoProps,
+  TPublicPageResponse,
+} from "@plane/types";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // types
@@ -12,10 +23,15 @@ export type TIssueEmbed = IIssue & {
   state_detail?: IStateLite;
 };
 
+export type TPageEmbedsAndMentionsInfo = {
+  embeds?: Record<Partial<TEditorEmbedType>, TEditorEmbedsResponse | undefined>;
+  mentions?: Record<Partial<TEditorMentionType>, TEditorMentionsResponse | undefined>;
+};
+
 export interface IPage extends TPublicPageResponse {
   // observables
-  issueEmbedError: boolean;
-  issueEmbedData: TIssueEmbed[] | undefined;
+  embedsAndMentionsInfo: TPageEmbedsAndMentionsInfo;
+  hasLoadedEmbedsAndMentions: boolean;
   // additional properties for subpages
   archived_at: string | null | undefined;
   deleted_at: Date | undefined;
@@ -24,18 +40,17 @@ export interface IPage extends TPublicPageResponse {
   parent_id: string | null | undefined;
   // computed
   asJSON: TPublicPageResponse | undefined;
-  areIssueEmbedsLoaded: boolean;
-  // helpers
-  getIssueEmbedDetails: (issueID: string) => TIssueEmbed | undefined;
   // actions
-  fetchPageIssueEmbeds: (anchor: string) => Promise<TIssueEmbed[]>;
+  fetchEmbedsAndMentions: (anchor: string) => Promise<void>;
+  getMentionDetails: (mentionType: TEditorMentionType, entityId: string) => TEditorMentionItem | undefined;
+  getEmbedDetails: (embedType: TEditorEmbedType, entityId: string) => TEditorEmbedItem | undefined;
   mutateProperties: (data: Partial<TPublicPageResponse>, shouldUpdateName?: boolean) => void;
 }
 
 export class Page implements IPage {
   // observables
-  issueEmbedError: boolean = false;
-  issueEmbedData: TIssueEmbed[] | undefined = undefined;
+  embedsAndMentionsInfo: TPageEmbedsAndMentionsInfo;
+  hasLoadedEmbedsAndMentions: boolean;
   // page properties
   created_at: Date | undefined;
   description: object | undefined;
@@ -56,6 +71,8 @@ export class Page implements IPage {
     private rootStore: CoreRootStore,
     page: TPublicPageResponse
   ) {
+    this.embedsAndMentionsInfo = {};
+    this.hasLoadedEmbedsAndMentions = false;
     this.created_at = page.created_at || undefined;
     this.description = page.description || undefined;
     this.id = page.id || undefined;
@@ -70,8 +87,8 @@ export class Page implements IPage {
 
     makeObservable(this, {
       // observables
-      issueEmbedError: observable.ref,
-      issueEmbedData: observable,
+      embedsAndMentionsInfo: observable,
+      hasLoadedEmbedsAndMentions: observable.ref,
       // page properties
       created_at: observable,
       description: observable,
@@ -86,9 +103,8 @@ export class Page implements IPage {
       parent_id: observable,
       // computed
       asJSON: computed,
-      areIssueEmbedsLoaded: computed,
       // actions
-      fetchPageIssueEmbeds: action,
+      fetchEmbedsAndMentions: action,
       mutateProperties: action,
     });
 
@@ -110,36 +126,39 @@ export class Page implements IPage {
     };
   }
 
-  get areIssueEmbedsLoaded() {
-    return !!this.issueEmbedData;
-  }
+  getEmbedDetails: IPage["getEmbedDetails"] = computedFn((embedType, entityId) =>
+    this.embedsAndMentionsInfo?.embeds?.[embedType]?.find((embed) => embed.id === entityId)
+  );
+
+  getMentionDetails: IPage["getMentionDetails"] = computedFn((mentionType, entityId) =>
+    this.embedsAndMentionsInfo?.mentions?.[mentionType]?.find((mention) => mention.id === entityId)
+  );
 
   /**
-   * @description get issue embed details
-   * @param {string} issueID
+   * @description fetch page embed and mentions
    */
-  getIssueEmbedDetails = computedFn((issueID: string) => this.issueEmbedData?.find((i) => i.id === issueID));
-
-  /**
-   * @description fetch page issue embeds
-   * @param {string} anchor
-   */
-  fetchPageIssueEmbeds = async (anchor: string) => {
-    runInAction(() => {
-      this.issueEmbedError = false;
-    });
-
+  fetchEmbedsAndMentions: IPage["fetchEmbedsAndMentions"] = async (anchor) => {
     try {
-      const response = await this.pageService.listIssueEmbeds(anchor);
+      const workItemEmbeds = await this.pageService.listEmbeds(anchor, "issue");
+      const workItemMentions = await this.pageService.listMentions(anchor, "issue_mention");
+
+      const existingWorkItemEmbeds = this.embedsAndMentionsInfo?.embeds?.issue || [];
+      const uniqueWorkItemEmbeds = uniqBy([...existingWorkItemEmbeds, ...workItemEmbeds], "id");
+
+      const existingWorkItemMentions = this.embedsAndMentionsInfo?.mentions?.issue_mention || [];
+      const uniqueWorkItemMentions = uniqBy([...existingWorkItemMentions, ...workItemMentions], "id");
+
       runInAction(() => {
-        this.issueEmbedData = response;
+        set(this.embedsAndMentionsInfo, "embeds.issue", uniqueWorkItemEmbeds);
+        set(this.embedsAndMentionsInfo, "mentions.issue_mention", uniqueWorkItemMentions);
       });
-      return response;
     } catch (error) {
-      runInAction(() => {
-        this.issueEmbedError = true;
-      });
+      console.error("Failed to fetch embeds and mentions", error);
       throw error;
+    } finally {
+      runInAction(() => {
+        this.hasLoadedEmbedsAndMentions = true;
+      });
     }
   };
 

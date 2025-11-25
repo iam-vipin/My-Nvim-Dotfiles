@@ -55,7 +55,7 @@ export type TDeletePageModalState = {
 export type TExtendedBasePageServices = {
   download: () => Promise<void>;
   fetchEmbeds: (embedType: TEditorEmbedType) => Promise<TEditorEmbedsResponse>;
-  fetchMentions: (mentionType: TEditorMentionType, entityId?: string) => Promise<TEditorMentionsResponse>;
+  fetchMentions: (mentionType: TEditorMentionType) => Promise<TEditorMentionsResponse>;
 };
 
 export type TPageEmbedsAndMentionsInfo = {

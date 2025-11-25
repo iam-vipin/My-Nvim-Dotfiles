@@ -268,14 +268,12 @@ export class ProjectPageService extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    mentionType: TEditorMentionType,
-    entityId?: string
+    mentionType: TEditorMentionType
   ): Promise<TEditorMentionsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
       params: {
         project_id: projectId,
         mention_type: mentionType,
-        entity_id: entityId,
       },
     })
       .then((response) => response?.data)

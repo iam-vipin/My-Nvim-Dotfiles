@@ -26,7 +26,7 @@ export const PageHeaderActions = observer(function PageHeaderActions(props: Prop
   return (
     <div className="flex items-center gap-1">
       <PageArchivedBadge page={page} />
-      <PageOfflineBadge />
+      <PageOfflineBadge page={page} />
       <PageLockControl page={page} storeType={storeType} />
       <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />

@@ -28,7 +28,6 @@ export const Badge = ({ text, icon }: { text: string; icon?: React.ReactNode }) 
 
 type Props = {
   pageId: string;
-
   editorRef?: React.RefObject<EditorRefApi>;
 };
 

@@ -1,7 +1,13 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { IPublicIssue, TPublicPageResponse } from "@plane/types";
-// api service
+import type {
+  TEditorEmbedsResponse,
+  TEditorEmbedType,
+  TEditorMentionsResponse,
+  TEditorMentionType,
+  TPublicPageResponse,
+} from "@plane/types";
+// local imports
 import { APIService } from "../api.service";
 
 /**
@@ -30,20 +36,6 @@ export class SitesPagePublishService extends APIService {
   }
 
   /**
-   * Retrieves page issue embeds for a specific anchor.
-   * @param {string} anchor - The anchor identifier
-   * @returns {Promise<IPublicIssue[]>} The page issue embeds
-   * @throws {Error} If the API request fails
-   */
-  async listIssueEmbeds(anchor: string): Promise<IPublicIssue[]> {
-    return this.get(`/api/public/anchor/${anchor}/page-issues/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  /**
    * Retrieves subpages for a specific page.
    * @param {string} anchor - The anchor identifier
    * @param {string} pageId - The parent page identifier
@@ -53,6 +45,44 @@ export class SitesPagePublishService extends APIService {
   async fetchSubPages(anchor: string): Promise<TPublicPageResponse[]> {
     return this.get(`/api/public/anchor/${anchor}/sub-pages/`)
       .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  /**
+   * Retrieves page embeds for a specific anchor.
+   * @param {string} anchor - The anchor identifier
+   * @param {TEditorEmbedType} embedType - The embed type
+   * @returns {Promise<TEditorEmbedsResponse>} The page embeds
+   * @throws {Error} If the API request fails
+   */
+  async listEmbeds(anchor: string, embedType: TEditorEmbedType): Promise<TEditorEmbedsResponse> {
+    return this.get(`/api/public/anchor/${anchor}/page-embeds/`, {
+      params: {
+        embed_type: embedType,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  /**
+   * Retrieves page mentions for a specific anchor.
+   * @param {string} anchor - The anchor identifier
+   * @param {TEditorMentionType} mentionType - The mention type
+   * @returns {Promise<TEditorMentionsResponse>} The page mentions
+   * @throws {Error} If the API request fails
+   */
+  async listMentions(anchor: string, mentionType: TEditorMentionType): Promise<TEditorMentionsResponse> {
+    return this.get(`/api/public/anchor/${anchor}/page-mentions/`, {
+      params: {
+        mention_type: mentionType,
+      },
+    })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });

@@ -248,13 +248,11 @@ export class WorkspacePageService extends APIService {
   async fetchMentions(
     workspaceSlug: string,
     pageId: string,
-    mentionType: TEditorMentionType,
-    entityId?: string
+    mentionType: TEditorMentionType
   ): Promise<TEditorMentionsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
       params: {
         mention_type: mentionType,
-        entity_id: entityId,
       },
     })
       .then((response) => response?.data)

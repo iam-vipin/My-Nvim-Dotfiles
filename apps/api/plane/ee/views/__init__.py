@@ -85,7 +85,8 @@ from plane.ee.views.app.dashboard import DashboardViewSet, DashboardQuickFilterE
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
     SubPagePublicEndpoint,
-    PagePublicIssuesEndpoint,
+    PagePublicMentionEndpoint,
+    PagePublicEmbedEndpoint,
     PageMetaDataEndpoint,
 )
 from plane.ee.views.space.views import (

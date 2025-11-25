@@ -31,7 +31,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
     },
   } = useInitiatives();
   const { data: currentUser } = useUser();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { getUserDetails } = useMember();
   // translation
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
             message: t("issue.comments.create.success"),
           });
           return comment;
-        } catch (error) {
+        } catch {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -163,6 +163,20 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
         const formattedUsers = formatTextList(reactionUsers);
         return formattedUsers;
       },
+      duplicateCommentAsset: async (assetId, commentId) => {
+        try {
+          if (!workspaceSlug) throw new Error("Missing fields");
+          const res = await duplicateEditorAsset({
+            assetId,
+            entityId: commentId,
+            entityType: EFileAssetType.INITIATIVE_COMMENT_DESCRIPTION,
+            workspaceSlug,
+          });
+          return res;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
+        }
+      },
     };
 
     return ops;
@@ -176,6 +190,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
     addCommentReaction,
     deleteCommentReaction,
     uploadEditorAsset,
+    duplicateEditorAsset,
   ]);
 
   return operations;

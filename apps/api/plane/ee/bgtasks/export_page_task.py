@@ -495,38 +495,37 @@ def fetch_page_markdown(page_id, slug):
             entity_type=FileAsset.EntityTypeContext.PAGE_DESCRIPTION.value,
         ).values("id", "attributes__name")
 
+        page_entities = PageLog.objects.filter(page_id=page_id).values("entity_name", "entity_identifier")
+
         # get all the issue embeds in the page from pagelog table
-        issue_embeds = PageLog.objects.filter(
-            page_id=page_id,
-            entity_name="issue",
-        ).values_list("entity_identifier", flat=True)
+        issue_embeds = page_entities.filter(entity_name="issue").values_list("entity_identifier", flat=True).distinct()
         # get the basic details of the issue from the issue table
         issues = Issue.issue_objects.filter(id__in=issue_embeds).values("id", "project__identifier", "sequence_id")
 
+        # get all work item mentions in the page from pagelog table
+        page_log_work_item_mentions = (
+            page_entities.filter(entity_name="issue_mention").values_list("entity_identifier", flat=True).distinct()
+        )
+        # get the basic details of the work item from the issue table
+        work_item_mentions = Issue.issue_objects.filter(id__in=page_log_work_item_mentions).values(
+            "id", "project__identifier", "sequence_id"
+        )
+
         # get all the user mentions in the page from pagelog table
-        user_mentions = (
-            PageLog.objects.filter(
-                page_id=page_id,
-                entity_name="user_mention",
-            )
-            .values_list("entity_identifier", flat=True)
-            .distinct()
+        page_user_mentions = (
+            page_entities.filter(entity_name="user_mention").values_list("entity_identifier", flat=True).distinct()
         )
         # get the basic details of the user from the user table
-        users = User.objects.filter(id__in=user_mentions).filter(is_bot=False).values("id", "display_name").distinct()
+        users_mentions = (
+            User.objects.filter(id__in=page_user_mentions).filter(is_bot=False).values("id", "display_name").distinct()
+        )
 
         # page embeds in the page from pagelog table
         page_embeds = (
-            PageLog.objects.filter(
-                page_id=page_id,
-                entity_name="sub_page",
-            )
-            .values_list("entity_identifier", flat=True)
-            .distinct()
+            page_entities.filter(entity_name="sub_page").values_list("entity_identifier", flat=True).distinct()
         )
-
         # get the basic details of the page from the page table
-        pages = (
+        page_embeds = (
             Page.objects.filter(id__in=page_embeds)
             .filter(moved_to_page__isnull=True)
             .annotate(project_id=Subquery(ProjectPage.objects.filter(page_id=OuterRef("id")).values("project_id")[:1]))
@@ -546,7 +545,7 @@ def fetch_page_markdown(page_id, slug):
                 "id": str(user["id"]),
                 "display_name": user["display_name"],
             }
-            for user in users
+            for user in users_mentions
         ]
 
         pages_serializable = [
@@ -555,7 +554,16 @@ def fetch_page_markdown(page_id, slug):
                 "name": str(p["name"]),
                 "project_id": str(p["project_id"]) if p["project_id"] else None,
             }
-            for p in pages
+            for p in page_embeds
+        ]
+
+        work_item_mentions_serializable = [
+            {
+                "id": str(w["id"]),
+                "project_identifier": str(w["project__identifier"]),
+                "sequence_id": str(w["sequence_id"]),
+            }
+            for w in work_item_mentions
         ]
 
         # Combine all data into a single payload
@@ -569,6 +577,7 @@ def fetch_page_markdown(page_id, slug):
                 "work_item_embeds": issues_serializable,
                 "user_mentions": users_serializable,
                 "page_embeds": pages_serializable,
+                "work_item_mentions": work_item_mentions_serializable,
             },
         }
 

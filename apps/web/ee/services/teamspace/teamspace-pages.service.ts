@@ -367,14 +367,12 @@ export class TeamspacePageService extends APIService {
     workspaceSlug: string,
     teamspaceId: string,
     pageId: string,
-    mentionType: TEditorMentionType,
-    entityId?: string
+    mentionType: TEditorMentionType
   ): Promise<TEditorMentionsResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/mentions/`, {
       params: {
         teamspace_id: teamspaceId,
         mention_type: mentionType,
-        entity_id: entityId,
       },
     })
       .then((response) => response?.data)

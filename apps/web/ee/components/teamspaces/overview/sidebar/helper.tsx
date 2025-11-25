@@ -26,28 +26,28 @@ export const useCommentOperations = (
     commentReactionsByUser,
   } = useTeamspaceUpdates();
   const { getUserDetails } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
 
-  // Helper function to capture events with consistent element
-  const captureTeamspaceCommentEvent = (
-    eventName: string,
-    state: "SUCCESS" | "ERROR",
-    payload?: Record<string, any>
-  ) => {
-    captureElementAndEvent({
-      element: {
-        elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_COMMENT_SECTION,
-      },
-      event: {
-        eventName,
-        payload,
-        state,
-      },
-    });
-  };
-
   const operations: TCommentsOperations = useMemo(() => {
+    // Helper function to capture events with consistent element
+    const captureTeamspaceCommentEvent = (
+      eventName: string,
+      state: "SUCCESS" | "ERROR",
+      payload?: Record<string, any>
+    ) => {
+      captureElementAndEvent({
+        element: {
+          elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_COMMENT_SECTION,
+        },
+        event: {
+          eventName,
+          payload,
+          state,
+        },
+      });
+    };
+
     // Define operations object with all methods
     const ops: TCommentsOperations = {
       copyCommentLink: () => "",
@@ -199,6 +199,20 @@ export const useCommentOperations = (
         const formattedUsers = formatTextList(reactionUsers);
         return formattedUsers;
       },
+      duplicateCommentAsset: async (assetId, commentId) => {
+        try {
+          if (!workspaceSlug) throw new Error("Missing fields");
+          const res = await duplicateEditorAsset({
+            assetId,
+            entityId: commentId,
+            entityType: EFileAssetType.TEAM_SPACE_COMMENT_DESCRIPTION,
+            workspaceSlug,
+          });
+          return res;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
+        }
+      },
     };
     return ops;
   }, [
@@ -208,6 +222,14 @@ export const useCommentOperations = (
     updateTeamspaceComment,
     uploadEditorAsset,
     deleteTeamspaceComment,
+    duplicateEditorAsset,
+    getCommentReactionsByCommentId,
+    getCommentReactionById,
+    commentReactionsByUser,
+    addCommentReaction,
+    deleteCommentReaction,
+    currentUser,
+    getUserDetails,
   ]);
 
   return operations;

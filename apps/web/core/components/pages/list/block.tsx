@@ -31,7 +31,7 @@ type TPageListBlock = {
   canShowAddButton?: boolean;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
   const {
     handleToggleExpanded,
     isExpanded,

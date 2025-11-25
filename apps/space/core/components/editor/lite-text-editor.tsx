@@ -74,7 +74,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
-        extendedEditorProps={{}}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: false,
+        }}
         {...rest}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}

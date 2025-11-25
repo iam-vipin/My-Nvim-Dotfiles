@@ -19,7 +19,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
 import { AutomationQuickActions } from "@/plane-web/components/automations/details/quick-actions";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
 type TProps = {
@@ -137,10 +136,6 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={() => router.back()} isLoading={isInitializingProjects || !automationDetails}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={automationDetails.workspaceSlug}
-            projectId={automationDetails.project}
-          />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

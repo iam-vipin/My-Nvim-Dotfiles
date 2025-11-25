@@ -175,6 +175,9 @@ export const PROJECT_MODULES = (workspaceSlug: string, projectId: string) =>
 export const PROJECT_VIEWS = (workspaceSlug: string, projectId: string) =>
   `PROJECT_VIEWS_${projectId.toString().toUpperCase()}`;
 
+export const PROJECT_MEMBER_PREFERENCES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MEMBER_PREFERENCES_${projectId.toString().toUpperCase()}`;
+
 export const PROJECT_WORKFLOWS = (workspaceSlug: string, projectId: string) =>
   `PROJECT_WORKFLOWS_${projectId.toString().toUpperCase()}`;
 

@@ -25,6 +25,7 @@ from plane.app.serializers import (
 from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.db.models.user import BotTypeEnum
+from plane.db.models.project import get_default_preferences
 from plane.ee.models import TeamspaceMember, TeamspaceProject, PageUser
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
@@ -545,3 +546,40 @@ class UserProjectRolesEndpoint(BaseAPIView):
             project_roles[str(project_id)] = ROLE.MEMBER.value
 
         return Response(project_roles, status=status.HTTP_200_OK)
+
+
+class ProjectMemberPreferenceEndpoint(BaseAPIView):
+    def get_project_member(self, slug, project_id, member_id):
+        return ProjectMember.objects.get(
+            project_id=project_id,
+            member_id=member_id,
+            workspace__slug=slug,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id, member_id):
+        project_member = self.get_project_member(slug, project_id, member_id)
+
+        current_preferences = project_member.preferences or {}
+        default_preferences = get_default_preferences()
+        current_preferences["navigation"] = request.data.get(
+            "navigation", current_preferences.get("navigation", default_preferences.get("navigation"))
+        )
+
+        project_member.preferences = current_preferences
+        project_member.save(update_fields=["preferences"])
+
+        return Response({"preferences": project_member.preferences}, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, member_id):
+        project_member = self.get_project_member(slug, project_id, member_id)
+
+        response = {
+            "preferences": project_member.preferences,
+            "project_id": project_member.project_id,
+            "member_id": project_member.member_id,
+            "workspace_id": project_member.workspace_id,
+        }
+
+        return Response(response, status=status.HTTP_200_OK)

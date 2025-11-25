@@ -18,6 +18,7 @@ from .project.member import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 from .user.base import (
@@ -224,7 +225,6 @@ from .notification.base import (
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
 )
-
 
 
 from .webhook.base import (

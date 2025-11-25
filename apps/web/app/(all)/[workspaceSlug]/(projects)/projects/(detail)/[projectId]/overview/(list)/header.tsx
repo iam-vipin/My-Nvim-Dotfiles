@@ -4,16 +4,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Sidebar } from "lucide-react";
-import { EProjectFeatureKey } from "@plane/constants";
 // plane imports
+import { OverviewIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane-web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectOverviewHeader = observer(() => {
   // router
@@ -27,11 +26,14 @@ export const ProjectOverviewHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={currentProjectDetails?.id?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.OVERVIEW}
-            isLast
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Overview"
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/overview/`}
+                icon={<OverviewIcon className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
         </Breadcrumbs>
       </Header.LeftItem>

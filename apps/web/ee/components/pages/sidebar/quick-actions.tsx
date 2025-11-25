@@ -13,8 +13,6 @@ import { SidebarAddButton } from "@/components/sidebar/add-button";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-store";
-import { AppSearch } from "../../workspace/sidebar/app-search";
-// plane web components
 
 export const PagesAppSidebarQuickActions = observer(() => {
   // states
@@ -74,8 +72,6 @@ export const PagesAppSidebarQuickActions = observer(() => {
         onClick={handleCreatePage}
         disabled={isCreatingPage}
       />
-
-      <AppSearch />
     </div>
   );
 });

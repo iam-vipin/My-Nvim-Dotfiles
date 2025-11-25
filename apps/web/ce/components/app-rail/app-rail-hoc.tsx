@@ -1,0 +1,35 @@
+// hoc/withDockItems.tsx
+"use client";
+
+import React from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { PlaneNewIcon } from "@plane/propel/icons";
+import type { AppSidebarItemData } from "@/components/sidebar/sidebar-item";
+import { useWorkspacePaths } from "@/hooks/use-workspace-paths";
+import { isAppRailFeatureEnabled } from "@/plane-web/helpers/app-rail.helper";
+
+type WithDockItemsProps = {
+  dockItems: (AppSidebarItemData & { shouldRender: boolean })[];
+};
+
+export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: React.ComponentType<P>) {
+  const ComponentWithDockItems = observer((props: Omit<P, keyof WithDockItemsProps>) => {
+    const { workspaceSlug } = useParams();
+    const { isProjectsPath, isNotificationsPath } = useWorkspacePaths();
+
+    const dockItems: (AppSidebarItemData & { shouldRender: boolean })[] = [
+      {
+        label: "Projects",
+        icon: <PlaneNewIcon className="size-4" />,
+        href: `/${workspaceSlug}/`,
+        isActive: isProjectsPath && !isNotificationsPath,
+        shouldRender: isAppRailFeatureEnabled("projects"),
+      },
+    ];
+
+    return <WrappedComponent {...(props as P)} dockItems={dockItems} />;
+  });
+
+  return ComponentWithDockItems;
+}

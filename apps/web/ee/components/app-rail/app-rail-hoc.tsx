@@ -16,14 +16,14 @@ type WithDockItemsProps = {
 export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: React.ComponentType<P>) {
   const ComponentWithDockItems = observer((props: Omit<P, keyof WithDockItemsProps>) => {
     const { workspaceSlug } = useParams();
-    const { isProjectsPath, isWikiPath, isAiPath } = useWorkspacePaths();
+    const { isProjectsPath, isWikiPath, isAiPath, isNotificationsPath } = useWorkspacePaths();
 
     const dockItems: (AppSidebarItemData & { shouldRender: boolean })[] = [
       {
         label: "Projects",
         icon: <PlaneNewIcon className="size-4" />,
         href: `/${workspaceSlug}/`,
-        isActive: isProjectsPath,
+        isActive: isProjectsPath && !isNotificationsPath,
         shouldRender: isAppRailFeatureEnabled("projects"),
       },
       {

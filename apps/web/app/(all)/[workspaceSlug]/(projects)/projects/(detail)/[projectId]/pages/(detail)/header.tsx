@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EProjectFeatureKey } from "@plane/constants";
 import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
 // types
 import type { ICustomSearchSelectOption } from "@plane/types";
@@ -10,6 +9,7 @@ import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPageName } from "@plane/utils";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";
@@ -20,7 +20,6 @@ import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { CollaboratorsList, PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -90,10 +89,14 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.LeftItem>
         <div className="w-full overflow-hidden">
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-              featureKey={EProjectFeatureKey.PAGES}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Pages"
+                  href={`/${workspaceSlug}/projects/${projectId}/pages/`}
+                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
             {isNestedPagesEnabled(workspaceSlug?.toString()) && (
               <>

@@ -9,7 +9,6 @@ import { useParams, usePathname } from "next/navigation";
 import { Pin, PinOff } from "lucide-react";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { DragHandle, DropIndicator } from "@plane/ui";
@@ -18,10 +17,8 @@ import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
+import { useUser } from "@/hooks/store/user";
+import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
@@ -52,14 +49,12 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getNavigationPreferences, updateSidebarPreference } = useWorkspace();
   const { toggleExtendedSidebar } = useAppTheme();
   const { data } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { preferences: workspacePreferences, toggleWorkspaceItem } = useWorkspaceNavigationPreferences();
 
   // derived values
-  const sidebarPreference = getNavigationPreferences(workspaceSlug.toString());
-  const isPinned = sidebarPreference?.[item.key]?.is_pinned;
+  const isPinned = workspacePreferences.items[item.key]?.is_pinned ?? false;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
 
@@ -132,11 +127,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
 
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
-    return null;
-  }
-
-  if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
 
   const itemHref =
     item.key === "your_work"
@@ -144,16 +134,12 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
       : `/${workspaceSlug.toString()}${item.href}`;
   const isActive = itemHref === pathname;
 
-  const pinNavigationItem = (workspaceSlug: string, key: string) => {
-    updateSidebarPreference(workspaceSlug, key, {
-      is_pinned: true,
-    });
+  const pinNavigationItem = (key: string) => {
+    toggleWorkspaceItem(key, true);
   };
 
-  const unPinNavigationItem = (workspaceSlug: string, key: string) => {
-    updateSidebarPreference(workspaceSlug, key, {
-      is_pinned: false,
-    });
+  const unPinNavigationItem = (key: string) => {
+    toggleWorkspaceItem(key, false);
   };
 
   const icon = getSidebarNavigationItemIcon(item.key);
@@ -215,14 +201,14 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
               <Tooltip tooltipContent="Unpin">
                 <PinOff
                   className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
-                  onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
+                  onClick={() => unPinNavigationItem(item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Pin">
                 <Pin
                   className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
-                  onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
+                  onClick={() => pinNavigationItem(item.key)}
                 />
               </Tooltip>
             )}

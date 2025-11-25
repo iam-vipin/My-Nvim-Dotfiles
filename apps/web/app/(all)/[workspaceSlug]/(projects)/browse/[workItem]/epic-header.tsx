@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 // plane imports
-import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EpicIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -21,7 +22,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -73,10 +73,16 @@ export const EpicItemDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectDetails?.id?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.EPICS}
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Epics"
+                href={`/${workspaceSlug}/projects/${projectId}/epics/`}
+                icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                isLast
+              />
+            }
+            isLast
           />
           <Breadcrumbs.Item
             component={

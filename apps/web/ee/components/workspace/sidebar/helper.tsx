@@ -13,6 +13,7 @@ import {
   PiChatLogo,
   TeamsIcon,
   YourWorkIcon,
+  MultipleStickyIcon,
 } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
@@ -22,6 +23,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <HomeIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "inbox":
       return <InboxIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "stickies":
+      return <MultipleStickyIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "pi_chat":
       return <PiChatLogo className={cn("size-4 flex-shrink-0", className)} />;
     case "projects":

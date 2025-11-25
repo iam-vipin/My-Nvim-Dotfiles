@@ -2,13 +2,15 @@ import React, { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
+import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane-web imports
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
@@ -18,22 +20,38 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   const { workspaceSlug } = useParams();
   // store hooks
   const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
-  const { updateSidebarPreference, getNavigationPreferences } = useWorkspace();
+  const { allowPermissions } = useUserPermissions();
+  const { preferences: workspacePreferences, updateWorkspaceItemSortOrder } = useWorkspaceNavigationPreferences();
 
   // derived values
-  const currentWorkspaceNavigationPreferences = getNavigationPreferences(workspaceSlug.toString());
+  const currentWorkspaceNavigationPreferences = workspacePreferences.items;
 
-  const sortedNavigationItems = useMemo(
-    () =>
-      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
-        const preference = currentWorkspaceNavigationPreferences?.[item.key];
-        return {
-          ...item,
-          sort_order: preference ? preference.sort_order : 0,
-        };
-      }).sort((a, b) => a.sort_order - b.sort_order),
-    [currentWorkspaceNavigationPreferences]
-  );
+  const sortedNavigationItems = useMemo(() => {
+    const slug = workspaceSlug.toString();
+
+    return WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
+      // Permission check
+      const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
+      // Feature flag check
+      const isFeatureEnabled = isSidebarFeatureEnabled(item.key, slug);
+
+      return hasPermission && isFeatureEnabled;
+    }).map((item) => {
+      const preference = currentWorkspaceNavigationPreferences?.[item.key];
+      return {
+        ...item,
+        sort_order: preference?.sort_order ?? 0,
+        is_pinned: preference?.is_pinned ?? false,
+      };
+    }).sort((a, b) => {
+      // First sort by pinned status (pinned items first)
+      if (a.is_pinned !== b.is_pinned) {
+        return b.is_pinned ? 1 : -1;
+      }
+      // Then sort by sort_order within each group
+      return a.sort_order - b.sort_order;
+    });
+  }, [workspaceSlug, currentWorkspaceNavigationPreferences, allowPermissions]);
 
   const sortedNavigationItemsKeys = sortedNavigationItems.map((item) => item.key);
 
@@ -88,9 +106,7 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
     const updatedSortOrder = orderNavigationItem(sourceIndex, destinationIndex, sortedNavigationItems);
 
     if (updatedSortOrder != undefined)
-      updateSidebarPreference(workspaceSlug.toString(), sourceId, {
-        sort_order: updatedSortOrder,
-      });
+      updateWorkspaceItemSortOrder(sourceId, updatedSortOrder);
   };
 
   const handleClose = () => toggleExtendedSidebar(false);

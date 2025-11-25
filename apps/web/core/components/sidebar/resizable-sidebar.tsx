@@ -23,7 +23,6 @@ interface ResizableSidebarProps {
   extendedSidebar?: ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
   isAnySidebarDropdownOpen?: boolean;
-  disablePeekTrigger?: boolean;
 }
 
 export function ResizableSidebar({
@@ -43,7 +42,6 @@ export function ResizableSidebar({
   extendedSidebar,
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
-  disablePeekTrigger = false,
 }: ResizableSidebarProps) {
   // states
   const [isResizing, setIsResizing] = useState(false);
@@ -94,25 +92,6 @@ export function ResizableSidebar({
       clearTimeout(peekTimeoutRef.current);
     }
   }, [toggleCollapsedProp, setShowPeek]);
-
-  const handleTriggerEnter = useCallback(() => {
-    if (isCollapsed) {
-      setIsHoveringTrigger(true);
-      setShowPeek(true);
-      if (peekTimeoutRef.current) {
-        clearTimeout(peekTimeoutRef.current);
-      }
-    }
-  }, [isCollapsed, setShowPeek]);
-
-  const handleTriggerLeave = useCallback(() => {
-    if (isCollapsed && !isAnyExtendedSidebarExpanded) {
-      setIsHoveringTrigger(false);
-      peekTimeoutRef.current = setTimeout(() => {
-        setShowPeek(false);
-      }, peekDuration);
-    }
-  }, [isCollapsed, peekDuration, setShowPeek, isAnyExtendedSidebarExpanded]);
 
   const handlePeekEnter = useCallback(() => {
     if (isCollapsed && showPeek) {
@@ -232,22 +211,6 @@ export function ResizableSidebar({
           />
         </aside>
       </div>
-
-      {/* Peek Trigger Area */}
-      {isCollapsed && !disablePeekTrigger && (
-        <div
-          className={cn(
-            "absolute top-0 left-0 w-1 h-full z-50 bg-transparent",
-            "transition-opacity duration-200",
-            isHoveringTrigger ? "opacity-100" : "opacity-0"
-          )}
-          onMouseEnter={handleTriggerEnter}
-          onMouseLeave={handleTriggerLeave}
-          role="button"
-          aria-label="Show sidebar peek"
-        />
-      )}
-
       {/* Peek View */}
       <div
         className={cn(

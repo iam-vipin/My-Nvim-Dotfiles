@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane ui
-import { EProjectFeatureKey } from "@plane/constants";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -13,8 +13,6 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane-web components
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const WorkItemDetailsHeader = observer(() => {
   // router
@@ -36,10 +34,14 @@ export const WorkItemDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectDetails?.id?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.WORK_ITEMS}
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Work Items"
+                href={`/${workspaceSlug}/projects/${projectId}/issues/`}
+                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+              />
+            }
           />
           <Breadcrumbs.Item
             component={

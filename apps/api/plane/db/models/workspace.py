@@ -472,6 +472,7 @@ class WorkspaceUserPreference(BaseModel):
         INITIATIVES = "initiatives", "Initiatives"
         CUSTOMERS = "customers", "Customers"
         DASHBOARDS = "dashboards", "Dashboards"
+        STICKIES = "stickies", "Stickies"
 
     workspace = models.ForeignKey(
         "db.Workspace",

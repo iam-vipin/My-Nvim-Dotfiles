@@ -180,43 +180,45 @@ export const extendedRoutes: RouteConfigEntry[] = [
         // --------------------------------------------------------------------
         // Project Detail
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/layout.tsx", [
-          // Project Overview
-          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/layout.tsx", [
-            route(
-              ":workspaceSlug/projects/:projectId/overview",
-              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/page.tsx"
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx", [
+            // Project Overview
+            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/layout.tsx", [
+              route(
+                ":workspaceSlug/projects/:projectId/overview",
+                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/page.tsx"
+              ),
+            ]),
+
+            // Project Epics
+            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/layout.tsx", [
+              // Epics List
+              layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/layout.tsx", [
+                route(
+                  ":workspaceSlug/projects/:projectId/epics",
+                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/page.tsx"
+                ),
+              ]),
+
+              // Project Epic Detail
+              layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/layout.tsx", [
+                route(
+                  ":workspaceSlug/projects/:projectId/epics/:epicId",
+                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/[epicId]/page.tsx"
+                ),
+              ]),
+            ]),
+
+            // Project Automations
+            layout(
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/layout.tsx",
+              [
+                route(
+                  ":workspaceSlug/projects/:projectId/automations/:automationId",
+                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/page.tsx"
+                ),
+              ]
             ),
           ]),
-
-          // Project Epics
-          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/layout.tsx", [
-            // Epics List
-            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/layout.tsx", [
-              route(
-                ":workspaceSlug/projects/:projectId/epics",
-                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/page.tsx"
-              ),
-            ]),
-
-            // Project Epic Detail
-            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/layout.tsx", [
-              route(
-                ":workspaceSlug/projects/:projectId/epics/:epicId",
-                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/[epicId]/page.tsx"
-              ),
-            ]),
-          ]),
-
-          // Project Automations
-          layout(
-            "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/layout.tsx",
-            [
-              route(
-                ":workspaceSlug/projects/:projectId/automations/:automationId",
-                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/page.tsx"
-              ),
-            ]
-          ),
         ]),
 
         // Pi Chat (Project Level)

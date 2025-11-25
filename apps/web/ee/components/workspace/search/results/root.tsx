@@ -128,14 +128,14 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
           })}
           disabled={searchFilter === filter.key || isSearching}
         >
-          <span>{t(filter.i18n_label)}</span>
+          <span className="text-nowrap">{t(filter.i18n_label)}</span>
           {isSearching && searchFilter === filter.key ? (
             <Spinner className="size-3.5 animate-spin" />
-          ) : (
+          ) : getSearchResultsCount(filter.key) > 0 ? (
             <span className={cn("min-w-4 text-center", { "text-custom-text-350": searchFilter !== filter.key })}>
               {getSearchResultsCount(filter.key)}
             </span>
-          )}
+          ) : null}
         </button>
       ))}
     </div>

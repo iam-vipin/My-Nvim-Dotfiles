@@ -2703,6 +2703,7 @@ export default {
       copy_current_page_url: "Copy current page URL",
       copy_current_page_url_toast_success: "Current page URL copied to clipboard.",
       copy_current_page_url_toast_error: "Some error occurred while copying the current page URL to clipboard.",
+      focus_top_nav_search: "Focus search input",
     },
     preferences_actions: {
       update_theme: "Change interface theme",
@@ -2772,5 +2773,18 @@ export default {
       preferences: "Preferences",
       help: "Help",
     },
+  },
+  // Navigation customization
+  customize_navigation: "Customize navigation",
+  personal: "Personal",
+  accordion_navigation_control: "Accordion navigation control",
+  horizontal_navigation_bar: "Horizontal navigation bar",
+  show_limited_projects_on_sidebar: "Show limited projects on sidebar",
+  enter_number_of_projects: "Enter number of projects",
+  pin: "Pin",
+  unpin: "Unpin",
+  sidebar: {
+    stickies: "Stickies",
+    your_work: "Your work",
   },
 } as const;

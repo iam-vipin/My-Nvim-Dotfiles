@@ -749,7 +749,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Tipo de conexión",
-          description: "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta",
+          description:
+            "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta",
         },
         app_description_error: "La descripción de la aplicación es obligatoria",
         app_slug_title: "Slug de la aplicación",
@@ -810,7 +811,8 @@ export default {
         invalid_categories_error: "Categorías inválidas",
         categories_description: "Selecciona las categorías que mejor describen la aplicación",
         supported_plans: "Planes Soportados",
-        supported_plans_description: "Selecciona los planes de espacio de trabajo que pueden instalar esta aplicación. Deja vacío para permitir todos los planes.",
+        supported_plans_description:
+          "Selecciona los planes de espacio de trabajo que pueden instalar esta aplicación. Deja vacío para permitir todos los planes.",
         select_plans: "Seleccionar Planes",
         privacy_policy_url_title: "URL de la Política de Privacidad",
         privacy_policy_url_error: "La URL de la Política de Privacidad es requerida",
@@ -885,8 +887,8 @@ export default {
         internal: "Interno",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Ve tu trabajo obtener más inteligente y más rápido con IA que está conectada de forma nativa a tu trabajo y base de conocimientos.",
       },

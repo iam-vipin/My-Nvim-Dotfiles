@@ -854,8 +854,8 @@ export default {
         internal: "内部",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。",
       },
     },

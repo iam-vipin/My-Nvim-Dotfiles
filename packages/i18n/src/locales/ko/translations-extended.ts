@@ -798,7 +798,8 @@ export default {
         invalid_categories_error: "유효하지 않은 카테고리",
         categories_description: "앱을 가장 잘 설명하는 카테고리를 선택하세요",
         supported_plans: "지원되는 플랜",
-        supported_plans_description: "이 애플리케이션을 설치할 수 있는 워크스페이스 플랜을 선택하세요. 비워두면 모든 플랜이 허용됩니다.",
+        supported_plans_description:
+          "이 애플리케이션을 설치할 수 있는 워크스페이스 플랜을 선택하세요. 비워두면 모든 플랜이 허용됩니다.",
         select_plans: "플랜 선택",
         privacy_policy_url_title: "개인정보 보호 정책 URL",
         privacy_policy_url_error: "개인정보 보호 정책 URL은 필수입니다",
@@ -873,8 +874,8 @@ export default {
         internal: "내부",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요.",
       },
     },

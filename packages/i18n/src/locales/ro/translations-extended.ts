@@ -750,7 +750,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Tipul conexiunii",
-          description: "Alege dacă aplicația ta trebuie instalată o dată pentru spațiul de lucru sau să permită fiecărui utilizator să își conecteze propriul cont",
+          description:
+            "Alege dacă aplicația ta trebuie instalată o dată pentru spațiul de lucru sau să permită fiecărui utilizator să își conecteze propriul cont",
         },
         app_description_error: "Descrierea aplicației este obligatorie",
         app_slug_title: "Slug-ul aplicației",
@@ -810,7 +811,8 @@ export default {
         invalid_categories_error: "Categorii sunt inva",
         categories_description: "Selectează categorii care descriu cel mai bine aplicația",
         supported_plans: "Planuri Suportate",
-        supported_plans_description: "Selectează planurile de spațiu de lucru care pot instala această aplicație. Lasă gol pentru a permite toate planurile.",
+        supported_plans_description:
+          "Selectează planurile de spațiu de lucru care pot instala această aplicație. Lasă gol pentru a permite toate planurile.",
         select_plans: "Selectează Planuri",
         privacy_policy_url_title: "URL-ul politică de confidențialitate",
         privacy_policy_url_error: "Privacy Policy URL is required",
@@ -887,8 +889,8 @@ export default {
         internal: "Intern",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe.",
       },

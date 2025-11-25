@@ -742,7 +742,8 @@ export default {
         },
         authorization_grant_type: {
           title: "接続タイプ",
-          description: "アプリをワークスペースに一度インストールするか、各ユーザーが自分のアカウントを接続できるようにするかを選択してください",
+          description:
+            "アプリをワークスペースに一度インストールするか、各ユーザーが自分のアカウントを接続できるようにするかを選択してください",
         },
         app_description_error: "アプリの説明は必須です",
         app_slug_title: "アプリのスラッグ",
@@ -802,7 +803,8 @@ export default {
         invalid_categories_error: "無効なカテゴリー",
         categories_description: "アプリを最もよく説明するカテゴリーを選択してください",
         supported_plans: "サポートされているプラン",
-        supported_plans_description: "このアプリケーションをインストールできるワークスペースプランを選択してください。空のままにすると、すべてのプランが許可されます。",
+        supported_plans_description:
+          "このアプリケーションをインストールできるワークスペースプランを選択してください。空のままにすると、すべてのプランが許可されます。",
         select_plans: "プランを選択",
         privacy_policy_url_title: "プライバシーポリシーURL",
         privacy_policy_url_error: "プライバシーポリシーURLは必須です",
@@ -877,8 +879,8 @@ export default {
         internal: "内部",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。",
       },
     },

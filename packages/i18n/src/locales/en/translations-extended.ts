@@ -850,7 +850,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Connection Type",
-          description: "Choose if your app should be installed once for the workspace or let every user connect their own account",
+          description:
+            "Choose if your app should be installed once for the workspace or let every user connect their own account",
         },
         website: {
           title: "Website",
@@ -955,7 +956,8 @@ export default {
         invalid_categories_error: "Invalid categories",
         categories_description: "Select the categories that best describe the app",
         supported_plans: "Supported Plans",
-        supported_plans_description: "Select the workspace plans that can install this application. Leave empty to allow all plans.",
+        supported_plans_description:
+          "Select the workspace plans that can install this application. Leave empty to allow all plans.",
         select_plans: "Select Plans",
         privacy_policy_url_title: "Privacy Policy URL",
         privacy_policy_url_error: "Privacy Policy URL is required",
@@ -995,8 +997,8 @@ export default {
           "When this is enabled, Users can mention or assign Work Items to this application.",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. ",
       },

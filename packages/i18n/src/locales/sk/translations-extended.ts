@@ -759,7 +759,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Typ pripojenia",
-          description: "Vyberte, či má byť vaša aplikácia nainštalovaná raz pre pracovný priestor alebo umožniť každému používateľovi pripojiť svoj vlastný účet",
+          description:
+            "Vyberte, či má byť vaša aplikácia nainštalovaná raz pre pracovný priestor alebo umožniť každému používateľovi pripojiť svoj vlastný účet",
         },
         app_description_error: "Popis aplikácie je povinný",
         app_slug_title: "Slug aplikácie",
@@ -819,7 +820,8 @@ export default {
         invalid_categories_error: "Neplatné kategórie",
         categories_description: "Vyberte kategórie, ktoré najlepšie opisujú aplikáciu",
         supported_plans: "Podporované Plány",
-        supported_plans_description: "Vyberte plány pracovného priestoru, ktoré môžu nainštalovať túto aplikáciu. Ponechajte prázdne, ak chcete povoliť všetky plány.",
+        supported_plans_description:
+          "Vyberte plány pracovného priestoru, ktoré môžu nainštalovať túto aplikáciu. Ponechajte prázdne, ak chcete povoliť všetky plány.",
         select_plans: "Vybrať Plány",
         privacy_policy_url_title: "URL Pravidiel ochrany súkromia",
         privacy_policy_url_error: "URL Pravidiel ochrany súkromia je povinné",
@@ -895,8 +897,8 @@ export default {
         internal: "Interný",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni.",
       },

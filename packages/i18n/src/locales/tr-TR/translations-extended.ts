@@ -761,7 +761,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Bağlantı türü",
-          description: "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin",
+          description:
+            "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin",
         },
         app_description_error: "Aplikasyon açıklaması gerekli",
         app_slug_title: "Aplikasyon slag",
@@ -819,7 +820,8 @@ export default {
         invalid_categories_error: "Geçersiz kategoriler",
         categories_description: "En iyi açıklamayı veren kategorileri seçin",
         supported_plans: "Desteklenen Planlar",
-        supported_plans_description: "Bu uygulamayı yükleyebilecek çalışma alanı planlarını seçin. Tüm planlara izin vermek için boş bırakın.",
+        supported_plans_description:
+          "Bu uygulamayı yükleyebilecek çalışma alanı planlarını seçin. Tüm planlara izin vermek için boş bırakın.",
         select_plans: "Planları Seç",
         privacy_policy_url_title: "Gizlilik Politikası URL",
         privacy_policy_url_error: "Gizlilik Politikası URL gerekli",
@@ -895,8 +897,8 @@ export default {
         internal: "Dahili",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın.",
       },

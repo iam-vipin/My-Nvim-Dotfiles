@@ -734,7 +734,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Loại kết nối",
-          description: "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ",
+          description:
+            "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ",
         },
         app_description_error: "Mô tả ứng dụng là bắt buộc",
         app_slug_title: "Slug ứng dụng",
@@ -792,7 +793,8 @@ export default {
         invalid_categories_error: "Danh mục không hợp lệ",
         categories_description: "Chọn các danh mục phù hợp nhất với ứng dụng",
         supported_plans: "Gói được Hỗ trợ",
-        supported_plans_description: "Chọn các gói không gian làm việc có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
+        supported_plans_description:
+          "Chọn các gói không gian làm việc có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
         select_plans: "Chọn Gói",
         privacy_policy_url_title: "URL Chính sách bảo mật",
         privacy_policy_url_error: "URL Chính sách bảo mật là bắt buộc",
@@ -868,8 +870,8 @@ export default {
         internal: "Nội bộ",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn.",
       },

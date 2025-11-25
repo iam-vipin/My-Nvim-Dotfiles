@@ -748,7 +748,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Jenis Koneksi",
-          description: "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri",
+          description:
+            "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri",
         },
         app_description_error: "Deskripsi aplikasi diperlukan",
         app_slug_title: "Slug aplikasi",
@@ -806,7 +807,8 @@ export default {
         invalid_categories_error: "Kategori tidak valid",
         categories_description: "Pilih kategori yang paling sesuai dengan aplikasi",
         supported_plans: "Paket yang Didukung",
-        supported_plans_description: "Pilih paket workspace yang dapat menginstal aplikasi ini. Kosongkan untuk mengizinkan semua paket.",
+        supported_plans_description:
+          "Pilih paket workspace yang dapat menginstal aplikasi ini. Kosongkan untuk mengizinkan semua paket.",
         select_plans: "Pilih Paket",
         privacy_policy_url_title: "URL Privacy Policy",
         privacy_policy_url_error: "URL Privacy Policy diperlukan",
@@ -882,8 +884,8 @@ export default {
         internal: "Internal",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda.",
       },

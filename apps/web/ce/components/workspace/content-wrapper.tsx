@@ -13,15 +13,17 @@ export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper
 }) {
   return (
     <div className="flex flex-col relative size-full overflow-hidden bg-custom-background-90 rounded-lg transition-all ease-in-out duration-300">
-    <TopNavigationRoot />
+      <TopNavigationRoot />
       <div className="relative flex size-full overflow-hidden">
-      <AppRailRoot />
-      <div
-        className={cn("relative size-full pb-2 pr-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden")}
-      >
-        {children}
+        <AppRailRoot />
+        <div
+          className={cn(
+            "relative size-full pb-2 pr-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden"
+          )}
+        >
+          {children}
+        </div>
       </div>
-    </div>
     </div>
   );
 });

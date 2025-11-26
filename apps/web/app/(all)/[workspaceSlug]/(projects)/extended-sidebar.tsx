@@ -36,21 +36,23 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
       const isFeatureEnabled = isSidebarFeatureEnabled(item.key, slug);
 
       return hasPermission && isFeatureEnabled;
-    }).map((item) => {
-      const preference = currentWorkspaceNavigationPreferences?.[item.key];
-      return {
-        ...item,
-        sort_order: preference?.sort_order ?? 0,
-        is_pinned: preference?.is_pinned ?? false,
-      };
-    }).sort((a, b) => {
-      // First sort by pinned status (pinned items first)
-      if (a.is_pinned !== b.is_pinned) {
-        return b.is_pinned ? 1 : -1;
-      }
-      // Then sort by sort_order within each group
-      return a.sort_order - b.sort_order;
-    });
+    })
+      .map((item) => {
+        const preference = currentWorkspaceNavigationPreferences?.[item.key];
+        return {
+          ...item,
+          sort_order: preference?.sort_order ?? 0,
+          is_pinned: preference?.is_pinned ?? false,
+        };
+      })
+      .sort((a, b) => {
+        // First sort by pinned status (pinned items first)
+        if (a.is_pinned !== b.is_pinned) {
+          return b.is_pinned ? 1 : -1;
+        }
+        // Then sort by sort_order within each group
+        return a.sort_order - b.sort_order;
+      });
   }, [workspaceSlug, currentWorkspaceNavigationPreferences, allowPermissions]);
 
   const sortedNavigationItemsKeys = sortedNavigationItems.map((item) => item.key);
@@ -105,8 +107,7 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
 
     const updatedSortOrder = orderNavigationItem(sourceIndex, destinationIndex, sortedNavigationItems);
 
-    if (updatedSortOrder != undefined)
-      updateWorkspaceItemSortOrder(sourceId, updatedSortOrder);
+    if (updatedSortOrder != undefined) updateWorkspaceItemSortOrder(sourceId, updatedSortOrder);
   };
 
   const handleClose = () => toggleExtendedSidebar(false);

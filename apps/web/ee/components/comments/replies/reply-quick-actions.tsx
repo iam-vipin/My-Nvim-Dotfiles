@@ -1,68 +1,42 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import type { TIssueComment, TCommentsOperations } from "@plane/types";
+import type { TIssueComment } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useCommentMenuItems } from "@/components/common/quick-actions-helper";
 import { useUser } from "@/hooks/store/user";
+// local imports
+import { useReplyMenuItems } from "./helper";
 
-type TCommentCard = {
-  activityOperations: TCommentsOperations;
-  comment: TIssueComment;
+type TReplyQuickActions = {
+  handleDelete: () => Promise<void>;
+  reply: TIssueComment;
   setEditMode: () => void;
-  showAccessSpecifier: boolean;
-  showCopyLinkOption: boolean;
-  showReplyOption: boolean;
-  handleReply?: () => void;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
-  const {
-    activityOperations,
-    comment,
-    setEditMode,
-    showAccessSpecifier,
-    showCopyLinkOption,
-    showReplyOption,
-    handleReply,
-  } = props;
+export const ReplyQuickActions: FC<TReplyQuickActions> = observer((props) => {
+  const { handleDelete, reply, setEditMode } = props;
   // store hooks
   const { data: currentUser } = useUser();
   // derived values
-  const isAuthor = currentUser?.id === comment.actor;
+  const isAuthor = currentUser?.id === reply.actor;
 
-  const MENU_ITEMS: TContextMenuItem[] = useCommentMenuItems({
-    comment: {
-      id: comment.id,
-      actor: comment.actor,
-      access: comment.access,
+  const MENU_ITEMS: TContextMenuItem[] = useReplyMenuItems({
+    reply: {
+      id: reply.id,
+      actor: reply.actor,
     },
     isAuthor,
-    showAccessSpecifier,
-    showCopyLinkOption,
     handleEdit: setEditMode,
-    handleCopyLink: () => activityOperations.copyCommentLink(comment.id),
-    handleToggleAccess: () =>
-      activityOperations.updateComment(comment.id, {
-        access:
-          comment.access === EIssueCommentAccessSpecifier.INTERNAL
-            ? EIssueCommentAccessSpecifier.EXTERNAL
-            : EIssueCommentAccessSpecifier.INTERNAL,
-      }),
-    handleDelete: () => activityOperations.removeComment(comment.id),
-    handleReply,
-    showReplyOption,
+    handleDelete,
   });
 
   return (
     <CustomMenu ellipsis closeOnSelect>
       {MENU_ITEMS.map((item) => {
         if (item.shouldRender === false) return null;
-
         return (
           <CustomMenu.MenuItem
             key={item.key}

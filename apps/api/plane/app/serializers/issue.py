@@ -134,13 +134,9 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Validate description content for security
         if "description_html" in attrs and attrs["description_html"]:
-            is_valid, error_msg, sanitized_html = validate_html_content(
-                attrs["description_html"]
-            )
+            is_valid, error_msg, sanitized_html = validate_html_content(attrs["description_html"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"error": "html content is not valid"}
-                )
+                raise serializers.ValidationError({"error": "html content is not valid"})
             # Update the attrs with sanitized HTML if available
             if sanitized_html is not None:
                 attrs["description_html"] = sanitized_html
@@ -148,9 +144,7 @@ class IssueCreateSerializer(BaseSerializer):
         if "description_binary" in attrs and attrs["description_binary"]:
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError(
-                    {"description_binary": "Invalid binary data"}
-                )
+                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -182,9 +176,7 @@ class IssueCreateSerializer(BaseSerializer):
                 )
 
                 # Then get all the teamspace members for the project with project member
-                attrs["assignee_ids"] = list(
-                    set(teamspace_member_ids + project_member_ids)
-                )
+                attrs["assignee_ids"] = list(set(teamspace_member_ids + project_member_ids))
 
             else:
                 attrs["assignee_ids"] = ProjectMember.objects.filter(
@@ -212,9 +204,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("state").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "State is not valid please pass a valid state_id"
-            )
+            raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
         # Check parent issue is from workspace as it can be cross workspace
         if (
@@ -224,9 +214,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("parent").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Parent is not valid issue_id please pass a valid issue_id"
-            )
+            raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")
 
         if (
             attrs.get("estimate_point")
@@ -235,9 +223,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("estimate_point").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Estimate point is not valid please pass a valid estimate_point_id"
-            )
+            raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
         return attrs
 
@@ -294,9 +280,7 @@ class IssueCreateSerializer(BaseSerializer):
             issue_type = issue_type
 
         # Create Issue
-        issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type=issue_type
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -322,9 +306,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pass
         else:
             # Assign to default assignee if valid
-            if default_assignee_id is not None and self._is_valid_assignee(
-                default_assignee_id, project_id
-            ):
+            if default_assignee_id is not None and self._is_valid_assignee(default_assignee_id, project_id):
                 try:
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
@@ -370,18 +352,14 @@ class IssueCreateSerializer(BaseSerializer):
 
         if assignees is not None:
             # Here because of validate the assignee_ids are list of uuids
-            current_assignees = IssueAssignee.objects.filter(
-                issue=instance
-            ).values_list("assignee_id", flat=True)
+            current_assignees = IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
 
             # Get the assignees to add and assignees to remove from both the current and the new assignees #noqa: E501
             assignees_to_add = list(set(assignees) - set(current_assignees))
             assignees_to_remove = list(set(current_assignees) - set(assignees))
 
             # Delete the assignees to remove
-            IssueAssignee.objects.filter(
-                issue=instance, assignee_id__in=assignees_to_remove
-            ).delete()
+            IssueAssignee.objects.filter(issue=instance, assignee_id__in=assignees_to_remove).delete()
 
             # Create the assignees to add
             try:
@@ -405,11 +383,7 @@ class IssueCreateSerializer(BaseSerializer):
 
         if labels is not None:
             # Here we get label instances as a list
-            current_label_ids = list(
-                IssueLabel.objects.filter(issue=instance).values_list(
-                    "label_id", flat=True
-                )
-            )
+            current_label_ids = list(IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True))
 
             requested_label_ids = labels
 
@@ -418,9 +392,7 @@ class IssueCreateSerializer(BaseSerializer):
             labels_to_remove = list(set(current_label_ids) - set(requested_label_ids))
 
             # Delete the labels to remove
-            IssueLabel.objects.filter(
-                issue=instance, label_id__in=labels_to_remove
-            ).delete()
+            IssueLabel.objects.filter(issue=instance, label_id__in=labels_to_remove).delete()
 
             # Create the labels to add
             try:
@@ -455,11 +427,7 @@ class IssueActivitySerializer(BaseSerializer):
     source_data = serializers.SerializerMethodField()
 
     def get_source_data(self, obj):
-        if (
-            hasattr(obj, "issue")
-            and hasattr(obj.issue, "source_data")
-            and obj.issue.source_data
-        ):
+        if hasattr(obj, "issue") and hasattr(obj.issue, "source_data") and obj.issue.source_data:
             return {
                 "source": obj.issue.source_data[0].source,
                 "source_email": obj.issue.source_data[0].source_email,
@@ -522,18 +490,12 @@ class IssueLabelSerializer(BaseSerializer):
 
 class IssueRelationSerializer(BaseSerializer):
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="related_issue.project_id", read_only=True
-    )
-    sequence_id = serializers.IntegerField(
-        source="related_issue.sequence_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
     type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
-    is_epic = serializers.BooleanField(
-        source="related_issue.type.is_epic", read_only=True
-    )
+    is_epic = serializers.BooleanField(source="related_issue.type.is_epic", read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
     assignee_ids = serializers.ListField(
@@ -572,9 +534,7 @@ class IssueRelationSerializer(BaseSerializer):
 
 class RelatedIssueSerializer(BaseSerializer):
     id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="issue.project_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
     type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
@@ -617,12 +577,8 @@ class RelatedIssueSerializer(BaseSerializer):
 
 
 class IssueDuplicateSerializer(BaseSerializer):
-    sequence_id = serializers.IntegerField(
-        source="related_issue.sequence_id", read_only=True
-    )
-    project_identifier = serializers.CharField(
-        source="related_issue.project.identifier", read_only=True
-    )
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
+    project_identifier = serializers.CharField(source="related_issue.project.identifier", read_only=True)
 
     class Meta:
         model = IssueRelation
@@ -733,25 +689,17 @@ class IssueLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if IssueLink.objects.filter(url=validated_data.get("url"), issue_id=validated_data.get("issue_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            IssueLink.objects.filter(
-                url=validated_data.get("url"), issue_id=instance.issue_id
-            )
+            IssueLink.objects.filter(url=validated_data.get("url"), issue_id=instance.issue_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
@@ -867,10 +815,59 @@ class IssueCommentSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     comment_reactions = CommentReactionSerializer(read_only=True, many=True)
     is_member = serializers.BooleanField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent",
+        queryset=IssueComment.objects.filter(parent__isnull=True),
+        required=False,
+        allow_null=True,
+    )
+    reply_count = serializers.SerializerMethodField()
+    replied_user_ids = serializers.SerializerMethodField()
+    last_reply_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = IssueComment
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+    def get_reply_count(self, obj):
+        return len(obj.parent_issue_comment.all())
+
+    def get_replied_user_ids(self, obj):
+        return list(set([comment.actor_id for comment in obj.parent_issue_comment.all()]))
+
+
+class IssueCommentReplySerializer(BaseSerializer):
+    comment_reactions = CommentReactionSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = IssueComment
+        fields = [
+            "id",
+            "issue",
+            "comment_stripped",
+            "comment_json",
+            "comment_html",
+            "comment_reactions",
+            "parent_id",
+            "created_at",
+            "updated_at",
+            "edited_at",
+            "deleted_at",
+            "created_by_id",
+            "updated_by_id",
+            "actor",
+            "workspace_id",
+            "project_id",
+        ]
         read_only_fields = [
             "workspace",
             "project",
@@ -965,9 +962,7 @@ class IssueSerializer(DynamicBaseSerializer):
         if not (
             slug
             and user_id
-            and check_workspace_feature_flag(
-                feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id
-            )
+            and check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id)
         ):
             self.fields.pop("milestone_id", None)
 
@@ -1048,19 +1043,9 @@ class IssueListDetailSerializer(serializers.Serializer):
             "module_ids": self.get_module_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "assignee_ids": self.get_assignee_ids(instance),
-            "sub_issues_count": (
-                instance.sub_issues_count
-                if hasattr(instance, "sub_issues_count")
-                else None
-            ),
-            "attachment_count": (
-                instance.attachment_count
-                if hasattr(instance, "attachment_count")
-                else None
-            ),
-            "link_count": (
-                instance.link_count if hasattr(instance, "link_count") else None
-            ),
+            "sub_issues_count": (instance.sub_issues_count if hasattr(instance, "sub_issues_count") else None),
+            "attachment_count": (instance.attachment_count if hasattr(instance, "attachment_count") else None),
+            "link_count": (instance.link_count if hasattr(instance, "link_count") else None),
         }
 
         # Gate milestone_id behind MILESTONES feature flag. Only add when enabled.
@@ -1069,13 +1054,9 @@ class IssueListDetailSerializer(serializers.Serializer):
         if (
             slug
             and user_id
-            and check_workspace_feature_flag(
-                feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id
-            )
+            and check_workspace_feature_flag(feature_key=FeatureFlag.MILESTONES, slug=slug, user_id=user_id)
         ):
-            data["milestone_id"] = (
-                instance.milestone_id if hasattr(instance, "milestone_id") else None
-            )
+            data["milestone_id"] = instance.milestone_id if hasattr(instance, "milestone_id") else None
 
         # Handle expanded fields only when requested - using direct field access
         if self.expand:
@@ -1168,27 +1149,17 @@ class IssueDetailSerializer(IssueSerializer):
 
         # Check if the user has access to the customer request count
         if slug and user_id:
-            if check_workspace_feature_flag(
-                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
-            ):
-                self.fields["customer_request_ids"] = serializers.ListField(
-                    read_only=True
-                )
+            if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id):
+                self.fields["customer_request_ids"] = serializers.ListField(read_only=True)
                 self.fields["initiative_ids"] = serializers.ListField(read_only=True)
-            if check_workspace_feature_flag(
-                feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES, slug=slug, user_id=user_id
-            ):
-                self.fields["transferred_cycle_ids"] = serializers.ListField(
-                    read_only=True
-                )
+            if check_workspace_feature_flag(feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES, slug=slug, user_id=user_id):
+                self.fields["transferred_cycle_ids"] = serializers.ListField(read_only=True)
 
 
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionSerializer(
-        read_only=True, many=True, source="issue_reactions"
-    )
+    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:

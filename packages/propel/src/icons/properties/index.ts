@@ -21,3 +21,4 @@ export * from "./workflows-icon";
 export * from "./eye-open-icon";
 export * from "./pencil-left-icon";
 export * from "./transfer-hop";
+export * from "./comment-icon";

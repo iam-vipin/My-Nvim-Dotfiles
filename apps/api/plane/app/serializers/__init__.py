@@ -52,6 +52,7 @@ from .issue import (
     IssueCreateSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
+    IssueCommentReplySerializer,
     IssueUserPropertySerializer,
     IssueAssigneeSerializer,
     LabelSerializer,

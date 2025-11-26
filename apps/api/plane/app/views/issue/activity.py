@@ -2,7 +2,7 @@
 from itertools import chain
 
 # Django imports
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, Max
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
@@ -51,7 +51,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = issue_activities.filter(~Q(field="type"))
 
         issue_comments = (
-            IssueComment.objects.filter(issue_id=issue_id)
+            IssueComment.objects.filter(issue_id=issue_id, parent_id__isnull=True)
             .filter(project__archived_at__isnull=True, workspace__slug=slug)
             .filter(**filters)
             .order_by("created_at")
@@ -60,7 +60,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 Prefetch(
                     "comment_reactions",
                     queryset=CommentReaction.objects.select_related("actor"),
-                )
+                ),
             )
             .distinct()
             .accessible_to(request.user.id, slug)
@@ -80,7 +80,12 @@ class IssueActivityEndpoint(BaseAPIView):
             return Response(issue_activities, status=status.HTTP_200_OK)
 
         if request.GET.get("activity_type", None) == "issue-comment":
-            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+            issue_comments = IssueCommentSerializer(
+                issue_comments.prefetch_related("parent_issue_comment").annotate(
+                    last_reply_at=Max("parent_issue_comment__created_at")
+                ),
+                many=True,
+            ).data
             return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(

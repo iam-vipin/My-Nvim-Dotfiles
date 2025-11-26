@@ -140,7 +140,7 @@ from .issue.attachment import (
     IssueAttachmentV2Endpoint,
 )
 
-from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.comment import IssueCommentViewSet, CommentReactionViewSet, IssueCommentRepliesEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 

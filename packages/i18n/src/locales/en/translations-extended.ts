@@ -18,6 +18,9 @@ export default {
     recurring_work_items: "Recurring work items",
     milestones: "Milestones",
     open_in_full_screen: "Open {page} in full screen",
+    actions: {
+      reply: "Reply",
+    },
   },
   issue: {
     relation: {
@@ -51,6 +54,45 @@ export default {
         },
         error: {
           message: "Failed to duplicate work item",
+        },
+      },
+    },
+    comments: {
+      replies: {
+        create: {
+          submit_button: "Add reply",
+          placeholder: "Add reply",
+        },
+        toast: {
+          fetch: {
+            error: {
+              message: "Failed to fetch replies",
+            },
+          },
+          create: {
+            success: {
+              message: "Reply created successfully",
+            },
+            error: {
+              message: "Failed to create reply",
+            },
+          },
+          update: {
+            success: {
+              message: "Reply updated successfully",
+            },
+            error: {
+              message: "Failed to update reply",
+            },
+          },
+          delete: {
+            success: {
+              message: "Reply deleted successfully",
+            },
+            error: {
+              message: "Failed to delete reply",
+            },
+          },
         },
       },
     },

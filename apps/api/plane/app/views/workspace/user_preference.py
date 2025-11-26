@@ -13,7 +13,6 @@ from rest_framework import status
 
 class WorkspaceUserPreferenceViewSet(BaseAPIView):
     model = WorkspaceUserPreference
-    use_read_replica = True
 
     def get_serializer_class(self):
         return WorkspaceUserPreferenceSerializer
@@ -71,7 +70,9 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             if not key:
                 continue
 
-            preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug).first()
+            preference = WorkspaceUserPreference.objects.filter(
+                key=key, workspace__slug=slug, user=request.user
+            ).first()
 
             if not preference:
                 continue

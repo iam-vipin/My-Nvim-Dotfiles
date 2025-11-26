@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -10,6 +11,7 @@ import { Loader } from "@plane/ui";
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
 import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
+import { JoinProject } from "@/components/auth-screens/project/join-project";
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -17,13 +19,18 @@ import { IssueDetailRoot } from "@/components/issues/issue-detail";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+// assets
+// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
+// plane-web components
+import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import type { Route } from "./+types/page";
 
 function IssueDetailsPage({ params }: Route.ComponentProps) {
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = params;
@@ -35,7 +42,7 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
     fetchIssueWithIdentifier,
     issue: { getIssueById },
   } = useIssueDetail();
-  const { getProjectById } = useProject();
+  const { getProjectById, getProjectByIdentifier } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
   const [projectIdentifier, sequence_id] = workItem.split("-");
@@ -44,9 +51,11 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
   const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`, () =>
     fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
   );
-  const issueId = data?.id;
-  const projectId = data?.project_id;
+
   // derived values
+  const projectDetails = getProjectByIdentifier(projectIdentifier);
+  const issueId = data?.id;
+  const projectId = data?.project_id ?? projectDetails?.id ?? "";
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
   const issueLoader = !issue || isLoading;
@@ -79,46 +88,68 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
     }
   }, [workspaceSlug, data]);
 
+  const renderPrivateProjectEmptyState = error && error.type === 0;
+
   return (
     <>
       <PageHead title={pageTitle} />
-      {error ? (
-        <EmptyState
-          image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title={t("issue.empty_state.issue_detail.title")}
-          description={t("issue.empty_state.issue_detail.description")}
-          primaryButton={{
-            text: t("issue.empty_state.issue_detail.primary_button.text"),
-            onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
-          }}
-        />
-      ) : issueLoader ? (
-        <Loader className="flex h-full gap-5 p-5">
-          <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
-          </div>
-          <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </div>
-        </Loader>
+      {renderPrivateProjectEmptyState ? (
+        <JoinProject projectId={projectId} isPrivateProject />
       ) : (
-        projectId &&
-        issueId && (
-          <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-            <IssueDetailRoot
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              is_archived={!!issue?.archived_at}
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+          {error ? (
+            <EmptyState
+              image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+              title={t("issue.empty_state.issue_detail.title")}
+              description={t("issue.empty_state.issue_detail.description")}
+              primaryButton={{
+                text: t("issue.empty_state.issue_detail.primary_button.text"),
+                onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
+              }}
             />
-          </ProjectAuthWrapper>
-        )
+          ) : issueLoader ? (
+            <Loader className="flex h-full gap-5 p-5">
+              <div className="basis-2/3 space-y-2">
+                <Loader.Item height="30px" width="40%" />
+                <Loader.Item height="15px" width="60%" />
+                <Loader.Item height="15px" width="60%" />
+                <Loader.Item height="15px" width="40%" />
+              </div>
+              <div className="basis-1/3 space-y-3">
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+              </div>
+            </Loader>
+          ) : (
+            workspaceSlug &&
+            projectId &&
+            issueId && (
+              <>
+                {issue?.is_epic ? (
+                  <>
+                    <EpicDetailRoot
+                      editorRef={editorRef}
+                      workspaceSlug={workspaceSlug.toString()}
+                      projectId={projectId.toString()}
+                      epicId={issueId.toString()}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <IssueDetailRoot
+                      workspaceSlug={workspaceSlug.toString()}
+                      projectId={projectId.toString()}
+                      issueId={issueId.toString()}
+                      is_archived={!!issue?.archived_at}
+                    />
+                  </>
+                )}
+              </>
+            )
+          )}
+        </ProjectAuthWrapper>
       )}
     </>
   );

@@ -4,7 +4,7 @@ import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { IProject } from "@plane/types";
+import type { IProject, TProjectFeatures } from "@plane/types";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers
@@ -15,6 +15,7 @@ import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { ProjectFeatureToggle } from "./helper";
 
 type Props = {
@@ -29,8 +30,10 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
   const { t } = useTranslation();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
+  const { toggleProjectFeatures, getProjectFeatures } = useProjectAdvanced();
   // derived values
   const currentProjectDetails = getProjectById(projectId);
+  const projectFeatures = getProjectFeatures(projectId);
 
   const handleSubmit = async (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
@@ -39,9 +42,24 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
     const settingsPayload = {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
-    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
+    const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload).then(() => {});
 
-    setPromiseToast(updateProjectPromise, {
+    const updatePromises = [updateProjectPromise];
+
+    if (["is_milestone_enabled", "is_time_tracking_enabled"].includes(featureProperty)) {
+      updatePromises.push(toggleProjectFeatures(workspaceSlug, projectId, settingsPayload));
+    }
+
+    const promises = Promise.all(updatePromises).then(() => {
+      captureSuccess({
+        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
+        payload: {
+          feature_key: featureKey,
+        },
+      });
+    });
+
+    setPromiseToast(promises, {
       loading: "Updating project feature...",
       success: {
         title: "Success!",
@@ -52,15 +70,12 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
     });
-    updateProjectPromise.then(() => {
-      captureSuccess({
-        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
-        payload: {
-          feature_key: featureKey,
-        },
-      });
-    });
   };
+
+  const isFeatureEnabled = (featureKey: string) =>
+    Boolean(
+      projectFeatures?.[featureKey as keyof TProjectFeatures] || currentProjectDetails?.[featureKey as keyof IProject]
+    );
 
   if (!currentUser) return <></>;
 
@@ -94,17 +109,11 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                   </div>
                 </div>
                 <ProjectFeatureToggle
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
                   featureItem={featureItem}
-                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                  value={isFeatureEnabled(featureItemKey)}
                   handleSubmit={handleSubmit}
                   disabled={!isAdmin}
                 />
-              </div>
-              <div className="pl-14">
-                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
               </div>
             </div>
           ))}

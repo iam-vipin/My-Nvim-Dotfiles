@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/core/app-header";
 import { TabNavigationRoot } from "@/components/navigation";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local components
+import { EpicItemDetailsHeader } from "./epic-header";
 import { WorkItemDetailsHeader } from "./work-item-header";
 
 export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
@@ -37,7 +38,7 @@ export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDet
           </div>
         </Row>
       </div>
-      <AppHeader header={<WorkItemDetailsHeader />} />
+      <AppHeader header={issueDetails?.is_epic ? <EpicItemDetailsHeader /> : <WorkItemDetailsHeader />} />
     </>
   );
 });

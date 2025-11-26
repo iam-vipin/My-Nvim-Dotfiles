@@ -93,7 +93,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
         )}
       </div>
 
-      <span className="text-left text-sm break-words">{prompt.text}</span>
+      <span className="text-left text-sm break-words line-clamp-2">{prompt.text}</span>
     </button>
   );
 };

@@ -11,11 +11,9 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { Breadcrumbs, Header as HeaderUI, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
-import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { AppHeader } from "@/components/core/app-header";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { BetaBadge } from "../../common/beta";
-import { isSidebarToggleVisible } from "../../desktop";
 import { ModelsDropdown } from "./models-dropdown";
 
 type THeaderProps = {
@@ -31,75 +29,77 @@ const buttonClass =
 export const Header = observer((props: THeaderProps) => {
   const router = useRouter();
   const { workspaceSlug } = useParams();
-  const { isProjectLevel = false, shouldRenderSidebarToggle, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;
-  const { sidebarCollapsed } = useAppTheme();
+  const { isProjectLevel = false, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;
   const { initPiChat, activeModel, models, setActiveModel } = usePiChat();
   const { t } = useTranslation();
   return (
-    <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100 rounded-tl-lg rounded-tr-lg">
-      {isSidebarToggleVisible() && sidebarCollapsed && shouldRenderSidebarToggle && <AppSidebarToggleButton />}
-      <HeaderUI>
-        <HeaderUI.LeftItem>
-          <Breadcrumbs onBack={router.back}>
-            {isProjectLevel && isFullScreen && (
+    <AppHeader
+      header={
+        <HeaderUI>
+          <HeaderUI.LeftItem className="flex items-center gap-2">
+            <Breadcrumbs onBack={router.back}>
+              {isProjectLevel && isFullScreen && (
+                <Breadcrumbs.Item
+                  component={
+                    <BreadcrumbLink
+                      href={"/"}
+                      label={t("home.title")}
+                      icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
+                    />
+                  }
+                />
+              )}
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink
-                    href={"/"}
-                    label={t("home.title")}
-                    icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
-                  />
+                  <div className="flex rounded gap-2 items-center">
+                    {isFullScreen && (
+                      <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
+                    )}
+                    {models?.length > 1 ? (
+                      <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
+                    ) : (
+                      <span className="font-medium text-sm my-auto">Plane AI</span>
+                    )}
+                    <BetaBadge />
+                  </div>
                 }
               />
-            )}
-            <Breadcrumbs.Item
-              component={
-                <div className="flex rounded gap-2 items-center">
-                  {isFullScreen && <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />}
-                  {models?.length > 1 ? (
-                    <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
+            </Breadcrumbs>
+          </HeaderUI.LeftItem>
+          <HeaderUI.RightItem>
+            {isProjectLevel && (
+              <div className="flex gap-2">
+                <>
+                  {!isFullScreen ? (
+                    <Tooltip tooltipContent="Start a new chat" position="left">
+                      <button className={cn(buttonClass)} onClick={() => initPiChat()}>
+                        <SquarePen className="flex-shrink-0 size-3.5" />
+                      </button>
+                    </Tooltip>
                   ) : (
-                    <span className="font-medium text-sm my-auto">Plane AI</span>
+                    <Tooltip tooltipContent="Start a new chat" position="bottom">
+                      <Link
+                        href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
+                        tabIndex={-1}
+                        className={cn(buttonClass)}
+                      >
+                        <SquarePen className="flex-shrink-0 size-3.5" />
+                      </Link>
+                    </Tooltip>
                   )}
-                  <BetaBadge />
-                </div>
-              }
-            />
-          </Breadcrumbs>
-        </HeaderUI.LeftItem>
-        <HeaderUI.RightItem>
-          {isProjectLevel && (
-            <div className="flex gap-2">
-              <>
-                {!isFullScreen ? (
-                  <Tooltip tooltipContent="Start a new chat" position="left">
-                    <button className={cn(buttonClass)} onClick={() => initPiChat()}>
-                      <SquarePen className="flex-shrink-0 size-3.5" />
-                    </button>
-                  </Tooltip>
-                ) : (
-                  <Tooltip tooltipContent="Start a new chat" position="bottom">
-                    <Link
-                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat`}
-                      tabIndex={-1}
-                      className={cn(buttonClass)}
-                    >
-                      <SquarePen className="flex-shrink-0 size-3.5" />
-                    </Link>
-                  </Tooltip>
-                )}
-                {!isSidePanelOpen && (
-                  <Tooltip tooltipContent="History" position="bottom">
-                    <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
-                      <PanelLeft className="size-3.5" />
-                    </button>
-                  </Tooltip>
-                )}
-              </>
-            </div>
-          )}
-        </HeaderUI.RightItem>
-      </HeaderUI>
-    </Row>
+                  {!isSidePanelOpen && (
+                    <Tooltip tooltipContent="History" position="bottom">
+                      <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
+                        <PanelLeft className="size-3.5" />
+                      </button>
+                    </Tooltip>
+                  )}
+                </>
+              </div>
+            )}
+          </HeaderUI.RightItem>
+        </HeaderUI>
+      }
+    />
   );
 });

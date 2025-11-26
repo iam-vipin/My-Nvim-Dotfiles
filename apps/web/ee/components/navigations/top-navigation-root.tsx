@@ -31,7 +31,7 @@ export const TopNavigationRoot = observer(() => {
   const { preferences } = useAppRailPreferences();
 
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId, workItem } = useParams();
   const pathname = usePathname();
 
   // Fetch notification count
@@ -49,7 +49,8 @@ export const TopNavigationRoot = observer(() => {
   const shouldRenderPiChat =
     useFlag(workspaceSlug?.toString() ?? "", E_FEATURE_FLAGS.PI_CHAT) &&
     !pathname.includes(`/${workspaceSlug?.toString()}/pi-chat/`) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
+    (projectId || workItem);
 
   const isAdvancedSearchEnabled = useFlag(workspaceSlug?.toString(), "ADVANCED_SEARCH");
   const isOpenSearch = config?.is_opensearch_enabled;
@@ -57,21 +58,18 @@ export const TopNavigationRoot = observer(() => {
 
   return (
     <div
-      className={cn("flex items-center justify-evenly min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
-        "px-3.5": showLabel,
+      className={cn("flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
       {/* Workspace Menu */}
-      <div className="flex items-center justify-start flex-shrink-0">
+      <div className="shrink-0 flex-1">
         <WorkspaceMenuRoot />
       </div>
       {/* Power K Search */}
-      <div className="flex items-center justify-center flex-grow px-4">
-        {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
-      </div>
+      <div className="shrink-0">{isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}</div>
       {/* Additional Actions */}
-      <div className="flex gap-1.5 items-center justify-end flex-shrink-0 min-w-60">
+      <div className="shrink-0 flex-1 flex items-center justify-end">
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"
@@ -89,26 +87,27 @@ export const TopNavigationRoot = observer(() => {
             }}
           />
         </Tooltip>
-
+        <HelpMenuRoot />
         {shouldRenderPiChat && (
           <div>
             <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
-                  "flex items-center gap-2 transition-colors p-2 rounded-md  hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200  text-custom-text-200 place-items-center w-full",
+                  "flex items-center gap-1.5 transition-colors py-2 px-1 rounded-md  hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 place-items-center w-full",
                   {
-                    "bg-custom-primary-100/10 !text-custom-primary-200 gap-1": isPiChatDrawerOpen,
+                    "bg-custom-primary-100/10 !text-custom-primary-200": isPiChatDrawerOpen,
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}
               >
-                {isPiChatDrawerOpen ? <CloseIcon className="size-4" /> : <PiIcon className="size-4" />}
+                <span className="shrink-0 size-4 grid place-items-center">
+                  {isPiChatDrawerOpen ? <CloseIcon className="size-4" /> : <PiIcon className="size-4" />}
+                </span>
                 <span className="text-xs leading-normal font-medium">AI assistant</span>
               </button>
             </Tooltip>
           </div>
         )}
-        <HelpMenuRoot />
         <UserMenuRoot size="xs" />
       </div>
     </div>

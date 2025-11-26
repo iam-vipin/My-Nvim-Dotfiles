@@ -40,11 +40,7 @@ export const NewConversation = observer((props: TProps) => {
   if (!currentUser) return null;
   if (!isLoading && !instance?.is_authorized) return <UnauthorizedView />;
   return (
-    <div
-      className={cn("m-auto pb-[180px]", {
-        "mt-[40%]": !isFullScreen,
-      })}
-    >
+    <div className={cn("mt-[10%] md:mt-[20%]")}>
       <div className={cn("text-center text-3xl font-bold text-custom-text-200", { "text-2xl": !isFullScreen })}>
         Hey, {currentUser?.display_name}!
       </div>

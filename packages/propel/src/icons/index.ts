@@ -75,6 +75,7 @@ export * from "./restricted-page-icon";
 export * from "./sans-serif-icon";
 export * from "./scope-icon";
 export * from "./serif-icon";
+export * from "./set-as-default-icon";
 export * from "./side-panel-icon";
 export * from "./slack-icon";
 export * from "./state";

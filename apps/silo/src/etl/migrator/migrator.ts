@@ -150,13 +150,13 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
       isIssueTypeFeatureEnabled && (!cachedIssueTypes || !cachedIssueProperties || !cachedIssuePropertyOptions);
 
     /* ------------------- Issue Type Creation -------------------- */
+    const planeProjectDetails = await protect<ExProject>(
+      planeClient.project.getProject.bind(planeClient.project),
+      job.workspace_slug,
+      job.project_id
+    );
     if (triggerIssueTypeStep) {
       // 2. Check if issue type is enabled for the project or not.
-      const planeProjectDetails = await protect<ExProject>(
-        planeClient.project.getProject.bind(planeClient.project),
-        job.workspace_slug,
-        job.project_id
-      );
       // Extract the issue types from the plane entities
       const isIssueTypeEnabledForProject = planeProjectDetails.is_issue_type_enabled;
       const { issue_types, issue_properties, issue_property_options } = planeEntities;
@@ -395,6 +395,15 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     // Batch Start Index
     const issueProcessIndex = meta.batch_start;
 
+    if (
+      (cycles.length > 0 || modules.length > 0) &&
+      (!planeProjectDetails?.cycle_view || !planeProjectDetails?.module_view)
+    ) {
+      await protect(planeClient.project.update.bind(planeClient.project), job.workspace_slug, job.project_id, {
+        ...(cycles.length > 0 && { cycle_view: true }),
+        ...(modules.length > 0 && { module_view: true }),
+      });
+    }
     const planeCycles = await createAllCycles(
       job.id,
       cycles as ExCycle[],

@@ -6,7 +6,7 @@ import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StatePropertyIcon, ModuleStatusIcon } from "@plane/propel/icons";
-import type { IModule } from "@plane/types";
+import type { IModule, TModuleStatus } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 // types
@@ -16,9 +16,10 @@ type Props = {
   control: Control<IModule, any>;
   error?: FieldError;
   tabIndex?: number;
+  handleOnChange?: () => void;
 };
 
-export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
+export function ModuleStatusSelect({ control, error, tabIndex , handleOnChange}: Props) {
   const { t } = useTranslation();
   return (
     <Controller
@@ -42,7 +43,10 @@ export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
                 )}
               </div>
             }
-            onChange={onChange}
+            onChange={(e: TModuleStatus) => {
+              onChange(e);
+              handleOnChange?.();
+            }}
             tabIndex={tabIndex}
             noChevron
           >

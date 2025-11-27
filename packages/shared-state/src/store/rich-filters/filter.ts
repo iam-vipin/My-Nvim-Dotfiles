@@ -118,6 +118,7 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   updateView: () => Promise<void>;
   // expression options actions
   updateExpressionOptions: (newOptions: Partial<TExpressionOptions<E>>) => void;
+  getExternalExpression: () => E;
 }
 
 type TFilterParams<P extends TFilterProperty, E extends TExternalFilter> = {
@@ -506,7 +507,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   saveView: IFilterInstance<P, E>["saveView"] = action(async () => {
     if (this.canSaveView && this.saveViewOptions) {
-      await this.saveViewOptions.onViewSave(this._getExternalExpression());
+      await this.saveViewOptions.onViewSave(this.getExternalExpression());
     } else {
       console.warn("Cannot save view: invalid expression or missing options.");
     }
@@ -517,7 +518,7 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   updateView: IFilterInstance<P, E>["updateView"] = action(async () => {
     if (this.canUpdateView && this.updateViewOptions) {
-      await this.updateViewOptions.onViewUpdate(this._getExternalExpression());
+      await this.updateViewOptions.onViewUpdate(this.getExternalExpression());
       this._resetInitialFilterExpression();
     } else {
       console.warn("Cannot update view: invalid expression or missing options.");
@@ -535,6 +536,14 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
     };
   });
 
+  /**
+   * Returns the external filter representation of the filter instance.
+   * @returns The external filter representation of the filter instance.
+   */
+  getExternalExpression = computedFn(() =>
+    this.adapter.toExternal(sanitizeAndStabilizeExpression(toJS(this.expression)))
+  );
+
   // ------------ private helpers ------------
   /**
    * Resets the initial filter expression to the current expression.
@@ -544,17 +553,9 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   }
 
   /**
-   * Returns the external filter representation of the filter instance.
-   * @returns The external filter representation of the filter instance.
-   */
-  private _getExternalExpression = computedFn(() =>
-    this.adapter.toExternal(sanitizeAndStabilizeExpression(toJS(this.expression)))
-  );
-
-  /**
    * Notifies the parent component of the expression change.
    */
   private _notifyExpressionChange(): void {
-    this.onExpressionChange?.(this._getExternalExpression());
+    this.onExpressionChange?.(this.getExternalExpression());
   }
 }

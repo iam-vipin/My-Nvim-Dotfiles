@@ -1,5 +1,6 @@
 # Python imports
 import uuid
+from enum import Enum
 
 # Django imports
 from django.conf import settings
@@ -8,29 +9,41 @@ from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import DeployBoard, FileAsset
+from plane.db.models import DeployBoard, FileAsset, Project, APIToken, BotTypeEnum
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.ee.models import IntakeSetting, IntakeForm
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class EntityAssetEndpoint(BaseAPIView):
-    def get_permissions(self):
-        if self.request.method == "GET":
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
+    permission_classes = [AllowAny]
+
+    class PublishEntityType(Enum):
+        DEPLOY_BOARD = "DEPLOY_BOARD"
+        INTAKE_FORM = "INTAKE_FORM"
+
+    def get_publish_entity(self, anchor):
+        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        if deploy_board:
+            return deploy_board, self.PublishEntityType.DEPLOY_BOARD
+        # check if the anchor is a type form anchor
+        intake_form = IntakeForm.objects.filter(anchor=anchor).first()
+        if intake_form:
+            return intake_form, self.PublishEntityType.INTAKE_FORM
+        return None, None
 
     def get(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
-        # Check if the project is published
-        if not deploy_board:
+        publish_entity, _ = self.get_publish_entity(anchor)
+
+        if not publish_entity:
             return Response(
                 {"error": "Requested resource could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
@@ -38,11 +51,13 @@ class EntityAssetEndpoint(BaseAPIView):
 
         # get the asset id
         asset = FileAsset.objects.get(
-            workspace_id=deploy_board.workspace_id,
+            workspace_id=publish_entity.workspace_id,
             pk=pk,
             entity_type__in=[
                 FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
                 FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+                FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
             ],
         )
 
@@ -62,54 +77,74 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def post(self, request, anchor):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        publish_entity, publish_entity_type = self.get_publish_entity(anchor)
+
         # Check if the project is published
-        if not deploy_board:
+        if not publish_entity:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
+
+        # if deploy board is not found
+        if publish_entity_type == self.PublishEntityType.DEPLOY_BOARD and publish_entity.entity_name == "intake":
+            # check if the intake is enabled and intake form is enabled
+            if not (
+                IntakeSetting.objects.filter(intake=publish_entity.entity_identifier, is_form_enabled=True).exists()
+                and Project.objects.filter(pk=publish_entity.project_id, intake_view=True).exists()
+            ):
+                return Response({"error": "Intake is not enabled"}, status=status.HTTP_404_NOT_FOUND)
+
+        if publish_entity_type == self.PublishEntityType.INTAKE_FORM:
+            # check if the intake form is enabled
+            if not Project.objects.filter(pk=publish_entity.project_id, intake_view=True).exists():
+                return Response({"error": "Intake is not enabled"}, status=status.HTTP_404_NOT_FOUND)
 
         # Get the asset
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        size = int(request.data.get("size"))
         entity_type = request.data.get("entity_type", "")
         entity_identifier = request.data.get("entity_identifier")
 
-        # Check if the entity type is allowed
-        if entity_type not in FileAsset.EntityTypeContext.values:
-            return Response(
-                {"error": "Invalid entity type.", "status": False},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=publish_entity.workspace.slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
-        # Check if the file type is allowed
-        allowed_types = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/jpg",
-            "image/gif",
-        ]
-        if type not in allowed_types:
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": "Invalid file type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # asset key
-        asset_key = f"{deploy_board.workspace_id}/{uuid.uuid4().hex}-{name}"
+        asset_key = f"{publish_entity.workspace_id}/{uuid.uuid4().hex}-{name}"
+
+        user = None
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Check if there is an api token
+            api_token = APIToken.objects.filter(
+                workspace_id=publish_entity.workspace_id,
+                user__is_bot=True,
+                user__bot_type=BotTypeEnum.INTAKE_BOT,
+            ).first()
+            if api_token:
+                user = api_token.user
 
         # Create a File Asset
         asset = FileAsset.objects.create(
-            attributes={"name": name, "type": type, "size": size},
+            attributes={"name": name, "type": type, "size": size_limit},
             asset=asset_key,
-            size=size,
-            workspace=deploy_board.workspace,
-            created_by=request.user,
+            size=size_limit,
+            created_by=user,
+            workspace=publish_entity.workspace,
             entity_type=entity_type,
-            project_id=deploy_board.project_id,
+            project_id=publish_entity.project_id,
             comment_id=entity_identifier,
         )
 
@@ -129,13 +164,13 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def patch(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        publish_entity, publish_entity_type = self.get_publish_entity(anchor)
         # Check if the project is published
-        if not deploy_board:
+        if not publish_entity:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         # get the asset id
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace)
+        asset = FileAsset.objects.get(id=pk, workspace=publish_entity.workspace)
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -150,12 +185,33 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def delete(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
-        # Check if the project is published
-        if not deploy_board:
-            return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
+        publish_entity, publish_entity_type = self.get_publish_entity(anchor)
         # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        asset = FileAsset.objects.get(id=pk, workspace=publish_entity.workspace)
+
+        # Delete check so some other other asset may not be deleted
+        if (
+            publish_entity_type == self.PublishEntityType.DEPLOY_BOARD
+            and publish_entity.entity_name == "intake"
+            and asset.entity_type != FileAsset.EntityTypeContext.ISSUE_DESCRIPTION
+        ):
+            return Response(
+                {"error": "You are not allowed to delete this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # In the project, only the authenticated user can delete the asset if the asset is a comment description
+        if (
+            publish_entity_type == self.PublishEntityType.DEPLOY_BOARD
+            and publish_entity.entity_name == "project"
+            and asset.entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION
+            and not request.user.is_authenticated
+        ):
+            return Response(
+                {"error": "You are not allowed to delete this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()

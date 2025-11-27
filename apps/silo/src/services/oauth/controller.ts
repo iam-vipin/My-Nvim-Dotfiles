@@ -1,5 +1,6 @@
 import type { Response } from "express";
 import { E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
+import { logger } from "@plane/logger";
 import type { PlaneUser } from "@plane/sdk";
 import type { TWorkspaceConnection } from "@plane/types";
 import { E_INTEGRATION_KEYS } from "@plane/types";
@@ -147,6 +148,12 @@ export class OAuthController {
       // Handle specific error cases
       const providerString = convertIntegrationKeyToProvider(provider);
       const redirectBase = `${env.APP_BASE_URL}/${JSON.parse(Buffer.from(state, "base64").toString()).workspace_slug}/settings/integrations/${providerString}/`;
+
+      logger.error(`OAuth handleCallback error for provider: ${providerString}`, {
+        error: error.message,
+        errorStack: error.stack,
+        provider: providerString,
+      });
 
       if (error.message === E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT) {
         res.status(400).redirect(`${redirectBase}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);

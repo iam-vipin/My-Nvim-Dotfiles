@@ -79,16 +79,19 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
           <IssueAdditionalPropertiesActivity
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "WORKLOG" ? (
           <IssueActivityWorklog
+            key={activityComment.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}

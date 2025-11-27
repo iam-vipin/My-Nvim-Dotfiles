@@ -162,11 +162,16 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 # Get all applications that is either owned by workspace
                 # OR published
                 # or feature flag enabled
+                # or is installed in the workspace
                 applications = (
                     Application.objects.filter(
                         Q(application_owners__workspace__slug=slug)
                         | Q(published_at__isnull=False)
                         | Q(slug__in=enabled_apps_slugs)
+                        | Q(
+                            workspace_app_installations__workspace__slug=slug,
+                            workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
+                        )
                     )
                     .filter(deleted_at__isnull=True)
                     .select_related("logo_asset")
@@ -210,6 +215,10 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 Application.objects.filter(
                     Q(slug=app_slug, application_owners__workspace__slug=slug)
                     | Q(published_at__isnull=False, slug=app_slug)
+                    | Q(
+                        workspace_app_installations__workspace__slug=slug,
+                        workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
+                    )
                 )
                 .select_related(
                     "logo_asset",

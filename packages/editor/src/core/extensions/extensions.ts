@@ -36,7 +36,6 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomPlaceholderExtension } from "./placeholder";
 import { CustomStarterKitExtension } from "./starter-kit";
-import { UniqueID } from "./unique-id/extension";
 
 type TArguments = Pick<
   IEditorProps,
@@ -122,11 +121,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      extendedEditorProps,
       flaggedExtensions,
       fileHandler,
-      extendedEditorProps,
-    }),
-    UniqueID.configure({
       provider,
     }),
   ];

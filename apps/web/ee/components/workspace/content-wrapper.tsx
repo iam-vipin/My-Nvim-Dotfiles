@@ -17,7 +17,7 @@ export const WorkspaceContentWrapper = observer(({ children }: { children: React
   const shouldRenderAiCanvas = pathname.split("/").includes("pi-chat");
 
   return (
-    <div className="flex flex-col relative size-full overflow-hidden bg-custom-background-90 rounded-lg transition-all ease-in-out duration-300">
+    <div className="flex flex-col relative size-full overflow-hidden bg-custom-background-90 transition-all ease-in-out duration-300">
       <TopNavigationRoot />
       <div className="relative flex size-full overflow-hidden">
         <AppRailRoot />

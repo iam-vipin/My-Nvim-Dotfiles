@@ -120,6 +120,9 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
                     }}
+                    displayConfig={{
+                      fontSize: "small-font",
+                    }}
                   />
                 )}
               />

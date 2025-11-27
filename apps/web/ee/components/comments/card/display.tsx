@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueCommentAccessSpecifier } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
@@ -37,6 +37,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
   } = props;
   // refs
   const repliesRootRef = useRef<CommentRepliesRootHandle>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
@@ -46,9 +47,10 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
     : (userDetails?.display_name ?? comment?.actor_detail?.display_name);
   const avatarUrl = userDetails?.avatar_url ?? comment?.actor_detail?.avatar_url;
 
-  const handleReply = () => {
+  const handleReply = useCallback(() => {
+    editorRef.current?.setFocusAtPosition(0);
     repliesRootRef.current?.showReplyEditor();
-  };
+  }, []);
   const areRepliesAvailable = comment.reply_count !== undefined && comment.reply_count > 0;
   const shouldShowIndicator = isReply || areRepliesAvailable;
 
@@ -64,9 +66,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
         <div className="flex relative w-full gap-2 items-center z-10">
           <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
           <div className="flex-1 flex flex-wrap items-center gap-1">
-            <div className="text-xs font-medium">
-              {`${displayName}${comment.access === EIssueCommentAccessSpecifier.EXTERNAL ? " (External user)" : ""}`}
-            </div>
+            <div className="text-xs font-medium">{displayName}</div>
             <div className="text-xs text-custom-text-300">
               commented{" "}
               <Tooltip
@@ -97,6 +97,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
       </div>
       {enableReplies && !isReply && projectId && (
         <CommentRepliesRoot
+          editorRef={editorRef}
           ref={repliesRootRef}
           workspaceSlug={workspaceSlug}
           projectId={projectId}

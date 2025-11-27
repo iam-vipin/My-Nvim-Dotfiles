@@ -2,10 +2,11 @@ import { useEffect, useState, useImperativeHandle, forwardRef, useRef } from "re
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import type { TCommentsOperations } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/ui";
-import { calculateTimeAgo, getFileURL } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // local imports
@@ -13,6 +14,7 @@ import { RepliesList } from "./replies-list";
 import { ReplyCreate } from "./reply-create";
 
 type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   entityId: string;
@@ -31,6 +33,7 @@ export type CommentRepliesRootHandle = {
 export const CommentRepliesRoot = observer(
   forwardRef<CommentRepliesRootHandle, Props>(function CommentRepliesRoot(props, ref) {
     const {
+      editorRef,
       workspaceSlug,
       projectId,
       entityId,
@@ -113,28 +116,33 @@ export const CommentRepliesRoot = observer(
           </Button>
         )}
 
-        {isExpanded && (
-          <>
-            {repliesCount > 0 && (
-              <RepliesList
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                entityId={entityId}
-                commentId={commentId}
-                activityOperations={activityOperations}
-                showAccessSpecifier={showAccessSpecifier}
-                setIsExpanded={setIsExpanded}
-              />
-            )}
+        {isExpanded && repliesCount > 0 && (
+          <RepliesList
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            entityId={entityId}
+            commentId={commentId}
+            activityOperations={activityOperations}
+            showAccessSpecifier={showAccessSpecifier}
+            setIsExpanded={setIsExpanded}
+          />
+        )}
+        {
+          <div
+            className={cn({
+              hidden: !isExpanded,
+            })}
+          >
             <ReplyCreate
+              editorRef={editorRef}
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               entityId={entityId}
               commentId={commentId}
               activityOperations={activityOperations}
             />
-          </>
-        )}
+          </div>
+        }
       </div>
     );
   })

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
@@ -17,6 +17,7 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 
 type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   entityId: string;
@@ -25,13 +26,11 @@ type Props = {
 };
 
 export const ReplyCreate = observer(function ReplyCreate(props: Props) {
-  const { workspaceSlug, projectId, entityId, commentId, activityOperations } = props;
+  const { editorRef, workspaceSlug, projectId, entityId, commentId, activityOperations } = props;
   // translation
   const { t } = useTranslation();
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const workspaceStore = useWorkspace();
   // derived values

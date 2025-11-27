@@ -56,15 +56,25 @@ def validate_binary_data(data):
     # Check for suspicious text patterns (HTML/JS)
     try:
         decoded_text = binary_data.decode("utf-8", errors="ignore")[:200]
-        if any(
-            pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS
-        ):
+        if any(pattern in decoded_text.lower() for pattern in SUSPICIOUS_BINARY_PATTERNS):
             return False, "Binary data contains suspicious content patterns"
     except Exception:
         pass  # Binary data might not be decodable as text, which is fine
 
     return True, None
 
+
+EE_CUSTOM_TAGS = {
+    "issue-embed-component",
+    "external-embed",
+    "external-embed-component",
+    "page-embed-component",
+    "page-link-component",
+    "attachment-component",
+    "inline-math-component",
+    "block-math-component",
+    "drawio-component",
+}
 
 # Combine custom components and editor-specific nodes into a single set of tags
 CUSTOM_TAGS = {
@@ -74,7 +84,64 @@ CUSTOM_TAGS = {
     "input",
     "image-component",
 }
-ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS
+
+ALLOWED_TAGS = nh3.ALLOWED_TAGS | CUSTOM_TAGS | EE_CUSTOM_TAGS
+
+EE_ATTRIBUTES = {
+    "*": {
+        "data-comment-id",
+        "data-comment-resolved",
+    },
+    # issue-embed-component (from editor extension and migrations)
+    "issue-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+        "sequence_id",
+        "title",
+    },
+    # external embed variants (generic)
+    "external-embed-component": {
+        "src",
+        "id",
+        "data-embed-data",
+        "data-is-rich-card",
+        "data-entity-name",
+        "data-entity-type",
+        "data-has-embed-failed",
+        "data-has-tried-embedding",
+    },
+    # page-related components (no concrete usages found; allow common identifiers)
+    "page-embed-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+    },
+    "page-link-component": {
+        "entity_identifier",
+        "project_identifier",
+        "workspace_identifier",
+        "id",
+        "entity_name",
+    },
+    # attachment (generic)
+    "attachment-component": {
+        "id",
+        "src",
+        "data-name",
+        "data-file-size",
+        "data-file-type",
+    },
+    # math components (generic)
+    "inline-math-component": {"latex", "id"},
+    "block-math-component": {"latex", "id"},
+    # drawio components (generic)
+    "drawio-component": {"id", "data-image-src", "data-xml-src", "data-mode"},
+}
 
 # Merge nh3 defaults with all attributes used across our custom components
 ATTRIBUTES = {
@@ -157,6 +224,11 @@ ATTRIBUTES = {
     "code": {"language", "spellcheck"},
     "input": {"type", "checked"},
 }
+
+
+for k, v in EE_ATTRIBUTES.items():
+    ATTRIBUTES.setdefault(k, set()).update(v)
+
 
 SAFE_PROTOCOLS = {"http", "https", "mailto", "tel"}
 

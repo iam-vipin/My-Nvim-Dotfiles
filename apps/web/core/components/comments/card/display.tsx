@@ -12,19 +12,23 @@ import { cn } from "@plane/utils";
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
 import { CommentReactions } from "../comment-reaction";
+import { CommentCardEditForm } from "./edit-form";
 
-type Props = {
+export type TCommentCardDisplayProps = {
   activityOperations: TCommentsOperations;
   comment: TIssueComment;
   disabled: boolean;
+  entityId: string;
   projectId?: string;
   readOnlyEditorRef: React.RefObject<EditorRefApi>;
   showAccessSpecifier: boolean;
   workspaceId: string;
   workspaceSlug: string;
+  isEditing?: boolean;
+  setIsEditing?: (isEditing: boolean) => void;
 };
 
-export const CommentCardDisplay = observer(function CommentCardDisplay(props: Props) {
+export const CommentCardDisplay = observer(function CommentCardDisplay(props: TCommentCardDisplayProps) {
   const {
     activityOperations,
     comment,
@@ -34,6 +38,8 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
     showAccessSpecifier,
     workspaceId,
     workspaceSlug,
+    isEditing = false,
+    setIsEditing,
   } = props;
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
@@ -68,20 +74,36 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
           )}
         </div>
       )}
-      <LiteTextEditor
-        editable={false}
-        ref={readOnlyEditorRef}
-        id={comment.id}
-        initialValue={comment.comment_html ?? ""}
-        workspaceId={workspaceId}
-        workspaceSlug={workspaceSlug}
-        containerClassName={cn("!py-1 transition-[border-color] duration-500", highlightClassName)}
-        projectId={projectId?.toString()}
-        displayConfig={{
-          fontSize: "small-font",
-        }}
-      />
-      <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+      {isEditing && setIsEditing ? (
+        <CommentCardEditForm
+          activityOperations={activityOperations}
+          comment={comment}
+          isEditing={isEditing}
+          readOnlyEditorRef={readOnlyEditorRef.current}
+          setIsEditing={setIsEditing}
+          projectId={projectId}
+          workspaceId={workspaceId}
+          workspaceSlug={workspaceSlug}
+        />
+      ) : (
+        <>
+          <LiteTextEditor
+            editable={false}
+            ref={readOnlyEditorRef}
+            id={comment.id}
+            initialValue={comment.comment_html ?? ""}
+            workspaceId={workspaceId}
+            workspaceSlug={workspaceSlug}
+            containerClassName={cn("!py-1 transition-[border-color] duration-500", highlightClassName)}
+            projectId={projectId?.toString()}
+            displayConfig={{
+              fontSize: "small-font",
+            }}
+            parentClassName="border-none"
+          />
+          <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+        </>
+      )}
     </div>
   );
 });

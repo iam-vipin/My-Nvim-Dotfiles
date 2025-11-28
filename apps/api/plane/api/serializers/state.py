@@ -23,7 +23,7 @@ class StateSerializer(BaseSerializer):
 
     class Meta:
         model = State
-        fields = "__all__"
+        exclude = ["slug"]
         read_only_fields = [
             "id",
             "created_by",
@@ -33,7 +33,6 @@ class StateSerializer(BaseSerializer):
             "workspace",
             "project",
             "deleted_at",
-            "slug",
         ]
 
 

@@ -10,7 +10,10 @@ This module provides reusable components for API documentation:
 """
 
 # Authentication extensions
-from .auth import APIKeyAuthenticationExtension
+from .auth import (
+    APIKeyAuthenticationExtension,
+    OAuth2AuthenticationExtension,
+)
 
 # Parameters
 from .parameters import (
@@ -43,6 +46,9 @@ from .parameters import (
     CYCLE_VIEW_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    INITIATIVE_ID_PARAMETER,
+    INITIATIVE_LABEL_ID_PARAMETER,
+    TEAMSPACE_ID_PARAMETER,
 )
 
 # Responses
@@ -140,6 +146,13 @@ from .examples import (
     WORKSPACE_MEMBER_EXAMPLE,
     PROJECT_MEMBER_EXAMPLE,
     CYCLE_ISSUE_EXAMPLE,
+    INITIATIVE_EXAMPLE,
+    INITIATIVE_LABEL_EXAMPLE,
+    EPIC_EXAMPLE,
+    STICKY_EXAMPLE,
+    TEAMSPACE_EXAMPLE,
+    PROJECT_FEATURE_EXAMPLE,
+    WORKSPACE_FEATURE_EXAMPLE,
 )
 
 # Helper decorators
@@ -160,6 +173,7 @@ from .decorators import (
     module_docs,
     module_issue_docs,
     state_docs,
+    issue_worklog_docs,
 )
 
 # Schema processing hooks
@@ -171,6 +185,7 @@ from .hooks import (
 __all__ = [
     # Authentication
     "APIKeyAuthenticationExtension",
+    "OAuth2AuthenticationExtension",
     # Parameters
     "WORKSPACE_SLUG_PARAMETER",
     "PROJECT_ID_PARAMETER",
@@ -201,6 +216,9 @@ __all__ = [
     "CYCLE_VIEW_PARAMETER",
     "FIELDS_PARAMETER",
     "EXPAND_PARAMETER",
+    "INITIATIVE_ID_PARAMETER",
+    "INITIATIVE_LABEL_ID_PARAMETER",
+    "TEAMSPACE_ID_PARAMETER",
     # Responses
     "UNAUTHORIZED_RESPONSE",
     "FORBIDDEN_RESPONSE",
@@ -292,6 +310,13 @@ __all__ = [
     "WORKSPACE_MEMBER_EXAMPLE",
     "PROJECT_MEMBER_EXAMPLE",
     "CYCLE_ISSUE_EXAMPLE",
+    "INITIATIVE_EXAMPLE",
+    "INITIATIVE_LABEL_EXAMPLE",
+    "EPIC_EXAMPLE",
+    "STICKY_EXAMPLE",
+    "TEAMSPACE_EXAMPLE",
+    "PROJECT_FEATURE_EXAMPLE",
+    "WORKSPACE_FEATURE_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",
@@ -309,6 +334,7 @@ __all__ = [
     "module_docs",
     "module_issue_docs",
     "state_docs",
+    "issue_worklog_docs",
     # Hooks
     "preprocess_filter_api_v1_paths",
     "generate_operation_summary",

@@ -3,10 +3,17 @@ export type TIssueLinkEditableFields = {
   url: string;
 };
 
+export type TLinkMetadata = {
+  title?: string;
+  favicon?: string;
+  favicon_url?: string;
+  url?: string;
+};
+
 export type TIssueLink = TIssueLinkEditableFields & {
   created_by_id: string;
   id: string;
-  metadata: any;
+  metadata: TLinkMetadata;
   issue_id: string;
 
   //need

@@ -109,9 +109,41 @@ export class IssueLinkStore implements IIssueLinkStore {
         link_count: issueLinkCount + 1, // increment link count
       });
     });
+    await this._scheduleRefreshLinks(workspaceSlug, projectId, issueId, 200);
     // fetching activity
     this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return response;
+  };
+
+  /**
+   * Schedules a background refresh of issue links to asynchronously update link metadata.
+   * @param workspaceSlug - The slug of the workspace
+   * @param projectId - The id of the project
+   * @param issueId - The id of the issue
+   * @param duration - The duration to wait before running the task
+   * @returns void
+   */
+  _scheduleRefreshLinks = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    duration: number
+  ): Promise<void> => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, duration));
+
+      const updatedLinks = await this.issueService.fetchIssueLinks(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.links[issueId] = updatedLinks.map((link) => link.id);
+
+        updatedLinks.forEach((link) => {
+          set(this.linkMap, link.id, link);
+        });
+      });
+    } catch (error) {
+      console.error("Error while refreshing issue links:", error);
+    }
   };
 
   updateLink = async (

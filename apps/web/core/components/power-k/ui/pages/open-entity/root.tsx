@@ -1,3 +1,5 @@
+// plane web imports
+import { PowerKOpenEntityActionsExtended } from "@/plane-web/components/command-palette/power-k/pages/open-entity-actions/root";
 // local imports
 import { PowerKOpenProjectCyclesMenu } from "./project-cycles-menu";
 import { PowerKOpenProjectModulesMenu } from "./project-modules-menu";
@@ -30,6 +32,7 @@ export function PowerKOpenEntityPages(props: TPowerKOpenEntityActionsProps) {
       {activePage === "open-project-view" && (
         <PowerKOpenProjectViewsMenu context={context} handleSelect={handleSelection} />
       )}
+      <PowerKOpenEntityActionsExtended {...props} />
     </>
   );
 }

@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, State
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, IssueType, State
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -137,6 +137,11 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 default=False,
             )
 
+        issue_type = IssueType.objects.filter(
+            project_issue_types__project_id=project_deploy_board.project_id,
+            is_default=True,
+        ).first()
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -145,6 +150,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
             state_id=triage_state.id,
+            type=issue_type,
         )
 
         # Create an Issue Activity
@@ -208,7 +214,12 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             issue,
             data=issue_data,
             partial=True,
-            context={"project_id": project_deploy_board.project_id, "allow_triage_state": True},
+            context={
+                "project_id": project_deploy_board.project_id,
+                "user_id": request.user.id,
+                "slug": project_deploy_board.workspace.slug,
+                "allow_triage_state": True,
+            },
         )
 
         if issue_serializer.is_valid():

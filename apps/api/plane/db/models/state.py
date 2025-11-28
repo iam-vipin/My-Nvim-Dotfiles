@@ -43,15 +43,8 @@ class State(ProjectBaseModel):
     slug = models.SlugField(max_length=100, blank=True)
     sequence = models.FloatField(default=65535)
     group = models.CharField(
-        choices=(
-            ("backlog", "Backlog"),
-            ("unstarted", "Unstarted"),
-            ("started", "Started"),
-            ("completed", "Completed"),
-            ("cancelled", "Cancelled"),
-            ("triage", "Triage"),
-        ),
-        default="backlog",
+        choices=GROUP_CHOICES,
+        default=BACKLOG,
         max_length=20,
     )
     is_triage = models.BooleanField(default=False)

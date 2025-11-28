@@ -15,7 +15,6 @@ import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { DesktopAppProviderRoot } from "@/plane-web/components/desktop/root";
 import { TrialBanner } from "@/plane-web/components/license/banner/trial-banner";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
@@ -60,11 +59,10 @@ export function Layout({ children }: { children: ReactNode }) {
         <div id="context-menu-portal" />
         <div id="editor-portal" />
         <AppProvider>
-          <DesktopAppProviderRoot />
           <div
             className={cn(
               "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
-              "app-container"
+              "desktop-app-container"
             )}
           >
             {/* free trial banner */}

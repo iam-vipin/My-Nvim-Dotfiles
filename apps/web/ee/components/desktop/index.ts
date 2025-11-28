@@ -4,3 +4,5 @@ export * from "./sidebar-toggle";
 export * from "./navigation";
 export * from "./use-desktop-app";
 export * from "./helper";
+export * from "./sidebar-workspace-menu";
+

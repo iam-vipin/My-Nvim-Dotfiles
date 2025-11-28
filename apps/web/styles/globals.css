@@ -1039,10 +1039,9 @@ div.web-view-spinner div.bar12 {
 html.todesktop body {
   height: 100vh;
   width: 100%;
-  padding-top: 32px;
 }
 
-html.todesktop .app-container {
+html.todesktop .desktop-app-container {
   height: 100%;
   width: 100%;
   overflow: unset;
@@ -1051,12 +1050,13 @@ html.todesktop .app-container {
   position: relative; /* Ensure it's the containing block */
 }
 
-html.todesktop .header {
+html.todesktop .desktop-header {
   background-color: rgb(var(--color-background-90));
   -webkit-app-region: drag;
 }
 
-html.todesktop .header button {
+html.todesktop .desktop-header button,
+html.todesktop .desktop-header .desktop-header-actions {
   -webkit-app-region: no-drag;
 }
 

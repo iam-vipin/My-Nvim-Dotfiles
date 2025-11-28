@@ -6,8 +6,6 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
-// local imports
-import { isSidebarToggleVisible } from "../desktop/helper";
 
 export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
   const { header } = props;
@@ -22,7 +20,7 @@ export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
 
   return (
     <>
-      {isSidebarToggleVisible() && sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
+      {sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
       <div className="flex items-center gap-2 divide-x divide-custom-border-100 w-full">
         <div className="w-full flex-1">{header}</div>
       </div>

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
@@ -20,6 +22,7 @@ import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import { DesktopHeaderProvider } from "../desktop/root";
 import { TopNavSearch } from "./top-nav-search";
 
 export const TopNavigationRoot = observer(() => {
@@ -29,10 +32,11 @@ export const TopNavigationRoot = observer(() => {
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
   const { preferences } = useAppRailPreferences();
-
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
   const pathname = usePathname();
+  // derived
+  const isDesktopApp = useMemo(() => isDesktopAppFn(), []);
 
   // Fetch notification count
   useSWR(
@@ -58,18 +62,21 @@ export const TopNavigationRoot = observer(() => {
 
   return (
     <div
-      className={cn("flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
+      className={cn("desktop-header flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
       {/* Workspace Menu */}
       <div className="shrink-0 flex-1">
-        <WorkspaceMenuRoot />
+        {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
+        {isDesktopApp && <DesktopHeaderProvider />}
       </div>
       {/* Power K Search */}
-      <div className="shrink-0">{isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}</div>
+      <div className="desktop-header-actions shrink-0">
+        {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
+      </div>
       {/* Additional Actions */}
-      <div className="shrink-0 flex-1 flex items-center justify-end">
+      <div className="desktop-header-actions shrink-0 flex-1 flex items-center justify-end">
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"

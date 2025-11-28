@@ -130,7 +130,7 @@ export const TopNavSearch = observer(() => {
           <SearchResults
             query={searchQuery}
             flattenedSearchResults={flattenedSearchResults}
-            handleClose={handleClose}
+            handleResultClick={handleClose}
             isSearching={isSearching}
             setFlattenedSearchResults={setFlattenedSearchResults}
             setIsSearching={setIsSearching}

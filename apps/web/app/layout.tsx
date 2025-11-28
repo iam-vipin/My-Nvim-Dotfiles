@@ -14,7 +14,6 @@ import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 
 // assets
-import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
 import { TrialBanner } from "@/plane-web/components/license";
 
 // local
@@ -78,7 +77,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="context-menu-portal" />
         <div id="editor-portal" />
         <AppProvider>
-          <DesktopAppProviderRoot />
           <div
             className={cn(
               "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",

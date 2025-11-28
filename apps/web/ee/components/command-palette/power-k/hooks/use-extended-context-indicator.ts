@@ -1,11 +1,10 @@
 import { useParams } from "next/navigation";
 // plane imports
+import type { TPowerKContextType } from "@/components/power-k/core/types";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-// local imports
-import type { TPowerKContextTypeExtended } from "../types";
 
 type TArgs = {
-  activeContext: TPowerKContextTypeExtended | null;
+  activeContext: TPowerKContextType | null;
 };
 
 export const useExtendedContextIndicator = (args: TArgs): string | null => {

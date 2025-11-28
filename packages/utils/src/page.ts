@@ -1,6 +1,8 @@
 import { sortBy } from "lodash-es";
 // plane imports
 import type {
+  TMovePageActions,
+  TMovePageEntity,
   TPage,
   TPageFilterProps,
   TPageFiltersSortBy,
@@ -22,6 +24,7 @@ export const filterPagesByPageType = (pageType: TPageNavigationTabs, pages: TPag
     if (pageType === "public") return page.access === 0 && !page.archived_at;
     if (pageType === "private") return page.access === 1 && !page.archived_at;
     if (pageType === "archived") return page.archived_at;
+    if (pageType === "shared") return page.is_shared && !page.archived_at;
     return true;
   });
 
@@ -89,4 +92,16 @@ export const getPageName = (name: string | undefined) => {
   if (name === undefined) return "";
   if (!name || name.trim() === "") return "Untitled";
   return name;
+};
+
+/**
+ * @description returns the source and target from the move type
+ * @param {TMovePageActions} moveType
+ * @returns { { source: TMovePageEntity; target: TMovePageEntity } }
+ */
+export const getMoveSourceAndTargetFromMoveType = (
+  moveType: TMovePageActions
+): { source: TMovePageEntity; target: TMovePageEntity } => {
+  const [source, target] = moveType.split("_to_") as [TMovePageEntity, TMovePageEntity];
+  return { source, target };
 };

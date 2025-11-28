@@ -32,6 +32,10 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "build/**"]
     },
+    "vite:build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "out/**"]
+    },
     "build-storybook": {
       "dependsOn": ["^build"],
       "outputs": ["storybook-static/**"]

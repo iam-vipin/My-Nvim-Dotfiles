@@ -42,8 +42,9 @@ import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties"
 // plane web imports
 import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
 import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
-import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
+import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal/issue-type-select";
 import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
+import { WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal/template-select";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
@@ -67,8 +68,10 @@ export interface IssueFormProps {
   handleDuplicateIssueModal: (isOpen: boolean) => void;
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
+  convertToWorkItem?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+  isTypeSelectDisabled?: boolean;
 }
 
 export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
@@ -94,8 +97,10 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     handleDuplicateIssueModal,
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
+    convertToWorkItem = false,
     showActionButtons = true,
     dataResetProperties = [],
+    isTypeSelectDisabled = false,
   } = props;
 
   // states
@@ -393,7 +398,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       control={control}
                       projectId={projectId}
                       editorRef={editorRef}
-                      disabled={!!data?.sourceIssueId}
+                      disabled={!!data?.sourceIssueId || isTypeSelectDisabled}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />
@@ -501,6 +506,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
+                  convertToWorkItem={convertToWorkItem}
                 />
               </div>
               {showActionButtons && (

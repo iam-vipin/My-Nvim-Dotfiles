@@ -3,7 +3,7 @@ import { StopCircle, Download, Lock, LockOpen, Pencil, Trash2 } from "lucide-rea
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CommentIcon } from "@plane/propel/icons";
+import { CommentReplyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -504,7 +504,7 @@ export const useQuickActionsFactory = () => {
         {
           key: "reply",
           title: t("common.actions.reply"),
-          icon: CommentIcon,
+          icon: CommentReplyIcon,
           action: props.handleReply || (() => {}),
           shouldRender: props.shouldRender,
         } as TContextMenuItem,

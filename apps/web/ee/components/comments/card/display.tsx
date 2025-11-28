@@ -74,7 +74,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
                 position="bottom"
               >
                 <span className="text-custom-text-350">
-                  {calculateTimeAgo(comment.updated_at)}
+                  {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && " (edited)"}
                 </span>
               </Tooltip>

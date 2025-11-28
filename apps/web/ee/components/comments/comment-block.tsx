@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
-import { CommentIcon } from "@plane/propel/icons";
+import { CommentReplyIcon } from "@plane/propel/icons";
 import type { TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -50,7 +50,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
           higlightedActivityIds.includes(comment.id) ? "border-2 border-custom-primary-100" : ""
         )}
       >
-        <CommentIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />
+        <CommentReplyIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-3 truncate flex-grow">
         <div className="text-base mb-2 bg-custom-background-90 rounded-lg p-3">{children}</div>

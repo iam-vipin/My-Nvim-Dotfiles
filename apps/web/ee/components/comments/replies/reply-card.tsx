@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
+// hooks
+import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { CommentCardDisplay } from "@/plane-web/components/comments/card/display";
 // local imports
@@ -23,6 +25,8 @@ export const ReplyCard = observer(function ReplyCard(props: Props) {
   const [isEditing, setIsEditing] = useState(false);
   // refs
   const readOnlyEditorRef = useRef<EditorRefApi>(null);
+  // store hooks
+  const { data: currentUser } = useUser();
   // derived values
   const reply = getReply();
 
@@ -44,7 +48,7 @@ export const ReplyCard = observer(function ReplyCard(props: Props) {
       isEditing={isEditing}
       setIsEditing={setIsEditing}
       renderQuickActions={() => {
-        if (!activityOperations.replyOperations) return null;
+        if (!activityOperations.replyOperations || reply.actor !== currentUser?.id) return null;
         return (
           <ReplyQuickActions
             handleDelete={async () => {

@@ -101,7 +101,9 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
             }}
             parentClassName="border-none"
           />
-          <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+          <div className="pl-2">
+            <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+          </div>
         </>
       )}
     </div>

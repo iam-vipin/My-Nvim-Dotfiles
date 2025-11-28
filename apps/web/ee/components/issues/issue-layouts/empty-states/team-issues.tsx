@@ -30,9 +30,7 @@ export const TeamEmptyState: React.FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   const { getTeamspaceProjectIds } = useTeamspaces();
   // derived values
-  const teamspaceWorkItemFilter = teamspaceId
-    ? useWorkItemFilterInstance(EIssuesStoreType.TEAM, teamspaceId)
-    : undefined;
+  const teamspaceWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.TEAM, teamspaceId);
   const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],

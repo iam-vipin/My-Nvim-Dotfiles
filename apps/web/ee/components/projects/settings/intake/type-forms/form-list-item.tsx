@@ -45,7 +45,7 @@ export const TypeFormListItem: React.FC<Props> = observer((props: Props) => {
 
   // derived values
   const typeFormDetails = getTypeFormById(projectId, formId);
-  const workItemType = typeFormDetails ? useIssueType(typeFormDetails.work_item_type) : undefined;
+  const workItemType = useIssueType(typeFormDetails?.work_item_type);
 
   const QUICK_ACTIONS: TContextMenuItem[] = [
     {

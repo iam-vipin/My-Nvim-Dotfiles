@@ -23,6 +23,7 @@ type Props = {
   setActiveProject: (projectId: string) => void;
   data?: ICycle | null;
   isMobile?: boolean;
+  isBackwardDateEditEnabled?: boolean;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -33,7 +34,16 @@ const defaultValues: Partial<ICycle> = {
 };
 
 export function CycleForm(props: Props) {
-  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  const {
+    handleFormSubmit,
+    handleClose,
+    status,
+    projectId,
+    setActiveProject,
+    data,
+    isMobile = false,
+    isBackwardDateEditEnabled = false,
+  } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -152,7 +162,7 @@ export function CycleForm(props: Props) {
                     <DateRangeDropdown
                       buttonVariant="border-with-text"
                       className="h-7"
-                      minDate={new Date()}
+                      minDate={isBackwardDateEditEnabled ? undefined : new Date()}
                       value={{
                         from: getDate(startDateValue),
                         to: getDate(endDateValue),

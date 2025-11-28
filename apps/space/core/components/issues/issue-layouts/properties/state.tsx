@@ -24,7 +24,7 @@ type Props = {
     }
 );
 
-export const IssueBlockState: React.FC<Props> = observer((props) => {
+export const IssueBlockState = observer(function IssueBlockState(props: Props) {
   const { shouldShowBorder = true } = props;
   // store hooks
   const { getStateById } = useStates();

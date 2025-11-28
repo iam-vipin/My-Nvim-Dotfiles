@@ -41,6 +41,7 @@ type TIssueDefaultPropertiesProps = {
   isDraft: boolean;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
+  convertToWorkItem?: boolean;
 };
 
 export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
@@ -56,6 +57,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     isDraft,
     handleFormChange,
     setSelectedParentIssue,
+    convertToWorkItem = false,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -329,6 +331,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             }}
             projectId={projectId ?? undefined}
             issueId={isDraft ? undefined : id}
+            searchEpic
+            convertToWorkItem={convertToWorkItem}
           />
         )}
       />

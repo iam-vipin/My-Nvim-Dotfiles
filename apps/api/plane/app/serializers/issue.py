@@ -867,6 +867,7 @@ class IssueCommentReplySerializer(BaseSerializer):
             "actor",
             "workspace_id",
             "project_id",
+            "access",
         ]
         read_only_fields = [
             "workspace",

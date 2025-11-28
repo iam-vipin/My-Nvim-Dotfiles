@@ -519,7 +519,7 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
         related_name="parent_issue_comment",  # TODO (Dheeraj): The related_name should be changed to replies
     )
 
-    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html"]
+    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html", "access"]
 
     def save(self, *args, **kwargs):
         """
@@ -531,6 +531,16 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
 
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         is_creating = self._state.adding
+
+        # Get the parent comment access and set it for the child
+        if self.parent_id:
+            parent_comment = IssueComment.objects.get(id=self.parent_id)
+            self.access = parent_comment.access
+
+        # set the child comments access only if the parent comment access is changed
+        if self.has_changed("access"):
+            # Get all the child comments and set it's access to the parent's access
+            IssueComment.objects.filter(parent_id=self.id).update(access=self.access)
 
         # Prepare description defaults
         description_defaults = {
@@ -545,11 +555,11 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
 
         with transaction.atomic():
             super(IssueComment, self).save(*args, **kwargs)
-
             if is_creating or not self.description_id:
                 # Create new description for new comment
                 description = Description.objects.create(**description_defaults)
                 self.description_id = description.id
+
                 super(IssueComment, self).save(update_fields=["description_id"])
             else:
                 field_mapping = {

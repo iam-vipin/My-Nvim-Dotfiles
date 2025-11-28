@@ -470,8 +470,9 @@ export class ProjectInboxStore implements IProjectInboxStore {
           );
         });
       return inboxIssueResponse;
-    } catch {
+    } catch (error) {
       console.error("Error creating the intake issue");
+      throw error;
     }
   };
 

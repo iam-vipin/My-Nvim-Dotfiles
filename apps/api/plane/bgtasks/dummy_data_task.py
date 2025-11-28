@@ -292,7 +292,7 @@ def create_issues(workspace_id, project_id, user_id, issue_count):
 
     states = (
         State.objects.filter(workspace_id=workspace_id, project_id=project_id)
-        .exclude(group="Triage")
+        .exclude(group=State.TRIAGE)
         .values_list("id", flat=True)
     )
     creators = ProjectMember.objects.filter(workspace_id=workspace_id, project_id=project_id).values_list(

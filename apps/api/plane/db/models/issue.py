@@ -21,6 +21,7 @@ from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
 from plane.db.mixins import ChangeTrackerMixin
+from .state import State
 
 # ee imports
 from plane.db.models.intake import IntakeIssueStatus
@@ -129,6 +130,7 @@ class IssueAndEpicsManager(ProjectManager):
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
+            .exclude(state__group=State.TRIAGE)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)

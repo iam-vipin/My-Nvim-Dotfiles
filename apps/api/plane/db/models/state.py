@@ -7,6 +7,20 @@ from django.db.models import Q
 from .project import ProjectBaseModel
 
 
+class StateManager(models.Manager):
+    """Default manager - excludes triage states"""
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(group=State.TRIAGE)
+
+
+class TriageStateManager(models.Manager):
+    """Manager for triage states only"""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(group=State.TRIAGE)
+
+
 class State(ProjectBaseModel):
     BACKLOG = "backlog"
     UNSTARTED = "unstarted"
@@ -37,6 +51,10 @@ class State(ProjectBaseModel):
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+
+    objects = StateManager()
+    all_state_objects = models.Manager()
+    triage_objects = TriageStateManager()
 
     def __str__(self):
         """Return name of the state"""

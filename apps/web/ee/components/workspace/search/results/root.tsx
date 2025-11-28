@@ -22,13 +22,14 @@ const DEBOUNCE_DELAY = 900;
 type TProps = {
   query: string;
   flattenedSearchResults: TSearchResultItem[];
+  handleClose: () => void;
   isSearching: boolean;
   setFlattenedSearchResults: (results: TSearchResultItem[]) => void;
   setIsSearching: (isSearching: boolean) => void;
 };
 
 export const SearchResults: React.FC<TProps> = observer((props) => {
-  const { query, flattenedSearchResults, setFlattenedSearchResults, isSearching, setIsSearching } = props;
+  const { query, flattenedSearchResults, handleClose, setFlattenedSearchResults, isSearching, setIsSearching } = props;
   // params
   const { workspaceSlug } = useParams();
   // states
@@ -171,27 +172,21 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
     }
 
     return (
-      <>
-        {/* {query.length < MIN_SEARCH_LENGTH && flattenedSearchResults.length === 0 && (
-          <div className="text-sm text-custom-text-200 p-3 bg-custom-background-90 rounded-md">
-            {t("common.search.min_chars", { count: MIN_SEARCH_LENGTH })}
-          </div>
-        )} */}
-        <div className="transition-all duration-500 fade-in">
-          {filteredSearchResults.map((entity) => (
-            <Link
-              key={entity.id}
-              href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
-              className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
-            >
-              <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
-              <span className="flex-1 line-clamp-2">
-                {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </>
+      <div className="transition-all duration-500 fade-in">
+        {filteredSearchResults.map((entity) => (
+          <Link
+            key={entity.id}
+            href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
+            onClick={handleClose}
+            className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
+          >
+            <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
+            <span className="flex-1 line-clamp-2">
+              {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
+            </span>
+          </Link>
+        ))}
+      </div>
     );
   };
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { SearchResults } from "ee/components/workspace/search/results/root";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,13 @@ export const TopNavSearch = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { setTopNavSearchInputRef } = usePowerK();
-
+  // handle close search results menu
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    setFlattenedSearchResults([]);
+    setSearchQuery("");
+    inputRef.current?.blur();
+  }, []);
   // Register input ref with PowerK store for keyboard shortcut access
   useEffect(() => {
     setTopNavSearchInputRef(inputRef);
@@ -35,12 +41,7 @@ export const TopNavSearch = observer(() => {
     };
   }, [setTopNavSearchInputRef]);
 
-  useOutsideClickDetector(containerRef, () => {
-    if (isOpen) {
-      setIsOpen(false);
-      setFlattenedSearchResults([]);
-    }
-  });
+  useOutsideClickDetector(containerRef, handleClose);
 
   const handleFocus = () => {
     setIsOpen(true);
@@ -55,16 +56,13 @@ export const TopNavSearch = observer(() => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       e.preventDefault();
-      setIsOpen(false);
-      inputRef.current?.blur();
-      setSearchQuery("");
+      handleClose();
     }
 
     if (e.key === "Enter") {
       e.preventDefault();
       router.push(`/${workspaceSlug}/search?q=${searchQuery}`);
-      setIsOpen(false);
-      setFlattenedSearchResults([]);
+      handleClose();
     }
   };
 
@@ -78,10 +76,13 @@ export const TopNavSearch = observer(() => {
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 px-2 py-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 transition-colors duration-200",
-            isOpen && "border border-custom-border-200"
+            "flex items-center w-full h-7 px-2 py-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            {
+              "border-custom-border-200": isOpen,
+            }
           )}
           onClick={() => inputRef.current?.focus()}
+          role="button"
         >
           <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
           <input
@@ -121,7 +122,7 @@ export const TopNavSearch = observer(() => {
             <div className="text-center space-y-2">
               <div className="text-xl font-bold text-custom-text-300">Search your workspace</div>
               <div className="text-sm text-custom-text-300 max-w-[300px]">
-                Start typing to search across workitems, projects, cycles,modules and more
+                Start typing to search across work items, projects, cycles, modules and more
               </div>
             </div>
           </div>
@@ -129,8 +130,9 @@ export const TopNavSearch = observer(() => {
           <SearchResults
             query={searchQuery}
             flattenedSearchResults={flattenedSearchResults}
-            setFlattenedSearchResults={setFlattenedSearchResults}
+            handleClose={handleClose}
             isSearching={isSearching}
+            setFlattenedSearchResults={setFlattenedSearchResults}
             setIsSearching={setIsSearching}
           />
         )}

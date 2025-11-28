@@ -30,6 +30,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     State,
+    StateGroup,
     IssueType,
 )
 from plane.utils.host import base_host
@@ -180,8 +181,8 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
 
         if not triage_state:
             triage_state = State.objects.create(
-                name="Intake Triage",
-                group=State.TRIAGE,
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
                 color="#4E5355",

@@ -28,7 +28,6 @@ export interface IPagesHeaderProps {
 const storeType = EPageStoreType.PROJECT;
 
 export const PageDetailsHeader = observer(function PageDetailsHeader() {
-  // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks

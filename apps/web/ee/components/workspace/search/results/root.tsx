@@ -114,18 +114,21 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
   );
 
   const renderSearchFilters = () => (
-    <div className="flex gap-3 py-3 overflow-auto horizontal-scrollbar scrollbar-xs">
+    <div className="shrink-0 flex gap-3 p-3 overflow-auto horizontal-scrollbar scrollbar-xs">
       {SEARCH_FILTERS.map((filter) => (
         <button
           type="button"
           key={filter.key}
           onClick={() => setSearchFilter(filter.key)}
-          className={cn("flex w-fit items-center gap-2 text-xs font-medium rounded-md py-1.5 px-3 transition-all", {
-            "text-custom-text-200 bg-custom-background-90": searchFilter !== filter.key,
-            "hover:bg-custom-background-80": searchFilter !== filter.key && !isSearching,
-            "text-custom-primary-300 bg-custom-primary-200/15": searchFilter === filter.key,
-            "cursor-not-allowed opacity-60": isSearching,
-          })}
+          className={cn(
+            "shrink-0 flex w-fit items-center gap-2 text-xs font-medium rounded-md py-1.5 px-3 transition-all",
+            {
+              "text-custom-text-200 bg-custom-background-90": searchFilter !== filter.key,
+              "hover:bg-custom-background-80": searchFilter !== filter.key && !isSearching,
+              "text-custom-primary-300 bg-custom-primary-200/15": searchFilter === filter.key,
+              "cursor-not-allowed opacity-60": isSearching,
+            }
+          )}
           disabled={searchFilter === filter.key || isSearching}
         >
           <span className="text-nowrap">{t(filter.i18n_label)}</span>
@@ -174,7 +177,7 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
             {t("common.search.min_chars", { count: MIN_SEARCH_LENGTH })}
           </div>
         )} */}
-        <div className="flex flex-col transition-all duration-500 fade-in">
+        <div className="transition-all duration-500 fade-in">
           {filteredSearchResults.map((entity) => (
             <Link
               key={entity.id}
@@ -193,9 +196,9 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col py-2">
+    <div className="size-full flex flex-col overflow-hidden py-2">
       {renderSearchFilters()}
-      <div className="flex-1 overflow-y-auto">{renderSearchResults()}</div>
+      <div className="h-full flex-1 px-3 overflow-y-auto vertical-scrollbar scrollbar-sm">{renderSearchResults()}</div>
     </div>
   );
 });

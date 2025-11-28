@@ -4,18 +4,21 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { useParams } from "react-router";
 import { Search } from "lucide-react";
+// plane imports
 import type { TSearchResultItem } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
+// hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 
 export const TopNavSearch = observer(() => {
+  // states
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
+  // refs
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // router hooks
@@ -101,10 +104,9 @@ export const TopNavSearch = observer(() => {
           )}
         </div>
       </div>
-
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-3 pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2 bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg flex flex-col overflow-hidden z-20 transition-all duration-300 ease-in-out pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,

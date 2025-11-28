@@ -6,7 +6,6 @@ import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
-import { BetaBadge } from "@/plane-web/components/common/beta";
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycleHeader() {
@@ -25,7 +24,6 @@ export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycle
               }
             />
           </Breadcrumbs>
-          <BetaBadge />
         </div>
         <UpgradeBadge size="md" flag="WORKSPACE_ACTIVE_CYCLES" />
       </Header.LeftItem>

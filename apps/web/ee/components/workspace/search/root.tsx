@@ -33,15 +33,6 @@ export const AppSearchRoot = observer(() => {
         "px-4 sm:px-6 pt-4"
       )}
     >
-      <h3
-        className={cn(
-          "font-semibold text-custom-text-100",
-          "transform transition-all duration-500 ease-out",
-          "opacity-0 scale-95 text-sm h-8"
-        )}
-      >
-        Your workspace at your fingertips
-      </h3>
       <div className={cn("w-full relative transition-all duration-500 ease-out h-full", "max-w-full", "py-2 sm:px-2")}>
         <div className="relative flex items-center group">
           <Input

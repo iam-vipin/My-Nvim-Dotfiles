@@ -22,6 +22,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -73,6 +74,7 @@ export const EpicItemDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          {projectId && <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId} />}
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

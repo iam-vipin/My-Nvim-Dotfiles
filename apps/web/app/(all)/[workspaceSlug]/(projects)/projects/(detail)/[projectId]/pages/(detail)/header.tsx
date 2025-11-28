@@ -3,25 +3,22 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ChevronRightIcon, PageIcon } from "@plane/propel/icons";
-// types
 import type { ICustomSearchSelectOption } from "@plane/types";
-// ui
 import { Breadcrumbs, Header, CustomMenu, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-// components
 import { getPageName } from "@plane/utils";
+// components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
-// helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { CollaboratorsList, PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-// plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
@@ -89,6 +86,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.LeftItem>
         <div className="w-full overflow-hidden">
           <Breadcrumbs isLoading={loader === "init-loader"}>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

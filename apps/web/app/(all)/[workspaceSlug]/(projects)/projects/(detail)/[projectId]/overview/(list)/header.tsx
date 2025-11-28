@@ -13,11 +13,13 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectOverviewHeader = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const { projectOverviewSidebarCollapsed, toggleProjectOverviewSidebar } = useAppTheme();
@@ -26,6 +28,7 @@ export const ProjectOverviewHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

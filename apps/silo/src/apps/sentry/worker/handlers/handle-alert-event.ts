@@ -123,11 +123,19 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     const labels = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "labels");
     const state = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "state");
 
+    if (assigneeIds?.value && !Array.isArray(assigneeIds.value)) {
+      assigneeIds.value = [assigneeIds.value as string];
+    }
+
+    if (labels?.value && !Array.isArray(labels.value)) {
+      labels.value = [labels.value as string];
+    }
+
     return {
       type: type?.value as string,
       projectId: projectId?.value as string,
-      assigneeIds: (assigneeIds?.value as string[]) || [],
-      labels: (labels?.value as string[]) || [],
+      assigneeIds: assigneeIds?.value as string[],
+      labels: labels?.value as string[],
       state: state?.value as string,
     };
   }

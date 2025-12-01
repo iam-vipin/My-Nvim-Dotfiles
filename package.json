@@ -25,6 +25,7 @@
   },
   "pnpm": {
     "overrides": {
+      "body-parser": "2.2.1",
       "valibot": "1.2.0",
       "glob": "11.1.0",
       "js-yaml": "4.1.1",

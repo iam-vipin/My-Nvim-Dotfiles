@@ -43,8 +43,6 @@ from plane.db.models import (
     APIToken,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 
 # EE imports
@@ -362,9 +360,7 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
-        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
-
-        project = project.first()
+        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)

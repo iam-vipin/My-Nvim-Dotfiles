@@ -79,6 +79,10 @@ export const useTitleEditor = (props: TUseTitleEditorProps) => {
     ...getEditorRefHelpers({
       editor,
       provider,
+      getEditorMetaData: () => ({
+        file_assets: [],
+        user_mentions: [],
+      }),
     }),
     clearEditor: (emitUpdate = false) => {
       editor

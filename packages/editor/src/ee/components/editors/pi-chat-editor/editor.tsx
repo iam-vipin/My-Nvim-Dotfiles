@@ -114,6 +114,10 @@ const PiChatEditor = (props: PiChatEditorProps) => {
       getEditorRefHelpers({
         editor,
         provider: undefined,
+        getEditorMetaData: () => ({
+          file_assets: [],
+          user_mentions: [],
+        }),
       }),
     [editor]
   );

@@ -214,7 +214,7 @@ export class WorkspacePageService extends APIService {
   }
 
   async downloadWikiDirectory(workspaceSlug: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/pages/exports/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/pages-export/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -12,7 +11,7 @@ import type { TProperties } from "@/ce/constants/project";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 export type TIntakeFeatureList = {
   [key: string]: TProperties & {
@@ -32,7 +31,7 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
   const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
-  const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   if (!workspaceSlug || !projectId) return null;
 
@@ -46,7 +45,6 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
 
   return (
     <>
-      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3", className)}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)

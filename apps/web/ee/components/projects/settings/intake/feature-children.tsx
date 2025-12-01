@@ -17,7 +17,6 @@ type Props = {
 export const IntakeFeatureChildren = observer(({ currentProjectDetails, workspaceSlug }: Props) => {
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
-  const upgradePlan = !(isEmailEnabled || isFormEnabled);
 
   return (
     <>
@@ -30,11 +29,7 @@ export const IntakeFeatureChildren = observer(({ currentProjectDetails, workspac
         )}
       </div>
 
-      <IntakeResponsibility
-        projectId={currentProjectDetails?.id}
-        featureList={INTAKE_RESPONSIBILITY_LIST}
-        upgradePlan={upgradePlan}
-      />
+      <IntakeResponsibility projectId={currentProjectDetails?.id} featureList={INTAKE_RESPONSIBILITY_LIST} />
     </>
   );
 });

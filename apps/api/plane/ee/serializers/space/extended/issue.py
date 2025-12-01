@@ -94,6 +94,7 @@ class ExtendedIssueCreateSerializer(BaseSerializer):
                             for user_id in intake_responsibilities
                         ],
                         batch_size=10,
+                        ignore_conflicts=True,
                     )
                 except IntegrityError:
                     pass

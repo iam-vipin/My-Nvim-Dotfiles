@@ -8,13 +8,16 @@ from plane.db.models import Intake
 from plane.ee.serializers import IntakeResponsibilitySerializer
 from plane.app.permissions import allow_permission, ROLE
 from plane.ee.models import IntakeResponsibility
-
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 class IntakeResponsibilityEndpoint(BaseAPIView):
     serializer_class = IntakeResponsibilitySerializer
     model = IntakeResponsibility
 
+
     @allow_permission([ROLE.ADMIN], level="PROJECT")
+    @check_feature_flag(FeatureFlag.INTAKE_RESPONSIBILITY)
     def post(self, request, slug, project_id):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not intake:
@@ -31,6 +34,7 @@ class IntakeResponsibilityEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN], level="PROJECT")
+    @check_feature_flag(FeatureFlag.INTAKE_RESPONSIBILITY)
     def delete(self, request, slug, project_id, user_id):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not intake:
@@ -42,6 +46,8 @@ class IntakeResponsibilityEndpoint(BaseAPIView):
         responsibility.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    @check_feature_flag(FeatureFlag.INTAKE_RESPONSIBILITY)
     def get(self, request, slug, project_id):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not intake:

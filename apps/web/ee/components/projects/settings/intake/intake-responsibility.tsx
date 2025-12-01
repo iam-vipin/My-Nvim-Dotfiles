@@ -1,40 +1,36 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { ChevronDownIcon } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
-import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
-// ce imports
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { useUserPermissions } from "@/hooks/store/user";
-import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
-import type { TIntakeResponsibilityList } from "@/plane-web/constants/project/settings/features";
-// hooks
-import { useIntakeResponsibility } from "@/plane-web/hooks/store/use-intake-responsibility";
-// plane web imports
 // components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+// plane web imports
+import type { TIntakeResponsibilityList } from "@/plane-web/constants/project/settings/features";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useIntakeResponsibility } from "@/plane-web/hooks/store/use-intake-responsibility";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 type Props = {
   projectId?: string;
   featureList: TIntakeResponsibilityList;
-  upgradePlan: boolean;
 };
+
 const IntakeResponsibility = observer((props: Props) => {
-  const { projectId, featureList, upgradePlan } = props;
+  const { projectId, featureList } = props;
   const { workspaceSlug } = useParams();
   //   hooks
-  const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
   // store hooks
   const { getAssignee, fetchIntakeAssignee, createIntakeAssignee, deleteIntakeAssignee } = useIntakeResponsibility();
-  //   state
-  const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   const assignee = projectId ? getAssignee(projectId) : null;
   /**Fetch intake assignee */
@@ -47,12 +43,7 @@ const IntakeResponsibility = observer((props: Props) => {
   if (!workspaceSlug || !projectId) return null;
 
   // Derived Values
-  const isAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId
-  );
+  const isResponsibilityEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_RESPONSIBILITY);
 
   const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
@@ -99,34 +90,19 @@ const IntakeResponsibility = observer((props: Props) => {
 
   return (
     <>
-      {upgradePlan && (
-        <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-      )}
       <h4 className="pt-4 mt-4 mb-2 text-sm font-medium text-custom-text-300">{intakeT("heading")}</h4>
       <div className="px-4 rounded border transition-all border-custom-border-200 bg-custom-background-90">
         {Object.entries(featureList).map(([featureKey, feature]) => (
           <div key={featureKey} className={cn("gap-y-3 gap-x-8 py-3 bg-custom-background-90")}>
             <div key={featureKey} className={cn("flex gap-2 justify-between", {})}>
               <div className="flex gap-2 w-full">
-                <div
-                  className={cn("flex justify-center rounded mt-1", {
-                    "opacity-50": !isAdmin && upgradePlan,
-                  })}
-                >
-                  {feature.icon}
-                </div>
+                <div className="flex justify-center mt-1 rounded">{feature.icon}</div>
                 <div className="w-full">
                   <div className={cn("flex gap-2 justify-between", {})}>
                     <div className="flex-1 w-full">
                       <div className="flex gap-2">
-                        <div
-                          className={cn("text-sm font-medium leading-5 align-top", {
-                            "opacity-50": !isAdmin && upgradePlan,
-                          })}
-                        >
-                          {intakeT(`${featureKey}.title`)}
-                        </div>
-                        {upgradePlan && (
+                        <div className="text-sm font-medium leading-5 align-top">{intakeT(`${featureKey}.title`)}</div>
+                        {!isResponsibilityEnabled && (
                           <div
                             className={cn(
                               "rounded bg-custom-background-80 px-2 py-[1px] text-xs font-medium text-custom-text-300 capitalize items-center",
@@ -137,49 +113,15 @@ const IntakeResponsibility = observer((props: Props) => {
                           </div>
                         )}
                       </div>
-                      <p
-                        className={cn("text-sm text-custom-text-300 text-wrap mt-1", {
-                          "opacity-50": !isAdmin && upgradePlan,
-                        })}
-                      >
+                      <p className="mt-1 text-sm text-custom-text-300 text-wrap">
                         {intakeT(`${featureKey}.description`)}
                       </p>
                     </div>
                     <div className="flex items-center h-8 max-w-40">
-                      {upgradePlan ? (
-                        <Tooltip
-                          tooltipContent={`Ask your Workspace Admin to upgrade.`}
-                          position="top"
-                          className=""
-                          disabled={isAdmin}
-                        >
-                          <div
-                            onClick={() => {
-                              if (!isAdmin) return;
-                              togglePaidPlanModal(true);
-                            }}
-                          >
-                            <MemberDropdown
-                              value={assignee}
-                              onChange={() => {}}
-                              disabled={!isAdmin}
-                              projectId={projectId}
-                              placeholder={t("no_assignee")}
-                              multiple={false}
-                              showUserDetails
-                              buttonVariant="border-with-text"
-                              className={`w-full ${isAdmin ? "opacity-30" : ""}`}
-                              buttonContainerClassName="w-full text-left"
-                              buttonClassName={assignee ? "hover:bg-transparent" : ""}
-                              dropdownArrow
-                            />
-                          </div>
-                        </Tooltip>
-                      ) : (
+                      {isResponsibilityEnabled ? (
                         <MemberDropdown
                           value={assignee}
                           onChange={handleAssigneeChange}
-                          disabled={!isAdmin}
                           projectId={projectId}
                           placeholder={t("no_assignee")}
                           multiple={false}
@@ -190,6 +132,18 @@ const IntakeResponsibility = observer((props: Props) => {
                           buttonClassName={assignee ? "hover:bg-transparent" : ""}
                           dropdownArrow
                         />
+                      ) : (
+                        <button
+                          type="button"
+                          className="block w-full max-w-full h-full text-left opacity-30 cursor-pointer outline-none clickable"
+                          onClick={() => togglePaidPlanModal(true)}
+                        >
+                          <div className="h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded px-2 py-0.5 text-xs">
+                            <MembersPropertyIcon className={cn("flex-shrink-0 w-3 h-3 mx-[4px]")} />
+                            <span className="flex-grow leading-5 truncate">{t("no_assignee")}</span>
+                            <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />
+                          </div>
+                        </button>
                       )}
                     </div>
                   </div>

@@ -7,7 +7,8 @@ import json
 
 # Module imports
 from plane.db.models import Notification, EmailNotificationLog, User, UserNotificationPreference
-
+from plane.app.serializers import NotificationSerializer
+from plane.graphql.bgtasks.push_notifications import issue_push_notifications
 
 
 @dataclass
@@ -181,6 +182,10 @@ class BaseNotificationHandler(ABC):
 
         # 11. Persist all notifications
         self.save_notifications()
+
+        # 12. Send push notifications
+        if self.should_send_push_notifications():
+            self.send_push_notifications()
 
         return self.payload
 
@@ -524,3 +529,19 @@ class BaseNotificationHandler(ABC):
     def send_email_notification(self, template_name: str, context: Dict[str, Any], receiver_data: Dict[str, Any]):
         """Send an email notification"""
         pass
+
+
+    def send_push_notifications(self):
+        """Send push notifications"""
+        if self.payload.in_app_notifications:
+                serialized_notifications = NotificationSerializer(self.payload.in_app_notifications, many=True).data
+
+                # converting the uuid to string
+                for notification in serialized_notifications:
+                    if notification is not None:
+                        for key in ["id", "workspace", "project", "receiver"]:
+                            if key in notification:
+                                notification[key] = str(notification[key])
+                        if "triggered_by_details" in notification:
+                            notification["triggered_by_details"]["id"] = str(notification["triggered_by_details"]["id"])
+                        issue_push_notifications.delay(notification)

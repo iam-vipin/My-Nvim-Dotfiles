@@ -344,6 +344,8 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 "default_assignee_id": self.context.get("default_assignee_id"),
                 "created_by_id": self.context.get("created_by_id"),
                 "slug": self.context.get("slug"),
+                "intake_id": intake_id,
+                "user_id": self.context.get("created_by_id"),
             },
         )
 

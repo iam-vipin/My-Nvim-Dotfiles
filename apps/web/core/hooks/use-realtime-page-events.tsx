@@ -1,9 +1,11 @@
 import { useCallback, useMemo } from "react";
+import { useParams } from "next/navigation";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // types
-import type { IUserLite } from "@plane/types";
+import type { IUserLite, TCollaborator } from "@plane/types";
+import { getMoveSourceAndTargetFromMoveType } from "@plane/utils";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
@@ -41,10 +43,14 @@ export const useRealtimePageEvents = ({
   customRealtimeEventHandlers,
   handlers,
 }: UsePageEventsProps) => {
+  // navigation
   const router = useAppRouter();
-  const { removePage, getPageById } = usePageStore(storeType);
-
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { removePage, getPageById, getOrFetchPageInstance, removePageInstance } = usePageStore(storeType);
   const { data: currentUser } = useUser();
+  // derived values
+  const { editorRef } = page.editor;
 
   // Helper function to safely get user display text
   const getUserDisplayText = useCallback(
@@ -131,7 +137,143 @@ export const useRealtimePageEvents = ({
           pageInstance?.mutateProperties(rest);
         });
       },
+      moved_internally: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["moved_internally"] }) => {
+        pageIds.forEach((pageId) => {
+          const pageItem = getPageById(pageId);
+          if (data.sub_pages_count !== undefined) {
+            // Handle parent page sub-pages count update
+            const currentSubPageCount = pageItem?.sub_pages_count ?? (data.sub_pages_count === -1 ? 1 : -1);
+            pageItem?.mutateProperties({
+              sub_pages_count: currentSubPageCount + data.sub_pages_count,
+            });
+          } else if (data.parent_id !== undefined) {
+            // Handle page parent change
+            pageItem?.mutateProperties({ parent_id: data.parent_id });
+            if (pageItem?.id === page.id) {
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "This page has been moved",
+                message: "This page has been moved to a new parent page",
+              });
+            }
+          }
+        });
+      },
+      published: ({ data }: { data: EventToPayloadMap["published"] }) => {
+        const pagesToPublish = data.published_pages;
+        pagesToPublish?.forEach(({ page_id: pageId, anchor }) => {
+          const pageItem = getPageById(pageId);
+          pageItem?.mutateProperties({ anchor: anchor });
+        });
+      },
+      unpublished: ({ pageIds }: { pageIds: string[] }) => {
+        pageIds.forEach((pageId) => {
+          const pageItem = getPageById(pageId);
+          pageItem?.mutateProperties({ anchor: null });
+        });
+      },
+      "collaborators-updated": ({
+        pageIds,
+        data,
+      }: {
+        pageIds: string[];
+        data: EventToPayloadMap["collaborators-updated"];
+      }) => {
+        pageIds.forEach((pageId: string) => {
+          const pageItem = getPageById(pageId);
+          const collaborators = data.users;
+          if (pageItem && collaborators) {
+            const collaboratorsForPageStore: TCollaborator[] = collaborators.map((col) => ({
+              name: col.name,
+              color: col.color,
+              id: col.id,
+              clientId: col.clientId,
+            }));
+            pageItem.updateCollaborators(collaboratorsForPageStore);
+          }
+        });
+      },
+      restored: ({ data }: { data: EventToPayloadMap["restored"] }) => {
+        if (page.id) {
+          let descriptionHTML: string | null = null;
+          if (page?.restoration.versionId) {
+            descriptionHTML = page.restoration.descriptionHTML;
+            if (!editorRef) {
+              page?.setVersionToBeRestored(null, null);
+              page?.setRestorationStatus(false);
+              dismissToast("restoring-version");
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: "Page version failed to restore.",
+              });
+              return;
+            }
+            editorRef?.clearEditor(true);
 
+            page?.setVersionToBeRestored(null, null);
+            page?.setRestorationStatus(false);
+            if (descriptionHTML) {
+              editorRef?.setEditorValue(descriptionHTML);
+            }
+
+            dismissToast("restoring-version");
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Page version restored.",
+            });
+
+            return;
+          }
+        }
+        // delete the pages from the store
+        const { deleted_page_ids } = data;
+
+        deleted_page_ids?.forEach((pageId) => {
+          const pageItem = getPageById(pageId);
+          if (pageItem)
+            Promise.resolve(removePage({ pageId, shouldSync: false })).then(() => {
+              if (page.id === pageId) {
+                router.push(handlers.getRedirectionLink());
+              }
+            });
+          else if (page.id === pageId) router.push(handlers.getRedirectionLink());
+        });
+      },
+      shared: async ({ data }: { data: EventToPayloadMap["shared"] }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, access, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.appendSharedUsers([
+                {
+                  user_id,
+                  access,
+                },
+              ]);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(access);
+              }
+            }
+          }
+        }
+      },
+      unshared: async ({ data }: { data: EventToPayloadMap["unshared"] }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.removeSharedUser(user_id);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(null);
+              }
+            }
+          }
+        }
+      },
       error: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["error"] }) => {
         const errorType = data.error_type;
         const errorMessage = data.error_message || "An error occurred";
@@ -162,10 +304,69 @@ export const useRealtimePageEvents = ({
           }
         }
       },
+      duplicated: async ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["duplicated"] }) => {
+        const duplicatedPage = data.new_page_id;
+        dismissToast("duplicating-page");
 
+        // create a new page instace of the duplicatedPage in the store
+        await getOrFetchPageInstance({ pageId: duplicatedPage, trackVisit: false });
+
+        if (page.id === pageIds[0] && data.user_id === currentUser?.id) {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: `Page duplicated successfully.`,
+            actionItems: (
+              <div className="flex items-center gap-1 text-xs text-custom-text-200">
+                <a
+                  href={handlers.getRedirectionLink(duplicatedPage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                >
+                  View duplicated page
+                </a>
+              </div>
+            ),
+          });
+        }
+      },
+      moved: async ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["moved"] }) => {
+        const moveType = data.move_type;
+        const newEntityIdentifier = data.new_entity_identifier;
+
+        if (moveType && newEntityIdentifier && page.id) {
+          const { target: moveTarget } = getMoveSourceAndTargetFromMoveType(moveType);
+
+          // remove the old page instance from the store
+          if (pageIds.includes(page.id)) {
+            removePageInstance(page.id);
+
+            if (moveTarget === "workspace") {
+              router.replace(`/${workspaceSlug}/wiki/${page.id}`);
+            } else if (moveTarget === "project") {
+              router.replace(`/${workspaceSlug}/projects/${newEntityIdentifier}/pages/${page.id}`);
+            } else {
+              router.replace(`/${workspaceSlug}/teamspaces/${newEntityIdentifier}/pages/${page.id}`);
+            }
+          }
+        }
+      },
       ...customRealtimeEventHandlers,
     }),
-    [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
+    [
+      customRealtimeEventHandlers,
+      getPageById,
+      removePage,
+      page,
+      currentUser?.id,
+      getUserDisplayText,
+      router,
+      handlers,
+      editorRef,
+      getOrFetchPageInstance,
+      removePageInstance,
+      workspaceSlug,
+    ]
   );
 
   // The main function that will be returned from this hook

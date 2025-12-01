@@ -9,7 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from celery import shared_task
 
 # Module imports
-from plane.db.models import DeployBoard, Intake, APIToken, IntakeIssue, Issue
+from plane.db.models import DeployBoard, Intake, APIToken, IntakeIssue, Issue, State, StateGroup
 from plane.db.models.asset import FileAsset
 from plane.ee.models import IntakeSetting
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -34,16 +34,29 @@ def create_intake_issue(deploy_board, message, intake):
     # issue data
     issue_data = {
         "name": message.get("subject"),
-        "description_html": "<p>" + message.get("body", "") + "</p>"
-        if message.get("body")
-        else "<p></p>",
+        "description_html": "<p>" + message.get("body", "") + "</p>" if message.get("body") else "<p></p>",
     }
+
+    triage_state = State.triage_objects.filter(
+        project_id=deploy_board.project_id, workspace_id=deploy_board.workspace_id
+    ).first()
+    if not triage_state:
+        triage_state = State.objects.create(
+            name="Triage",
+            group=StateGroup.TRIAGE.value,
+            project_id=deploy_board.project_id,
+            workspace_id=deploy_board.workspace_id,
+            color="#4E5355",
+            sequence=65000,
+            default=False,
+        )
 
     issue = Issue.objects.create(
         project_id=deploy_board.project_id,
         name=issue_data["name"],
         description_html=issue_data["description_html"],
         created_by_id=api_token.user.id,
+        state_id=triage_state.id,
     )
 
     # create an Intake issue
@@ -74,15 +87,10 @@ def create_intake_issue(deploy_board, message, intake):
 
 def update_assets(issue_id, attachment_ids):
     # Update the issue_id and is_uploaded status for the file assets
-    FileAsset.objects.filter(pk__in=attachment_ids).update(
-        issue_id=issue_id, is_uploaded=True
-    )
+    FileAsset.objects.filter(pk__in=attachment_ids).update(issue_id=issue_id, is_uploaded=True)
 
     # Spawn meta bgtask
-    [
-        get_asset_object_metadata.delay(asset_id=str(asset_id))
-        for asset_id in attachment_ids
-    ]
+    [get_asset_object_metadata.delay(asset_id=str(asset_id)) for asset_id in attachment_ids]
     return
 
 
@@ -99,9 +107,7 @@ def intake_email(message):
             return
 
         # Check if workspace has feature flag enabled
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug
-        ):
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug):
             return
 
         # Get the deploy boards

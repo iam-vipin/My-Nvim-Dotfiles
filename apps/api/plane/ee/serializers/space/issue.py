@@ -71,6 +71,7 @@ class IssueCreateSerializer(BaseSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        allow_triage_state = self.context.get("allow_triage_state", False)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -88,10 +89,12 @@ class IssueCreateSerializer(BaseSerializer):
             ).first()
             issue_type = issue_type
 
+        state = None
+        if allow_triage_state:
+            state = State.triage_objects.filter(project_id=project_id, workspace_id=workspace_id).first()
+
         # Create Issue
-        issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type=issue_type
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type, state=state)
         issue.save(created_by_id=created_by_id)
 
         # Issue Audit Users

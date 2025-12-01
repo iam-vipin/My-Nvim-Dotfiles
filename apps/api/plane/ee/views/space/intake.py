@@ -121,6 +121,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     "default_assignee_id": deploy_board.project.default_assignee_id,
                     "created_by_id": api_token.user_id,
                     "slug": deploy_board.workspace.slug,
+                    "allow_triage_state": True
                 },
             )
 

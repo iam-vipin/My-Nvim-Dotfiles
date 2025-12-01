@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { SearchResults } from "ee/components/workspace/search/results/root";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -6,46 +6,44 @@ import { useParams } from "react-router";
 import { Search } from "lucide-react";
 // plane imports
 import type { TSearchResultItem } from "@plane/constants";
-import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
+import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
 export const TopNavSearch = observer(() => {
   // states
-  const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  // refs
-  const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   // router hooks
   const router = useRouter();
   const { workspaceSlug } = useParams();
   // store hooks
   const { setTopNavSearchInputRef } = usePowerK();
-  // handle close search results menu
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    setFlattenedSearchResults([]);
-    setSearchQuery("");
-    inputRef.current?.blur();
-  }, []);
+  // expandable search hook
+  const {
+    isOpen,
+    containerRef,
+    inputRef,
+    handleClose: closePanel,
+    handleMouseDown,
+    handleFocus,
+    openPanel,
+  } = useExpandableSearch({
+    onClose: () => {
+      setFlattenedSearchResults([]);
+      setSearchQuery("");
+    },
+  });
   // Register input ref with PowerK store for keyboard shortcut access
   useEffect(() => {
     setTopNavSearchInputRef(inputRef);
     return () => {
       setTopNavSearchInputRef(null);
     };
-  }, [setTopNavSearchInputRef]);
-
-  useOutsideClickDetector(containerRef, handleClose);
-
-  const handleFocus = () => {
-    setIsOpen(true);
-  };
+  }, [setTopNavSearchInputRef, inputRef]);
 
   const handleClear = () => {
     setSearchQuery("");
@@ -56,13 +54,13 @@ export const TopNavSearch = observer(() => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       e.preventDefault();
-      handleClose();
+      closePanel();
     }
 
     if (e.key === "Enter") {
       e.preventDefault();
       router.push(`/${workspaceSlug}/search?q=${searchQuery}`);
-      handleClose();
+      closePanel();
     }
   };
 
@@ -92,7 +90,9 @@ export const TopNavSearch = observer(() => {
             onChange={(e) => {
               setSearchQuery(e.target.value);
               if (e.target.value) setIsSearching(true);
+              if (!isOpen) openPanel();
             }}
+            onMouseDown={handleMouseDown}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search"
@@ -130,7 +130,7 @@ export const TopNavSearch = observer(() => {
           <SearchResults
             query={searchQuery}
             flattenedSearchResults={flattenedSearchResults}
-            handleResultClick={handleClose}
+            handleResultClick={closePanel}
             isSearching={isSearching}
             setFlattenedSearchResults={setFlattenedSearchResults}
             setIsSearching={setIsSearching}

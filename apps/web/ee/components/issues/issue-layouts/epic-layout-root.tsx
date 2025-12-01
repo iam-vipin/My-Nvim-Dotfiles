@@ -73,7 +73,7 @@ export const ProjectEpicsLayoutRoot: FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !projectId) return <></>;
+  if (!workspaceSlug || !projectId || !workItemFilters) return <></>;
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.EPIC}>

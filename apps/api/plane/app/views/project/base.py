@@ -1,38 +1,42 @@
 # Python imports
-from django.utils import timezone
 import json
 from typing import Dict, Any, List
 import uuid
 
+import boto3
+
 # Django imports
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
-
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
 from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
     DeployBoardSerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
 )
-
-from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
+from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
-    UserFavorite,
-    Intake,
     DeployBoard,
+    Intake,
     IssueUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
+    ProjectNetwork,
     State,
+    UserFavorite,
     DEFAULT_STATES,
     Workspace,
     WorkspaceMember,
@@ -360,20 +364,36 @@ class ProjectViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk):
         project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
 
-        # filter projects
-        project = project.filter(
-            Q(pk__in=self.get_teamspace_project_ids(request, slug))
-            | Q(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-        )
-
-        # projects
         project = project.first()
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the user is either part of the project or the teamspace
+        # Get all the member ids of the project
+        member_ids = [str(project_member.member_id) for project_member in project.members_list]
+
+        project_teamspaces_ids = TeamspaceProject.objects.filter(workspace__slug=slug, project_id=pk).values_list(
+            "team_space_id"
+        )
+        is_teamspace_member = TeamspaceMember.objects.filter(
+            member_id=request.user.id, team_space_id__in=project_teamspaces_ids
+        ).exists()
+
+        is_project_member = str(request.user.id) in member_ids
+
+        # Return error message based on the project network
+        if not (is_project_member or is_teamspace_member):
+            if project.network == ProjectNetwork.SECRET.value:
+                return Response(
+                    {"error": "You do not have permission"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            else:
+                return Response(
+                    {"error": "You are not a member of this project"},
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         recent_visited_task.delay(
             slug=slug,

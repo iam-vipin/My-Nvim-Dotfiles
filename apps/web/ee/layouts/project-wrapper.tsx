@@ -35,37 +35,32 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   // fetching all work item types and properties
   useSWR(
-    workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId)
-      : null,
-    workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId)
-      : null,
+    isWorkItemTypeEnabled ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
+    isWorkItemTypeEnabled ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching all epic types and properties
   useSWR(
-    workspaceSlug && projectId && isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
-    workspaceSlug && projectId && isEpicEnabled
-      ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId)
-      : null,
+    isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
+    isEpicEnabled ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching project level workflow states
   useSWR(
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(workspaceSlug, projectId) : null,
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? () => fetchWorkflowStates(workspaceSlug, projectId)
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(workspaceSlug, projectId) : null,
+    () => fetchWorkflowStates(workspaceSlug, projectId),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
   );
 
   // fetching project level milestones
   useSWR(
-    projectId && workspaceSlug && isMilestonesFeatureEnabled ? `PROJECT_MILESTONES_${projectId}` : null,
-    projectId && workspaceSlug && isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
+    isMilestonesFeatureEnabled ? `PROJECT_MILESTONES_${projectId}` : null,
+    isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

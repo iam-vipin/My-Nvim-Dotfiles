@@ -8,7 +8,6 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { CalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/project-root";
 import { KanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/project-root";
 import { ListLayout } from "@/components/issues/issue-layouts/list/roots/project-root";
@@ -54,7 +53,7 @@ export const TeamspaceProjectWorkLayoutRoot: React.FC = observer(() => {
   // swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // fetch teamspace view issue filters
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && teamspaceId && projectId
       ? `TEAMSPACE_PROJECT_WORK_ITEMS_ISSUE_FILTERS_${workspaceSlug}_${teamspaceId}_${projectId}`
       : null,
@@ -66,16 +65,7 @@ export const TeamspaceProjectWorkLayoutRoot: React.FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !teamspaceId || !projectId) return <></>;
-
-  if (isLoading && !workItemFilters) {
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-  }
-
+  if (!workspaceSlug || !teamspaceId || !projectId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS}>
       {/* TODO: Check if saving a view should be allowed here, as it will create a project-level view. We can't create teamspace views since the filters won't be compatible. */}

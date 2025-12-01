@@ -179,46 +179,44 @@ export const extendedRoutes: RouteConfigEntry[] = [
         // PROJECT LEVEL ROUTES
         // --------------------------------------------------------------------
         // Project Detail
-        layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/layout.tsx", [
-          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx", [
-            // Project Overview
-            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/layout.tsx", [
+        layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx", [
+          // Project Overview
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/overview",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/page.tsx"
+            ),
+          ]),
+
+          // Project Epics
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/layout.tsx", [
+            // Epics List
+            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/layout.tsx", [
               route(
-                ":workspaceSlug/projects/:projectId/overview",
-                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/overview/(list)/page.tsx"
+                ":workspaceSlug/projects/:projectId/epics",
+                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/page.tsx"
               ),
             ]),
 
-            // Project Epics
-            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/layout.tsx", [
-              // Epics List
-              layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/layout.tsx", [
-                route(
-                  ":workspaceSlug/projects/:projectId/epics",
-                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(list)/page.tsx"
-                ),
-              ]),
-
-              // Project Epic Detail
-              layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/layout.tsx", [
-                route(
-                  ":workspaceSlug/projects/:projectId/epics/:epicId",
-                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/[epicId]/page.tsx"
-                ),
-              ]),
+            // Project Epic Detail
+            layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/layout.tsx", [
+              route(
+                ":workspaceSlug/projects/:projectId/epics/:epicId",
+                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/epics/(detail)/[epicId]/page.tsx"
+              ),
             ]),
-
-            // Project Automations
-            layout(
-              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/layout.tsx",
-              [
-                route(
-                  ":workspaceSlug/projects/:projectId/automations/:automationId",
-                  "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/page.tsx"
-                ),
-              ]
-            ),
           ]),
+
+          // Project Automations
+          layout(
+            "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/layout.tsx",
+            [
+              route(
+                ":workspaceSlug/projects/:projectId/automations/:automationId",
+                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/automations/[automationId]/page.tsx"
+              ),
+            ]
+          ),
         ]),
 
         // Pi Chat (Project Level)
@@ -477,74 +475,79 @@ export const extendedRoutes: RouteConfigEntry[] = [
         // --------------------------------------------------------------------
 
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [
-          // Project Epics
-          route(
-            ":workspaceSlug/settings/projects/:projectId/epics",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/epics/page.tsx"
-          ),
-          // Project Integrations
-          route(
-            ":workspaceSlug/settings/projects/:projectId/integrations",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/integrations/page.tsx"
-          ),
-          // Project Updates
-          route(
-            ":workspaceSlug/settings/projects/:projectId/project-updates",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/project-updates/page.tsx"
-          ),
-          // Project Work Item Types
-          route(
-            ":workspaceSlug/settings/projects/:projectId/work-item-types",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/work-item-types/page.tsx"
-          ),
-          // Project Workflows
-          route(
-            ":workspaceSlug/settings/projects/:projectId/workflows",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
-          ),
-          // Project Features - Cycles
-          route(
-            ":workspaceSlug/settings/projects/:projectId/features/cycles",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
-          ),
-          // Project Features - Intake
-          route(
-            ":workspaceSlug/settings/projects/:projectId/features/intake",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
-          ),
-          // Recurring Work Items
-          layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/layout.tsx", [
+          layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/layout.tsx", [
+            // Project Epics
             route(
-              ":workspaceSlug/settings/projects/:projectId/recurring-work-items",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId/epics",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/epics/page.tsx"
+            ),
+            // Project Integrations
+            route(
+              ":workspaceSlug/settings/projects/:projectId/integrations",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/integrations/page.tsx"
+            ),
+            // Project Updates
+            route(
+              ":workspaceSlug/settings/projects/:projectId/project-updates",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/project-updates/page.tsx"
+            ),
+            // Project Work Item Types
+            route(
+              ":workspaceSlug/settings/projects/:projectId/work-item-types",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/work-item-types/page.tsx"
+            ),
+            // Project Workflows
+            route(
+              ":workspaceSlug/settings/projects/:projectId/workflows",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
+            ),
+            // Project Features - Cycles
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/cycles",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/cycles/page.tsx"
+            ),
+            // Project Features - Intake
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/intake",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/intake/page.tsx"
+            ),
+            // Recurring Work Items
+            layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/layout.tsx", [
+              route(
+                ":workspaceSlug/settings/projects/:projectId/recurring-work-items",
+                "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/page.tsx"
+              ),
+              layout(
+                "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/layout.tsx",
+                [
+                  route(
+                    ":workspaceSlug/settings/projects/:projectId/recurring-work-items/create",
+                    "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/create/page.tsx"
+                  ),
+                  route(
+                    ":workspaceSlug/settings/projects/:projectId/recurring-work-items/:recurringWorkItemId/update",
+                    "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/[recurringWorkItemId]/update/page.tsx"
+                  ),
+                ]
+              ),
+            ]),
+            // Project Templates
+            route(
+              ":workspaceSlug/settings/projects/:projectId/templates",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/page.tsx"
             ),
             layout(
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/layout.tsx",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/layout.tsx",
               [
                 route(
-                  ":workspaceSlug/settings/projects/:projectId/recurring-work-items/create",
-                  "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/create/page.tsx"
+                  ":workspaceSlug/settings/projects/:projectId/templates/page",
+                  "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/page/page.tsx"
                 ),
                 route(
-                  ":workspaceSlug/settings/projects/:projectId/recurring-work-items/:recurringWorkItemId/update",
-                  "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/recurring-work-items/(details)/[recurringWorkItemId]/update/page.tsx"
+                  ":workspaceSlug/settings/projects/:projectId/templates/work-item",
+                  "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/work-item/page.tsx"
                 ),
               ]
-            ),
-          ]),
-          // Project Templates
-          route(
-            ":workspaceSlug/settings/projects/:projectId/templates",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/page.tsx"
-          ),
-          layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/layout.tsx", [
-            route(
-              ":workspaceSlug/settings/projects/:projectId/templates/page",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/page/page.tsx"
-            ),
-            route(
-              ":workspaceSlug/settings/projects/:projectId/templates/work-item",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/templates/(templates)/work-item/page.tsx"
             ),
           ]),
         ]),

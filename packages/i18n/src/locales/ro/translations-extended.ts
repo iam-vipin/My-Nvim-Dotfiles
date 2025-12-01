@@ -163,6 +163,39 @@ export default {
       settings_sub_heading:
         "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilitate de primire",
+        notify_assignee: {
+          title: "Notifică persoana desemnată",
+          description: "Pentru o nouă cerere de primire, persoana desemnată implicit va fi alertată prin notificări",
+        },
+        toasts: {
+          remove: {
+            loading: "Eliminarea persoanei desemnate...",
+            success: {
+              title: "Succes!",
+              message: "Persoana desemnată a fost eliminată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Ceva a mers greșit la eliminarea persoanei desemnate. Te rugăm să încerci din nou.",
+            },
+          },
+          set: {
+            loading: "Setarea persoanei desemnate...",
+            success: {
+              title: "Succes!",
+              message: "Persoana desemnată a fost setată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Ceva a mers greșit la setarea persoanei desemnate. Te rugăm să încerci din nou.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Nicio integrare configurată",

@@ -162,6 +162,39 @@ export default {
       settings_sub_heading:
         "Przenieś prośby klientów do elementów pracy, przypisz priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zaintregujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta.",
     },
+    features: {
+      intake: {
+        heading: "Odpowiedzialność za przyjęcie",
+        notify_assignee: {
+          title: "Powiadom przypisanego",
+          description: "Dla nowego żądania przyjęcia domyślny przypisany zostanie powiadomiony poprzez powiadomienia",
+        },
+        toasts: {
+          remove: {
+            loading: "Usuwanie przypisanego...",
+            success: {
+              title: "Sukces!",
+              message: "Przypisany został pomyślnie usunięty.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Coś poszło nie tak podczas usuwania przypisanego. Proszę spróbować ponownie.",
+            },
+          },
+          set: {
+            loading: "Ustawianie przypisanego...",
+            success: {
+              title: "Sukces!",
+              message: "Przypisany został pomyślnie ustawiony.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Coś poszło nie tak podczas ustawiania przypisanego. Proszę spróbować ponownie.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Brak skonfigurowanych integracji",

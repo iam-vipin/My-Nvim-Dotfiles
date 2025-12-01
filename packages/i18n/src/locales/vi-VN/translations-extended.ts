@@ -151,6 +151,39 @@ export default {
       settings_sub_heading:
         "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng.",
     },
+    features: {
+      intake: {
+        heading: "Trách nhiệm tiếp nhận",
+        notify_assignee: {
+          title: "Thông báo người được chỉ định",
+          description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
+        },
+        toasts: {
+          remove: {
+            loading: "Đang xóa người được chỉ định...",
+            success: {
+              title: "Thành công!",
+              message: "Đã xóa người được chỉ định thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Đã xảy ra lỗi khi xóa người được chỉ định. Vui lòng thử lại.",
+            },
+          },
+          set: {
+            loading: "Đang đặt người được chỉ định...",
+            success: {
+              title: "Thành công!",
+              message: "Đã đặt người được chỉ định thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Không có tích hợp nào được cấu hình",

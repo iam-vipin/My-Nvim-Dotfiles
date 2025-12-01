@@ -6,6 +6,8 @@ import type { ICycleStore } from "@/plane-web/store/cycle";
 import { CycleStore } from "@/plane-web/store/cycle";
 import type { IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import { FeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
+import type { IIntakeResponsibilityStore } from "@/plane-web/store/intake-responsibility.store";
+import { IntakeResponsibilityStore } from "@/plane-web/store/intake-responsibility.store";
 import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
 import type { IWorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
 import { WorkspaceNotificationStore } from "@/plane-web/store/notifications/notifications.store";
@@ -165,6 +167,8 @@ export class RootStore extends CoreRootStore {
   milestone: IMilestoneStore;
   // intake type forms
   intakeTypeForms: IIntakeTypeFormStore;
+  // intake responsibility
+  intakeResponsibility: IIntakeResponsibilityStore;
 
   constructor() {
     super();
@@ -228,6 +232,8 @@ export class RootStore extends CoreRootStore {
     this.milestone = new MilestoneStore(this);
     // intake type forms
     this.intakeTypeForms = new IntakeTypeFormStore(this);
+    // intake responsibility
+    this.intakeResponsibility = new IntakeResponsibilityStore(this);
   }
 
   resetOnSignOut() {
@@ -288,5 +294,7 @@ export class RootStore extends CoreRootStore {
     this.milestone = new MilestoneStore(this);
     // intake type forms
     this.intakeTypeForms = new IntakeTypeFormStore(this);
+    // intake responsibility
+    this.intakeResponsibility = new IntakeResponsibilityStore(this);
   }
 }

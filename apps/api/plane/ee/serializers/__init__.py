@@ -122,6 +122,11 @@ from .app.recurring_work_item import (
 
 from .app.description import DescriptionSerializer
 
+from .app.intake import (
+    IntakeSettingSerializer,
+    IntakeResponsibilitySerializer,
+)
+
 # Space imports
 from .space.page import (
     PagePublicSerializer,
@@ -130,6 +135,7 @@ from .space.page import (
 )
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
+from .space.extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer # noqa: F811
 from .space.intake_form import (
     IntakeFormSettingsSerializer,
     IntakeFormFieldSerializer,

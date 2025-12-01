@@ -2,6 +2,8 @@
 from django.urls import path
 
 # Module imports
+from plane.ee.views.app.intake import ProjectInTakePublishViewSet, IntakeSettingEndpoint
+from plane.ee.views.app.intake import IntakeResponsibilityEndpoint
 from plane.ee.views.app.intake import (
     ProjectInTakePublishViewSet,
     IntakeSettingEndpoint,
@@ -19,6 +21,16 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-settings/",
         IntakeSettingEndpoint.as_view(),
         name="project-intake-settings",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-responsibilities/",
+        IntakeResponsibilityEndpoint.as_view(),
+        name="project-intake-responsibilities",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-responsibilities/<uuid:user_id>/",
+        IntakeResponsibilityEndpoint.as_view(),
+        name="project-intake-responsibilities",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-forms/",

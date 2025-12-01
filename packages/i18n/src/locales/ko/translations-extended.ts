@@ -161,6 +161,39 @@ export default {
       settings_sub_heading:
         "고객 요청을 작업 항목으로 가져오고, 요청에 따라 우선순위를 지정하고, 작업 항목의 상태를 고객 기록에 통합합니다. 곧 CRM이나 지원 도구와 통합하여 고객 속성별로 더 나은 작업 관리를 제공할 예정입니다.",
     },
+    features: {
+      intake: {
+        heading: "인테이크 책임",
+        notify_assignee: {
+          title: "담당자에게 알림",
+          description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
+        },
+        toasts: {
+          remove: {
+            loading: "담당자 제거 중...",
+            success: {
+              title: "성공!",
+              message: "담당자가 성공적으로 제거되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "담당자를 제거하는 중 문제가 발생했습니다. 다시 시도해 주세요.",
+            },
+          },
+          set: {
+            loading: "담당자 설정 중...",
+            success: {
+              title: "성공!",
+              message: "담당자가 성공적으로 설정되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "담당자를 설정하는 중 문제가 발생했습니다. 다시 시도해 주세요.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "구성된 인테그레이션 없음",

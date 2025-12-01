@@ -229,6 +229,39 @@ export default {
       description:
         "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
     },
+    features: {
+      intake: {
+        heading: "Intake responsibility",
+        notify_assignee: {
+          title: "Notify assignee",
+          description: "For a new request to intake, default assignee will be alerted via notifications",
+        },
+        toasts: {
+          remove: {
+            loading: "Removing assignee...",
+            success: {
+              title: "Success!",
+              message: "Assignee removed successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Something went wrong while removing assignee. Please try again.",
+            },
+          },
+          set: {
+            loading: "Setting assignee...",
+            success: {
+              title: "Success!",
+              message: "Assignee set successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Something went wrong while setting assignee. Please try again.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "No integrations configured",

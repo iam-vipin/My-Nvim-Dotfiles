@@ -162,6 +162,39 @@ export default {
       settings_sub_heading:
         "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilidad de ingreso",
+        notify_assignee: {
+          title: "Notificar asignado",
+          description: "Para una nueva solicitud de ingreso, el asignado predeterminado será alertado mediante notificaciones",
+        },
+        toasts: {
+          remove: {
+            loading: "Eliminando asignado...",
+            success: {
+              title: "¡Éxito!",
+              message: "Asignado eliminado exitosamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message: "Algo salió mal al eliminar el asignado. Por favor, inténtalo de nuevo.",
+            },
+          },
+          set: {
+            loading: "Estableciendo asignado...",
+            success: {
+              title: "¡Éxito!",
+              message: "Asignado establecido exitosamente.",
+            },
+            error: {
+              title: "¡Error!",
+              message: "Algo salió mal al establecer el asignado. Por favor, inténtalo de nuevo.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "No hay integraciones configuradas",

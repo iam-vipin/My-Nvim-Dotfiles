@@ -167,6 +167,39 @@ export default {
       settings_sub_heading:
         "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz.",
     },
+    features: {
+      intake: {
+        heading: "Alım sorumluluğu",
+        notify_assignee: {
+          title: "Atanan kişiyi bildir",
+          description: "Yeni bir alım talebi için varsayılan atanan kişi bildirimler aracılığıyla uyarılacaktır",
+        },
+        toasts: {
+          remove: {
+            loading: "Atanan kişi kaldırılıyor...",
+            success: {
+              title: "Başarılı!",
+              message: "Atanan kişi başarıyla kaldırıldı.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Atanan kişiyi kaldırırken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+            },
+          },
+          set: {
+            loading: "Atanan kişi ayarlanıyor...",
+            success: {
+              title: "Başarılı!",
+              message: "Atanan kişi başarıyla ayarlandı.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Atanan kişiyi ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Konfigüre edilmiş entegrasyon yok",

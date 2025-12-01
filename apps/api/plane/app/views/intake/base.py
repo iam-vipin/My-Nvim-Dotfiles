@@ -14,6 +14,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import status
 from rest_framework.response import Response
 
+
 # Module imports
 from ..base import BaseViewSet
 from plane.app.permissions import allow_permission, ROLE
@@ -52,6 +53,9 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.ee.models import IntakeResponsibility
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IntakeViewSet(BaseViewSet):
@@ -274,6 +278,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 "allow_triage_state": True,
                 "user_id": request.user.id,
                 "slug": slug,
+                "intake_id": str(intake.id),
             },
         )
         # EE start
@@ -311,6 +316,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
             )
+
             # updated issue description version
             issue_description_version_task.delay(
                 updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),

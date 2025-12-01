@@ -162,6 +162,39 @@ export default {
       settings_sub_heading:
         "Preneste požiadavky zákazníkov do pracovných položiek, priraďte prioritu podľa požiadaviek a zlúčte stavy pracovných položiek do záznamov zákazníkov. Čoskoro sa budete môcť integrovať s vašim CRM alebo podporným nástrojom pre ešte lepšiu správu práce podľa atribútov zákazníka.",
     },
+    features: {
+      intake: {
+        heading: "Zodpovednosť za príjem",
+        notify_assignee: {
+          title: "Upozorniť priradeného",
+          description: "Pre novú žiadosť o príjem bude predvolený priradený upozornený prostredníctvom oznámení",
+        },
+        toasts: {
+          remove: {
+            loading: "Odstraňovanie priradeného...",
+            success: {
+              title: "Úspech!",
+              message: "Priradený bol úspešne odstránený.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Pri odstraňovaní priradeného došlo k chybe. Skúste to prosím znova.",
+            },
+          },
+          set: {
+            loading: "Nastavovanie priradeného...",
+            success: {
+              title: "Úspech!",
+              message: "Priradený bol úspešne nastavený.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Pri nastavovaní priradeného došlo k chybe. Skúste to prosím znova.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Žiadne nakonfigurované integrácie",

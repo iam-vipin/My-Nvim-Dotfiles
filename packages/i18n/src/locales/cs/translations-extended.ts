@@ -162,6 +162,39 @@ export default {
       settings_sub_heading:
         "Převeďte požadavky zákazníků na pracovní položky, přiřaďte prioritu podle požadavků a propojte stavy pracovních položek se záznamy zákazníků. Brzy budete moci integrovat váš CRM nebo nástroj podpory pro ještě lepší správu práce podle atributů zákazníků.",
     },
+    features: {
+      intake: {
+        heading: "Odpovědnost za příjem",
+        notify_assignee: {
+          title: "Upozornit přiřazeného",
+          description: "Pro novou žádost o příjem bude výchozí přiřazený upozorněn prostřednictvím oznámení",
+        },
+        toasts: {
+          remove: {
+            loading: "Odebírání přiřazeného...",
+            success: {
+              title: "Úspěch!",
+              message: "Přiřazený byl úspěšně odebrán.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Při odebírání přiřazeného došlo k chybě. Zkuste to prosím znovu.",
+            },
+          },
+          set: {
+            loading: "Nastavování přiřazeného...",
+            success: {
+              title: "Úspěch!",
+              message: "Přiřazený byl úspěšně nastaven.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Při nastavování přiřazeného došlo k chybě. Zkuste to prosím znovu.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Žádné integrace nejsou nakonfigurovány",

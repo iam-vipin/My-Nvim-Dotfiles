@@ -163,6 +163,39 @@ export default {
       settings_sub_heading:
         "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan.",
     },
+    features: {
+      intake: {
+        heading: "Tanggung jawab penerimaan",
+        notify_assignee: {
+          title: "Beritahu yang ditugaskan",
+          description: "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
+        },
+        toasts: {
+          remove: {
+            loading: "Menghapus yang ditugaskan...",
+            success: {
+              title: "Berhasil!",
+              message: "Yang ditugaskan berhasil dihapus.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Terjadi kesalahan saat menghapus yang ditugaskan. Silakan coba lagi.",
+            },
+          },
+          set: {
+            loading: "Mengatur yang ditugaskan...",
+            success: {
+              title: "Berhasil!",
+              message: "Yang ditugaskan berhasil diatur.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Terjadi kesalahan saat mengatur yang ditugaskan. Silakan coba lagi.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Tidak ada integrasi yang dikonfigurasi",

@@ -6,7 +6,13 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.ee.models import IntakeSetting, IntakeForm, IntakeFormField
+from plane.ee.models import (
+    IntakeSetting,
+    IntakeForm,
+    IntakeFormField,
+    IntakeResponsibility,
+    IntakeResponsibilityTypeChoices,
+)
 from plane.db.models import Project
 
 
@@ -21,6 +27,46 @@ class IntakeSettingSerializer(BaseSerializer):
             "project",
             "created_by",
         ]
+
+
+class IntakeResponsibilitySerializer(BaseSerializer):
+    class Meta:
+        model = IntakeResponsibility
+        fields = [
+            "id",
+            "intake",
+            "user",
+            "type",
+            "project",
+        ]
+        read_only_fields = [
+            "id",
+            "intake",
+            "project",
+        ]
+
+    def create(self, validated_data):
+        # Remove the existing responsibility and add the new user
+        intake = self.context.get("intake")
+        project_id = self.context.get("project_id")
+        if not intake or not project_id:
+            raise serializers.ValidationError("Intake and project are required")
+
+        # Check if there is an existing intake responsibility for this intake and project
+        intake_responsibility = IntakeResponsibility.objects.filter(intake=intake, project_id=project_id).first()
+
+        if intake_responsibility:
+            intake_responsibility.user = validated_data.get("user")
+            intake_responsibility.type = validated_data.get("type", IntakeResponsibilityTypeChoices.ASSIGNEE)
+            intake_responsibility.save()
+        else:
+            intake_responsibility = IntakeResponsibility.objects.create(
+                intake=intake,
+                project_id=project_id,
+                user=validated_data.get("user"),
+                type=validated_data.get("type", IntakeResponsibilityTypeChoices.ASSIGNEE),
+            )
+        return intake_responsibility
 
 
 class IntakeFormSerializer(BaseSerializer):

@@ -161,6 +161,39 @@ export default {
       settings_sub_heading:
         "將客戶請求帶入工作項目，根據請求分配優先級，並將工作項目狀態匯總到客戶記錄中。很快，您將與您的 CRM 或支援工具整合，以實現更好的客戶屬性工作管理。",
     },
+    features: {
+      intake: {
+        heading: "接收責任",
+        notify_assignee: {
+          title: "通知負責人",
+          description: "對於新的接收請求，預設負責人將透過通知收到提醒",
+        },
+        toasts: {
+          remove: {
+            loading: "正在移除負責人...",
+            success: {
+              title: "成功！",
+              message: "負責人已成功移除。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "移除負責人時出現問題。請重試。",
+            },
+          },
+          set: {
+            loading: "正在設定負責人...",
+            success: {
+              title: "成功！",
+              message: "負責人已成功設定。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "設定負責人時出現問題。請重試。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "未配置整合",

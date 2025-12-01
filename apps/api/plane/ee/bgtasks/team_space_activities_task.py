@@ -17,9 +17,8 @@ from plane.ee.models import (
 )
 from plane.db.models import Label, Project, User, Workspace
 from plane.utils.exception_logger import log_exception
-from plane.ee.bgtasks.notification_task import workspace_notifications
+from plane.ee.bgtasks.notification_task import process_teamspace_notifications
 from plane.ee.serializers import TeamspaceActivitySerializer
-from plane.db.models.notification import EntityName
 
 
 # Track Changes in name
@@ -672,14 +671,18 @@ def team_space_activity(
         )
 
         if notification:
-            workspace_notifications(
+            process_teamspace_notifications.delay(
+                teamspace_id=team_space.id,
                 workspace_id=workspace_id,
-                entity_name=EntityName.TEAMSPACE.value,
-                entity_identifier=team_space.id,
                 actor_id=actor_id,
-                activities_created=json.dumps(
-                    TeamspaceActivitySerializer(teamspace_activities_created, many=True).data, cls=DjangoJSONEncoder
+                activities_data=json.dumps(
+                    TeamspaceActivitySerializer(teamspace_activities_created, many=True).data,
+                    cls=DjangoJSONEncoder,
                 ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+                subscriber=False,
+                notification_type=type,
             )
 
         return

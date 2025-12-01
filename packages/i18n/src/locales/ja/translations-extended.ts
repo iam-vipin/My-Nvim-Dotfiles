@@ -160,6 +160,39 @@ export default {
       settings_sub_heading:
         "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。",
     },
+    features: {
+      intake: {
+        heading: "受付責任",
+        notify_assignee: {
+          title: "担当者に通知",
+          description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
+        },
+        toasts: {
+          remove: {
+            loading: "担当者を削除中...",
+            success: {
+              title: "成功！",
+              message: "担当者が正常に削除されました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "担当者の削除中に問題が発生しました。もう一度お試しください。",
+            },
+          },
+          set: {
+            loading: "担当者を設定中...",
+            success: {
+              title: "成功！",
+              message: "担当者が正常に設定されました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "担当者の設定中に問題が発生しました。もう一度お試しください。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "設定された統合がありません",

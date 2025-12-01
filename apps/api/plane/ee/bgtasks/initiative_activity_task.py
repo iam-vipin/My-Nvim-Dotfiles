@@ -21,11 +21,10 @@ from plane.ee.models import (
     InitiativeLabel,
 )
 from plane.ee.serializers import InitiativeActivitySerializer
-from plane.ee.bgtasks.notification_task import workspace_notifications
+from plane.ee.bgtasks.notification_task import process_initiative_notifications
 
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
-from plane.db.models.notification import EntityName
 
 
 # Track Changes in name
@@ -885,15 +884,18 @@ def initiative_activity(
         initiative_activities_created = InitiativeActivity.objects.bulk_create(initiative_activities)
 
         if notification:
-            workspace_notifications(
+            process_initiative_notifications.delay(
+                initiative_id=initiative_id,
                 workspace_id=workspace_id,
-                entity_name=EntityName.INITIATIVE.value,
-                entity_identifier=initiative_id,
                 actor_id=actor_id,
-                activities_created=json.dumps(
+                activities_data=json.dumps(
                     InitiativeActivitySerializer(initiative_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+                subscriber=subscriber,
+                notification_type=type,
             )
         return
     except Exception as e:

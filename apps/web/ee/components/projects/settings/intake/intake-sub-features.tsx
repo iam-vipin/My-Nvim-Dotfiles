@@ -105,7 +105,7 @@ const IntakeSubFeatures = observer((props: Props) => {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3")}>
+      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "")}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {
@@ -127,7 +127,13 @@ const IntakeSubFeatures = observer((props: Props) => {
                 />
               );
             return (
-              <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
+              <div
+                key={featureKey}
+                className={cn(
+                  "gap-x-8 gap-y-3 py-3",
+                  isTooltip ? "bg-custom-background-100" : "bg-custom-background-90"
+                )}
+              >
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
                   <div className="w-full space-y-2">
                     <div className={cn("flex justify-between gap-4", {})}>
@@ -162,7 +168,12 @@ const IntakeSubFeatures = observer((props: Props) => {
                     </div>
 
                     {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
-                      <div className="rounded-md bg-custom-background-90 space-y-2">
+                      <div
+                        className={cn(
+                          "rounded-md space-y-2",
+                          isTooltip ? "bg-custom-background-90" : "bg-custom-background-100"
+                        )}
+                      >
                         <div className="p-3 space-y-2">
                           <div className="flex gap-2 rounded">
                             {feature.icon} <span className="text-xs font-medium">{feature.fieldName}</span>

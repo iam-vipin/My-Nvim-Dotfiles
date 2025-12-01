@@ -21,6 +21,7 @@ from plane.db.models import (
     FileAsset,
     Workspace,
     BotTypeEnum,
+    IssueSubscriber,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -33,7 +34,7 @@ from plane.space.rate_limit import SpaceRateThrottle, AnchorBasedRateThrottle
 ## Enterprise imports
 from plane.ee.serializers import IssueCreateSerializer
 from plane.ee.views.base import BaseAPIView
-from plane.ee.models import IntakeSetting
+from plane.ee.models import IntakeSetting, IntakeResponsibility, IntakeResponsibilityTypeChoices
 from plane.ee.bgtasks.intake_email_task import intake_email
 from plane.ee.utils.intake_email_anchor import get_anchors
 
@@ -113,6 +114,27 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                 "description_html": request.data.get("description_html", "<p></p>"),
             }
 
+            subscriber_ids = []
+            # Check if intake responsibility is enabled
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.INTAKE_RESPONSIBILITY, slug=deploy_board.workspace.slug
+            ):
+                # Get the intake responsibilities
+                intake_responsibilities = IntakeResponsibility.objects.filter(intake=intake)
+                # Get the user ids from the intake responsibilities
+                issue_data["assignee_ids"] = list(
+                    intake_responsibilities.filter(type=IntakeResponsibilityTypeChoices.ASSIGNEE).values_list(
+                        "user_id", flat=True
+                    )
+                )
+
+                # Set the subscriber ids
+                subscriber_ids = list(
+                    intake_responsibilities.filter(type=IntakeResponsibilityTypeChoices.SUBSCRIBER).values_list(
+                        "user_id", flat=True
+                    )
+                )
+
             serializer = IssueCreateSerializer(
                 data=issue_data,
                 context={
@@ -121,12 +143,32 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     "default_assignee_id": deploy_board.project.default_assignee_id,
                     "created_by_id": api_token.user_id,
                     "slug": deploy_board.workspace.slug,
+                    "intake_id": intake.id,
+                    "user_id": api_token.user_id,
                     "allow_triage_state": True
                 },
             )
 
             if serializer.is_valid():
                 serializer.save()
+
+                # Create subscribers
+                if subscriber_ids:
+                    IssueSubscriber.objects.bulk_create(
+                        [
+                            IssueSubscriber(
+                                issue_id=serializer.instance.id,
+                                subscriber_id=subscriber_id,
+                                project_id=deploy_board.project_id,
+                                workspace_id=deploy_board.workspace_id,
+                                created_by_id=api_token.user.id,
+                                updated_by_id=api_token.user.id,
+                            )
+                            for subscriber_id in subscriber_ids
+                        ],
+                        batch_size=10,
+                        ignore_conflicts=True,
+                    )
 
                 # create an Intake issue
                 intake_issue = IntakeIssue.objects.create(

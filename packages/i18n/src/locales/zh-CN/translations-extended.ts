@@ -160,6 +160,39 @@ export default {
       settings_sub_heading:
         "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。",
     },
+    features: {
+      intake: {
+        heading: "接收责任",
+        notify_assignee: {
+          title: "通知负责人",
+          description: "对于新的接收请求，默认负责人将通过通知收到提醒",
+        },
+        toasts: {
+          remove: {
+            loading: "正在移除负责人...",
+            success: {
+              title: "成功！",
+              message: "负责人已成功移除。",
+            },
+            error: {
+              title: "错误！",
+              message: "移除负责人时出现问题。请重试。",
+            },
+          },
+          set: {
+            loading: "正在设置负责人...",
+            success: {
+              title: "成功！",
+              message: "负责人已成功设置。",
+            },
+            error: {
+              title: "错误！",
+              message: "设置负责人时出现问题。请重试。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "未配置集成",

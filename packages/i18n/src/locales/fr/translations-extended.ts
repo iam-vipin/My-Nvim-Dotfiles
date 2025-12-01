@@ -162,6 +162,39 @@ export default {
       settings_sub_heading:
         "Transformez les demandes des clients en éléments de travail, attribuez une priorité en fonction des demandes et associez les états des éléments de travail aux enregistrements des clients. Bientôt, vous pourrez intégrer votre CRM ou outil de support pour une meilleure gestion du travail selon les attributs des clients.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilité d'ingestion",
+        notify_assignee: {
+          title: "Notifier le responsable",
+          description: "Pour une nouvelle demande d'ingestion, le responsable par défaut sera alerté via des notifications",
+        },
+        toasts: {
+          remove: {
+            loading: "Suppression du responsable...",
+            success: {
+              title: "Succès !",
+              message: "Responsable supprimé avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Une erreur s'est produite lors de la suppression du responsable. Veuillez réessayer.",
+            },
+          },
+          set: {
+            loading: "Définition du responsable...",
+            success: {
+              title: "Succès !",
+              message: "Responsable défini avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Une erreur s'est produite lors de la définition du responsable. Veuillez réessayer.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Aucune intégration configurée",

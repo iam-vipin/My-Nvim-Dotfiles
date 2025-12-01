@@ -5,7 +5,7 @@ import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader, ToggleSwitch } from "@plane/ui";
-import { copyTextToClipboard } from "@plane/utils";
+import { cn, copyTextToClipboard } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { RenewModal } from "./renew-modal";
 import { TypeFormsRoot } from "./type-forms/root";
@@ -81,7 +81,7 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      <div className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
+      <div className={cn("gap-x-8 gap-y-3 py-3", isToolTip ? "bg-custom-background-100" : "bg-custom-background-90")}>
         <div className="flex justify-between gap-2">
           <div className="w-full">
             <div className="flex justify-between gap-4">
@@ -119,7 +119,12 @@ export const IntakeFormsRoot: React.FC<Props> = (props: Props) => {
             </div>
 
             {isEnabled && isFormEnabled && (
-              <div className="rounded-md bg-custom-background-90 space-y-2 mt-2">
+              <div
+                className={cn(
+                  "rounded-md space-y-2 mt-2",
+                  isToolTip ? "bg-custom-background-90" : "bg-custom-background-100"
+                )}
+              >
                 <div className="space-y-2">
                   <div className="p-3 space-y-2">
                     <div className="flex gap-2 rounded">

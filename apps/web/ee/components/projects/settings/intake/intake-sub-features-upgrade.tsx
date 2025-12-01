@@ -54,7 +54,13 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
             const feature = featureList[featureKey];
 
             return (
-              <div key={featureKey} className={cn("gap-x-8 gap-y-3 bg-custom-background-100 py-3")}>
+              <div
+                key={featureKey}
+                className={cn(
+                  "gap-x-8 gap-y-3 py-3",
+                  isTooltip ? "bg-custom-background-100" : "bg-custom-background-90"
+                )}
+              >
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
                   <div className="flex gap-2 w-full">
                     <div

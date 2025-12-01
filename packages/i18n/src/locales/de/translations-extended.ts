@@ -163,6 +163,39 @@ export default {
       settings_sub_heading:
         "Bringen Sie Kundenanfragen zu Arbeitsaufgaben, weisen Sie Priorität nach Anfragen zu und führen Sie den Status von Arbeitsaufgaben in Kundendatensätzen zusammen. Bald werden Sie mit Ihrem CRM oder Support-Tool für eine noch bessere Arbeitsverwaltung nach Kundenattributen integrieren können.",
     },
+    features: {
+      intake: {
+        heading: "Intake-Verantwortung",
+        notify_assignee: {
+          title: "Zuständigen benachrichtigen",
+          description: "Für eine neue Intake-Anfrage wird der Standard-Zuständige über Benachrichtigungen informiert",
+        },
+        toasts: {
+          remove: {
+            loading: "Zuständigen wird entfernt...",
+            success: {
+              title: "Erfolg!",
+              message: "Zuständiger erfolgreich entfernt.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Beim Entfernen des Zuständigen ist etwas schief gelaufen. Bitte versuchen Sie es erneut.",
+            },
+          },
+          set: {
+            loading: "Zuständiger wird festgelegt...",
+            success: {
+              title: "Erfolg!",
+              message: "Zuständiger erfolgreich festgelegt.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Beim Festlegen des Zuständigen ist etwas schief gelaufen. Bitte versuchen Sie es erneut.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Keine Integrationen konfiguriert",

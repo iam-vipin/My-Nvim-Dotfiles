@@ -93,6 +93,8 @@ class FeatureFlag(Enum):
     AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES"
     # Exports
     ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
+    # Intake responsibility
+    INTAKE_RESPONSIBILITY = "INTAKE_RESPONSIBILITY"
     # Intake form workitem types
     WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM"
     # PI Chat

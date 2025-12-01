@@ -163,6 +163,39 @@ export default {
       settings_sub_heading:
         "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilidade de recebimento",
+        notify_assignee: {
+          title: "Notificar responsável",
+          description: "Para uma nova solicitação de recebimento, o responsável padrão será alertado via notificações",
+        },
+        toasts: {
+          remove: {
+            loading: "Removendo responsável...",
+            success: {
+              title: "Sucesso!",
+              message: "Responsável removido com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Algo deu errado ao remover o responsável. Por favor, tente novamente.",
+            },
+          },
+          set: {
+            loading: "Definindo responsável...",
+            success: {
+              title: "Sucesso!",
+              message: "Responsável definido com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Algo deu errado ao definir o responsável. Por favor, tente novamente.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Nenhuma integração configurada",

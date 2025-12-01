@@ -161,6 +161,39 @@ export default {
       settings_sub_heading:
         "Trasforma le richieste dei clienti in elementi di lavoro, assegna priorità in base alle richieste e collega gli stati degli elementi di lavoro ai record dei clienti. Presto potrai integrare il tuo CRM o strumento di supporto per una gestione del lavoro ancora migliore in base agli attributi dei clienti.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilità di accettazione",
+        notify_assignee: {
+          title: "Notifica assegnatario",
+          description: "Per una nuova richiesta di accettazione, l'assegnatario predefinito sarà avvisato tramite notifiche",
+        },
+        toasts: {
+          remove: {
+            loading: "Rimozione assegnatario...",
+            success: {
+              title: "Successo!",
+              message: "Assegnatario rimosso con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message: "Qualcosa è andato storto durante la rimozione dell'assegnatario. Riprova.",
+            },
+          },
+          set: {
+            loading: "Impostazione assegnatario...",
+            success: {
+              title: "Successo!",
+              message: "Assegnatario impostato con successo.",
+            },
+            error: {
+              title: "Errore!",
+              message: "Qualcosa è andato storto durante l'impostazione dell'assegnatario. Riprova.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Nessuna integrazione configurata",

@@ -10,8 +10,6 @@ import { getFileURL } from "@plane/utils";
 import tourImage from "@/app/assets/onboarding/tour.webp?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
-
 const BUSINESS_FEATURES = [
   {
     free: "12 Seats",
@@ -43,7 +41,7 @@ type Props = {
   onComplete: () => void;
 };
 
-export const TourRoot: React.FC<Props> = observer((props) => {
+export const BusinessPlanFeatures = observer(function BusinessPlanFeatures(props: Props) {
   const { onComplete } = props;
   const { workspaceSlug } = useParams();
   const { getWorkspaceBySlug } = useWorkspace();

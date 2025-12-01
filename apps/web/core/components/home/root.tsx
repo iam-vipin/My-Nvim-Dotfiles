@@ -4,15 +4,14 @@ import useSWR from "swr";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
-// components
-import { TourRoot } from "@/components/onboarding/tour";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useUserProfile, useUser } from "@/hooks/store/user";
-// plane web components
+// plane web imports
 import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
+import { TourRoot } from "@/plane-web/components/onboarding/tour/root";
 // local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";

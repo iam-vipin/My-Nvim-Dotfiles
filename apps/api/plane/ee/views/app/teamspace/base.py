@@ -44,7 +44,9 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             Teamspace.objects.annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        TeamspaceProject.objects.filter(team_space=OuterRef("pk"), workspace__slug=slug)
+                        TeamspaceProject.objects.filter(
+                            team_space=OuterRef("pk"), workspace__slug=slug, project__archived_at__isnull=True
+                        )
                         .values("team_space")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")
@@ -73,7 +75,9 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
             .annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        TeamspaceProject.objects.filter(team_space=OuterRef("pk"), workspace__slug=slug)
+                        TeamspaceProject.objects.filter(
+                            team_space=OuterRef("pk"), workspace__slug=slug, project__archived_at__isnull=True
+                        )
                         .values("team_space")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")

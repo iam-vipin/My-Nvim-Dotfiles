@@ -41,7 +41,7 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
 
         # Get linked entities count
         project_ids = TeamspaceProject.objects.filter(
-            team_space_id=team_space_id
+            team_space_id=team_space_id, project__archived_at__isnull=True
         ).values_list("project_id", flat=True)
 
         team_member_ids = TeamspaceMember.objects.filter(

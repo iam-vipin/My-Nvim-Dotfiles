@@ -98,7 +98,6 @@ from .cycle.base import (
 )
 from .cycle.issue import CycleIssueViewSet
 from .cycle.archive import CycleArchiveUnarchiveEndpoint
-
 from .asset.base import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .asset.v2 import (
     WorkspaceFileAssetEndpoint,
@@ -111,7 +110,13 @@ from .asset.v2 import (
     DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
+    ProjectReuploadAssetEndpoint,
+    WorkspaceReuploadAssetEndpoint,
+    WorkspaceFileAssetServerEndpoint,
+    ProjectAssetServerEndpoint,
 )
+from .asset.silo import SiloAssetsEndpoint
+
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,
@@ -127,7 +132,7 @@ from .issue.base import (
 
 from .issue.activity import IssueActivityEndpoint
 
-from .issue.archive import IssueArchiveViewSet, BulkArchiveIssuesEndpoint
+from .issue.archive import IssueArchiveViewSet
 
 from .issue.attachment import (
     IssueAttachmentEndpoint,
@@ -135,7 +140,7 @@ from .issue.attachment import (
     IssueAttachmentV2Endpoint,
 )
 
-from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.comment import IssueCommentViewSet, CommentReactionViewSet, IssueCommentRepliesEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 
@@ -175,6 +180,7 @@ from .page.version import PageVersionEndpoint
 from .search.base import GlobalSearchEndpoint, SearchEndpoint
 from .search.issue import IssueSearchEndpoint
 
+from .search.workspace import WorkspaceSearchEndpoint
 
 from .external.base import (
     GPTIntegrationEndpoint,
@@ -220,8 +226,6 @@ from .notification.base import (
     UserNotificationPreferenceEndpoint,
 )
 
-from .exporter.base import ExportIssuesEndpoint
-
 
 from .webhook.base import (
     WebhookEndpoint,
@@ -231,7 +235,38 @@ from .webhook.base import (
 
 from .error_404 import custom_404_view
 
+from .importer.base import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .integration.base import IntegrationViewSet, WorkspaceIntegrationViewSet
+
+from .integration.github import (
+    GithubRepositoriesEndpoint,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .integration.slack import SlackProjectSyncViewSet
+
 from .notification.base import MarkAllReadNotificationViewSet
-from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
+
+from .user.base import (
+    AccountEndpoint,
+    ProfileEndpoint,
+    UserSessionEndpoint,
+    UserTokenVerificationEndpoint,
+)
 
 from .timezone.base import TimezoneEndpoint
+
+
+from .asset.proxy import ProxyUploadEndpoint, ProxyDownloadEndpoint
+
+from .exporter.base import ExportIssuesEndpoint

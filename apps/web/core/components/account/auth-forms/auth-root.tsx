@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
+import { Key } from "lucide-react";
 import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // assets
@@ -55,7 +56,13 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
   // derived values
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_oidc_enabled ||
+        config?.is_saml_enabled)) ||
+    false;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -141,6 +148,24 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       },
       enabled: config?.is_gitlab_enabled,
     },
+    {
+      id: "oidc",
+      text: `Continue with ${!!config?.oidc_provider_name ? config.oidc_provider_name : "OIDC"}`,
+      icon: <Key height={18} width={18} />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_oidc_enabled,
+    },
+    {
+      id: "saml",
+      text: `Continue with ${!!config?.saml_provider_name ? config.saml_provider_name : "SAML"}`,
+      icon: <Key height={18} width={18} />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/saml/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_saml_enabled,
+    },
   ];
 
   return (
@@ -157,6 +182,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           currentAuthStep={authStep}
         />
 
+        {/* TODO: code splitting needed here */}
         {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
 
         <AuthFormRoot

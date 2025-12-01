@@ -1,5 +1,6 @@
 import type { TAnalyticsTabsBase } from "@plane/types";
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
+import { ANALYTICS_INSIGHTS_FIELDS_EXTENDED } from "./common-extended";
 
 export interface IInsightField {
   key: string;
@@ -94,6 +95,7 @@ export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField
       i18nKey: "workspace_analytics.completed_work_items",
     },
   ],
+  ...ANALYTICS_INSIGHTS_FIELDS_EXTENDED,
 };
 
 export const ANALYTICS_DURATION_FILTER_OPTIONS = [

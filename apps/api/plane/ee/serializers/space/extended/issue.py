@@ -12,9 +12,9 @@ from plane.db.models import (
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices
+from plane.ee.serializers.space.issue import IssueCreateSerializer
 
-
-class ExtendedIssueCreateSerializer(BaseSerializer):
+class ExtendedIssueCreateSerializer(IssueCreateSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)

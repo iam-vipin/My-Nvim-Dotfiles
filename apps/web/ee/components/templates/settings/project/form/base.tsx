@@ -168,13 +168,28 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     defaultValues,
   });
   const {
-    watch,
-    reset,
-    handleSubmit,
     formState: { isSubmitting },
+    getValues,
+    handleSubmit,
+    reset,
+    watch,
   } = methods;
   // derived values
   const isDirty = Object.keys(methods.formState.dirtyFields).length > 0;
+  const getWorkItemTypeById = useCallback(
+    (workItemTypeId: string) => {
+      const helpers = projectTemplateFormGettersHelpers(getValues("project"));
+      return helpers.getWorkItemTypeById(workItemTypeId);
+    },
+    [getValues]
+  );
+  const getCustomPropertyById = useCallback(
+    (customPropertyId: string) => {
+      const helpers = projectTemplateFormGettersHelpers(getValues("project"));
+      return helpers.getCustomPropertyById(customPropertyId);
+    },
+    [getValues]
+  );
 
   /**
    * Reset the local states
@@ -219,7 +234,6 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
       if (!templateId || loader === "init-loader") return;
       const templateDetails = getTemplateById(templateId)?.asJSON;
       if (!templateDetails) return;
-      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
 
       setIsApplyingTemplate(true);
 
@@ -236,8 +250,8 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
         getWorkspaceProjectStateIds: getProjectStateIdsByWorkspaceId,
         getWorkspaceMemberIds,
-        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
-        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
+        getWorkItemTypeById,
+        getCustomPropertyById,
       });
 
       // Set the preloaded data and invalid IDs
@@ -259,7 +273,6 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
    */
   useEffect(() => {
     const updateDefaultFormData = async () => {
-      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
       // Generate default form data
       const additionalDefaultValueForReset = await generateAdditionalProjectTemplateFormData({
         workspaceSlug: workspaceSlug?.toString(),
@@ -270,8 +283,8 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
             ...params,
           }),
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
-        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
-        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
+        getWorkItemTypeById,
+        getCustomPropertyById,
       });
       // Reset the form with the default values
       if (preloadedData) {

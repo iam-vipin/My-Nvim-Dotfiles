@@ -7,6 +7,7 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { useUser } from "@/hooks/store/user";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import type { TChatContextData } from "@/plane-web/types";
 import { Loading } from "./conversation/loading";
 import { Messages } from "./conversation/messages";
 import { scrollIntoViewHelper } from "./helper";
@@ -17,9 +18,10 @@ type TProps = {
   isFullScreen?: boolean;
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
+  contextData?: TChatContextData;
 };
 export const PiChatDetail = observer((props: TProps) => {
-  const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false } = props;
+  const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false, contextData } = props;
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(false);
   // router
   const pathName = usePathname();
@@ -69,6 +71,7 @@ export const PiChatDetail = observer((props: TProps) => {
             )}
             {/* Chat Input */}
             <InputBox
+              contextData={contextData}
               isProjectLevel={isProjectLevel}
               isFullScreen={isFullScreen}
               activeChatId={activeChatId}

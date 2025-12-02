@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUp } from "lucide-react";
-import type { EditorRefApi } from "@plane/editor";
+import type { TPiChatEditorRefApi } from "@plane/editor";
 import { PiChatEditorWithRef } from "@plane/editor";
 import { FilledCheck, FilledCross } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
@@ -35,7 +35,7 @@ export const FollowUpDetail = observer((props: TProps) => {
   const [error, setError] = useState<string | null>(null);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
-  const editorRef = useRef<EditorRefApi>(null);
+  const editorRef = useRef<TPiChatEditorRefApi>(null);
   // store hooks
   const { followUp, activeChatId } = usePiChat();
   // hooks

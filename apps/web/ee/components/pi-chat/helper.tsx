@@ -1,5 +1,5 @@
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
-import { CycleIcon, ModuleIcon, LayersIcon, PageIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 import type { IFormattedValue, IItem } from "@/plane-web/types/pi-chat";
 import { IssueIdentifier } from "../issues/issue-details/issue-identifier";
 
@@ -18,9 +18,10 @@ export const scrollIntoViewHelper = async (elementId: string) => {
   if (sourceElement) await smoothScrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
 };
 
-export const getIcon = (type: string, item: Partial<IItem>) => {
+export const getIcon = (type: string, item?: Partial<IItem>) => {
   switch (type) {
     case "issue":
+      if (!item) return <LayersIcon className="w-4 h-4" />;
       return (
         <IssueIdentifier
           issueTypeId={item.type_id}
@@ -36,6 +37,8 @@ export const getIcon = (type: string, item: Partial<IItem>) => {
       return <ModuleIcon className="w-4 h-4" />;
     case "page":
       return <PageIcon className="w-4 h-4" />;
+    case "view":
+      return <ViewsIcon className="w-4 h-4" />;
     default:
       return <LayersIcon className="w-4 h-4" />;
   }

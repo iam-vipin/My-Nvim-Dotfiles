@@ -37,7 +37,7 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       italic: false,
       paragraph: {
         HTMLAttributes: {
-          class: `text-[14px] leading-5 font-normal`,
+          class: `text-[14px] font-normal`,
         },
       },
       strike: false,

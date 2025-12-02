@@ -69,17 +69,15 @@ export const Header = observer((props: { artifact: TArtifact }) => {
         </HeaderUI.LeftItem>
         <HeaderUI.RightItem>
           <div className="flex gap-2">
-            <Tooltip tooltipContent="Start a new chat" position="left">
-              <button
-                className={cn(buttonClass, "border-none")}
-                onClick={() => {
-                  togglePiArtifactsDrawer();
-                  toggleSidebar();
-                }}
-              >
-                <CloseIcon className="flex-shrink-0 size-3.5" />
-              </button>
-            </Tooltip>
+            <button
+              className={cn(buttonClass, "border-none")}
+              onClick={() => {
+                togglePiArtifactsDrawer();
+                toggleSidebar();
+              }}
+            >
+              <CloseIcon className="flex-shrink-0 size-3.5" />
+            </button>
           </div>
         </HeaderUI.RightItem>
       </HeaderUI>

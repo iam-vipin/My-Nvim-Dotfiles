@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+import { v4 as uuidv4 } from "uuid";
 import { ArrowUp, Disc, Square } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { EditorRefApi } from "@plane/editor";
+
 import { PiChatEditorWithRef } from "@plane/editor";
+import type { TPiChatEditorRefApi } from "@plane/editor";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -13,7 +15,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import type { TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
+import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";
@@ -34,6 +36,7 @@ type TProps = {
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
   showProgress?: boolean;
+  contextData?: TChatContextData;
 };
 
 export const InputBox = observer((props: TProps) => {
@@ -44,6 +47,7 @@ export const InputBox = observer((props: TProps) => {
     isProjectLevel = false,
     showProgress = false,
     isFullScreen = false,
+    contextData,
   } = props;
 
   // store hooks
@@ -66,19 +70,24 @@ export const InputBox = observer((props: TProps) => {
   const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const chatFocus = getChatFocus(activeChatId) || {
-    isInWorkspaceContext: true,
-    entityType: projectId ? "project_id" : "workspace_id",
-    entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
-  };
+  const chatFocus = useMemo(
+    () =>
+      getChatFocus(activeChatId) || {
+        isInWorkspaceContext: true,
+        entityType: projectId ? "project_id" : "workspace_id",
+        entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
+      },
+    [activeChatId, getChatFocus, projectId, workspaceId]
+  );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
   const [focus, setFocus] = useState<TFocus>(chatFocus);
   const [loader, setLoader] = useState<TPiLoaders>("");
   const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
-  const editorRef = useRef<EditorRefApi>(null);
+  const editorRef = useRef<TPiChatEditorRefApi>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: false,
@@ -89,6 +98,17 @@ export const InputBox = observer((props: TProps) => {
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
+
+  const addContext = useCallback((): void => {
+    if (!contextData) return;
+
+    editorRef.current?.addChatContext({
+      id: uuidv4(),
+      label: contextData.subTitle || contextData.title || "",
+      entity_identifier: contextData.id,
+      target: contextData.type,
+    });
+  }, [contextData]);
 
   const handleSubmit = useEvent(async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -122,6 +142,7 @@ export const InputBox = observer((props: TProps) => {
       attachmentIds
     );
     editorCommands.current?.clear();
+    addContext();
     setLoader("");
     setAttachments([]);
   });
@@ -145,7 +166,14 @@ export const InputBox = observer((props: TProps) => {
       };
       setFocus(presentFocus);
     }
-  }, [isChatLoading]);
+  }, [isChatLoading, chatFocus]);
+
+  // Adding context for the sidecar
+  useEffect(() => {
+    if (isEditorReady) {
+      addContext();
+    }
+  }, [contextData, isEditorReady, addContext]);
 
   if (!workspaceId) return;
   return (
@@ -202,12 +230,18 @@ export const InputBox = observer((props: TProps) => {
                 className={cn("flex-1  max-h-[250px] min-h-[70px]", {
                   "absolute w-0": SPEECH_LOADERS.includes(loader),
                 })}
+                onEditorReady={() => setIsEditorReady(true)}
                 ref={editorRef}
               />
               <div className="flex w-full gap-3 justify-between">
                 {/* Focus */}
                 {!SPEECH_LOADERS.includes(loader) && (
-                  <FocusFilter focus={focus} setFocus={setFocus} isLoading={isChatLoading && !!activeChatId} />
+                  <FocusFilter
+                    workspaceId={workspaceId}
+                    focus={focus}
+                    setFocus={setFocus}
+                    isLoading={isChatLoading && !!activeChatId}
+                  />
                 )}
                 <div className="flex items-center w-full justify-end gap-2">
                   <div className="flex w-full justify-end">

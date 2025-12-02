@@ -8,6 +8,7 @@ import type { AttachmentExtensionOptions } from "../extensions/attachments/types
 import type { DrawioExtensionOptions } from "../extensions/drawio/types";
 import type { ExternalEmbedExtensionOptions } from "../extensions/external-embed/types";
 import type { MathematicsExtensionOptions } from "../extensions/mathematics/types";
+import type { PiChatEditorMentionAttributes } from "../extensions/pi-chat-editor/mention/types";
 import type { TCommentConfig } from "./comments";
 import type { TEmbedConfig } from "./issue-embed";
 
@@ -77,4 +78,8 @@ export type ICollaborativeDocumentEditorPropsExtended = {
   isSelfHosted?: boolean;
   titleContainerClassName?: string;
   onTitleFocus?: () => void;
+};
+
+export type TPiChatEditorApi = {
+  addChatContext: (attributes: PiChatEditorMentionAttributes) => boolean;
 };

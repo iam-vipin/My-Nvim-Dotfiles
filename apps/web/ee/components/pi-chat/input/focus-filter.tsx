@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -21,14 +22,15 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { TFocus } from "@/plane-web/types";
 
 type TProps = {
+  workspaceId: string;
   focus: TFocus;
   isLoading: boolean;
   setFocus: Dispatch<SetStateAction<TFocus>>;
 };
 export const FocusFilter = observer((props: TProps) => {
-  const { focus, setFocus, isLoading } = props;
+  const { focus, setFocus, isLoading, workspaceId } = props;
   // router params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { workspaceProjectIds, getProjectById } = useProject();
@@ -43,6 +45,23 @@ export const FocusFilter = observer((props: TProps) => {
       return updated;
     });
   };
+
+  // Change focus based on projectId
+  useEffect(() => {
+    if (projectId) {
+      setFocus({
+        isInWorkspaceContext: true,
+        entityType: "project_id",
+        entityIdentifier: projectId.toString(),
+      });
+    } else {
+      setFocus({
+        isInWorkspaceContext: true,
+        entityType: "workspace_id",
+        entityIdentifier: workspaceId?.toString() || "",
+      });
+    }
+  }, [projectId, workspaceId]);
 
   if (isLoading)
     return (

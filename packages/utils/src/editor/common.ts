@@ -109,3 +109,7 @@ export enum ADDITIONAL_EXTENSIONS {
   PAGE_LINK_COMPONENT = "pageLinkComponent",
   DRAWIO = "drawIoComponent",
 }
+
+export enum PI_CHAT_EXTENSIONS {
+  MENTION = "mention",
+}

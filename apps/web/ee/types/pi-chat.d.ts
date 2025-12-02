@@ -212,11 +212,11 @@ interface IItem {
   target: string;
   redirect_uri: string;
   name?: string;
-  project__identifier?: string;
-  sequence_id?: string;
+  project__identifier?: string | null;
+  sequence_id?: string | null;
   title: string;
   subTitle: string | undefined;
-  type_id: string;
+  type_id: string | null;
   project_id: string;
 }
 
@@ -271,6 +271,14 @@ export type TInstanceResponse =
       is_authorized: false;
       oauth_url: string;
     };
+
+export type TChatContextData = {
+  id: string;
+  type: string;
+  title: string | undefined;
+  subTitle?: string | undefined;
+  icon: React.ReactNode;
+} | null;
 
 // constants
 export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "cycle", "module"];

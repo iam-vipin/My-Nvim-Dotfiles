@@ -4,24 +4,63 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@plane/utils";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import { useAIAssistant } from "@/plane-web/hooks/use-ai-assistant";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
 
+const getEntityData = (
+  params: Record<string, string | undefined>
+): {
+  entityType: "issue" | "cycle" | "module" | "page" | "view";
+  entityIdentifier: string;
+} | null => {
+  const { workItem, cycleId, moduleId, pageId, viewId } = params;
+  if (workItem)
+    return {
+      entityType: "issue",
+      entityIdentifier: workItem,
+    };
+  if (cycleId)
+    return {
+      entityType: "cycle",
+      entityIdentifier: cycleId,
+    };
+  if (moduleId)
+    return {
+      entityType: "module",
+      entityIdentifier: moduleId,
+    };
+  if (pageId)
+    return {
+      entityType: "page",
+      entityIdentifier: pageId,
+    };
+  if (viewId)
+    return {
+      entityType: "view",
+      entityIdentifier: viewId,
+    };
+  return null;
+};
+
 export const PiChatFloatingBot = observer(() => {
-  // states
-  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // query params
   const pathName = usePathname();
-  const { workspaceSlug } = useParams();
+  const params = useParams();
+  const { workspaceSlug, projectId, workItem } = params;
   const searchParams = useSearchParams();
+  // hooks
+  const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
+  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const entityData = getEntityData(params);
+  const contextData = entityData ? useAIAssistant(entityData.entityType, entityData.entityIdentifier) : null;
   // derived states
   const isSidePanelOpen = searchParams.get("pi_sidebar_open");
   const chatId = searchParams.get("chat_id");
   const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
-
+  const shouldRenderPiChat = !pathName.includes(`/${workspaceSlug?.toString()}/pi-chat/`) && (projectId || workItem);
   useEffect(() => {
     if (!isPiEnabled) return;
     // initialize chat
@@ -34,10 +73,10 @@ export const PiChatFloatingBot = observer(() => {
   }, [isPiEnabled]);
 
   if (pathName.includes("pi-chat")) return null;
-  if (!isPiEnabled) return <></>;
+  if (!isPiEnabled || !shouldRenderPiChat) return <></>;
 
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="PI_CHAT" fallback={<></>}>
       <div
         className={cn(
           "transform transition-all duration-300 ease-in-out overflow-x-hidden",
@@ -46,7 +85,7 @@ export const PiChatFloatingBot = observer(() => {
         )}
       >
         <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
-          <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel />
+          <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />
         </PiChatLayout>
       </div>
     </WithFeatureFlagHOC>

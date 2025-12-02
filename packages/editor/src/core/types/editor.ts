@@ -12,6 +12,7 @@ import type {
   IEditorPropsExtended,
   TExtendedEditorCommands,
   ICollaborativeDocumentEditorPropsExtended,
+  TPiChatEditorApi,
 } from "@/plane-editor/types/editor-extended";
 // types
 import type {
@@ -157,6 +158,8 @@ export type CoreEditorRefApi = {
 export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
 
 export type EditorTitleRefApi = EditorRefApi;
+
+export type TPiChatEditorRefApi = CoreEditorRefApi & TPiChatEditorApi;
 
 // editor props
 export type IEditorProps = {

@@ -174,4 +174,5 @@ ell.db
 node_modules
 
 # test artifacts
-pi/tests/api_test_results_*.json
+*test_results_*.json
+

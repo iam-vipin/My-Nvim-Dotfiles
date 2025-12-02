@@ -1,0 +1,43 @@
+"use client";
+
+import type { FC } from "react";
+import { MoveRight } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
+// assets
+import emptyInitiative from "@/app/assets/empty-state/issue.svg?url";
+// components
+import { EmptyState } from "@/components/common/empty-state";
+// hooks
+import { usePlatformOS } from "@/hooks/use-platform-os";
+
+type TInitiativePeekOverviewError = {
+  removeRoutePeekId: () => void;
+};
+
+export const InitiativePeekOverviewError: FC<TInitiativePeekOverviewError> = (props) => {
+  const { removeRoutePeekId } = props;
+  // hooks
+  const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
+
+  return (
+    <div className="w-full h-full overflow-hidden relative flex flex-col">
+      <div className="flex-shrink-0 flex justify-start">
+        <Tooltip tooltipContent="Close the peek view" isMobile={isMobile}>
+          <button onClick={removeRoutePeekId} className="w-5 h-5 m-5">
+            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+          </button>
+        </Tooltip>
+      </div>
+
+      <div className="w-full h-full">
+        <EmptyState
+          image={emptyInitiative ?? undefined}
+          title={t("initiatives.empty_state.not_found.title")}
+          description={t("initiatives.empty_state.not_found.description")}
+        />
+      </div>
+    </div>
+  );
+};

@@ -12,6 +12,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from pi import logger
 from pi import settings
 from pi.app.api.v1.router import plane_pi_router
+from pi.app.api.v2.router import plane_v2_router
 from pi.app.middleware.feature_flag import FeatureFlagMiddleware
 
 # LLM fixtures sync moved to explicit startup scripts
@@ -95,6 +96,7 @@ def create_app() -> FastAPI:
 
     # Add routes
     app.include_router(plane_pi_router, prefix=f"{base_path}/api/v1")
+    app.include_router(plane_v2_router, prefix=f"{base_path}/api/v2")
 
     # Add CORS middleware
     app.add_middleware(

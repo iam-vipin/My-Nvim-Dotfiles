@@ -256,10 +256,25 @@ export class PiChatStore implements IPiChatStore {
     dialogue.actions.forEach((action) => {
       const artifact = this.artifactsStore.getArtifact(action.artifact_id);
       if (!artifact) return;
+
+      // Pull in error/message/entity info from the action as a backup.
+      // This way, users still see why an action failed even after a page refresh.
+      const mergedArtifact: TArtifact = {
+        ...artifact,
+        action: artifact.action || action.action,
+        artifact_type: artifact.artifact_type || action.artifact_type,
+        entity_name: artifact.entity_name || action.entity?.entity_name,
+        entity_url: artifact.entity_url || action.entity?.entity_url,
+        // If we have live artifact error/message, use that; otherwise, fall back
+        // to the error/message that came back with the chat history.
+        error: artifact.error ?? action.error,
+        message: artifact.message ?? action.message,
+      };
+
       if (action.success) {
-        response.successful.push(artifact);
+        response.successful.push(mergedArtifact);
       } else {
-        response.failed.push(artifact);
+        response.failed.push(mergedArtifact);
       }
     });
     return response;
@@ -707,11 +722,11 @@ export class PiChatStore implements IPiChatStore {
 
   searchCallback = async (workspace: string, search: string, focus: TFocus): Promise<IFormattedValue> => {
     const filteredProjectId = focus.entityType === "project_id" ? focus.entityIdentifier : undefined;
-    let params: { search: string; projectId?: string } = { search };
+    let params: { search: string; project_id?: string } = { search };
     if (filteredProjectId) {
       params = {
         ...params,
-        projectId: filteredProjectId,
+        project_id: filteredProjectId,
       };
     }
     const response = await this.workspaceService.searchAcrossWorkspace(workspace, params);
@@ -913,6 +928,8 @@ export class PiChatStore implements IPiChatStore {
           issue_identifier: action.entity?.issue_identifier,
           is_executed: true,
           success: action.success,
+          error: action.error,
+          message: action.message,
         });
         if (action.success) {
           actionableEntities.push(action.artifact_type);
@@ -920,6 +937,7 @@ export class PiChatStore implements IPiChatStore {
       });
       // update dialogue
       dialogue.execution_status = EExecutionStatus.COMPLETED;
+      dialogue.action_error = undefined;
       dialogue.action_summary = response.action_summary;
       dialogue.actions = response.actions;
       this.updateDialogue(chatId, actionId, dialogue);
@@ -928,6 +946,9 @@ export class PiChatStore implements IPiChatStore {
     } catch (error) {
       console.error(error);
       dialogue.execution_status = EExecutionStatus.COMPLETED;
+      dialogue.action_error =
+        (error as any)?.error ?? (error as any)?.detail ?? (error as any)?.message ?? "Unable to execute action.";
+      dialogue.action_summary = undefined;
       this.updateDialogue(chatId, actionId, dialogue);
       throw error;
     }

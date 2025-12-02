@@ -9,11 +9,11 @@ export const DisplayDates = (props: {
 }) => {
   const { startDate, endDate, className } = props;
   return (
-    <div className={cn("flex items-center gap-1 text-custom-text-300", className)}>
-      <CalendarLayoutIcon className="size-3 flex-shrink-0" />
-      <div className="text-sm"> {renderFormattedDate(startDate)}</div>
+    <div className={cn("flex items-center gap-1 text-custom-text-300 flex-wrap", className)}>
+      <CalendarLayoutIcon className="size-4 flex-shrink-0" />
+      <div className="text-sm flex-shrink-0"> {renderFormattedDate(startDate)}</div>
       {startDate && endDate && <ArrowRight className="h-3 w-3 flex-shrink-0" />}
-      <div className="text-sm"> {renderFormattedDate(endDate)}</div>
+      <div className="text-sm flex-shrink-0"> {renderFormattedDate(endDate)}</div>
     </div>
   );
 };

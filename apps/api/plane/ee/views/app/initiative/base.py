@@ -18,7 +18,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, Issue, Project
+from plane.db.models import Workspace, Issue, Project, StateGroup
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
@@ -329,30 +329,36 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             is_draft=False,
             workspace__slug=self.kwargs.get("slug"),
         ).aggregate(
-            backlog_issues=self.projects_issues_count(State.BACKLOG, project_ids),
-            unstarted_issues=self.projects_issues_count(State.UNSTARTED, project_ids),
-            started_issues=self.projects_issues_count(State.STARTED, project_ids),
-            completed_issues=self.projects_issues_count(State.COMPLETED, project_ids),
-            cancelled_issues=self.projects_issues_count(State.CANCELLED, project_ids),
-            epic_backlog_issues=self.epic_issues_count(State.BACKLOG, initiative_epics, related_issues_ids),
-            epic_unstarted_issues=self.epic_issues_count(State.UNSTARTED, initiative_epics, related_issues_ids),
-            epic_started_issues=self.epic_issues_count(State.STARTED, initiative_epics, related_issues_ids),
-            epic_completed_issues=self.epic_issues_count(State.COMPLETED, initiative_epics, related_issues_ids),
-            epic_cancelled_issues=self.epic_issues_count(State.CANCELLED, initiative_epics, related_issues_ids),
+            backlog_issues=self.projects_issues_count(StateGroup.BACKLOG.value, project_ids),
+            unstarted_issues=self.projects_issues_count(StateGroup.UNSTARTED.value, project_ids),
+            started_issues=self.projects_issues_count(StateGroup.STARTED.value, project_ids),
+            completed_issues=self.projects_issues_count(StateGroup.COMPLETED.value, project_ids),
+            cancelled_issues=self.projects_issues_count(StateGroup.CANCELLED.value, project_ids),
+            epic_backlog_issues=self.epic_issues_count(StateGroup.BACKLOG.value, initiative_epics, related_issues_ids),
+            epic_unstarted_issues=self.epic_issues_count(
+                StateGroup.UNSTARTED.value, initiative_epics, related_issues_ids
+            ),
+            epic_started_issues=self.epic_issues_count(StateGroup.STARTED.value, initiative_epics, related_issues_ids),
+            epic_completed_issues=self.epic_issues_count(
+                StateGroup.COMPLETED.value, initiative_epics, related_issues_ids
+            ),
+            epic_cancelled_issues=self.epic_issues_count(
+                StateGroup.CANCELLED.value, initiative_epics, related_issues_ids
+            ),
             total_backlog_issues=self.total_issues_count(
-                State.BACKLOG, initiative_epics, related_issues_ids, project_ids
+                StateGroup.BACKLOG.value, initiative_epics, related_issues_ids, project_ids
             ),
             total_unstarted_issues=self.total_issues_count(
-                State.UNSTARTED, initiative_epics, related_issues_ids, project_ids
+                StateGroup.UNSTARTED.value, initiative_epics, related_issues_ids, project_ids
             ),
             total_started_issues=self.total_issues_count(
-                State.STARTED, initiative_epics, related_issues_ids, project_ids
+                StateGroup.STARTED.value, initiative_epics, related_issues_ids, project_ids
             ),
             total_completed_issues=self.total_issues_count(
-                State.COMPLETED, initiative_epics, related_issues_ids, project_ids
+                StateGroup.COMPLETED.value, initiative_epics, related_issues_ids, project_ids
             ),
             total_cancelled_issues=self.total_issues_count(
-                State.CANCELLED, initiative_epics, related_issues_ids, project_ids
+                StateGroup.CANCELLED.value, initiative_epics, related_issues_ids, project_ids
             ),
         )
         return issues_counts
@@ -632,7 +638,7 @@ class InitiativeProgressEndpoint(BaseAPIView):
             if not issue.target_date:
                 no_due_date.append(issue)
 
-            if issue.state.group == State.COMPLETED:
+            if issue.state.group == StateGroup.COMPLETED.value:
                 completed_work_items.append(issue)
 
                 latest_state_activity = issue.state_activities[0] if issue.state_activities else None

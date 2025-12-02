@@ -262,21 +262,23 @@ class GlobalSearchEndpoint(BaseAPIView):
     def filter_initiatives(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
-        for field in fields:
-            q |= Q(**{f"{field}__icontains": query})
+        if query:
+            for field in fields:
+                q |= Q(**{f"{field}__icontains": query})
 
         return Initiative.objects.filter(q, workspace__slug=slug).distinct().values("name", "id", "workspace__slug")
 
     def filter_epics(self, query, slug, project_id, workspace_search):
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
-        for field in fields:
-            if field == "sequence_id":
-                sequences = re.findall(r"\b\d+\b", query)
-                for sequence_id in sequences:
-                    q |= Q(**{"sequence_id": sequence_id})
-            else:
-                q |= Q(**{f"{field}__icontains": query})
+        if query:
+            for field in fields:
+                if field == "sequence_id":
+                    sequences = re.findall(r"\b\d+\b", query)
+                    for sequence_id in sequences:
+                        q |= Q(**{"sequence_id": sequence_id})
+                else:
+                    q |= Q(**{f"{field}__icontains": query})
 
         epics = Issue.objects.filter(
             q,
@@ -296,14 +298,16 @@ class GlobalSearchEndpoint(BaseAPIView):
             "project_id",
             "workspace__slug",
             "type_id",
-        )
+        )[:30]
 
     def filter_teams(self, query, slug, project_id, workspace_search):
         fields = ["name"]
 
         q = Q()
-        for field in fields:
-            q |= Q(**{f"{field}__icontains": query})
+
+        if query:
+            for field in fields:
+                q |= Q(**{f"{field}__icontains": query})
 
         return (
             Teamspace.objects.filter(q, workspace__slug=slug, members__member_id=self.request.user.id)

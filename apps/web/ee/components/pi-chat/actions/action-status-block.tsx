@@ -21,8 +21,9 @@ type TProps = {
 
 const ActionStatusBlock = (props: TProps) => {
   // props
+
   const { isLatest, isPiThinking, workspaceSlug, workspaceId, query_id, activeChatId, isPiTyping, dialogue } = props;
-  const { execution_status, action_summary, actions } = dialogue;
+  const { execution_status, action_summary, actions, action_error } = dialogue;
   // states
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   // store
@@ -43,7 +44,7 @@ const ActionStatusBlock = (props: TProps) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Action failed!",
-        message: e?.detail,
+        message: e?.error ?? e?.detail ?? e?.message ?? "Unable to execute action.",
       });
     } finally {
       setIsExecutingAction(false);
@@ -78,15 +79,24 @@ const ActionStatusBlock = (props: TProps) => {
       </div>
     );
   // Render summary if execution status is executing or action summary is present
+  const shouldShowSummary = execution_status === EExecutionStatus.EXECUTING || Boolean(action_summary);
+
+  if (!shouldShowSummary && !action_error) return null;
+
   return (
-    (execution_status === EExecutionStatus.EXECUTING || action_summary) && (
-      <SummaryBlock
-        summary={dialogue.action_summary}
-        chatId={activeChatId}
-        status={execution_status}
-        query_id={query_id}
-      />
-    )
+    <div className="flex flex-col gap-2">
+      {action_error && (
+        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">{action_error}</div>
+      )}
+      {shouldShowSummary && (
+        <SummaryBlock
+          summary={dialogue.action_summary}
+          chatId={activeChatId}
+          status={execution_status}
+          query_id={query_id}
+        />
+      )}
+    </div>
   );
 };
 

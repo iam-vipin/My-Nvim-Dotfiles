@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
+import { CycleDetail } from "./cycle";
 import { EpicDetail } from "./epic";
 import { Header } from "./header";
 import { ModuleDetail } from "./module";
@@ -27,7 +28,9 @@ const DetailCardRenderer = observer(
       case "epic":
         return <EpicDetail {...props} />;
       case "module":
-          return <ModuleDetail {...props} />;
+        return <ModuleDetail {...props} />;
+      case "cycle":
+        return <CycleDetail {...props} />;
       default:
         return <TemplateDetail {...props} />;
     }

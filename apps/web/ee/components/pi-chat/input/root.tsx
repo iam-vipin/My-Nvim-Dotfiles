@@ -131,10 +131,10 @@ export const InputBox = observer((props: TProps) => {
     abortStream(activeChatId || "");
   };
 
-  const getMentionSuggestions = async (query: string) => {
+  const getMentionSuggestions = useEvent(async (query) => {
     const response = await searchCallback(workspaceSlug.toString(), query, focus);
     return formatSearchQuery(response);
-  };
+  });
 
   useEffect(() => {
     if (chatFocus) {

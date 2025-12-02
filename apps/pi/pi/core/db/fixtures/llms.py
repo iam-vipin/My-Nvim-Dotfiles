@@ -18,8 +18,10 @@ llm_id_map = {
     "gpt-4.1-nano": "fa8e33df-7130-4d3d-b4d8-ca627d3208af",
     "gpt-5-standard": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
     "gpt-5-fast": "d7e8f9a0-b1c2-3456-7890-abcdef123456",
+    "gpt-5.1": "e8f9a0b1-c2d3-4567-8901-abcdef123456",
     "claude-sonnet-4": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
     "claude-sonnet-4-0": "60cf738d-3f6b-4fe4-b088-8c902528657f",
+    "claude-sonnet-4-5": "6a14a494-dc87-42cc-9d7c-1f82faa3d018",
 }
 
 # Data for sync.
@@ -73,9 +75,17 @@ LLMS_DATA = [
         "max_tokens": 200000,
     },
     {
+        "id": llm_id_map["gpt-5.1"],
+        "name": "GPT-5.1",
+        "description": "OpenAI's GPT-5.1 model - latest standard model.",
+        "provider": "OpenAI",
+        "model_key": "gpt-5.1",
+        "max_tokens": 200000,
+    },
+    {
         "id": llm_id_map["claude-sonnet-4"],
         "name": "Claude Sonnet 4",
-        "description": "Anthropic's Claude Sonnet 4 model - powerful reasoning and analysis.",
+        "description": "Anthropic's Claude Sonnet 4 model.",
         "provider": "Anthropic",
         "model_key": "claude-sonnet-4",
         "max_tokens": 200000,
@@ -83,9 +93,17 @@ LLMS_DATA = [
     {
         "id": llm_id_map["claude-sonnet-4-0"],
         "name": "Claude Sonnet 4.0",
-        "description": "Anthropic's Claude Sonnet 4.0 model - powerful reasoning and analysis.",
+        "description": "Anthropic's Claude Sonnet 4.0 model.",
         "provider": "Anthropic",
         "model_key": "claude-sonnet-4-0",
+        "max_tokens": 200000,
+    },
+    {
+        "id": llm_id_map["claude-sonnet-4-5"],
+        "name": "Claude Sonnet 4.5",
+        "description": "Anthropic's Claude Sonnet 4.5 model.",
+        "provider": "Anthropic",
+        "model_key": "claude-sonnet-4-5",
         "max_tokens": 200000,
     },
 ]

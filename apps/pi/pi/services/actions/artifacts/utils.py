@@ -573,9 +573,9 @@ async def prepare_edited_artifact_data(entity_type: str, artifact_data: dict) ->
     edited_preparation_functions = {
         "workitem": prepare_edited_workitem_artifact_data,
         "epic": prepare_edited_workitem_artifact_data,
+        "cycle": prepare_edited_cycle_artifact_data,
         # TODO: Add other entity types later
         # "project": prepare_edited_project_artifact_data,
-        # "cycle": prepare_edited_cycle_artifact_data,
         # "module": prepare_edited_module_artifact_data,
         # "comment": prepare_edited_comment_artifact_data,
         # "state": prepare_edited_state_artifact_data,
@@ -586,6 +586,62 @@ async def prepare_edited_artifact_data(entity_type: str, artifact_data: dict) ->
     prepared_data = await preparation_function(artifact_data)
 
     return prepared_data
+
+
+async def prepare_edited_cycle_artifact_data(artifact_data: dict) -> dict:
+    """Prepare edited cycle artifact data for execution."""
+    clean_data: dict = {}
+    properties: dict[str, Any] = {}
+
+    # Essential top-level fields for cycles (from CYCLE_FIELDS schema)
+    # Note: start_date and end_date should be at top level for tool execution
+    essential_fields = {"name", "description", "project", "project_id", "start_date", "end_date"}
+
+    # Extract and preserve entity_info first (for executed artifacts)
+    entity_info = None
+    if isinstance(artifact_data, dict) and "entity_info" in artifact_data:
+        entity_info = artifact_data.get("entity_info")
+        log.info(f"Found entity_info in edited cycle artifact data: {entity_info}")
+
+    for key, value in artifact_data.items():
+        # Skip null/empty values
+        if value is None or (isinstance(value, list) and not value):
+            continue
+
+        if key in essential_fields:
+            # For dates, ensure they're strings (not objects)
+            if key in ["start_date", "end_date"] and isinstance(value, dict):
+                # Extract the date string from object format {"name": "2025-11-11"}
+                clean_data[key] = str(value.get("name", value))
+            else:
+                clean_data[key] = value
+        elif key == "owned_by" and value:
+            # Handle owned_by field (user who owns the cycle)
+            if isinstance(value, dict):
+                properties["owned_by"] = value
+            else:
+                # If it's just an ID, keep it as string
+                properties["owned_by"] = str(value)
+        elif key not in {"entity_info"}:  # Skip entity_info
+            properties[key] = value
+
+    # Convert project object to project_id string (frontend sends project as object)
+    if "project" in clean_data and isinstance(clean_data["project"], dict):
+        project_obj = clean_data.pop("project")
+        if "id" in project_obj:
+            clean_data["project_id"] = str(project_obj["id"])
+            log.info(f"Converted project object to project_id: {clean_data["project_id"]}")
+
+    # Add properties if any
+    if properties:
+        clean_data["properties"] = properties
+
+    # Restore entity_info if it was present
+    if entity_info:
+        clean_data["entity_info"] = entity_info
+        log.info(f"Restored entity_info to clean cycle data: {entity_info}")
+
+    return clean_data
 
 
 async def prepare_edited_workitem_artifact_data(artifact_data: dict) -> dict:

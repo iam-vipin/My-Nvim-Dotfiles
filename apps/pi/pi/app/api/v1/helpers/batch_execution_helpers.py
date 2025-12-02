@@ -226,15 +226,6 @@ async def prepare_execution_data(request: ActionBatchExecutionRequest, user_id: 
                         # No project_id found in original artifact - this might be okay for some entities
                         log.warning(f"No project_id found in original artifact {artifact_item.artifact_id} (entity: {entity_type})")
 
-                # Resolve project_id to full project object for UI display
-                try:
-                    from pi.services.actions.artifacts.utils import resolve_project_id_to_object
-
-                    tool_args = await resolve_project_id_to_object(tool_args)
-                    log.info(f"Resolved project data for artifact {artifact_item.artifact_id}")
-                except Exception as e:
-                    log.error(f"Error resolving project_id for artifact {artifact_item.artifact_id}: {e}")
-
                 # Create ActionArtifactVersion and use its UUID as step_id
                 try:
                     from pi.services.actions.artifacts.utils import convert_uuids_to_strings

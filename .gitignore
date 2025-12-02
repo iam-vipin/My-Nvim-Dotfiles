@@ -117,3 +117,9 @@ build/
 .react-router/
 
 temp/
+
+# Ignore any test results JSON files
+*test_results*.json
+apps/pi/tests/test_results.json
+
+scripts/

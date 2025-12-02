@@ -186,7 +186,9 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
           zIndex: 100,
         }}
       >
-        {isLoading ? (
+        {!query ? (
+          <div className="text-center text-sm text-custom-text-400">Start typing to see suggestions</div>
+        ) : isLoading ? (
           <div className="text-center text-sm text-custom-text-400">Loading...</div>
         ) : sectionKeys.length > 0 ? (
           sectionKeys.map((type, index) => (
@@ -200,7 +202,7 @@ export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMenti
             />
           ))
         ) : (
-          <div className="text-center text-sm text-custom-text-400">No results</div>
+          <div className="text-center text-sm text-custom-text-400">{"No results"}</div>
         )}
       </div>
     </>

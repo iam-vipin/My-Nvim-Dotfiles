@@ -107,6 +107,8 @@ def create_intake_issue(deploy_board, message, intake):
 
 
 def update_assets(issue_id, attachment_ids):
+    if not attachment_ids:
+        return
     # Update the issue_id and is_uploaded status for the file assets
     FileAsset.objects.filter(pk__in=attachment_ids).update(issue_id=issue_id, is_uploaded=True)
 

@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash-es";
-import type { IModule, TIssue, TIssuePriorities, TPage } from "@plane/types";
+import type { ICycle, IModule, TIssue, TIssuePriorities, TPage } from "@plane/types";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 
@@ -81,10 +81,29 @@ export const useTemplateData = (artifactId: string): TArtifact | undefined => {
   return getArtifact(artifactId);
 };
 
+export const useCycleData = (artifactId: string): Partial<ICycle> => {
+  const {
+    artifactsStore: { getArtifact, getArtifactByVersion },
+  } = usePiChat();
+
+  const originalData = getArtifact(artifactId);
+  const updatedData = getArtifactByVersion(artifactId, "updated");
+  const parameters = originalData?.parameters;
+  return !isEmpty(updatedData as Partial<ICycle>)
+    ? (updatedData as Partial<ICycle>)
+    : {
+        name: parameters?.name,
+        description: parameters?.description || "",
+        start_date: parameters?.properties?.start_date?.name || null,
+        end_date: parameters?.properties?.end_date?.name || null,
+      };
+};
+
 export const useArtifactData = (artifactId: string, artifactType?: string): TUpdatedArtifact => {
   const issueData = useWorkItemData(artifactId);
   const templateData = useTemplateData(artifactId);
   const pageData = usePageData(artifactId);
+  const cycleData = useCycleData(artifactId);
   const moduleData = useModuleData(artifactId);
   switch (artifactType) {
     case "workitem":
@@ -93,6 +112,8 @@ export const useArtifactData = (artifactId: string, artifactType?: string): TUpd
       return pageData;
     case "epic":
       return issueData;
+    case "cycle":
+      return cycleData;
     case "module":
       return moduleData;
     default:

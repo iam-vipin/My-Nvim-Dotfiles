@@ -76,7 +76,6 @@ from .intake import (
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
 from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
-from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
 

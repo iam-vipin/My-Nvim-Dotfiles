@@ -1553,7 +1553,7 @@ export default {
           },
           code: {
             label: "Benzersiz kod",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Doğrulama kodu yeni e-postanıza gönderildi.",
             errors: {
               required: "Benzersiz kod zorunludur",

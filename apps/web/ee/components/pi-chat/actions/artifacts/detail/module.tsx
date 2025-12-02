@@ -21,10 +21,10 @@ export const ModuleDetail = observer((props: TModuleDetailProps) => {
   // hooks
   const { isMobile } = usePlatformOS();
   const updatedData = useModuleData(data.artifact_id);
-    // state
-    const [isSaving, setIsSaving] = useState(false);
-    const [showSavedToast, setShowSavedToast] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  // state
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // derived values
   const projectId = data.parameters?.project?.id;
   // handlers
@@ -51,30 +51,31 @@ export const ModuleDetail = observer((props: TModuleDetailProps) => {
   };
   return (
     <>
-    <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
-      <ModuleForm
-        onChange={onChange}
-        status
-        projectId={projectId ?? ""}
-        setActiveProject={() => {}}
-        data={updatedData}
-        isMobile={isMobile}
-        showActionButtons={false}
+      <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
+        <ModuleForm
+          onChange={onChange}
+          status
+          projectId={projectId ?? ""}
+          setActiveProject={() => {}}
+          data={updatedData}
+          isMobile={isMobile}
+          showActionButtons={false}
+        />
+        <div
+          className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
+            hidden: data.is_editable,
+          })}
+        />
+      </Card>
+      <PiChatArtifactsFooter
+        artifactsData={data}
+        workspaceSlug={workspaceSlug}
+        activeChatId={activeChatId}
+        artifactId={data.artifact_id}
+        isSaving={isSaving}
+        showSavedToast={showSavedToast}
+        error={error}
       />
-      <div
-        className={cn("absolute top-0 right-0 w-full h-full bg-custom-background-100 rounded-xl opacity-50", {
-          hidden: data.is_editable,
-        })}
-      />
-    </Card>
-    <PiChatArtifactsFooter
-    artifactsData={data}
-    workspaceSlug={workspaceSlug}
-    activeChatId={activeChatId}
-    artifactId={data.artifact_id}
-    isSaving={isSaving}
-    showSavedToast={showSavedToast}
-    error={error}
-  /></>
+    </>
   );
 });

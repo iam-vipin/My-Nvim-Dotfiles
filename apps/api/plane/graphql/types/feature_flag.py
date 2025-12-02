@@ -72,6 +72,9 @@ class FeatureFlagsTypesEnum(Enum):
     EDITOR_MATHEMATICS = "EDITOR_MATHEMATICS"
     EDITOR_EXTERNAL_EMBEDS = "EDITOR_EXTERNAL_EMBEDS"
     PAGE_COMMENTS = "PAGE_COMMENTS"
+    EDITOR_ADVANCED_MENTIONS = "EDITOR_ADVANCED_MENTIONS"
+    EDITOR_COPY_BLOCK_LINK = "EDITOR_COPY_BLOCK_LINK"
+    EDITOR_VIDEO_ATTACHMENTS = "EDITOR_VIDEO_ATTACHMENTS"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -178,6 +181,9 @@ class FeatureFlagType:
     editor_mathematics: bool
     editor_external_embeds: bool
     page_comments: bool
+    editor_advanced_mentions: bool
+    editor_copy_block_link: bool
+    editor_video_attachments: bool
 
     # Silo importers and integrations
     silo: bool

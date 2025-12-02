@@ -140,6 +140,7 @@ from .queries.issues import (
     SubIssuesQuery,
     WorkItemCommentReactionQuery,
 )
+from .queries.workitem import WorkspaceWorkItemMentionQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.module import (
     ModuleIssueQuery,
@@ -153,10 +154,12 @@ from .queries.page import (
     NestedParentPagesQuery,
     PageQuery,
     ProjectPageCommentsQuery,
+    ProjectPageMentionQuery,
     UserPageQuery,
     WorkspaceNestedChildPagesQuery,
     WorkspaceNestedParentPagesQuery,
     WorkspacePageCommentsQuery,
+    WorkspacePageMentionQuery,
     WorkspacePageQuery,
 )
 from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
@@ -247,6 +250,7 @@ class Query(
     IssuesSearchQuery,
     WorkItemCommentReactionQuery,
     IssueStatsQuery,
+    WorkspaceWorkItemMentionQuery,
     # workitem type
     IssueTypesTypeQuery,
     # label
@@ -278,6 +282,8 @@ class Query(
     NestedChildPagesQuery,
     ProjectPageCommentsQuery,
     WorkspacePageCommentsQuery,
+    ProjectPageMentionQuery,
+    WorkspacePageMentionQuery,
     # epics
     EpicUserPropertyQuery,
     EpicCountQuery,

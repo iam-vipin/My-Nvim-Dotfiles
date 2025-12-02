@@ -13,7 +13,7 @@ from strawberry.types import Info
 
 # Module imports
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
-from plane.db.models import Issue, State, IntakeIssue
+from plane.db.models import Issue, State, IntakeIssue, StateGroup
 from plane.graphql.helpers import (
     get_intake_work_item_async,
     get_project,
@@ -98,7 +98,7 @@ def handle_intake_work_item_status_accept(workspace_slug: str, project_id: str, 
         id=work_item_id,
     )
 
-    if work_item.state.is_triage:
+    if work_item.state.group == StateGroup.TRIAGE.value:
         state = State.objects.filter(workspace__slug=workspace_slug, project_id=project_id, default=True).first()
 
         if state is not None:
@@ -114,22 +114,6 @@ def handle_intake_work_item_status_decline(workspace_slug: str, project_id: str,
     intake_work_item.snoozed_till = None
     intake_work_item.duplicate_to = None
     intake_work_item.save()
-
-    work_item_id = intake_work_item.issue_id
-    work_item = Issue.objects.get(
-        workspace__slug=workspace_slug,
-        project_id=project_id,
-        id=work_item_id,
-    )
-    state = State.objects.filter(
-        workspace__slug=workspace_slug,
-        project_id=project_id,
-        group="cancelled",
-    ).first()
-
-    if state is not None and work_item is not None:
-        work_item.state = state
-        work_item.save()
 
     return intake_work_item
 
@@ -154,22 +138,6 @@ def handle_intake_work_item_status_duplicate(
         intake_work_item.duplicate_to_id = intake_work_item_status_input.duplicate_to
         intake_work_item.snoozed_till = None
         intake_work_item.save()
-
-        work_item_id = intake_work_item.issue_id
-        work_item = Issue.objects.get(
-            workspace__slug=workspace_slug,
-            project_id=project_id,
-            id=work_item_id,
-        )
-        state = State.objects.filter(
-            workspace__slug=workspace_slug,
-            project_id=project_id,
-            group="cancelled",
-        ).first()
-
-        if state is not None and work_item is not None:
-            work_item.state = state
-            work_item.save()
 
         return intake_work_item
     except Exception as e:

@@ -7,7 +7,7 @@ import strawberry
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Subquery
 from django.utils import timezone
 
 # Strawberry Imports
@@ -20,6 +20,7 @@ from plane.db.models import (
     Issue,
     IssueAssignee,
     IssueSubscriber,
+    IntakeIssue,
     Notification,
     Workspace,
     WorkspaceMember,
@@ -220,6 +221,31 @@ class NotificationQuery:
 
         q = q_filters & type_q_filters
         notification_queryset = notification_queryset.filter(q)
+
+        intake_issue_subquery = IntakeIssue.objects.filter(
+            issue_id=OuterRef("entity_identifier"),
+            issue__workspace__slug=slug,
+            status__in=[0, 2, -2],
+        ).values("id")[:1]
+
+        epic_issue_subquery = Issue.objects.filter(
+            pk=OuterRef("entity_identifier"),
+            workspace__slug=slug,
+            type__isnull=False,
+            type__is_epic=True,
+        ).values("pk")[:1]
+
+        notification_queryset = notification_queryset.annotate(
+            is_intake_issue=Exists(intake_issue_subquery),
+            is_epic_issue=Exists(epic_issue_subquery),
+            intake_id=Subquery(
+                IntakeIssue.objects.filter(
+                    issue_id=OuterRef("entity_identifier"),
+                    issue__workspace__slug=slug,
+                    status__in=[0, 2, -2],
+                ).values("id")[:1]
+            ),
+        )
 
         notification_count_queryset = copy.deepcopy(notification_queryset)
         notification_queryset = (

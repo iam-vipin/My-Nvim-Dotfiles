@@ -100,6 +100,9 @@ class FeatureFlagQuery:
             editor_mathematics=feature_flags.get(FeatureFlagsTypesEnum.EDITOR_MATHEMATICS.value, False),
             editor_external_embeds=feature_flags.get(FeatureFlagsTypesEnum.EDITOR_EXTERNAL_EMBEDS.value, False),
             page_comments=feature_flags.get(FeatureFlagsTypesEnum.PAGE_COMMENTS.value, False),
+            editor_advanced_mentions=feature_flags.get(FeatureFlagsTypesEnum.EDITOR_ADVANCED_MENTIONS.value, False),
+            editor_copy_block_link=feature_flags.get(FeatureFlagsTypesEnum.EDITOR_COPY_BLOCK_LINK.value, False),
+            editor_video_attachments=feature_flags.get(FeatureFlagsTypesEnum.EDITOR_VIDEO_ATTACHMENTS.value, False),
             # Silo importers and integrations
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(FeatureFlagsTypesEnum.SILO_IMPORTERS.value, False),

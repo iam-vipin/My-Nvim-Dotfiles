@@ -87,6 +87,8 @@ export type TArtifact = {
   is_editable: boolean;
   is_executed: boolean;
   success: boolean;
+  error?: string;
+  message?: string;
   artifact_type: string;
   entity_id?: string;
   entity_url?: string;
@@ -120,6 +122,15 @@ export type TArtifact = {
   success?: boolean;
 };
 
+export type TArtifactWithEntity = TArtifact & {
+  entity?: {
+    entity_id: string;
+    entity_url: string;
+    issue_identifier: string;
+    entity_name: string;
+  };
+};
+
 export type TDialogue = {
   query_id?: string;
   answer_id?: string;
@@ -130,7 +141,7 @@ export type TDialogue = {
   reasoning?: string;
   isPiThinking: boolean;
   execution_status?: EExecutionStatus;
-  actions?: TArtifact[];
+  actions?: TArtifactWithEntity[];
   action_summary?: {
     completed: number;
     duration_seconds: number;
@@ -138,6 +149,7 @@ export type TDialogue = {
     total_planned: number;
   };
   attachment_ids?: string[];
+  action_error?: string;
 };
 
 export type TChatHistory = {
@@ -167,9 +179,7 @@ export type TAction = {
 export type TExecuteActionResponse = {
   status: string;
   message: string;
-  actions: Array<
-    TArtifact & { entity?: { entity_id: string; entity_url: string; issue_identifier: string; entity_name: string } }
-  >;
+  actions: TArtifactWithEntity[];
   action_summary?: {
     completed: number;
     duration_seconds: number;

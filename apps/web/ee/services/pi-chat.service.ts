@@ -282,7 +282,11 @@ export class PiChatService extends APIService {
     return this.post(`/api/v1/chat/execute-action/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw (
+          error?.response?.data ?? {
+            error: error?.message ?? "Unable to execute action",
+          }
+        );
       });
   }
 

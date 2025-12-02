@@ -325,7 +325,23 @@ async def extract_execution_status_from_flow_steps(
         if is_executed and is_successful:
             action_data["message"] = "Action completed successfully"
         elif is_executed and not is_successful:
-            action_data["error"] = "Action failed"
+            # Prefer the detailed execution_error from the flow step, then fall back to execution_result
+            error_message = None
+            try:
+                if getattr(step, "execution_error", None):
+                    error_message = str(step.execution_error)
+                elif step.execution_data and isinstance(step.execution_data, dict):
+                    exec_result = step.execution_data.get("execution_result")
+                    if exec_result:
+                        error_message = str(exec_result)
+            except Exception:
+                error_message = None
+
+            # Truncate very long errors to keep the response compact
+            if error_message:
+                action_data["error"] = f"{error_message[:200]}..." if len(error_message) > 200 else error_message
+            else:
+                action_data["error"] = None
 
         actions.append(action_data)
 

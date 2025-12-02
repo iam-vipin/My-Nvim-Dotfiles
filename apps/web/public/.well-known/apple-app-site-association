@@ -41,6 +41,12 @@
             "/": "/*/projects/*/pages/*"
           },
           {
+            "/": "/*/projects/*/intake"
+          },
+          {
+            "/": "/*/projects/*/intake/*"
+          },
+          {
             "/": "/*/wiki/*"
           },
           {
@@ -91,6 +97,12 @@
             "/": "/*/projects/*/pages/*"
           },
           {
+            "/": "/*/projects/*/intake"
+          },
+          {
+            "/": "/*/projects/*/intake/*"
+          },
+          {
             "/": "/*/wiki/*"
           },
           {
@@ -139,6 +151,12 @@
           },
           {
             "/": "/*/projects/*/pages/*"
+          },
+          {
+            "/": "/*/projects/*/intake"
+          },
+          {
+            "/": "/*/projects/*/intake/*"
           },
           {
             "/": "/*/wiki/*"

@@ -76,7 +76,7 @@ export const TopNavigationRoot = observer(() => {
         {isAdvancedSearchEnabled && isOpenSearch ? <TopNavSearch /> : <TopNavPowerK />}
       </div>
       {/* Additional Actions */}
-      <div className="desktop-header-actions shrink-0 flex-1 flex items-center justify-end">
+      <div className="desktop-header-actions shrink-0 flex-1 flex items-center gap-1 justify-end">
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"
@@ -84,7 +84,7 @@ export const TopNavigationRoot = observer(() => {
               href: `/${workspaceSlug?.toString()}/notifications/`,
               icon: (
                 <div className="relative">
-                  <InboxIcon className="size-4" />
+                  <InboxIcon className="size-5" />
                   {totalNotifications > 0 && (
                     <span className="absolute -top-0 -right-0 size-2 rounded-full bg-red-500" />
                   )}
@@ -100,17 +100,17 @@ export const TopNavigationRoot = observer(() => {
             <Tooltip tooltipContent="Ask AI" position="bottom">
               <button
                 className={cn(
-                  "flex items-center gap-1.5 transition-colors py-2 px-1 rounded-md  hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 place-items-center w-full",
+                  "flex items-center gap-1.5 transition-colors h-8 py-1.5 px-1 rounded-md  hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 place-items-center w-full",
                   {
                     "bg-custom-primary-100/10 !text-custom-primary-200": isPiChatDrawerOpen,
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}
               >
-                <span className="shrink-0 size-4 grid place-items-center">
-                  {isPiChatDrawerOpen ? <CloseIcon className="size-4" /> : <PiIcon className="size-4" />}
+                <span className="shrink-0 size-5 grid place-items-center">
+                  {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}
                 </span>
-                <span className="text-xs leading-normal font-medium">AI assistant</span>
+                <span className="text-sm leading-normal font-medium pr-1">AI assistant</span>
               </button>
             </Tooltip>
           </div>

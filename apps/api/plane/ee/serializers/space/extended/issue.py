@@ -2,12 +2,13 @@
 from django.db import IntegrityError
 
 # Module imports
-from plane.ee.serializers import BaseSerializer
 from plane.db.models import (
     Issue,
     IssueAssignee,
     IssueLabel,
     IssueType,
+    State,
+    StateGroup,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -35,8 +36,22 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
             ).first()
             issue_type = issue_type
 
+        triage_state = State.triage_objects.filter(
+            project_id=project_id, workspace_id=workspace_id
+        ).first()
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                color="#4E5355",
+                sequence=65000,
+                default=False,
+            )
+
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type, state=triage_state)
         issue.save()
 
         # Issue Audit Users

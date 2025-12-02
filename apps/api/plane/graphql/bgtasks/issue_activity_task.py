@@ -1801,7 +1801,7 @@ def issue_activity(
 
         if notification:
             process_workitem_notifications.delay(
-                type=type,
+                notification_type=type,
                 issue_id=issue_id,
                 actor_id=actor_id,
                 project_id=project_id,

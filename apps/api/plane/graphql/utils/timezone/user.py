@@ -1,25 +1,15 @@
 # Python imports
-import pytz
-from datetime import datetime, date
+from datetime import date, datetime
 
 # Third-party imports
-from asgiref.sync import sync_to_async
-from django.core.exceptions import ObjectDoesNotExist
-
-# Module imports
-from plane.db.models import User
+import pytz
 
 
 async def user_timezone_converter(user, input_date=None):
     if user is None or input_date is None:
         return None
 
-    try:
-        current_user = await sync_to_async(User.objects.get)(id=user.id)
-    except ObjectDoesNotExist:
-        return input_date
-
-    user_timezone = current_user.user_timezone
+    user_timezone = user.user_timezone or None
     if not user_timezone:
         return input_date
 

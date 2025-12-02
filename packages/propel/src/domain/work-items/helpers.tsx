@@ -1,4 +1,4 @@
-import type {FC} from "react";
+import type { FC } from "react";
 import { AudioFileIcon, CodeFileIcon, DocumentFileIcon, ImageFileIcon, VideoFileIcon } from "../../icons/attachments";
 
 const extensionToIconMap: Record<string, FC<{ className?: string }>> = {

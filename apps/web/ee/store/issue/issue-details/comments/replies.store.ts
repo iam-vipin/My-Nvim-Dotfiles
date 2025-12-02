@@ -25,6 +25,13 @@ export interface IRepliesStore {
     commentId: string,
     data: Partial<TIssueComment>
   ) => Promise<TIssueComment>;
+  updateReply: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    replyId: string,
+    data: Partial<TIssueComment>
+  ) => Promise<TIssueComment>;
   deleteReply: (workspaceSlug: string, projectId: string, issueId: string, replyId: string) => Promise<void>;
 }
 
@@ -42,10 +49,10 @@ export class RepliesStore implements IRepliesStore {
     makeObservable(this, {
       // observables
       repliesMap: observable,
-
       // actions
       fetchReplies: action,
       createReply: action,
+      updateReply: action,
       deleteReply: action,
     });
 
@@ -59,10 +66,17 @@ export class RepliesStore implements IRepliesStore {
     const commentMap = this.repliesMap.get(commentId);
     if (!commentMap) return undefined;
 
-    return Array.from(commentMap.keys());
+    // order ids by created_at
+    const orderedIds = Array.from(commentMap.keys()).sort((a, b) => {
+      const aCreatedAt = commentMap.get(a)?.created_at;
+      const bCreatedAt = commentMap.get(b)?.created_at;
+      if (!aCreatedAt || !bCreatedAt) return 0;
+      return new Date(aCreatedAt).getTime() - new Date(bCreatedAt).getTime();
+    });
+
+    return orderedIds;
   });
 
-  // actions
   fetchReplies = async (
     workspaceSlug: string,
     projectId: string,
@@ -151,6 +165,7 @@ export class RepliesStore implements IRepliesStore {
 
     const oldValues = instance.asJSON;
 
+    // Optimistic update with the data being sent
     runInAction(() => {
       instance.update(data);
     });
@@ -163,6 +178,13 @@ export class RepliesStore implements IRepliesStore {
         replyId,
         data
       );
+
+      runInAction(() => {
+        instance.update({
+          updated_at: updatedReply.updated_at,
+          edited_at: updatedReply.edited_at,
+        });
+      });
 
       return updatedReply;
     } catch (error) {

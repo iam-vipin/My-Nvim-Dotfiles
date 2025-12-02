@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -30,11 +30,25 @@ export const ReplyCard = observer(function ReplyCard(props: Props) {
   // derived values
   const reply = getReply();
 
+  // Create wrapper operations that route updateComment to updateReply for replies
+  const replyActivityOperations: TCommentsOperations = useMemo(
+    () => ({
+      ...activityOperations,
+      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
+        // Route to reply update operation
+        if (activityOperations.replyOperations?.updateReply) {
+          await activityOperations.replyOperations.updateReply(commentId, data);
+        }
+      },
+    }),
+    [activityOperations]
+  );
+
   if (!reply) return null;
 
   return (
     <CommentCardDisplay
-      activityOperations={activityOperations}
+      activityOperations={replyActivityOperations}
       entityId={entityId}
       comment={reply}
       disabled={false}

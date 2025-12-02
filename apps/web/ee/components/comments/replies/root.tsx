@@ -1,4 +1,4 @@
-import { useEffect, useState, useImperativeHandle, forwardRef, useRef } from "react";
+import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import { uniq } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
@@ -46,29 +46,17 @@ export const CommentRepliesRoot = observer(
     } = props;
     // states
     const [isExpanded, setIsExpanded] = useState(false);
-    // refs
-    const previousRepliesCountRef = useRef(repliesCount);
     // store hooks
     const { getUserDetails } = useMember();
     // Expose method to show editor - expands and shows editor
     useImperativeHandle(ref, () => ({
       showReplyEditor: () => {
-        setIsExpanded(true);
+        if (!isExpanded) {
+          setIsExpanded(true);
+        }
+        editorRef.current?.focus("end");
       },
     }));
-    // Auto-expand only when a new reply is added (repliesCount increases)
-    useEffect(() => {
-      const previousCount = previousRepliesCountRef.current;
-      const currentCount = repliesCount;
-
-      // Only auto-expand if replies count increased (new reply added) and not already expanded
-      if (currentCount > previousCount && currentCount > 0 && !isExpanded) {
-        setIsExpanded(true);
-      }
-
-      // Update ref for next render
-      previousRepliesCountRef.current = currentCount;
-    }, [repliesCount, isExpanded]);
     // Fetch replies when expanded and has replies
     useEffect(() => {
       if (isExpanded && repliesCount > 0) {
@@ -79,53 +67,63 @@ export const CommentRepliesRoot = observer(
     }, [isExpanded, repliesCount, commentId, activityOperations.replyOperations]);
 
     return (
-      <div className="flex flex-col gap-2">
-        {repliesCount > 0 && !isExpanded && (
-          <Button
-            variant="link-neutral"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 text-xs text-custom-text-300 hover:text-custom-text-200 w-fit px-0 z-[1] ml-2 pl-3 relative"
-          >
-            {repliedUserIds.length > 0 && (
-              <AvatarGroup size="sm" max={2} showTooltip={false}>
-                {uniq(repliedUserIds).map((userId) => {
-                  const userDetails = getUserDetails(userId);
-                  if (!userDetails) return null;
-                  return (
-                    <Avatar
-                      key={userId}
-                      name={userDetails.display_name}
-                      src={userDetails.avatar_url ? getFileURL(userDetails.avatar_url) : undefined}
-                    />
-                  );
-                })}
-              </AvatarGroup>
+      <div className="flex flex-col">
+        {repliesCount > 0 && (
+          <>
+            {!isExpanded && (
+              <Button
+                variant="link-neutral"
+                size="sm"
+                onClick={() => setIsExpanded(true)}
+                className="flex items-center gap-2 text-xs text-custom-text-300 hover:text-custom-text-200 w-fit px-0 ml-2 pl-3 relative"
+              >
+                {repliedUserIds.length > 0 && (
+                  <AvatarGroup size="sm" max={2} showTooltip={false}>
+                    {uniq(repliedUserIds).map((userId) => {
+                      const userDetails = getUserDetails(userId);
+                      if (!userDetails) return null;
+                      return (
+                        <Avatar
+                          key={userId}
+                          name={userDetails.display_name}
+                          src={userDetails.avatar_url ? getFileURL(userDetails.avatar_url) : undefined}
+                        />
+                      );
+                    })}
+                  </AvatarGroup>
+                )}
+                <span>
+                  {repliesCount} {repliesCount === 1 ? "reply" : "replies"}
+                </span>
+                <div className="size-1 rounded-full bg-custom-background-80" />
+                {lastReplyAt && (
+                  <div className="flex gap-1">
+                    <span className="text-custom-text-400">Last reply</span>
+                    <span className="text-custom-text-400">{calculateTimeAgo(lastReplyAt)}</span>
+                  </div>
+                )}
+                <div className="absolute left-0 top-0 h-4 w-2 border-l border-b rounded-bl-full border-custom-background-80" />
+              </Button>
             )}
-            <span>
-              {repliesCount} {repliesCount === 1 ? "reply" : "replies"}
-            </span>
-            <div className="size-1 rounded-full bg-custom-background-80" />
-            {lastReplyAt && (
-              <>
-                <span className="text-custom-text-400">Last reply</span>
-                <span className="text-custom-text-400">{calculateTimeAgo(lastReplyAt)}</span>
-              </>
-            )}
-            <div className="absolute left-0 top-0 h-4 w-2 border-l border-b rounded-bl-full border-custom-background-80" />
-          </Button>
-        )}
-
-        {isExpanded && repliesCount > 0 && (
-          <RepliesList
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            entityId={entityId}
-            commentId={commentId}
-            activityOperations={activityOperations}
-            showAccessSpecifier={showAccessSpecifier}
-            setIsExpanded={setIsExpanded}
-          />
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows] duration-200 ease-out",
+                isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+              )}
+            >
+              <div className="overflow-hidden">
+                <RepliesList
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  entityId={entityId}
+                  commentId={commentId}
+                  activityOperations={activityOperations}
+                  showAccessSpecifier={showAccessSpecifier}
+                  setIsExpanded={setIsExpanded}
+                />
+              </div>
+            </div>
+          </>
         )}
         {
           <div

@@ -16,20 +16,10 @@ type TCommentCard = {
   setEditMode: () => void;
   showAccessSpecifier: boolean;
   showCopyLinkOption: boolean;
-  showReplyOption: boolean;
-  handleReply?: () => void;
 };
 
 export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
-  const {
-    activityOperations,
-    comment,
-    setEditMode,
-    showAccessSpecifier,
-    showCopyLinkOption,
-    showReplyOption,
-    handleReply,
-  } = props;
+  const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();
   // derived values
@@ -54,9 +44,9 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
             : EIssueCommentAccessSpecifier.INTERNAL,
       }),
     handleDelete: () => activityOperations.removeComment(comment.id),
-    handleReply,
-    showReplyOption,
   });
+
+  if(MENU_ITEMS.length === 0) return null;
 
   return (
     <CustomMenu ellipsis closeOnSelect>

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
@@ -26,6 +27,7 @@ export type TCommentCardDisplayProps = {
   workspaceSlug: string;
   isEditing?: boolean;
   setIsEditing?: (isEditing: boolean) => void;
+  renderFooter?: (ReactionsComponent: ReactNode) => ReactNode;
 };
 
 export const CommentCardDisplay = observer(function CommentCardDisplay(props: TCommentCardDisplayProps) {
@@ -40,6 +42,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     workspaceSlug,
     isEditing = false,
     setIsEditing,
+    renderFooter,
   } = props;
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
@@ -99,11 +102,17 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
             displayConfig={{
               fontSize: "small-font",
             }}
-            parentClassName="border-none"
+            parentClassName="border-none pl-1"
           />
-          <div className="pl-2">
-            <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
-          </div>
+          {renderFooter ? (
+            renderFooter(
+              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+            )
+          ) : (
+            <div className="pl-2">
+              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+            </div>
+          )}
         </>
       )}
     </div>

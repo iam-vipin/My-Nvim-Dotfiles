@@ -112,6 +112,7 @@ export const ReplyCreate = observer(function ReplyCreate(props: Props) {
                   }
                 }}
                 ref={editorRef}
+                value={null}
                 initialValue={value ?? "<p></p>"}
                 containerClassName="min-h-min"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
@@ -130,7 +131,7 @@ export const ReplyCreate = observer(function ReplyCreate(props: Props) {
                   return asset_id;
                 }}
                 showToolbarInitially={false}
-                parentClassName="p-2"
+                parentClassName="p-2 bg-custom-background-100"
                 placeholder={t("issue.comments.replies.create.placeholder")}
                 displayConfig={{
                   fontSize: "small-font",

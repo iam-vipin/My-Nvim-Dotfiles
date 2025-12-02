@@ -71,7 +71,7 @@ export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) 
     <div
       className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`} ${!worklog?.description && "items-center"}`}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-custom-background-80" aria-hidden />
       <div className="flex-shrink-0 relative w-7 h-7 rounded-full flex justify-center items-center z-10 bg-gray-500 text-white border border-white uppercase font-medium">
         {currentUser?.member?.avatar_url && currentUser?.member?.avatar_url !== "" ? (
           <img

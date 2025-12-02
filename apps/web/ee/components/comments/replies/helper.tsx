@@ -58,6 +58,24 @@ export const useCommentRepliesOperations = (
           return undefined;
         }
       },
+      updateReply: async (replyId, data) => {
+        try {
+          if (!workspaceSlug || !projectId || !issueId || !replyId) throw new Error("Missing fields");
+          await repliesStore.updateReply(workspaceSlug, projectId, issueId, replyId, data);
+          setToast({
+            title: t("common.success"),
+            type: TOAST_TYPE.SUCCESS,
+            message: t("issue.comments.replies.toast.update.success.message"),
+          });
+        } catch (error) {
+          console.error("Error updating reply:", error);
+          setToast({
+            title: t("common.error.label"),
+            type: TOAST_TYPE.ERROR,
+            message: t("issue.comments.replies.toast.update.error.message"),
+          });
+        }
+      },
       deleteReply: async (replyId) => {
         try {
           if (!workspaceSlug || !projectId || !issueId || !replyId) throw new Error("Missing fields");

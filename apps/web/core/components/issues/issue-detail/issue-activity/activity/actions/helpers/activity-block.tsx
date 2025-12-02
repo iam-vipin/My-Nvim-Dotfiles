@@ -56,7 +56,7 @@ export const IssueActivityBlockComponent = observer(function IssueActivityBlockC
       }`}
       ref={activityBlockRef}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-custom-background-80" aria-hidden />
       <div
         className={cn(
           "flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 transition-border duration-1000 border-2 border-transparent",

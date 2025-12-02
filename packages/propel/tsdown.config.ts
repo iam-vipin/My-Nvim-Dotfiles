@@ -26,6 +26,7 @@ export default defineConfig({
     "src/popover/index.ts",
     "src/portal/index.ts",
     "src/scrollarea/index.ts",
+    "src/separator/index.ts",
     "src/skeleton/index.ts",
     "src/switch/index.ts",
     "src/table/index.ts",

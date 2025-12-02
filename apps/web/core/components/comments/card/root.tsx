@@ -57,15 +57,13 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
         workspaceSlug={workspaceSlug}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
-        renderQuickActions={(handleReply) => (
+        renderQuickActions={() => (
           <CommentQuickActions
             activityOperations={activityOperations}
             comment={comment}
             setEditMode={() => setIsEditing(true)}
             showAccessSpecifier={showAccessSpecifier}
             showCopyLinkOption={showCopyLinkOption}
-            showReplyOption={enableReplies}
-            handleReply={handleReply}
           />
         )}
         enableReplies={enableReplies}

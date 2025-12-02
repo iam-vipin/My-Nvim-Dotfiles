@@ -47,6 +47,7 @@
     "./popover": "./dist/popover/index.js",
     "./portal": "./dist/portal/index.js",
     "./scrollarea": "./dist/scrollarea/index.js",
+    "./separator": "./dist/separator/index.js",
     "./skeleton": "./dist/skeleton/index.js",
     "./switch": "./dist/switch/index.js",
     "./tab-navigation": "./dist/tab-navigation/index.js",

@@ -60,6 +60,7 @@ class ProjectIntakeExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="intake",
         )
 
         # Return the response

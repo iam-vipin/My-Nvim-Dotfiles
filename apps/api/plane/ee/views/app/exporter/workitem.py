@@ -12,13 +12,12 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ProjectWorkItemExportEndpoint(BaseAPIView):
-
     """
     Export workitems from a project workitem endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, project_id):
         # Get the provider
@@ -56,6 +55,7 @@ class ProjectWorkItemExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="issue",
         )
 
         # Return the response

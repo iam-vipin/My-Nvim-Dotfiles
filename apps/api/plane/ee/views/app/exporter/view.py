@@ -57,6 +57,7 @@ class ProjectViewExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="issue",
         )
 
         # Return the response
@@ -110,6 +111,7 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="issue",
         )
 
         # Return the response

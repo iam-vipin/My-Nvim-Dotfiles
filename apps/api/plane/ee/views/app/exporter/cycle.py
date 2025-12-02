@@ -10,17 +10,16 @@ from plane.bgtasks.export_task import issue_export_task
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
-class ProjectCycleExportEndpoint(BaseAPIView):
 
+class ProjectCycleExportEndpoint(BaseAPIView):
     """
     Export cycle from a project cycle endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, project_id, cycle_id):
-
         # Get the provider
         provider = request.data.get("provider", False)
 
@@ -59,6 +58,7 @@ class ProjectCycleExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="issue",
         )
 
         # Return the response

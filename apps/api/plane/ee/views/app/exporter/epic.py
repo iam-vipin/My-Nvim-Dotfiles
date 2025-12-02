@@ -59,6 +59,7 @@ class ProjectEpicExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="epic",
         )
 
         # Return the response

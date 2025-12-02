@@ -233,19 +233,31 @@ async def validate_file_content(file_data: bytes, content_type: str, filename: s
         if content_type == "application/pdf":
             try:
                 pdf_content = file_data.decode("latin-1", errors="ignore")
-                suspicious_patterns = [
-                    "/JavaScript",
-                    "/JS",
-                    "/OpenAction",
-                    "/Launch",
-                    "/EmbeddedFile",
+
+                # Check for high-risk patterns that are almost always malicious
+                high_risk_patterns = [
+                    "/Launch",  # Can execute external programs
                     "eval(",
                     "unescape(",
                 ]
 
-                for pattern in suspicious_patterns:
+                for pattern in high_risk_patterns:
                     if pattern in pdf_content:
                         return False, f"PDF contains potentially malicious content: {pattern}"
+
+                # Check for JavaScript - only flag if combined with action triggers
+                has_javascript = "/JavaScript" in pdf_content or "/JS" in pdf_content
+                has_open_action = "/OpenAction" in pdf_content
+                has_embedded_file = "/EmbeddedFile" in pdf_content
+
+                # Flag if JavaScript is combined with auto-execution triggers
+                if has_javascript and has_open_action:
+                    return False, "PDF contains JavaScript with auto-execution (OpenAction)"
+
+                # EmbeddedFiles with JavaScript can be risky
+                if has_javascript and has_embedded_file:
+                    return False, "PDF contains JavaScript with embedded files"
+
             except Exception:
                 # If we can't decode, it might be a binary PDF which is safer
                 pass

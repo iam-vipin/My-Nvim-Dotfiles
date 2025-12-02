@@ -56,16 +56,18 @@ class ChatKit(AttachmentMixin):
 
         # Use factory to create tracked tool LLM
         from pi.services.llm.llms import LLMConfig
+        from pi.services.llm.llms import _create_anthropic_config
         from pi.services.llm.llms import create_openai_llm
 
         # Store original switch_llm value to determine if custom model was requested
-        # GPT-5 variants are handled separately, not as custom models
-        use_custom_model = switch_llm is not None and not switch_llm.startswith("gpt-5")
+        # GPT-5 variants and gpt-5.1 are handled separately, not as custom models
+        use_custom_model = switch_llm is not None and not (switch_llm.startswith("gpt-5") or switch_llm == "gpt-5.1")
 
         # Model name mapping for user-friendly names to actual LiteLLM model names
         model_name_mapping = {
             "claude-sonnet-4": settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
             "claude-sonnet-4-0": settings.llm_model.CLAUDE_SONNET_4_0,
+            "claude-sonnet-4-5": settings.llm_model.CLAUDE_SONNET_4_5,
         }
 
         if not switch_llm:
@@ -78,15 +80,10 @@ class ChatKit(AttachmentMixin):
 
             if switch_llm in model_name_mapping:
                 # This is a Claude model
-                if actual_model_name == settings.llm_model.CLAUDE_SONNET_4_0:
-                    TOOL_LLM = settings.llm_model.CLAUDE_SONNET_4_0
-                    tool_config = LLMConfig(
-                        model=TOOL_LLM,
-                        temperature=0.2,
-                        streaming=False,
-                        base_url=settings.llm_config.CLAUDE_BASE_URL,
-                        api_key=settings.llm_config.CLAUDE_API_KEY,
-                    )
+                if actual_model_name in [settings.llm_model.CLAUDE_SONNET_4_0, settings.llm_model.CLAUDE_SONNET_4_5]:
+                    # Direct Anthropic API models
+                    TOOL_LLM = actual_model_name
+                    tool_config = _create_anthropic_config(model=TOOL_LLM)
                 elif actual_model_name == settings.llm_model.LITE_LLM_CLAUDE_SONNET_4:
                     # This is a LiteLLM model
                     TOOL_LLM = settings.llm_model.LITE_LLM_CLAUDE_SONNET_4
@@ -118,6 +115,13 @@ class ChatKit(AttachmentMixin):
                     reasoning_effort="low",
                     use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
                 )
+            elif switch_llm == "gpt-5.1":
+                # This is GPT-5.1
+                TOOL_LLM = "gpt-5.1"
+                tool_config = LLMConfig(
+                    model=TOOL_LLM,
+                    streaming=False,
+                )
             else:
                 # This is a regular OpenAI model
                 TOOL_LLM = switch_llm
@@ -142,6 +146,11 @@ class ChatKit(AttachmentMixin):
                 self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_fast_stream")
                 self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_fast_default")
                 self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_fast_default")
+            elif switch_llm == "gpt-5.1":
+                self.llm = llms.LLMFactory.get_default_llm("gpt5_1_default")
+                self.stream_llm = llms.LLMFactory.get_stream_llm("gpt5_1_stream")
+                self.decomposer_llm = llms.LLMFactory.get_decomposer_llm("gpt5_1_default")
+                self.fast_llm = llms.LLMFactory.get_fast_llm(streaming=False, model_name="gpt5_1_default")
             else:
                 # Use default global instances
                 self.llm = llms.llm

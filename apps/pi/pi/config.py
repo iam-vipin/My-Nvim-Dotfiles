@@ -169,8 +169,10 @@ class LLMModels:
     LITE_LLM_CLAUDE_SONNET_4: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"
     GPT_5_STANDARD: str = "gpt-5-standard"
     GPT_5_FAST: str = "gpt-5-fast"
+    GPT_5_1: str = "gpt-5.1"
     DEFAULT: str = GPT_4_1
     CLAUDE_SONNET_4_0: str = "claude-sonnet-4-0"
+    CLAUDE_SONNET_4_5: str = "claude-sonnet-4-5"
 
 
 @dataclass
@@ -187,7 +189,9 @@ class LLMConfig:
             LLMModels.GPT_4_1,
             LLMModels.GPT_5_STANDARD,
             LLMModels.GPT_5_FAST,
+            LLMModels.GPT_5_1,
             LLMModels.CLAUDE_SONNET_4_0,
+            LLMModels.CLAUDE_SONNET_4_5,
             LLMModels.LITE_LLM_CLAUDE_SONNET_4,
         ]
     )

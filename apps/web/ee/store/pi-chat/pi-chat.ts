@@ -707,11 +707,11 @@ export class PiChatStore implements IPiChatStore {
 
   searchCallback = async (workspace: string, search: string, focus: TFocus): Promise<IFormattedValue> => {
     const filteredProjectId = focus.entityType === "project_id" ? focus.entityIdentifier : undefined;
-    let params: { search: string; projectId?: string } = { search };
+    let params: { search: string; project_id?: string } = { search };
     if (filteredProjectId) {
       params = {
         ...params,
-        projectId: filteredProjectId,
+        project_id: filteredProjectId,
       };
     }
     const response = await this.workspaceService.searchAcrossWorkspace(workspace, params);

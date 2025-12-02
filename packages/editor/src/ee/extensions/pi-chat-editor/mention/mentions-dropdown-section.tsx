@@ -24,7 +24,7 @@ export const MentionsDropdownSection: React.FC<Props> = (props) => {
       >
         <>
           <span className="text-xs font-medium capitalize text-custom-text-300 my-1">
-            {type === "issue" ? "Work item" : type}
+            {type === "issue" ? "Work item" : type?.replaceAll("_", " ")}
           </span>
         </>
       </div>

@@ -22,15 +22,12 @@ from plane.graphql.helpers import (
     get_intake_async,
     get_intake_work_item_async,
     get_project,
-    get_project_default_state,
     get_project_member,
+    get_project_triage_states_async,
+    get_triage_state_async,
     get_workspace,
     is_project_intakes_enabled_async,
     is_project_settings_enabled_by_settings_key_async,
-    is_project_workflow_enabled,
-    is_workflow_create_allowed,
-    is_workflow_feature_flagged,
-    is_workflow_update_allowed,
 )
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectPermission, Roles
@@ -92,21 +89,14 @@ class IntakeWorkItemMutation:
 
         # check if the workflow is enabled for the project and the state is not passed
         if work_item_state_id is None:
-            state = await get_project_default_state(workspace_slug=workspace_slug, project_id=project_id)
-            work_item_state_id = str(state.id)
+            triage_states = await get_project_triage_states_async(workspace_slug=workspace_slug, project_id=project_id)
+            triage_state = triage_states[0]
+            work_item_state_id = str(triage_state.id)
         else:
-            workflow_feature_flagged = await is_workflow_feature_flagged(user_id=user_id, workspace_slug=workspace_slug)
-            if workflow_feature_flagged:
-                project_workflow_enabled = await is_project_workflow_enabled(
-                    workspace_slug=workspace_slug, project_id=project_id
-                )
-                if project_workflow_enabled:
-                    await is_workflow_create_allowed(
-                        workspace_slug=workspace_slug,
-                        project_id=project_id,
-                        user_id=user_id,
-                        state_id=work_item_state_id,
-                    )
+            triage_state = await get_triage_state_async(
+                workspace_slug=workspace_slug, project_id=project_id, state_id=work_item_state_id
+            )
+            work_item_state_id = str(triage_state.id)
 
         # get the issue type
         work_item_type = await default_work_item_type(workspace_slug=slug, project_id=project)
@@ -331,18 +321,10 @@ class IntakeWorkItemMutation:
             activity_payload["parent_id"] = provided_fields["parent"]
             current_activity_payload["parent_id"] = current_intake_work_item_activity["parent_id"]
 
-        # validate the workflow if the project has workflows enabled
+        # validate the triage state
         state_id = provided_fields["state"] if "state" in provided_fields else None
         if state_id:
-            workflow_enabled = await is_workflow_feature_flagged(workspace_slug=workspace_slug, user_id=user_id)
-            if workflow_enabled:
-                await is_workflow_update_allowed(
-                    workspace_slug=workspace_slug,
-                    project_id=project_id,
-                    user_id=user_id,
-                    current_state_id=work_item.state_id,
-                    new_state_id=state_id,
-                )
+            await get_triage_state_async(workspace_slug=workspace_slug, project_id=project_id, state_id=state_id)
 
         # updating the intake work item
         work_item.updated_by_id = user_id

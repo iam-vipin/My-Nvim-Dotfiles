@@ -162,7 +162,7 @@ from .queries.page import (
 from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
-from .queries.state import StateQuery, WorkspaceStateQuery
+from .queries.state import StateQuery, WorkspaceStateQuery, TriageStateQuery
 from .queries.stickies import WorkspaceStickiesQuery
 from .queries.teamspace import TeamspaceMemberQuery
 from .queries.timezone import TimezoneListQuery
@@ -255,6 +255,7 @@ class Query(
     # state
     WorkspaceStateQuery,
     StateQuery,
+    TriageStateQuery,
     # estimate
     EstimatePointQuery,
     # cycle

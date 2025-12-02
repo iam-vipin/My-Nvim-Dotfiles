@@ -1,26 +1,26 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import type { IModule } from "@plane/types";
+import type { ICycle } from "@plane/types";
 import { Card } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { ModuleForm } from "@/components/modules";
+import { CycleForm } from "@/components/cycles/form";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import type { TUpdatedArtifact, TArtifact } from "@/plane-web/types";
-import { useModuleData } from "../useArtifactData";
+import { useCycleData } from "../useArtifactData";
 import { PiChatArtifactsFooter } from "./footer";
 
-interface TModuleDetailProps {
+interface TCycleDetailProps {
   data: TArtifact;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
   workspaceSlug: string;
   activeChatId: string;
 }
 
-export const ModuleDetail = observer((props: TModuleDetailProps) => {
+export const CycleDetail = observer((props: TCycleDetailProps) => {
   const { data, updateArtifact, workspaceSlug, activeChatId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
-  const updatedData = useModuleData(data.artifact_id);
+  const updatedData = useCycleData(data.artifact_id);
   // state
   const [isSaving, setIsSaving] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -36,10 +36,10 @@ export const ModuleDetail = observer((props: TModuleDetailProps) => {
       setError(null);
     }, 1000);
   };
-  const onChange = (formData: Partial<IModule> | null) => {
+  const onChange = async (formData: Partial<ICycle> | null) => {
     if (!formData) return;
     setIsSaving(true);
-    updateArtifact(formData)
+    await updateArtifact(formData)
       .then(() => {
         handleOnSave();
       })
@@ -52,7 +52,7 @@ export const ModuleDetail = observer((props: TModuleDetailProps) => {
   return (
     <>
       <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
-        <ModuleForm
+        <CycleForm
           onChange={onChange}
           status
           projectId={projectId ?? ""}

@@ -2,7 +2,7 @@ import type { JiraV2Service } from "@plane/etl/jira-server";
 import type { Client as PlaneClient, TWorklog } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 
-export enum EJiraServerStep {
+export enum EJiraStep {
   // Pre-run
   PLANE_PROJECT_CONFIGURATION = "plane_project_configuration",
 
@@ -45,6 +45,15 @@ export type TIssuesAssociationsData = {
   worklogs: Map<string, Partial<TWorklog>[]>;
 };
 
+/**
+ * Failed step tracking structure
+ */
+export type TFailedStep = {
+  name: string;
+  error: string;
+  failedAt: string;
+};
+
 export type TOrchestratorState = {
   jobId: string;
 
@@ -53,6 +62,9 @@ export type TOrchestratorState = {
   currentStepName: string;
   totalSteps: number;
   completedSteps: string[];
+
+  // Failed steps (logged and skipped)
+  failedSteps?: TFailedStep[];
 
   // Timestamps
   startedAt: string;
@@ -103,10 +115,10 @@ export type TIssuePropertiesData = Array<{
  */
 export interface IStep {
   /** Step name (e.g., 'users', 'issues') */
-  name: EJiraServerStep;
+  name: EJiraStep;
 
   /** data that should be loaded before handling this step */
-  dependencies: EJiraServerStep[];
+  dependencies: EJiraStep[];
   shouldFail?: boolean;
 
   /** Execute pull, transform, and push for this step */

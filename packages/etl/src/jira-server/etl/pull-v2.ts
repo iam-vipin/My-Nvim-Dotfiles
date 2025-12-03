@@ -5,6 +5,7 @@ import type {
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
+  Worklog
 } from "jira.js/out/version2/models";
 import type {
   ImportedJiraUser,
@@ -15,7 +16,7 @@ import type {
   JiraCustomFieldKeys,
   JiraV2Service,
 } from "..";
-import { formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
+import { fetchPaginatedDataByKey, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
 
 type BasePaginationContext = {
   client: JiraV2Service;
@@ -190,6 +191,34 @@ export async function pullComponentIssuesV2(
     maxResults,
   };
 }
+
+export const pullAllCommentsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<JiraComment[]> => {
+  const values = await fetchPaginatedDataByKey<JComment>(
+    (startAt) => client.getIssueComments(issue.id, startAt, 500),
+    "comments"
+  );
+
+  return values.map(
+    (comment): JiraComment => ({
+      ...comment,
+      issue_id: issue.id,
+    })
+  );
+};
+
+export const pullAllWorklogsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<Worklog[]> => {
+  const values = await fetchPaginatedDataByKey<Worklog>(
+    (startAt) => client.getIssueWorklogs(issue.id, startAt, 500),
+    "worklogs"
+  );
+
+  return values.map(
+    (worklog) => ({
+      ...worklog,
+      issue_id: issue.id,
+    })
+  );
+};
 
 export async function pullCommentsForIssueV2(
   ctx: BasePaginationContext,

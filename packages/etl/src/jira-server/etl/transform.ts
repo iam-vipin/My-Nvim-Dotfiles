@@ -35,14 +35,20 @@ import type {
   JiraIssueFieldOptions,
 } from "../types";
 
+export type TTransformationContext = {
+  resourceId: string;
+  projectId: string;
+  source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA;
+};
+
 export const transformIssue = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issue: IJiraIssue,
   resourceUrl: string,
   stateMap: IStateConfig[],
   priorityMap: IPriorityConfig[]
 ): Partial<PlaneIssue> => {
+  const { resourceId, projectId, source } = ctx;
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
   const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
@@ -66,7 +72,7 @@ export const transformIssue = (
     assignees: issue.fields.assignee?.name ? [issue.fields.assignee.name] : [],
     links,
     external_id: `${projectId}_${resourceId}_${issue.id}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_source: source,
     created_by: issue.fields.creator?.name,
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
@@ -84,13 +90,13 @@ export const transformIssue = (
 };
 
 export const transformIssueV2 = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issue: IJiraIssue,
   resourceUrl: string,
   stateMap: IStateConfig[],
   priorityMap: IPriorityConfig[]
 ): Partial<PlaneIssue> => {
+  const { resourceId, projectId, source } = ctx;
   const targetState = getTargetState(stateMap, issue.fields.status);
   const targetPriority = getTargetPriority(priorityMap, issue.fields.priority);
   const attachments = getTargetAttachments(resourceId, projectId, issue.fields.attachment);
@@ -111,11 +117,15 @@ export const transformIssueV2 = (
   issue.fields.labels.push("JIRA IMPORTED");
 
   return {
-    assignees: issue.fields.assignee?.emailAddress ? [issue.fields.assignee.emailAddress] : [],
+    assignees: issue.fields.assignee?.emailAddress
+      ? [issue.fields.assignee.emailAddress]
+      : issue.fields.assignee?.displayName
+        ? [issue.fields.assignee.displayName]
+        : [],
     links,
     external_id: `${projectId}_${resourceId}_${issue.id}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-    created_by: issue.fields.creator?.emailAddress,
+    external_source: source,
+    created_by: issue.fields.creator?.emailAddress || issue.fields.creator?.displayName,
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
     target_date: issue.fields.duedate,
@@ -136,20 +146,19 @@ export const transformLabel = (label: string): Partial<ExIssueLabel> => ({
   color: getRandomColor(),
 });
 
-export const transformComment = (
-  resourceId: string,
-  projectId: string,
-  comment: JiraComment
-): Partial<ExIssueComment> => ({
-  external_id: `${projectId}_${resourceId}_${comment.id}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  created_at: getFormattedDate(comment.created),
-  created_by: comment.author?.emailAddress,
-  // @ts-expect-error
-  comment_html: comment.body ?? "<p></p>",
-  actor: comment.author?.emailAddress,
-  issue: `${projectId}_${resourceId}_${comment.issue_id}`,
-});
+export const transformComment = (ctx: TTransformationContext, comment: JiraComment): Partial<ExIssueComment> => {
+  const { resourceId, projectId, source } = ctx;
+  return {
+    external_id: `${projectId}_${resourceId}_${comment.id}`,
+    external_source: source,
+    created_at: comment.created,
+    created_by: comment.author?.emailAddress || comment.author?.displayName,
+    // @ts-expect-error
+    comment_html: comment.renderedBody ? comment.renderedBody : (comment.body ?? "<p></p>"),
+    actor: comment.author?.emailAddress || comment.author?.displayName,
+    issue: `${projectId}_${resourceId}_${comment.issue_id}`,
+  };
+};
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   const [first_name, last_name] = user.full_name.split(" ");
@@ -165,42 +174,46 @@ export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   };
 };
 
-export const transformSprint = (resourceId: string, projectId: string, sprint: JiraSprint): Partial<ExCycle> => ({
-  external_id: `${projectId}_${resourceId}_${sprint.sprint.id.toString()}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  name: sprint.sprint.name,
-  start_date: getFormattedDate(sprint.sprint.startDate),
-  end_date: getFormattedDate(sprint.sprint.endDate),
-  created_at: getFormattedDate(sprint.sprint.createdDate),
-  issues: sprint.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
-});
+export const transformSprint = (ctx: TTransformationContext, sprint: JiraSprint): Partial<ExCycle> => {
+  const { resourceId, projectId, source } = ctx;
+  return {
+    external_id: `${projectId}_${resourceId}_${sprint.sprint.id.toString()}`,
+    external_source: source,
+    name: sprint.sprint.name,
+    start_date: getFormattedDate(sprint.sprint.startDate),
+    end_date: getFormattedDate(sprint.sprint.endDate),
+    created_at: getFormattedDate(sprint.sprint.createdDate),
+    issues: sprint.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
+  };
+};
 
-export const transformComponent = (
-  resourceId: string,
-  projectId: string,
-  component: JiraComponent
-): Partial<ExModule> => ({
-  external_id: `${projectId}_${resourceId}_${component.component.id}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  name: component.component.name,
-  issues: component.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
-});
+export const transformComponent = (ctx: TTransformationContext, component: JiraComponent): Partial<ExModule> => {
+  const { resourceId, projectId, source } = ctx;
+  return {
+    external_id: `${projectId}_${resourceId}_${component.component.id}`,
+    external_source: source,
+    name: component.component.name,
+    issues: component.issues.map((issue) => `${projectId}_${resourceId}_${issue.id}`),
+  };
+};
 
 export const transformComponentV2 = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   component: ComponentWithIssueCount
-): Partial<ExModule> => ({
-  external_id: `${projectId}_${resourceId}_${component.id}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  name: component.name,
-});
+): Partial<ExModule> => {
+  const { resourceId, projectId, source } = ctx;
+  return {
+    external_id: `${projectId}_${resourceId}_${component.id}`,
+    external_source: source,
+    name: component.name,
+  };
+};
 
 export const transformIssueType = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issueType: JiraIssueTypeDetails
 ): Partial<ExIssueType> => {
+  const { resourceId, projectId, source } = ctx;
   const isEpic = issueType.name?.toLowerCase().includes("epic");
 
   return {
@@ -209,15 +222,15 @@ export const transformIssueType = (
     is_active: true,
     is_epic: isEpic,
     external_id: `${projectId}_${resourceId}_${issueType.id}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_source: source,
   };
 };
 
 export const transformIssueFields = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issueField: JiraIssueField
 ): Partial<ExIssueProperty> | undefined => {
+  const { resourceId, projectId, source } = ctx;
   if (
     !issueField.schema ||
     !issueField.scope?.type ||
@@ -231,7 +244,7 @@ export const transformIssueFields = (
 
   return {
     external_id: `${projectId}_${resourceId}_${fieldId}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_source: source,
     display_name: issueField.name,
     type_id: issueField.scope?.type ? `${projectId}_${resourceId}_${issueField.scope?.type}` : undefined,
     is_required: false,
@@ -241,26 +254,28 @@ export const transformIssueFields = (
 };
 
 export const transformIssueFieldOptions = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issueFieldOption: JiraIssueFieldOptions
-): Partial<ExIssuePropertyOption> => ({
-  external_id: `${projectId}_${resourceId}_${issueFieldOption.id}`,
-  external_source: E_IMPORTER_KEYS.JIRA_SERVER,
-  name: issueFieldOption.value,
-  is_active: issueFieldOption.disabled ? false : true,
-  property_id: `${projectId}_${resourceId}_${issueFieldOption.fieldId}`,
-});
+): Partial<ExIssuePropertyOption> => {
+  const { resourceId, projectId, source } = ctx;
+  return {
+    external_id: `${projectId}_${resourceId}_${issueFieldOption.id}`,
+    external_source: source,
+    name: issueFieldOption.value,
+    is_active: issueFieldOption.disabled ? false : true,
+    property_id: `${projectId}_${resourceId}_${issueFieldOption.fieldId}`,
+  };
+};
 
 export const transformIssuePropertyValues = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issue: IJiraIssue,
   // eslint-disable-next-line no-undef
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: replace Map with Record<string, Partial<ExIssueProperty>> in the future
   // eslint-disable-next-line no-undef
   jiraCustomFieldMap: Map<string, string> // TODO: replace Map with Record<string, string> in the future
 ): TPropertyValuesPayload => {
+  const { resourceId, projectId } = ctx;
   // Get all custom fields that are present in the issue and are also present in the plane issue properties
   const customFieldKeysToTransform = Object.keys(issue.fields).filter(
     (key) => key.startsWith("customfield_") && planeIssueProperties.has(key)
@@ -283,18 +298,18 @@ export const transformIssuePropertyValues = (
 };
 
 export const transformDefaultPropertyValues = (
-  resourceId: string,
-  projectId: string,
+  ctx: TTransformationContext,
   issue: IJiraIssue,
   issueTypeId: string
 ): TPropertyValuesPayload => {
+  const { resourceId, projectId, source } = ctx;
   const propertyValuesPayload: TPropertyValuesPayload = {};
 
   // Fix Versions
   if (issue.fields.fixVersions && Array.isArray(issue.fields.fixVersions)) {
     const fixVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-fix-version`;
     propertyValuesPayload[fixVersionExternalId] = issue.fields.fixVersions.map((version: any) => ({
-      external_source: "JIRA_SERVER",
+      external_source: source,
       external_id: version.id ? String(version.id) : undefined,
       value: version.name || "",
     }));
@@ -304,7 +319,7 @@ export const transformDefaultPropertyValues = (
   if (issue.fields.versions && Array.isArray(issue.fields.versions)) {
     const affectedVersionExternalId = `${resourceId}-${projectId}-${issueTypeId}-affected-version`;
     propertyValuesPayload[affectedVersionExternalId] = issue.fields.versions.map((version: any) => ({
-      external_source: "JIRA_SERVER",
+      external_source: source,
       external_id: version.id ? String(version.id) : undefined,
       value: version.name || "",
     }));
@@ -315,8 +330,8 @@ export const transformDefaultPropertyValues = (
     const reporterExternalId = `${resourceId}-${projectId}-${issueTypeId}-reporter`;
     propertyValuesPayload[reporterExternalId] = [
       {
-        external_source: "JIRA_SERVER",
-        external_id: issue.fields.reporter.emailAddress || issue.fields.reporter.name,
+        external_source: source,
+        external_id: issue.fields.reporter.emailAddress || issue.fields.reporter.displayName || "",
         value: issue.fields.reporter.emailAddress || issue.fields.reporter.displayName || "",
       },
     ];

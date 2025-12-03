@@ -1,6 +1,7 @@
 /* ----------------- Modules Migrator Step ----------------- */
 import type { ComponentWithIssueCount } from "jira.js/out/version2/models";
 import { v4 as uuid } from "uuid";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraV2Service } from "@plane/etl/jira-server";
 import { pullComponentsV2, transformComponentV2 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -14,18 +15,20 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createAllModulesV2 } from "@/etl/migrator/modules.migrator";
 
 /**
  * Jira Server Modules Step (Components in Jira)
  * Pulls components from Jira Server with pagination, transforms to modules, and pushes to Plane
  */
-export class JiraServerModulesStep implements IStep {
-  name = EJiraServerStep.MODULES;
+export class JiraModulesStep implements IStep {
+  name = EJiraStep.MODULES;
   dependencies = [];
 
   private readonly PAGE_SIZE = 100;
+
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, storage, previousContext } = input;
@@ -102,7 +105,9 @@ export class JiraServerModulesStep implements IStep {
    */
   private transform(job: TImportJob<JiraConfig>, jiraComponents: ComponentWithIssueCount[]) {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
-    return jiraComponents.map((component) => transformComponentV2(resourceId, job.project_id, component));
+    return jiraComponents.map((component) =>
+      transformComponentV2({ resourceId, projectId: job.project_id, source: this.source }, component)
+    );
   }
 
   /**

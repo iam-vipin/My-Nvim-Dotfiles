@@ -1,5 +1,6 @@
 import type { Sprint } from "jira.js/out/agile/models";
 import { v4 as uuid } from "uuid";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraSprint } from "@plane/etl/jira-server";
 import { pullSprintsForBoardV2, transformSprint } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -14,7 +15,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createAllCyclesV2 } from "@/etl/migrator/cycles.migrator";
 
 /**
@@ -23,11 +24,13 @@ import { createAllCyclesV2 } from "@/etl/migrator/cycles.migrator";
  *
  * Dependencies: boards - board IDs to iterate through for sprint collection
  */
-export class JiraServerCyclesStep implements IStep {
-  name = EJiraServerStep.CYCLES;
-  dependencies = [EJiraServerStep.BOARDS];
+export class JiraCyclesStep implements IStep {
+  name = EJiraStep.CYCLES;
+  dependencies = [EJiraStep.BOARDS];
 
   private readonly PAGE_SIZE = 100;
+
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) { }
 
   /**
    * Executes the sprint extraction process:
@@ -64,7 +67,7 @@ export class JiraServerCyclesStep implements IStep {
     } catch (error) {
       logger.error(`[${jobContext.job.id}] [${this.name}] Step failed`, {
         jobId: jobContext.job.id,
-        error: error instanceof Error ? error.message : String(error),
+        error: error
       });
       throw error;
     }
@@ -152,7 +155,16 @@ export class JiraServerCyclesStep implements IStep {
       issues: [], // Issues are handled in separate step
     }));
 
-    return formattedSprints.map((sprint) => transformSprint(resourceId, job.project_id, sprint));
+    return formattedSprints.map((sprint) =>
+      transformSprint(
+        {
+          resourceId,
+          projectId: job.project_id,
+          source: this.source,
+        },
+        sprint
+      )
+    );
   }
 
   /**

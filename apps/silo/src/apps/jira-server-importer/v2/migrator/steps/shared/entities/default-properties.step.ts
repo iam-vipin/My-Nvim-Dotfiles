@@ -2,8 +2,8 @@ import { createSuccessContext } from "@/apps/jira-server-importer/v2/helpers/ctx
 import { extractJobData } from "@/apps/jira-server-importer/v2/helpers/job";
 import { getSupportedDefaultProperties } from "@/apps/jira-server-importer/v2/helpers/properties";
 import type { TIssueTypesData, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
-import { JiraServerIssuePropertiesStep } from "./issue-properties.step";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { JiraIssuePropertiesStep } from "./issue-properties.step";
 
 /*
  * @overview
@@ -14,9 +14,9 @@ import { JiraServerIssuePropertiesStep } from "./issue-properties.step";
  * to all the available issue types, which will allow us to map those properties
  * to the corresponding plane properties.
  */
-export class JiraServerDefaultPropertiesStep extends JiraServerIssuePropertiesStep {
-  name: EJiraServerStep = EJiraServerStep.DEFAULT_PROPERTIES;
-  dependencies: EJiraServerStep[] = [EJiraServerStep.ISSUE_TYPES];
+export class JiraDefaultPropertiesStep extends JiraIssuePropertiesStep {
+  name: EJiraStep = EJiraStep.DEFAULT_PROPERTIES;
+  dependencies: EJiraStep[] = [EJiraStep.ISSUE_TYPES];
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     // Get the issue types from the dependency data and for each issue type, populate
@@ -37,13 +37,14 @@ export class JiraServerDefaultPropertiesStep extends JiraServerIssuePropertiesSt
         resourceId,
         projectId,
         issueType.id,
-        issueType.external_id
+        issueType.external_id,
+        this.source
       );
       defaultPropertiesToCreate.push(...defaultProperties);
     }
 
     const pushed = await this.push(jobContext, defaultPropertiesToCreate, issueTypes);
-    await this.storePropertiesData(EJiraServerStep.ISSUE_PROPERTIES, job, pushed, storage);
+    await this.storePropertiesData(EJiraStep.ISSUE_PROPERTIES, job, pushed, storage);
 
     return createSuccessContext({
       pulled: defaultPropertiesToCreate.length,

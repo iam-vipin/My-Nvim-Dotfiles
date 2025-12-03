@@ -1,7 +1,14 @@
+import type { Worklog } from "jira.js/out/version2/models";
 import { v4 as uuidv4 } from "uuid";
-import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
-import type { IJiraIssue, JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
-import { pullIssuesV2, transformComment, transformIssueV2 } from "@plane/etl/jira-server";
+import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type { IJiraIssue, JiraConfig, JiraIssueField, JiraV2Service } from "@plane/etl/jira-server";
+import {
+  pullAllCommentsForIssue,
+  pullAllWorklogsForIssue,
+  pullIssuesV2,
+  transformComment,
+  transformIssueV2,
+} from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 import type { ExIssue, ExIssueComment, ExIssueProperty, ExIssuePropertyOption, TWorklog } from "@plane/sdk";
 import type { TImportJob } from "@plane/types";
@@ -20,7 +27,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { E_ADDITIONAL_STORAGE_KEYS, EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { generateIssuePayloadV2 } from "@/etl/migrator/issues.migrator";
 import { getAPIClient } from "@/services/client";
 import type { BulkIssuePayload } from "@/types";
@@ -41,90 +48,71 @@ import { celeryProducer } from "@/worker";
  * NOT dependencies (accessed via storage.lookupMapping):
  * - users, labels, issue_types
  */
-export class JiraServerIssuesStep implements IStep {
-  name = EJiraServerStep.ISSUES;
+export class JiraIssuesStep implements IStep {
+  name = EJiraStep.ISSUES;
 
   dependencies = [
-    EJiraServerStep.ISSUE_TYPES, // Provides issue types
-    EJiraServerStep.ISSUE_PROPERTIES, // Provides properties + rawFields
-    EJiraServerStep.ISSUE_PROPERTY_OPTIONS, // Provides options
+    EJiraStep.ISSUE_TYPES, // Provides issue types
+    EJiraStep.ISSUE_PROPERTIES, // Provides properties + rawFields
+    EJiraStep.ISSUE_PROPERTY_OPTIONS, // Provides options
   ];
 
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) { }
+
   private readonly PAGE_SIZE = 50;
-
-  /**
-   * Initialize report batch count on first page
-   * Automatically detects if it's the first page and calculates total batches
-   */
-  private async initializeReportBatchCount(input: TStepExecutionInput, totalIssues: number): Promise<void> {
-    const { jobContext, previousContext } = input;
-    const startAt = previousContext?.pageCtx.startAt || 0;
-
-    // Only initialize on first page
-    if (startAt !== 0) return;
-
-    const totalBatches = Math.ceil(totalIssues / this.PAGE_SIZE);
-    const client = getAPIClient();
-
-    await client.importReport.updateImportReport(jobContext.job.report_id, {
-      total_batch_count: totalBatches,
-    });
-
-    logger.info(`[${jobContext.job.id}] [${this.name}] Initialized report batch count`, {
-      jobId: jobContext.job.id,
-      totalIssues,
-      pageSize: this.PAGE_SIZE,
-      totalBatches,
-    });
-  }
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, storage, previousContext, dependencyData } = input;
     const { job } = jobContext;
 
     try {
-      const projectKey = job.config?.project?.key;
-      if (!projectKey) {
-        throw new Error("Project key not found in job config");
-      }
+      const projectKey = this.getProjectKey(job);
+      const paginationCtx = this.getPaginationContext(previousContext);
 
-      const startAt = previousContext?.pageCtx.startAt || 0;
-      const totalProcessed = previousContext?.pageCtx.totalProcessed || 0;
-
-      logger.info(`[${jobContext.job.id}] [${this.name}] Starting execution`, {
+      logger.info(`[${job.id}] [${this.name}] Starting execution`, {
         jobId: job.id,
-        startAt,
-        totalProcessed,
+        ...paginationCtx,
       });
 
       // Get property data from dependencies (needed for property value transformation)
       const propertyData = this.getPropertyData(dependencyData);
       const additionalData = await this.getAdditionalData(storage, job);
 
-      // Pull paginated issues, comments, and transform property values
-      const pulled = await this.pull(jobContext, projectKey, startAt, propertyData, additionalData);
+      // Pull paginated issues from Jira (can be overridden in subclasses)
+      const issuesResult = await this.pull({
+        jobContext,
+        projectKey,
+        paginationCtx,
+      });
 
-      if (pulled.total !== undefined) {
-        await this.initializeReportBatchCount(input, pulled.total);
-      }
+      await this.initializeReportBatchCount(paginationCtx, issuesResult.total, job);
 
-      const associations = this.extractAssociations(job, pulled.issues);
-
-      if (pulled.issues.length === 0) {
-        logger.info(`[${jobContext.job.id}] [${this.name}] No issues found`, { jobId: job.id });
+      if (this.shouldReturnEmpty(issuesResult, paginationCtx)) {
+        logger.info(`[${job.id}] [${this.name}] No issues found`, { jobId: job.id });
         return createEmptyContext();
       }
 
+      // Process issues: extract comments and transform property values
+      const processed = await this.processIssuesData({
+        jobContext,
+        issuesResult,
+        propertyData,
+        additionalData,
+      });
+
+      const associations = await this.extractAssociations(job, jobContext.sourceClient, processed.issues);
+
       // Load entity mappings from storage
-      const mappings = await this.loadMappings(job, pulled.issues, associations, storage);
+      const mappings = await this.loadMappings(job, processed.issues, associations, storage);
 
       // Transform issues (uses existing transformIssue function)
-      const transformed = await this.transform(job, pulled.issues);
+      const transformed = await this.transform(job, processed.issues);
+
       // Generate payload and send to Celery
       const pushed = await this.push(
         transformed,
-        pulled.comments,
-        pulled.propertyValues,
+        processed.comments,
+        processed.propertyValues,
         mappings,
         associations,
         propertyData,
@@ -132,26 +120,19 @@ export class JiraServerIssuesStep implements IStep {
       );
 
       // Store relations for Relations Step
-      const relations = this.extractRelations(job, pulled.issues);
+      const relations = this.extractRelations(job, processed.issues);
       await this.storeRelations(relations, storage, job.id);
 
-      logger.info(`[${jobContext.job.id}] [${this.name}] Completed page`, {
+      logger.info(`[${job.id}] [${this.name}] Completed page`, {
         jobId: job.id,
-        issues: pulled.issues.length,
-        comments: pulled.comments.length,
+        issues: processed.issues.length,
+        comments: processed.comments.length,
         pushed: pushed.length,
       });
 
-      return createPaginationContext({
-        hasMore: pulled.hasMore,
-        startAt: startAt,
-        pageSize: this.PAGE_SIZE,
-        pulled: pulled.issues.length,
-        pushed: pushed.length,
-        totalProcessed: totalProcessed + pulled.issues.length,
-      });
+      return this.buildNextContext(issuesResult, paginationCtx, processed.issues.length, pushed.length);
     } catch (error) {
-      logger.error(`[${jobContext.job.id}] [${this.name}] Step failed`, {
+      logger.error(`[${job.id}] [${this.name}] Step failed`, {
         jobId: job.id,
         error: error instanceof Error ? error.message : String(error),
       });
@@ -160,50 +141,152 @@ export class JiraServerIssuesStep implements IStep {
   }
 
   /**
-   * Pull issues and comments, then transform property values
-   * Uses existing transformIssuePropertyValues for proper conversion
+   * Extract pagination state from previous context
+   * Override this in subclasses to support different pagination strategies
+   * (e.g., nextPageToken for Jira Cloud)
    */
-  private async pull(
-    jobContext: TJobContext,
-    projectKey: string,
-    startAt: number,
-    propertyData: {
-      issueTypes: TIssueTypesData;
-      planeIssueProperties: ExIssueProperty[];
-      planeIssuePropertiesOptions: ExIssuePropertyOption[];
-    },
-    additionalData: {
-      rawFields: JiraIssueField[];
+  protected getPaginationContext(previousContext?: TStepExecutionContext) {
+    return {
+      startAt: previousContext?.pageCtx.startAt ?? 0,
+      totalProcessed: previousContext?.pageCtx.totalProcessed ?? 0,
+    };
+  }
+
+  /**
+   * Extract and validate project key from job configuration
+   */
+  protected getProjectKey(job: TImportJob<JiraConfig>): string {
+    const projectKey = job.config?.project?.key;
+    if (!projectKey) {
+      throw new Error("Project key not found in job config");
     }
-  ): Promise<{
-    issues: IJiraIssue[];
-    comments: ExIssueComment[];
-    propertyValues: TIssuePropertyValuesPayload;
+    return projectKey;
+  }
+
+  /**
+   * Initialize report batch count on first page
+   */
+  protected async initializeReportBatchCount(
+    paginationCtx: { startAt: number; totalProcessed: number },
+    totalIssues: number | undefined,
+    job: TImportJob<JiraConfig>
+  ): Promise<void> {
+    // Only initialize on first page
+    if (paginationCtx.startAt !== 0 || !totalIssues) return;
+
+    const totalBatches = Math.ceil(totalIssues / this.PAGE_SIZE);
+    const client = getAPIClient();
+
+    await client.importReport.updateImportReport(job.report_id, {
+      total_batch_count: totalBatches,
+    });
+
+    logger.info(`[${job.id}] [${this.name}] Initialized report batch count`, {
+      jobId: job.id,
+      totalIssues,
+      pageSize: this.PAGE_SIZE,
+      totalBatches,
+    });
+  }
+
+  /**
+   * Check if step should return empty context
+   */
+  protected shouldReturnEmpty(
+    issuesResult: { items: IJiraIssue[]; hasMore: boolean; total: number },
+    paginationCtx: { startAt: number; totalProcessed: number }
+  ): boolean {
+    return issuesResult.items.length === 0 && paginationCtx.startAt === 0;
+  }
+
+  /**
+   * Build the next context based on pagination state
+   * Override this in subclasses to support different pagination strategies
+   */
+  protected buildNextContext(
+    issuesResult: { items: IJiraIssue[]; hasMore: boolean; total: number },
+    paginationCtx: { startAt: number; totalProcessed: number },
+    pulled: number,
+    pushed: number
+  ): TStepExecutionContext {
+    return createPaginationContext({
+      hasMore: issuesResult.hasMore,
+      startAt: paginationCtx.startAt,
+      pageSize: this.PAGE_SIZE,
+      pulled,
+      pushed,
+      totalProcessed: paginationCtx.totalProcessed + pulled,
+    });
+  }
+
+  /**
+   * Pull paginated issues from Jira
+   * Override this in subclasses to customize issue fetching behavior
+   * (e.g., use nextPageToken for Jira Cloud)
+   */
+  protected async pull(props: {
+    jobContext: TJobContext;
+    projectKey: string;
+    paginationCtx: { startAt: number; totalProcessed: number };
+  }): Promise<{
+    items: IJiraIssue[];
     hasMore: boolean;
     total: number;
   }> {
-    const { projectId, resourceId } = extractJobData(jobContext.job);
-    // Pull paginated issues
     const issuesResult = await pullIssuesV2(
       {
-        client: jobContext.sourceClient,
-        startAt,
+        client: props.jobContext.sourceClient,
+        startAt: props.paginationCtx.startAt,
         maxResults: this.PAGE_SIZE,
       },
-      projectKey
+      props.projectKey
     );
 
-    // Pull comments for these issues
-    // Merge: timestamps from fields.comment, HTML body from renderedFields.comment
-    const comments: Partial<ExIssueComment>[] = issuesResult.items
-      .map((issue) => {
-        const fieldsComments = issue.fields?.comment?.comments || [];
-        const renderedComments = issue.renderedFields?.comment?.comments || [];
+    logger.info(`[${props.jobContext.job.id}] [${this.name}] Pulled issues`, {
+      jobId: props.jobContext.job.id,
+      count: issuesResult.items.length,
+      hasMore: issuesResult.hasMore,
+      startAt: props.paginationCtx.startAt,
+    });
 
+    return {
+      items: issuesResult.items,
+      hasMore: issuesResult.hasMore,
+      total: issuesResult.total ?? 0,
+    };
+  }
+
+  /**
+   * Extract and transform comments from issues
+   * Merges timestamps from fields.comment with HTML body from renderedFields.comment
+   */
+  protected async extractCommentsFromIssues(props: {
+    _jobContext: TJobContext;
+    issues: IJiraIssue[];
+    resourceId: string;
+    projectId: string;
+  }): Promise<ExIssueComment[]> {
+    const comments = [];
+    for (const issue of props.issues) {
+      const fieldsComments = issue.fields?.comment?.comments || [];
+      const renderedComments = issue.renderedFields?.comment?.comments || [];
+      /*
+       * Jira provides us with the comments, but those comments are paginated, in
+       * case the number of comments are more than what we have in the comments property
+       * we will need to fetch the remaining comments.
+       */
+      const shouldFetchMoreComments = issue.fields.comment?.total > issue.fields.comment?.comments?.length;
+      if (shouldFetchMoreComments) {
+        const allComments = await pullAllCommentsForIssue(issue, props._jobContext.sourceClient);
+        const transformedComments = allComments.map((comment) =>
+          transformComment({ resourceId: props.resourceId, projectId: props.projectId, source: this.source }, comment)
+        );
+        comments.push(transformedComments);
+      } else {
         // Create a map of rendered comments by ID for quick lookup
         const renderedCommentsMap = new Map(renderedComments.map((rendered) => [rendered.id, rendered]));
 
-        return fieldsComments.map((comment) => {
+        const transformedComments = fieldsComments.map((comment) => {
           // Get the rendered version for HTML body
           const renderedComment = renderedCommentsMap.get(comment.id);
 
@@ -217,35 +300,72 @@ export class JiraServerIssuesStep implements IStep {
             issue_id: issue.id,
           };
 
-          return transformComment(resourceId, projectId, mergedComment);
+          return transformComment(
+            { resourceId: props.resourceId, projectId: props.projectId, source: this.source },
+            mergedComment
+          );
         });
-      })
-      .flat();
+        comments.push(transformedComments);
+      }
+    }
+
+    return comments.flat() as ExIssueComment[];
+  }
+
+  /**
+   * Process pulled issues: extract comments and transform property values
+   * Uses existing transformIssuePropertyValues for proper conversion
+   */
+  protected async processIssuesData(props: {
+    jobContext: TJobContext;
+    issuesResult: {
+      items: IJiraIssue[];
+      hasMore: boolean;
+      total: number;
+    };
+    propertyData: {
+      issueTypes: TIssueTypesData;
+      planeIssueProperties: ExIssueProperty[];
+      planeIssuePropertiesOptions: ExIssuePropertyOption[];
+    };
+    additionalData: {
+      rawFields: JiraIssueField[];
+    };
+  }): Promise<{
+    issues: IJiraIssue[];
+    comments: ExIssueComment[];
+    propertyValues: TIssuePropertyValuesPayload;
+  }> {
+    const { projectId, resourceId } = extractJobData(props.jobContext.job);
+
+    // Extract comments from issues
+    const comments = await this.extractCommentsFromIssues({
+      _jobContext: props.jobContext,
+      issues: props.issuesResult.items,
+      resourceId,
+      projectId,
+    });
 
     // Transform property values for each issue using existing function
     const propertyValues = getTransformedIssuePropertyValuesV2(
-      jobContext.job,
-      issuesResult.items,
-      additionalData.rawFields,
-      propertyData.planeIssueProperties,
-      propertyData.issueTypes
+      props.jobContext.job,
+      props.issuesResult.items,
+      props.additionalData.rawFields,
+      props.propertyData.planeIssueProperties,
+      props.propertyData.issueTypes
     );
 
-    logger.info(`[${jobContext.job.id}] [${this.name}] Pulled from Jira`, {
-      jobId: jobContext.job.id,
-      issues: issuesResult.items.length,
+    logger.info(`[${props.jobContext.job.id}] [${this.name}] Processed issues data`, {
+      jobId: props.jobContext.job.id,
+      issues: props.issuesResult.items.length,
       comments: comments.length,
       issuesWithPropertyValues: Object.keys(propertyValues).length,
-      hasMore: issuesResult.hasMore,
-      startAt,
     });
 
     return {
-      issues: issuesResult.items,
-      comments: comments as ExIssueComment[],
+      issues: props.issuesResult.items,
+      comments,
       propertyValues,
-      hasMore: issuesResult.hasMore,
-      total: issuesResult.total ?? 0,
     };
   }
 
@@ -265,9 +385,9 @@ export class JiraServerIssuesStep implements IStep {
       };
     }
 
-    const issueTypes = dependencyData[EJiraServerStep.ISSUE_TYPES] as TIssueTypesData;
-    const propertiesData = dependencyData[EJiraServerStep.ISSUE_PROPERTIES] as TIssuePropertiesData;
-    const optionsData = dependencyData[EJiraServerStep.ISSUE_PROPERTY_OPTIONS];
+    const issueTypes = dependencyData[EJiraStep.ISSUE_TYPES] as TIssueTypesData;
+    const propertiesData = dependencyData[EJiraStep.ISSUE_PROPERTIES] as TIssuePropertiesData;
+    const optionsData = dependencyData[EJiraStep.ISSUE_PROPERTY_OPTIONS];
 
     return {
       issueTypes,
@@ -336,10 +456,10 @@ export class JiraServerIssuesStep implements IStep {
     // Load mappings in parallel from storage
     const [userMap, issueTypeMap, cycleMap, moduleMap] = await Promise.all([
       // We are retrieving all users instead of associated users, as there can be custom fields that associates with users, and we can't select those
-      storage.retrieveMapping(jobId, EJiraServerStep.USERS),
-      storage.lookupMapping(jobId, EJiraServerStep.ISSUE_TYPES, Array.from(issueTypeIds)),
-      storage.lookupMapping(jobId, EJiraServerStep.CYCLES, Array.from(sprintExternalIds)),
-      storage.lookupMapping(jobId, EJiraServerStep.MODULES, Array.from(componentExternalIds)),
+      storage.retrieveMapping(jobId, EJiraStep.USERS),
+      storage.lookupMapping(jobId, EJiraStep.ISSUE_TYPES, Array.from(issueTypeIds)),
+      storage.lookupMapping(jobId, EJiraStep.CYCLES, Array.from(sprintExternalIds)),
+      storage.lookupMapping(jobId, EJiraStep.MODULES, Array.from(componentExternalIds)),
     ]);
 
     logger.info(`[${jobId}] [${this.name}] Loaded mappings`, {
@@ -362,7 +482,13 @@ export class JiraServerIssuesStep implements IStep {
     const priorityMapping = job.config?.priority || {};
 
     const transformed = issues.map((issue) =>
-      transformIssueV2(resourceId, job.project_id, issue, resourceUrl, stateMapping, priorityMapping)
+      transformIssueV2(
+        { resourceId, projectId: job.project_id, source: this.source },
+        issue,
+        resourceUrl,
+        stateMapping,
+        priorityMapping
+      )
     );
 
     return transformed;
@@ -395,7 +521,11 @@ export class JiraServerIssuesStep implements IStep {
       );
   }
 
-  private extractAssociations(job: TImportJob<JiraConfig>, issues: IJiraIssue[]): TIssuesAssociationsData {
+  private async extractAssociations(
+    job: TImportJob<JiraConfig>,
+    client: JiraV2Service,
+    issues: IJiraIssue[]
+  ): Promise<TIssuesAssociationsData> {
     const { projectId, resourceId } = extractJobData(job);
     const cycles = new Map<string, string[]>();
     const modules = new Map<string, string[]>();
@@ -404,7 +534,7 @@ export class JiraServerIssuesStep implements IStep {
       const issueExternalId = buildExternalId(projectId, resourceId, issue.id);
       const sprintExternalIds = this.extractSprints(job, issue);
       const componentExternalIds = this.extractComponents(job, issue);
-      const issueWorklogs = this.extractWorklogs(job, issue);
+      const issueWorklogs = await this.extractWorklogs(job, client, issue);
       cycles.set(issueExternalId, sprintExternalIds);
       modules.set(issueExternalId, componentExternalIds);
       worklogs.set(issueExternalId, issueWorklogs);
@@ -412,7 +542,7 @@ export class JiraServerIssuesStep implements IStep {
     return { cycles, modules, worklogs };
   }
 
-  private extractSprints(job: TImportJob<JiraConfig>, issue: IJiraIssue): string[] {
+  protected extractSprints(job: TImportJob<JiraConfig>, issue: IJiraIssue): string[] {
     const { projectId, resourceId } = extractJobData(job);
 
     const sprintFieldKey = detectSprintFieldId(issue);
@@ -424,8 +554,8 @@ export class JiraServerIssuesStep implements IStep {
       : null;
     return sprintObjects
       ? sprintObjects
-          .map((s) => (s ? buildExternalId(projectId, resourceId, s.id.toString()) : null))
-          .filter((s) => s !== null)
+        .map((s) => (s ? buildExternalId(projectId, resourceId, s.id.toString()) : null))
+        .filter((s) => s !== null)
       : [];
   }
 
@@ -467,15 +597,34 @@ export class JiraServerIssuesStep implements IStep {
   /**
    * Extract worklogs from issue
    */
-  private extractWorklogs(_job: TImportJob<JiraConfig>, issue: IJiraIssue): Partial<TWorklog>[] {
+  protected async extractWorklogs(
+    _job: TImportJob<JiraConfig>,
+    client: JiraV2Service,
+    issue: IJiraIssue
+  ): Promise<Partial<TWorklog>[]> {
+    const transformWorklog = (worklog: Worklog) => ({
+      description: worklog.comment ?? "",
+      duration: worklog.timeSpentSeconds ? worklog.timeSpentSeconds / 60 : 0,
+      logged_by: worklog.author?.emailAddress,
+      created_at: worklog.created,
+      updated_at: worklog.updated,
+    });
+
+    const shouldPullMoreWorklogs = issue.fields?.worklog?.total > issue.fields?.worklog?.worklogs?.length;
+    if (shouldPullMoreWorklogs) {
+      const worklogs = await pullAllWorklogsForIssue(issue, client);
+      return worklogs.map(transformWorklog);
+    }
+
     return (
-      issue.fields.worklog?.worklogs?.map((worklog) => ({
-        description: worklog.comment ?? "",
-        duration: worklog.timeSpentSeconds ? worklog.timeSpentSeconds / 60 : 0,
-        logged_by: worklog.author?.emailAddress,
-        created_at: worklog.created,
-        updated_at: worklog.updated,
-      })) || []
+      issue.fields?.worklog?.worklogs?.map((worklog, index) => {
+        const comment =
+          typeof worklog.comment === "string"
+            ? worklog.comment
+            : issue.renderedFields?.worklog?.worklogs?.[index]?.comment;
+
+        return transformWorklog({ ...worklog, comment });
+      }) || []
     );
   }
 

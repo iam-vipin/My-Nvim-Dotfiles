@@ -1,6 +1,7 @@
 import type { IssueTypeDetails } from "jira.js/out/version2/models";
 import { v4 as uuid } from "uuid";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig } from "@plane/etl/jira-server";
 import { pullIssueTypesV2, transformIssueType } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -16,7 +17,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssueTypes } from "@/etl/migrator/issue-types/issue-type.migrator";
 import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { protect } from "@/lib";
@@ -27,9 +28,11 @@ import { protect } from "@/lib";
  *
  * Handles Epic types and conflict resolution automatically
  */
-export class JiraServerIssueTypesStep implements IStep {
-  name = EJiraServerStep.ISSUE_TYPES;
+export class JiraIssueTypesStep implements IStep {
+  name = EJiraStep.ISSUE_TYPES;
   dependencies = [];
+
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   private readonly PAGE_SIZE = 50;
 
@@ -135,7 +138,7 @@ export class JiraServerIssueTypesStep implements IStep {
   /**
    * Pull one page of issue types from Jira Server
    */
-  private async pull(jobContext: TJobContext, projectId: string, startAt: number) {
+  protected async pull(jobContext: TJobContext, projectId: string, startAt: number) {
     const result = await pullIssueTypesV2(
       {
         client: jobContext.sourceClient,
@@ -161,7 +164,9 @@ export class JiraServerIssueTypesStep implements IStep {
   private transform(job: TImportJob<JiraConfig>, jiraIssueTypes: IssueTypeDetails[]): Partial<ExIssueType>[] {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
 
-    return jiraIssueTypes.map((issueType) => transformIssueType(resourceId, job.project_id, issueType));
+    return jiraIssueTypes.map((issueType) =>
+      transformIssueType({ resourceId, projectId: job.project_id, source: this.source }, issueType)
+    );
   }
 
   /**

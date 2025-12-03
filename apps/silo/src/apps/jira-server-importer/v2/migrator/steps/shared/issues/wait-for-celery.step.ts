@@ -1,12 +1,12 @@
 import { logger } from "@plane/logger";
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { wait } from "@/helpers/delay";
 import { getAPIClient } from "@/services/client";
 
 export class WaitForCeleryStep implements IStep {
-  name = EJiraServerStep.WAIT_FOR_CELERY;
+  name = EJiraStep.WAIT_FOR_CELERY;
   dependencies = [];
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {

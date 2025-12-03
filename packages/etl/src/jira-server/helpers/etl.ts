@@ -191,11 +191,11 @@ export const getPropertyValues = (
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:userpicker":
       // Handle userpicker
-      if (value.emailAddress) {
+      if (value.emailAddress || value.displayName) {
         propertyValues.push({
           ...commonPropertyProp,
-          external_id: value.emailAddress,
-          value: value.emailAddress,
+          external_id: value.emailAddress ?? value.displayName,
+          value: value.emailAddress ?? value.displayName,
         });
       }
       break;
@@ -277,11 +277,11 @@ export const getPropertyValues = (
       // Handle multiuserpicker
       if (Array.isArray(value)) {
         value.forEach((val) => {
-          if (val.emailAddress) {
+          if (val.emailAddress || val.displayName) {
             propertyValues.push({
               ...commonPropertyProp,
-              external_id: val.emailAddress,
-              value: val.emailAddress,
+              external_id: val.emailAddress ?? val.displayName,
+              value: val.emailAddress ?? val.displayName,
             });
           }
         });

@@ -4,7 +4,6 @@ import { logger } from "@plane/logger";
 import type { TImportJob } from "@plane/types";
 import { createJiraClient } from "@/apps/jira-server-importer/helpers/migration-helpers";
 import { flushJob } from "@/apps/jira-server-importer/v2/helpers/cache";
-import JIRA_SERVER_STEPS from "@/apps/jira-server-importer/v2/migrator/steps";
 import type {
   IStep,
   IStorageService,
@@ -15,7 +14,7 @@ import type {
 } from "@/apps/jira-server-importer/v2/types";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getAPIClient } from "@/services/client";
+import { getAPIClient, getAPIClientInternal } from "@/services/client";
 import type { TaskHandler, TaskHeaders } from "@/types";
 import type { MQ, Store } from "@/worker/base";
 import { redisStorageService } from "../services/storage.service";
@@ -37,18 +36,16 @@ type OrchestratorTaskData = {
   stepContext?: TStepExecutionContext;
 };
 
-const client = getAPIClient();
+const client = getAPIClientInternal();
 
-export class JiraServerImportOrchestrator implements TaskHandler {
-  private steps: IStep[];
+export class JiraImportOrchestrator implements TaskHandler {
   private storage: IStorageService = redisStorageService;
 
   constructor(
     private readonly mq: MQ,
-    private readonly store: Store
-  ) {
-    this.steps = JIRA_SERVER_STEPS;
-  }
+    private readonly store: Store,
+    private readonly steps: IStep[]
+  ) { }
 
   /**
    * Main task handler - called by worker
@@ -143,8 +140,74 @@ export class JiraServerImportOrchestrator implements TaskHandler {
     // Load execution context
     const { state, step, jobContext } = await this.loadStepExecution(jobId, data);
 
-    // Execute step and handle result
-    await this.executeAndHandleResult(headers, state, step, jobContext);
+    try {
+      // Execute step and handle result
+      await this.executeAndHandleResult(headers, state, step, jobContext);
+    } catch (error) {
+      // Log error and move to next step instead of failing the job
+      await this.handleStepError(headers, state, step, error);
+    }
+  }
+
+  /**
+   * Handle step error: Log error and move to next step
+   */
+  private async handleStepError(
+    headers: TaskHeaders,
+    state: TOrchestratorState,
+    step: IStep,
+    error: unknown
+  ): Promise<void> {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    logger.error(`[ORCHESTRATOR] Step failed, continuing to next step`, {
+      jobId: state.jobId,
+      step: step.name,
+      stepIndex: state.currentStepIndex + 1,
+      totalSteps: state.totalSteps,
+      error: errorMessage,
+    });
+
+    // Track failed step
+    if (!state.failedSteps) {
+      state.failedSteps = [];
+    }
+    state.failedSteps.push({
+      name: step.name,
+      error: errorMessage,
+      failedAt: new Date().toISOString(),
+    });
+
+    // Move to next step
+    state.currentStepIndex++;
+    state.stepContext = undefined;
+    await this.saveState(state);
+
+    if (state.currentStepIndex >= this.steps.length) {
+      // All steps processed (some may have failed)
+      await this.mq.sendMessage(
+        {},
+        {
+          headers: {
+            ...headers,
+            type: EOrchestratorTaskType.COMPLETE,
+          },
+        }
+      );
+    } else {
+      // Move to next step
+      state.currentStepName = this.steps[state.currentStepIndex].name;
+      await this.saveState(state);
+      await this.mq.sendMessage(
+        { state },
+        {
+          headers: {
+            ...headers,
+            type: EOrchestratorTaskType.EXECUTE_STEP,
+          },
+        }
+      );
+    }
   }
 
   /**
@@ -176,6 +239,18 @@ export class JiraServerImportOrchestrator implements TaskHandler {
     const jobContext = await this.initializeJobContext(jobId);
 
     return { state, step, jobContext };
+  }
+
+  /**
+   * Initialize job context
+   */
+  private async initializeJobContext(jobId: string): Promise<TJobContext> {
+    const job = await getJobData(jobId);
+    const credentials = await getJobCredentials(job as TImportJob<JiraConfig>);
+    const planeClient = await getPlaneAPIClient(credentials, E_IMPORTER_KEYS.IMPORTER);
+    const sourceClient = createJiraClient(job as TImportJob<JiraConfig>, credentials);
+
+    return { job, credentials, planeClient, sourceClient };
   }
 
   /**
@@ -298,7 +373,7 @@ export class JiraServerImportOrchestrator implements TaskHandler {
     // Delete orchestrator state
     await this.store.del(stateKey);
 
-    logger.info(`[ORCHESTRATOR] Job completed successfully`, { jobId });
+    logger.info(`[ORCHESTRATOR] Job completed`, { jobId });
   }
 
   /**
@@ -360,18 +435,6 @@ export class JiraServerImportOrchestrator implements TaskHandler {
     });
 
     return dependencyData;
-  }
-
-  /**
-   * Initialize job context
-   */
-  private async initializeJobContext(jobId: string): Promise<TJobContext> {
-    const job = await getJobData(jobId);
-    const credentials = await getJobCredentials(job as TImportJob<JiraConfig>);
-    const planeClient = await getPlaneAPIClient(credentials, E_IMPORTER_KEYS.IMPORTER);
-    const sourceClient = createJiraClient(job as TImportJob<JiraConfig>, credentials);
-
-    return { job, credentials, planeClient, sourceClient };
   }
 
   /**

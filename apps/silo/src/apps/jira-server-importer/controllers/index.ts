@@ -2,9 +2,8 @@ import type { Request, Response } from "express";
 // etl
 import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import type { JiraResource } from "@plane/etl/jira";
 import type { JiraProject, JiraV2Service } from "@plane/etl/jira-server";
-import { createJiraService } from "@plane/etl/jira-server";
+import { createJiraService, EJiraAuthenticationType } from "@plane/etl/jira-server";
 // db
 // helpers
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
@@ -24,14 +23,18 @@ class JiraDataCenterController {
   async upsertCredentials(req: Request, res: Response) {
     try {
       const { workspaceId, userId, apiToken, personalAccessToken, userEmail, hostname } = req.body;
-      if (!workspaceId || !userId || !apiToken || !personalAccessToken) {
-        res.status(400).json({ message: "Workspace ID, User ID, API Token and Personal Access Token are required" });
+      if (!workspaceId || !userId || !apiToken || !personalAccessToken || !userEmail) {
+        return res
+          .status(400)
+          .json({ message: "Workspace ID, User ID, API Token, Personal Access Token and User Email are required" });
       }
 
       try {
         const jiraService = createJiraService({
           patToken: personalAccessToken,
           hostname: hostname,
+          email: (userEmail as string).trim(),
+          authenticationType: EJiraAuthenticationType.PERSONAL_ACCESS_TOKEN,
         });
 
         await jiraService.getCurrentUser();
@@ -64,8 +67,7 @@ class JiraDataCenterController {
     try {
       const jiraClient = await createJiraServerClient(workspaceId, userId);
       const serverInfo = await jiraClient.getServerInfo();
-      // @ts-expect-error
-      const resource: JiraResource = {
+      const resource = {
         id: serverInfo.scmInfo ?? "",
         url: serverInfo.baseUrl ?? "",
         name: serverInfo.serverTitle ?? "",
@@ -185,6 +187,8 @@ export const createJiraServerClient = async (workspaceId: string, userId: string
   return createJiraService({
     hostname: jiraCredentials.source_hostname,
     patToken: jiraCredentials.source_access_token,
+    email: jiraCredentials.source_auth_email,
+    authenticationType: EJiraAuthenticationType.PERSONAL_ACCESS_TOKEN,
   });
 };
 

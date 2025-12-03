@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
 import { pullIssueFieldsV2, transformIssueFields } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -15,7 +16,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { E_ADDITIONAL_STORAGE_KEYS, EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssueProperties } from "@/etl/migrator/issue-types/issue-property.migrator";
 
 /**
@@ -24,9 +25,11 @@ import { createOrUpdateIssueProperties } from "@/etl/migrator/issue-types/issue-
  *
  * Note: No pagination needed - fields are a small dataset
  */
-export class JiraServerIssuePropertiesStep implements IStep {
-  name = EJiraServerStep.ISSUE_PROPERTIES;
-  dependencies = [EJiraServerStep.ISSUE_TYPES];
+export class JiraIssuePropertiesStep implements IStep {
+  name = EJiraStep.ISSUE_PROPERTIES;
+  dependencies = [EJiraStep.ISSUE_TYPES];
+
+  constructor(protected readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, storage, dependencyData } = input;
@@ -91,7 +94,7 @@ export class JiraServerIssuePropertiesStep implements IStep {
   /**
    * Pull custom fields from Jira Server
    */
-  private async pull(
+  protected async pull(
     jobCtx: TJobContext,
     projectId: string,
     issueTypesData: TIssueTypesData
@@ -119,7 +122,7 @@ export class JiraServerIssuePropertiesStep implements IStep {
     const resourceId = job.config.resource ? job.config.resource.id : uuid();
 
     return jiraFields
-      .map((field) => transformIssueFields(resourceId, job.project_id, field))
+      .map((field) => transformIssueFields({ resourceId, projectId: job.project_id, source: this.source }, field))
       .filter((field) => field && field.property_type) as Partial<ExIssueProperty>[];
   }
 
@@ -261,7 +264,7 @@ export class JiraServerIssuePropertiesStep implements IStep {
    */
   protected async storePropertiesData(
     // We need to pass the name of the step, as default properties step uses this function to store data
-    name: EJiraServerStep,
+    name: EJiraStep,
     job: TImportJob,
     properties: ExIssueProperty[],
     storage: IStorageService

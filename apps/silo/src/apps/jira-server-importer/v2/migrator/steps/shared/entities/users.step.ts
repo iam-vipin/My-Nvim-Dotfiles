@@ -12,7 +12,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createUsers } from "@/etl/migrator/users.migrator";
 import { protect } from "@/lib";
 
@@ -25,8 +25,8 @@ import { protect } from "@/lib";
  *
  * User avatars are also imported to Plane during this process.
  */
-export class JiraServerUsersStep implements IStep {
-  name = EJiraServerStep.USERS;
+export class JiraUsersStep implements IStep {
+  name = EJiraStep.USERS;
   dependencies = [];
 
   private readonly PAGE_SIZE = 100;
@@ -37,7 +37,7 @@ export class JiraServerUsersStep implements IStep {
   private shouldExecute(input: TStepExecutionInput): boolean {
     const { jobContext } = input;
     const job = jobContext.job as TImportJob<JiraConfig>;
-    return !job.config?.skipUserImport;
+    return !job.config.skipUserImport;
   }
 
   /**
@@ -81,7 +81,7 @@ export class JiraServerUsersStep implements IStep {
       });
 
       // Pull users from Jira Server (paginated)
-      const pulledUsers = await this.pull(sourceClient, startAt, job.id);
+      const pulledUsers = await this.pull(jobContext, sourceClient, startAt, job.id);
 
       if (pulledUsers.items.length === 0) {
         logger.info(`[${job.id}] [${this.name}] No users found`, { jobId: job.id });
@@ -119,14 +119,14 @@ export class JiraServerUsersStep implements IStep {
    * @param jobId - The import job ID for logging purposes
    * @returns Paginated result containing user items and hasMore flag
    */
-  private async pull(client: JiraV2Service, startAt: number, jobId: string) {
+  protected async pull(_jobContext: TJobContext, client: JiraV2Service, startAt: number, jobId: string) {
     const result = await pullUsersV2({
       client,
       startAt,
       maxResults: this.PAGE_SIZE,
     });
 
-    logger.info(`[${jobId}] [${this.name}] Pulled users from Jira Server`, {
+    logger.info(`[${jobId}] [${this.name}] Pulled users`, {
       jobId,
       count: result.items.length,
       hasMore: result.hasMore,
@@ -256,18 +256,36 @@ export class JiraServerUsersStep implements IStep {
     storage: IStorageService
   ): Promise<void> {
     const allUsers = [...existingUsers, ...createdUsers];
+
+    /*
+     * In jira cloud, we don't have access to user emails, hence insead
+     * of poluting the space with multiple mappings and if else conditions
+     * we are using a merge of displayName and email, in case of transformation
+     * if the email is not present, we can fallback to displayName, which can be
+     * expected to be present in the mapping.
+     */
     const mappings = allUsers
       .filter((user) => user.email && user.id)
-      .map((user) => ({
-        externalId: user.email!,
-        planeId: user.id!,
-      }));
+      .flatMap((user) => {
+        const displayName = user.display_name;
+        const email = user.email;
+
+        return [
+          ...(email
+            ? [
+                {
+                  externalId: email,
+                  planeId: user.id!,
+                },
+              ]
+            : []),
+          {
+            externalId: displayName,
+            planeId: user.id!,
+          },
+        ];
+      });
 
     await storage.storeMapping(jobId, this.name, mappings);
-
-    logger.info(`[${jobId}] [${this.name}] Stored mappings`, {
-      jobId,
-      mappingCount: mappings.length,
-    });
   }
 }

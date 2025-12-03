@@ -64,6 +64,37 @@ export async function pullIssues(client: JiraService, projectKey: string, from?:
   return issues;
 }
 
+/**
+ * Pull issues using nextPageToken pagination (Jira Cloud Enhanced Search API)
+ * Note: Enhanced Search API does not return total count, only nextPageToken for pagination
+ */
+export async function pullIssuesV2(
+  ctx: {
+    client: JiraService;
+    nextPageToken?: string;
+    maxResults?: number;
+  },
+  projectKey: string,
+  // We are using this property for the pagination context
+  total = 0,
+  from?: Date
+): Promise<{
+  items: IJiraIssue[];
+  hasMore: boolean;
+  total?: number;
+  nextPageToken?: string;
+}> {
+  const { client, nextPageToken } = ctx;
+  const result = await client.getProjectIssues(projectKey, nextPageToken, from ? formatDateStringForHHMM(from) : "");
+
+  return {
+    items: result.issues || [],
+    hasMore: !!result.nextPageToken,
+    total: total,
+    nextPageToken: result.nextPageToken,
+  };
+}
+
 export async function pullComments(issues: IJiraIssue[], client: JiraService): Promise<any[]> {
   const comments: JiraComment[] = [];
 
@@ -168,10 +199,11 @@ export const pullIssueFields = async (
   const customFields: JiraIssueField[] = [];
   try {
     // initialize fields
-    const fields: FieldDetails[] = await client.getCustomFields();
+    const allFields: FieldDetails[] = await client.getCustomFields();
+    const filteredFields = allFields.filter((field) => field.custom);
 
     // get all field contexts
-    for (const field of fields) {
+    for (const field of filteredFields) {
       // skip if field has no id
       if (!field.id) continue;
 
@@ -226,7 +258,11 @@ export const pullIssueFields = async (
               (startAt) => client.getIssueFieldOptions(field.id as string, Number(issueTypeContext.contextId), startAt),
               (values: CustomFieldContextOption[]) => {
                 values.map((value) => {
-                  if (field.id) fieldOptions.push({ ...value, fieldId: field.id });
+                  if (field.id)
+                    fieldOptions.push({
+                      ...value,
+                      fieldId: field.id.includes("customfield_") ? field.id.split("_").pop()! : field.id,
+                    });
                 });
               },
               "values"

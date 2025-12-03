@@ -13,8 +13,10 @@ import { FlatfileMigrator } from "@/apps/flatfile/migrator/flatfile.migrator";
 import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
 import { GitlabWebhookWorker } from "@/apps/gitlab";
-import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
-import { JiraServerImportOrchestrator } from "@/apps/jira-server-importer/v2/migrator/orchestrator";
+import {
+  getJiraCloudImportOrchestrator,
+  getJiraServerImportOrchestrator,
+} from "@/apps/jira-server-importer/v2/migrator";
 import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
 import { NotionDataMigrator } from "@/apps/notion-importer/worker";
@@ -46,10 +48,9 @@ class WorkerFactory {
   static createWorker(type: string, mq: MQ, store: Store): TaskHandler {
     switch (type) {
       case "jira":
-        return new JiraDataMigrator(mq, store);
+        return getJiraCloudImportOrchestrator(mq, store);
       case "jira_server":
-        // return new JiraDataCenterMigrator(mq, store);
-        return new JiraServerImportOrchestrator(mq, store);
+        return getJiraServerImportOrchestrator(mq, store);
       case "linear":
         return new LinearDataMigrator(mq, store);
       case "linear_docs":

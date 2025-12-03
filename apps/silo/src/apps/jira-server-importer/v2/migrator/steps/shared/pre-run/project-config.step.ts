@@ -8,7 +8,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { logger } from "@plane/logger";
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type { IStep, TStepExecutionContext, TStepExecutionInput } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 
 export type TRequiredFlags = {
@@ -18,8 +18,8 @@ export type TRequiredFlags = {
 };
 
 export class PlaneProjectConfigurationStep implements IStep {
-  name = EJiraServerStep.PLANE_PROJECT_CONFIGURATION;
-  dependencies: EJiraServerStep[] = [];
+  name = EJiraStep.PLANE_PROJECT_CONFIGURATION;
+  dependencies: EJiraStep[] = [];
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext } = input;

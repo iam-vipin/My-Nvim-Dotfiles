@@ -1,4 +1,4 @@
-import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { ExIssueProperty } from "@plane/sdk";
 
 export enum E_DEFAULT_PROPERTY_TYPES {
@@ -23,12 +23,13 @@ export const getSupportedDefaultProperties = (
   resourceId: string,
   projectId: string,
   issueTypeId: string,
-  issueTypeExternalId: string
+  issueTypeExternalId: string,
+  source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA
 ): Partial<ExIssueProperty>[] => [
   {
     type_id: issueTypeExternalId,
-    external_id: `${resourceId}-${projectId}-${issueTypeId}-${E_DEFAULT_PROPERTY_TYPES.FIX_VERSION}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.FIX_VERSION),
+    external_source: source,
     display_name: "Fix Version",
     property_type: "TEXT",
     settings: {
@@ -38,8 +39,13 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: `${resourceId}-${projectId}-${issueTypeId}-${E_DEFAULT_PROPERTY_TYPES.AFFECTED_VERSION}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_id: getDefaultPropertyExternalId(
+      resourceId,
+      projectId,
+      issueTypeId,
+      E_DEFAULT_PROPERTY_TYPES.AFFECTED_VERSION
+    ),
+    external_source: source,
     display_name: "Affected Version",
     property_type: "TEXT",
     settings: {
@@ -49,8 +55,8 @@ export const getSupportedDefaultProperties = (
   },
   {
     type_id: issueTypeExternalId,
-    external_id: `${resourceId}-${projectId}-${issueTypeId}-${E_DEFAULT_PROPERTY_TYPES.REPORTER}`,
-    external_source: E_IMPORTER_KEYS.JIRA_SERVER,
+    external_id: getDefaultPropertyExternalId(resourceId, projectId, issueTypeId, E_DEFAULT_PROPERTY_TYPES.REPORTER),
+    external_source: source,
     display_name: "Reporter",
     property_type: "RELATION",
     relation_type: "USER",

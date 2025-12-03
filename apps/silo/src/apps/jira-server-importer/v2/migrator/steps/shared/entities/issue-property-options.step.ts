@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { JiraConfig, JiraCustomFieldKeys, JiraIssueField } from "@plane/etl/jira-server";
 import { OPTION_CUSTOM_FIELD_TYPES, transformIssueFieldOptions } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -14,7 +15,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { E_ADDITIONAL_STORAGE_KEYS, EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { createOrUpdateIssuePropertiesOptions } from "@/etl/migrator/issue-types/issue-property.migrator";
 
 /**
@@ -23,9 +24,11 @@ import { createOrUpdateIssuePropertiesOptions } from "@/etl/migrator/issue-types
  *
  * Note: Only processes select/multi-select fields
  */
-export class JiraServerIssuePropertyOptionsStep implements IStep {
-  name = EJiraServerStep.ISSUE_PROPERTY_OPTIONS;
-  dependencies = [EJiraServerStep.ISSUE_PROPERTIES];
+export class JiraIssuePropertyOptionsStep implements IStep {
+  name = EJiraStep.ISSUE_PROPERTY_OPTIONS;
+  dependencies = [EJiraStep.ISSUE_PROPERTIES];
+
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, storage, dependencyData } = input;
@@ -85,7 +88,10 @@ export class JiraServerIssuePropertyOptionsStep implements IStep {
           field.schema?.custom && OPTION_CUSTOM_FIELD_TYPES.includes(field.schema.custom as JiraCustomFieldKeys)
       )
       .flatMap(
-        (field) => field.options?.map((option) => transformIssueFieldOptions(resourceId, job.project_id, option)) || []
+        (field) =>
+          field.options?.map((option) =>
+            transformIssueFieldOptions({ resourceId, projectId: job.project_id, source: this.source }, option)
+          ) || []
       )
       .filter(Boolean) as Partial<ExIssuePropertyOption>[];
 

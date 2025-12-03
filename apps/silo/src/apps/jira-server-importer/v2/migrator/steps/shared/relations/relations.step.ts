@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import { createEmptyContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type {
@@ -7,7 +8,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { E_ADDITIONAL_STORAGE_KEYS, EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { E_ADDITIONAL_STORAGE_KEYS, EJiraStep } from "@/apps/jira-server-importer/v2/types";
 import { celeryProducer } from "@/worker";
 
 /**
@@ -16,9 +17,10 @@ import { celeryProducer } from "@/worker";
  * Retrieves all accumulated relations from storage and sends to Celery in one batch
  * Only handles relationships (parent, blocking, etc) - cycles/modules already handled
  */
-export class JiraServerRelationsStep implements IStep {
-  name = EJiraServerStep.RELATIONS;
+export class JiraRelationsStep implements IStep {
+  name = EJiraStep.RELATIONS;
   dependencies = [];
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
     const { jobContext, storage } = input;
@@ -68,7 +70,7 @@ export class JiraServerRelationsStep implements IStep {
           job_id: job.id,
           workspace_id: job.workspace_id,
           project_id: job.project_id,
-          source: job.source,
+          source: this.source,
           user_id: credentials.user_id,
         },
         job.workspace_slug,

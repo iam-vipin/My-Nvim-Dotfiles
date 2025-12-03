@@ -1,5 +1,6 @@
 // services
-import axios, { AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import axios from "axios";
 import type { Paginated } from "jira.js";
 import { Board as BoardClient } from "jira.js/out/agile";
 import { Version2Client } from "jira.js/out/version2";
@@ -7,29 +8,45 @@ import type {
   CustomFieldContextOption,
   FieldDetails,
   Issue,
-  IssueTypeDetails,
   JiraStatus,
   Project,
+  IssueTypeDetails,
 } from "jira.js/out/version2/models";
 import type { JiraCustomFieldWithCtx } from "@/jira-server/types/custom-fields";
 import type { JiraApiUser, JiraProps } from "..";
-import { fetchPaginatedData } from "..";
+import { fetchPaginatedData, EJiraAuthenticationType } from "..";
 
 export class JiraV2Service {
   private jiraClient: Version2Client;
   private hostname: string;
   private patToken: string;
+  private email: string;
+  private authenticationType: EJiraAuthenticationType = EJiraAuthenticationType.PERSONAL_ACCESS_TOKEN;
 
   constructor(props: JiraProps) {
     this.hostname = props.hostname;
     this.patToken = props.patToken;
+    this.email = props.email;
+    this.authenticationType = props.authenticationType;
 
-    this.jiraClient = new Version2Client({
-      host: props.hostname,
-      authentication: {
-        personalAccessToken: props.patToken,
-      },
-    });
+    if (this.authenticationType === EJiraAuthenticationType.BASIC) {
+      this.jiraClient = new Version2Client({
+        host: props.hostname,
+        authentication: {
+          basic: {
+            email: this.email,
+            apiToken: props.patToken,
+          },
+        },
+      });
+    } else {
+      this.jiraClient = new Version2Client({
+        host: props.hostname,
+        authentication: {
+          personalAccessToken: props.patToken,
+        },
+      });
+    }
 
     this.jiraClient.handleFailedResponse = async (request) => {
       const error = request as AxiosError;
@@ -68,6 +85,14 @@ export class JiraV2Service {
       startAt: startAt ?? 0,
       maxResults: maxResults ?? 1000,
     })) as JiraApiUser[];
+  }
+
+  async getIssueWorklogs(issueId: string, startAt: number, maxResults: number) {
+    return this.jiraClient.issueWorklogs.getIssueWorklog({
+      issueIdOrKey: issueId,
+      startAt: startAt,
+      maxResults: maxResults,
+    });
   }
 
   // Verified
@@ -239,15 +264,11 @@ export class JiraV2Service {
   // Verified
   async getPaginatedIssueTypes(projectId: string, startAt?: number, maxResults?: number) {
     try {
-      return axios
-        .get(
-          `${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}&maxResults=${maxResults}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.patToken}`,
-            },
-          }
-        )
+      return await this.jiraClient
+        .sendRequestFullResponse<Paginated<IssueTypeDetails>>({
+          method: "GET",
+          url: `${this.hostname}/rest/api/2/issuetype/page?projectIds=${projectId}&startAt=${startAt}&maxResults=${maxResults}`,
+        })
         .then((res) => res.data as Paginated<IssueTypeDetails>);
     } catch (e) {
       console.error("error getProjectIssueTypes", e);
@@ -264,15 +285,13 @@ export class JiraV2Service {
 
   async getCustomFieldsWithContext(projectId?: string) {
     try {
-      return await fetchPaginatedData<JiraCustomFieldWithCtx>((startAt) =>
-        axios
-          .get(`${this.hostname}/rest/api/2/customFields?startAt=${startAt}&projectIds=${projectId ?? ""}`, {
-            headers: {
-              Authorization: `Bearer ${this.patToken}`,
-            },
-          })
-          .then((res) => res.data as Paginated<JiraCustomFieldWithCtx>)
-      );
+      return await fetchPaginatedData<JiraCustomFieldWithCtx>(async (startAt) => {
+        const result = await this.jiraClient.sendRequestFullResponse<Paginated<JiraCustomFieldWithCtx>>({
+          method: "GET",
+          url: `${this.hostname}/rest/api/2/customFields?startAt=${startAt}&projectIds=${projectId ?? ""}`,
+        });
+        return result.data;
+      });
     } catch (e) {
       console.error("error getCustomFieldsWithContext", e);
       throw e;

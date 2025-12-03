@@ -6,7 +6,7 @@ import type {
 } from "jira.js/out/version2/models";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import type { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@plane/etl/jira-server";
-import { JiraV2Service } from "@plane/etl/jira-server";
+import { EJiraAuthenticationType, JiraV2Service } from "@plane/etl/jira-server";
 
 import type { ExIssueAttachment, ExState } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
@@ -92,8 +92,14 @@ export const createJiraClient = (
   if (!credentials.source_access_token || !credentials.source_hostname || !credentials.source_auth_email) {
     throw new Error(`Missing credentials in job config for job ${job.id}`);
   }
+
+  const authenticationType =
+    job.source === E_IMPORTER_KEYS.JIRA ? EJiraAuthenticationType.BASIC : EJiraAuthenticationType.PERSONAL_ACCESS_TOKEN;
+
   return new JiraV2Service({
+    email: credentials.source_auth_email,
     patToken: credentials.source_access_token!,
     hostname: credentials.source_hostname,
+    authenticationType,
   });
 };

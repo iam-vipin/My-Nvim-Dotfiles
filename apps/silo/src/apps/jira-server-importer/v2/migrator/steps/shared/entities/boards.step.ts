@@ -15,7 +15,7 @@ import type {
   TStepExecutionContext,
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
-import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 
 /**
  * Handles the extraction of boards from Jira Server.
@@ -28,8 +28,8 @@ import { EJiraServerStep } from "@/apps/jira-server-importer/v2/types";
  * for mapping issues to modules/views. If future requirements need board entities
  * in Plane, add transform/push logic here.
  */
-export class JiraServerBoardsStep implements IStep {
-  name = EJiraServerStep.BOARDS;
+export class JiraBoardsStep implements IStep {
+  name = EJiraStep.BOARDS;
   dependencies = [];
 
   private readonly PAGE_SIZE = 100;
@@ -52,12 +52,13 @@ export class JiraServerBoardsStep implements IStep {
       logger.info(`[${job.id}] [${this.name}] Pulling boards`, { startAt, totalProcessed });
 
       const result = await this.pullBoards(sourceClient, projectId, startAt, job.id);
+      const scrumBoards = result.items.filter((board) => board.type === "scrum");
 
       if (this.shouldReturnEmpty(result, startAt)) {
         return createEmptyContext();
       }
 
-      await this.storeBoards(storage, job.id, result.items);
+      await this.storeBoards(storage, job.id, scrumBoards);
 
       const newTotalProcessed = totalProcessed + result.items.length;
 

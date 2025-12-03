@@ -49,7 +49,7 @@ export const PiChatFloatingBot = observer(() => {
   // query params
   const pathName = usePathname();
   const params = useParams();
-  const { workspaceSlug, projectId, workItem } = params;
+  const { workspaceSlug, projectId, workItem, chatId: routeChatId } = params;
   const searchParams = useSearchParams();
   // hooks
   const { isPiChatDrawerOpen: isOpen, togglePiChatDrawer, initPiChat } = usePiChat();
@@ -62,15 +62,15 @@ export const PiChatFloatingBot = observer(() => {
   const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
   const shouldRenderPiChat = !pathName.includes(`/${workspaceSlug?.toString()}/pi-chat/`) && (projectId || workItem);
   useEffect(() => {
-    if (!isPiEnabled) return;
+    if (!isPiEnabled || !isSidePanelOpen) return;
     // initialize chat
-    if (chatId) initPiChat(chatId.toString());
+    if (chatId || routeChatId) initPiChat(chatId?.toString() || routeChatId?.toString());
     else initPiChat();
     // open side panel
     if (isSidePanelOpen) {
       togglePiChatDrawer(true);
     }
-  }, [isPiEnabled]);
+  }, [isPiEnabled, isSidePanelOpen]);
 
   if (pathName.includes("pi-chat")) return null;
   if (!isPiEnabled || !shouldRenderPiChat) return <></>;

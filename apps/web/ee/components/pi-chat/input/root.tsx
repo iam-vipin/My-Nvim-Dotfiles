@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
@@ -10,6 +10,7 @@ import { PiChatEditorWithRef } from "@plane/editor";
 import type { TPiChatEditorRefApi } from "@plane/editor";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -64,24 +65,26 @@ export const InputBox = observer((props: TProps) => {
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // router
-  const { workspaceSlug, projectId, chatId: routeChatId } = useParams();
+  const { workspaceSlug, projectId, workItem, chatId: routeChatId } = useParams();
   const router = useRouter();
+  const { getProjectByIdentifier } = useProject();
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const chatFocus = useMemo(
-    () =>
-      getChatFocus(activeChatId) || {
-        isInWorkspaceContext: true,
-        entityType: projectId ? "project_id" : "workspace_id",
-        entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
-      },
-    [activeChatId, getChatFocus, projectId, workspaceId]
-  );
+  const [projectIdentifier] = workItem?.split("-") ?? [];
+  const projectDetails = getProjectByIdentifier(projectIdentifier);
+  const projectIdToUse = projectDetails?.id || projectId || "";
+  const chatFocus = getChatFocus(activeChatId);
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
-  const [focus, setFocus] = useState<TFocus>(chatFocus);
+  const [focus, setFocus] = useState<TFocus>(
+    chatFocus || {
+      isInWorkspaceContext: true,
+      entityType: projectIdToUse ? "project_id" : "workspace_id",
+      entityIdentifier: projectIdToUse?.toString() || workspaceId?.toString() || "",
+    }
+  );
   const [loader, setLoader] = useState<TPiLoaders>("");
   const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
   const [isEditorReady, setIsEditorReady] = useState(false);
@@ -238,6 +241,7 @@ export const InputBox = observer((props: TProps) => {
                 {!SPEECH_LOADERS.includes(loader) && (
                   <FocusFilter
                     workspaceId={workspaceId}
+                    projectId={projectIdToUse}
                     focus={focus}
                     setFocus={setFocus}
                     isLoading={isChatLoading && !!activeChatId}

@@ -23,14 +23,15 @@ import type { TFocus } from "@/plane-web/types";
 
 type TProps = {
   workspaceId: string;
+  projectId: string;
   focus: TFocus;
   isLoading: boolean;
   setFocus: Dispatch<SetStateAction<TFocus>>;
 };
 export const FocusFilter = observer((props: TProps) => {
-  const { focus, setFocus, isLoading, workspaceId } = props;
+  const { focus, setFocus, isLoading, workspaceId, projectId } = props;
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { workspaceProjectIds, getProjectById } = useProject();

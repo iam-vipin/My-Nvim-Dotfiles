@@ -12,9 +12,6 @@ import { BooleanInput, DateSelect, NumberInput, OptionSelect, TextInput, UrlInpu
 import { AttachmentPreviewList, extractFileExtension } from "../work-items";
 import type { TAttachmentPreviewItem } from "../work-items";
 
-const DEFAULT_COVER_IMAGE =
-  "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
-
 export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
   isPreview = false,
   projectName,
@@ -28,6 +25,7 @@ export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
   editorProps,
   onFileUpload,
   className = "",
+  projectCoverImageFallback,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -167,7 +165,7 @@ export const IntakePublishForm: React.FC<TIntakePublishFormProps> = ({
           <div className="relative h-[133px] w-full">
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-md" />
             <img
-              src={getFileURL(projectCoverImage ?? DEFAULT_COVER_IMAGE)}
+              src={getFileURL(projectCoverImage ?? projectCoverImageFallback)}
               alt="Project cover image"
               className="h-[133px] w-full rounded-md object-cover"
             />

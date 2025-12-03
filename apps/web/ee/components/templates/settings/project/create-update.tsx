@@ -4,8 +4,9 @@ import useSWR from "swr";
 import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { ETemplateType } from "@plane/types";
+import { EFileAssetType, ETemplateType } from "@plane/types";
 import { getTemplateSettingsBasePath, getTemplateTypeI18nName, projectTemplateFormDataToData } from "@plane/utils";
+import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -61,8 +62,43 @@ export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProject
     const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
     if (!currentWorkspace) return;
 
+    // Handle cover image upload if it's a local static image
+    let processedTemplateData = { ...templateData };
+    const coverImage = templateData.project.cover_image_url;
+
+    if (coverImage) {
+      const imageType = getCoverImageType(coverImage);
+
+      if (imageType === "local_static") {
+        try {
+          const uploadedUrl = await uploadCoverImage(coverImage, {
+            workspaceSlug: workspaceSlug,
+            entityIdentifier: templateData.template.id || "",
+            entityType: EFileAssetType.TEMPLATE_ATTACHMENT,
+            isUserAsset: false,
+          });
+
+          processedTemplateData = {
+            ...processedTemplateData,
+            project: {
+              ...processedTemplateData.project,
+              cover_image_url: uploadedUrl,
+            },
+          };
+        } catch (error) {
+          console.error("Error uploading cover image for template:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: error instanceof Error ? error.message : "Failed to upload cover image",
+          });
+          return;
+        }
+      }
+    }
+
     const payload = projectTemplateFormDataToData({
-      formData: templateData,
+      formData: processedTemplateData,
       getUserDetails,
       getWorkspaceProjectStateById: getProjectStateById,
       workItemListCustomPropertyValues,

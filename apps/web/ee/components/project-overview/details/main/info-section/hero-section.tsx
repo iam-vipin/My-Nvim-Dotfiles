@@ -8,9 +8,9 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
-import { getFileURL } from "@plane/utils";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -21,9 +21,6 @@ type THeroSection = {
   project: TProject;
   workspaceSlug: string;
 };
-
-const DEFAULT_COVER_IMAGE =
-  "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
 
 export const HeroSection = observer((props: THeroSection) => {
   const { project, workspaceSlug } = props;
@@ -100,7 +97,7 @@ export const HeroSection = observer((props: THeroSection) => {
     <div>
       <div className="relative h-[118px] w-full ">
         <img
-          src={getFileURL(project.cover_image_url ?? DEFAULT_COVER_IMAGE)}
+          src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
           alt={project.name}
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
@@ -113,7 +110,7 @@ export const HeroSection = observer((props: THeroSection) => {
                 if (data === project.cover_image_url) return;
                 handleCoverChange({ cover_image_url: data });
               }}
-              value={project.cover_image_url ?? DEFAULT_COVER_IMAGE}
+              value={project.cover_image_url ?? DEFAULT_COVER_IMAGE_URL}
               disabled={!isAdmin}
               projectId={project.id}
             />

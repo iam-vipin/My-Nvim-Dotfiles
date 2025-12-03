@@ -4,12 +4,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
-  EProjectPriority,
-  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_UNSPLASH_COVERS,
-  RANDOM_EMOJI_CODES,
-} from "@plane/constants";
+import { EProjectPriority, PROJECT_TEMPLATE_TRACKER_ELEMENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -30,6 +25,7 @@ import {
   projectTemplateDataToSanitizedFormData,
 } from "@plane/utils";
 // root store
+import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { rootStore } from "@/lib/store-context";
@@ -50,6 +46,7 @@ import { ProjectTemplateLoader } from "./loader";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
+import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 
 export enum EProjectFormOperation {
   CREATE = "create",
@@ -91,7 +88,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
         value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
       },
     },
-    cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+    cover_image_url: DEFAULT_COVER_IMAGE_URL,
     network: 2,
     project_lead: "",
     // attributes
@@ -277,6 +274,7 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
       const additionalDefaultValueForReset = await generateAdditionalProjectTemplateFormData({
         workspaceSlug: workspaceSlug?.toString(),
         projectId: preloadedData?.template?.id ?? "",
+        coverImageUrl: DEFAULT_COVER_IMAGE_URL,
         createWorkItemTypeInstance: (params) =>
           new IssueType({
             root: rootStore,

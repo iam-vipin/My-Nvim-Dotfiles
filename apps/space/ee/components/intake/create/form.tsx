@@ -9,6 +9,7 @@ import type { IProject } from "@plane/types";
 import { Input } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components
+import CoverImage1 from "@/app/assets/cover-images/image_1.jpg?url";
 import { ProjectLogo } from "@/components/common/project-logo";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 // hooks
@@ -24,8 +25,6 @@ type TProps = {
   anchor: string;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };
-const DEFAULT_COVER_IMAGE =
-  "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
 
 const IssueForm = observer((props: TProps) => {
   const { project, isSubmitting, descriptionEditorRef, anchor } = props;
@@ -44,7 +43,7 @@ const IssueForm = observer((props: TProps) => {
         <div className="relative h-[133px] w-full">
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-md" />
           <img
-            src={getFileURL(project_details?.cover_image ?? DEFAULT_COVER_IMAGE)}
+            src={project_details?.cover_image_url ? getFileURL(project_details?.cover_image_url) : CoverImage1}
             alt="Project cover image"
             className="h-[133px] w-full rounded-md object-cover"
           />

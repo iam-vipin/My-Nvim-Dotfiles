@@ -44,6 +44,7 @@ export type TIntakePublishFormProps = {
   projectName: string;
   projectLogo?: TLogoProps;
   projectCoverImage?: string;
+  projectCoverImageFallback: string;
 
   // Form configuration
   formTitle: string;

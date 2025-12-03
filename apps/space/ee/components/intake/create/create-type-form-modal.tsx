@@ -7,6 +7,7 @@ import { PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIntakeFormSettingsResponse, TIntakeFormSubmitPayload } from "@plane/types";
 import { cn } from "@plane/utils";
+import CoverImage1 from "@/app/assets/cover-images/image_1.jpg?url";
 import GridBgDark from "@/app/assets/images/grid-bg-dark.svg?url";
 import GridBgLight from "@/app/assets/images/grid-bg-light.svg?url";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
@@ -152,6 +153,8 @@ const CreateTypeFormModal = ({ formSettings, anchor }: TProps) => {
                 projectName={projectDetails?.name || ""}
                 projectLogo={projectDetails?.logo_props}
                 projectCoverImage={projectDetails?.cover_image}
+                // CoverImage1 is the default cover image in web/helpers/cover-image.helper.ts
+                projectCoverImageFallback={CoverImage1}
                 formTitle={formSettings.name}
                 properties={formProperties}
                 isSubmitting={isSubmitting}

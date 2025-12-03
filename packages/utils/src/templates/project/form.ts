@@ -1,12 +1,14 @@
 // plane imports
-import { PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
+import { RANDOM_EMOJI_CODES } from "@plane/constants";
 import type { PartialDeep, TProjectTemplateForm } from "@plane/types";
 // local imports
 import { mockCreateDefaultProjectStates } from "./state";
 import type { TMockCreateDefaultWorkItemTypeInstanceParams } from "./work-item-type";
 import { mockCreateDefaultWorkItemTypeInstance, mockCreateProjectEpicWorkItemTypeInstance } from "./work-item-type";
 
-type TGenerateAdditionalProjectTemplateFormDataParams = TMockCreateDefaultWorkItemTypeInstanceParams;
+type TGenerateAdditionalProjectTemplateFormDataParams = TMockCreateDefaultWorkItemTypeInstanceParams & {
+  coverImageUrl: string;
+};
 
 /**
  * Generate additional project template form data that are dynamic
@@ -35,7 +37,7 @@ export const generateAdditionalProjectTemplateFormData = async (
           value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
         },
       },
-      cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+      cover_image_url: params.coverImageUrl,
       states: projectStates,
       workitem_types: workItemTypes,
       epics: projectEpicWorkItemType,

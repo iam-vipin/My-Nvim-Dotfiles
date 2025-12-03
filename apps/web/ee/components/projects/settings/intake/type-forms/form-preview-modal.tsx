@@ -5,6 +5,7 @@ import type { EIssuePropertyType, TIssueProperty } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { useProject } from "@/hooks/store/use-project";
 import { useIssueType } from "@/plane-web/hooks/store";
+import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 
 type Props = {
   isOpen: boolean;
@@ -60,6 +61,7 @@ export const IntakeFormPreviewModal = observer((props: Props) => {
               projectName={currentProjectDetails.name || ""}
               projectLogo={currentProjectDetails.logo_props}
               projectCoverImage={currentProjectDetails.cover_image}
+              projectCoverImageFallback={DEFAULT_COVER_IMAGE_URL}
               formTitle={formTitle || ""}
               properties={formProperties}
               onSubmit={async (data) => console.log("Form submitted:", data)}

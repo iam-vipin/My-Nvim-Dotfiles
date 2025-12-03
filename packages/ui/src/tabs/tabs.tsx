@@ -73,6 +73,7 @@ export function Tabs(props: TTabsProps) {
               tabClassName={tabClassName}
               size={size}
               onTabChange={handleTabChange}
+              autoWrap={false}
             />
             {actions && <div className="flex-grow">{actions}</div>}
           </div>

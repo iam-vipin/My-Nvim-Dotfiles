@@ -10,6 +10,7 @@ import type {
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
+  IInboxIssueStore,
 } from "@plane/types";
 import { EInboxIssueCurrentTab, EInboxIssueStatus } from "@plane/types";
 import { getCustomDates } from "@plane/utils";
@@ -17,7 +18,6 @@ import { getCustomDates } from "@plane/utils";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import type { CoreRootStore } from "../root.store";
 
@@ -139,7 +139,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
 
   get getAppliedFiltersCount() {
     let count = 0;
-    this.inboxFilters != undefined &&
+    if (this.inboxFilters != undefined)
       Object.keys(this.inboxFilters).forEach((key) => {
         const filterKey = key as keyof TInboxIssueFilter;
         if (this.inboxFilters[filterKey] && this.inboxFilters?.[filterKey])
@@ -188,7 +188,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     paginationCursor: string
   ) => {
     const filters: Partial<Record<keyof TInboxIssueFilter, string>> = {};
-    !isEmpty(inboxFilters) &&
+    if (!isEmpty(inboxFilters))
       Object.keys(inboxFilters).forEach((key) => {
         const filterKey = key as keyof TInboxIssueFilter;
         if (inboxFilters[filterKey] && inboxFilters[filterKey]?.length) {
@@ -237,7 +237,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   createOrUpdateInboxIssue = (inboxIssues: TInboxIssue[], workspaceSlug: string, projectId: string) => {
     if (inboxIssues && inboxIssues.length > 0) {
       inboxIssues.forEach((inbox: TInboxIssue) => {
-        const existingInboxIssueDetail = this.getIssueInboxByIssueId(inbox?.issue?.id);
+        if (!inbox?.issue?.id) return;
+        const existingInboxIssueDetail = this.getIssueInboxByIssueId(inbox.issue.id);
         if (existingInboxIssueDetail)
           Object.assign(existingInboxIssueDetail, {
             ...inbox,
@@ -246,8 +247,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
               ...inbox.issue,
             },
           });
-        else
-          set(this.inboxIssues, [inbox?.issue?.id], new InboxIssueStore(workspaceSlug, projectId, inbox, this.store));
+        else set(this.inboxIssues, [inbox.issue.id], new InboxIssueStore(workspaceSlug, projectId, inbox, this.store));
       });
     }
   };
@@ -456,10 +456,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
       const inboxIssueResponse = await this.inboxIssueService.create(workspaceSlug, projectId, data);
       if (inboxIssueResponse)
         runInAction(() => {
-          update(this, ["inboxIssueIds"], (ids) => [...ids, inboxIssueResponse?.issue?.id]);
+          if (!inboxIssueResponse?.issue) return;
+          update(this, ["inboxIssueIds"], (ids) => [...ids, inboxIssueResponse.issue?.id]);
           set(
             this.inboxIssues,
-            [inboxIssueResponse?.issue?.id],
+            [inboxIssueResponse.issue.id],
             new InboxIssueStore(workspaceSlug, projectId, inboxIssueResponse, this.store)
           );
           set(

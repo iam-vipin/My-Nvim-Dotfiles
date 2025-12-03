@@ -87,6 +87,11 @@ urlpatterns = [
         name="project-member",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+        ProjectMemberPreferenceEndpoint.as_view(),
+        name="project-member-preference",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/",
         ProjectUserViewsEndpoint.as_view(),
         name="project-view",

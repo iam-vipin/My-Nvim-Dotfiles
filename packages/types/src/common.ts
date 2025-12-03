@@ -25,6 +25,15 @@ export type TLogoProps = {
 
 export type TNameDescriptionLoader = "submitting" | "submitted" | "saved";
 
+export type TStateAnalytics = {
+  overdue_issues: number;
+  backlog_issues: number;
+  unstarted_issues: number;
+  started_issues: number;
+  completed_issues: number;
+  cancelled_issues: number;
+};
+
 export type TFetchStatus = "partial" | "complete" | undefined;
 
 export type ICustomSearchSelectOption = {
@@ -33,4 +42,10 @@ export type ICustomSearchSelectOption = {
   content: React.ReactNode;
   disabled?: boolean;
   tooltip?: string | React.ReactNode;
+};
+
+export type TDescription = {
+  description_html: string;
+  description_stripped: string;
+  description_binary: string;
 };

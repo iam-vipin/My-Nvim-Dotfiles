@@ -2,11 +2,14 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { Outlet } from "react-router";
+import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { NewUserPopup } from "@/components/new-user-popup";
 // hooks
 import { useUser } from "@/hooks/store";
+// plane admin hooks
+import { useInstanceFeatureFlags } from "@/plane-admin/hooks/store/use-instance-feature-flag";
 // local components
 import type { Route } from "./+types/layout";
 import { AdminHeader } from "./header";
@@ -17,12 +20,20 @@ function AdminLayout(_props: Route.ComponentProps) {
   const { replace } = useRouter();
   // store hooks
   const { isUserLoggedIn } = useUser();
+  // plane admin hooks
+  const { fetchInstanceFeatureFlags } = useInstanceFeatureFlags();
+  // fetching instance feature flags
+  const { isLoading: flagsLoader, error: flagsError } = useSWR(
+    `INSTANCE_FEATURE_FLAGS`,
+    () => fetchInstanceFeatureFlags(),
+    { revalidateOnFocus: false, revalidateIfStale: false, errorRetryCount: 1 }
+  );
 
   useEffect(() => {
     if (isUserLoggedIn === false) replace("/");
   }, [replace, isUserLoggedIn]);
 
-  if (isUserLoggedIn === undefined) {
+  if ((flagsLoader && !flagsError) || isUserLoggedIn === undefined) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />

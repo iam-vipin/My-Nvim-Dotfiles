@@ -38,6 +38,8 @@ class S3Storage(S3Boto3Storage):
         self.aws_region = os.environ.get("AWS_REGION")
         # Use the AWS_S3_ENDPOINT_URL environment variable for the endpoint URL
         self.aws_s3_endpoint_url = os.environ.get("AWS_S3_ENDPOINT_URL") or os.environ.get("MINIO_ENDPOINT_URL")
+        # Use the SIGNED_URL_EXPIRATION environment variable for the expiration time (default: 3600 seconds)
+        self.signed_url_expiration = int(os.environ.get("SIGNED_URL_EXPIRATION", "3600"))
 
         # Use the USE_STORAGE_PROXY environment variable for the storage proxy
         self.use_storage_proxy = getattr(settings, "USE_STORAGE_PROXY", False)
@@ -84,8 +86,10 @@ class S3Storage(S3Boto3Storage):
                 config=boto3.session.Config(signature_version="s3v4"),
             )
 
-    def generate_presigned_post(self, object_name, file_type, file_size, expiration=3600):
+    def generate_presigned_post(self, object_name, file_type, file_size, expiration=None):
         """Generate a presigned URL to upload an S3 object"""
+        if expiration is None:
+            expiration = self.signed_url_expiration
         fields = {"Content-Type": file_type}
 
         conditions = [
@@ -182,7 +186,7 @@ class S3Storage(S3Boto3Storage):
     def generate_presigned_url(
         self,
         object_name,
-        expiration=3600,
+        expiration=None,
         http_method="GET",
         disposition="inline",
         filename=None,
@@ -193,6 +197,9 @@ class S3Storage(S3Boto3Storage):
             return self._generate_proxy_download_url(object_name, expiration, disposition, filename)
 
         """Generate a presigned URL to share an S3 object"""
+        if expiration is None:
+            expiration = self.signed_url_expiration
+        content_disposition = self._get_content_disposition(disposition, filename)
         try:
             response = self.s3_client.generate_presigned_url(
                 "get_object",

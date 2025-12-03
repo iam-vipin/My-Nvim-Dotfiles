@@ -23,14 +23,13 @@ export const handleIssueCommentWebhook = async (
 ) => {
   const payloadId = payload?.id ?? "";
 
-  // Store a key associated with the data in the store
-  // If the key is present, then we need to requeue all that task and process them again
+  // Check if this webhook was triggered by our own GitHub->Plane sync (loop prevention)
   if (payloadId) {
-    const exist = await store.get(`silo:comment:${payload.id}`);
+    const exist = await store.get(`silo:comment:plane:${payload.id}`);
     if (exist) {
-      logger.info("[PLANE][COMMENT] Event Processed Successfully, confirmed by target");
-      // Remove the webhook from the store
-      await store.del(`silo:comment:${payload.id}`);
+      logger.info("[PLANE][COMMENT] Event triggered by GitHub->Plane sync, skipping to prevent loop");
+      // Remove the key so future legitimate webhooks are not blocked
+      await store.del(`silo:comment:plane:${payload.id}`);
       return true;
     }
   }
@@ -130,7 +129,9 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       credentials,
       ghIntegrationKey
     );
-    await store.set(`silo:comment:${githubComment.data.id}`, "true");
+    // Set key with GitHub comment ID so GitHub->Plane handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:comment:gh:${githubComment.data.id}`, "true", 5);
 
     if (
       !comment.external_id ||

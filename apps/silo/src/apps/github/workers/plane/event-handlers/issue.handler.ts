@@ -20,13 +20,14 @@ const apiClient = getAPIClient();
 export const imagePrefix = encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github/");
 
 export const handleIssueWebhook = async (headers: TaskHeaders, mq: MQ, store: Store, payload: PlaneWebhookPayload) => {
-  // Check for the key in the store, if the key is present, then the issue is already synced
+  // Check if this webhook was triggered by our own GitHub->Plane sync (loop prevention)
+  // The GitHub->Plane handler sets a temporary key with the Plane issue ID
   if (payload && payload.id) {
-    const exist = await store.get(`silo:issue:${payload.id}`);
+    const exist = await store.get(`silo:issue:plane:${payload.id}`);
     if (exist) {
-      logger.info("[PLANE][ISSUE] Event Processed Successfully, confirmed by target");
-      // Remove the webhook from the store
-      await store.del(`silo:issue:${payload.id}`);
+      logger.info("[PLANE][ISSUE] Event triggered by GitHub->Plane sync, skipping to prevent loop");
+      // Remove the key so future legitimate webhooks are not blocked
+      await store.del(`silo:issue:plane:${payload.id}`);
       return true;
     }
   }
@@ -127,8 +128,9 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
       await Promise.all([addExternalId(), createLink()]);
     }
 
-    // Add the issue number to the store
-    await store.set(`silo:issue:${githubIssue?.data.number}`, "true");
+    // Set key with GitHub issue number so GitHub->Plane handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 5);
   } catch (error) {
     logger.error("[Plane][Github] Error handling issue create/update event", {
       error,

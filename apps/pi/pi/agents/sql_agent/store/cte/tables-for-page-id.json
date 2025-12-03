@@ -1,0 +1,17 @@
+{
+    "pages": [
+        "id"
+    ],
+    "page_labels": [
+        "page_id"
+    ],
+    "project_pages": [
+        "page_id"
+    ],
+    "page_logs": [
+        "page_id"
+    ],
+    "page_versions": [
+        "page_id"
+    ]
+}

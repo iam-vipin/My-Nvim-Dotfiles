@@ -580,7 +580,7 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
             # For failed actions, include error message
             error = action.get("error", "")
             if error:
-                action_data["error"] = error[:200] + "..." if len(error) > 200 else error
+                action_data["error"] = error.split("\n")[0]
 
         clean_actions.append(action_data)
 

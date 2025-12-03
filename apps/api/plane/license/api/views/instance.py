@@ -224,6 +224,7 @@ class InstanceEndpoint(BaseAPIView):
         # Airgapped mode
         data["is_airgapped"] = settings.IS_AIRGAPPED
 
+
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 

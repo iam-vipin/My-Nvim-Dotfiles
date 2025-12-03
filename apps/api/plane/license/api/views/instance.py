@@ -217,6 +217,7 @@ class InstanceEndpoint(BaseAPIView):
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
+        data["is_self_managed"] = settings.IS_SELF_MANAGED
 
         data["is_opensearch_enabled"] = OPENSEARCH_ENABLED == "1"
 

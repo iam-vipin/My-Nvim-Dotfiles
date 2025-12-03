@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
@@ -91,7 +90,6 @@ export const ProductUpdatesHeader = observer(() => {
             Perpetual license
           </div>
         )}
-        <PlaneLogo className="h-6 w-auto text-custom-text-100" />
       </div>
     </div>
   );

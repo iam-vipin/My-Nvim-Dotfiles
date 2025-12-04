@@ -19,10 +19,12 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useInstance } from "@/hooks/store/use-instance";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
+import { useAppRailVisibility } from "@/lib/app-rail/context";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
+import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
 
 export const TopNavigationRoot = observer(() => {
@@ -32,6 +34,7 @@ export const TopNavigationRoot = observer(() => {
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
   const { preferences } = useAppRailPreferences();
+  const { isEnabled: isAppRailEnabled, isCollapsed: isAppRailCollapsed } = useAppRailVisibility();
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
   const pathname = usePathname();
@@ -60,16 +63,22 @@ export const TopNavigationRoot = observer(() => {
   const isOpenSearch = config?.is_opensearch_enabled;
   const showLabel = preferences.displayMode === "icon_with_label";
 
+  // Show WorkspaceAppSwitcher when app rail is enabled and collapsed
+  const shouldShowAppSwitcher = isAppRailEnabled && isAppRailCollapsed;
+
   return (
     <div
       className={cn("desktop-header flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
-      {/* Workspace Menu */}
-      <div className="shrink-0 flex-1">
-        {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
-        {isDesktopApp && <DesktopHeaderProvider />}
+      <div className="flex flex-1 shrink-0 items-center gap-1.5">
+        {shouldShowAppSwitcher && <WorkspaceAppSwitcher />}
+        {/* Workspace Menu */}
+        <div className="shrink-0 flex-1">
+          {!isDesktopApp && <WorkspaceMenuRoot variant="top-navigation" />}
+          {isDesktopApp && <DesktopHeaderProvider />}
+        </div>
       </div>
       {/* Power K Search */}
       <div className="desktop-header-actions shrink-0">

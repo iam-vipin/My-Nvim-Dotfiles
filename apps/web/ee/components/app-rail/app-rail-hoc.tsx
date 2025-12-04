@@ -21,21 +21,21 @@ export function withDockItems<P extends WithDockItemsProps>(WrappedComponent: Re
     const dockItems: (AppSidebarItemData & { shouldRender: boolean })[] = [
       {
         label: "Projects",
-        icon: <PlaneNewIcon className="size-4" />,
+        icon: <PlaneNewIcon className="size-5" />,
         href: `/${workspaceSlug}/`,
         isActive: isProjectsPath && !isNotificationsPath,
         shouldRender: isAppRailFeatureEnabled("projects"),
       },
       {
         label: "Wiki",
-        icon: <WikiIcon className="size-4" />,
+        icon: <WikiIcon className="size-5" />,
         href: `/${workspaceSlug}/wiki`,
         isActive: isWikiPath,
         shouldRender: isAppRailFeatureEnabled("wiki"),
       },
       {
         label: "AI",
-        icon: <PiIcon className="size-4" />,
+        icon: <PiIcon className="size-5" />,
         href: `/${workspaceSlug}/pi-chat`,
         isActive: isAiPath,
         shouldRender: isAppRailFeatureEnabled("pi-chat"),

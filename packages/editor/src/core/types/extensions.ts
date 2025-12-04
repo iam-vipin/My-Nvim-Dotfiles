@@ -13,5 +13,4 @@ export type TExtensions =
   | "mathematics"
   | "drawio"
   | "copy-block-link"
-  | "unique-id"
   | "selection-conversion";

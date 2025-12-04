@@ -31,7 +31,6 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
   const isEditorCopyBlockLinkEnabled = useFlag(workspaceSlug, "EDITOR_COPY_BLOCK_LINK");
-  const isEditorUniqueIdEnabled = useFlag(workspaceSlug, "EDITOR_UNIQUE_ID");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
   const isEditorSelectionConversionEnabled = useFlag(workspaceSlug, "EDITOR_SELECTION_CONVERSION");
@@ -97,12 +96,6 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   if (!isEditorCopyBlockLinkEnabled) {
     document.disabled.add("copy-block-link");
     richText.disabled.add("copy-block-link");
-  }
-
-  if (!isEditorUniqueIdEnabled) {
-    document.disabled.add("unique-id");
-    richText.disabled.add("unique-id");
-    liteText.disabled.add("unique-id");
   }
 
   // check for drawio integration

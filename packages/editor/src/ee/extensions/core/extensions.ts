@@ -2,7 +2,6 @@ import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 // ce imports
 import type { TCoreAdditionalExtensionsProps } from "src/ce/extensions";
-import { UniqueID } from "@/extensions/unique-id/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import type { IEditorPropsExtended } from "@/plane-editor/types/editor-extended";
 // types
@@ -38,12 +37,5 @@ export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
     extensions.push(SmoothCursorExtension);
   }
 
-  if (!disabledExtensions?.includes("unique-id")) {
-    extensions.push(
-      UniqueID.configure({
-        provider,
-      })
-    );
-  }
   return extensions;
 };

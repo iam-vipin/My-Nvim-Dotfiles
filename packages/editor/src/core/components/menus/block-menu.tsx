@@ -194,7 +194,7 @@ export const BlockMenu = (props: Props) => {
       icon: Link2,
       key: "copy-link",
       label: "Copy link",
-      isDisabled: disabledExtensions?.includes("copy-block-link") || disabledExtensions?.includes("unique-id"),
+      isDisabled: disabledExtensions?.includes("copy-block-link"),
       onClick: () => {
         const { selection, tr } = editor.state;
         const selectedNode = selection.content().content.firstChild;

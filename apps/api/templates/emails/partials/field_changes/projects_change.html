@@ -1,0 +1,34 @@
+{% if change %} <!-- Projects changed -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px;">
+  <tr>
+    <td>
+      <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.png" width="12" height="12" border="0" style="display: inline-block;" />
+      <span style="font-size: 0.8rem; font-weight: 500; color: #525252; font-family: 'Inter', sans-serif;">Projects:</span>
+    </td>
+    {% if change.new_value.0 %}
+    <td style="padding-left: 5px;overflow-wrap: break-word;">
+      {% for project in change.new_value|slice:":2" %}
+        <span style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; font-family: 'Inter', sans-serif;">{{ project }}</span>
+      {% endfor %}
+    </td>
+    {% endif %}
+    {% if change.new_value.2 %}
+    <td>
+      <span style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; font-family: 'Inter', sans-serif;">+{{ change.new_value|length|add:"-2" }} more</span>
+    </td>
+    {% endif %}
+    {% if change.old_value.0 %}
+    <td style="padding-left: 8px;">
+      {% for project in change.old_value|slice:":2" %}
+        <span style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; font-family: 'Inter', sans-serif;">{{ project }}</span>
+      {% endfor %}
+    </td>
+    {% endif %}
+    {% if change.old_value.2 %}
+    <td>
+      <span style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; font-family: 'Inter', sans-serif;">+{{ change.old_value|length|add:"-2" }} more</span>
+    </td>
+    {% endif %}
+  </tr>
+</table>
+{% endif %}

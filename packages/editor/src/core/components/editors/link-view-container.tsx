@@ -3,7 +3,6 @@ import type { Editor } from "@tiptap/react";
 import { useEditorState } from "@tiptap/react";
 import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-
 // components
 import type { LinkViewProps } from "@/components/links";
 import { LinkView } from "@/components/links";

@@ -1,0 +1,38 @@
+<!-- action performer -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td style="padding-bottom: 2px;">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding-right: 8px;">
+            {% if actor_detail.avatar_url %}
+              <img src="{{ actor_detail.avatar_url }}" width="25" height="25" border="0" style="border-radius: 50%; display: block;" />
+            {% else %}
+              <table border="0" cellpadding="0" cellspacing="0" style="background-color: #4f3422; border-radius: 50%; overflow: hidden; max-height: 28px; height: 28px; max-width: 28px; width: 28px;">
+                <tr>
+                  <td style="text-align: center; padding: 0; height: 28px; width: 28px; vertical-align: middle;">
+                    <span style="color: white; font-weight: 500; font-size: 13px; line-height: 28px; display: inline-block;">{{ actor_detail.first_name.0 }}</span>
+                  </td>
+                </tr>
+              </table>
+            {% endif %}
+          </td>
+          <td style="vertical-align: top;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td style="color: #1c2024; font-weight: 500; font-size: 12px; line-height: 16px; font-family: 'Inter', sans-serif; padding-bottom: 2px;">
+                  {{ actor_detail.first_name }} {{ actor_detail.last_name }}
+                </td>
+              </tr>
+              <tr>
+                <td style="color: #6c7275; font-weight: 400; font-size: 10px; line-height: 14px; font-family: 'Inter', sans-serif;">
+                  {{ activity_time }}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

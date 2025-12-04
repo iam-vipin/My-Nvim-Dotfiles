@@ -122,9 +122,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      extendedEditorProps,
       flaggedExtensions,
       fileHandler,
-      extendedEditorProps,
+      provider,
     }),
     UniqueID.configure({
       provider,

@@ -22,6 +22,15 @@ from .views import (
     SignUpAuthEndpoint,
     ForgotPasswordSpaceEndpoint,
     ResetPasswordSpaceEndpoint,
+    # OIDC
+    OIDCAuthInitiateEndpoint,
+    OIDCallbackEndpoint,
+    OIDCLogoutEndpoint,
+    # SAML
+    SAMLAuthInitiateEndpoint,
+    SAMLCallbackEndpoint,
+    SAMLMetadataEndpoint,
+    SAMLLogoutEndpoint,
     # Space
     EmailCheckSpaceEndpoint,
     GitLabCallbackSpaceEndpoint,
@@ -40,6 +49,29 @@ from .views import (
     GiteaOauthInitiateEndpoint,
     GiteaCallbackSpaceEndpoint,
     GiteaOauthInitiateSpaceEndpoint,
+    # mobile web view authentication
+    MobileEmailCheckEndpoint,
+    MobileMagicGenerateEndpoint,
+    MobileSignInAuthEndpoint,
+    MobileSignUpAuthEndpoint,
+    MobileMagicSignInEndpoint,
+    MobileMagicSignUpEndpoint,
+    MobileSessionTokenCheckEndpoint,
+    MobileSignOutAuthEndpoint,
+    MobileSessionTokenEndpoint,
+    MobileTokenEndpoint,
+    MobileRefreshTokenEndpoint,
+    MobileGoogleOauthInitiateEndpoint,
+    MobileGoogleCallbackEndpoint,
+    MobileGitHubOauthInitiateEndpoint,
+    MobileGitHubCallbackEndpoint,
+    MobileOIDCAuthInitiateEndpoint,
+    MobileOIDCallbackEndpoint,
+    MobileOIDCLogoutEndpoint,
+    MobileSAMLAuthInitiateEndpoint,
+    MobileSAMLCallbackEndpoint,
+    MobileSAMLLogoutEndpoint,
+    MobileSAMLMetadataEndpoint,
 )
 
 urlpatterns = [
@@ -145,5 +177,129 @@ urlpatterns = [
         "spaces/gitea/callback/",
         GiteaCallbackSpaceEndpoint.as_view(),
         name="space-gitea-callback",
+    ),
+    # OIDC
+    path("oidc/", OIDCAuthInitiateEndpoint.as_view(), name="oidc"),
+    path("oidc/callback/", OIDCallbackEndpoint.as_view(), name="oidc"),
+    path("oidc/logout/", OIDCLogoutEndpoint.as_view(), name="oidc"),
+    # SAML
+    path("saml/", SAMLAuthInitiateEndpoint.as_view(), name="saml"),
+    path("saml/callback/", SAMLCallbackEndpoint.as_view(), name="saml"),
+    path("saml/metadata/", SAMLMetadataEndpoint.as_view(), name="saml"),
+    path("saml/logout/", SAMLLogoutEndpoint.as_view(), name="saml"),
+    # mobile web view authentication
+    path(
+        "mobile/email-check/",
+        MobileEmailCheckEndpoint.as_view(),
+        name="mobile-email-check",
+    ),
+    path(
+        "mobile/magic-generate/",
+        MobileMagicGenerateEndpoint.as_view(),
+        name="mobile-magic-generate",
+    ),
+    path("mobile/sign-in/", MobileSignInAuthEndpoint.as_view(), name="mobile-sign-in"),
+    path(
+        "mobile/sign-up/",
+        MobileSignUpAuthEndpoint.as_view(),
+        name="mobile-sign-up",
+    ),
+    path(
+        "mobile/magic-sign-in/",
+        MobileMagicSignInEndpoint.as_view(),
+        name="mobile-magic-sign-in",
+    ),
+    path(
+        "mobile/magic-sign-up/",
+        MobileMagicSignUpEndpoint.as_view(),
+        name="mobile-magic-sign-up",
+    ),
+    path(
+        "mobile/token-check/",
+        MobileSessionTokenCheckEndpoint.as_view(),
+        name="mobile-token-check",
+    ),
+    path("mobile/sign-out/", MobileSignOutAuthEndpoint.as_view(), name="mobile-sign-out"),
+    path(
+        "mobile/session-token/",
+        MobileSessionTokenEndpoint.as_view(),
+        name="mobile-token",
+    ),
+    path("mobile/token/", MobileTokenEndpoint.as_view(), name="mobile-token"),
+    # mobile web view refresh token
+    path(
+        "mobile/refresh-token/",
+        MobileRefreshTokenEndpoint.as_view(),
+        name="mobile-refresh-token",
+    ),
+    # mobile web view google oauth
+    path(
+        "mobile/google/",
+        MobileGoogleOauthInitiateEndpoint.as_view(),
+        name="mobile-google-initiate",
+    ),
+    path(
+        "mobile/google/callback/",
+        MobileGoogleCallbackEndpoint.as_view(),
+        name="mobile-google-callback",
+    ),
+    # mobile web view github oauth
+    path(
+        "mobile/github/",
+        MobileGitHubOauthInitiateEndpoint.as_view(),
+        name="mobile-github-initiate",
+    ),
+    path(
+        "mobile/github/callback/",
+        MobileGitHubCallbackEndpoint.as_view(),
+        name="mobile-github-callback",
+    ),
+    # # mobile web view gitlab oauth
+    # path(
+    #     "mobile/gitlab/",
+    #     MobileGitlabOauthInitiateEndpoint.as_view(),
+    #     name="mobile-gitlab-initiate",
+    # ),
+    # path(
+    #     "mobile/gitlab/callback/",
+    #     MobileGitlabCallbackEndpoint.as_view(),
+    #     name="mobile-gitlab-callback",
+    # ),
+    # mobile web view oidc
+    path(
+        "mobile/oidc/",
+        MobileOIDCAuthInitiateEndpoint.as_view(),
+        name="mobile-oidc-initiate",
+    ),
+    path(
+        "mobile/oidc/callback/",
+        MobileOIDCallbackEndpoint.as_view(),
+        name="mobile-oidc-callback",
+    ),
+    path(
+        "mobile/oidc/logout/",
+        MobileOIDCLogoutEndpoint.as_view(),
+        name="mobile-oidc-logout",
+    ),
+    # mobile web view saml
+    path(
+        "mobile/saml/",
+        MobileSAMLAuthInitiateEndpoint.as_view(),
+        name="mobile-saml-initiate",
+    ),
+    path(
+        "mobile/saml/callback/",
+        MobileSAMLCallbackEndpoint.as_view(),
+        name="mobile-saml-callback",
+    ),
+    path(
+        "mobile/saml/metadata/",
+        MobileSAMLMetadataEndpoint.as_view(),
+        name="mobile-saml-metadata",
+    ),
+    path(
+        "mobile/saml/logout/",
+        MobileSAMLLogoutEndpoint.as_view(),
+        name="mobile-saml-logout",
     ),
 ]

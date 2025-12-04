@@ -3,7 +3,9 @@
 		max_size {$FILE_SIZE_LIMIT}
 	}
 
+	redir /spaces /spaces/ permanent
 	reverse_proxy /spaces/* systemd-space:3000
+	redir /god-mode /god-mode/ permanent
 	reverse_proxy /god-mode/* systemd-admin:3000
 	reverse_proxy /api/* systemd-api:8000
 	reverse_proxy /graphql/* systemd-api:8000

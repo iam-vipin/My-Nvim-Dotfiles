@@ -57,20 +57,8 @@ const Component = ({ dockItems }: Props) => {
               >
                 <div className="flex items-center gap-2">
                   {item.icon && (
-                    <div
-                      className={cn("flex items-center justify-center size-8 rounded-md", {
-                        "bg-custom-primary-100/20 text-custom-primary-100": item.isActive,
-                        "bg-custom-background-80": !item.isActive,
-                      })}
-                    >
-                      <span
-                        className={cn("size-5", {
-                          "text-custom-primary-100": item.isActive,
-                          "text-custom-text-300": !item.isActive,
-                        })}
-                      >
-                        {item.icon}
-                      </span>
+                    <div className="flex items-center justify-center size-8 rounded-md bg-custom-background-80">
+                      <span className="size-5 text-custom-text-300">{item.icon}</span>
                     </div>
                   )}
                   <span className="text-xs font-medium">{item.label}</span>

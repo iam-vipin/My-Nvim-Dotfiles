@@ -279,4 +279,4 @@ export const ModuleForm: React.FC<Props> = (props) => {
       )}
     </form>
   );
-}
+};

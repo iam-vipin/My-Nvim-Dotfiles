@@ -19,8 +19,10 @@ export type TBaseTemplateInstanceProps<T extends TBaseTemplateWithData> = {
   baseTemplateData: T;
 };
 
-export interface IBaseTemplateInstance<T extends TBaseTemplateWithData>
-  extends TBaseTemplate<T["template_type"], T["template_data"]> {
+export interface IBaseTemplateInstance<T extends TBaseTemplateWithData> extends TBaseTemplate<
+  T["template_type"],
+  T["template_data"]
+> {
   // computed
   asJSON: T;
   asPublishableJSON: TPublishTemplateForm<T["template_type"], T["template_data"]>;

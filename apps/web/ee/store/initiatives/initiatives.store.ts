@@ -242,10 +242,10 @@ export class InitiativeStore implements IInitiativeStore {
   get isAnyModalOpen() {
     return Boolean(
       this.initiativeLinks.isLinkModalOpen ||
-        this.isInitiativeModalOpen ||
-        this.isProjectsModalOpen ||
-        this.isEpicModalOpen ||
-        this.isAttachmentDeleteModalOpen
+      this.isInitiativeModalOpen ||
+      this.isProjectsModalOpen ||
+      this.isEpicModalOpen ||
+      this.isAttachmentDeleteModalOpen
     );
   }
 

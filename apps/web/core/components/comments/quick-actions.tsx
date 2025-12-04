@@ -46,7 +46,7 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
     handleDelete: () => activityOperations.removeComment(comment.id),
   });
 
-  if(MENU_ITEMS.length === 0) return null;
+  if (MENU_ITEMS.length === 0) return null;
 
   return (
     <CustomMenu ellipsis closeOnSelect>

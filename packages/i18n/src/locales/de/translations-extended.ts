@@ -168,7 +168,8 @@ export default {
         heading: "Intake-Verantwortung",
         notify_assignee: {
           title: "Zuständige benachrichtigen",
-          description: "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
+          description:
+            "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
         },
         toasts: {
           set: {
@@ -776,7 +777,8 @@ export default {
         },
         authorization_grant_type: {
           title: "Verbindungstyp",
-          description: "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll",
+          description:
+            "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll",
         },
         app_description_error: "App-Beschreibung ist erforderlich",
         app_slug_title: "App-Slug",
@@ -838,7 +840,8 @@ export default {
         invalid_categories_error: "Ungültige Kategorien",
         categories_description: "Wählen Sie die Kategorien, die am besten zu der App passen",
         supported_plans: "Unterstützte Pläne",
-        supported_plans_description: "Wählen Sie die Workspace-Pläne aus, die diese Anwendung installieren können. Leer lassen, um alle Pläne zu erlauben.",
+        supported_plans_description:
+          "Wählen Sie die Workspace-Pläne aus, die diese Anwendung installieren können. Leer lassen, um alle Pläne zu erlauben.",
         select_plans: "Pläne Auswählen",
         privacy_policy_url_title: "Datenschutzerklärung URL",
         privacy_policy_url_error: "Datenschutzerklärung URL ist erforderlich",

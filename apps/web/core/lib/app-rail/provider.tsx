@@ -16,10 +16,7 @@ interface AppRailVisibilityProviderProps {
  * AppRailVisibilityProvider - manages app rail visibility state
  * Base provider that accepts isEnabled as a prop
  */
-export const AppRailVisibilityProvider = observer(({
-  children,
-  isEnabled = false,
-}: AppRailVisibilityProviderProps) => {
+export const AppRailVisibilityProvider = observer(({ children, isEnabled = false }: AppRailVisibilityProviderProps) => {
   const { workspaceSlug } = useParams();
 
   // User preference from localStorage

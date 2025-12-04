@@ -19,7 +19,7 @@ type Props = {
   handleOnChange?: () => void;
 };
 
-export function ModuleStatusSelect({ control, error, tabIndex , handleOnChange}: Props) {
+export function ModuleStatusSelect({ control, error, tabIndex, handleOnChange }: Props) {
   const { t } = useTranslation();
   return (
     <Controller

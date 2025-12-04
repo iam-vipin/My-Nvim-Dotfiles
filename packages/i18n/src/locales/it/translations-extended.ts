@@ -166,7 +166,8 @@ export default {
         heading: "Responsabilità di accettazione",
         notify_assignee: {
           title: "Notifica assegnatari",
-          description: "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
+          description:
+            "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
         },
         toasts: {
           set: {

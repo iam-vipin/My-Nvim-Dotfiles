@@ -168,7 +168,8 @@ export default {
         heading: "Tanggung jawab penerimaan",
         notify_assignee: {
           title: "Beritahu yang ditugaskan",
-          description: "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
+          description:
+            "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
         },
         toasts: {
           set: {

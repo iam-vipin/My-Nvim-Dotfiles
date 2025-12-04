@@ -26,8 +26,7 @@ export const AppRailVisibilityProvider = observer(({ children }: AppRailVisibili
   const subscriptionDetail = workspaceSubscription.currentWorkspaceSubscribedPlanDetail;
 
   // EE Logic: Feature is NOT enabled for free self-managed workspaces
-  const isFreeForSelfManaged =
-    subscriptionDetail?.is_self_managed === true && subscriptionDetail?.product === "FREE";
+  const isFreeForSelfManaged = subscriptionDetail?.is_self_managed === true && subscriptionDetail?.product === "FREE";
 
   // Feature is enabled if:
   // 1. Feature flag is on AND

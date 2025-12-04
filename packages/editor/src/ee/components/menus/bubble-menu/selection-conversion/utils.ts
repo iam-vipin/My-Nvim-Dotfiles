@@ -427,10 +427,9 @@ export const handleSelectionConversion = async (args: THandleSelectionConversion
   });
   await createTreePromise;
 
-
   // Show error/warning toast if there were any failures
   if (errors.length > 0) {
-    const successCount = (workItemsToInsert.length || (mixedContentWorkItemId ? 1 : 0));
+    const successCount = workItemsToInsert.length || (mixedContentWorkItemId ? 1 : 0);
     const failureCount = errors.length;
 
     if (successCount > 0) {

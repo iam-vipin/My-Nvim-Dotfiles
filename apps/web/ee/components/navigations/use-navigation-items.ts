@@ -16,7 +16,6 @@ import type { TNavigationItem } from "@/components/navigation/tab-navigation-roo
 import { useFlag } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
-
 type UseNavigationItemsProps = {
   workspaceSlug: string;
   projectId: string;
@@ -35,15 +34,12 @@ export const useNavigationItems = ({
   project,
   allowPermissions,
 }: UseNavigationItemsProps): TNavigationItem[] => {
-
   const isProjectOverviewEnabled = useFlag(workspaceSlug, "PROJECT_OVERVIEW");
   const { getProjectFeatures } = useProjectAdvanced();
 
   const projectFeatures = getProjectFeatures(projectId);
 
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
-
-
 
   // Base navigation items
   const baseNavigation = useCallback(

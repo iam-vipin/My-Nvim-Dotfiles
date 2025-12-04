@@ -2,11 +2,10 @@ import { pullIssuesV2 } from "@plane/etl/jira";
 import { logger } from "@plane/logger";
 import type { TImportJob } from "@plane/types";
 import { createJiraClient } from "@/apps/jira-importer/helpers/migration-helpers";
-import type { TStepExecutionContext } from "@/apps/jira-server-importer/v2/types";
+import type { TStepExecutionContext, TJobContext } from "@/apps/jira-server-importer/v2/types";
 import { getJobCredentials } from "@/helpers/job";
 import { withCache } from "../../../../helpers/cache";
 import { buildExternalId } from "../../../../helpers/job";
-import type { TJobContext } from "../../../../types";
 import { JiraIssuesStep } from "../../shared/issues";
 
 /**

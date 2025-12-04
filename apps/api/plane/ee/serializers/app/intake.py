@@ -12,8 +12,12 @@ from plane.ee.models import (
     IntakeFormField,
     IntakeResponsibility,
     IntakeResponsibilityTypeChoices,
+    TeamspaceMember,
+    TeamspaceProject,
 )
-from plane.db.models import Project
+from plane.db.models import Project, ProjectMember
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IntakeSettingSerializer(BaseSerializer):
@@ -29,44 +33,89 @@ class IntakeSettingSerializer(BaseSerializer):
         ]
 
 
-class IntakeResponsibilitySerializer(BaseSerializer):
-    class Meta:
-        model = IntakeResponsibility
-        fields = [
-            "id",
-            "intake",
-            "user",
-            "type",
-            "project",
-        ]
-        read_only_fields = [
-            "id",
-            "intake",
-            "project",
-        ]
+class IntakeResponsibilitySerializer(serializers.Serializer):
+    users = serializers.ListField(child=serializers.UUIDField(), required=False, allow_empty=True)
+
+    def validate_users(self, value):
+        if not value:
+            return []
+
+        project_id = self.context.get("project_id")
+        if not project_id:
+            raise serializers.ValidationError("Project is required")
+
+        # Check if teamspace projects is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES, user_id=self.context.get("user_id"), slug=self.context.get("slug")
+        ):
+            # Get the project members and teamspace members
+            teamspace_ids = TeamspaceProject.objects.filter(project_id=project_id).values_list(
+                "team_space_id", flat=True
+            )
+            return list(
+                ProjectMember.objects.filter(project_id=project_id, member_id__in=value, is_active=True).values_list(
+                    "member_id", flat=True
+                )
+            ) + list(
+                TeamspaceMember.objects.filter(team_space_id__in=teamspace_ids, member_id__in=value).values_list(
+                    "member_id", flat=True
+                )
+            )
+        return list(
+            ProjectMember.objects.filter(project_id=project_id, member_id__in=value, is_active=True).values_list(
+                "member_id", flat=True
+            )
+        )
 
     def create(self, validated_data):
         # Remove the existing responsibility and add the new user
         intake = self.context.get("intake")
         project_id = self.context.get("project_id")
+
         if not intake or not project_id:
             raise serializers.ValidationError("Intake and project are required")
 
-        # Check if there is an existing intake responsibility for this intake and project
-        intake_responsibility = IntakeResponsibility.objects.filter(intake=intake, project_id=project_id).first()
+        # Get the existing users
+        existing_users = IntakeResponsibility.objects.filter(intake=intake, project_id=project_id).values_list(
+            "user_id", flat=True
+        )
+        requested_users = validated_data.get("users")
 
-        if intake_responsibility:
-            intake_responsibility.user = validated_data.get("user")
-            intake_responsibility.type = validated_data.get("type", IntakeResponsibilityTypeChoices.ASSIGNEE)
-            intake_responsibility.save()
-        else:
-            intake_responsibility = IntakeResponsibility.objects.create(
-                intake=intake,
-                project_id=project_id,
-                user=validated_data.get("user"),
-                type=validated_data.get("type", IntakeResponsibilityTypeChoices.ASSIGNEE),
+        new_users = set(requested_users) - set(existing_users)
+        deleted_users = set(existing_users) - set(requested_users)
+
+        with transaction.atomic():
+            # Delete the existing users
+            IntakeResponsibility.objects.filter(
+                intake=intake, project_id=project_id, user_id__in=deleted_users
+            ).delete()
+
+            # Create the new users
+            IntakeResponsibility.objects.bulk_create(
+                [
+                    IntakeResponsibility(
+                        intake=intake,
+                        project_id=project_id,
+                        user_id=user_id,
+                        workspace_id=intake.workspace_id,
+                        type=IntakeResponsibilityTypeChoices.ASSIGNEE,
+                    )
+                    for user_id in new_users
+                ],
+                batch_size=10,
             )
-        return intake_responsibility
+
+        # Return all requested users (the final state), not just newly created ones
+        return requested_users
+
+    def to_representation(self, instance):
+        """
+        Convert the list of user IDs to the expected format
+        """
+        if isinstance(instance, list):
+            # Convert user_ids to strings
+            return {"users": [str(user_id) for user_id in instance]}
+        return {"users": []}
 
 
 class IntakeFormSerializer(BaseSerializer):

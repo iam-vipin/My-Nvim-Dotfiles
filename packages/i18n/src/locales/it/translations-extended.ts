@@ -165,30 +165,19 @@ export default {
       intake: {
         heading: "Responsabilità di accettazione",
         notify_assignee: {
-          title: "Notifica assegnatario",
-          description: "Per una nuova richiesta di accettazione, l'assegnatario predefinito sarà avvisato tramite notifiche",
+          title: "Notifica assegnatari",
+          description: "Per una nuova richiesta di accettazione, gli assegnatari predefiniti saranno avvisati tramite notifiche",
         },
         toasts: {
-          remove: {
-            loading: "Rimozione assegnatario...",
-            success: {
-              title: "Successo!",
-              message: "Assegnatario rimosso con successo.",
-            },
-            error: {
-              title: "Errore!",
-              message: "Qualcosa è andato storto durante la rimozione dell'assegnatario. Riprova.",
-            },
-          },
           set: {
-            loading: "Impostazione assegnatario...",
+            loading: "Impostazione degli assegnatari...",
             success: {
               title: "Successo!",
-              message: "Assegnatario impostato con successo.",
+              message: "Assegnatari impostati con successo.",
             },
             error: {
               title: "Errore!",
-              message: "Qualcosa è andato storto durante l'impostazione dell'assegnatario. Riprova.",
+              message: "Qualcosa è andato storto durante l'impostazione degli assegnatari. Riprova.",
             },
           },
         },

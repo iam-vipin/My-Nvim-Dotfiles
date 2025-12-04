@@ -159,22 +159,11 @@ export default {
           description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
         },
         toasts: {
-          remove: {
-            loading: "Đang xóa người được chỉ định...",
-            success: {
-              title: "Thành công!",
-              message: "Đã xóa người được chỉ định thành công.",
-            },
-            error: {
-              title: "Lỗi!",
-              message: "Đã xảy ra lỗi khi xóa người được chỉ định. Vui lòng thử lại.",
-            },
-          },
           set: {
             loading: "Đang đặt người được chỉ định...",
             success: {
               title: "Thành công!",
-              message: "Đã đặt người được chỉ định thành công.",
+              message: "Người được chỉ định đã được đặt thành công.",
             },
             error: {
               title: "Lỗi!",

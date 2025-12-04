@@ -166,30 +166,19 @@ export default {
       intake: {
         heading: "Responsabilité d'ingestion",
         notify_assignee: {
-          title: "Notifier le responsable",
-          description: "Pour une nouvelle demande d'ingestion, le responsable par défaut sera alerté via des notifications",
+          title: "Notifier les responsables",
+          description: "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
         },
         toasts: {
-          remove: {
-            loading: "Suppression du responsable...",
-            success: {
-              title: "Succès !",
-              message: "Responsable supprimé avec succès.",
-            },
-            error: {
-              title: "Erreur !",
-              message: "Une erreur s'est produite lors de la suppression du responsable. Veuillez réessayer.",
-            },
-          },
           set: {
-            loading: "Définition du responsable...",
+            loading: "Définition des responsables...",
             success: {
               title: "Succès !",
-              message: "Responsable défini avec succès.",
+              message: "Responsables définis avec succès.",
             },
             error: {
               title: "Erreur !",
-              message: "Une erreur s'est produite lors de la définition du responsable. Veuillez réessayer.",
+              message: "Une erreur s'est produite lors de la définition des responsables. Veuillez réessayer.",
             },
           },
         },

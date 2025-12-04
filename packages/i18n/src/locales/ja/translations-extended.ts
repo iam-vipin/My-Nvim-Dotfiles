@@ -168,17 +168,6 @@ export default {
           description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
         },
         toasts: {
-          remove: {
-            loading: "担当者を削除中...",
-            success: {
-              title: "成功！",
-              message: "担当者が正常に削除されました。",
-            },
-            error: {
-              title: "エラー！",
-              message: "担当者の削除中に問題が発生しました。もう一度お試しください。",
-            },
-          },
           set: {
             loading: "担当者を設定中...",
             success: {

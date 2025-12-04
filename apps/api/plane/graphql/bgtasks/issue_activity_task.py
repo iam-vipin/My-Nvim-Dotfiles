@@ -1806,7 +1806,7 @@ def issue_activity(
                 actor_id=actor_id,
                 project_id=project_id,
                 subscriber=subscriber,
-                issue_activities_created=json.dumps(
+                activities_data=json.dumps(
                     IssueActivitySerializer(issue_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),

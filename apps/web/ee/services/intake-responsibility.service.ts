@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "@plane/constants";
-import type { TIntakeUser } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -8,7 +7,7 @@ export class IntakeResponsibilityService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getIntakeAssignee(workspaceSlug: string, projectId: string): Promise<TIntakeUser> {
+  async getIntakeAssignees(workspaceSlug: string, projectId: string): Promise<string[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-responsibilities/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -16,19 +15,15 @@ export class IntakeResponsibilityService extends APIService {
       });
   }
 
-  async createIntakeAssignee(workspaceSlug: string, projectId: string, data: { user: string }): Promise<TIntakeUser> {
+  async updateIntakeAssignees(
+    workspaceSlug: string,
+    projectId: string,
+    data: { users: string[] }
+  ): Promise<{ users: string[] }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-responsibilities/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
-      });
-  }
-
-  async deleteIntakeAssignee(workspaceSlug: string, projectId: string, userId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-responsibilities/${userId}/`)
-      .then((response) => response?.data)
-      .catch((err) => {
-        throw err?.response?.data;
       });
   }
 }

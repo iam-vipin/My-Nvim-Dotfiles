@@ -167,30 +167,19 @@ export default {
       intake: {
         heading: "Responsabilitate de primire",
         notify_assignee: {
-          title: "Notifică persoana desemnată",
-          description: "Pentru o nouă cerere de primire, persoana desemnată implicit va fi alertată prin notificări",
+          title: "Notifică persoanele desemnate",
+          description: "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări",
         },
         toasts: {
-          remove: {
-            loading: "Eliminarea persoanei desemnate...",
-            success: {
-              title: "Succes!",
-              message: "Persoana desemnată a fost eliminată cu succes.",
-            },
-            error: {
-              title: "Eroare!",
-              message: "Ceva a mers greșit la eliminarea persoanei desemnate. Te rugăm să încerci din nou.",
-            },
-          },
           set: {
-            loading: "Setarea persoanei desemnate...",
+            loading: "Setarea persoanelor desemnate...",
             success: {
               title: "Succes!",
-              message: "Persoana desemnată a fost setată cu succes.",
+              message: "Persoanele desemnate au fost setate cu succes.",
             },
             error: {
               title: "Eroare!",
-              message: "Ceva a mers greșit la setarea persoanei desemnate. Te rugăm să încerci din nou.",
+              message: "Ceva a mers greșit la setarea persoanelor desemnate. Vă rugăm să încercați din nou.",
             },
           },
         },

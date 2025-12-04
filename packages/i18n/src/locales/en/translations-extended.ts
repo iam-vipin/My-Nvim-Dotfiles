@@ -233,30 +233,19 @@ export default {
       intake: {
         heading: "Intake responsibility",
         notify_assignee: {
-          title: "Notify assignee",
-          description: "For a new request to intake, default assignee will be alerted via notifications",
+          title: "Notify assignees",
+          description: "For a new request to intake, default assignees will be alerted via notifications",
         },
         toasts: {
-          remove: {
-            loading: "Removing assignee...",
-            success: {
-              title: "Success!",
-              message: "Assignee removed successfully.",
-            },
-            error: {
-              title: "Error!",
-              message: "Something went wrong while removing assignee. Please try again.",
-            },
-          },
           set: {
-            loading: "Setting assignee...",
+            loading: "Setting assignees...",
             success: {
               title: "Success!",
-              message: "Assignee set successfully.",
+              message: "Assignees set successfully.",
             },
             error: {
               title: "Error!",
-              message: "Something went wrong while setting assignee. Please try again.",
+              message: "Something went wrong while setting assignees. Please try again.",
             },
           },
         },

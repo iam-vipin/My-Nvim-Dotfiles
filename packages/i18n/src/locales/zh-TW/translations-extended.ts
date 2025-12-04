@@ -169,22 +169,11 @@ export default {
           description: "對於新的接收請求，預設負責人將透過通知收到提醒",
         },
         toasts: {
-          remove: {
-            loading: "正在移除負責人...",
-            success: {
-              title: "成功！",
-              message: "負責人已成功移除。",
-            },
-            error: {
-              title: "錯誤！",
-              message: "移除負責人時出現問題。請重試。",
-            },
-          },
           set: {
             loading: "正在設定負責人...",
             success: {
               title: "成功！",
-              message: "負責人已成功設定。",
+              message: "負責人設定成功。",
             },
             error: {
               title: "錯誤！",

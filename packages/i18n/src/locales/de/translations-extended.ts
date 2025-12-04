@@ -167,30 +167,19 @@ export default {
       intake: {
         heading: "Intake-Verantwortung",
         notify_assignee: {
-          title: "Zuständigen benachrichtigen",
-          description: "Für eine neue Intake-Anfrage wird der Standard-Zuständige über Benachrichtigungen informiert",
+          title: "Zuständige benachrichtigen",
+          description: "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
         },
         toasts: {
-          remove: {
-            loading: "Zuständigen wird entfernt...",
-            success: {
-              title: "Erfolg!",
-              message: "Zuständiger erfolgreich entfernt.",
-            },
-            error: {
-              title: "Fehler!",
-              message: "Beim Entfernen des Zuständigen ist etwas schief gelaufen. Bitte versuchen Sie es erneut.",
-            },
-          },
           set: {
-            loading: "Zuständiger wird festgelegt...",
+            loading: "Zuständige werden festgelegt...",
             success: {
               title: "Erfolg!",
-              message: "Zuständiger erfolgreich festgelegt.",
+              message: "Zuständige erfolgreich festgelegt.",
             },
             error: {
               title: "Fehler!",
-              message: "Beim Festlegen des Zuständigen ist etwas schief gelaufen. Bitte versuchen Sie es erneut.",
+              message: "Beim Festlegen der Zuständigen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
             },
           },
         },

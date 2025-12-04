@@ -166,30 +166,19 @@ export default {
       intake: {
         heading: "Responsabilidad de ingreso",
         notify_assignee: {
-          title: "Notificar asignado",
-          description: "Para una nueva solicitud de ingreso, el asignado predeterminado será alertado mediante notificaciones",
+          title: "Notificar asignados",
+          description: "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
         },
         toasts: {
-          remove: {
-            loading: "Eliminando asignado...",
-            success: {
-              title: "¡Éxito!",
-              message: "Asignado eliminado exitosamente.",
-            },
-            error: {
-              title: "¡Error!",
-              message: "Algo salió mal al eliminar el asignado. Por favor, inténtalo de nuevo.",
-            },
-          },
           set: {
-            loading: "Estableciendo asignado...",
+            loading: "Estableciendo asignados...",
             success: {
               title: "¡Éxito!",
-              message: "Asignado establecido exitosamente.",
+              message: "Asignados establecidos correctamente.",
             },
             error: {
               title: "¡Error!",
-              message: "Algo salió mal al establecer el asignado. Por favor, inténtalo de nuevo.",
+              message: "Algo salió mal al establecer los asignados. Por favor, inténtalo de nuevo.",
             },
           },
         },

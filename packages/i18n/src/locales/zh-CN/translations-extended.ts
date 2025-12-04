@@ -168,22 +168,11 @@ export default {
           description: "对于新的接收请求，默认负责人将通过通知收到提醒",
         },
         toasts: {
-          remove: {
-            loading: "正在移除负责人...",
-            success: {
-              title: "成功！",
-              message: "负责人已成功移除。",
-            },
-            error: {
-              title: "错误！",
-              message: "移除负责人时出现问题。请重试。",
-            },
-          },
           set: {
             loading: "正在设置负责人...",
             success: {
               title: "成功！",
-              message: "负责人已成功设置。",
+              message: "负责人设置成功。",
             },
             error: {
               title: "错误！",

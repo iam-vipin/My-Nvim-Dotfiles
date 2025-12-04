@@ -166,30 +166,19 @@ export default {
       intake: {
         heading: "Zodpovednosť za príjem",
         notify_assignee: {
-          title: "Upozorniť priradeného",
-          description: "Pre novú žiadosť o príjem bude predvolený priradený upozornený prostredníctvom oznámení",
+          title: "Upozorniť priradených",
+          description: "Pre novú žiadosť o príjem budú predvolení priradení upozornení prostredníctvom oznámení",
         },
         toasts: {
-          remove: {
-            loading: "Odstraňovanie priradeného...",
-            success: {
-              title: "Úspech!",
-              message: "Priradený bol úspešne odstránený.",
-            },
-            error: {
-              title: "Chyba!",
-              message: "Pri odstraňovaní priradeného došlo k chybe. Skúste to prosím znova.",
-            },
-          },
           set: {
-            loading: "Nastavovanie priradeného...",
+            loading: "Nastavovanie priradených...",
             success: {
               title: "Úspech!",
-              message: "Priradený bol úspešne nastavený.",
+              message: "Priradení úspešne nastavení.",
             },
             error: {
               title: "Chyba!",
-              message: "Pri nastavovaní priradeného došlo k chybe. Skúste to prosím znova.",
+              message: "Pri nastavovaní priradených sa niečo pokazilo. Skúste to prosím znova.",
             },
           },
         },

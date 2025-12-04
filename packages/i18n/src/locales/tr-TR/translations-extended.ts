@@ -171,30 +171,19 @@ export default {
       intake: {
         heading: "Alım sorumluluğu",
         notify_assignee: {
-          title: "Atanan kişiyi bildir",
-          description: "Yeni bir alım talebi için varsayılan atanan kişi bildirimler aracılığıyla uyarılacaktır",
+          title: "Atanan kişileri bildir",
+          description: "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır",
         },
         toasts: {
-          remove: {
-            loading: "Atanan kişi kaldırılıyor...",
-            success: {
-              title: "Başarılı!",
-              message: "Atanan kişi başarıyla kaldırıldı.",
-            },
-            error: {
-              title: "Hata!",
-              message: "Atanan kişiyi kaldırırken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
-            },
-          },
           set: {
-            loading: "Atanan kişi ayarlanıyor...",
+            loading: "Atanan kişiler ayarlanıyor...",
             success: {
               title: "Başarılı!",
-              message: "Atanan kişi başarıyla ayarlandı.",
+              message: "Atanan kişiler başarıyla ayarlandı.",
             },
             error: {
               title: "Hata!",
-              message: "Atanan kişiyi ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+              message: "Atanan kişileri ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
             },
           },
         },

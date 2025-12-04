@@ -71,8 +71,8 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
 export const INTAKE_RESPONSIBILITY_LIST: TIntakeResponsibilityList = {
   notify_assignee: {
     property: "notify_assignee",
-    title: "Notify assignee",
-    description: "For a new request to intake, default assignee will be alerted via notifications",
+    title: "Notify assignees",
+    description: "For a new request to intake, default assignees will be alerted via notifications",
     icon: <Users className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,

@@ -166,30 +166,19 @@ export default {
       intake: {
         heading: "Odpowiedzialność za przyjęcie",
         notify_assignee: {
-          title: "Powiadom przypisanego",
-          description: "Dla nowego żądania przyjęcia domyślny przypisany zostanie powiadomiony poprzez powiadomienia",
+          title: "Powiadom przypisanych",
+          description: "Dla nowego żądania przyjęcia domyślni przypisani zostaną powiadomieni poprzez powiadomienia",
         },
         toasts: {
-          remove: {
-            loading: "Usuwanie przypisanego...",
-            success: {
-              title: "Sukces!",
-              message: "Przypisany został pomyślnie usunięty.",
-            },
-            error: {
-              title: "Błąd!",
-              message: "Coś poszło nie tak podczas usuwania przypisanego. Proszę spróbować ponownie.",
-            },
-          },
           set: {
-            loading: "Ustawianie przypisanego...",
+            loading: "Ustawianie przypisanych...",
             success: {
               title: "Sukces!",
-              message: "Przypisany został pomyślnie ustawiony.",
+              message: "Przypisani ustawieni pomyślnie.",
             },
             error: {
               title: "Błąd!",
-              message: "Coś poszło nie tak podczas ustawiania przypisanego. Proszę spróbować ponownie.",
+              message: "Coś poszło nie tak podczas ustawiania przypisanych. Spróbuj ponownie.",
             },
           },
         },

@@ -67,11 +67,3 @@ export type TIntakePublishFormProps = {
 export type TIntakeIssueExtended = {
   additional_information: TIssuePropertySerializedEntry[];
 };
-
-export type TIntakeUser = {
-  id: string;
-  intake: string;
-  user: string | null;
-  type: "ASSIGNEE" | "SUBSCRIBER" | null;
-  project: string;
-};

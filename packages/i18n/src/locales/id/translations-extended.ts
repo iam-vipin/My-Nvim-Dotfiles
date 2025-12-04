@@ -171,17 +171,6 @@ export default {
           description: "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
         },
         toasts: {
-          remove: {
-            loading: "Menghapus yang ditugaskan...",
-            success: {
-              title: "Berhasil!",
-              message: "Yang ditugaskan berhasil dihapus.",
-            },
-            error: {
-              title: "Kesalahan!",
-              message: "Terjadi kesalahan saat menghapus yang ditugaskan. Silakan coba lagi.",
-            },
-          },
           set: {
             loading: "Mengatur yang ditugaskan...",
             success: {

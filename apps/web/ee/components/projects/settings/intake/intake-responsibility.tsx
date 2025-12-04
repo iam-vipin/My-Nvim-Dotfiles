@@ -29,14 +29,14 @@ const IntakeResponsibility = observer((props: Props) => {
   //   hooks
   const { t } = useTranslation();
   // store hooks
-  const { getAssignee, fetchIntakeAssignee, createIntakeAssignee, deleteIntakeAssignee } = useIntakeResponsibility();
+  const { getAssignees, fetchIntakeAssignees, updateIntakeAssignees } = useIntakeResponsibility();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
 
-  const assignee = projectId ? getAssignee(projectId) : null;
+  const assignees = projectId ? getAssignees(projectId) : [];
   /**Fetch intake assignee */
   useSWR(
     workspaceSlug && projectId ? `INTAKE_ASSIGNEE_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchIntakeAssignee(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId ? () => fetchIntakeAssignees(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -47,33 +47,10 @@ const IntakeResponsibility = observer((props: Props) => {
 
   const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
-  const handleAssigneeChange = async (val: string | null) => {
+  const handleAssigneeChange = async (val: string[]) => {
     if (!workspaceSlug || !projectId) return;
 
-    const currentAssignee = assignee;
-    let updatePromise: Promise<void>;
-
-    // If clicking on the already selected assignee or clearing (setting to null), remove it
-    if (val === null || (val === currentAssignee && currentAssignee !== null)) {
-      if (!currentAssignee) return;
-
-      updatePromise = deleteIntakeAssignee(workspaceSlug, projectId, currentAssignee);
-
-      setPromiseToast(updatePromise, {
-        loading: intakeT("toasts.remove.loading"),
-        success: {
-          title: intakeT("toasts.remove.success.title"),
-          message: () => intakeT("toasts.remove.success.message"),
-        },
-        error: {
-          title: intakeT("toasts.remove.error.title"),
-          message: () => intakeT("toasts.remove.error.message"),
-        },
-      });
-      return;
-    }
-    // Create new assignee
-    updatePromise = createIntakeAssignee(workspaceSlug, projectId, { user: val });
+    const updatePromise = updateIntakeAssignees(workspaceSlug, projectId, { users: val });
 
     setPromiseToast(updatePromise, {
       loading: intakeT("toasts.set.loading"),
@@ -120,16 +97,16 @@ const IntakeResponsibility = observer((props: Props) => {
                     <div className="flex items-center h-8 max-w-40">
                       {isResponsibilityEnabled ? (
                         <MemberDropdown
-                          value={assignee}
+                          value={assignees}
                           onChange={handleAssigneeChange}
                           projectId={projectId}
                           placeholder={t("no_assignee")}
-                          multiple={false}
+                          multiple
                           showUserDetails
                           buttonVariant="border-with-text"
                           className="w-full"
                           buttonContainerClassName="w-full text-left"
-                          buttonClassName={assignee ? "hover:bg-transparent" : ""}
+                          buttonClassName={assignees.length > 0 ? "hover:bg-transparent" : ""}
                           dropdownArrow
                         />
                       ) : (

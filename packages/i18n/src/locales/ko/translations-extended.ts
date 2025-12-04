@@ -169,17 +169,6 @@ export default {
           description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
         },
         toasts: {
-          remove: {
-            loading: "담당자 제거 중...",
-            success: {
-              title: "성공!",
-              message: "담당자가 성공적으로 제거되었습니다.",
-            },
-            error: {
-              title: "오류!",
-              message: "담당자를 제거하는 중 문제가 발생했습니다. 다시 시도해 주세요.",
-            },
-          },
           set: {
             loading: "담당자 설정 중...",
             success: {
@@ -188,7 +177,7 @@ export default {
             },
             error: {
               title: "오류!",
-              message: "담당자를 설정하는 중 문제가 발생했습니다. 다시 시도해 주세요.",
+              message: "담당자 설정 중 문제가 발생했습니다. 다시 시도해 주세요.",
             },
           },
         },

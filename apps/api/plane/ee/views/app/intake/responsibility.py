@@ -11,10 +11,10 @@ from plane.ee.models import IntakeResponsibility
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
+
 class IntakeResponsibilityEndpoint(BaseAPIView):
     serializer_class = IntakeResponsibilitySerializer
     model = IntakeResponsibility
-
 
     @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.INTAKE_RESPONSIBILITY)
@@ -26,7 +26,8 @@ class IntakeResponsibilityEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         serializer = IntakeResponsibilitySerializer(
-            data=request.data, context={"intake": intake, "project_id": project_id}
+            data=request.data,
+            context={"intake": intake, "project_id": project_id, "user_id": request.user.id, "slug": slug},
         )
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -55,6 +56,6 @@ class IntakeResponsibilityEndpoint(BaseAPIView):
                 {"error": "Intake not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        # Since right now we are only allowing one responsibility per intake, we can just get the first one and return it
-        responsibility = IntakeResponsibility.objects.filter(intake=intake).first()
-        return Response(IntakeResponsibilitySerializer(responsibility).data, status=status.HTTP_200_OK)
+        # Return all user IDs assigned responsibility for this intake
+        responsibility = IntakeResponsibility.objects.filter(intake=intake).values_list("user_id", flat=True)
+        return Response(responsibility, status=status.HTTP_200_OK)

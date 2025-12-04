@@ -166,30 +166,19 @@ export default {
       intake: {
         heading: "Odpovědnost za příjem",
         notify_assignee: {
-          title: "Upozornit přiřazeného",
-          description: "Pro novou žádost o příjem bude výchozí přiřazený upozorněn prostřednictvím oznámení",
+          title: "Upozornit přiřazené",
+          description: "Pro novou žádost o příjem budou výchozí přiřazení upozorněni prostřednictvím oznámení",
         },
         toasts: {
-          remove: {
-            loading: "Odebírání přiřazeného...",
-            success: {
-              title: "Úspěch!",
-              message: "Přiřazený byl úspěšně odebrán.",
-            },
-            error: {
-              title: "Chyba!",
-              message: "Při odebírání přiřazeného došlo k chybě. Zkuste to prosím znovu.",
-            },
-          },
           set: {
-            loading: "Nastavování přiřazeného...",
+            loading: "Nastavování přiřazených...",
             success: {
               title: "Úspěch!",
-              message: "Přiřazený byl úspěšně nastaven.",
+              message: "Přiřazení úspěšně nastaveno.",
             },
             error: {
               title: "Chyba!",
-              message: "Při nastavování přiřazeného došlo k chybě. Zkuste to prosím znovu.",
+              message: "Při nastavování přiřazených se něco pokazilo. Zkuste to prosím znovu.",
             },
           },
         },

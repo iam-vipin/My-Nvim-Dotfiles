@@ -167,30 +167,19 @@ export default {
       intake: {
         heading: "Responsabilidade de recebimento",
         notify_assignee: {
-          title: "Notificar responsável",
-          description: "Para uma nova solicitação de recebimento, o responsável padrão será alertado via notificações",
+          title: "Notificar responsáveis",
+          description: "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
         },
         toasts: {
-          remove: {
-            loading: "Removendo responsável...",
-            success: {
-              title: "Sucesso!",
-              message: "Responsável removido com sucesso.",
-            },
-            error: {
-              title: "Erro!",
-              message: "Algo deu errado ao remover o responsável. Por favor, tente novamente.",
-            },
-          },
           set: {
-            loading: "Definindo responsável...",
+            loading: "Definindo responsáveis...",
             success: {
               title: "Sucesso!",
-              message: "Responsável definido com sucesso.",
+              message: "Responsáveis definidos com sucesso.",
             },
             error: {
               title: "Erro!",
-              message: "Algo deu errado ao definir o responsável. Por favor, tente novamente.",
+              message: "Algo deu errado ao definir os responsáveis. Por favor, tente novamente.",
             },
           },
         },

@@ -98,7 +98,7 @@ update_env_file(){
 
 build_dist_files(){
     cp ./variables.env $DIST_DIR/plane.env
-    cp ../../../apps/proxy/Caddyfile.ee $DIST_DIR/Caddyfile
+    cp ../../../apps/proxy/Caddyfile.aio.ee $DIST_DIR/Caddyfile
 
     echo "" >> $DIST_DIR/plane.env
     echo "" >> $DIST_DIR/plane.env
@@ -118,9 +118,6 @@ build_dist_files(){
     update_env_file $DIST_DIR/plane.env "LISTEN_SMTP_PORT_465" "20465"
     update_env_file $DIST_DIR/plane.env "LISTEN_SMTP_PORT_587" "20587"
 
-    # remove this line containing `plane-minio:9000`
-    string_replace $DIST_DIR/Caddyfile "plane-minio:9000" ""
-
     # in caddyfile, update `reverse_proxy /spaces/* space:3000` to `reverse_proxy /spaces/* space:3002` 
     string_replace $DIST_DIR/Caddyfile "web:3000" "localhost:3001"
     string_replace $DIST_DIR/Caddyfile "space:3000" "localhost:3002"
@@ -132,9 +129,6 @@ build_dist_files(){
     string_replace $DIST_DIR/Caddyfile ":10025 {" ":{\$LISTEN_SMTP_PORT_25} {"
     string_replace $DIST_DIR/Caddyfile ":10465 {" ":{\$LISTEN_SMTP_PORT_465} {"
     string_replace $DIST_DIR/Caddyfile ":10587 {" ":{\$LISTEN_SMTP_PORT_587} {"
-    
-    # remove line with {$BUCKET_NAME} and {$BUCKET_NAME}/*
-    remove_line $DIST_DIR/Caddyfile "BUCKET_NAME"
 
     # print docker build command
     echo "------------------------------------------------"

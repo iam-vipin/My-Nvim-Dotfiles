@@ -127,7 +127,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
 
-
   const itemHref =
     item.key === "your_work"
       ? `/${workspaceSlug.toString()}${item.href}${data?.id}`

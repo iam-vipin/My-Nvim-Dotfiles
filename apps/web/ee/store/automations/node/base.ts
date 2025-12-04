@@ -42,8 +42,7 @@ export abstract class AutomationBaseNode<
   T extends EAutomationNodeType,
   H extends TAutomationNodeHandlerName,
   C extends TAutomationNodeConfig,
-> implements IAutomationBaseNode<T, H, C>
-{
+> implements IAutomationBaseNode<T, H, C> {
   // node properties
   config: TAutomationNode<T, H, C>["config"];
   created_at: TAutomationNode<T, H, C>["created_at"];

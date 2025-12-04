@@ -10,8 +10,7 @@ import type {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
-import type { TPropertyValuesPayload } from "@/core";
-import { E_IMPORTER_KEYS } from "@/core";
+import type { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
 import {
   getFormattedDate,
   getPropertyAttributes,

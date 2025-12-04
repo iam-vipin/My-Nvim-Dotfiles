@@ -6,7 +6,6 @@ import { SettingsHeader } from "@/components/settings/header";
 // plane web imports
 import { LicenseSeatsBanner } from "@/plane-web/components/license";
 
-
 export default function SettingsLayout() {
   return (
     <>

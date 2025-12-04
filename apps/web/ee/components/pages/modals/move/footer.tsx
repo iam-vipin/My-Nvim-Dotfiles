@@ -20,7 +20,9 @@ export const MovePageModalFooter: React.FC<Props> = (props) => {
         {t("common.cancel")}
       </Button>
       <Button variant="primary" size="sm" onClick={onMove} loading={isMoving} disabled={disabled}>
-        {isMoving ? t("page_actions.move_page.submit_button.loading") : t("page_actions.move_page.submit_button.default")}
+        {isMoving
+          ? t("page_actions.move_page.submit_button.loading")
+          : t("page_actions.move_page.submit_button.default")}
       </Button>
     </div>
   );

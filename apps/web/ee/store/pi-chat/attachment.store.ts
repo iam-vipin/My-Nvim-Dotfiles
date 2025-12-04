@@ -113,7 +113,7 @@ export class PiChatAttachmentStore implements IPiChatAttachmentStore {
     } finally {
       // Cancel any pending debounced updates
       this.debouncedUpdateProgress.cancel();
-      
+
       // Remove the attachment from upload status map
       runInAction(() => {
         if (this.attachmentsUploadStatusMap[chatId] && this.attachmentsUploadStatusMap[chatId][tempId]) {

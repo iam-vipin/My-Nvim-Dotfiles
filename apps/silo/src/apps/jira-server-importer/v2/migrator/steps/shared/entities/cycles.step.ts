@@ -30,7 +30,7 @@ export class JiraCyclesStep implements IStep {
 
   private readonly PAGE_SIZE = 100;
 
-  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) { }
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   /**
    * Executes the sprint extraction process:
@@ -67,7 +67,7 @@ export class JiraCyclesStep implements IStep {
     } catch (error) {
       logger.error(`[${jobContext.job.id}] [${this.name}] Step failed`, {
         jobId: jobContext.job.id,
-        error: error
+        error: error,
       });
       throw error;
     }

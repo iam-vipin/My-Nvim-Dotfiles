@@ -57,7 +57,7 @@ export class JiraIssuesStep implements IStep {
     EJiraStep.ISSUE_PROPERTY_OPTIONS, // Provides options
   ];
 
-  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) { }
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
 
   private readonly PAGE_SIZE = 50;
 
@@ -554,8 +554,8 @@ export class JiraIssuesStep implements IStep {
       : null;
     return sprintObjects
       ? sprintObjects
-        .map((s) => (s ? buildExternalId(projectId, resourceId, s.id.toString()) : null))
-        .filter((s) => s !== null)
+          .map((s) => (s ? buildExternalId(projectId, resourceId, s.id.toString()) : null))
+          .filter((s) => s !== null)
       : [];
   }
 

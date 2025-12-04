@@ -5,7 +5,7 @@ import type {
   Comment as JComment,
   IssueTypeDetails as JiraIssueTypeDetails,
   FieldDetails,
-  Worklog
+  Worklog,
 } from "jira.js/out/version2/models";
 import type {
   ImportedJiraUser,
@@ -212,12 +212,10 @@ export const pullAllWorklogsForIssue = async (issue: IJiraIssue, client: JiraV2S
     "worklogs"
   );
 
-  return values.map(
-    (worklog) => ({
-      ...worklog,
-      issue_id: issue.id,
-    })
-  );
+  return values.map((worklog) => ({
+    ...worklog,
+    issue_id: issue.id,
+  }));
 };
 
 export async function pullCommentsForIssueV2(

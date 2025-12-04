@@ -168,7 +168,8 @@ export default {
         heading: "Responsabilidade de recebimento",
         notify_assignee: {
           title: "Notificar responsáveis",
-          description: "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
+          description:
+            "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
         },
         toasts: {
           set: {

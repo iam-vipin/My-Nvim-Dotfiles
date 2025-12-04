@@ -167,7 +167,8 @@ export default {
         heading: "Responsabilidad de ingreso",
         notify_assignee: {
           title: "Notificar asignados",
-          description: "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
+          description:
+            "Para una nueva solicitud de ingreso, los asignados predeterminados serán alertados mediante notificaciones",
         },
         toasts: {
           set: {

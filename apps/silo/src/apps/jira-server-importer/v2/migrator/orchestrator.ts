@@ -45,7 +45,7 @@ export class JiraImportOrchestrator implements TaskHandler {
     private readonly mq: MQ,
     private readonly store: Store,
     private readonly steps: IStep[]
-  ) { }
+  ) {}
 
   /**
    * Main task handler - called by worker

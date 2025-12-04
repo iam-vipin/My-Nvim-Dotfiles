@@ -38,7 +38,7 @@ export class AIService extends APIService {
    * @returns {Promise<any>} The response data from the GPT task
    * @throws {Error} Throws the response error if the request fails
    */
-  async prompt(workspaceSlug: string, data: { prompt: string; task: string }):  Promise<any> {
+  async prompt(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {

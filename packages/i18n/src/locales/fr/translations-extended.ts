@@ -167,7 +167,8 @@ export default {
         heading: "Responsabilité d'ingestion",
         notify_assignee: {
           title: "Notifier les responsables",
-          description: "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
+          description:
+            "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
         },
         toasts: {
           set: {

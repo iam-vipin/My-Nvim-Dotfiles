@@ -77,9 +77,9 @@ export enum E_PLANE_WEBHOOK_ACTION {
 export type PlaneWebhookData = WebhookIssuePayload | WebhookIssueCommentPayload;
 
 // Main webhook payload interfaces
-export interface PlaneWebhookPayloadBase<data = any> {
+export interface PlaneWebhookPayloadBase<Data = any> {
   event: string;
-  data: any;
+  data: Data;
   action: string;
   webhook_id: UUID;
   workspace_id: UUID;

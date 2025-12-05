@@ -631,3 +631,5 @@ export default class GitlabController {
     }
   }
 }
+
+export { GitlabController };

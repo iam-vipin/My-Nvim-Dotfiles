@@ -29,7 +29,6 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/types": "workspace:*",
     "@types/lodash": "^4.17.6",

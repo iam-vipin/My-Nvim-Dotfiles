@@ -96,7 +96,7 @@ export class GitlabEnterpriseStrategy implements OAuthStrategy {
         access_token: tokenResponse.access_token,
         refresh_token: tokenResponse.refresh_token,
         connection_id: user.id.toString(),
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for dynamic key assignment
         connection_slug: user.login,
         expires_in: tokenResponse.expires_in,
         provider_user_data: null,

@@ -17,6 +17,7 @@ export const WidgetColorPicker: React.FC<Props> = (props) => {
   const id = useId();
 
   const debouncedColorUpdate = useCallback(
+    // eslint-disable-next-line react-hooks/use-memo
     debounce((color: string) => {
       onChange(color);
     }, 500),

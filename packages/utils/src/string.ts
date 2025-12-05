@@ -251,7 +251,13 @@ export const isStringCommentEmpty = (comment: string | undefined): boolean => {
   return (
     comment?.trim() === "" ||
     comment === "<p></p>" ||
-    isEmptyHtmlString(comment ?? "", ["img", "mention-component", "image-component", "embed-component", "attachment-component"])
+    isEmptyHtmlString(comment ?? "", [
+      "img",
+      "mention-component",
+      "image-component",
+      "embed-component",
+      "attachment-component",
+    ])
   );
 };
 

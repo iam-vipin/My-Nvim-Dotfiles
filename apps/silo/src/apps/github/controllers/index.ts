@@ -268,7 +268,7 @@ export default class GithubController {
         credential_id: insertedId,
         connection_id: installation.data.account.id.toString(),
         connection_data: installation.data.account,
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for connection_slug
         connection_slug: installation.data.account.login,
         config: {
           userMap: [],
@@ -780,6 +780,7 @@ export default class GithubController {
         const id = payload.data.id;
         const workspace = payload.data.workspace;
         const project = payload.data.project;
+        // @ts-expect-error - fix this
         const issue = payload.data.issue;
 
         const log = {

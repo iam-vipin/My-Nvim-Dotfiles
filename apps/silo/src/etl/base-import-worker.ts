@@ -344,6 +344,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             completed_batch_count: 1,
           });
         }
+        break;
       default:
         await client.importJob.updateImportJob(jobId, {
           status: stage as any as TJobStatus,

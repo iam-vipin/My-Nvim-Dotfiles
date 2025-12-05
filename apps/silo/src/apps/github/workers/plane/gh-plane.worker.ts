@@ -27,10 +27,10 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
         default:
           break;
       }
+      return true;
     } catch (error) {
       logger.error("[GITHUB] Error processing plane webhook:", error);
       captureException(error as Error);
-    } finally {
       return true;
     }
   }

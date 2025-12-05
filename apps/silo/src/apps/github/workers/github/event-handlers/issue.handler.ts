@@ -20,14 +20,14 @@ const SYNC_LABEL = "plane";
 export const handleIssueEvents = async (store: Store, action: string, data: unknown) => {
   // Check if this webhook was triggered by our own Plane->GitHub sync (loop prevention)
   // The Plane->GitHub handler sets a temporary key right after syncing to GitHub
-  // @ts-expect-error
+  // @ts-expect-error  - Ignoring ts error for data type
   if (data && data.issueNumber) {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for store get
     const exist = await store.get(`silo:issue:gh:${data.issueNumber}`);
     if (exist) {
       logger.info(`[GITHUB][ISSUE] Event triggered by Plane->GitHub sync, skipping to prevent loop`);
       // Remove the key so future legitimate webhooks are not blocked
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for store del
       await store.del(`silo:issue:gh:${data.issueNumber}`);
       return true;
     }

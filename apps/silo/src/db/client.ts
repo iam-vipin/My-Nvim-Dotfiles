@@ -110,3 +110,5 @@ class DB {
 }
 
 export default DB;
+
+export { DB };

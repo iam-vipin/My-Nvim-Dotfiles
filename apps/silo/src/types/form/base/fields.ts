@@ -1,4 +1,4 @@
-import type { PropertyTypeEnum, RelationTypeEnum } from "@makeplane/plane-node-sdk";
+import type { RelationTypeEnum, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
 import type { SelectOption, UserOption } from "./field-options";
 import type { FieldValidation, TextValidation, NumberValidation, DateValidation, FileValidation } from "./validations";
 

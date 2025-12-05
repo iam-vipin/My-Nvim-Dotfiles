@@ -77,10 +77,10 @@ export class JiraV2Service {
   }
 
   async getJiraUsers(startAt?: number, maxResults?: number): Promise<JiraApiUser[]> {
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for return type
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
-      // @ts-expect-error
+      // @ts-expect-error - Ignoring ts error for includeActive
       includeActive: true,
       startAt: startAt ?? 0,
       maxResults: maxResults ?? 1000,

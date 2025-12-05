@@ -151,7 +151,7 @@ const createOrUpdateGitHubIssue = async (
   ghIntegrationKey: E_INTEGRATION_KEYS
 ) => {
   const isEnterprise = ghIntegrationKey === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE;
-  // @ts-expect-error
+  // @ts-expect-error - Ignoring ts error for missing userMap
   const userMap: Record<string, WebhookGitHubUser> = Object.fromEntries(
     workspaceConnection.config.userMap.map((obj) => [obj.planeUser.id, obj.githubUser])
   );
@@ -177,7 +177,7 @@ const createOrUpdateGitHubIssue = async (
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
     workspace_id: workspaceConnection.workspace_id,
     user_id: issue.updated_by != null ? issue.updated_by : issue.created_by,
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for enum mapping
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
   });
 

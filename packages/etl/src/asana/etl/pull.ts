@@ -149,9 +149,9 @@ export async function pullCustomFields(client: AsanaService, projectGid: string)
       customFields.push(...response.data);
       pagination.offset = response._response.next_page?.offset || "";
     } while (pagination.offset);
+    return customFields;
   } catch (error: any) {
     console.log("error while fetching custom fields from asana", error?.message);
-  } finally {
     return customFields;
   }
 }

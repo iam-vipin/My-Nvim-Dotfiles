@@ -152,7 +152,7 @@ export const transformComment = (ctx: TTransformationContext, comment: JiraComme
     external_source: source,
     created_at: comment.created,
     created_by: comment.author?.emailAddress || comment.author?.displayName,
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for possible undefined
     comment_html: comment.renderedBody ? comment.renderedBody : (comment.body ?? "<p></p>"),
     actor: comment.author?.emailAddress || comment.author?.displayName,
     issue: `${projectId}_${resourceId}_${comment.issue_id}`,

@@ -51,14 +51,15 @@ export class SlackInteractionHandler extends TaskHandler {
         default:
           break;
       }
+      return true;
     } catch (error) {
       logger.error(`[SLACK] Error processing slack webhook`, {
         error,
       });
       captureException(error as Error);
+      return true;
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
-      return true;
     }
   }
 }

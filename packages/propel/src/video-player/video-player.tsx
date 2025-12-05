@@ -171,6 +171,7 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
           onLoadedMetadata={onLoadedMetadata}
           onCanPlay={handlePlay}
         >
+          <track kind="captions" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -203,6 +204,7 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
         onPause={handlePause}
         onEnded={handleEnded}
       >
+        <track kind="captions" />
         Your browser does not support the video tag.
       </video>
       {/* Controls overlay */}

@@ -79,7 +79,7 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
               ? convertMinutesToHoursMinutesString(Number(selectedValue?.value))
               : selectedValue?.value || "Select an estimate point"}
           </div>
-          <ChevronDownIcon className={`size-3 ${true ? "stroke-onboarding-text-400" : "stroke-onboarding-text-100"}`} />
+          <ChevronDownIcon className="size-3 stroke-onboarding-text-400" />
           {error && (
             <>
               <Tooltip tooltipContent={error} position="bottom">

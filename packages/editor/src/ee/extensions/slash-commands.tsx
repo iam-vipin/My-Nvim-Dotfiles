@@ -26,8 +26,7 @@ const coreSlashCommandRegistry: {
       description: "Insert a file",
       searchTerms: ["image", "photo", "picture", "pdf", "media", "upload", "audio", "video", "file", "attachment"],
       icon: <Paperclip className="size-3.5" />,
-      command: ({ editor, range }) =>
-        insertAttachment({ editor, event: "insert", range, acceptedFileType: "all" }),
+      command: ({ editor, range }) => insertAttachment({ editor, event: "insert", range, acceptedFileType: "all" }),
       section: "general",
       pushAfter: "image",
     }),

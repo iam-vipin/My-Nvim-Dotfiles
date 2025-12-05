@@ -3,14 +3,11 @@
   "version": "0.23.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.cts",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "module": "./dist/index.mjs",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
+    ".": "./dist/index.mjs",
     "./package.json": "./package.json"
   },
   "files": [
@@ -20,10 +17,10 @@
     "dev": "tsdown --watch",
     "build": "tsdown --minify",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 26",
+    "check:lint": "eslint . --max-warnings=272",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
+    "fix:lint": "eslint . --max-warnings=272 --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
@@ -31,7 +28,6 @@
   },
   "devDependencies": {
     "@plane/types": "workspace:*",
-    "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:"

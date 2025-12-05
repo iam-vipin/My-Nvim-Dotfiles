@@ -25,6 +25,7 @@ export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
   const selectedModel = watch("chart_model");
 
   const debouncedConfigUpdate = useCallback(
+    // eslint-disable-next-line react-hooks/use-memo
     debounce((updateData: Partial<TDashboardWidgetConfig>) => {
       handleConfigUpdate(updateData);
     }, 500),

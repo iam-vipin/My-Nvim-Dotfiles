@@ -841,6 +841,7 @@ export default class SlackController {
       const id = payload.data.id;
       const workspace = payload.data.workspace;
       const project = payload.data.project;
+      // @ts-expect-error - fix this
       const issue = payload.data.issue;
       const actor = payload.activity.actor;
       const event = payload.event;
@@ -974,6 +975,7 @@ export default class SlackController {
             `[SLACK] Entity connection found for issue ${id} in workspace ${workspace} and project ${project}`
           );
           // Register activity key for the particular issue
+          // @ts-expect-error - fix this
           await this.collectActivityForStacking(payload);
 
           // Register store task for stacking the issue

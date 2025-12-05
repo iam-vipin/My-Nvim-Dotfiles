@@ -149,12 +149,14 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
             router.push(`/${selectedWorkspaceSlug}/settings/templates`);
             break;
           }
+          break;
         default:
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error while submitting",
             message: error?.error,
           });
+          break;
       }
       setIsSubmitting(false);
     }

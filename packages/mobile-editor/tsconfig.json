@@ -1,21 +1,9 @@
 {
+  "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "baseUrl": ".",
-    "allowJs": false,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
+    "useDefineForClassFields": true,
+    "strict": true,
     "paths": {
       "@/*": ["./src/*"]
     }

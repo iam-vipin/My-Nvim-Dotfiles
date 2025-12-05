@@ -826,7 +826,7 @@ const createIssueLinks = async (
       });
       await Promise.all(linkPromises);
     } catch (error) {
-      // @ts-expect-error
+      // @ts-expect-error - Need to check with AssertAPIErrorResponse
       if (error.error && !error.error.includes("already exists")) {
         logger.error(`[${jobId.slice(0, 7)}] Error while creating the link for the issue: ${issue.external_id}`, error);
       }

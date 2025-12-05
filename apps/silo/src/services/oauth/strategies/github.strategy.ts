@@ -122,7 +122,7 @@ export class GithubEnterpriseStrategy implements OAuthStrategy {
         authorization_type: ESourceAuthorizationType.TOKEN,
         access_token: installation_id as string,
         connection_id: installation.data.account.id.toString(),
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for dynamic key assignment
         connection_slug: installation.data.account.login,
         refresh_token: "",
         expires_in: 0,

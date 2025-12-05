@@ -196,20 +196,14 @@ export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, on
       icon: VideoIcon,
       key: "show-video-preview",
       label: "Show preview",
-      isDisabled:
-        !editorState.isVideoAttachment ||
-        editorState.isAttachmentPreview ||
-        isVideoAttachmentsFlagged,
+      isDisabled: !editorState.isVideoAttachment || editorState.isAttachmentPreview || isVideoAttachmentsFlagged,
       onClick: () => handleToggleAttachmentPreview(true),
     },
     {
       icon: FileAttachmentIcon,
       key: "show-as-attachment",
       label: "Show as attachment",
-      isDisabled:
-        !editorState.isVideoAttachment ||
-        !editorState.isAttachmentPreview ||
-        isVideoAttachmentsFlagged,
+      isDisabled: !editorState.isVideoAttachment || !editorState.isAttachmentPreview || isVideoAttachmentsFlagged,
       onClick: () => handleToggleAttachmentPreview(false),
     },
   ];

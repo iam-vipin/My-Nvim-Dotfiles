@@ -179,7 +179,7 @@ const createOrUpdateGitHubComment = async (
 
   // Find the credentials for the comment creator
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for enum mapping
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
     workspace_id: entityConnection.workspace_id,
     user_id: comment.updated_by || comment.created_by,

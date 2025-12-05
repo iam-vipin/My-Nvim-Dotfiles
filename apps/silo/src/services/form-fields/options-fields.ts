@@ -1,5 +1,5 @@
-import type { IssuePropertyAPI, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
 import { RelationTypeEnum } from "@makeplane/plane-node-sdk";
+import type { IssuePropertyAPI, PropertyTypeEnum } from "@makeplane/plane-node-sdk";
 import type { PlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import { getPlaneClientV2 } from "@/helpers/plane-api-client-v2";
 import type { FormField, RelationField, SelectField } from "@/types/form/base/fields";

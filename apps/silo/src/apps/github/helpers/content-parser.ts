@@ -173,7 +173,7 @@ export class GithubContentParser {
       // Upload using AssetService
       const assetId = await options.planeClient.assets.uploadAsset(
         options.workspaceSlug,
-        // @ts-expect-error
+        // @ts-expect-error - Ignoring ts error for missing projectId
         blob,
         "image",
         blob.size,

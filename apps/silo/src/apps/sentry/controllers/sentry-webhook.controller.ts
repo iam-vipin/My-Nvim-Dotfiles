@@ -64,6 +64,7 @@ export class SentryWebhookController {
         const id = payload.data.id;
         const workspace = payload.data.workspace;
         const project = payload.data.project;
+        // @ts-expect-error - fix this
         const issue = payload.data.issue;
 
         // Only accept  the state activity

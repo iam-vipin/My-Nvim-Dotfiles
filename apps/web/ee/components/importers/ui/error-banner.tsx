@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
 
@@ -14,3 +13,5 @@ export default function ErrorBanner({ message, onClose }: { message: string; onC
     </div>
   );
 }
+
+export { ErrorBanner };

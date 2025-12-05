@@ -406,3 +406,5 @@ export default class GitlabEnterpriseController {
     }
   }
 }
+
+export { GitlabEnterpriseController };

@@ -9,7 +9,7 @@ export const removeSpacesFromKeys = (obj: any) => {
   const newObj = {};
   for (const [key, value] of Object.entries(obj)) {
     const newKey = key.replace(/\s+/g, "_").toLowerCase();
-    // @ts-expect-error
+    // @ts-expect-error - Ignoring ts error for dynamic key assignment
     newObj[newKey] = value;
   }
   return newObj;

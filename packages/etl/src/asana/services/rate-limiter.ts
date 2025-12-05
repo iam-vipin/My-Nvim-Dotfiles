@@ -30,3 +30,5 @@ class RateLimiter {
 }
 
 export default RateLimiter;
+
+export { RateLimiter };

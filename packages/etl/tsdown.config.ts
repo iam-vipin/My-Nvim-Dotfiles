@@ -15,7 +15,7 @@ export default defineConfig({
     "src/sentry/index.ts",
     "src/clickup/index.ts",
   ],
-  format: ["cjs", "esm"],
+  format: ["esm"],
   dts: true,
   clean: true,
   minify: true,

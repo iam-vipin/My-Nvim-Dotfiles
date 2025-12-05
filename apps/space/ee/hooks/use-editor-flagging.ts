@@ -9,6 +9,7 @@ const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
   "EDITOR_MATHEMATICS",
   "EDITOR_EXTERNAL_EMBEDS",
   "EDITOR_VIDEO_ATTACHMENTS",
+  "EDITOR_ATTACHMENTS",
 ] as const;
 
 /**

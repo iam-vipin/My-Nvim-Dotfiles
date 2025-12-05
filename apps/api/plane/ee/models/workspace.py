@@ -10,9 +10,7 @@ from plane.db.models.workspace import WorkspaceBaseModel
 
 
 class WorkspaceFeature(BaseModel):
-    workspace = models.OneToOneField(
-        "db.Workspace", on_delete=models.CASCADE, related_name="features"
-    )
+    workspace = models.OneToOneField("db.Workspace", on_delete=models.CASCADE, related_name="features")
     is_project_grouping_enabled = models.BooleanField(default=False)
     is_initiative_enabled = models.BooleanField(default=False)
     is_teams_enabled = models.BooleanField(default=False)
@@ -41,9 +39,7 @@ class WorkspaceLicense(BaseModel):
         QUARTERLY = "QUARTERLY", "Quarterly"
 
     # The workspace that this license is for
-    workspace = models.OneToOneField(
-        "db.Workspace", on_delete=models.CASCADE, related_name="license"
-    )
+    workspace = models.OneToOneField("db.Workspace", on_delete=models.CASCADE, related_name="license")
     recurring_interval = models.CharField(
         choices=RecurringIntervalChoice.choices, max_length=255, blank=True, null=True
     )
@@ -80,9 +76,7 @@ class WorkspaceLicense(BaseModel):
 
 class WorkspaceActivity(WorkspaceBaseModel):
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
@@ -108,12 +102,8 @@ class WorkspaceActivity(WorkspaceBaseModel):
 
 class WorkspaceCredential(BaseModel):
     source = models.CharField(max_length=60)  # importer type
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="credentials"
-    )
-    user = models.ForeignKey(
-        "db.User", on_delete=models.CASCADE, related_name="credentials"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="credentials")
+    user = models.ForeignKey("db.User", on_delete=models.CASCADE, related_name="credentials")
     # Source being the type of importer where issues are imported example: jira
     source_identifier = models.CharField(max_length=255, null=True, blank=True)
     source_authorization_type = models.CharField(max_length=255, null=True, blank=True)
@@ -142,9 +132,7 @@ class WorkspaceCredential(BaseModel):
 
 
 class WorkspaceConnection(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="connections"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="connections")
     credential = models.ForeignKey(
         "ee.WorkspaceCredential",
         on_delete=models.CASCADE,
@@ -195,18 +183,11 @@ class WorkspaceConnection(BaseModel):
             self.save(update_fields=["deleted_by", "disconnect_meta"])
             # Remove all credentials with the same workspace_id and connection_type + "-USER"
             user_connection_type = f"{self.connection_type}-USER"
-            WorkspaceCredential.objects.filter(
-                workspace_id=self.workspace_id, source=user_connection_type
-            ).delete()
+            WorkspaceCredential.objects.filter(workspace_id=self.workspace_id, source=user_connection_type).delete()
 
             super().delete(*args, **kwargs)
             # Deactivate the credential if no other connections reference it
-            if (
-                credential
-                and not WorkspaceConnection.objects.filter(
-                    credential=credential
-                ).exists()
-            ):
+            if credential and not WorkspaceConnection.objects.filter(credential=credential).exists():
                 credential.is_active = False
                 credential.save()
 
@@ -218,9 +199,7 @@ class WorkspaceEntityConnection(BaseModel):
         on_delete=models.CASCADE,
         related_name="entity_connections",
     )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="entity_connections"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="entity_connections")
     project = models.ForeignKey(
         "db.Project",
         on_delete=models.CASCADE,
@@ -247,16 +226,17 @@ class WorkspaceEntityConnection(BaseModel):
         db_table = "workspace_entity_connections"
 
 
-class WorkspaceMemberActivityModel(BaseModel):
+class WorkspaceMemberActivity(BaseModel):
     class WorkspaceMemberActivityType(models.TextChoices):
         JOINED = "JOINED", "JOINED"
         REMOVED = "REMOVED", "Removed"
         LEFT = "LEFT", "Left"
         ROLE_CHANGED = "ROLE_CHANGED", "Role Changed"
+        INVITED = "INVITED", "Invited"
+        INVITATION_DELETED = "INVITATION_DELETED", "Invitation Deleted"
+        ACCEPTED_INVITATION = "ACCEPTED_INVITATION", "Accepted Invitation"
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="member_activities"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="member_activities")
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -265,7 +245,7 @@ class WorkspaceMemberActivityModel(BaseModel):
     )
     type = models.CharField(max_length=255, default=WorkspaceMemberActivityType.JOINED)
     workspace_member = models.ForeignKey(
-        "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities"
+        "db.WorkspaceMember", on_delete=models.CASCADE, related_name="activities", null=True, blank=True
     )
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)

@@ -1,23 +1,26 @@
 // plane imports
-import { useEffect } from "react";
+import useSWR from "swr";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TExtensions } from "@plane/editor";
 import type { TEditorFlaggingHookReturnType } from "ce/hooks/use-editor-flagging";
 import { useFeatureFlags } from "./store";
+
+const flagsToFetch: ReadonlyArray<keyof typeof E_FEATURE_FLAGS> = [
+  "EDITOR_MATHEMATICS",
+  "EDITOR_EXTERNAL_EMBEDS",
+  "EDITOR_VIDEO_ATTACHMENTS",
+] as const;
 
 /**
  * @description extensions disabled in various editors
  */
 export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType => {
-  const { fetchFeatureFlag, getFeatureFlag, hasFetchedFeatureFlag } = useFeatureFlags();
+  const { fetchFeatureFlags, getFeatureFlag } = useFeatureFlags();
 
-  useEffect(() => {
-    if (!hasFetchedFeatureFlag(anchor, "EDITOR_MATHEMATICS")) {
-      fetchFeatureFlag(anchor, "EDITOR_MATHEMATICS");
-    }
-    if (!hasFetchedFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS")) {
-      fetchFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS");
-    }
-  }, [anchor, fetchFeatureFlag, hasFetchedFeatureFlag]);
+  useSWR(
+    anchor ? `EDITOR_FEATURE_FLAGS_${anchor}` : null,
+    anchor ? () => fetchFeatureFlags(anchor, flagsToFetch) : null
+  );
 
   const isEditorAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_ATTACHMENTS", false);
   const isVideoAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_VIDEO_ATTACHMENTS", false);

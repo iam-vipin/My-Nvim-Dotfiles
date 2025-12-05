@@ -1,0 +1,59 @@
+{
+  "name": "@plane/etl",
+  "version": "0.24.1",
+  "repository": "https://github.com/makeplane/plane-ee",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "private": true,
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    "./asana": "./dist/asana/index.mjs",
+    "./clickup": "./dist/clickup/index.mjs",
+    "./core": "./dist/core/index.mjs",
+    "./flatfile": "./dist/flatfile/index.mjs",
+    "./github": "./dist/github/index.mjs",
+    "./gitlab": "./dist/gitlab/index.mjs",
+    "./jira": "./dist/jira/index.mjs",
+    "./jira-server": "./dist/jira-server/index.mjs",
+    "./linear": "./dist/linear/index.mjs",
+    "./sentry": "./dist/sentry/index.mjs",
+    "./slack": "./dist/slack/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsdown --minify",
+    "dev": "tsdown --watch",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings=614",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --max-warnings=614 --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+  },
+  "dependencies": {
+    "@flatfile/api": "^1.12.0",
+    "@linear/sdk": "^37.0.0",
+    "@octokit/auth-app": "^7.1.0",
+    "@octokit/rest": "^21.0.2",
+    "@plane/constants": "workspace:*",
+    "@plane/sdk": "workspace:*",
+    "@plane/types": "workspace:*",
+    "asana": "^3.0.11",
+    "axios": "catalog:",
+    "jira.js": "^4.0.1",
+    "node-html-parser": "^6.1.13",
+    "papaparse": "^5.4.1",
+    "tsdown": "catalog:",
+    "uuid": "catalog:",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@octokit/openapi-webhooks-types": "^8.3.0",
+    "@plane/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/papaparse": "^5.3.15"
+  }
+}

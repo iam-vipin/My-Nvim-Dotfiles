@@ -1,0 +1,342 @@
+import type { Board, Sprint } from "jira.js/out/agile/models";
+import type {
+  Issue as IJiraIssue,
+  ComponentWithIssueCount,
+  Comment as JComment,
+  IssueTypeDetails as JiraIssueTypeDetails,
+  FieldDetails,
+  Worklog,
+} from "jira.js/out/version2/models";
+import type {
+  ImportedJiraUser,
+  JiraComment,
+  PaginatedResponse,
+  JiraIssueField,
+  JiraIssueFieldOptions,
+  JiraCustomFieldKeys,
+  JiraV2Service,
+} from "..";
+import { fetchPaginatedDataByKey, formatDateStringForHHMM, OPTION_CUSTOM_FIELD_TYPES } from "../helpers";
+
+type BasePaginationContext = {
+  client: JiraV2Service;
+  startAt: number;
+  maxResults: number;
+};
+
+/**
+ * Paginated result with metadata
+ */
+export type PaginatedResult<T> = {
+  items: T[];
+  hasMore: boolean;
+  total?: number;
+  startAt: number;
+  maxResults: number;
+};
+
+export async function pullUsersV2(ctx: BasePaginationContext): Promise<PaginatedResult<ImportedJiraUser>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getJiraUsers(startAt, maxResults);
+
+  const users: ImportedJiraUser[] = result
+    .map((user): ImportedJiraUser | undefined => {
+      if (!user.emailAddress) return;
+
+      const avatarUrl = user.avatarUrls["24x24"];
+
+      return {
+        avatarUrl: avatarUrl,
+        user_id: user.key,
+        email: user.emailAddress,
+        full_name: user.displayName,
+        user_name: user.name,
+        added_to_org: "",
+        org_role: "None",
+        user_status: "Active",
+      };
+    })
+    .filter((user): user is ImportedJiraUser => user !== undefined);
+
+  return {
+    items: users,
+    hasMore: users.length === maxResults,
+    total: users.length, // API doesn't return total
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullLabelsV2(ctx: BasePaginationContext): Promise<PaginatedResult<string>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getLabelsV2(startAt, maxResults);
+
+  return {
+    items: result.values || [],
+    hasMore: result.isLast === false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullIssuesV2(
+  ctx: BasePaginationContext,
+  projectKey: string,
+  from?: Date
+): Promise<PaginatedResult<IJiraIssue>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getProjectIssues(
+    projectKey,
+    startAt,
+    from ? formatDateStringForHHMM(from) : "",
+    maxResults
+  );
+
+  return {
+    items: result.issues || [],
+    hasMore: result.total ? startAt + (result.issues?.length || 0) < result.total : false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullBoardsV2(ctx: BasePaginationContext, projectId: string): Promise<PaginatedResult<Board>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getProjectBoards(projectId, startAt, maxResults);
+
+  return {
+    items: result.values || [],
+    hasMore: result.isLast === false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullSprintsForBoardV2(
+  ctx: BasePaginationContext,
+  boardId: number
+): Promise<PaginatedResult<Sprint>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getBoardSprints(boardId, startAt, maxResults);
+
+  return {
+    items: result.values || [],
+    hasMore: result.isLast === false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function getSprintIssuesV2(
+  ctx: BasePaginationContext,
+  boardId: number,
+  sprintId: number
+): Promise<PaginatedResult<IJiraIssue>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = (await client.getBoardSprintsIssues(boardId, sprintId, startAt, maxResults)) as PaginatedResponse;
+
+  return {
+    items: (result.issues as IJiraIssue[]) || [],
+    hasMore: result.total ? startAt + (result.issues?.length || 0) < result.total : false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullComponentsV2(
+  ctx: BasePaginationContext,
+  projectKey: string
+): Promise<PaginatedResult<ComponentWithIssueCount>> {
+  const { client, startAt, maxResults } = ctx;
+
+  try {
+    const result = await client.getProjectComponents(projectKey);
+
+    return {
+      items: result || [],
+      hasMore: false,
+      total: result.length,
+      startAt,
+      maxResults,
+    };
+  } catch (e: any) {
+    console.error("Could not fetch components, something went wrong", e.response?.data);
+    return {
+      items: [],
+      hasMore: false,
+      total: 0,
+      startAt,
+      maxResults,
+    };
+  }
+}
+
+export async function pullComponentIssuesV2(
+  ctx: BasePaginationContext,
+  componentId: string
+): Promise<PaginatedResult<IJiraIssue>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = (await client.getProjectComponentIssues(componentId, startAt, maxResults)) as PaginatedResponse;
+
+  return {
+    items: (result.issues as IJiraIssue[]) || [],
+    hasMore: result.total ? startAt + (result.issues?.length || 0) < result.total : false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export const pullAllCommentsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<JiraComment[]> => {
+  const values = await fetchPaginatedDataByKey<JComment>(
+    (startAt) => client.getIssueComments(issue.id, startAt, 500),
+    "comments"
+  );
+
+  return values.map(
+    (comment): JiraComment => ({
+      ...comment,
+      issue_id: issue.id,
+    })
+  );
+};
+
+export const pullAllWorklogsForIssue = async (issue: IJiraIssue, client: JiraV2Service): Promise<Worklog[]> => {
+  const values = await fetchPaginatedDataByKey<Worklog>(
+    (startAt) => client.getIssueWorklogs(issue.id, startAt, 500),
+    "worklogs"
+  );
+
+  return values.map((worklog) => ({
+    ...worklog,
+    issue_id: issue.id,
+  }));
+};
+
+export async function pullCommentsForIssueV2(
+  ctx: BasePaginationContext,
+  issue: IJiraIssue
+): Promise<PaginatedResult<JiraComment>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getIssueComments(issue.id, startAt, maxResults);
+
+  const comments: JiraComment[] = (result.comments || []).map(
+    (comment): JiraComment => ({
+      ...(comment as JComment),
+      issue_id: issue.id,
+    })
+  );
+
+  return {
+    items: comments,
+    hasMore: result.total ? startAt + comments.length < result.total : false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+export async function pullIssueTypesV2(
+  ctx: BasePaginationContext,
+  projectId: string
+): Promise<PaginatedResult<JiraIssueTypeDetails>> {
+  const { client, startAt, maxResults } = ctx;
+  const result = await client.getPaginatedIssueTypes(projectId, startAt, maxResults);
+  return {
+    items: result.values || [],
+    hasMore: result.isLast === false,
+    total: result.total,
+    startAt,
+    maxResults,
+  };
+}
+
+/**
+ * Issue fields - no pagination, but takes issue types as dependency
+ */
+export async function pullIssueFieldsV2(
+  client: JiraV2Service,
+  projectId: string,
+  projectIssueTypes: JiraIssueTypeDetails[]
+): Promise<JiraIssueField[]> {
+  const customFields: JiraIssueField[] = [];
+
+  try {
+    // Get custom fields directly
+    const fields: FieldDetails[] = await client.getCustomFields();
+    const fieldsWithCtx = await client.getCustomFieldsWithContext(projectId);
+
+    const mappedFields = fieldsWithCtx
+      .map((field) => ({
+        ...field,
+        fieldInfo: fields.find((f) => f.id === field.id),
+      }))
+      .filter((field) => field.isAllProjects || field.projectIds.includes(Number(projectId)));
+
+    for (const field of mappedFields) {
+      if (!field.fieldInfo) continue;
+
+      const resolveFieldPromises = field.issueTypeIds.map(async (issueTypeId: any) => {
+        const issueType = projectIssueTypes.find((type) => type.id === issueTypeId);
+
+        if (!issueType) return;
+
+        const fieldOptions: JiraIssueFieldOptions[] = OPTION_CUSTOM_FIELD_TYPES.includes(
+          field.fieldInfo?.schema?.custom as JiraCustomFieldKeys
+        )
+          ? await getFieldOptionsV2(client, field.numericId.toString(), projectId, issueTypeId)
+          : [];
+
+        return {
+          ...field.fieldInfo,
+          scope: {
+            project: { id: projectId },
+            type: issueTypeId,
+          },
+          options: fieldOptions,
+        };
+      });
+
+      const resolvedFields: any = (await Promise.all(resolveFieldPromises)).filter((field) => field !== undefined);
+      customFields.push(...resolvedFields);
+    }
+  } catch (e: any) {
+    console.error("Error fetching custom fields", e.response?.data);
+  }
+
+  return customFields;
+}
+
+/**
+ * Helper function to get field options
+ */
+async function getFieldOptionsV2(
+  client: JiraV2Service,
+  fieldId: string,
+  projectId: string,
+  issueTypeId: string
+): Promise<JiraIssueFieldOptions[]> {
+  const fieldOptions: JiraIssueFieldOptions[] = [];
+
+  try {
+    const options = await client.getIssueFieldOptions(fieldId, projectId, issueTypeId);
+
+    if (options) {
+      options.forEach((value) => {
+        fieldOptions.push({
+          ...value,
+          fieldId: fieldId,
+        });
+      });
+    }
+  } catch (e: any) {
+    console.error(`Could not fetch field options for field ${fieldId}`, e.response?.data);
+  }
+
+  return fieldOptions;
+}

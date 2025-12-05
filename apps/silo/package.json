@@ -5,11 +5,14 @@
   "private": true,
   "author": "engineering@plane.so",
   "type": "module",
-  "main": "./dist/start.mjs",
+  "main": "./dist/start.cjs",
   "module": "./dist/start.mjs",
-  "types": "./dist/start.d.mts",
+  "types": "./dist/start.d.cts",
   "exports": {
-    ".": "./dist/start.mjs",
+    ".": {
+      "import": "./dist/start.mjs",
+      "require": "./dist/start.cjs"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

@@ -4,12 +4,12 @@
     "rootDirs": [".", "./.react-router/types"],
     "types": ["vite/client"],
     "paths": {
-      "ce/*": ["./ce/*"],
       "@/app/*": ["./app/*"],
       "@/*": ["./core/*"],
       "@/helpers/*": ["./helpers/*"],
       "@/styles/*": ["./styles/*"],
-      "@/plane-web/*": ["./ee/*"]
+      "@/plane-web/*": ["./ee/*"],
+      "ce/*": ["./ce/*"]
     },
     "strictNullChecks": true,
     "noImplicitOverride": false,

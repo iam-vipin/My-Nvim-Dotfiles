@@ -4,14 +4,14 @@
     "paths": {
       "@/*": ["./core/*"],
       "@/app/*": ["./app/*"],
-      "@/ce/*": ["./ce/*"],
       "@/helpers/*": ["./helpers/*"],
       "@/plane-web/*": ["./ee/*"],
+      "@/ce/*": ["./ce/*"],
       "@/styles/*": ["./styles/*"],
       "app/*": ["./app/*"],
+      "package.json": ["./package.json"],
       "ce/*": ["./ce/*"],
-      "ee/*": ["./ee/*"],
-      "package.json": ["./package.json"]
+      "ee/*": ["./ee/*"]
     },
     "strictNullChecks": true,
     "exactOptionalPropertyTypes": false,

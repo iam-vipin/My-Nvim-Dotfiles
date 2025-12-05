@@ -2,6 +2,8 @@
 Pages API tools for Plane documentation and page management operations.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -26,7 +28,7 @@ def get_page_tools(method_executor, context):
         access: Optional[int] = None,
         color: Optional[str] = None,
         logo_props: Optional[dict] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new page in a project.
 
         Args:
@@ -71,10 +73,10 @@ def get_page_tools(method_executor, context):
             # Using "project" not "project_id" because extract_entity_from_api_response looks for "project"
             if project_id:
                 data["project"] = project_id
-            return await PlaneToolBase.format_success_response_with_url(f"Project page '{name}' created successfully", data, "page", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Project page '{name}' created successfully", data, "page", context)
         else:
             error_msg = result.get("error", "Unknown error occurred")
-            return PlaneToolBase.format_error_response("Failed to create project page", error_msg)
+            return PlaneToolBase.format_error_payload("Failed to create project page", error_msg)
 
     @tool
     async def pages_create_workspace_page(
@@ -83,7 +85,7 @@ def get_page_tools(method_executor, context):
         access: Optional[int] = None,
         color: Optional[str] = None,
         logo_props: Optional[dict] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new page in the workspace.
 
         Args:
@@ -117,10 +119,10 @@ def get_page_tools(method_executor, context):
 
         if result.get("success"):
             data = result.get("data", {})
-            return await PlaneToolBase.format_success_response_with_url(f"Workspace page '{name}' created successfully", data, "page", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Workspace page '{name}' created successfully", data, "page", context)
         else:
             error_msg = result.get("error", "Unknown error occurred")
-            return PlaneToolBase.format_error_response("Failed to create workspace page", error_msg)
+            return PlaneToolBase.format_error_payload("Failed to create workspace page", error_msg)
 
     # In workspace/global context, expose a single tool that forces clarification for scope
     @tool
@@ -131,7 +133,7 @@ def get_page_tools(method_executor, context):
         access: Optional[int] = None,
         color: Optional[str] = None,
         logo_props: Optional[dict] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new page either in a project or at the workspace level.
 
         Args:
@@ -185,34 +187,16 @@ def get_page_tools(method_executor, context):
             # for the URL builder to construct the correct project page URL
             if scope_label == "Project" and project_id != "__workspace_scope__":
                 data["project"] = project_id
-            return await PlaneToolBase.format_success_response_with_url(f"{scope_label} page '{name}' created successfully", data, "page", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"{scope_label} page '{name}' created successfully", data, "page", context)
         else:
             error_msg = result.get("error", "Unknown error occurred")
-            return PlaneToolBase.format_error_response(f"Failed to create {scope_label.lower()} page", error_msg)
+            return PlaneToolBase.format_error_payload(f"Failed to create {scope_label.lower()} page", error_msg)
 
     # Return tools based on context:
     # - In project chat: only project pages (workspace pages are not accessible in project UI)
     # - In workspace/global chat: consolidated tool that requires scope selection via clarification
 
-    # CRITICAL: Include ONLY the entity search tools relevant to Pages
-    # Keep the tool surface minimal to avoid unintended tool selection
-    entity_tools = []
-    try:
-        from .entity_search import get_entity_search_tools
-
-        all_entity_tools = get_entity_search_tools(method_executor, context) or []
-        allowed_entity_tool_names = {
-            # Projects-only for page scope selection
-            "list_member_projects",
-            "search_project_by_name",
-            "search_project_by_identifier",
-        }
-        entity_tools = [t for t in all_entity_tools if getattr(t, "name", "") in allowed_entity_tool_names]
-    except Exception:
-        # Best-effort; if entity search tools are unavailable, proceed with page tools only
-        pass
-
     if is_project_chat:
-        return [pages_create_project_page] + entity_tools
+        return [pages_create_project_page]
     else:
-        return [pages_create_page] + entity_tools
+        return [pages_create_page]

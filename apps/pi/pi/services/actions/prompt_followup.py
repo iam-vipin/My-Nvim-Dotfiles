@@ -32,6 +32,7 @@ from pi.app.models.enums import MessageMetaStepType
 from pi.services.actions.method_executor import MethodExecutor
 from pi.services.actions.plane_actions_executor import PlaneActionsExecutor
 from pi.services.chat.chat import PlaneChatBot
+from pi.services.chat.prompts import plane_context
 from pi.services.retrievers.pg_store.action_artifact import add_query_to_artifact
 from pi.services.retrievers.pg_store.action_artifact import get_artifact_prompt_history_from_flow_steps
 
@@ -122,7 +123,7 @@ class EntityResolver:
 
         return tool_results
 
-    def _extract_entity_info(self, tool_name: str, tool_args: Dict[str, Any], result: str) -> Dict[str, Any]:
+    def _extract_entity_info(self, tool_name: str, tool_args: Dict[str, Any], result: Any) -> Dict[str, Any]:
         """Extract entity information using standardized mapping."""
         entity_type = TOOL_ENTITY_MAPPING.get(tool_name)
         if not entity_type:
@@ -147,8 +148,28 @@ class EntityResolver:
 
         return {result_key: entity_id, name_key: entity_name}
 
-    def _extract_entity_id_from_result(self, result: str) -> Optional[str]:
+    def _extract_entity_id_from_result(self, result: Any) -> Optional[str]:
         """Extract entity ID from tool result using existing patterns."""
+        # Handle structured dict payload (new format) - highest priority
+        if isinstance(result, dict):
+            # Check entity field first
+            if "entity" in result and isinstance(result["entity"], dict):
+                entity = result["entity"]
+                if "entity_id" in entity:
+                    return str(entity["entity_id"])
+            # Check data field
+            if "data" in result and isinstance(result["data"], dict):
+                data = result["data"]
+                if "id" in data:
+                    return str(data["id"])
+            # Check if result itself has entity_id
+            if "entity_id" in result:
+                return str(result["entity_id"])
+            # Check if result itself has id
+            if "id" in result:
+                return str(result["id"])
+
+        # Handle string results (legacy format)
         result_str = str(result)
 
         # Look for UUID patterns (standard Plane format)
@@ -314,6 +335,8 @@ class ArtifactFollowupService:
         """Execute LLM with search tools for entity resolution."""
         try:
             # Bind tools to LLM (same pattern as main flow)
+            # deduplicate search tools
+            search_tools = list({tool.name: tool for tool in search_tools}.values())
             llm_with_tools = self.chatbot.tool_llm.bind_tools(search_tools)
             llm_with_tools.set_tracking_context(message_id, db, MessageMetaStepType.ARTIFACT_MODIFICATION)
 
@@ -455,22 +478,13 @@ class ArtifactFollowupService:
             )
 
 
-ARTIFACT_MODIFICATION_PROMPT = """# Plane Artifact Modification Assistant
+ARTIFACT_MODIFICATION_PROMPT = f"""# Plane Artifact Modification Assistant
 
 You are a specialized AI assistant for modifying Plane project management artifacts.
 Your role is to process user requests and generate precise JSON modifications.
 
-## System Context
-
-Plane is an enterprise project management platform with these core entities:
-- **Workspaces**: Top-level organizational containers
-- **Projects**: Collections of work items, cycles, and modules
-- **Work Items**: Core units of work with customizable properties
-- **States**: Workflow stages (Backlog, Unstarted, Started, Completed, Cancelled)
-- **Cycles**: Time-boxed development sprints
-- **Modules**: Logical feature groupings
-- **Labels**: Categorization tags
-- **Users**: Team members who can be assigned to work
+## Context about Plane
+{plane_context}
 
 ## Your Task
 
@@ -539,18 +553,17 @@ When user references "me", "myself", "assign to me", or "assign it to me":
 After executing any necessary search tools, provide a complete JSON object with all modifications:
 
 ```json
-{
-  "field_name": "value",
+{{"field_name": "value",
   "relation_field_ids": ["uuid1", "uuid2"],
   "single_relation_id": "uuid"
-}
+}}
 ```
 
 ## Examples
 
 **Simple Assignment:**
 Request: "assign it to me"
-Response: `{"assignee_ids": ["actual-user-uuid-here"]}`  (NOT "me")
+Response: `{{"assignee_ids": ["actual-user-uuid-here"]}}`  (NOT "me")
 
 **Mixed Operations:**
 Request: "set state to done, priority to high, assign to me, add dev label"
@@ -560,12 +573,11 @@ Process:
 3. Use current user ID for self-assignment
 4. Response:
 ```json
-{
-  "state_id": "state-uuid",
+{{"state_id": "state-uuid",
   "priority": "high",
   "assignee_ids": ["actual-user-uuid-here"],
   "label_ids": ["label-uuid"]
-}
+}}
 ```
 
 ## Critical Requirements

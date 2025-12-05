@@ -3,6 +3,7 @@ import uuid
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Tuple
 from typing import Union
@@ -14,11 +15,13 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.agents.sql_agent.tools import format_as_bullet_points
 from pi.app.models import Chat
 from pi.app.models import Message
 from pi.app.models import MessageFlowStep
 from pi.app.models import UserChatPreference
 from pi.app.models.enums import ExecutionStatus
+from pi.app.models.enums import FocusEntityType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.chat import PaginationResponse
@@ -27,6 +30,8 @@ from pi.app.utils.attachments import get_presigned_url_preview
 from pi.app.utils.pagination import apply_cursor_pagination
 from pi.app.utils.pagination import check_pagination_bounds
 from pi.app.utils.pagination import create_pagination_response
+from pi.services.chat.helpers.tool_utils import format_tool_message_for_display
+from pi.services.chat.utils import mask_uuids_in_text
 from pi.services.query_utils import parse_query
 
 log = logger.getChild(__name__)
@@ -35,10 +40,10 @@ log = logger.getChild(__name__)
 internal_reasoning_format_dict = {
     "rewrite": "Rewritten Query",
     "routing": "Routing",
-    "tool": "Selected Agent",
-    "PLANE_STRUCTURED_DATABASE_AGENT": "Plane Structured Database Agent",
-    "PLANE_VECTOR_SEARCH_AGENT": "Plane Vector Search Agent",
-    "PLANE_PAGES_AGENT": "Plane Pages Search Agent",
+    "tool": "Selected Tool",
+    "structured_db_tool": "Structured DB Tool",
+    "vector_search_tool": "Vector Search Tool",
+    "pages_search_tool": "Pages Search Tool",
 }
 
 
@@ -502,6 +507,171 @@ async def retrieve_chat_history(
                             "execution_status": execution_status_info,
                         }
 
+                        # For external responses, augment reasoning with cleaned tool results from flow steps
+                        if not pi_internal:
+                            try:
+                                # Collect relevant flow steps for this message, in order
+                                message_specific_steps = [step for step in message_flow_steps if step.message_id == user_message.id]
+                                message_specific_steps.sort(key=lambda x: x.step_order or 0)
+
+                                cleaned_blocks: List[str] = []
+                                for step in message_specific_steps:
+                                    # Only include tool steps; skip metadata/internal-only tools
+                                    if getattr(step, "step_type", None) != "tool":
+                                        continue
+                                    tool_name = getattr(step, "tool_name", None)
+                                    if tool_name in (
+                                        "tool_orchestration_context",
+                                        "llm_reasoning",
+                                        "get_available_plane_actions",
+                                        "planner_summary",
+                                    ):
+                                        continue
+                                    # Skip planned actions in external reasoning (only show retrieval outputs)
+                                    if getattr(step, "is_planned", False):
+                                        continue
+                                    # Include retrieval steps even if execution_success wasn't explicitly set,
+                                    # as ask-mode persistence used to leave it as PENDING. Prefer executed or explicit success.
+                                    if (
+                                        not getattr(step, "is_executed", False)
+                                        and getattr(step, "execution_success", None) != ExecutionStatus.SUCCESS
+                                    ):
+                                        continue
+
+                                    # SPECIAL FILTERS:
+                                    # For structured_db_tool, hide intermediate steps (table selection, SQL generation, final_query planning)
+                                    if isinstance(tool_name, str) and tool_name.startswith("structured_db_tool_"):
+                                        # Only the core 'structured_db_tool' should be shown in external reasoning
+                                        continue
+
+                                    # Extract raw content and format for display
+                                    exec_data = getattr(step, "execution_data", {}) or {}
+                                    raw_str: str = ""
+                                    if isinstance(exec_data, dict):
+                                        if exec_data.get("execution_result"):
+                                            raw_str = str(exec_data.get("execution_result"))
+                                        elif exec_data.get("retrieval_result"):
+                                            raw_str = str(exec_data.get("retrieval_result"))
+                                        elif exec_data.get("structured_result") is not None:
+                                            try:
+                                                raw_str = json.dumps(exec_data.get("structured_result"), default=str)
+                                            except Exception:
+                                                raw_str = str(exec_data.get("structured_result"))
+                                    if not raw_str:
+                                        raw_content = parse_flow_step_content(step.content or "")
+                                        try:
+                                            if isinstance(raw_content, (dict, list)):
+                                                raw_str = json.dumps(raw_content, default=str)
+                                            else:
+                                                raw_str = str(raw_content)
+                                        except Exception:
+                                            raw_str = str(raw_content)
+
+                                    # Tool-specific external rendering
+                                    tname = (tool_name or "").strip().lower()
+                                    if tname == "structured_db_tool":
+                                        try:
+                                            # Prefer structured_result.results if available
+                                            results_obj = None
+                                            sql_query_str = None
+                                            if isinstance(exec_data, dict):
+                                                sr = exec_data.get("structured_result")
+                                                if isinstance(sr, dict):
+                                                    results_obj = sr.get("results")
+                                                    sql_query_str = sr.get("sql_query")
+                                            if results_obj is None and raw_str:
+                                                # Try to parse raw_str JSON and extract 'results'
+                                                try:
+                                                    parsed = json.loads(raw_str)
+                                                    if isinstance(parsed, dict):
+                                                        results_obj = parsed.get("results")
+                                                        if not sql_query_str:
+                                                            sql_query_str = parsed.get("sql_query")
+                                                except Exception:
+                                                    results_obj = None
+
+                                            # Fallback: if still missing, try step.content JSON
+                                            if results_obj is None:
+                                                content_parsed = parse_flow_step_content(step.content or "")
+                                                if isinstance(content_parsed, dict):
+                                                    results_obj = content_parsed.get("results")
+                                                    if not sql_query_str:
+                                                        sql_query_str = content_parsed.get("sql_query")
+
+                                            # Build display exactly as live stream intent: success prelude + rows
+                                            prelude = "✅ Database querying execution completed"
+                                            rows_text = ""
+                                            if results_obj is not None:
+                                                # Use bullet points formatter (async)
+                                                rows_text = await format_as_bullet_points(results_obj, sql_query=sql_query_str)
+                                            else:
+                                                # Last resort: fall back to cleaned message formatter
+                                                rows_text = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
+                                                # Avoid duplicating prelude inside rows_text
+                                                if rows_text.startswith(prelude):
+                                                    rows_text = rows_text[len(prelude) :].lstrip()
+
+                                            block = f"{prelude}\n\n{rows_text}".strip()
+                                            if block:
+                                                cleaned_blocks.append(mask_uuids_in_text(block))
+                                        except Exception:
+                                            # Fail-safe: fall back to generic formatting
+                                            prelude = f"✅ {(tool_name or "Tool")} execution completed"
+                                            formatted = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
+                                            if formatted and formatted.strip():
+                                                cleaned_blocks.append(mask_uuids_in_text(formatted))
+
+                                    elif tname == "vector_search_tool":
+                                        # Truncate to first 50 words for external display
+                                        def _truncate_words(text: str, max_words: int = 50) -> str:
+                                            words = text.split()
+                                            if len(words) <= max_words:
+                                                return text
+                                            return " ".join(words[:max_words]) + "..."
+
+                                        truncated = ""
+                                        # Try to extract 'results' from structured_result if present
+                                        if isinstance(exec_data, dict) and exec_data.get("structured_result"):
+                                            sr = exec_data.get("structured_result")
+                                            if isinstance(sr, dict):
+                                                res = sr.get("results")
+                                                if res is not None:
+                                                    truncated = _truncate_words(str(res))
+                                        if not truncated:
+                                            truncated = _truncate_words(str(raw_str))
+
+                                        from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+
+                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        formatted = f"{prelude}\n\nResult: {truncated}"
+                                        cleaned_blocks.append(mask_uuids_in_text(formatted.strip()))
+
+                                    else:
+                                        from pi.services.chat.helpers.tool_utils import tool_name_shown_to_user
+
+                                        prelude = f"✅ {tool_name_shown_to_user(tool_name or "Tool")} execution completed"
+                                        # Include query context when available (helps external readers)
+                                        if isinstance(exec_data, dict) and exec_data.get("tool_query"):
+                                            try:
+                                                tq = str(exec_data.get("tool_query")).strip()
+                                                if tq:
+                                                    prelude = f"{prelude} ({tq})"
+                                            except Exception:
+                                                pass
+                                        formatted = format_tool_message_for_display(f"{prelude}\n\nResult: {raw_str}")
+                                        if formatted and formatted.strip():
+                                            cleaned_blocks.append(mask_uuids_in_text(formatted))
+
+                                if cleaned_blocks:
+                                    base_reasoning = (qa_pair.get("reasoning") or "").strip()
+                                    if base_reasoning:
+                                        base_reasoning = mask_uuids_in_text(base_reasoning)
+                                    appended = "\n\n".join(cleaned_blocks)
+                                    qa_pair["reasoning"] = f"{base_reasoning}\n\n{appended}".strip() if base_reasoning else appended
+                            except Exception:
+                                # Fail-safe: do not block retrieval on formatting errors
+                                pass
+
                         # Add execution information at dialogue level (only if there are actions)
                         if execution_status_info.get("actions"):
                             qa_pair.update({
@@ -523,57 +693,57 @@ async def retrieve_chat_history(
                                 execution_summaries: List[str] = []
 
                                 # Extract information from flow steps for this message
-                                selected_agents_results: List[str] = []
-                                agent_results: Dict[str, List[Any]] = {}
+                                selected_tools_results: List[str] = []
+                                tool_results: Dict[str, List[Any]] = {}
 
                                 # Process flow steps to extract information
                                 for message_flow_step in message_specific_steps:
                                     content = parse_flow_step_content(message_flow_step.content or "")
                                     step_type = message_flow_step.step_type
                                     tool_name = message_flow_step.tool_name
-                                    if step_type == "routing":
-                                        # Handle routing step - content could be a dict with a list or a string
-                                        routing_data = None
-                                        if isinstance(content, dict):
-                                            # Check if content contains a list of routing results
-                                            routing_data = content.get("results")
-                                        elif isinstance(content, list):
-                                            routing_data = content
-                                        elif isinstance(content, str):
-                                            routing_data = content
 
-                                        if routing_data is not None:
-                                            if isinstance(routing_data, list):
-                                                # Content contains the list of selected agents
-                                                routing_results = []
-                                                for d in routing_data:
-                                                    if not isinstance(d, dict):
-                                                        continue
-                                                    tool_val = str(d.get("tool", "")).strip()
-                                                    query_val = str(d.get("query", "")).strip()
-                                                    if not tool_val or not query_val:
-                                                        # Filter empty agent entries safely
-                                                        continue
-                                                    tool_disp = internal_reasoning_format_dict.get(tool_val, tool_val)
-                                                    routing_results.append(
-                                                        f"Selected Agent: {tool_disp} and the corresponding sub query: {query_val}"
-                                                    )
-                                                if routing_results:
-                                                    selected_agents_results.extend(routing_results)
-                                            elif isinstance(routing_data, str):
-                                                selected_agents_results.append(routing_data)
-                                            else:
-                                                log.warning(f"Unexpected routing data type: {type(routing_data)}, routing_data: {routing_data}")
-
-                                    elif step_type == "tool" and tool_name:
-                                        # Skip context-only metadata steps (don't clutter history)
-                                        if tool_name == "tool_orchestration_context":
+                                    if step_type == "tool" and tool_name:
+                                        # Handle tool selection specially - extract selected tools for display
+                                        if tool_name == "tool_selection":
+                                            content_data = parse_flow_step_content(message_flow_step.content or "")
+                                            if isinstance(content_data, dict):
+                                                selected_tools = content_data.get("selected_tools", [])
+                                                for tool_info in selected_tools:
+                                                    if isinstance(tool_info, dict):
+                                                        tool_display_name = tool_info.get("name", "")
+                                                        # Format tool selection for enhanced history
+                                                        selected_tools_results.append(f"Selected Tool: {tool_display_name}")
                                             continue
 
-                                        # Collect agent results
-                                        if tool_name not in agent_results:
-                                            agent_results[tool_name] = []
-                                        agent_results[tool_name].append(content)
+                                        # Skip context-only metadata steps, verbose advisory content, and reasoning (don't clutter history)
+                                        if tool_name in (
+                                            "tool_orchestration_context",
+                                            "llm_reasoning",
+                                            "get_available_plane_actions",
+                                            "planner_summary",
+                                        ):
+                                            continue
+
+                                        # Skip intermediate retrieval tool steps (same as external reasoning)
+                                        # These are internal implementation details that shouldn't clutter the LLM context
+                                        if tool_name in (
+                                            "structured_db_tool_table_selection",
+                                            "structured_db_tool_sql_generation",
+                                            "structured_db_tool_final_query",
+                                        ):
+                                            continue
+
+                                        # For retrieval tools (non-planned), skip PENDING steps - they shouldn't be in history
+                                        if hasattr(message_flow_step, "execution_success") and hasattr(message_flow_step, "is_planned"):
+                                            if not message_flow_step.is_planned:
+                                                # This is a retrieval tool - only include if successfully executed
+                                                if message_flow_step.execution_success != ExecutionStatus.SUCCESS:
+                                                    continue
+
+                                        # Collect tool results
+                                        if tool_name not in tool_results:
+                                            tool_results[tool_name] = []
+                                        tool_results[tool_name].append(content)
 
                                         # Add execution status information using new fields
                                         if hasattr(message_flow_step, "execution_success") and hasattr(message_flow_step, "is_planned"):
@@ -735,11 +905,11 @@ async def retrieve_chat_history(
 
                                 # Prepare separate sections so downstream can reorder (selected vs executed)
                                 selected_section_lines: List[str] = []
-                                if selected_agents_results:
+                                if selected_tools_results:
                                     selected_section_lines.append(
-                                        "The below agents were selected to retrieve relevant information to address the query:"
+                                        "The below tools were selected to retrieve relevant information to address the query:"
                                     )
-                                    selected_section_lines.extend(selected_agents_results)
+                                    selected_section_lines.extend(selected_tools_results)
                                     selected_section_lines.append("")
                                     # Also add into internal_reasoning_parts for backwards-compatible single string
                                     internal_reasoning_parts.extend(selected_section_lines)
@@ -752,12 +922,12 @@ async def retrieve_chat_history(
                                     # Also add into internal_reasoning_parts for backwards-compatible single string
                                     internal_reasoning_parts.extend(executed_section_lines)
 
-                                # Process each agent's results - add only non-redundant, high-signal details
+                                # Process each tool's results - add only non-redundant, high-signal details
                                 # Avoid duplicating raw results here since execution summaries above already include a results preview
-                                for agent_name, agent_content_list in agent_results.items():
-                                    for content in agent_content_list:
+                                for tool_name_key, tool_content_list in tool_results.items():
+                                    for content in tool_content_list:
                                         if isinstance(content, dict):
-                                            if agent_name == "PLANE_STRUCTURED_DATABASE_AGENT":
+                                            if tool_name_key == "structured_db_tool":
                                                 # Include generated SQL query (useful context), but skip raw result dumps
                                                 intermediate_results = content.get("intermediate_results", {})
                                                 if intermediate_results:
@@ -778,20 +948,29 @@ async def retrieve_chat_history(
                                                                 f"    issue unique key: {url_dict.get("issue_identifier")}"
                                                             )
                                             else:
-                                                # Skip adding additional raw results for other agents to avoid duplication
+                                                # Skip adding additional raw results for other tools to avoid duplication
                                                 continue
 
-                                    internal_reasoning_parts.append("")  # Add empty line between agents
+                                    internal_reasoning_parts.append("")  # Add empty line between tools
 
                                 # Join all internal reasoning parts into a single formatted string
                                 message_internal_reasoning = "\n".join(internal_reasoning_parts)
 
                             # Store both combined and split sections for downstream formatting control
                             qa_pair["internal_reasoning"] = message_internal_reasoning
-                            if selected_section_lines:
-                                qa_pair["internal_selected"] = "\n".join(selected_section_lines).strip()
-                            if executed_section_lines:
-                                qa_pair["internal_executed"] = "\n".join(executed_section_lines).strip()
+                            try:
+                                if selected_tools_results:
+                                    qa_pair["internal_selected"] = "\n".join(
+                                        ["The below tools were selected to retrieve relevant information to address the query:"]
+                                        + selected_tools_results
+                                    ).strip()
+                            except Exception:
+                                pass
+                            try:
+                                if executed_section_lines:
+                                    qa_pair["internal_executed"] = "\n".join(executed_section_lines).strip()
+                            except Exception:
+                                pass
 
                         dialogue_list.append(qa_pair)
                         i += 2
@@ -821,9 +1000,17 @@ async def retrieve_chat_history(
                             "query_id": str(user_message.id),
                             "answer_id": "",  # No assistant message yet
                             "attachment_ids": attachments_dict.get(user_message.id, []),
+                            "attachments": attachments_object_dict.get(user_message.id, []),  # Add this line for consistency
                             # Add execution status information for frontend
                             "execution_status": execution_status_info,
                         }
+
+                        # Flatten actions and summary at the top-level for frontend compatibility (build mode)
+                        if execution_status_info.get("actions"):
+                            standalone_qa_pair.update({
+                                "action_summary": execution_status_info.get("action_summary", {}),
+                                "actions": execution_status_info.get("actions", []),
+                            })
 
                         if pi_internal:
                             # Generate internal reasoning for this standalone user message
@@ -840,8 +1027,8 @@ async def retrieve_chat_history(
                                 # Extract information from flow steps for this message
                                 standalone_original_query = user_message.content or ""
                                 standalone_rewritten_query = ""
-                                standalone_selected_agents_results: List[str] = []
-                                standalone_agent_results: Dict[str, List[Any]] = {}
+                                standalone_selected_tools_results: List[str] = []
+                                standalone_tool_results: Dict[str, List[Any]] = {}
 
                                 # Process flow steps to extract information
                                 for message_flow_step in standalone_message_specific_steps:
@@ -851,36 +1038,48 @@ async def retrieve_chat_history(
 
                                     if step_type == "rewrite" and isinstance(content, dict):
                                         standalone_rewritten_query = content.get("results", "") or content.get("rewritten_query", "")
-                                    elif step_type == "routing":
-                                        # Handle routing step - content could be a dict with a list or a string
-                                        routing_data = None
-                                        if isinstance(content, dict):
-                                            # Check if content contains a list of routing results
-                                            routing_data = content.get("results")
-                                        elif isinstance(content, list):
-                                            routing_data = content
-                                        elif isinstance(content, str):
-                                            routing_data = content
-
-                                        if routing_data is not None:
-                                            if isinstance(routing_data, list):
-                                                # Content contains the list of selected agents
-                                                routing_results = [
-                                                    f"Selected Agent: {internal_reasoning_format_dict.get(d.get("tool", ""), d.get("tool", ""))} and the corresponding sub query: {d.get("query", "")}"  # noqa: E501
-                                                    for d in routing_data
-                                                    if isinstance(d, dict)
-                                                ]
-                                                standalone_selected_agents_results.extend(routing_results)
-                                            elif isinstance(routing_data, str):
-                                                standalone_selected_agents_results.append(routing_data)
-                                            else:
-                                                log.warning(f"Unexpected routing data type: {type(routing_data)}, routing_data: {routing_data}")
 
                                     elif step_type == "tool" and tool_name:
-                                        # Collect agent results
-                                        if tool_name not in standalone_agent_results:
-                                            standalone_agent_results[tool_name] = []
-                                        standalone_agent_results[tool_name].append(content)
+                                        # Handle tool selection specially - extract selected tools for display
+                                        if tool_name == "tool_selection":
+                                            content_data = parse_flow_step_content(message_flow_step.content or "")
+                                            if isinstance(content_data, dict):
+                                                selected_tools = content_data.get("selected_tools", [])
+                                                for tool_info in selected_tools:
+                                                    if isinstance(tool_info, dict):
+                                                        tool_display_name = tool_info.get("name", "")
+                                                        standalone_selected_tools_results.append(f"Selected Tool: {tool_display_name}")
+                                            continue
+
+                                        # Skip context-only metadata steps, verbose advisory content, and reasoning
+                                        if tool_name in (
+                                            "tool_orchestration_context",
+                                            "llm_reasoning",
+                                            "get_available_plane_actions",
+                                            "planner_summary",
+                                        ):
+                                            continue
+
+                                        # Skip intermediate retrieval tool steps (same as external reasoning)
+                                        # These are internal implementation details that shouldn't clutter the LLM context
+                                        if tool_name in (
+                                            "structured_db_tool_table_selection",
+                                            "structured_db_tool_sql_generation",
+                                            "structured_db_tool_final_query",
+                                        ):
+                                            continue
+
+                                        # For retrieval tools (non-planned), skip PENDING steps - they shouldn't be in history
+                                        if hasattr(message_flow_step, "execution_success") and hasattr(message_flow_step, "is_planned"):
+                                            if not message_flow_step.is_planned:
+                                                # This is a retrieval tool - only include if successfully executed
+                                                if message_flow_step.execution_success != ExecutionStatus.SUCCESS:
+                                                    continue
+
+                                        # Collect tool results
+                                        if tool_name not in standalone_tool_results:
+                                            standalone_tool_results[tool_name] = []
+                                        standalone_tool_results[tool_name].append(content)
 
                                         # Add execution status information using new fields
                                         if hasattr(message_flow_step, "execution_success") and hasattr(message_flow_step, "is_planned"):
@@ -939,19 +1138,19 @@ async def retrieve_chat_history(
                                         standalone_internal_reasoning_parts.append(f"User question: '{cleaned_query}'")
                                     standalone_internal_reasoning_parts.append("")
 
-                                if standalone_selected_agents_results:
+                                if standalone_selected_tools_results:
                                     standalone_internal_reasoning_parts.append(
-                                        "The below agents were selected to retrieve relevant information to address the query:"
+                                        "The below tools were selected to retrieve relevant information to address the query:"
                                     )
-                                    standalone_internal_reasoning_parts.extend(standalone_selected_agents_results)
+                                    standalone_internal_reasoning_parts.extend(standalone_selected_tools_results)
                                     standalone_internal_reasoning_parts.append("")
 
-                                # Process each agent's results
-                                for agent_name, agent_content_list in standalone_agent_results.items():
-                                    for content in agent_content_list:
+                                # Process each tool's results
+                                for tool_name_key, tool_content_list in standalone_tool_results.items():
+                                    for content in tool_content_list:
                                         if isinstance(content, dict):
-                                            # Handle structured database agent specifically
-                                            if agent_name == "PLANE_STRUCTURED_DATABASE_AGENT":
+                                            # Handle structured database tool specifically
+                                            if tool_name_key == "structured_db_tool":
                                                 # standalone_internal_reasoning_parts.append("Intermediate results")
 
                                                 # SQL query and results
@@ -978,8 +1177,8 @@ async def retrieve_chat_history(
                                                                 f"    issue unique key: {url_dict.get("issue_identifier")}"
                                                             )
 
-                                            # Handle vector search agent
-                                            elif agent_name == "PLANE_VECTOR_SEARCH_AGENT":
+                                            # Handle vector search tool
+                                            elif tool_name_key == "vector_search_tool":
                                                 results = content.get("results", "")
                                                 if results:
                                                     standalone_internal_reasoning_parts.append("Semantic search results:")
@@ -999,8 +1198,8 @@ async def retrieve_chat_history(
                                                             standalone_internal_reasoning_parts.append(
                                                                 f"    issue unique key: {url_dict.get("issue_identifier")}"
                                                             )
-                                            # Handle pages search agent
-                                            elif agent_name == "PLANE_PAGES_AGENT":
+                                            # Handle pages search tool
+                                            elif tool_name_key == "pages_search_tool":
                                                 results = content.get("results", "")
                                                 if results:
                                                     standalone_internal_reasoning_parts.append("Pages search results:")
@@ -1008,7 +1207,7 @@ async def retrieve_chat_history(
                                                 else:
                                                     standalone_internal_reasoning_parts.append("Pages search results: No results found")
 
-                                            # Generic handling for other agents
+                                            # Generic handling for other tools
                                             else:
                                                 results = content.get("results", "")
                                                 if results:
@@ -1019,7 +1218,7 @@ async def retrieve_chat_history(
                                             standalone_internal_reasoning_parts.append("Results:")
                                             standalone_internal_reasoning_parts.append(content)
 
-                                    standalone_internal_reasoning_parts.append("")  # Add empty line between agents
+                                    standalone_internal_reasoning_parts.append("")  # Add empty line between tools
 
                                 # Join all internal reasoning parts into a single formatted string
                                 standalone_message_internal_reasoning = "\n".join(standalone_internal_reasoning_parts)
@@ -1031,7 +1230,8 @@ async def retrieve_chat_history(
                     else:
                         i += 1
 
-        return {
+        # Return both new polymorphic structure and legacy fields for backward compatibility
+        response = {
             "chat_id": str(chat_id),
             "title": chat.title or "",
             "dialogue": dialogue_list,
@@ -1039,13 +1239,19 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": chat_llm,
             "is_focus_enabled": user_chat_preference.is_focus_enabled if user_chat_preference else False,
+            # New polymorphic structure
+            "focus_entity_type": user_chat_preference.focus_entity_type if user_chat_preference and user_chat_preference.focus_entity_type else None,
+            "focus_entity_id": str(user_chat_preference.focus_entity_id) if user_chat_preference and user_chat_preference.focus_entity_id else None,
+            # Legacy fields (for backward compatibility)
             "focus_project_id": str(user_chat_preference.focus_project_id)
             if user_chat_preference and user_chat_preference.focus_project_id
             else None,
             "focus_workspace_id": str(user_chat_preference.focus_workspace_id)
             if user_chat_preference and user_chat_preference.focus_workspace_id
             else None,
+            "mode": user_chat_preference.mode if user_chat_preference and user_chat_preference.mode else "ask",
         }
+        return response
 
     except Exception as e:
         log.error(f"Error retrieving chat history: {e}")
@@ -1057,8 +1263,11 @@ async def retrieve_chat_history(
             "reasoning": "",
             "llm": "",
             "is_focus_enabled": False,
+            "focus_entity_type": None,
+            "focus_entity_id": None,
             "focus_project_id": None,
             "focus_workspace_id": None,
+            "mode": "ask",
         }
 
 
@@ -1495,25 +1704,54 @@ async def upsert_user_chat_preference(
     chat_id: UUID4,
     db: AsyncSession,
     is_focus_enabled: Optional[bool] = None,
+    # New polymorphic parameters
+    focus_entity_type: Optional[str] = None,
+    focus_entity_id: Optional[UUID4] = None,
+    # Legacy parameters (for backward compatibility)
     focus_project_id: Optional[UUID4] = None,
     focus_workspace_id: Optional[UUID4] = None,
+    mode: Optional[Literal["ask", "build"]] = "ask",
 ) -> Dict[str, Any]:
     """
     Upserts a user chat preference.
     Returns a dictionary with operation status and the user chat preference object or error details.
+
+    Supports both new polymorphic structure (focus_entity_type, focus_entity_id) and
+    legacy structure (focus_project_id, focus_workspace_id) for backward compatibility.
+    New parameters take precedence over legacy parameters.
     """
     try:
         stmt = select(UserChatPreference).where(UserChatPreference.user_id == user_id).where(UserChatPreference.chat_id == chat_id)  # type: ignore[union-attr,arg-type]
         result = await db.execute(stmt)
         existing_user_chat_preference = result.scalar_one_or_none()
 
+        # Determine focus context: prioritize new polymorphic params, fall back to legacy
+        final_focus_entity_type = focus_entity_type
+        final_focus_entity_id = focus_entity_id
+
+        if not final_focus_entity_type and not final_focus_entity_id:
+            # Fall back to legacy parameters
+            if focus_project_id:
+                final_focus_entity_type = "project"
+                final_focus_entity_id = focus_project_id
+            elif focus_workspace_id:
+                final_focus_entity_type = "workspace"
+                final_focus_entity_id = focus_workspace_id
+
         if existing_user_chat_preference:
             if is_focus_enabled is not None:
                 existing_user_chat_preference.is_focus_enabled = is_focus_enabled
+            if final_focus_entity_type is not None:
+                existing_user_chat_preference.focus_entity_type = final_focus_entity_type
+            if final_focus_entity_id is not None:
+                existing_user_chat_preference.focus_entity_id = final_focus_entity_id
+            # Also update legacy fields for backward compatibility during migration
             if focus_project_id is not None:
                 existing_user_chat_preference.focus_project_id = focus_project_id
             if focus_workspace_id is not None:
                 existing_user_chat_preference.focus_workspace_id = focus_workspace_id
+            if mode is not None:
+                existing_user_chat_preference.mode = mode
             db.add(existing_user_chat_preference)
             await db.commit()
             return {"message": "success", "user_chat_preference": existing_user_chat_preference}
@@ -1524,10 +1762,17 @@ async def upsert_user_chat_preference(
             }
             if is_focus_enabled is not None:
                 new_user_chat_preference_kwargs["is_focus_enabled"] = is_focus_enabled
+            if final_focus_entity_type is not None:
+                new_user_chat_preference_kwargs["focus_entity_type"] = final_focus_entity_type
+            if final_focus_entity_id is not None:
+                new_user_chat_preference_kwargs["focus_entity_id"] = final_focus_entity_id
+            # Also set legacy fields for backward compatibility during migration
             if focus_project_id is not None:
                 new_user_chat_preference_kwargs["focus_project_id"] = focus_project_id
             if focus_workspace_id is not None:
                 new_user_chat_preference_kwargs["focus_workspace_id"] = focus_workspace_id
+            if mode is not None:
+                new_user_chat_preference_kwargs["mode"] = mode
             new_user_chat_preference = UserChatPreference(**new_user_chat_preference_kwargs)
             db.add(new_user_chat_preference)
             await db.commit()
@@ -1536,3 +1781,40 @@ async def upsert_user_chat_preference(
         await db.rollback()
         log.error(f"Error upserting user chat preference: {e}")
         return {"message": "error", "error": str(e)}
+
+
+async def get_project_from_chat_preference(chat_id: str, user_id: str, db: AsyncSession) -> Tuple[Optional[str], bool]:
+    # Get is_project_chat from chat record (with explicit commit/refresh to avoid race condition)
+    # Refresh the session to ensure we see any committed chat records
+    await db.commit()
+
+    stmt = select(Chat).where(Chat.id == chat_id)  # type: ignore[arg-type]
+    result = await db.execute(stmt)
+    chat = result.scalar_one_or_none()
+    is_project_chat = chat.is_project_chat if chat else False
+
+    # Get project_id from UserChatPreference
+    project_id = None
+    try:
+        pref_stmt = select(UserChatPreference).where(
+            UserChatPreference.chat_id == chat_id,  # type: ignore[arg-type]
+            UserChatPreference.user_id == user_id,  # type: ignore[arg-type]
+        )
+        result = await db.execute(pref_stmt)
+        pref = result.scalar_one_or_none()
+
+        if pref:
+            # Check polymorphic focus first
+            if pref.focus_entity_type == FocusEntityType.PROJECT.value and pref.focus_entity_id:
+                project_id = pref.focus_entity_id
+            # Fallback to legacy field
+            elif pref.focus_project_id:
+                project_id = pref.focus_project_id
+
+        if project_id:
+            log.info(f"🔧 Found project_id in UserChatPreference: {project_id}")
+    except Exception as e:
+        log.error(f"Error fetching UserChatPreference: {e}")
+
+    project_id = str(project_id) if project_id else None
+    return project_id, is_project_chat

@@ -76,3 +76,22 @@ class ExecutionStatus(str, Enum):
 
     def __str__(self):
         return self.value
+
+
+class FocusEntityType(str, Enum):
+    """Entity types that can be used as focus context in chat preferences."""
+
+    WORKSPACE = "workspace"
+    PROJECT = "project"
+    CYCLE = "cycle"
+    MODULE = "module"
+    INITIATIVE = "initiative"
+    TEAMSPACE = "teamspace"
+    PAGE = "page"
+    PROJECT_PAGE = "project_page"
+    WIKI = "wiki"
+    EPIC = "epic"
+    WORKITEM = "workitem"
+
+    def __str__(self):
+        return self.value

@@ -6,6 +6,7 @@ import time
 from typing import Any
 from typing import Dict
 from typing import Optional
+from typing import Tuple
 
 from pi import logger
 
@@ -40,6 +41,25 @@ class PlaneToolBase:
     def format_success_response(message: str, data: Any) -> str:
         """Format successful operation response."""
         return f"✅ {message}\n\nResult: {data}"
+
+    @staticmethod
+    def format_success_payload(
+        message: str, data: Any = None, entity: Optional[Dict[str, Any]] = None, meta: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Structured success payload for API/consumers. Intended long-term replacement for string responses.
+        """
+        payload: Dict[str, Any] = {
+            "ok": True,
+            "message": f"✅ {message}",
+        }
+        if entity is not None:
+            payload["entity"] = entity
+        if data is not None:
+            payload["data"] = data
+        if meta is not None:
+            payload["meta"] = meta
+        return payload
 
     @staticmethod
     async def format_success_response_with_url(message: str, data: Any, entity_type: str, context: Dict[str, Any]) -> str:
@@ -128,9 +148,73 @@ class PlaneToolBase:
         return PlaneToolBase.format_success_response(message, data)
 
     @staticmethod
+    async def format_success_payload_with_url(message: str, data: Any, entity_type: str, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Structured success payload that also includes constructed entity URL information when available.
+        """
+        # Lazy import to avoid circular dependency
+        from pi.agents.sql_agent.tools import extract_entity_from_api_response
+        from pi.config import settings as _settings
+
+        entity: Dict[str, Any] = {}
+        try:
+            entity_data = extract_entity_from_api_response(data, entity_type)
+            if entity_data:
+                workspace_slug = context.get("workspace_slug")
+                frontend_url = _settings.plane_api.FRONTEND_URL
+                if context.get("workspace_id"):
+                    entity_data["workspace"] = str(context["workspace_id"])
+                if workspace_slug:
+                    try:
+                        from pi.agents.sql_agent.tools import construct_action_entity_url
+
+                        url_info = await construct_action_entity_url(entity_data, entity_type, workspace_slug, frontend_url)
+                        if url_info:
+                            # Normalize keys to entity_* for consumers
+                            entity["entity_url"] = url_info.get("entity_url")
+                            entity["entity_name"] = url_info.get("entity_name")
+                            entity["entity_type"] = url_info.get("entity_type") or entity_type
+                            entity["entity_id"] = url_info.get("entity_id")
+                            # Carry identifier fields where applicable
+                            if url_info.get("issue_identifier"):
+                                entity["issue_identifier"] = url_info["issue_identifier"]
+                            if url_info.get("entity_identifier"):
+                                entity["entity_identifier"] = url_info["entity_identifier"]
+                    except Exception as e:
+                        log.error(f"Error constructing entity URL: {e}")
+                # Ensure id/name/type present even if URL creation failed
+                if entity_data.get("id") and "entity_id" not in entity:
+                    entity["entity_id"] = str(entity_data["id"])
+                if entity_data.get("name") and "entity_name" not in entity:
+                    entity["entity_name"] = str(entity_data["name"])
+                if "entity_type" not in entity:
+                    entity["entity_type"] = entity_type
+        except Exception as e:
+            log.warning(f"Failed to build structured entity payload: {e}")
+
+        return PlaneToolBase.format_success_payload(message, data=data, entity=entity or None)
+
+    @staticmethod
     def format_error_response(message: str, error: Any) -> str:
         """Format error response."""
         return f"❌ {message}\n\nError: {error}"
+
+    @staticmethod
+    def format_error_payload(message: str, error: Any = None, data: Any = None, meta: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Structured error payload for API/consumers. Intended long-term replacement for string responses.
+        """
+        payload: Dict[str, Any] = {
+            "ok": False,
+            "message": f"❌ {message}",
+        }
+        if error is not None:
+            payload["error"] = error
+        if data is not None:
+            payload["data"] = data
+        if meta is not None:
+            payload["meta"] = meta
+        return payload
 
     @staticmethod
     def generate_project_identifier(name: str) -> str:
@@ -143,10 +227,12 @@ class PlaneToolBase:
         return base_identifier
 
     @staticmethod
-    def generate_fallback_identifier(base_identifier: str) -> str:
-        """Generate fallback identifier with timestamp."""
-        timestamp = str(int(time.time()))[-3:]  # Last 3 digits of timestamp
-        return f"{base_identifier}{timestamp}"
+    def generate_fallback_name_identifier(base_name: str, base_identifier: str) -> Tuple[str, str]:
+        """Generate fallback name and identifier with timestamp."""
+        timestamp = str(int(time.time()))[-5:]  # Last 5 digits of timestamp
+        name = f"{base_name}{timestamp}"
+        identifier = f"{base_identifier}{timestamp}"
+        return name, identifier
 
 
 def get_workspace_slug_from_context(context: Dict[str, Any]) -> Optional[str]:

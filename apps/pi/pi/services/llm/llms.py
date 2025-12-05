@@ -11,7 +11,7 @@ from typing import Iterator
 from typing import Optional
 from uuid import UUID
 
-from langchain.schema.language_model import BaseLanguageModel
+from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.runnables import Runnable
 from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
@@ -592,9 +592,53 @@ def get_dupes_llm() -> BaseLanguageModel:
         return create_openai_llm(fallback_config)
 
 
-# Global instances for backward compatibility
-llm = LLMFactory.get_default_llm()
-stream_llm = LLMFactory.get_stream_llm()
-decomposer_llm = LLMFactory.get_decomposer_llm()
-fast_llm = LLMFactory.get_fast_llm(streaming=False)
-fast_llm_stream = LLMFactory.get_fast_llm(streaming=True)
+class LazyLLM(Runnable):
+    """Lazy initialization proxy for LLMs to avoid shared SSL contexts in forked processes."""
+
+    def __init__(self, factory_func: Any):
+        self._factory_func = factory_func
+        self._proxy_target: Any = None
+
+    @property
+    def _target(self) -> Any:
+        if self._proxy_target is None:
+            self._proxy_target = self._factory_func()
+        return self._proxy_target
+
+    def invoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:  # noqa: A002
+        return self._target.invoke(input, config, **kwargs)
+
+    async def ainvoke(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Any:  # noqa: A002
+        return await self._target.ainvoke(input, config, **kwargs)
+
+    def stream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Iterator[Any]:  # noqa: A002
+        return self._target.stream(input, config, **kwargs)
+
+    async def astream(self, input: Any, config: Optional[RunnableConfig] = None, **kwargs: Any) -> AsyncIterator[Any]:  # noqa: A002
+        async for chunk in self._target.astream(input, config, **kwargs):
+            yield chunk
+
+    def bind_tools(self, *args: Any, **kwargs: Any) -> Any:
+        return self._target.bind_tools(*args, **kwargs)
+
+    def with_structured_output(self, *args: Any, **kwargs: Any) -> Any:
+        return self._target.with_structured_output(*args, **kwargs)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._target, name)
+
+    @property
+    def InputType(self) -> Any:
+        return self._target.InputType
+
+    @property
+    def OutputType(self) -> Any:
+        return self._target.OutputType
+
+
+# Global instances for backward compatibility - using LazyLLM to prevent fork issues
+llm = LazyLLM(LLMFactory.get_default_llm)
+stream_llm = LazyLLM(LLMFactory.get_stream_llm)
+decomposer_llm = LazyLLM(LLMFactory.get_decomposer_llm)
+fast_llm = LazyLLM(lambda: LLMFactory.get_fast_llm(streaming=False))
+fast_llm_stream = LazyLLM(lambda: LLMFactory.get_fast_llm(streaming=True))

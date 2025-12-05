@@ -1,4 +1,5 @@
 import json
+import random
 import re
 import uuid
 from typing import Any
@@ -39,8 +40,6 @@ def mask_uuids_in_text(text: str) -> str:
     Returns:
         Cleaned text with UUIDs masked and context removed
     """
-    import re
-
     uuid_pattern = r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"
 
     def replace_uuid(match):
@@ -151,6 +150,22 @@ class StandardAgentResponse:
         return any(pattern.lower() in response_lower for pattern in error_patterns)
 
     @staticmethod
+    def format_response_with_entity_urls(response: Union[str, Dict[str, Any]]) -> str:
+        """Format a response into a string with entity URLs"""
+        if isinstance(response, dict):
+            entity_urls = response.get("entity_urls") or []
+            url_info = ""
+            if entity_urls:
+                url_info = "\n\n**Entity URLs Available:**\n"
+                for url in entity_urls:
+                    url_info += f"- {url.get("type", "").title()}: {url.get("name")} - URL: {url.get("url")}\n"
+                    if url.get("type") == "issue":
+                        url_info += f"Issue Unique Key: {url.get("issue_identifier")}\n"
+            formatted_response = response.get("results", "") + url_info
+            return formatted_response
+        return str(response)
+
+    @staticmethod
     def format_responses(responses, chat_id, query_flow_store):
         formatted_responses = []
         formatted_responses_str = ""
@@ -194,6 +209,89 @@ class StandardAgentResponse:
 
         # Mark if responses contain errors (used by caller to skip LLM rewriting)
         return {"formatted": formatted_responses_str, "has_errors": has_errors}
+
+
+def reasoning_header_factory(stage: str, tool_name: str, tool_query: str) -> str:
+    """Factory function to create a reasoning header for a given stage"""
+    stage_dict = {
+        "build_beginning": [
+            "🧠 Assembling the action sequence...\n\n",
+            "🤔 Planning next steps...\n\n",
+            "🧠 Brainstorming the best approach...\n\n",
+            "🛤️ Mapping out the action path...\n\n",
+            "🚧 Constructing your request workflow...\n\n",
+            "🔍 Evaluating available options...\n\n",
+            "⏳ Orchestrating the next steps...\n\n",
+        ],
+        "selected_action_categories": [
+            "🧭 Identified planning focus\n\n",
+            "🔍 Evaluated relevant areas\n\n",
+        ],
+        "actions_clarification_followup": [
+            "🧠 Continuing with your request...\n\n",
+        ],
+        "planner_tool_selection_calling": [
+            "🧠 Zeroing in on the best tool...\n\n",
+            "🔍 Narrowing down the next moves...\n\n",
+            "🧭 Steps to take next...\n\n",
+        ],
+        "planner_tool_selection": [
+            "💭 Contemplating...\n\n",
+        ],
+        "planner_tool_selection_final": [
+            f"🤖 {tool_name} ({tool_query})\n\n" if tool_query else f"🤖 {tool_name}\n\n",
+        ],
+        "retrieval_tool_execution": [
+            f"🔧 Executing: {tool_name}: {tool_query}\n\n",
+            f"Calling {tool_name} for {tool_query}\n\n",
+        ],
+        "retrieval_tool_execution_message": [
+            f"✅Tool {tool_name} returned its output...\n\n",
+            f"I received {tool_name}'s result..\n\n",
+        ],
+        "tool_complete": [
+            f"✅ {tool_name} execution completed\n\n",
+            f"{tool_name} is executed successfully\n\n",
+        ],
+        "tool_error": [
+            f"⚠️ Error executing {tool_name}\n\n",
+        ],
+        "tool_unavailable": [
+            "⚠️ A required capability was unavailable.\n\n",
+        ],
+        "ask_mode_clarification_followup": [
+            "🤖 Processing your clarification...\n\n",
+        ],
+        "ask_mode_beginning": [
+            "🤖 Retrieving information...\n\n",
+            "🤖 Processing your request...\n\n",
+            "🧠 Planning next steps...\n\n",
+            "🤔 Planning next steps...\n\n",
+            "🧠 Brainstorming the best approach...\n\n",
+        ],
+        "ask_mode_analyzing_results": [
+            "🤖 Analyzing results...\n\n",
+            "🧠 Reviewing tool outputs...\n\n",
+        ],
+        "ask_preset_reasoning": [
+            "🧭 Using optimized path...\n\n",
+            "💡 Applying optimized insights...\n\n",
+            "🧠 Following optimized guidance...\n\n",
+        ],
+        "final_response": ["📝 Generating final response...\n\n"],
+    }
+    stage_list = stage_dict.get(stage, "🧠 {stage}\n\n")
+    return random.choice(stage_list)
+
+
+def reasoning_dict_maker(stage: str, tool_name: str, tool_query: str, content: str) -> dict:
+    """Factory function to create a reasoning dictionary for a given stage"""
+    return {
+        "chunk_type": "reasoning",
+        "header": mask_uuids_in_text(reasoning_header_factory(stage, tool_name, tool_query)),
+        "content": mask_uuids_in_text(content),
+        "stage": stage,
+    }
 
 
 def format_conversation_history(conversation_history):
@@ -257,12 +355,13 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
         # Extract and include action context if available
         action_context = ""
         execution_status = qa_pair.get("execution_status", {})
-        if execution_status.get("has_planned_actions") and execution_status.get("actions"):
+        # Fix: Remove has_planned_actions gate - just check if actions exist
+        if execution_status.get("actions"):
             action_context += "\n**Action Context:**\n"
 
             # Include planning context from actions
             for action in execution_status.get("actions", []):
-                tool_name = action.get("tool")
+                action_type = action.get("action")
                 success = action.get("success")
 
                 if success and action.get("entity"):
@@ -271,11 +370,11 @@ async def process_conv_history(conv_history: list[dict[str, Any]], db: AsyncSess
                     entity_name = entity.get("entity_name", "")
                     entity_id = entity.get("entity_id", "")
 
-                    action_context += f"- Action: {tool_name} → Successfully created/updated {entity_type} '{entity_name}' (ID: {entity_id})\n"
+                    action_context += f"- Action: {action_type} → Successfully created/updated {entity_type} '{entity_name}' (ID: {entity_id})\n"
                 elif success:
-                    action_context += f"- Action: {tool_name} → Executed successfully\n"
+                    action_context += f"- Action: {action_type} → Executed successfully\n"
                 else:
-                    action_context += f"- Action: {tool_name} → Failed to execute\n"
+                    action_context += f"- Action: {action_type} → Failed to execute\n"
 
             # Check if we can extract planning context from the qa_pair structure
             # This would be available when the enhanced execution_data includes planning_context
@@ -441,7 +540,6 @@ async def initialize_new_chat(
             chat_exists = await check_if_chat_exists(final_chat_id, db)
             if chat_exists:
                 return {"success": False, "message": "Chat ID already exists", "error_code": "CHAT_EXISTS"}
-        log.info(f"ChatID: {final_chat_id} - Initializing chat context to db: is_project_chat={is_project_chat}")
         # Create the chat record without workspace details (will be backfilled later)
         chat_result = await upsert_chat(
             chat_id=final_chat_id,

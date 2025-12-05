@@ -1,7 +1,7 @@
 import asyncio
 
-from langchain.callbacks.manager import AsyncCallbackManagerForRetrieverRun
-from langchain.callbacks.manager import CallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import AsyncCallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
@@ -96,6 +96,8 @@ class IssueRetriever(BaseRetriever):
                 Document(
                     page_content=description,
                     metadata={
+                        # Provide both for compatibility with downstream formatters
+                        "title": title,
                         "name": title,
                         "relevance": round(hit.get("Score", 0), 3),
                         "issue_id": issue_id,

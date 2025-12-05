@@ -5,6 +5,8 @@ export { ICON_REGISTRY } from "./registry";
 export * from "./actions";
 export * from "./arrows";
 export * from "./ai-icon";
+export * from "./ai-search";
+export * from "./ai-write";
 export * from "./approver-icon";
 export * from "./at-risk-icon";
 export * from "./attachments";

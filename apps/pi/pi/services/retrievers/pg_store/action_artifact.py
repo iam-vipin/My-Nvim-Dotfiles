@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 from typing import Dict
 from typing import List
@@ -12,6 +13,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.models import ActionArtifact
 from pi.app.models.action_artifact import ActionArtifactVersion
+from pi.app.models.enums import ExecutionStatus
 from pi.app.models.enums import FlowStepType
 from pi.app.models.message import MessageFlowStep
 
@@ -35,7 +37,6 @@ async def get_action_artifacts_by_ids(
             .where(ActionArtifact.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
             .order_by(desc(ActionArtifact.created_at))  # type: ignore[union-attr,arg-type]
         )
-
         result = await db.execute(stmt)
         artifacts = list(result.scalars().all())
 
@@ -148,19 +149,27 @@ async def create_action_artifact(
 async def update_action_artifact_execution_status(
     db: AsyncSession,
     artifact_id: UUID4,
+    message_id: UUID4,
+    chat_id: UUID4,
     is_executed: bool,
     success: bool,
     entity_id: Optional[UUID4] = None,
     entity_info: Optional[Dict[str, Any]] = None,
+    execution_result: Optional[str] = None,
+    executed_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
-    Updates the execution status of an action artifact.
+    Updates the execution status of an action artifact and corresponding MessageFlowStep.
 
     Args:
         db: Database session
         artifact_id: ID of the artifact to update
         is_executed: New execution status
+        success: Whether the execution succeeded
         entity_id: Optional entity ID to set (if entity was created)
+        entity_info: Optional entity info dict (entity_url, entity_name, etc.)
+        execution_result: Optional execution result message
+        executed_at: Optional execution timestamp (ISO format string)
 
     Returns:
         A dictionary with operation status and the artifact object or error details.
@@ -194,8 +203,62 @@ async def update_action_artifact_execution_status(
                 # Don't fail if data shaping has issues; persistence of status is primary
                 pass
 
-        # Add and commit
+        # Add artifact to session
         db.add(artifact)
+
+        # Also update MessageFlowStep if artifact has a message_id
+        if message_id:
+            try:
+                # Find the MessageFlowStep for this artifact
+                flow_step_stmt = (
+                    select(MessageFlowStep)
+                    .where(MessageFlowStep.chat_id == chat_id)  # type: ignore[arg-type]
+                    .where(MessageFlowStep.message_id == message_id)  # type: ignore[arg-type]
+                    .where(MessageFlowStep.execution_data.op("->>")("artifact_id") == str(artifact_id))  # type: ignore[union-attr,arg-type]
+                    .where(MessageFlowStep.is_planned == True)  # type: ignore[arg-type] # noqa: E712
+                )
+                flow_step_result = await db.execute(flow_step_stmt)
+                flow_step = flow_step_result.scalar_one_or_none()
+
+                if flow_step:
+                    # Mark as executed
+                    flow_step.is_executed = is_executed
+
+                    # Set execution success status
+                    if success:
+                        flow_step.execution_success = ExecutionStatus.SUCCESS
+                        flow_step.execution_error = None
+                    else:
+                        flow_step.execution_success = ExecutionStatus.FAILED
+                        error_msg = (
+                            execution_result
+                            if execution_result and "error" in execution_result.lower()
+                            else f"Execution failed: {execution_result or "Unknown error"}"
+                        )
+                        flow_step.execution_error = error_msg
+
+                    # Update execution_data
+                    current_execution_data = flow_step.execution_data or {}
+                    updated_execution_data = {
+                        **current_execution_data,
+                        "executed_at": executed_at or datetime.utcnow().isoformat(),
+                        "execution_result": execution_result or "",
+                        "business_success": success,
+                    }
+
+                    if entity_info:
+                        updated_execution_data["entity_info"] = entity_info
+
+                    flow_step.execution_data = updated_execution_data
+                    attributes.flag_modified(flow_step, "execution_data")
+                    db.add(flow_step)
+                else:
+                    log.warning(f"MessageFlowStep not found for artifact {artifact_id} and message {message_id}")
+            except Exception as flow_step_error:
+                log.error(f"Error updating MessageFlowStep for artifact {artifact_id}: {flow_step_error}")
+                # Don't fail the main execution if flow step update fails
+
+        # Commit all changes
         await db.commit()
         await db.refresh(artifact)
 
@@ -528,7 +591,7 @@ async def add_query_to_artifact(db: AsyncSession, artifact_id: UUID4, message_id
             select(MessageFlowStep)
             .where(
                 MessageFlowStep.step_type == "ARTIFACT_CHAT",  # type: ignore[union-attr,arg-type]
-                MessageFlowStep.execution_data.op("->>")('"artifact_id"') == str(artifact_id),  # type: ignore[union-attr,arg-type]
+                MessageFlowStep.execution_data.op("->>")("artifact_id") == str(artifact_id),  # type: ignore[union-attr,arg-type]
                 MessageFlowStep.message_id == message_id,  # type: ignore[union-attr,arg-type]
             )
             .order_by(desc(MessageFlowStep.created_at))  # type: ignore[union-attr,arg-type]
@@ -576,7 +639,7 @@ async def get_artifact_prompt_history_from_flow_steps(db: AsyncSession, artifact
     try:
         conditions = [
             MessageFlowStep.step_type == FlowStepType.ARTIFACT_CHAT,  # type: ignore[union-attr,arg-type]
-            MessageFlowStep.execution_data.op("->>")('"artifact_id"') == str(artifact_id),  # type: ignore[union-attr,arg-type]
+            MessageFlowStep.execution_data.op("->>")("artifact_id") == str(artifact_id),  # type: ignore[union-attr,arg-type]
             MessageFlowStep.message_id != message_id,  # type: ignore[union-attr,arg-type]
         ]
 

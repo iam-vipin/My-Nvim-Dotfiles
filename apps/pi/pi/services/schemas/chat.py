@@ -10,24 +10,35 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
-class Agents(str, Enum):
-    GENERIC_AGENT = "generic_agent"
-    PLANE_STRUCTURED_DATABASE_AGENT = "plane_structured_database_agent"
-    PLANE_VECTOR_SEARCH_AGENT = "plane_vector_search_agent"
-    PLANE_PAGES_AGENT = "plane_pages_agent"
-    PLANE_DOCS_AGENT = "plane_docs_agent"
-    PLANE_ACTION_EXECUTOR_AGENT = "plane_action_executor_agent"
+class RetrievalTools(str, Enum):
+    """Enumeration of available retrieval tools (formerly called agents)."""
+
+    STRUCTURED_DB_TOOL = "structured_db_tool"
+    VECTOR_SEARCH_TOOL = "vector_search_tool"
+    PAGES_SEARCH_TOOL = "pages_search_tool"
+    DOCS_SEARCH_TOOL = "docs_search_tool"
+    ACTION_EXECUTOR_TOOL = "action_executor_tool"
 
 
-class AgentQuery(BaseModel):
-    agent: Agents
-    query: str = Field(..., description="The decomposed query for this specific agent")
+# Legacy alias for backward compatibility during migration
+Agents = RetrievalTools
+
+
+class ToolQuery(BaseModel):
+    """A query targeted at a specific retrieval tool."""
+
+    tool: RetrievalTools
+    query: str = Field(..., description="The decomposed query for this specific tool")
+
+
+# Legacy alias for backward compatibility during migration
+AgentQuery = ToolQuery
 
 
 class RouteQuery(BaseModel):
-    """Route a user query to the most relevant customer service agent(s) with decomposed queries."""
+    """Route a user query to the most relevant retrieval tool(s) with decomposed queries."""
 
-    decomposed_queries: list[AgentQuery] = Field(..., description="List of agents with their corresponding decomposed queries")
+    decomposed_queries: list[ToolQuery] = Field(..., description="List of tools with their corresponding decomposed queries")
 
 
 class RoutingResult(TypedDict):
@@ -36,13 +47,20 @@ class RoutingResult(TypedDict):
     parsing_error: Exception | None
 
 
-AgentQueryList: TypeAlias = list[AgentQuery]
+ToolQueryList: TypeAlias = list[ToolQuery]
+
+# Legacy alias for backward compatibility during migration
+AgentQueryList = ToolQueryList
 
 
-class AgentOrder(BaseModel):
-    """Provide the order in which the selected data retrieval agents should be executed."""
+class ToolOrder(BaseModel):
+    """Provide the order in which the selected data retrieval tools should be executed."""
 
-    ordered_agents: List[str] = Field(..., description="List of ordered agent names")
+    ordered_tools: List[str] = Field(..., description="List of ordered tool names")
+
+
+# Legacy alias for backward compatibility during migration
+AgentOrder = ToolOrder
 
 
 class QueryFlowStore(TypedDict):
@@ -61,6 +79,8 @@ class QueryFlowStore(TypedDict):
     workspace_in_context: bool
     project_id: str
     workspace_id: str
+    # Optional: current step order to align sub-step persistence without DB lookups
+    step_order: int
 
 
 # --- Action Category Routing (for hierarchical actions) ---
@@ -88,6 +108,7 @@ class ActionCategorySelection(BaseModel):
         "properties",
         "types",
         "worklogs",
+        "retrieval_tools",
     ]
     rationale: Optional[str] = None
 

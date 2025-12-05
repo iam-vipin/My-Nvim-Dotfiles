@@ -22,9 +22,6 @@ from pi import logger
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
-from pi.app.api.v1.helpers.batch_execution_helpers import execute_batch_actions
-from pi.app.api.v1.helpers.batch_execution_helpers import format_execution_response
-from pi.app.api.v1.helpers.batch_execution_helpers import prepare_execution_data
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
 from pi.app.api.v2.dependencies import cookie_schema
 from pi.app.api.v2.dependencies import is_valid_session
@@ -40,9 +37,8 @@ from pi.app.utils.background_tasks import schedule_chat_search_upsert
 from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.chat.action_executor import BuildModeToolExecutor
 from pi.services.chat.chat import PlaneChatBot
-from pi.services.chat.helpers.batch_execution_helpers import get_original_user_query
-from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
 from pi.services.chat.helpers.tool_utils import format_clarification_as_text
 from pi.services.chat.utils import resolve_workspace_slug
 from pi.services.retrievers.pg_store.message import get_message_by_id
@@ -114,8 +110,11 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
 
     # Listen to all the stream chunks, join the chunks and return the complete response as JSON
     async with get_streaming_db_session() as stream_db:
-        base_iter = chatbot.process_query_stream(data, db=stream_db)
+        base_iter = chatbot.process_chat_stream(data, db=stream_db)
         async for chunk in base_iter:
+            if isinstance(chunk, dict):
+                # Currently only reasoning chunk is sent as dict.
+                continue
             # Ignore all intermediate chunks
             if chunk.startswith("πspecial reasoning block"):
                 continue
@@ -157,7 +156,10 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
         else:
             return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
 
-        execution_data = await prepare_execution_data(
+        # Execute batch actions using the service
+        service = BuildModeToolExecutor(chatbot=PlaneChatBot("gpt-4.1"), db=db)
+
+        result = await service.execute(
             ActionBatchExecutionRequest(
                 workspace_id=workspace_id,
                 chat_id=chat_id,
@@ -166,29 +168,23 @@ async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSe
                 access_token=access_token,
             ),
             user_id,
-            db,
         )
-        if not execution_data:
-            # Determine the specific error based on what failed
-            if not await get_planned_actions_for_execution(message_id, chat_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_PLANNED_ACTIONS"]})
-            elif not await get_original_user_query(message_id, db):
-                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_ORIGINAL_QUERY"]})
-            else:
-                # OAuth or workspace issue
-                return JSONResponse(
-                    status_code=401,
-                    content={
-                        "detail": BATCH_EXECUTION_ERRORS["OAUTH_REQUIRED"],
-                        "error_code": "OAUTH_REQUIRED",
-                        "workspace_id": str(data.workspace_id),
-                        "user_id": str(data.user_id),
-                    },
-                )
 
-        # Execute batch actions
-        context = await execute_batch_actions(execution_data, db)
-        formatted_context = format_execution_response(context)
+        # Check if service returned an error
+        if result.get("error"):
+            status_code = result.get("status_code", 500)
+            detail = result.get("detail", "Unknown error")
+            content = {"detail": detail}
+            if "error_code" in result:
+                content["error_code"] = result["error_code"]
+            if "workspace_id" in result:
+                content["workspace_id"] = result["workspace_id"]
+            if "user_id" in result:
+                content["user_id"] = result["user_id"]
+            return JSONResponse(status_code=status_code, content=content)
+
+        # Extract the formatted context from successful result
+        formatted_context = result
 
     return JSONResponse(
         status_code=200,
@@ -267,7 +263,7 @@ async def create_response_stream(data: ChatRequest, session: str = Depends(cooki
                     with contextlib.suppress(asyncio.CancelledError):
                         await asyncio.sleep(10)
 
-                base_iter = chatbot.process_query_stream(data, db=stream_db)
+                base_iter = chatbot.process_chat_stream(data, db=stream_db)
                 next_chunk_task: asyncio.Task[str] = asyncio.create_task(cast(Coroutine[None, None, str], base_iter.__anext__()))
 
                 # Start initial heartbeat timer

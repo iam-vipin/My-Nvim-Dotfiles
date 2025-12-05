@@ -51,6 +51,7 @@ export interface IPiChatStore {
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
   getChatFocus: (chatId: string | undefined) => TFocus | undefined;
+  getChatMode: (chatId: string) => string;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
@@ -62,7 +63,8 @@ export interface IPiChatStore {
     workspaceSlug: string,
     workspaceId: string | undefined,
     callbackUrl: string,
-    attachmentIds: string[]
+    attachmentIds: string[],
+    aiMode: string
   ) => Promise<void>;
   getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
@@ -78,7 +80,12 @@ export interface IPiChatStore {
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
   setActiveModel: (model: TAiModels) => void;
-  createNewChat: (focus: TFocus, isProjectChat: boolean, workspaceId: string | undefined) => Promise<string>;
+  createNewChat: (
+    focus: TFocus,
+    mode: string,
+    isProjectChat: boolean,
+    workspaceId: string | undefined
+  ) => Promise<string>;
   renameChat: (chatId: string, title: string, workspaceId: string | undefined) => Promise<void>;
   deleteChat: (chatId: string, workspaceSlug: string) => Promise<void>;
   favoriteChat: (chatId: string, workspaceId: string | undefined) => Promise<void>;
@@ -243,6 +250,14 @@ export class PiChatStore implements IPiChatStore {
     }
   });
 
+  getChatMode = computedFn((chatId: string) => {
+    const chat = this.chatMap[chatId];
+    if (chat) {
+      return chat.mode || "ask";
+    }
+    return "ask";
+  });
+
   getGroupedArtifactsByDialogue = computedFn((chatId: string, messageId: string) => {
     const dialogue = this.chatMap[chatId]?.dialogueMap[messageId];
     const response: {
@@ -294,7 +309,12 @@ export class PiChatStore implements IPiChatStore {
     this.isPiArtifactsDrawerOpen = undefined;
   };
 
-  createNewChat = async (focus: TFocus, isProjectChat: boolean = false, workspaceId: string | undefined) => {
+  createNewChat = async (
+    focus: TFocus,
+    mode: string,
+    isProjectChat: boolean = false,
+    workspaceId: string | undefined
+  ) => {
     this.isNewChat = true;
     let payload: TInitPayload = {
       workspace_in_context: focus.isInWorkspaceContext,
@@ -323,6 +343,7 @@ export class PiChatStore implements IPiChatStore {
       focus_workspace_id: focus.entityType === "workspace_id" ? focus.entityIdentifier : "",
       focus_project_id: focus.entityType === "project_id" ? focus.entityIdentifier : "",
       workspace_id: workspaceId,
+      mode,
     };
 
     if (isProjectChat) {
@@ -343,7 +364,8 @@ export class PiChatStore implements IPiChatStore {
     workspaceId: string | undefined,
     callbackUrl: string | undefined,
     attachmentIds: string[],
-    isNewChat: boolean
+    isNewChat: boolean,
+    mode: string
   ) => {
     let payload: TQuery = {
       chat_id: chatId,
@@ -364,6 +386,7 @@ export class PiChatStore implements IPiChatStore {
       workspace_slug: workspaceSlug,
       workspace_id: workspaceId,
       attachment_ids: attachmentIds,
+      mode,
     };
     if (focus.isInWorkspaceContext) {
       payload = { ...payload, [focus.entityType]: focus.entityIdentifier };
@@ -410,7 +433,9 @@ export class PiChatStore implements IPiChatStore {
     eventSource.addEventListener("reasoning", (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
-        newDialogue.reasoning += data.reasoning;
+        if (!data.header) return;
+        newDialogue.current_tick = data.header;
+        newDialogue.reasoning = newDialogue.reasoning + `${data.header}${data.content}`;
         this.updateDialogue(chatId, token, newDialogue);
       } catch (e) {
         console.error("Reasoning parse error", e);
@@ -478,7 +503,8 @@ export class PiChatStore implements IPiChatStore {
     workspaceSlug: string,
     workspaceId: string | undefined,
     callbackUrl: string,
-    attachmentIds: string[]
+    attachmentIds: string[],
+    aiMode: string
   ) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
@@ -489,6 +515,7 @@ export class PiChatStore implements IPiChatStore {
       query,
       llm: this.activeModel?.id,
       answer: "",
+      current_tick: "",
       reasoning: "",
       isPiThinking: true,
       actions: [],
@@ -522,7 +549,8 @@ export class PiChatStore implements IPiChatStore {
       workspaceId,
       callbackUrl,
       attachmentIds,
-      isNewChat
+      isNewChat,
+      aiMode
     );
     this.piChatService
       .retrieveToken(payload)
@@ -578,6 +606,7 @@ export class PiChatStore implements IPiChatStore {
       query: this.chatMap[chatId]?.dialogueMap?.[token]?.query,
       llm: this.activeModel?.id,
       answer: "",
+      current_tick: "",
       reasoning: "",
       isPiThinking: true,
       query_id: token,

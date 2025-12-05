@@ -62,7 +62,7 @@ export const Feedback = observer((props: TProps) => {
   };
 
   return (
-    <div className="flex gap-4 mt-6">
+    <div className="flex gap-4">
       {/* Copy */}
       <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">
         <Copy size={16} onClick={handleCopyLink} className="my-auto cursor-pointer text-custom-text-300" />

@@ -1,7 +1,7 @@
 import time
 
-from langchain.schema import HumanMessage
-from langchain.schema import SystemMessage
+from langchain_core.messages import HumanMessage
+from langchain_core.messages import SystemMessage
 
 from pi import logger
 from pi import settings
@@ -83,7 +83,7 @@ async def identify_duplicates_with_llm(query_title: str, query_description: str,
 
     # Create the dupes LLM with structured output (include_raw=True to preserve token usage)
     dupes_llm = get_dupes_llm()
-    dupes_structured_llm = dupes_llm.with_structured_output(DuplicateIdentificationResponse, include_raw=True)  # type: ignore[arg-type]
+    dupes_structured_llm = dupes_llm.with_structured_output(DuplicateIdentificationResponse, include_raw=True, method="json_schema")  # type: ignore[arg-type]
 
     # Format candidates for LLM input as a clean numbered list
     candidates_text = ""

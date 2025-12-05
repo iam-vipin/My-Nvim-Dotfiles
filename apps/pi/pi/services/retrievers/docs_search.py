@@ -1,5 +1,5 @@
-from langchain.callbacks.manager import AsyncCallbackManagerForRetrieverRun
-from langchain.callbacks.manager import CallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import AsyncCallbackManagerForRetrieverRun
+from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 

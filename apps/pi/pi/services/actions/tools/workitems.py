@@ -4,6 +4,8 @@ Work Items API tools for Plane issue/task management operations.
 
 import logging
 import uuid
+from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -71,6 +73,51 @@ async def resolve_state_to_uuid(state: Optional[str], project_id: Optional[str],
         return None
 
 
+async def resolve_type_to_uuid(type_id: Optional[str], project_id: Optional[str], workspace_slug: Optional[str] = None) -> Optional[str]:
+    """
+    Resolve issue type name to UUID with enhanced matching strategy.
+
+    Args:
+        type_id: Type name or UUID
+        project_id: Project ID for type resolution
+        workspace_slug: Optional workspace slug for filtering
+
+    Returns:
+        Type UUID if resolved, None if type should use project default or if resolution fails
+    """
+    if not type_id:
+        return None
+
+    # Check if type_id is already a valid UUID
+    try:
+        uuid.UUID(type_id)
+        return type_id
+    except (ValueError, TypeError):
+        log.debug(f"Type '{type_id}' is not a UUID, will resolve as name")
+
+    # Only attempt resolution if we have a project_id
+    if not project_id:
+        log.warning(f"Cannot resolve type '{type_id}' without project_id")
+        return None
+
+    try:
+        from pi.app.api.v1.helpers.plane_sql_queries import search_type_by_name
+
+        type_result = await search_type_by_name(type_id, project_id, workspace_slug)
+
+        if type_result and "id" in type_result:
+            resolved_uuid = type_result["id"]
+            log.info(f"Resolved type '{type_id}' to UUID {resolved_uuid}")
+            return resolved_uuid
+        else:
+            log.warning(f"Could not resolve type '{type_id}' to a valid UUID")
+            return None
+
+    except Exception as e:
+        log.error(f"Error resolving type '{type_id}': {e}")
+        return None
+
+
 async def get_epic_type_id(method_executor, project_id: str, workspace_slug: str) -> Optional[str]:
     """Get the epic issue type ID for a project using direct SQL query.
 
@@ -117,33 +164,25 @@ def get_workitem_tools(method_executor, context):
         target_date: Optional[str] = None,
         type_id: Optional[str] = None,
         parent: Optional[str] = None,
-        module_id: Optional[str] = None,
-        cycle_id: Optional[str] = None,
-        estimate_point: Optional[str] = None,
-        point: Optional[int] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
         is_draft: Optional[bool] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new work item/issue.
 
         Args:
             name: Work item title (required)
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (required - provide from conversation context)
-            description_html: Issue description in HTML format
+            description_html: Workitem description in HTML format
             priority: Priority level (high, medium, low, urgent, none)
-            state: State name or UUID for the issue (e.g., "todo", "in progress", "done")
+            state: State name or UUID for the workitem (e.g., "todo", "in progress", "done")
             assignees: List of assignee user IDs
             labels: List of label IDs
             start_date: Start date (YYYY-MM-DD format)
             target_date: Target completion date (YYYY-MM-DD format)
-            type_id: Issue type ID (optional)
+            type_id: Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), NOT the 'project_issue_types_id'.
             parent: Parent work-item ID (optional)
-            module_id: Module ID to associate (optional)
-            cycle_id: Cycle ID to associate (optional)
-            estimate_point: Estimate point ID (optional)
-            point: Story points value (optional)
             external_id: External system identifier (optional)
             external_source: External system source name (optional)
             is_draft: Create as draft (optional)
@@ -161,6 +200,9 @@ def get_workitem_tools(method_executor, context):
         # Resolve state name to UUID if needed
         resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
 
+        # Resolve type name to UUID if needed
+        resolved_type_id = await resolve_type_to_uuid(type_id, project_id, workspace_slug)
+
         result = await method_executor.execute(
             "workitems",
             "create",
@@ -174,12 +216,8 @@ def get_workitem_tools(method_executor, context):
             labels=labels,
             start_date=start_date,
             target_date=target_date,
-            type_id=type_id,
+            type_id=resolved_type_id,
             parent=parent,
-            module_id=module_id,
-            cycle_id=cycle_id,
-            estimate_point=estimate_point,
-            point=point,
             external_id=external_id,
             external_source=external_source,
             is_draft=is_draft,
@@ -201,9 +239,14 @@ def get_workitem_tools(method_executor, context):
                 except Exception as e:
                     log.warning(f"Could not enrich workitem data with identifier info: {e}")
 
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully created work item '{name}'", data, "workitem", context)
+            return await PlaneToolBase.format_success_payload_with_url(
+                f"Successfully created work item '{name}'",
+                data,
+                "workitem",
+                context,
+            )
         else:
-            return PlaneToolBase.format_error_response("Failed to create work item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create work item", result.get("error"))
 
     @tool
     async def workitems_update(
@@ -219,14 +262,10 @@ def get_workitem_tools(method_executor, context):
         target_date: Optional[str] = None,
         type_id: Optional[str] = None,
         parent: Optional[str] = None,
-        module_id: Optional[str] = None,
-        cycle_id: Optional[str] = None,
-        estimate_point: Optional[str] = None,
-        point: Optional[int] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
         is_draft: Optional[bool] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Update an existing work item/issue.
 
         Args:
@@ -241,12 +280,8 @@ def get_workitem_tools(method_executor, context):
             labels: New list of label IDs
             start_date: New start date (YYYY-MM-DD format)
             target_date: New target completion date (YYYY-MM-DD format)
-            type_id: Issue type ID (optional)
+            type_id: Workitem type ID (optional). MUST be the 'issue_types_id' (UUID of the issue type definition), NOT the 'project_issue_types_id'.
             parent: Parent work-item ID (optional)
-            module_id: Module ID to associate (optional)
-            cycle_id: Cycle ID to associate (optional)
-            estimate_point: Estimate point ID (optional)
-            point: Story points value (optional)
             external_id: External system identifier (optional)
             external_source: External system source name (optional)
             is_draft: Mark as draft (optional)
@@ -264,6 +299,9 @@ def get_workitem_tools(method_executor, context):
         # Resolve state name to UUID if needed
         resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
 
+        # Resolve type name to UUID if needed
+        resolved_type_id = await resolve_type_to_uuid(type_id, project_id, workspace_slug)
+
         # Build update data with only non-None values to avoid overwriting existing fields
         update_data = {
             k: v
@@ -276,12 +314,8 @@ def get_workitem_tools(method_executor, context):
                 "labels": labels,
                 "start_date": start_date,
                 "target_date": target_date,
-                "type_id": type_id,
+                "type_id": resolved_type_id,
                 "parent": parent,
-                "module_id": module_id,
-                "cycle_id": cycle_id,
-                "estimate_point": estimate_point,
-                "point": point,
                 "external_id": external_id,
                 "external_source": external_source,
                 "is_draft": is_draft,
@@ -314,12 +348,12 @@ def get_workitem_tools(method_executor, context):
                 except Exception as e:
                     log.warning(f"Could not enrich workitem update data with identifier info: {e}")
 
-            return await PlaneToolBase.format_success_response_with_url("Successfully updated work item", data, "workitem", context)
+            return await PlaneToolBase.format_success_payload_with_url("Successfully updated work item", data, "workitem", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to update work item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update work item", result["error"])
 
     @tool
-    async def epics_create(
+    async def create_epic(
         name: str,
         project_id: Optional[str] = None,
         description_html: Optional[str] = None,
@@ -329,13 +363,9 @@ def get_workitem_tools(method_executor, context):
         labels: Optional[List[str]] = None,
         start_date: Optional[str] = None,
         target_date: Optional[str] = None,
-        parent: Optional[str] = None,
-        estimate_point: Optional[str] = None,
-        point: Optional[int] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-        is_draft: Optional[bool] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new epic work item.
 
         Args:
@@ -348,12 +378,8 @@ def get_workitem_tools(method_executor, context):
             labels: List of label IDs
             start_date: Start date (YYYY-MM-DD format)
             target_date: Target completion date (YYYY-MM-DD format)
-            parent: Parent epic ID (optional)
-            estimate_point: Estimate point ID (optional)
-            point: Story points value (optional)
             external_id: External system identifier (optional)
             external_source: External system source name (optional)
-            is_draft: Create as draft (optional)
 
         Note: This tool automatically sets the work item type to 'epic' for the specified project.
         To add the created epic to a module or cycle, use modules_add_work_items or cycles_add_work_items after creation.
@@ -367,11 +393,11 @@ def get_workitem_tools(method_executor, context):
 
         # Get the epic type ID for this project
         if project_id is None:
-            return PlaneToolBase.format_error_response("Failed to create epic", "Project ID is required for epic creation. Please specify a project.")
+            return PlaneToolBase.format_error_payload("Failed to create epic", "Project ID is required for epic creation. Please specify a project.")
 
         epic_type_id = await get_epic_type_id(method_executor, project_id, workspace_slug)
         if not epic_type_id:
-            return PlaneToolBase.format_error_response(
+            return PlaneToolBase.format_error_payload(
                 "Failed to create epic", "Could not find epic issue type for this project. Please ensure an epic issue type exists."
             )
 
@@ -392,12 +418,8 @@ def get_workitem_tools(method_executor, context):
             start_date=start_date,
             target_date=target_date,
             type_id=epic_type_id,  # Automatically set to epic type
-            parent=parent,
-            estimate_point=estimate_point,
-            point=point,
             external_id=external_id,
             external_source=external_source,
-            is_draft=is_draft,
         )
 
         if result["success"]:
@@ -416,12 +438,12 @@ def get_workitem_tools(method_executor, context):
                 except Exception as e:
                     log.warning(f"Could not enrich epic data with identifier info: {e}")
 
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully created epic '{name}'", data, "epic", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Successfully created epic '{name}'", data, "epic", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to create epic", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create epic", result["error"])
 
     @tool
-    async def epics_update(
+    async def update_epic(
         issue_id: str,
         project_id: Optional[str] = None,
         name: Optional[str] = None,
@@ -432,13 +454,9 @@ def get_workitem_tools(method_executor, context):
         labels: Optional[List[str]] = None,
         start_date: Optional[str] = None,
         target_date: Optional[str] = None,
-        parent: Optional[str] = None,
-        estimate_point: Optional[str] = None,
-        point: Optional[int] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-        is_draft: Optional[bool] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Update an existing epic work item.
 
         Args:
@@ -452,12 +470,8 @@ def get_workitem_tools(method_executor, context):
             labels: List of label IDs
             start_date: Start date (YYYY-MM-DD format)
             target_date: Target completion date (YYYY-MM-DD format)
-            parent: Parent epic ID (optional)
-            estimate_point: Estimate point ID (optional)
-            point: Story points value (optional)
             external_id: External system identifier (optional)
             external_source: External system source name (optional)
-            is_draft: Mark as draft (optional)
 
         Note: This tool updates an existing epic. It does not change the work item type.
         To add/move the epic to a module or cycle, use modules_add_work_items or cycles_add_work_items.
@@ -485,12 +499,8 @@ def get_workitem_tools(method_executor, context):
                 "labels": labels,
                 "start_date": start_date,
                 "target_date": target_date,
-                "parent": parent,
-                "estimate_point": estimate_point,
-                "point": point,
                 "external_id": external_id,
                 "external_source": external_source,
-                "is_draft": is_draft,
             }.items()
             if v is not None
         }
@@ -505,9 +515,9 @@ def get_workitem_tools(method_executor, context):
         )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url("Successfully updated epic", result["data"], "epic", context)
+            return await PlaneToolBase.format_success_payload_with_url("Successfully updated epic", result["data"], "epic", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to update epic", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update epic", result["error"])
 
     @tool
     async def workitems_list(
@@ -520,7 +530,22 @@ def get_workitem_tools(method_executor, context):
         fields: Optional[str] = None,
         order_by: Optional[str] = None,
         per_page: Optional[int] = 20,
-    ) -> str:
+        priority: Optional[str] = None,
+        state: Optional[str] = None,
+        assignees: Optional[List[str]] = None,
+        labels: Optional[List[str]] = None,
+        start_date: Optional[str] = None,
+        target_date: Optional[str] = None,
+        created_by: Optional[str] = None,
+        updated_by: Optional[str] = None,
+        type_id: Optional[str] = None,
+        parent: Optional[str] = None,
+        is_draft: Optional[bool] = None,
+        created_at: Optional[str] = None,
+        updated_at: Optional[str] = None,
+        completed_at: Optional[str] = None,
+        archived_at: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """List work items with filtering.
 
         Args:
@@ -533,12 +558,52 @@ def get_workitem_tools(method_executor, context):
             fields: Comma-separated list of fields to include in response
             order_by: Field to order results by. Prefix with '-' for descending order
             per_page: Number of work items per page (default: 20, max: 100)
+            priority: Filter by priority (high, medium, low, urgent, none)
+            state: Filter by state name or UUID
+            assignees: Filter by assignee user IDs
+            labels: Filter by label IDs
+            start_date: Filter by start date
+            target_date: Filter by target date
+            created_by: Filter by creator ID
+            updated_by: Filter by updater ID
+            type_id: Filter by issue type ID
+            parent: Filter by parent issue ID
+            is_draft: Filter by draft status
+            created_at: Filter by creation time
+            updated_at: Filter by update time
+            completed_at: Filter by completion time
+            archived_at: Filter by archive time
         """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Resolve state name to UUID if needed
+        resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
+
+        # Build filter arguments
+        filter_args = {
+            "priority": priority,
+            "state": resolved_state,
+            "assignees": assignees,
+            "labels": labels,
+            "start_date": start_date,
+            "target_date": target_date,
+            "created_by": created_by,
+            "updated_by": updated_by,
+            "type_id": type_id,
+            "parent": parent,
+            "is_draft": is_draft,
+            "created_at": created_at,
+            "updated_at": updated_at,
+            "completed_at": completed_at,
+            "archived_at": archived_at,
+        }
+
+        # Remove None values
+        filter_args = {k: v for k, v in filter_args.items() if v is not None}
 
         result = await method_executor.execute(
             "workitems",
@@ -555,13 +620,13 @@ def get_workitem_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved work items list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved work items list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list work items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list work items", result["error"])
 
     @tool
     async def workitems_retrieve(
-        pk: str,
+        issue_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
         expand: Optional[str] = None,
@@ -569,11 +634,11 @@ def get_workitem_tools(method_executor, context):
         external_source: Optional[str] = None,
         fields: Optional[str] = None,
         order_by: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Retrieve a single work item by ID.
 
         Args:
-            pk: Work item ID (required)
+            issue_id: Work item ID (required)
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
             expand: Comma-separated list of related fields to expand in response
@@ -591,7 +656,7 @@ def get_workitem_tools(method_executor, context):
         result = await method_executor.execute(
             "workitems",
             "retrieve",
-            pk=pk,
+            issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
             expand=expand,
@@ -602,9 +667,9 @@ def get_workitem_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved work item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved work item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve work item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve work item", result["error"])
 
     @tool
     async def workitems_search(
@@ -613,7 +678,7 @@ def get_workitem_tools(method_executor, context):
         limit: Optional[int] = None,
         project_id: Optional[str] = None,
         workspace_search: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Search work items by criteria.
 
         Args:
@@ -640,16 +705,16 @@ def get_workitem_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully searched work items", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully searched work items", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to search work items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to search work items", result["error"])
 
     @tool
     async def workitems_get_workspace(
         issue_identifier: int,
         project_identifier: str,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Get work item across workspace using identifiers.
 
         Args:
@@ -670,9 +735,9 @@ def get_workitem_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved workspace work item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved workspace work item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve workspace work item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve workspace work item", result["error"])
 
     @tool
     async def workitems_create_relation(
@@ -680,7 +745,7 @@ def get_workitem_tools(method_executor, context):
         relation_type: str,
         related_issues: List[str],
         project_id: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create relationships between work items.
 
         Args:
@@ -714,13 +779,13 @@ def get_workitem_tools(method_executor, context):
         # Validate relation type
         if relation_type not in RELATION_TYPES:
             valid_types = ", ".join(RELATION_TYPES.keys())
-            return PlaneToolBase.format_error_response(
+            return PlaneToolBase.format_error_payload(
                 "Invalid relation type", f"Relation type '{relation_type}' is not valid. Valid types are: {valid_types}"
             )
 
         # Validate required parameters
         if not related_issues:
-            return PlaneToolBase.format_error_response("Missing related issues", "At least one related issue ID must be provided")
+            return PlaneToolBase.format_error_payload("Missing related issues", "At least one related issue ID must be provided")
 
         result = await method_executor.execute(
             "workitems",
@@ -739,26 +804,54 @@ def get_workitem_tools(method_executor, context):
             # Create a mock work item response with the source issue_id for entity URL generation
             source_workitem_data = {"id": issue_id}
 
-            return await PlaneToolBase.format_success_response_with_url(
+            return await PlaneToolBase.format_success_payload_with_url(
                 f"Successfully created {relation_count} '{relation_type}' relation(s) for work item", source_workitem_data, "workitem", context
             )
         else:
-            return PlaneToolBase.format_error_response("Failed to create work item relation", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create work item relation", result["error"])
 
-    # Get entity search tools relevant only to workitems
-    from .entity_search import get_entity_search_tools
+    @tool
+    async def workitems_delete(
+        issue_id: str,
+        project_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Delete a work item/issue.
 
-    entity_search_tools = get_entity_search_tools(method_executor, context)
-    workitem_entity_search_tools = [t for t in entity_search_tools if "workitem" in t.name or "user" in t.name]
+        Args:
+            issue_id: Work item ID to delete (required)
+            project_id: Project ID (required - provide from conversation context or previous actions)
+
+        Warning: This action is permanent and cannot be undone. The work item will be permanently deleted.
+        """
+        # Auto-fill workspace_slug from context (hidden from LLM)
+        workspace_slug = context.get("workspace_slug")
+
+        # Auto-fill project_id from context if not provided
+        if project_id is None and "project_id" in context:
+            project_id = context["project_id"]
+
+        result = await method_executor.execute(
+            "workitems",
+            "delete",
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_slug=workspace_slug,
+        )
+
+        if result["success"]:
+            return PlaneToolBase.format_success_payload(f"Successfully deleted work item {issue_id}", {"id": issue_id})
+        else:
+            return PlaneToolBase.format_error_payload("Failed to delete work item", result.get("error"))
 
     return [
         workitems_create,
         workitems_update,
-        epics_create,
-        epics_update,
+        create_epic,
+        update_epic,
         workitems_create_relation,
+        workitems_delete,
         workitems_list,
         # workitems_retrieve,
         # workitems_search,
         # workitems_get_workspace
-    ] + workitem_entity_search_tools
+    ]

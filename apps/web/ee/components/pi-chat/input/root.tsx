@@ -24,6 +24,7 @@ import { formatSearchQuery } from "../helper";
 import { InputPreviewUploads } from "../uploads/input-preview-uploads";
 import { DndWrapper } from "./dnd-wrapper";
 import { FocusFilter } from "./focus-filter";
+import { AiMode } from "./mode";
 import { AttachmentActionButton } from "./quick-action-button";
 
 type TEditCommands = {
@@ -61,6 +62,7 @@ export const InputBox = observer((props: TProps) => {
     getChatFocus,
     fetchModels,
     abortStream,
+    getChatMode,
     attachmentStore: { getAttachmentsUploadStatusByChatId },
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -76,6 +78,7 @@ export const InputBox = observer((props: TProps) => {
   const projectDetails = getProjectByIdentifier(projectIdentifier);
   const projectIdToUse = projectDetails?.id || projectId || "";
   const chatFocus = getChatFocus(activeChatId);
+  const chatMode = getChatMode(activeChatId || "");
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
   const [focus, setFocus] = useState<TFocus>(
@@ -87,6 +90,7 @@ export const InputBox = observer((props: TProps) => {
   );
   const [loader, setLoader] = useState<TPiLoaders>("");
   const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
+  const [aiMode, setAiMode] = useState<string>(chatMode);
   const [isEditorReady, setIsEditorReady] = useState(false);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
@@ -126,7 +130,7 @@ export const InputBox = observer((props: TProps) => {
     let chatIdToUse = activeChatId;
     setLoader("submitting");
     if (!chatIdToUse) {
-      chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
+      chatIdToUse = await createNewChat(focus, aiMode, isProjectLevel, workspaceId);
     }
     // Don't redirect if we are in the floating chat window
     if (shouldRedirect && !routeChatId)
@@ -142,7 +146,8 @@ export const InputBox = observer((props: TProps) => {
       workspaceSlug?.toString(),
       workspaceId,
       pathname,
-      attachmentIds
+      attachmentIds,
+      aiMode
     );
     editorCommands.current?.clear();
     addContext();
@@ -168,6 +173,9 @@ export const InputBox = observer((props: TProps) => {
         entityIdentifier: chatFocus.entityIdentifier,
       };
       setFocus(presentFocus);
+    }
+    if (chatMode) {
+      setAiMode(chatMode);
     }
   }, [isChatLoading, chatFocus]);
 
@@ -201,6 +209,7 @@ export const InputBox = observer((props: TProps) => {
           chatId={activeChatId}
           setAttachments={setAttachments}
           isProjectLevel={isProjectLevel}
+          mode={aiMode}
           createNewChat={createNewChat}
           focus={focus}
         >
@@ -223,22 +232,9 @@ export const InputBox = observer((props: TProps) => {
                   />
                 </div>
               )}
-              {/* editor view */}
-              <PiChatEditorWithRef
-                setEditorCommand={(command) => {
-                  setEditorCommands({ ...command });
-                }}
-                handleSubmit={handleSubmit}
-                searchCallback={getMentionSuggestions}
-                className={cn("flex-1  max-h-[250px] min-h-[70px]", {
-                  "absolute w-0": SPEECH_LOADERS.includes(loader),
-                })}
-                onEditorReady={() => setIsEditorReady(true)}
-                ref={editorRef}
-              />
-              <div className="flex w-full gap-3 justify-between">
-                {/* Focus */}
-                {!SPEECH_LOADERS.includes(loader) && (
+              {/* Focus */}
+              {!SPEECH_LOADERS.includes(loader) && (
+                <div className="mb-2 w-fit">
                   <FocusFilter
                     workspaceId={workspaceId}
                     projectId={projectIdToUse}
@@ -246,7 +242,24 @@ export const InputBox = observer((props: TProps) => {
                     setFocus={setFocus}
                     isLoading={isChatLoading && !!activeChatId}
                   />
-                )}
+                </div>
+              )}
+              {/* editor view */}
+              <PiChatEditorWithRef
+                setEditorCommand={(command) => {
+                  setEditorCommands({ ...command });
+                }}
+                handleSubmit={handleSubmit}
+                searchCallback={getMentionSuggestions}
+                className={cn("flex-1  max-h-[250px] min-h-[50px]", {
+                  "absolute w-0": SPEECH_LOADERS.includes(loader),
+                })}
+                onEditorReady={() => setIsEditorReady(true)}
+                ref={editorRef}
+              />
+              <div className="flex w-full gap-3 justify-between">
+                {/* Focus */}
+                {!SPEECH_LOADERS.includes(loader) && <AiMode aiMode={aiMode} setAiMode={setAiMode} />}
                 <div className="flex items-center w-full justify-end gap-2">
                   <div className="flex w-full justify-end">
                     {/* speech recorder */}
@@ -265,6 +278,7 @@ export const InputBox = observer((props: TProps) => {
                         setLoader={setLoader}
                         isFullScreen={isFullScreen}
                         focus={focus}
+                        mode={aiMode}
                       />
                     </WithFeatureFlagHOC>
                     {!SPEECH_LOADERS.includes(loader) && (

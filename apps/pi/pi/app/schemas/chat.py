@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Optional
 
 from pydantic import UUID4
@@ -52,9 +53,14 @@ class ChatRequest(BaseModel):
     is_temp: bool
     workspace_in_context: bool
     # is_reasoning: bool = False
+    # New polymorphic focus context fields
+    focus_entity_type: Optional[str] = Field(default=None, description="Type of focus entity (workspace, project, cycle, module, etc.)")
+    focus_entity_id: Optional[UUID4] = Field(default=None, description="ID of the focus entity")
+    # Legacy fields (for backward compatibility)
     workspace_id: UUID4 | None = ""  # type: ignore
     project_id: UUID4 | None = ""  # type: ignore
     context: dict[str, Any]
+    mode: Literal["ask", "build"] = "ask"  # ask: normal chat, build: planning mode
     is_project_chat: Optional[bool] = False
     pi_sidebar_open: Optional[bool] = False
     workspace_slug: Optional[str] = None
@@ -69,6 +75,10 @@ class ChatInitializationRequest(BaseModel):
     user_id: Optional[UUID4] = None
     chat_id: Optional[UUID4] = None
     workspace_in_context: bool = False
+    # New polymorphic focus context fields
+    focus_entity_type: Optional[str] = Field(default=None, description="Type of focus entity (workspace, project, cycle, module, etc.)")
+    focus_entity_id: Optional[UUID4] = Field(default=None, description="ID of the focus entity")
+    # Legacy fields (for backward compatibility)
     workspace_id: UUID4 | None = None
     project_id: UUID4 | None = None
     is_project_chat: Optional[bool] = False

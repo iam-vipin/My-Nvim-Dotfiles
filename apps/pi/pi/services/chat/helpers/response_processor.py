@@ -9,7 +9,7 @@ from pi.services.retrievers.pg_store.message import upsert_message
 log = logger.getChild(__name__)
 
 
-async def process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning=""):
+async def process_response(base_stream, chat_id, query_id, response_id, switch_llm, db, reasoning="", source=None):
     """Process streaming response and store the final result."""
     final_response_ = []
 
@@ -35,6 +35,7 @@ async def process_response(base_stream, chat_id, query_id, response_id, switch_l
         parent_id=query_id,
         llm_model=switch_llm,
         reasoning=reasoning,
+        source=source,
         db=db,
     )
 

@@ -35,7 +35,7 @@ def get_module_tools(method_executor, context):
         members: Optional[list] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new module.
 
         Args:
@@ -73,12 +73,12 @@ def get_module_tools(method_executor, context):
             external_source=external_source,
         )
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully created module '{name}'", result["data"], "module", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Successfully created module '{name}'", result["data"], "module", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to create module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create module", result["error"])
 
     @tool
-    async def modules_list(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_list(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List all modules in a project.
 
         Args:
@@ -98,19 +98,19 @@ def get_module_tools(method_executor, context):
 
         # Validate project_id is present
         if not project_id:
-            return PlaneToolBase.format_error_response(
+            return PlaneToolBase.format_error_payload(
                 "Missing required parameter",
                 "project_id is required to list modules. You MUST first call projects_list to see available projects, OR call ask_for_clarification with disambiguation_options populated by calling projects_list to ask which project the user wants.",  # noqa: E501
             )
 
         result = await method_executor.execute("modules", "list", project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved modules list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved modules list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list modules", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list modules", result["error"])
 
     @tool
-    async def modules_add_work_items(module_id: str, issues: list, project_id: Optional[str] = None) -> str:
+    async def modules_add_work_items(module_id: str, issues: list, project_id: Optional[str] = None) -> Dict[str, Any]:
         """Add work items to a module.
 
         Args:
@@ -129,12 +129,12 @@ def get_module_tools(method_executor, context):
             "modules", "add_work_items", module_id=module_id, issues=issues, project_id=project_id, workspace_slug=workspace_slug
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response(f"Successfully added {len(issues)} work items to module", result["data"])
+            return PlaneToolBase.format_success_payload(f"Successfully added {len(issues)} work items to module", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to add work items to module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to add work items to module", result["error"])
 
     @tool
-    async def modules_retrieve(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_retrieve(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Retrieve details of a specific module.
 
         Args:
@@ -148,11 +148,11 @@ def get_module_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
-        result = await method_executor.execute("modules", "retrieve", pk=module_id, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("modules", "retrieve", module_id=module_id, project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url("Successfully retrieved module details", result["data"], "module", context)
+            return await PlaneToolBase.format_success_payload_with_url("Successfully retrieved module details", result["data"], "module", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve module", result["error"])
 
     @tool
     async def modules_update(
@@ -168,7 +168,7 @@ def get_module_tools(method_executor, context):
         members: Optional[list] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Update module details.
 
         Args:
@@ -212,15 +212,17 @@ def get_module_tools(method_executor, context):
         if external_source is not None:
             update_data["external_source"] = external_source
 
-        result = await method_executor.execute("modules", "update", pk=module_id, project_id=project_id, workspace_slug=workspace_slug, **update_data)
+        result = await method_executor.execute(
+            "modules", "update", module_id=module_id, project_id=project_id, workspace_slug=workspace_slug, **update_data
+        )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url("Successfully updated module", result["data"], "module", context)
+            return await PlaneToolBase.format_success_payload_with_url("Successfully updated module", result["data"], "module", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to update module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update module", result["error"])
 
     @tool
-    async def modules_archive(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_archive(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Archive a module.
 
         Args:
@@ -234,15 +236,15 @@ def get_module_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
-        result = await method_executor.execute("modules", "archive", pk=module_id, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("modules", "archive", module_id=module_id, project_id=project_id, workspace_slug=workspace_slug)
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully archived module", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully archived module", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to archive module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to archive module", result["error"])
 
     @tool
-    async def modules_unarchive(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_unarchive(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Unarchive a module.
 
         Args:
@@ -256,15 +258,15 @@ def get_module_tools(method_executor, context):
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
 
-        result = await method_executor.execute("modules", "unarchive", pk=module_id, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("modules", "unarchive", module_id=module_id, project_id=project_id, workspace_slug=workspace_slug)
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully unarchived module", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully unarchived module", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to unarchive module", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to unarchive module", result["error"])
 
     @tool
-    async def modules_list_archived(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_list_archived(project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List archived modules in a project.
 
         Args:
@@ -279,12 +281,12 @@ def get_module_tools(method_executor, context):
 
         result = await method_executor.execute("modules", "list_archived", project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved archived modules list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved archived modules list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list archived modules", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list archived modules", result["error"])
 
     @tool
-    async def modules_list_work_items(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_list_work_items(module_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List work items in a module.
 
         Args:
@@ -302,12 +304,14 @@ def get_module_tools(method_executor, context):
             "modules", "list_work_items", module_id=module_id, project_id=project_id, workspace_slug=workspace_slug
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved module work items", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved module work items", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list module work items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list module work items", result["error"])
 
     @tool
-    async def modules_remove_work_item(module_id: str, issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None) -> str:
+    async def modules_remove_work_item(
+        module_id: str, issue_id: str, project_id: Optional[str] = None, workspace_slug: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Remove a work item from a module.
 
         Args:
@@ -327,17 +331,9 @@ def get_module_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully removed work item from module", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully removed work item from module", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to remove work item from module", result["error"])
-
-    # Get entity search tools relevant only to modules
-    from .entity_search import get_entity_search_tools
-
-    entity_search_tools = get_entity_search_tools(method_executor, context)
-    module_entity_search_tools = [
-        t for t in entity_search_tools if getattr(t, "name", "").find("module") != -1 or getattr(t, "name", "").find("user") != -1
-    ]
+            return PlaneToolBase.format_error_payload("Failed to remove work item from module", result["error"])
 
     return [
         modules_create,
@@ -350,4 +346,4 @@ def get_module_tools(method_executor, context):
         modules_list_archived,
         modules_list_work_items,
         modules_remove_work_item,
-    ] + module_entity_search_tools
+    ]

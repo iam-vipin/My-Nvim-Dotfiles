@@ -38,6 +38,7 @@ export type TQuery = {
   pi_sidebar_open?: boolean;
   sidebar_open_url?: string;
   attachment_ids?: string[];
+  mode?: string;
 };
 export type TInitPayload = Pick<
   TQuery,
@@ -138,6 +139,7 @@ export type TDialogue = {
   answer?: string;
   llm?: string;
   feedback?: EFeedback;
+  current_tick?: string;
   reasoning?: string;
   isPiThinking: boolean;
   execution_status?: EExecutionStatus;
@@ -163,6 +165,7 @@ export type TChatHistory = {
   focus_workspace_id: string;
   focus_project_id: string;
   workspace_id?: string;
+  mode?: string;
 };
 
 export type TAction = {

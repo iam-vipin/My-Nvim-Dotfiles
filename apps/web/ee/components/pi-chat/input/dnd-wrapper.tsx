@@ -24,7 +24,8 @@ type Props = {
   chatId: string | undefined;
   isProjectLevel: boolean;
   focus: TFocus;
-  createNewChat: (focus: TFocus, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
+  mode: string;
+  createNewChat: (focus: TFocus, mode: string, isProjectLevel: boolean, workspaceId: string) => Promise<string>;
   setAttachments: Dispatch<SetStateAction<TPiAttachment[]>>;
   children: (isUploading: boolean, open: () => void) => React.ReactNode;
 };
@@ -39,6 +40,7 @@ export const DndWrapper: FC<Props> = observer((props) => {
     isProjectLevel,
     createNewChat,
     focus,
+    mode,
     children,
   } = props;
 
@@ -62,7 +64,7 @@ export const DndWrapper: FC<Props> = observer((props) => {
       if (rejectedFiles.length === 0) {
         setIsUploading(true);
         let chatIdToUse = chatId;
-        if (!chatIdToUse) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
+        if (!chatIdToUse) chatIdToUse = await createNewChat(focus, mode, isProjectLevel, workspaceId);
         for (const file of acceptedFiles) {
           const currentFile: File = file;
           if (!currentFile) return;

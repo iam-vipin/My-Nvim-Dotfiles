@@ -2,6 +2,8 @@
 Cycles API tools for Plane project cycle management operations.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -26,19 +28,22 @@ def get_cycle_tools(method_executor, context):
         owned_by: Optional[str] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Create a new cycle.
 
         Args:
             name: Cycle name (required)
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (required - provide from conversation context)
-            start_date: Start date in YYYY-MM-DD format (optional)
-            end_date: End date in YYYY-MM-DD format (optional)
+            start_date: Start date in YYYY-MM-DD format (IMPORTANT: if provided, end_date must also be provided)
+            end_date: End date in YYYY-MM-DD format (IMPORTANT: if provided, start_date must also be provided)
             description: Cycle description (optional)
             owned_by: User ID who owns the cycle (provide when user specifies ownership or assignment)
             external_id: External system identifier (optional)
             external_source: External system source name (optional)
+
+        Note: Both start_date and end_date must be provided together, or neither should be provided.
+              You cannot provide only one date - the API will reject the request.
         """
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -59,15 +64,14 @@ def get_cycle_tools(method_executor, context):
             end_date=end_date,
             description=description,
             owned_by=owned_by,
-            user_id=context.get("user_id"),
             external_id=external_id,
             external_source=external_source,
         )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully created cycle '{name}'", result["data"], "cycle", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Successfully created cycle '{name}'", result["data"], "cycle", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to create cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create cycle", result["error"])
 
     @tool
     async def cycles_list(
@@ -76,7 +80,7 @@ def get_cycle_tools(method_executor, context):
         per_page: Optional[int] = 20,
         cursor: Optional[str] = None,
         cycle_view: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """List cycles in a project.
 
         Args:
@@ -100,7 +104,7 @@ def get_cycle_tools(method_executor, context):
 
         # Validate required parameters after auto-fill
         if not project_id or not workspace_slug:
-            return PlaneToolBase.format_error_response(
+            return PlaneToolBase.format_error_payload(
                 "Failed to list cycles",
                 "Missing required context: project_id/workspace_slug",
             )
@@ -116,31 +120,31 @@ def get_cycle_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved cycles list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved cycles list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list cycles", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list cycles", result["error"])
 
     @tool
-    async def cycles_retrieve(pk: str, project_id: str, workspace_slug: str) -> str:
+    async def cycles_retrieve(cycle_id: str, project_id: str, workspace_slug: str) -> Dict[str, Any]:
         """Retrieve a single cycle by ID.
 
         Args:
-            pk: Cycle ID (required)
+            cycle_id: Cycle ID (required)
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
         """
         # project_id and workspace_slug are now required parameters
 
-        result = await method_executor.execute("cycles", "retrieve", pk=pk, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("cycles", "retrieve", cycle_id=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved cycle", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved cycle", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve cycle", result["error"])
 
     @tool
     async def cycles_update(
-        pk: str,
+        cycle_id: str,
         project_id: str,
         workspace_slug: Optional[str] = None,
         name: Optional[str] = None,
@@ -150,11 +154,11 @@ def get_cycle_tools(method_executor, context):
         owned_by: Optional[str] = None,
         external_id: Optional[str] = None,
         external_source: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Update cycle details.
 
         Args:
-            pk: Cycle ID (required)
+            cycle_id: Cycle ID (required)
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
             name: New cycle name
@@ -186,15 +190,17 @@ def get_cycle_tools(method_executor, context):
         if external_source is not None:
             update_data["external_source"] = external_source
 
-        result = await method_executor.execute("cycles", "update", pk=pk, project_id=project_id, workspace_slug=workspace_slug, **update_data)
+        result = await method_executor.execute(
+            "cycles", "update", cycle_id=cycle_id, project_id=project_id, workspace_slug=workspace_slug, **update_data
+        )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url("Successfully updated cycle", result["data"], "cycle", context)
+            return await PlaneToolBase.format_success_payload_with_url("Successfully updated cycle", result["data"], "cycle", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to update cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update cycle", result["error"])
 
     @tool
-    async def cycles_archive(cycle_id: str, project_id: str, workspace_slug: str) -> str:
+    async def cycles_archive(cycle_id: str, project_id: str, workspace_slug: str) -> Dict[str, Any]:
         """Archive a cycle.
 
         Args:
@@ -204,15 +210,15 @@ def get_cycle_tools(method_executor, context):
         """
         # project_id and workspace_slug are now required parameters
 
-        result = await method_executor.execute("cycles", "archive", pk=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("cycles", "archive", cycle_id=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully archived cycle", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully archived cycle", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to archive cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to archive cycle", result["error"])
 
     @tool
-    async def cycles_add_work_items(cycle_id: str, issues: list, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_add_work_items(cycle_id: str, issues: list, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Add work items to a cycle.
 
         Args:
@@ -227,7 +233,7 @@ def get_cycle_tools(method_executor, context):
                 workspace_slug = context["workspace_slug"]
         # Check if issues list is empty
         if not issues or len(issues) == 0:
-            return PlaneToolBase.format_success_response(
+            return PlaneToolBase.format_success_payload(
                 "No work items to add to cycle", {"message": "There are no work items satisfying the criteria to add to the cycle", "issues_count": 0}
             )
 
@@ -237,12 +243,12 @@ def get_cycle_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully added work items to cycle", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully added work items to cycle", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to add work items to cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to add work items to cycle", result["error"])
 
     @tool
-    async def cycles_remove_work_item(cycle_id: str, issue_id: str, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_remove_work_item(cycle_id: str, issue_id: str, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Remove a work item from a cycle.
 
         Args:
@@ -262,12 +268,12 @@ def get_cycle_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully removed work item from cycle", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully removed work item from cycle", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to remove work item from cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to remove work item from cycle", result["error"])
 
     @tool
-    async def cycles_unarchive(cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_unarchive(cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Unarchive a cycle."""
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -275,14 +281,14 @@ def get_cycle_tools(method_executor, context):
                 workspace_slug = context["workspace_slug"]
 
         # project_id and workspace_slug are now required parameters
-        result = await method_executor.execute("cycles", "unarchive", pk=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
+        result = await method_executor.execute("cycles", "unarchive", cycle_id=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response(f"Successfully unarchived cycle '{cycle_id}'", result["data"])
+            return PlaneToolBase.format_success_payload(f"Successfully unarchived cycle '{cycle_id}'", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to unarchive cycle", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to unarchive cycle", result["error"])
 
     @tool
-    async def cycles_list_archived(project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_list_archived(project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List archived cycles."""
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -292,12 +298,12 @@ def get_cycle_tools(method_executor, context):
         # project_id and workspace_slug are now required parameters
         result = await method_executor.execute("cycles", "list_archived", project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved archived cycles list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved archived cycles list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list archived cycles", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list archived cycles", result["error"])
 
     @tool
-    async def cycles_list_work_items(cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_list_work_items(cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """List work items in a cycle."""
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -307,12 +313,12 @@ def get_cycle_tools(method_executor, context):
         # project_id and workspace_slug are now required parameters
         result = await method_executor.execute("cycles", "list_work_items", cycle_id=cycle_id, project_id=project_id, workspace_slug=workspace_slug)
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved cycle work items list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved cycle work items list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list cycle work items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list cycle work items", result["error"])
 
     @tool
-    async def cycles_retrieve_work_item(cycle_id: str, issue_id: str, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_retrieve_work_item(cycle_id: str, issue_id: str, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Get a specific work item in a cycle."""
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -324,12 +330,12 @@ def get_cycle_tools(method_executor, context):
             "cycles", "retrieve_work_item", cycle_id=cycle_id, issue_id=issue_id, project_id=project_id, workspace_slug=workspace_slug
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved cycle work item", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved cycle work item", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve cycle work item", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve cycle work item", result["error"])
 
     @tool
-    async def cycles_transfer_work_items(cycle_id: str, new_cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> str:
+    async def cycles_transfer_work_items(cycle_id: str, new_cycle_id: str, project_id: str, workspace_slug: Optional[str] = None) -> Dict[str, Any]:
         """Transfer work items between cycles."""
         # Auto-fill from context if not provided
         if workspace_slug is None:
@@ -341,23 +347,13 @@ def get_cycle_tools(method_executor, context):
             "cycles", "transfer_work_items", cycle_id=cycle_id, new_cycle_id=new_cycle_id, project_id=project_id, workspace_slug=workspace_slug
         )
         if result["success"]:
-            return PlaneToolBase.format_success_response(
+            return PlaneToolBase.format_success_payload(
                 f"Successfully transferred work items from cycle '{cycle_id}' to '{new_cycle_id}'", result["data"]
             )
         else:
-            return PlaneToolBase.format_error_response("Failed to transfer cycle work items", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to transfer cycle work items", result["error"])
 
-    # Get entity search tools relevant only to cycles
-    from .entity_search import get_entity_search_tools
-
-    entity_search_tools = get_entity_search_tools(method_executor, context)
-    cycle_entity_search_tools = [
-        t
-        for t in entity_search_tools
-        if getattr(t, "name", "").find("cycle") != -1 or getattr(t, "name", "").find("user") != -1 or getattr(t, "name", "") == "search_current_cycle"
-    ]
-
-    return cycle_entity_search_tools + [
+    return [
         cycles_create,
         cycles_update,
         cycles_archive,

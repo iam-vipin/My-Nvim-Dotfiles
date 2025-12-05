@@ -5,8 +5,10 @@ This module intentionally centralizes non-core helpers used by the action execut
 so that `action_executor.execute_action_with_retrieval` stays lean and readable.
 """
 
+import asyncio
 import logging
 import re
+from collections.abc import AsyncIterator
 from typing import Any
 from typing import Dict
 from typing import List
@@ -15,6 +17,86 @@ from typing import Tuple
 from typing import Union
 
 log = logging.getLogger(__name__)
+
+# build a map of tool name to category
+TOOL_NAME_TO_CATEGORY_MAP: Dict[str, Dict[str, str]] = {
+    # Assets
+    "assets_create": {"entity_type": "asset", "action_type": "create", "front_facing_name": "Create Asset"},
+    "assets_create_user_upload": {"entity_type": "asset", "action_type": "create", "front_facing_name": "Create Asset User Upload"},
+    "assets_delete_user": {"entity_type": "asset", "action_type": "delete", "front_facing_name": "Delete Asset User"},
+    "assets_get_generic": {"entity_type": "asset", "action_type": "get", "front_facing_name": "Get Asset Generic"},
+    "assets_update_generic": {"entity_type": "asset", "action_type": "update", "front_facing_name": "Update Asset Generic"},
+    "assets_update_user": {"entity_type": "asset", "action_type": "update", "front_facing_name": "Update Asset User"},
+    # Attachments
+    "attachments_create": {"entity_type": "attachment", "action_type": "create", "front_facing_name": "Create Attachment"},
+    "attachments_delete": {"entity_type": "attachment", "action_type": "delete", "front_facing_name": "Delete Attachment"},
+    # Comments
+    "comments_create": {"entity_type": "comment", "action_type": "create", "front_facing_name": "Create Comment"},
+    "comments_delete": {"entity_type": "comment", "action_type": "delete", "front_facing_name": "Delete Comment"},
+    "comments_update": {"entity_type": "comment", "action_type": "update", "front_facing_name": "Update Comment"},
+    # Cycles
+    "cycles_add_work_items": {"entity_type": "cycle", "action_type": "add", "front_facing_name": "Add Work Items to Cycle"},
+    "cycles_archive": {"entity_type": "cycle", "action_type": "archive", "front_facing_name": "Archive Cycle"},
+    "cycles_create": {"entity_type": "cycle", "action_type": "create", "front_facing_name": "Create Cycle"},
+    "cycles_remove_work_item": {"entity_type": "cycle", "action_type": "remove", "front_facing_name": "Remove Work Item from Cycle"},
+    "cycles_transfer_work_items": {"entity_type": "cycle", "action_type": "transfer", "front_facing_name": "Transfer Work Items to Cycle"},
+    "cycles_unarchive": {"entity_type": "cycle", "action_type": "unarchive", "front_facing_name": "Unarchive Cycle"},
+    "cycles_update": {"entity_type": "cycle", "action_type": "update", "front_facing_name": "Update Cycle"},
+    # Intakes
+    "intake_create": {"entity_type": "intake", "action_type": "create", "front_facing_name": "Create Intake"},
+    "intake_delete": {"entity_type": "intake", "action_type": "delete", "front_facing_name": "Delete Intake"},
+    "intake_update": {"entity_type": "intake", "action_type": "update", "front_facing_name": "Update Intake"},
+    # Labels
+    "labels_create": {"entity_type": "label", "action_type": "create", "front_facing_name": "Create Label"},
+    "labels_update": {"entity_type": "label", "action_type": "update", "front_facing_name": "Update Label"},
+    # Links
+    "links_create": {"entity_type": "link", "action_type": "create", "front_facing_name": "Create Link"},
+    "links_delete": {"entity_type": "link", "action_type": "delete", "front_facing_name": "Delete Link"},
+    "links_update": {"entity_type": "link", "action_type": "update", "front_facing_name": "Update Link"},
+    # Modules
+    "modules_add_work_items": {"entity_type": "module", "action_type": "add", "front_facing_name": "Add Work Items to Module"},
+    "modules_archive": {"entity_type": "module", "action_type": "archive", "front_facing_name": "Archive Module"},
+    "modules_create": {"entity_type": "module", "action_type": "create", "front_facing_name": "Create Module"},
+    "modules_remove_work_item": {"entity_type": "module", "action_type": "remove", "front_facing_name": "Remove Work Item from Module"},
+    "modules_unarchive": {"entity_type": "module", "action_type": "unarchive", "front_facing_name": "Unarchive Module"},
+    "modules_update": {"entity_type": "module", "action_type": "update", "front_facing_name": "Update Module"},
+    # Pages
+    "pages_create_page": {"entity_type": "page", "action_type": "create", "front_facing_name": "Create Page"},
+    "pages_create_project_page": {"entity_type": "page", "action_type": "create", "front_facing_name": "Create Project Page"},
+    "pages_create_workspace_page": {"entity_type": "page", "action_type": "create", "front_facing_name": "Create Workspace Page"},
+    # Projects
+    "projects_archive": {"entity_type": "project", "action_type": "archive", "front_facing_name": "Archive Project"},
+    "projects_create": {"entity_type": "project", "action_type": "create", "front_facing_name": "Create Project"},
+    "projects_unarchive": {"entity_type": "project", "action_type": "unarchive", "front_facing_name": "Unarchive Project"},
+    "projects_update": {"entity_type": "project", "action_type": "update", "front_facing_name": "Update Project"},
+    "projects_retrieve": {"entity_type": "project", "action_type": "retrieve", "front_facing_name": "Retrieve Project"},
+    # Properties
+    "properties_create": {"entity_type": "property", "action_type": "create", "front_facing_name": "Create Property"},
+    "properties_create_option": {"entity_type": "property", "action_type": "create_option", "front_facing_name": "Create Property Option"},
+    "properties_create_value": {"entity_type": "property", "action_type": "create_value", "front_facing_name": "Create Property Value"},
+    "properties_delete": {"entity_type": "property", "action_type": "delete", "front_facing_name": "Delete Property"},
+    "properties_delete_option": {"entity_type": "property", "action_type": "delete_option", "front_facing_name": "Delete Property Option"},
+    "properties_update": {"entity_type": "property", "action_type": "update", "front_facing_name": "Update Property"},
+    "properties_update_option": {"entity_type": "property", "action_type": "update_option", "front_facing_name": "Update Property Option"},
+    # States
+    "states_create": {"entity_type": "state", "action_type": "create", "front_facing_name": "Create State"},
+    "states_update": {"entity_type": "state", "action_type": "update", "front_facing_name": "Update State"},
+    # Types
+    "types_create": {"entity_type": "type", "action_type": "create", "front_facing_name": "Create Type"},
+    "types_delete": {"entity_type": "type", "action_type": "delete", "front_facing_name": "Delete Type"},
+    "types_update": {"entity_type": "type", "action_type": "update", "front_facing_name": "Update Type"},
+    # Workitems and Epics
+    "create_epic": {"entity_type": "epic", "action_type": "create", "front_facing_name": "Create Epic"},
+    "update_epic": {"entity_type": "epic", "action_type": "update", "front_facing_name": "Update Epic"},
+    "workitems_create": {"entity_type": "workitem", "action_type": "create", "front_facing_name": "Create Work Item"},
+    "workitems_create_relation": {"entity_type": "workitem", "action_type": "update", "front_facing_name": "Create Work Item Relation"},
+    "workitems_update": {"entity_type": "workitem", "action_type": "update", "front_facing_name": "Update Work Item"},
+    "workitems_delete": {"entity_type": "workitem", "action_type": "delete", "front_facing_name": "Delete Work Item"},
+    # Worklogs
+    "worklogs_create": {"entity_type": "worklog", "action_type": "create", "front_facing_name": "Create Work Log"},
+    "worklogs_delete": {"entity_type": "worklog", "action_type": "delete", "front_facing_name": "Delete Work Log"},
+    "worklogs_update": {"entity_type": "worklog", "action_type": "update", "front_facing_name": "Update Work Log"},
+}
 
 
 def is_retrieval_tool(tool_name: Any) -> bool:
@@ -36,29 +118,71 @@ def is_retrieval_tool(tool_name: Any) -> bool:
     if name.endswith("_list") or name.endswith("_retrieve"):
         return True
     # Known retrieval utilities
-    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "generic_query_tool", "fetch_cycle_details"}:
+    if name in {"structured_db_tool", "vector_search_tool", "pages_search_tool", "docs_search_tool", "fetch_cycle_details"}:
         return True
     return False
 
 
-"""Tool name mapping utilities."""
+"""Tool name mapping utilities and classification registry."""
+
+# ------------------------------
+# Tool classification registry
+# ------------------------------
+
+# kind: "retrieval" | "action"
+# plan_only: True means never execute in planning; store as planned
+TOOL_METADATA_REGISTRY: Dict[str, Dict[str, Any]] = {
+    # Retrieval tools (execute immediately)
+    "vector_search_tool": {"kind": "retrieval", "plan_only": False},
+    "structured_db_tool": {"kind": "retrieval", "plan_only": False},
+    "pages_search_tool": {"kind": "retrieval", "plan_only": False},
+    "docs_search_tool": {"kind": "retrieval", "plan_only": False},
+    "fetch_cycle_details": {"kind": "retrieval", "plan_only": False},
+    # Planner/system helpers
+    "ask_for_clarification": {"kind": "retrieval", "plan_only": False},
+    # Common actions (examples - fallback to heuristics for unknown tools)
+    "workitems_create": {"kind": "action", "plan_only": True},
+    "workitems_update": {"kind": "action", "plan_only": True},
+    "workitems_create_relation": {"kind": "action", "plan_only": True},
+    "modules_add_work_items": {"kind": "action", "plan_only": True},
+    "cycles_add_work_items": {"kind": "action", "plan_only": True},
+    "create_epic": {"kind": "action", "plan_only": True},
+    "projects_retrieve": {"kind": "retrieval", "plan_only": False},
+}
+
+
+def register_tool_metadata(name: str, *, kind: str, plan_only: bool = False) -> None:
+    """Register or update tool metadata in the classification registry."""
+    if not name:
+        return
+    TOOL_METADATA_REGISTRY[name] = {"kind": kind, "plan_only": bool(plan_only)}
+
+
+def get_tool_metadata(name: str) -> Dict[str, Any]:
+    """Return metadata for a tool if available; empty dict if unknown."""
+    return TOOL_METADATA_REGISTRY.get(name, {})
+
+
+def is_plan_only_tool(name: str) -> bool:
+    """Return True if the tool must not be executed during planning (planned only)."""
+    return bool(TOOL_METADATA_REGISTRY.get(name, {}).get("plan_only", False))
+
 
 import contextlib
 
-from pi.services.schemas.chat import Agents
+from pi.services.schemas.chat import RetrievalTools
 
 
-def tool_name_to_agent(tool_name: str) -> str:
-    """Convert tool name back to agent name for response formatting."""
-    tool_to_agent_map = {
-        "vector_search_tool": Agents.PLANE_VECTOR_SEARCH_AGENT,
-        "structured_db_tool": Agents.PLANE_STRUCTURED_DATABASE_AGENT,
-        "pages_search_tool": Agents.PLANE_PAGES_AGENT,
-        "docs_search_tool": Agents.PLANE_DOCS_AGENT,
-        "generic_query_tool": Agents.GENERIC_AGENT,
-        "action_executor_agent": Agents.PLANE_ACTION_EXECUTOR_AGENT,
+def tool_name_to_retrieval_tool(tool_name: str) -> str:
+    """Convert tool name back to retrieval tool enum value."""
+    tool_to_enum_map = {
+        "vector_search_tool": RetrievalTools.VECTOR_SEARCH_TOOL,
+        "structured_db_tool": RetrievalTools.STRUCTURED_DB_TOOL,
+        "pages_search_tool": RetrievalTools.PAGES_SEARCH_TOOL,
+        "docs_search_tool": RetrievalTools.DOCS_SEARCH_TOOL,
+        "action_executor_agent": RetrievalTools.ACTION_EXECUTOR_TOOL,
     }
-    return tool_to_agent_map.get(tool_name, tool_name)
+    return tool_to_enum_map.get(tool_name, tool_name)
 
 
 def tool_name_shown_to_user(tool_name: str) -> str:
@@ -66,11 +190,11 @@ def tool_name_shown_to_user(tool_name: str) -> str:
     tool_to_user_map = {
         "vector_search_tool": "Semantic search",
         "structured_db_tool": "Database querying",
+        "search_current_cycle": "Find Current Cycle",
         "fetch_cycle_details": "Cycle Details",
         "list_recent_cycles": "Recent Cycles",
         "pages_search_tool": "Semantic search of pages",
         "docs_search_tool": "Semantic search of docs",
-        "generic_query_tool": "General Knowledge",
         "action_executor_agent": "Action Execution",
         # Entity search tools
         "search_project_by_name": "Search Project",
@@ -92,20 +216,221 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "workitems_list": "List Work-items",
         "list_member_projects": "List Member Projects",
     }
-    return tool_to_user_map.get(tool_name, tool_name)
+    print("received tool name: ", tool_name)
+    name_to_return = tool_to_user_map.get(tool_name, "")
+    if not name_to_return:
+        name_to_return = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("front_facing_name", tool_name)
+    print("name to return: ", name_to_return)
+    return name_to_return
 
 
-def agent_to_tool_name(agent_name: str) -> str:
-    """Convert agent name to corresponding tool name."""
-    agent_to_tool_map = {
-        "plane_vector_search_agent": "vector_search_tool",
-        "plane_structured_database_agent": "structured_db_tool",
-        "plane_pages_agent": "pages_search_tool",
-        "plane_docs_agent": "docs_search_tool",
-        "generic_agent": "generic_query_tool",
-        "plane_action_executor_agent": "action_executor_agent",
+def category_display_name(category: str) -> str:
+    """
+    Convert internal category slug to a user-friendly display name.
+    Falls back to Title Case of the slug with underscores replaced.
+    """
+
+    category = category.strip().lower()
+    overrides = {
+        "workitems": "Work items",
+        "worklogs": "Work logs",
+        "projects": "Projects",
+        "cycles": "Cycles",
+        "modules": "Modules",
+        "labels": "Labels",
+        "states": "States",
+        "pages": "Pages",
+        "assets": "Assets",
+        "users": "Users",
+        "members": "Members",
+        "activity": "Activity",
+        "attachments": "Attachments",
+        "comments": "Comments",
+        "links": "Links",
+        "properties": "Properties",
+        "types": "Types",
+        "intake": "Intake",
     }
-    return agent_to_tool_map.get(agent_name, agent_name)
+    return overrides.get(category, category.replace("_", " ").title())
+
+
+def is_uuid_like(value: Any) -> bool:
+    """Check if a value looks like a UUID."""
+    if not isinstance(value, str):
+        return False
+    # UUID pattern: 8-4-4-4-12 hex digits with optional hyphens
+    uuid_pattern = re.compile(r"^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$", re.IGNORECASE)
+    return bool(uuid_pattern.match(value.strip()))
+
+
+def is_url(value: Any) -> bool:
+    """Check if a value looks like a URL."""
+    if not isinstance(value, str):
+        return False
+    return value.startswith(("http://", "https://", "ftp://"))
+
+
+def clean_result_dict(data: Any, depth: int = 0) -> Any:
+    """
+    Recursively clean a result dictionary by removing UUIDs, URLs, and technical fields.
+    Keeps user-friendly fields like names, identifiers, counts, dates, etc.
+
+    Args:
+        data: The data structure to clean (dict, list, or primitive)
+        depth: Current recursion depth (to prevent infinite loops)
+
+    Returns:
+        Cleaned data structure
+    """
+    if depth > 10:  # Safety limit
+        return "..."
+
+    # Fields to always exclude
+    EXCLUDE_FIELDS = {
+        "id",
+        "project_id",
+        "workspace_id",
+        "user_id",
+        "member_id",
+        "cycle_id",
+        "module_id",
+        "state_id",
+        "label_id",
+        "type_id",
+        "parent_id",
+        "url",
+        "entity_url",
+        "workspace",
+        "created_by_id",
+        "updated_by_id",
+        "owner_id",
+        "assignee_id",
+        "reporter_id",
+        "lead_id",
+    }
+
+    # Fields to always keep (even if they look like UUIDs)
+    KEEP_FIELDS = {
+        "name",
+        "identifier",
+        "title",
+        "description",
+        "count",
+        "total",
+        "status",
+        "priority",
+        "state",
+        "type",
+        "access",
+        "color",
+        "start_date",
+        "end_date",
+        "target_date",
+        "created_at",
+        "updated_at",
+        "is_current",
+        "is_active",
+        "is_draft",
+        "is_archived",
+    }
+
+    if isinstance(data, dict):
+        cleaned = {}
+        for key, value in data.items():
+            key_lower = key.lower()
+
+            # Skip excluded fields
+            if key_lower in EXCLUDE_FIELDS:
+                continue
+
+            # Skip UUID-like values unless it's a keep field
+            if is_uuid_like(value) and key_lower not in KEEP_FIELDS:
+                continue
+
+            # Skip URLs
+            if is_url(value):
+                continue
+
+            # Recursively clean nested structures
+            cleaned_value = clean_result_dict(value, depth + 1)
+
+            # Only include non-empty cleaned values
+            if cleaned_value not in (None, {}, []):
+                cleaned[key] = cleaned_value
+
+        return cleaned or None
+
+    elif isinstance(data, list):
+        cleaned_list = []
+        for item in data:
+            cleaned_item = clean_result_dict(item, depth + 1)
+            if cleaned_item not in (None, {}, []):
+                cleaned_list.append(cleaned_item)
+        return cleaned_list or None
+
+    else:
+        # Primitives: return as-is unless it's a UUID or URL
+        if is_uuid_like(data) or is_url(data):
+            return None
+        return data
+
+
+def format_tool_message_for_display(content: Optional[str | dict]) -> str:
+    """
+    Parse and clean tool message content for user-friendly display.
+    Removes UUIDs, URLs, and technical fields while preserving meaningful information.
+
+    Args:
+        content: Raw tool message content string (or dict that will be converted)
+
+    Returns:
+        Cleaned, user-friendly tool message string
+    """
+    if not content:
+        return ""
+
+    # Handle case where content is still a dict (shouldn't happen but defensive)
+    if isinstance(content, dict):
+        # Extract just the message field if it's a structured response
+        if "message" in content:
+            return content["message"]
+        # Otherwise convert to string
+        content = str(content)
+
+    try:
+        # Split into message and result parts
+        parts = content.split("\n\nResult:", 1)
+        success_message = parts[0].strip() if parts else ""
+        result_part = parts[1].strip() if len(parts) > 1 else ""
+
+        if not result_part:
+            # No result section, just return the message as-is
+            return content
+
+        # We have a Result section - hide it and return just the message
+        # The LLM gets the full data, user only sees the clean message
+        return success_message or "✅ Operation completed successfully"
+
+    except Exception as e:
+        # On any error, return original for debugging purposes but log it
+        log.debug(f"Error formatting tool message: {e}")
+        return content
+
+
+def retrieval_tool_to_tool_name(retrieval_tool: str) -> str:
+    """Convert retrieval tool enum value to corresponding LangChain tool name."""
+    enum_to_tool_map = {
+        "vector_search_tool": "vector_search_tool",
+        "structured_db_tool": "structured_db_tool",
+        "pages_search_tool": "pages_search_tool",
+        "docs_search_tool": "docs_search_tool",
+        "action_executor_tool": "action_executor_agent",
+    }
+    return enum_to_tool_map.get(retrieval_tool, retrieval_tool)
+
+
+# Legacy function name for backward compatibility
+agent_to_tool_name = retrieval_tool_to_tool_name
 
 
 def log_toolset_details(tools: List[Any], chat_id: str) -> None:
@@ -182,10 +507,37 @@ def log_toolset_details(tools: List[Any], chat_id: str) -> None:
 # Action Executor helper methods
 # ------------------------------
 
+# TOOL_CALL_REASONING_INSTRUCTIONS = """**MANDATORY REASONING AND COMMUNICATION (CRITICAL - REQUIRED FOR EVERY TOOL CALL):**
+# - **BEFORE EACH TOOL CALL**: You MUST explain your reasoning and intent
+#   - State what information you're trying to gather or what action you're planning
+#   - Explain why this tool is necessary for completing the user's request
+#   - Describe what you expect to get from the tool and how you'll use it
+#   - Example: "The user wants to check workitems assigned to Anil. First, I need to search for the user 'Anil' to get their ID, then I'll use that ID to filter workitems." # noqa: E501
+# - **AFTER EACH TOOL CALL**: You MUST provide a brief summary of what you learned
+#   - Summarize key information obtained from the tool
+#   - Explain how this information helps with the next step
+#   - If the tool returned unexpected results, explain how you'll adapt
+#   - Example: "Found user Anil Kumar with ID xyz-123. Now I'll use this ID to search for workitems assigned to them." # noqa: E501
+# - **THINKING OUT LOUD**: Express your thought process naturally
+#   - Share your understanding of the user's request
+#   - Explain your strategy for accomplishing the task
+#   - Mention any assumptions you're making
+# - This reasoning is MANDATORY and helps with debugging and understanding your decision-making process
+# - NEVER skip the reasoning - it's essential for transparency and troubleshooting"""  # noqa: E501
+
+
+# TOOL_CALL_REASONING_REINFORCEMENT = """**FINAL MANDATORY REQUIREMENT - REASONING FOR EVERY TOOL CALL:**
+# You MUST provide clear reasoning in your response content BEFORE and AFTER each tool call:
+# - BEFORE: Explain what you're about to do and why (e.g., "Let me first find user Anil's details to get their ID...") # noqa: E501
+# - AFTER: Summarize what you found and your next step (e.g., "Found Anil Kumar (ID: xyz-123). Now searching for workitems assigned to them...") # noqa: E501
+# - This reasoning is NOT optional - it's required for transparency and helps users understand your process
+# - Even for simple searches, explain your thinking (e.g., "Searching for project 'Mobile' to get its UUID for creating workitems...")
+# - Provide this in the content field surrounding your tool_calls"""  # noqa: E501
+
 
 # Build the planning method prompt used by the executor
 def build_method_prompt(
-    combined_agent_query: str,
+    combined_tool_query: str,
     project_id: Optional[str],
     user_id: Optional[str],
     workspace_id: Optional[str],
@@ -227,17 +579,41 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - Do not repeat the same action multiple times
 - Do not try to execute actions - only plan them
 
-**CRITICAL WORKFLOW:**
-1. **FIRST**: Use retrieval tools to gather required information (IDs, existence checks, etc.)
-2. **THEN**: Plan at least one MODIFYING ACTION that will change data
+**WORKSPACE-LEVEL QUERIES (EFFICIENCY):**
+|- When query is related to workitems and spans ALL projects without specifying a particular project or projects
+|  - DO NOT: call `list_member_projects` then query each project with `structured_db_tool` separately
+|  - INSTEAD: Use ONE `structured_db_tool` call WITHOUT `project_id` parameter
+|  - Query will automatically scope to workspace via `workspace_id` (already in context)
+|  - Example WRONG: `list_member_projects` + 7x `structured_db_tool` (each with different project_id)
+|  - Example RIGHT: Single `structured_db_tool`: "list all workitems prioritized as high"
+|- For project-specific queries, include the specific `project_id`
 
-**REASONING AND COMMUNICATION:**
-- When making tool calls, ALWAYS provide a brief explanation of your reasoning in your response
-- Explain why you're selecting specific tools and what you're trying to accomplish
-- This helps with debugging and understanding your decision-making process
-- Example: "I need to create a cycle as per the user's request, so I'll use cycles_create with the project ID."
+**PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
+- Cycles, modules, pages, workitem types, views, intake, and time tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
+- **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, modules_create, pages_create_*, etc.), you MUST:
+    1. First get the project_id (via search_project_by_name or search_project_by_identifier if not already known)
+    2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled
+    3. **AFTER checking**: You MUST plan the required actions using tool_calls:
+       - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`)
+       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`)
+    4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue planning the modifying actions. Do NOT return only text - you MUST return tool_calls for the planned actions.
+    5. **REMEMBER**: `projects_retrieve` is ONLY for information gathering. The user's actual request (create cycle/module/page) is NOT complete until you plan the creation action with tool_calls. Do NOT stop after retrieval - the task is incomplete without planning the creation.
+- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, or other project-scoped features.
+- **CRITICAL**: After retrieving project features, you MUST plan the actions - do NOT stop after retrieval. The user requested a modification (create cycle/module/page), so you MUST plan it with tool_calls.
+- **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID, do NOT call `projects_retrieve` during planning. Use placeholders for downstream actions and defer any feature checks until after execution or when working with an existing project that has a UUID.
+- Available tools:
+    - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities)
+    - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled)
+    - `projects_create` tool to create a new project with any/all of these features based on the user's request
 
-**RETRIEVAL RESULT RELEVANCE (CRITICAL):**
+**HARD CONSTRAINTS FOR TOOL CALLS (NON-NEGOTIABLE):**
+- If the request involves modification of data like creating, updating, adding, removing, moving, assigning, archiving, or unarchiving: you MUST return one or more tool_calls for the corresponding action tools (e.g., cycles_create, workitems_create, modules_add_work_items). Returning only text is incorrect.
+    - For modification requests, keep text content brief - do NOT provide meta commentary like "I will plan..." or ask user to click 'Confirm'
+    - System handles approval automatically
+    - If required information is missing, call ask_for_clarification instead of skipping tool_calls.
+
+
+**RETRIEVAL RESULT RELEVANCE IN PLANNING ACTIONS FOR MODIFYING REQUESTS (CRITICAL):**
 - Treat retrieval results as candidates, not ground truth.
 - Use results ONLY if they directly match the user's current intent and entities; otherwise ignore them.
 - Never copy retrieval text verbatim into parameters like description_html unless the user explicitly asked for it.
@@ -270,26 +646,78 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - **No identical retries**: Do not call the same retrieval tool with the exact same parameters more than once. If it returns no/invalid results, proceed to the next fallback (within the same entity type) or ask for clarification.
   - **Do not loop the same call.**
 
-**MANDATORY PROJECT/ENTITY RESOLUTION (NO PLACEHOLDERS FOR EXISTING ENTITIES):**
-- If the user mentions an EXISTING entity by NAME or IDENTIFIER, you MUST resolve it FIRST using the appropriate search tool and then use its UUID:
-  - project NAME → `search_project_by_name` FIRST
-  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `search_project_by_identifier` FIRST
-  - cycle/module/label/state/user/workitem NAME/IDENTIFIER → use the corresponding `search_*_by_name` / `search_*_by_identifier` tool FIRST
-- Extract the UUID from the search response before using it in any subsequent tools.
-- NEVER use names/identifiers directly as *_id parameters.
-- NEVER emit placeholders for EXISTING entities named by the user (e.g., `project_id: "<id of project: Mattu>"` is forbidden). Resolve to a UUID instead.
-- **CRITICAL**: If you need to list modules/cycles but don't have project_id, call `projects_list` FIRST to get options, then ask user which project via `ask_for_clarification` with the projects as disambiguation_options
+**CRITICAL: ENTITY ID RESOLUTION AND PLACEHOLDER RULES**
+
+**RULE 1: EXISTING ENTITIES - USE ACTUAL UUIDs (NO PLACEHOLDERS)**
+When the user mentions an EXISTING entity (one that already exists in Plane):
+- **YOU MUST**: Call the appropriate search tool FIRST to get its UUID
+  - project NAME → `search_project_by_name` → extract UUID from response
+  - project IDENTIFIER (e.g., 'HYDR', 'PARM') → `search_project_by_identifier` → extract UUID
+  - cycle/module/label/state/user/workitem NAME/IDENTIFIER → `search_*_by_name` / `search_*_by_identifier` → extract UUID
+  - **EXCEPTION**: User pronouns ('me', 'my', 'I', 'mine') → use User ID from USER CONTEXT directly
+- **YOU MUST**: Extract the actual UUID from the search tool response (usually in the `id` field)
+- **YOU MUST**: Use that extracted UUID directly in ALL subsequent tool calls
+- **FORBIDDEN**: Using placeholders like `<id of workitem: ask>` for existing entities
+- **FORBIDDEN**: Using names/identifiers directly as *_id parameters (e.g., `project_id: "Mobile"`)
+
+**RULE 2: NEWLY CREATED ENTITIES - USE PLACEHOLDERS**
+When planning actions that depend on entities you CREATE in the CURRENT PLAN:
+- **YOU MAY**: Use placeholder references for newly created entities
+- **PLACEHOLDER FORMAT**: `<id of entity_type: entity_name>`
+  - Module created in this plan: `<id of module: my-module>`
+  - Workitem created in this plan: `<id of workitem: bug fix>`
+  - Cycle created in this plan: `<id of cycle: Sprint 24>`
+  - Project created in this plan: `<id of project: my-project>`
+- **EXECUTION**: The system will resolve these placeholders during execution after the entities are created
+
+**CRITICAL EXAMPLES - MIXED EXISTING AND NEW ENTITIES:**
+
+Example 1: "Add workitems 'Login Page' and 'Logout Page' to new cycle 'Sprint 24'"
+- Step 1: search_workitem_by_name("Login Page") → Response:
+    {{
+        "id": "abc-123-uuid",
+        "name": "Login Page"
+    }}
+    → Extract UUID: abc-123-uuid
+- Step 2: search_workitem_by_name("Logout Page") → Response:
+    {{
+        "id": "def-456-uuid",
+        "name": "Logout Page"
+    }}
+    → Extract UUID: def-456-uuid
+- Step 3: Plan cycles_create(name="Sprint 24") → New cycle, will use placeholder
+- Step 4: Plan cycles_add_work_items:
+  - cycle_id: '<id of cycle: Sprint 24>' ✅ CORRECT (newly created - use placeholder)
+  - issues: ['abc-123-uuid', 'def-456-uuid'] ✅ CORRECT (existing - use actual UUIDs from search)
+  - ❌ WRONG: issues: ['<id of workitem: Login Page>', '<id of workitem: Logout Page>'] (these are existing!)
+
+Example 2: "Create workitem 'Fix login bug' and add it to existing module 'Backend'"
+- Step 1: search_module_by_name("Backend") → Extract UUID: "module-xyz-uuid"
+- Step 2: Plan workitems_create(name="Fix login bug") → New workitem, will use placeholder
+- Step 3: Plan modules_add_work_items:
+  - module_id: 'module-xyz-uuid' ✅ CORRECT (existing - use actual UUID from search)
+  - issues: ['<id of workitem: Fix login bug>'] ✅ CORRECT (newly created - use placeholder)
+  - ❌ WRONG: module_id: '<id of module: Backend>' (this module already exists!)
+
+**PROJECT-SCOPED ENTITIES - ADDITIONAL REQUIREMENT:**
+After resolving project_id for cycles/modules/pages creation:
+- **YOU MUST**: Call `projects_retrieve(project_id=...)` to verify the feature is enabled
+- **EXCEPTION**: If the project itself is being CREATED in this plan, skip `projects_retrieve` (no UUID yet)
+
+**ID VALIDATION FOR RETRIEVAL TOOLS (STRICT):**
+- NEVER pass placeholders like `<id of X: name>` to `*_retrieve`, `*_list`, or `*_get` tools
+- ONLY pass real UUIDs to retrieval tools
+- Do NOT retrieve entities that are only PLANNED (wait until after execution when UUID exists)
+- If you have a name: search first → extract UUID → then retrieve
+- If you have a placeholder: do NOT call retrieval until it's resolved to a UUID
+
 
 **WORKSPACE-LEVEL CONTEXT - USE PROJECT FROM HISTORY:**
 - In workspace-level chats (no explicit project pre-selected), if the conversation history clearly shows a specific project selection or creation (e.g., an executed action with "Entity: <project name> (<uuid>)" or a project URL containing the UUID), you MUST include that exact UUID as `project_id` for all project-scoped tools (e.g., `workitems_create`, `workitems_update`, `modules_*`, `cycles_*`).
 - Prefer the most recent project in the history when multiple appear; if multiple conflicting projects are present, disambiguate by selecting the one explicitly referenced in the current user request; otherwise ask for clarification.
 - Only omit `project_id` when no project is inferable from the history or current query.
 
-**TOOL TYPES:**
-- **Retrieval tools** (search_*, *_list, *_retrieve): Execute immediately, gather info
-- **Modifying actions** (*_create, *_update, *_add, *_remove): Planned for user approval
-
-**IMPORTANT**: Only plan modifying actions if the user's request actually requires modifying data. If the request cannot be fulfilled with available tools (e.g., analytics, visualizations, external integrations), return NO_ACTIONS_PLANNED instead of creating workaround entities.
+**IMPORTANT**: Only plan modifying actions if the user's request actually requires modifying data. If the request cannot be fulfilled with available tools (e.g., analytics, visualizations, external integrations), provide a polite explanation instead of creating workaround entities.
 
 **INTERLINKED ACTIONS GUIDANCE:**
 - **Multi-step operations**: When a request involves multiple related actions, you MUST plan ALL of them
@@ -305,7 +733,7 @@ Use retrieval tools to gather information, then plan the modifying actions based
 **WORK-ITEM CREATION CAPABILITIES:**
 **✅ CAN be set during workitems_create:**
 - name, description, priority, state, assignees, labels, story_points, start_date, target_date
-- **EPIC CREATION**: Use `epics_create` tool to create epics - this automatically sets the correct epic type_id
+- **EPIC CREATION**: Use `create_epic` tool to create epics - this automatically sets the correct epic type_id
 - **IMPORTANT**: Use workitems_create with ALL properties at once - do NOT create then update!
 
 **WORK-ITEM RELATIONS CAPABILITIES:**
@@ -322,127 +750,64 @@ Use retrieval tools to gather information, then plan the modifying actions based
 
 **EFFICIENCY RULE**: Always try to set as many properties as possible during creation to minimize API calls.
 
-**SPECIFIC EXAMPLES**:
-* "Make issue A block issue B" = search_workitem_by_name for A, search_workitem_by_name for B, then workitems_create_relation(issue_id=A_id, relation_type="blocking", related_issues=[B_id])
-* "Mark task X as duplicate of task Y" = search for X and Y to get IDs, then workitems_create_relation(issue_id=X_id, relation_type="duplicate", related_issues=[Y_id])
-* "Issue C should start after issues D and E finish" = search for C, D, E to get IDs, then workitems_create_relation(issue_id=C_id, relation_type="start_after", related_issues=[D_id, E_id])
-* "Move work item to module" = search for existing work item, then modules_add_work_items
-* "Create work item in module" = workitems_create, then modules_add_work_items
-* "Create work item with priority and state" = workitems_create with BOTH priority AND state (single call)
-* "Create work item and add to module" = workitems_create, then modules_add_work_items (two calls needed)
-* "Create issue domino with Low priority and Backlog state" = workitems_create with name='domino', priority='low', state_id='backlog-uuid' (single call)
-* "Move work item to cycle" = search for existing work item, then cycles_add_work_items
-* Creating entities AND adding them to containers = plan BOTH create + add actions
 
-**PLANNING DEPENDENT ACTIONS (PLACEHOLDERS ONLY FOR NEWLY CREATED ENTITIES):**
-- When planning multiple actions that depend on an entity you CREATE in the same plan, you may use a descriptive reference for that newly created entity in downstream actions.
-- For containers (cycles, modules, projects) or entities (work items, labels, states) that ALREADY EXIST, DO NOT use placeholders; resolve to UUIDs via search tools.
-- **PLACEHOLDER SYSTEM (new entities only)**:
-  - Module created in this plan 'my-module' → downstream action may refer to `<id of module: my-module>`
-  - Workitem created in this plan 'bug fix' → downstream action may refer to `<id of workitem: bug fix>`
-  - Project created in this plan 'my-project' → downstream action may refer to `<id of project: my-project>`
-  - The execution phase will resolve these placeholders using retrieval tools ONLY for entities that were created in the current plan.
-
-**OPTIMIZATION GUIDANCE:**
-- **Descriptive references**: Use entity names/descriptions that clearly identify what should be linked
-- **Eliminate redundancy**: Don't plan separate actions for each item if they can be handled in a single action if the target tool accepts a list of items
-
-**PLACEHOLDER PLANNING EXAMPLE:**
-When planning: "Create workitem 'bug fix' and add it to module 'my-module'"
-- Plan: `workitems_create` with `name: 'bug fix'`
-- Plan: `modules_add_work_items` with `module_id: 'my-module'` and `issues: ['bug fix']`
-- The system will automatically convert 'my-module' → `<id of module: my-module>` and 'bug fix' → `<id of workitem: bug fix>`
-- During execution, the LLM will resolve these placeholders using retrieval tools
 
 **IMPORTANT**: Analyze the user's request carefully to identify ALL required actions, not just the obvious ones.
 
 {RETRIEVAL_TOOL_DESCRIPTIONS}
 
 **Execution Guidelines:**
-- **Step 1**: Use retrieval tools (search_*_by_name, list_member_projects, structured_db_tool, etc.) to gather IDs and verify entities exist
-- **Step 2**: Plan modifying actions using the gathered information
-- **PROJECT LISTING**: When you need a list of active projects for scope selection or disambiguation, **PREFER** `list_member_projects` over `structured_db_tool` or `projects_list` to avoid archived/deleted projects
-- **CRITICAL - USE UUIDs, NOT NAMES**: When calling tools that expect IDs (like project_id, module_id, etc.), always use the UUID from the resolved entity, NOT the entity name
-- **STEP-BY-STEP PROCESS**:
-  1. Call search tool (e.g., `search_project_by_name`)
-  2. Extract the "id" field from the JSON response
-  3. Use that exact UUID string in subsequent tool calls
-- **WRONG**: Using entity names like "MyProject", "ExampleModule", etc. for ID parameters
-- **CORRECT**: Using the actual UUID string returned by search tools
-- **For Relation Tasks**:
-  - **Step 1**: ALWAYS search for ALL work items mentioned by name or identifier to get their UUIDs
-  - **Step 2**: Use workitems_create_relation with the collected UUIDs
-  - **CRITICAL**: Never attempt relations without first collecting actual work item IDs
-- Do NOT use vector_search_tool for finding projects, users, or other non-content queries
-- Plan actions in logical dependency order (e.g., create issue first, then add to container)
-- **Optimize similar actions**: If adding multiple items to the same target, use ONE action with a list
-- **CRITICAL**: Do NOT provide workspace_slug parameters - they will be automatically provided from context
-- Do not use 'search_workitem_by_identifier' if indentifier you are passing as param to it doesn't follow the format <project_identifier-workitem_sequence>, ex: 'ABCD-23'
-- Brief summary:
-  - If you planned actions, provide a very very brief summary of the actions you planned.
-  - If part of the user's intent cannot be fulfilled due to API/tool limitations, provide a ONE-LINE explanatory note ONLY when strictly necessary.
-  - If you are unable to plan ANY modifying action after retrieval, respond with EXACTLY: NO_ACTIONS_PLANNED
-  - Never ask the user to confirm in text; the system UI will request confirmation.
+- Use search tools for entity resolution, NOT vector_search_tool
+- Do NOT provide workspace_slug - auto-provided from context
+- search_workitem_by_identifier requires format: PROJECT-123
 
-**EXAMPLE WORKFLOW FOR "MOVE" OPERATIONS:**
-For "move workitem X to module Y":
-1. Call `search_project_by_name` → get project UUID (executes immediately)
-2. Call `search_workitem_by_name` → get work item UUID (executes immediately)
-3. Call `search_module_by_name` → get module UUID (executes immediately)
-4. Plan `modules_add_work_items` with the gathered UUIDs (requires user approval)
-5. Use the project UUID for subsequent calls: `search_workitem_by_name` with the UUID from step 1
-6. Use the project UUID for subsequent calls: `search_module_by_name` with the UUID from step 1
 
-**MANDATORY WORKFLOW - NO EXCEPTIONS:**
-1. **FIRST**: You MUST call `search_project_by_name("project-name")` to get the project UUID
-2. **THEN**: Extract the UUID from the "id" field in the response
-3. **FINALLY**: Use that exact UUID string in ALL subsequent tool calls
-4. **FORBIDDEN**: Using project names like "Mobile", "MyProject" etc. for project_id parameters
 
-**EXAMPLE SEQUENCE:**
-- User says: "create issue in Morpheus project"
-- Step 1: Call `search_project_by_name("Morpheus")` → get UUID
-- Step 2: Use UUID in `workitems_create(project_id="actual-uuid-from-step-1")`
-- NEVER: `workitems_create(project_id="Morpheus")` ← This will fail!
+**WORKFLOW DECISION TREE:**
 
-**CRITICAL**: "Move" means add existing entity to container - do NOT create new entities!
+**IF the user's request is informational/retrieval-only (questions, searches, listing, checking status):**
+1. Use retrieval/search tools to gather the requested information
+2. Provide a detailed, elaborate, and neatly formatted answer based on the retrieved data. Do NOT be brief.
+3. Do NOT plan any modifying actions - just return tool_calls for retrieval, then answer in your content
+4. **Formatting Requirements**:
+    - Use "work-item" (not "issue") and "unique key" (not "Issue ID") terminology
+    - Suppress UUIDs - they are PII (exception: unique keys like PAI-123 are not UUIDs, can show)
+    - No hallucination - if no data, say so clearly without mentioning SQL/tools/internals
+    - Never reveal sensitive info: passwords, API keys, table names, SQL queries
+    - Create clickable URLs: `[PAI-123](url)` for work-items, `[name](url)` for others
+    - Use tables for multi-attribute data (suppress UUIDs, apply URL rules)
+5. This formatting doesn't apply to modification requests - those require action planning.
 
-**STRICT OUTPUT RULES (Very Brief Summary / NO CONFIRMATION TEXT):**
-- Do NOT provide meta commentary. Do NOT say "I will plan..." or "I will update...".
-- Do NOT ask the user to click 'Confirm' or otherwise prompt for approval in text. The system handles approval.
-- When actions are planned: provide a very brief summary of the actions you planned.
-- When no actions can be planned: use the `no_actions_planned` tool with a clear reason and optional explanation.
-
-**STOP CONDITION:**
+Note: The system uses absence of tool_calls as the signal to stop and deliver your content as the final answer. For modification requests, include at least one write tool_call in your plan.
 
 **IF the user's request requires modifying data (create, update, delete, move, assign, etc.):**
 1. Use retrieval/search tools to gather necessary information (IDs, etc.)
-2. **AND** plan at least one MODIFYING ACTION (create, update, delete, add, remove, move, etc.)
-3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions
+2. **AND** plan at least one MODIFYING ACTION using tool_calls (create, update, delete, add, remove, move, etc.)
+3. You CANNOT stop after just searching/retrieving - you MUST plan the modifying actions with tool_calls
+4. Provide a very brief summary of what you planned in your content
 
-**IF the user's request is asking for unsupported features:**
-- Analytics/visualizations (pie charts, reports, dashboards, graphs)
-- External integrations (Slack, GitHub, Jira sync)
-- Bulk operations (bulk delete, mass archive)
-- Administrative functions (workspace settings, permissions, billing)
-- File uploads/management
-- Use the `no_actions_planned` tool with reason explaining why the feature is unsupported
+
+**IF the user's request cannot be fulfilled with available tools:**
+- Examples: Analytics/visualizations, external integrations, bulk operations, administrative functions, file uploads
+- Use retrieval tools if relevant to understand the request
+- Then provide a polite, brief explanation of why it cannot be done and what alternatives exist (if any)
 - Do NOT create workaround entities (like workitems) to satisfy these requests
-
-**CRITICAL**: Distinguish between legitimate data modification requests and requests for unsupported features. Only enforce the "must plan action" requirement for the former.
+- Do NOT plan any actions - just provide the explanation in your content
 """  # noqa: E501
 
     if project_id:
         method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
     else:
         # Workspace-level context (no specific project)
-        method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (without limit or with high limit) to get ALL projects in the workspace\n- Then iterate through projects to find relevant cycles/modules/work-items\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
+        method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use list_member_projects (with a high limit) to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
 
     if user_id:
         method_prompt += f"\n\n**USER CONTEXT:**\nUser ID: {user_id}\nUse this when user refers to him/herself or 'I' or 'me' or 'my' or 'mine' or any other personal pronoun or any derivative of these words."  # noqa: E501
 
     if enhanced_conversation_history and enhanced_conversation_history.strip():
         method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously created entities, their IDs, and project context without needing to search for them again."  # noqa: E501
+
+    log.info(f"ENHANCED_CONVERSATION_HISTORY being sent to LLM:\n{enhanced_conversation_history}")
 
     # Inject clarification context if present (from previous turn's ask_for_clarification)
     if clarification_context and isinstance(clarification_context, dict):
@@ -492,8 +857,72 @@ For "move workitem X to module Y":
     return method_prompt
 
 
+# ------------------------------
+# Clarification context builders
+# ------------------------------
+
+
+def build_clarification_context_block(clar_ctx: dict | None) -> str:
+    """Builds a formatted clarification context block for prompts.
+
+    Expected clar_ctx keys: original_query, reason, disambiguation_options (list of dicts), answer_text
+    """
+    try:
+        if not clar_ctx or not isinstance(clar_ctx, dict):
+            return ""
+
+        original_query_text = clar_ctx.get("original_query")
+        reason = clar_ctx.get("reason")
+        disambig_options = clar_ctx.get("disambiguation_options") or []
+        answer_text = clar_ctx.get("answer_text")
+
+        parts: list[str] = []
+        parts.append("\n\n**CLARIFICATION CONTEXT:**\n")
+        if original_query_text:
+            parts.append(f"Original user request: {original_query_text}\n")
+        if reason:
+            parts.append(f"Clarification reason: {reason}\n")
+        if disambig_options:
+            parts.append("The user was previously shown these options:\n")
+            for idx, opt in enumerate(disambig_options, 1):
+                if isinstance(opt, dict):
+                    opt_id = opt.get("id")
+                    opt_name = opt.get("name") or opt.get("display_name") or ""
+                    opt_identifier = opt.get("identifier") or ""
+                    opt_email = opt.get("email") or ""
+
+                    if opt_email:
+                        parts.append(f"  {idx}. {opt_name} ({opt_email}) → UUID: {opt_id}\n")
+                    elif opt_identifier:
+                        parts.append(f"  {idx}. {opt_name} (Identifier: {opt_identifier}) → UUID: {opt_id}\n")
+                    else:
+                        parts.append(f"  {idx}. {opt_name} → UUID: {opt_id}\n")
+        if answer_text:
+            parts.append(f"\nUser's clarification answer: {answer_text}\n")
+        parts.append(
+            "\nIMPORTANT: The current user message is a clarification response to the original request above. "
+            "Use the clarification answer to resolve missing information and continue with the ORIGINAL request, "
+            "not as a new standalone request.\n"
+        )
+
+        return "".join(parts)
+    except Exception:
+        return ""
+
+
 def classify_tool(tool_name: str) -> Tuple[bool, bool]:
-    """Return (is_retrieval_tool, is_action_tool) based on name heuristics."""
+    """Return (is_retrieval_tool, is_action_tool) using registry first, then heuristics."""
+    # 1) Registry check (authoritative if present)
+    meta = get_tool_metadata(tool_name)
+    if meta:
+        kind = str(meta.get("kind") or "").lower()
+        if kind == "retrieval":
+            return True, False
+        if kind == "action":
+            return False, True
+        # Fall through to heuristics if malformed
+
+    # 2) Heuristics fallback
     # Include both prefix and substring patterns for robustness
     read_only_patterns = [
         "list_",  # prefix form like list_member_projects
@@ -781,7 +1210,8 @@ def format_clarification_as_text(clarification_data: Dict[str, Any]) -> str:
 REQUIRED_FIELDS_BY_TOOL: Dict[str, List[str]] = {
     # Workitems
     "workitems_create": ["project_id", "name"],
-    "workitems_update": ["issue_id", "project_id"],
+    # For updates, issue_id is sufficient at planning time; project_id is auto-resolved from issue_id during execution
+    "workitems_update": ["issue_id"],
     # Modules
     "modules_create": ["name", "project_id"],
     "modules_add_work_items": ["module_id", "issues", "project_id"],
@@ -829,6 +1259,11 @@ def preflight_missing_required_fields(tool_name: str, tool_args: Dict[str, Any],
         return missing
 
     args = tool_args or {}
+    # Determine if this is an action tool; placeholders are allowed during planning for action tools
+    try:
+        _is_retrieval, _is_action = classify_tool(tool_name)
+    except Exception:
+        _is_action = False
     # UUID format for strict validation of *_id fields
     uuid_pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
     for key in required:
@@ -844,8 +1279,11 @@ def preflight_missing_required_fields(tool_name: str, tool_args: Dict[str, Any],
             if isinstance(val, str) and key == "project_id" and val == "__workspace_scope__":
                 is_missing = False
             elif isinstance(val, str):
-                # Missing if placeholder or non-UUID
-                if "<id of" in val or not uuid_pattern.match(val):
+                # Placeholders like "<id of project: X>" are allowed for ACTION tools during planning
+                if "<id of" in val:
+                    is_missing = not _is_action
+                elif not uuid_pattern.match(val):
+                    # Non-UUID strings (e.g., names) must be resolved; still missing
                     is_missing = True
             elif isinstance(val, dict):
                 # If dict provided, require a valid UUID in 'id' key
@@ -875,7 +1313,7 @@ async def handle_missing_required_fields(
     chat_id: str,
     tool_id: str,
     current_step: int,
-    combined_agent_query: str,
+    combined_tool_query: str,
     is_project_chat: Optional[bool] = None,
 ) -> Optional[Dict[str, Any]]:
     """Handle missing required fields by creating clarification payload with disambiguation options.
@@ -1231,7 +1669,7 @@ async def handle_missing_required_fields(
                 "clarification_pending": True,
                 "clarification_payload": clarification_payload,
                 # CRITICAL: Store the original query so we can reconstruct full context on clarification follow-up
-                "original_query": combined_agent_query,
+                "original_query": combined_tool_query,
             },
             "is_planned": False,
             "is_executed": False,
@@ -1247,3 +1685,42 @@ async def handle_missing_required_fields(
 
     except Exception:
         return None
+
+
+async def stream_content_in_chunks(content: str, words_per_chunk: int = 15, delay_seconds: float = 0.08) -> AsyncIterator[str]:
+    """
+    Stream content in chunks of words with a slight delay to simulate streaming.
+
+    Args:
+        content: The full content to stream
+        words_per_chunk: Number of words to include in each chunk (default: 15)
+        delay_seconds: Delay between chunks in seconds (default: 0.08)
+
+    Yields:
+        Content chunks as strings
+    """
+    if not content:
+        return
+
+    # Split by whitespace but keep delimiters to preserve formatting (newlines, tabs, etc.)
+    # This ensures tables and other formatted text are preserved exactly.
+    tokens = re.split(r"(\s+)", content)
+
+    current_chunk = []
+    word_count = 0
+
+    for token in tokens:
+        current_chunk.append(token)
+        # Count non-whitespace tokens as words
+        if token and not token.isspace():
+            word_count += 1
+
+        if word_count >= words_per_chunk:
+            yield "".join(current_chunk)
+            current_chunk = []
+            word_count = 0
+            await asyncio.sleep(delay_seconds)
+
+    # Yield remaining content
+    if current_chunk:
+        yield "".join(current_chunk)

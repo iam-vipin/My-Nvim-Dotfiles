@@ -2,6 +2,8 @@
 States API tools for Plane workflow state management.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from langchain_core.tools import tool
@@ -23,7 +25,12 @@ def get_state_tools(method_executor, context):
         workspace_slug: Optional[str] = None,
         description: Optional[str] = None,
         group: Optional[str] = None,
-    ) -> str:
+        sequence: Optional[int] = None,
+        is_triage: Optional[bool] = None,
+        default: Optional[bool] = None,
+        external_source: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Create a new workflow state.
 
         Args:
@@ -33,6 +40,11 @@ def get_state_tools(method_executor, context):
             workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
             description: State description
             group: State group (backlog, unstarted, started, completed, cancelled)
+            sequence: Display sequence order
+            is_triage: Whether this is a triage state
+            default: Whether this is the default state
+            external_source: External source identifier (e.g., "jira")
+            external_id: External system ID
         """
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -49,18 +61,23 @@ def get_state_tools(method_executor, context):
             workspace_slug=workspace_slug,
             description=description,
             group=group,
+            sequence=sequence,
+            is_triage=is_triage,
+            default=default,
+            external_source=external_source,
+            external_id=external_id,
         )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully created state '{name}'", result["data"], "state", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Successfully created state '{name}'", result["data"], "state", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to create state", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to create state", result["error"])
 
     @tool
     async def states_list(
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """List all workflow states in a project."""
         # Auto-fill from context if not provided
         if workspace_slug is None and "workspace_slug" in context:
@@ -76,16 +93,16 @@ def get_state_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved states list", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved states list", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to list states", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to list states", result["error"])
 
     @tool
     async def states_retrieve(
         state_id: str,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Retrieve details of a specific workflow state.
 
         Args:
@@ -108,9 +125,9 @@ def get_state_tools(method_executor, context):
         )
 
         if result["success"]:
-            return PlaneToolBase.format_success_response("Successfully retrieved state details", result["data"])
+            return PlaneToolBase.format_success_payload("Successfully retrieved state details", result["data"])
         else:
-            return PlaneToolBase.format_error_response("Failed to retrieve state", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to retrieve state", result["error"])
 
     @tool
     async def states_update(
@@ -120,7 +137,13 @@ def get_state_tools(method_executor, context):
         name: Optional[str] = None,
         color: Optional[str] = None,
         description: Optional[str] = None,
-    ) -> str:
+        sequence: Optional[int] = None,
+        group: Optional[str] = None,
+        is_triage: Optional[bool] = None,
+        default: Optional[bool] = None,
+        external_source: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Update an existing workflow state.
 
         Args:
@@ -128,6 +151,12 @@ def get_state_tools(method_executor, context):
             name: New state name
             color: New state color
             description: New state description
+            sequence: Display sequence order
+            group: State group (backlog, unstarted, started, completed, cancelled)
+            is_triage: Whether this is a triage state
+            default: Whether this is the default state
+            external_source: External source identifier (e.g., "jira")
+            external_id: External system ID
             project_id: Project ID (required - provide from conversation context or previous actions)
             workspace_slug: Workspace slug (provide if known, otherwise auto-detected)
         """
@@ -138,7 +167,21 @@ def get_state_tools(method_executor, context):
             project_id = context["project_id"]
 
         # Build update data with only non-None values
-        update_data = {k: v for k, v in {"name": name, "color": color, "description": description}.items() if v is not None}
+        update_data = {
+            k: v
+            for k, v in {
+                "name": name,
+                "color": color,
+                "description": description,
+                "sequence": sequence,
+                "group": group,
+                "is_triage": is_triage,
+                "default": default,
+                "external_source": external_source,
+                "external_id": external_id,
+            }.items()
+            if v is not None
+        }
 
         result = await method_executor.execute(
             "states",
@@ -150,16 +193,8 @@ def get_state_tools(method_executor, context):
         )
 
         if result["success"]:
-            return await PlaneToolBase.format_success_response_with_url(f"Successfully updated state '{state_id}'", result["data"], "state", context)
+            return await PlaneToolBase.format_success_payload_with_url(f"Successfully updated state '{state_id}'", result["data"], "state", context)
         else:
-            return PlaneToolBase.format_error_response("Failed to update state", result["error"])
+            return PlaneToolBase.format_error_payload("Failed to update state", result["error"])
 
-    # Get entity search tools relevant only to states
-    from .entity_search import get_entity_search_tools
-
-    entity_search_tools = get_entity_search_tools(method_executor, context)
-    state_entity_search_tools = [
-        t for t in entity_search_tools if getattr(t, "name", "").find("state") != -1 or getattr(t, "name", "").find("user") != -1
-    ]
-
-    return [states_create, states_list, states_retrieve, states_update] + state_entity_search_tools
+    return [states_create, states_list, states_retrieve, states_update]

@@ -50,8 +50,8 @@ def preset_question_flow(question: str) -> List[Dict[str, Any]]:
     Returns a list of flow steps that define the complete processing pipeline.
 
     Each step contains:
-    - step_type: The type of step (routing, agent_execution, etc.)
-    - agents: List of agents to execute with their queries and parameters
+    - step_type: The type of step (routing, tool_execution, etc.)
+    - agents: List of tools to execute with their queries and parameters (field name kept for backward compatibility)
     - skip_routing: Whether to skip the normal routing process
     - reasoning_messages: Messages to show during processing
     """
@@ -67,7 +67,7 @@ def preset_question_flow(question: str) -> List[Dict[str, Any]]:
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "Show me my urgent work items that are still pending",
                         "sql_query": """SELECT
   issues.id::text AS issues_id,
@@ -99,7 +99,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "What work items are assigned to me and not yet completed, with start and end dates, priorities?",
                         "sql_query": """SELECT
         issues.id::text AS issues_id,
@@ -135,7 +135,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "Show me my overdue work items",
                         "sql_query": """SELECT
   issues.id::text AS issues_id,
@@ -148,7 +148,7 @@ LEFT JOIN states ON issues.state_id = states.id
 WHERE
   issue_assignees.assignee_id = $1
   AND issues.target_date IS NOT NULL
-  AND issues.target_date < CURRENT_DATE
+  AND issues.target_date::date < CURRENT_DATE
   AND (states.group != 'completed' AND states.group != 'cancelled')
   AND issues.deleted_at IS NULL
   AND issue_assignees.deleted_at IS NULL
@@ -170,7 +170,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "What did I complete this week?",
                         "sql_query": """SELECT
   issues.id::text AS issues_id,
@@ -207,7 +207,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "Show me work items I'm working on currently",
                         "sql_query": """SELECT
     issues.id::text AS issues_id,
@@ -242,7 +242,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "What work items are assigned to me that are blocked, and which ones are blocking them?",
                         "sql_query": """SELECT
   i.id::text AS issues_id,
@@ -281,21 +281,33 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "Who commented on my work items recently?",
                         "sql_query": """SELECT
-    users.id::text AS users_id,
-    users.first_name,
-    users.last_name,
-    MAX(issue_comments.created_at) AS most_recent_comment_date
-FROM issue_assignees
-JOIN issues ON issue_assignees.issue_id = issues.id
-JOIN issue_comments ON issue_comments.issue_id = issues.id
-JOIN users ON users.id = issue_comments.created_by_id
-WHERE issue_assignees.assignee_id = $1
-  AND issue_comments.deleted_at IS NULL
-  AND issue_assignees.deleted_at IS NULL
-GROUP BY users.id, users.first_name, users.last_name
+    users_id,
+    first_name,
+    last_name,
+    most_recent_comment_date,
+    issues_id,
+    issue_name
+FROM (
+    SELECT DISTINCT ON (users.id)
+        users.id::text AS users_id,
+        users.first_name,
+        users.last_name,
+        issue_comments.created_at AS most_recent_comment_date,
+        issues.id::text AS issues_id,
+        issues.name AS issue_name
+    FROM issue_assignees
+    JOIN issues ON issue_assignees.issue_id = issues.id
+    JOIN issue_comments ON issue_comments.issue_id = issues.id
+    JOIN users ON users.id = issue_comments.created_by_id
+    WHERE issue_assignees.assignee_id = $1
+      AND users.id <> $1
+      AND issue_comments.deleted_at IS NULL
+      AND issue_assignees.deleted_at IS NULL
+    ORDER BY users.id, issue_comments.created_at DESC
+) t
 ORDER BY most_recent_comment_date DESC
 LIMIT 20;""",
                         "tables": ["issues", "users", "issue_assignees", "issue_comments"],
@@ -315,7 +327,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "What changed in my pending work items today?",
                         "sql_query": """SELECT
     issues.id::text AS issues_id,
@@ -357,7 +369,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "Show me recent activity on my pending work items",
                         "sql_query": """SELECT
     ia.id::text             AS issue_activities_id,
@@ -406,7 +418,7 @@ LIMIT 20;""",
                 ],
                 "agents": [
                     {
-                        "agent": "plane_structured_database_agent",
+                        "agent": "structured_db_tool",
                         "query": "What's the progress of current active cycles?",
                         "sql_query": """SELECT
    cycles.id::text AS cycles_id,
@@ -463,7 +475,7 @@ ORDER BY cycles.start_date DESC NULLS LAST, cycles.name ASC;""",
         #         ]
         #     },
         #     {
-        #         "step_type": "agent_execution",
+        #         "step_type": "tool_execution",
         #         "reasoning_messages": [
         #             "🔧 Step 2: Retrieving detailed updates for the work item"
         #         ],
@@ -497,7 +509,7 @@ ORDER BY cycles.start_date DESC NULLS LAST, cycles.name ASC;""",
         #         ]
         #     },
         #     {
-        #         "step_type": "agent_execution",
+        #         "step_type": "tool_execution",
         #         "reasoning_messages": [
         #             "🔧 Step 2: Retrieving detailed updates for each work item"
         #         ],

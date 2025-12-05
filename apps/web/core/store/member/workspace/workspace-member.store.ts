@@ -6,7 +6,7 @@ import type { EUserPermissions } from "@plane/constants";
 import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // plane-web constants
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // types
 import type { IRouterStore } from "@/store/router.store";
 import type { IUserStore } from "@/store/user";
@@ -15,14 +15,12 @@ import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
 import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
-
 export interface IWorkspaceMembership {
   id: string;
   member: string;
   role: EUserPermissions;
   is_active?: boolean;
 }
-
 export interface IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
@@ -56,7 +54,6 @@ export interface IWorkspaceMemberStore {
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
   isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
 }
-
 export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: {
@@ -71,7 +68,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   memberRoot: IMemberRootStore;
   // services
   workspaceService;
-
   constructor(_memberRoot: IMemberRootStore, _rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
@@ -88,6 +84,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       fetchWorkspaceMemberInvitations: action,
       updateMemberInvitation: action,
       deleteMemberInvitation: action,
+      isUserSuspended: action,
     });
     // initialize filters store
     this.filtersStore = new WorkspaceMemberFiltersStore();
@@ -98,29 +95,24 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     // services
     this.workspaceService = new WorkspaceService();
   }
-
   /**
    * @description get the list of all the user ids of all the members of the current workspace
    */
   get workspaceMemberIds() {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
-
     return this.getWorkspaceMemberIds(workspaceSlug);
   }
-
   get memberMap() {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     return this.workspaceMemberMap?.[workspaceSlug] ?? {};
   }
-
   get workspaceMemberInvitationIds() {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     return this.workspaceMemberInvitations?.[workspaceSlug]?.map((inv) => inv.id);
   }
-
   getWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     members = sortBy(members, [
@@ -131,7 +123,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
     return memberIds;
   });
-
   /**
    * @description get the filtered and sorted list of all the user ids of all the members of the workspace
    * @param workspaceSlug
@@ -147,10 +138,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       this.memberRoot?.memberMap || {},
       (member) => member.member
     );
-
     return memberIds;
   });
-
   /**
    * @description get the list of all the user ids that match the search query of all the members of the current workspace
    * @param searchQuery
@@ -170,7 +159,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     });
     return searchedWorkspaceMemberIds;
   });
-
   /**
    * @description get the list of all the invitation ids that match the search query of all the member invitations of the current workspace
    * @param searchQuery
@@ -188,7 +176,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     });
     return searchedWorkspaceMemberInvitationIds;
   });
-
   /**
    * @description get the details of a workspace member
    * @param userId
@@ -198,7 +185,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!workspaceSlug) return null;
     const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
     if (!workspaceMember) return null;
-
     const memberDetails: IWorkspaceMember = {
       id: workspaceMember.id,
       role: workspaceMember.role,
@@ -207,7 +193,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     };
     return memberDetails;
   });
-
   /**
    * @description get the details of a workspace member invitation
    * @param workspaceSlug
@@ -218,11 +203,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!workspaceSlug) return null;
     const invitationsList = this.workspaceMemberInvitations?.[workspaceSlug];
     if (!invitationsList) return null;
-
     const invitation = invitationsList.find((inv) => inv.id === invitationId);
     return invitation ?? null;
   });
-
   /**
    * @description fetch all the members of a workspace
    * @param workspaceSlug
@@ -242,7 +225,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       });
       return response;
     });
-
   /**
    * @description update the role of a workspace member
    * @param workspaceSlug
@@ -267,7 +249,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       throw error;
     }
   };
-
   /**
    * @description remove a member from workspace
    * @param workspaceSlug
@@ -282,7 +263,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       });
     });
   };
-
   /**
    * @description fetch all the member invitations of a workspace
    * @param workspaceSlug
@@ -294,7 +274,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       });
       return response;
     });
-
   /**
    * @description bulk invite members to a workspace
    * @param workspaceSlug
@@ -305,7 +284,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
     return response;
   };
-
   /**
    * @description update the role of a member invitation
    * @param workspaceSlug
@@ -336,7 +314,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       throw error;
     }
   };
-
   /**
    * @description delete a member invitation
    * @param workspaceSlug

@@ -2,6 +2,7 @@ from .project import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectFeatureAPIEndpoint,
 )
 
 from .state import (
@@ -11,6 +12,7 @@ from .state import (
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,
+    IssueAttachmentServerEndpoint,
     IssueListCreateAPIEndpoint,
     IssueDetailAPIEndpoint,
     LabelListCreateAPIEndpoint,
@@ -23,6 +25,8 @@ from .issue import (
     IssueActivityDetailAPIEndpoint,
     IssueAttachmentListCreateAPIEndpoint,
     IssueAttachmentDetailAPIEndpoint,
+    IssueRelationListCreateAPIEndpoint,
+    IssueRelationRemoveAPIEndpoint,
     IssueSearchEndpoint,
 )
 
@@ -43,7 +47,26 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint
+from .member import (
+    ProjectMemberListCreateAPIEndpoint,
+    ProjectMemberDetailAPIEndpoint,
+    WorkspaceMemberAPIEndpoint,
+    ProjectMemberSiloEndpoint,
+)
+from .user import UserEndpoint
+
+from .customer import (
+    CustomerAPIEndpoint,
+    CustomerDetailAPIEndpoint,
+    CustomerRequestAPIEndpoint,
+    CustomerRequestDetailAPIEndpoint,
+    CustomerIssuesAPIEndpoint,
+    CustomerIssueDetailAPIEndpoint,
+    CustomerPropertiesAPIEndpoint,
+    CustomerPropertyDetailAPIEndpoint,
+    CustomerPropertyValuesAPIEndpoint,
+    CustomerPropertyValueDetailAPIEndpoint,
+)
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
@@ -52,8 +75,11 @@ from .intake import (
 
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
-from .user import UserEndpoint
+from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
 
 from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
+from .initiative import InitiativeViewSet, InitiativeLabelViewSet
+from .teamspace import TeamspaceViewSet
+from .work_item_search import WorkItemAdvancedSearchEndpoint

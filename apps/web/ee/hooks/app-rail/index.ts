@@ -1,1 +1,1 @@
-export * from "ce/hooks/app-rail";
+export * from "./provider";

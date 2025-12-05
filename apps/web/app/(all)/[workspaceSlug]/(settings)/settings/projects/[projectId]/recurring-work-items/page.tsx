@@ -1,0 +1,65 @@
+"use client";
+
+import { observer } from "mobx-react";
+// plane imports
+import { EUserPermissionsLevel } from "@plane/constants";
+// component
+import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
+import { PageHead } from "@/components/core/page-title";
+// store hooks
+import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web components
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
+import { CreateRecurringWorkItemsButton } from "@/plane-web/components/recurring-work-items/settings/create-button";
+import { RecurringWorkItemsSettingsRoot } from "@/plane-web/components/recurring-work-items/settings/root";
+import { RecurringWorkItemsUpgrade } from "@/plane-web/components/recurring-work-items/settings/upgrade";
+import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import type { Route } from "./+types/page";
+
+function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug, projectId } = params;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
+  const { getProjectById } = useProject();
+  const { isAnyRecurringWorkItemsAvailableForProject } = useRecurringWorkItems();
+  // derived values
+  const isRecurringWorkItemsEnabled = useFlag(workspaceSlug, "RECURRING_WORKITEMS");
+  const isRecurringWorkItemsAvailableForProject = isAnyRecurringWorkItemsAvailableForProject(workspaceSlug, projectId);
+  const currentProjectDetails = getProjectById(projectId);
+  const pageTitle = currentProjectDetails?.name
+    ? `${currentProjectDetails.name} - ${t("common.recurring_work_items")}`
+    : undefined;
+  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+
+  return (
+    <>
+      <PageHead title={pageTitle} />
+      <SettingsHeading
+        title={t("recurring_work_items.settings.heading")}
+        description={t("recurring_work_items.settings.description")}
+        showButton={isRecurringWorkItemsEnabled && isRecurringWorkItemsAvailableForProject && hasAdminPermission}
+        customButton={
+          <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="sm" />
+        }
+      />
+      <WithFeatureFlagHOC
+        flag="RECURRING_WORKITEMS"
+        fallback={<RecurringWorkItemsUpgrade />}
+        workspaceSlug={workspaceSlug}
+      >
+        <div className="flex flex-col gap-10 py-6 w-full">
+          <RecurringWorkItemsSettingsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
+        </div>
+      </WithFeatureFlagHOC>
+    </>
+  );
+}
+
+export default observer(RecurringWorkItemsProjectSettingsPage);

@@ -62,3 +62,7 @@ ruff==0.5.5
 pylint==3.1.0
 types-requests==2.32.0.20240712
 pytest==8.3.2
+
+# markdown to html
+markdown-it-py==4.0.0
+mdit-py-plugins==0.5.0

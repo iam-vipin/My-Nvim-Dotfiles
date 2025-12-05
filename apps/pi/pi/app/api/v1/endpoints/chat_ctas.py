@@ -19,6 +19,7 @@ from pi import logger
 from pi import settings
 from pi.app.api.v1.dependencies import cookie_schema
 from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.utils.markdown_to_html import md_to_html
 from pi.core.db.plane import PlaneDBPool
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.services.actions.method_executor import MethodExecutor
@@ -64,6 +65,8 @@ async def save_as_page(
             )
 
         user_id = auth.user.id
+
+        data.description_html = md_to_html(data.description_html)
 
         # Validate page_type and project_id combination
         if data.page_type not in ["workspace", "project"]:

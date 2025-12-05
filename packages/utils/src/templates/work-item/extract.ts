@@ -1,13 +1,9 @@
 // plane imports
-import { TWorkItemTemplate, TWorkItemTemplateFormData } from "@plane/types";
+import type { TWorkItemTemplate, TWorkItemTemplateFormData } from "@plane/types";
 // local imports
 import { extractWorkItemFormDataBlueprint } from "./blueprint/extract";
-import {
-  sanitizeMultipleWorkItemFormDataBlueprints,
-  sanitizeWorkItemFormDataBlueprint,
-  TSanitizeWorkItemFormDataParams,
-  TWorkItemSanitizationResult,
-} from "./blueprint/sanitize";
+import type { TSanitizeWorkItemFormDataParams, TWorkItemSanitizationResult } from "./blueprint/sanitize";
+import { sanitizeMultipleWorkItemFormDataBlueprints, sanitizeWorkItemFormDataBlueprint } from "./blueprint/sanitize";
 
 /**
  * Extracts work item form data from the template

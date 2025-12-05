@@ -51,6 +51,7 @@ export interface IWorkspacePageStore {
   findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
   clearRootParentCache: () => void;
   // actions
+  fetchPagesSummary: () => Promise<TPagesSummary | undefined>;
   fetchAllPages: () => Promise<TPage[] | undefined>;
   fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
   fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
@@ -140,6 +141,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       updateFilters: action,
       clearAllFilters: action,
       // actions
+      fetchPagesSummary: action,
       fetchAllPages: action,
       fetchPagesByType: action,
       fetchParentPages: action,
@@ -526,6 +528,23 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   /**
    * @description fetch all the pages
    */
+  fetchPagesSummary = async () => {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug) return undefined;
+    try {
+      const pagesSummary = await this.pageService.fetchPagesSummary(workspaceSlug);
+      runInAction(() => {
+        this.pagesSummary = pagesSummary;
+      });
+      return pagesSummary;
+    } catch (error) {
+      console.error("Unable to fetch pages summary", error);
+    }
+  };
+
+  /**
+   * @description fetch all the pages
+   */
   fetchAllPages = async () => {
     try {
       const { workspaceSlug } = this.store.router;
@@ -537,12 +556,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const pagesSummary = await this.pageService.fetchPagesSummary(workspaceSlug);
-
       const pages = await this.pageService.fetchAll(workspaceSlug);
       runInAction(() => {
-        this.pagesSummary = pagesSummary;
-
         for (const page of pages)
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);
@@ -868,12 +883,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.error = undefined;
       });
 
-      const pagesSummary = await this.pageService.fetchPagesSummary(workspaceSlug);
-
       const pages = await this.pageService.fetchPagesByType(workspaceSlug, pageType, searchQuery);
       runInAction(() => {
-        this.pagesSummary = pagesSummary;
-
         for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);

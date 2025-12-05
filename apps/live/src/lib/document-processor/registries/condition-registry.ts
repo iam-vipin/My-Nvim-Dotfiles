@@ -1,4 +1,4 @@
-import { type ActionCondition } from "@/types/document-action";
+import type { ActionCondition } from "@/types/document-action";
 
 /**
  * Registry of conditions that can be used to determine if an action should be applied

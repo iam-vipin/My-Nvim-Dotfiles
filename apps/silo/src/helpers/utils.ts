@@ -1,5 +1,6 @@
 import axios from "axios";
-import { HTMLElement, parse } from "node-html-parser";
+import type { HTMLElement } from "node-html-parser";
+import { parse } from "node-html-parser";
 import { validate as uuidValidate } from "uuid";
 
 import { logger } from "@plane/logger";
@@ -56,6 +57,11 @@ export const downloadFile = async (url: string, authToken?: string | undefined):
         Authorization: authToken ? authToken : undefined,
       },
     });
+
+    if (!response.data) {
+      logger.error("Asset download failed with status code:", response.status);
+      return;
+    }
 
     const buffer = Buffer.from(response.data);
     const blob = new Blob([buffer], { type: response.headers["content-type"] });

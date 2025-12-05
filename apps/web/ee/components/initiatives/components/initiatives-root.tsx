@@ -1,28 +1,33 @@
 import { useMemo } from "react";
 import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
+// assets
+import projectDark from "@/app/assets/empty-state/search/project-dark.webp?url";
+import projectLight from "@/app/assets/empty-state/search/project-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { DEFAULT_INITIATIVE_LAYOUT } from "@/plane-web/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import InitiativeLayoutLoader from "./initiative-layout-loader";
+import { InitiativeGanttLayout } from "./layouts/gantt";
 import { InitiativeKanbanLayout } from "./layouts/kanban";
 import { InitiativesListLayout } from "./layouts/list";
 
 export const InitiativesRoot = observer(() => {
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { initiative, initiativeFilters } = useInitiatives();
   const { toggleCreateInitiativeModal } = useCommandPalette();
@@ -32,7 +37,7 @@ export const InitiativesRoot = observer(() => {
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const activeLayout = displayFilters.layout;
 
-  const searchedResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/project" });
+  const searchedResolvedPath = resolvedTheme === "light" ? projectLight : projectDark;
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -42,6 +47,7 @@ export const InitiativesRoot = observer(() => {
     () => ({
       list: <InitiativesListLayout />,
       kanban: <InitiativeKanbanLayout />,
+      gantt: <InitiativeGanttLayout />,
     }),
     []
   );

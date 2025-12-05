@@ -62,10 +62,10 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   get isAnyModalOpen(): boolean {
     return Boolean(
       super.getCoreModalsState() ||
-        this.createUpdateTeamspaceModal.isOpen ||
-        this.createUpdateTeamspaceViewModal.isOpen ||
-        this.createUpdateInitiativeModal.isOpen ||
-        this.createUpdateCustomerModal.isOpen
+      this.createUpdateTeamspaceModal.isOpen ||
+      this.createUpdateTeamspaceViewModal.isOpen ||
+      this.createUpdateInitiativeModal.isOpen ||
+      this.createUpdateCustomerModal.isOpen
     );
   }
 

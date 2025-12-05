@@ -1,18 +1,17 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserPermissionsLevel } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
@@ -30,10 +29,9 @@ export const InitiativeKanbanCard = observer((props: Props) => {
   const { initiativeId } = props;
   const parentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug } = useParams();
-  const router = useAppRouter();
 
   const {
-    initiative: { getInitiativeById, getInitiativeStatsById },
+    initiative: { getInitiativeById, getInitiativeStatsById, setPeekInitiative },
   } = useInitiatives();
 
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
@@ -51,13 +49,27 @@ export const InitiativeKanbanCard = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const handleInitiativeClick = useCallback(
+    (e: React.MouseEvent) => {
+      // If command/ctrl + click, open in new tab
+      if (e.metaKey || e.ctrlKey) {
+        const url = `/${workspaceSlug}/initiatives/${initiativeId}`;
+        window.open(url, "_blank");
+        return;
+      }
+      // Otherwise open peek view
+      setPeekInitiative({ workspaceSlug: workspaceSlug.toString(), initiativeId });
+    },
+    [workspaceSlug, initiativeId, setPeekInitiative]
+  );
+
   return (
     <div
       ref={parentRef}
       className={cn(
         "group/initiative-card relative flex flex-col gap-3 rounded-md border border-custom-border-200 bg-custom-background-100 p-3 text-sm transition-colors"
       )}
-      onClick={() => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`)}
+      onClick={handleInitiativeClick}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">

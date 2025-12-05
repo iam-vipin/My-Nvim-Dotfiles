@@ -29,6 +29,7 @@ export default {
     workflows: "Quy trình làm việc",
     templates: "Mẫu",
     members_and_teamspaces: "Thành viên và không gian nhóm",
+    open_in_full_screen: "Mở {page} trong chế độ toàn màn hình",
   },
   updates: {
     add_update: "Thêm cập nhật",
@@ -150,6 +151,28 @@ export default {
       settings_sub_heading:
         "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng.",
     },
+    features: {
+      intake: {
+        heading: "Trách nhiệm tiếp nhận",
+        notify_assignee: {
+          title: "Thông báo người được chỉ định",
+          description: "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo",
+        },
+        toasts: {
+          set: {
+            loading: "Đang đặt người được chỉ định...",
+            success: {
+              title: "Thành công!",
+              message: "Người được chỉ định đã được đặt thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Không có tích hợp nào được cấu hình",
@@ -194,6 +217,91 @@ export default {
         description: "Thêm thuộc tính tùy chỉnh vào epic của bạn.",
       },
       disabled: "Đã vô hiệu hóa",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Tự động lên lịch chu kỳ",
+        description: "Duy trì chu kỳ hoạt động mà không cần thiết lập thủ công.",
+        tooltip: "Tự động tạo chu kỳ mới dựa trên lịch trình bạn chọn.",
+        edit_button: "Chỉnh sửa",
+        form: {
+          cycle_title: {
+            label: "Tiêu đề chu kỳ",
+            placeholder: "Tiêu đề",
+            tooltip: "Tiêu đề sẽ được thêm số cho các chu kỳ tiếp theo. Ví dụ: Thiết kế - 1/2/3",
+            validation: {
+              required: "Tiêu đề chu kỳ là bắt buộc",
+              max_length: "Tiêu đề không được vượt quá 255 ký tự",
+            },
+          },
+          cycle_duration: {
+            label: "Thời lượng chu kỳ",
+            unit: "Tuần",
+            validation: {
+              required: "Thời lượng chu kỳ là bắt buộc",
+              min: "Thời lượng chu kỳ phải ít nhất 1 tuần",
+              max: "Thời lượng chu kỳ không được vượt quá 30 tuần",
+              positive: "Thời lượng chu kỳ phải là số dương",
+            },
+          },
+          cooldown_period: {
+            label: "Thời gian nghỉ",
+            unit: "ngày",
+            tooltip: "Khoảng nghỉ giữa các chu kỳ trước khi bắt đầu chu kỳ tiếp theo.",
+            validation: {
+              required: "Thời gian nghỉ là bắt buộc",
+              negative: "Thời gian nghỉ không thể là số âm",
+            },
+          },
+          start_date: {
+            label: "Ngày bắt đầu chu kỳ",
+            validation: {
+              required: "Ngày bắt đầu là bắt buộc",
+              past: "Ngày bắt đầu không thể ở quá khứ",
+            },
+          },
+          number_of_cycles: {
+            label: "Số chu kỳ tương lai",
+            validation: {
+              required: "Số chu kỳ là bắt buộc",
+              min: "Cần ít nhất 1 chu kỳ",
+              max: "Không thể lên lịch nhiều hơn 3 chu kỳ",
+            },
+          },
+          auto_rollover: {
+            label: "Tự động chuyển các mục công việc",
+            tooltip:
+              "Vào ngày hoàn thành chu kỳ, chuyển tất cả các mục công việc chưa hoàn thành sang chu kỳ tiếp theo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Đang bật tự động lên lịch chu kỳ",
+            loading_disable: "Đang tắt tự động lên lịch chu kỳ",
+            success: {
+              title: "Thành công!",
+              message: "Đã chuyển đổi tự động lên lịch chu kỳ thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message: "Không thể chuyển đổi tự động lên lịch chu kỳ.",
+            },
+          },
+          save: {
+            loading: "Đang lưu cấu hình tự động lên lịch chu kỳ",
+            success: {
+              title: "Thành công!",
+              message_create: "Đã lưu cấu hình tự động lên lịch chu kỳ thành công.",
+              message_update: "Đã cập nhật cấu hình tự động lên lịch chu kỳ thành công.",
+            },
+            error: {
+              title: "Lỗi!",
+              message_create: "Không thể lưu cấu hình tự động lên lịch chu kỳ.",
+              message_update: "Không thể cập nhật cấu hình tự động lên lịch chu kỳ.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -445,7 +553,7 @@ export default {
       },
       not_found: {
         title: "Sáng kiến không tồn tại",
-        description: "Sáng kiến bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+        description: "Sáng kiến bạn đang tìm kiếm không tồn tại, đã được lưu trữ hoặc đã bị xóa.",
         primary_button: {
           text: "Xem Sáng kiến khác",
         },
@@ -644,7 +752,12 @@ export default {
         app_short_description_error: "Mô tả ngắn ứng dụng là bắt buộc",
         app_description_title: {
           label: "Mô tả dài",
-          placeholder: "Viết mô tả dài cho marketplace. Nhấn ‘/’ để xem lệnh.",
+          placeholder: "Viết mô tả dài cho marketplace. Nhấn '/' để xem lệnh.",
+        },
+        authorization_grant_type: {
+          title: "Loại kết nối",
+          description:
+            "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ",
         },
         app_description_error: "Mô tả ứng dụng là bắt buộc",
         app_slug_title: "Slug ứng dụng",
@@ -701,6 +814,10 @@ export default {
         categories_error: "Danh mục là bắt buộc",
         invalid_categories_error: "Danh mục không hợp lệ",
         categories_description: "Chọn các danh mục phù hợp nhất với ứng dụng",
+        supported_plans: "Gói được Hỗ trợ",
+        supported_plans_description:
+          "Chọn các gói không gian làm việc có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
+        select_plans: "Chọn Gói",
         privacy_policy_url_title: "URL Chính sách bảo mật",
         privacy_policy_url_error: "URL Chính sách bảo mật là bắt buộc",
         invalid_privacy_policy_url_error: "URL Chính sách bảo mật không hợp lệ",
@@ -775,8 +892,8 @@ export default {
         internal: "Nội bộ",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn.",
       },
@@ -1477,7 +1594,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Nhập dữ liệu Jira Server của bạn vào các dự án Plane.",
+    jira_server_importer_description: "Nhập dữ liệu Jira Server/Data Center của bạn vào các dự án Plane.",
     steps: {
       title_configure_plane: "Cấu hình Plane",
       description_configure_plane:

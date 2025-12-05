@@ -1,13 +1,16 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
+// assets
+import currentCyclesDark from "@/app/assets/empty-state/teams/current-cycles-dark.webp?url";
+import currentCyclesLight from "@/app/assets/empty-state/teams/current-cycles-light.webp?url";
 // components
 import { CycleListProjectGroupHeader } from "@/components/cycles/list/cycle-list-project-group-header";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles/active-cycle";
 // hooks
 import { useTeamspaceCycles } from "@/plane-web/hooks/store";
@@ -21,12 +24,14 @@ export const TeamCurrentCyclesRoot = observer((props: TTeamCurrentCyclesRoot) =>
   const { teamspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { getTeamspaceFilteredActiveCycleIds, getTeamspaceGroupedActiveCycleIds } = useTeamspaceCycles();
   // derived values
   const filteredActiveCycleIds = getTeamspaceFilteredActiveCycleIds(teamspaceId);
   const groupedActiveCycleIds = getTeamspaceGroupedActiveCycleIds(teamspaceId);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/teams/current-cycles" });
+  const resolvedPath = resolvedTheme === "light" ? currentCyclesLight : currentCyclesDark;
 
   if (filteredActiveCycleIds.length === 0) {
     return (

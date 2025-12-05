@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { JiraStatus } from "@plane/etl/jira";
 import { StateGroupIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
 // plane web components

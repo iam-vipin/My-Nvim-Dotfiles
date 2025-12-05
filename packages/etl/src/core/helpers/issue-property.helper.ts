@@ -1,4 +1,4 @@
-import { TTextSettings, TTextSettingsDisplayOptions } from "@plane/sdk";
+import type { TTextSettings, TTextSettingsDisplayOptions } from "@plane/sdk";
 
 export const getTextPropertySettings = (display_format: TTextSettingsDisplayOptions): TTextSettings => {
   switch (display_format) {

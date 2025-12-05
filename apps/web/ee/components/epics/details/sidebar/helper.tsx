@@ -29,7 +29,7 @@ export const useCommentOperations = (
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
   // derived values
   const epicDetails = epicId ? getIssueById(epicId) : undefined;
@@ -167,7 +167,7 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -192,9 +192,32 @@ export const useCommentOperations = (
         const formattedUsers = formatTextList(reactionUsers);
         return formattedUsers;
       },
+      duplicateCommentAsset: async (assetId, commentId) => {
+        try {
+          if (!workspaceSlug) throw new Error("Missing fields");
+          const res = await duplicateEditorAsset({
+            assetId,
+            entityId: commentId,
+            entityType: EFileAssetType.COMMENT_DESCRIPTION,
+            workspaceSlug,
+          });
+          return res;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
+        }
+      },
     };
     return ops;
-  }, [workspaceSlug, projectId, epicId, createComment, updateComment, uploadEditorAsset, removeComment]);
+  }, [
+    workspaceSlug,
+    projectId,
+    epicId,
+    createComment,
+    updateComment,
+    uploadEditorAsset,
+    removeComment,
+    duplicateEditorAsset,
+  ]);
 
   return operations;
 };

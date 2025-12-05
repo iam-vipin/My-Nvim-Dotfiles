@@ -2,19 +2,18 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // components
 import { useTranslation } from "@plane/i18n";
+// assets
+import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
+import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import type { TProjectMap } from "@/plane-web/types/integrations";
-// public images
-import GithubDarkLogo from "@/public/services/github-dark.svg";
-import GithubLightLogo from "@/public/services/github-light.svg";
 
 type TSelectGithubRepository = {
   value: TProjectMap;
@@ -59,7 +58,7 @@ export const SelectGithubRepository: FC<TSelectGithubRepository> = observer((pro
         onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
         iconExtractor={() => (
           <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-            <Image src={githubLogo} layout="fill" objectFit="contain" alt="GitHub Logo" />
+            <img src={githubLogo} alt="GitHub Logo" className="w-full h-full object-cover" />
           </div>
         )}
         queryExtractor={(option) => option.name}

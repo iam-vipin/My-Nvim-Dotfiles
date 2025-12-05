@@ -20,7 +20,7 @@ COMPONENT_MAP = {
         "attributes": ["id", "entity_identifier", "entity_name", "entity_type"],
         "extract": lambda m: {
             "entity_name": m.get("entity_name"),
-            "entity_type": None,
+            "entity_type": "mention",
             "entity_identifier": m.get("entity_identifier"),
         },
     },

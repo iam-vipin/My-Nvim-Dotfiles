@@ -1,7 +1,7 @@
 // services
-import { AsanaService } from "@/asana/services/api.service";
+import type { AsanaService } from "@/asana/services/api.service";
 // types
-import {
+import type {
   AsanaAttachment,
   AsanaCustomFieldSettings,
   AsanaTag,

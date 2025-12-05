@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -16,17 +15,11 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import type { Route } from "./+types/layout";
 
-type TRecurringWorkItemsProjectSettingsLayout = {
-  children: React.ReactNode;
-};
-
-const RecurringWorkItemsProjectSettingsLayout = observer((props: TRecurringWorkItemsProjectSettingsLayout) => {
-  const { children } = props;
+function RecurringWorkItemsProjectSettingsLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const projectId = routerProjectId?.toString();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
@@ -41,22 +34,22 @@ const RecurringWorkItemsProjectSettingsLayout = observer((props: TRecurringWorkI
 
   // fetching recurring work items
   useSWR(
-    workspaceSlug && isRecurringWorkItemsEnabled
-      ? ["recurringWorkItems", workspaceSlug, projectId, isRecurringWorkItemsEnabled]
-      : null,
-    workspaceSlug && projectId && isRecurringWorkItemsEnabled
-      ? () => fetchRecurringWorkItems(workspaceSlug, projectId)
-      : null,
+    isRecurringWorkItemsEnabled ? ["recurringWorkItems", workspaceSlug, projectId, isRecurringWorkItemsEnabled] : null,
+    isRecurringWorkItemsEnabled ? () => fetchRecurringWorkItems(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !currentProjectDetails?.id) return <></>;
+  if (!currentProjectDetails?.id) return <></>;
 
   if (workspaceUserInfo && !hasMemberLevelPermission) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 
-  return <SettingsContentWrapper>{children}</SettingsContentWrapper>;
-});
+  return (
+    <SettingsContentWrapper>
+      <Outlet />
+    </SettingsContentWrapper>
+  );
+}
 
-export default RecurringWorkItemsProjectSettingsLayout;
+export default observer(RecurringWorkItemsProjectSettingsLayout);

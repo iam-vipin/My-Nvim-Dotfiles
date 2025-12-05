@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 // hooks
 import { useMathRenderer } from "../../hooks/use-math-renderer";
 // types
-import { TMathComponentProps } from "../../types";
+import type { TMathComponentProps } from "../../types";
 // local components
 import { BlockMathContainer } from "./container";
 

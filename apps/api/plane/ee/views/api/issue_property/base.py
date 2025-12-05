@@ -155,7 +155,9 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             )
 
         data = request.data
-        issue_property_serializer = self.serializer_class(data=data)
+        issue_property_serializer = self.serializer_class(
+            data=data, context={"issue_type": issue_type, "project": project}
+        )
         issue_property_serializer.is_valid(raise_exception=True)
         issue_property_serializer.save(
             workspace=workspace,
@@ -238,7 +240,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             issue_type_id=type_id,
             pk=property_id,
         )
-        serializer = self.serializer_class(issue_property)
+        serializer = self.serializer_class(issue_property, context={"issue_type": type_id, "project": project_id})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update issue property by id
@@ -279,7 +281,9 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
         )
 
         data = request.data
-        issue_property_serializer = self.serializer_class(issue_property, data=data, partial=True)
+        issue_property_serializer = self.serializer_class(
+            issue_property, data=data, partial=True, context={"issue_type": type_id, "project": project_id}
+        )
         issue_property_serializer.is_valid(raise_exception=True)
         issue_property_serializer.save()
 

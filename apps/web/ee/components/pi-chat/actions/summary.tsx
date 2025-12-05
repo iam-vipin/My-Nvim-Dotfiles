@@ -44,7 +44,11 @@ export const SummaryBlock = observer((props: TProps) => {
   };
 
   return (
-    <div className={cn("flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out")}>
+    <div
+      className={cn(
+        "@container flex flex-col rounded-xl bg-custom-background-90 transition-all duration-500 ease-in-out"
+      )}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
@@ -82,7 +86,7 @@ export const SummaryBlock = observer((props: TProps) => {
                 <div className="text-base">
                   {summary.completed} successful {summary.completed > 1 ? "actions" : "action"}{" "}
                 </div>
-                <div className="grid grid-cols-3 gap-2 flex-wrap w-full">
+                <div className="grid @lg:grid-cols-3 @md:grid-cols-2 @sm:grid-cols-1 gap-2 flex-wrap w-full">
                   {groupedArtifacts.successful.map((artifact) => (
                     <PreviewBlock
                       key={artifact.artifact_id}
@@ -105,11 +109,18 @@ export const SummaryBlock = observer((props: TProps) => {
                 </div>
                 <div className="flex flex-col gap-3 text-xs text-custom-text-300">
                   {groupedArtifacts.failed.map((artifact) => (
-                    <div className="flex items-center gap-2" key={artifact.artifact_id}>
-                      <div>{getIcon(artifact.artifact_type, "", "text")}</div>
-                      <div className="text-sm font-medium line-clamp-2 text-start text-custom-text-300">
-                        {artifact.entity_name || "Unknown"}
-                      </div>
+                    <div className="flex flex-col gap-1" key={artifact.artifact_id}>
+                      {(artifact.entity_name || artifact.action) && (
+                        <div className="flex items-center gap-2">
+                          <div>{getIcon(artifact.artifact_type, "", "text", "text-sm")}</div>
+                          <div className="text-sm font-medium line-clamp-2 text-start text-custom-text-300">
+                            {artifact.entity_name}
+                          </div>
+                        </div>
+                      )}
+                      {artifact.error && (
+                        <div className="rounded-md px-2 text-sm text-red-600 whitespace-pre-line">{artifact.error}</div>
+                      )}
                     </div>
                   ))}
                 </div>

@@ -1,9 +1,9 @@
 import { logger } from "@plane/logger";
-import { TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceEntityConnection } from "@plane/types";
 import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions } from "@/types";
+import type { ClientOptions } from "@/types";
 export class WorkspaceEntityConnectionAPIService extends APIService {
   constructor(options: ClientOptions) {
     super(options);

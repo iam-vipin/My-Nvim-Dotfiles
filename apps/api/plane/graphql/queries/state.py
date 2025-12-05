@@ -48,3 +48,23 @@ class StateQuery:
             .filter(is_triage=False)
         )
         return states
+
+
+@strawberry.type
+class TriageStateQuery:
+    @strawberry.field(extensions=[PermissionExtension(permissions=[ProjectBasePermission()])])
+    async def triage_states(self, info: Info, slug: str, project: strawberry.ID) -> list[StateType]:
+        user = info.context.user
+        user_id = str(user.id)
+
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
+        triage_states = await sync_to_async(list)(
+            State.triage_objects.filter(workspace__slug=slug, project_id=project)
+            .filter(project_teamspace_filter.query)
+            .filter(is_triage=False)
+        )
+
+        return triage_states

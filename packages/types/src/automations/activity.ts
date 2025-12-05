@@ -1,6 +1,6 @@
 // local imports
-import { EAutomationNodeType, TAutomationNode } from "./node";
-import { EAutomationScope, TAutomation } from "./root";
+import type { EAutomationNodeType, TAutomationNode } from "./node";
+import type { EAutomationScope, TAutomation } from "./root";
 
 export type TAutomationActivityKeys = Pick<TAutomation, "name" | "description" | "scope">;
 export type TAutomationNodeActivityKeys = Pick<TAutomationNode, "name" | "config" | "handler_name" | "is_enabled">;

@@ -1,15 +1,18 @@
 import { logger } from "@plane/logger";
-import { ExIssue, IssueWithExpanded } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
+import type { ExIssue, IssueWithExpanded } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getCreateIntakeFormFields, getCreateWorkItemFormFields } from "@/services/form-fields";
-import { E_KNOWN_FIELD_KEY, FormField } from "@/types/form/base";
-import { SlackBlockValue } from "../types/fields";
-import { SlackPrivateMetadata, TSlackWorkItemOrIntakeModalParams } from "../types/types";
+import type { FormField } from "@/types/form/base";
+import { E_KNOWN_FIELD_KEY } from "@/types/form/base";
+import type { SlackBlockValue } from "../types/fields";
+import type { SlackPrivateMetadata, TSlackWorkItemOrIntakeModalParams } from "../types/types";
 import { createIssueModalViewFull } from "../views";
-import { ENTITIES } from "./constants";
+import type { ENTITIES } from "./constants";
 import { extractFieldValue, getSlackBlock } from "./fields";
-import { convertToSlackOption, convertToSlackOptions, PlainTextOption } from "./slack-options";
+import type { PlainTextOption } from "./slack-options";
+import { convertToSlackOption, convertToSlackOptions } from "./slack-options";
 
 export function patchSlackView(newModal: any, existingValues: any) {
   // If no existing values, return the modal as-is

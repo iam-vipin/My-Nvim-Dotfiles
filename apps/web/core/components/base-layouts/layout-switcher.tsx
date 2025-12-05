@@ -1,6 +1,5 @@
-"use client";
-
 import React from "react";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TBaseLayoutType } from "@plane/types";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -12,9 +11,10 @@ type Props = {
   selectedLayout: TBaseLayoutType;
 };
 
-export const LayoutSwitcher: React.FC<Props> = (props) => {
+export function LayoutSwitcher(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   const handleOnChange = (layoutKey: TBaseLayoutType) => {
     if (selectedLayout !== layoutKey) {
@@ -27,7 +27,7 @@ export const LayoutSwitcher: React.FC<Props> = (props) => {
       {BASE_LAYOUTS.filter((l) => (layouts ? layouts.includes(l.key) : true)).map((layout) => {
         const Icon = layout.icon;
         return (
-          <Tooltip key={layout.key} tooltipContent={layout.label} isMobile={isMobile}>
+          <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
             <button
               type="button"
               className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
@@ -47,4 +47,4 @@ export const LayoutSwitcher: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

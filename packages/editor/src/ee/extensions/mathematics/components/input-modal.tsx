@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { TMathModalBaseProps } from "../types";
+import type { TMathModalBaseProps } from "../types";
 // utils
 import { validateLaTeX } from "../utils/latex-validator";
 

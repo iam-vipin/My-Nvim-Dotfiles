@@ -15,9 +15,9 @@ import type { TWorkspaceEntityConnection } from "@plane/types";
 // plane web components
 //  plane web hooks
 // plane web types
+import SlackLogo from "@/app/assets/services/slack.png?url";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
-import SlackLogo from "@/public/services/slack.png";
 import { MappingLoader } from "../../../ui";
 import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 import ProjectUpdatesForm from "./form/form";

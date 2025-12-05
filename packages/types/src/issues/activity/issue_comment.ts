@@ -1,14 +1,15 @@
 import type { JSONContent } from "../../editor";
-import { EIssueCommentAccessSpecifier } from "../../enums";
-import { TFileSignedURLResponse } from "../../file";
-import { IUserLite } from "../../users";
-import { IWorkspaceLite } from "../../workspace";
-import {
+import type { EIssueCommentAccessSpecifier } from "../../enums";
+import type { TFileSignedURLResponse } from "../../file";
+import type { IUserLite } from "../../users";
+import type { IWorkspaceLite } from "../../workspace";
+import type {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
+import type { TCommentReplyOperations } from "./issue_comment_extended";
 
 export type TCommentReaction = {
   id: string;
@@ -39,6 +40,10 @@ export type TIssueComment = {
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;
+  parent_id?: string | null;
+  reply_count?: number;
+  replied_user_ids?: string[];
+  last_reply_at?: string | null;
 };
 
 export type TCommentsOperations = {
@@ -47,6 +52,7 @@ export type TCommentsOperations = {
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  duplicateCommentAsset: (assetId: string, commentId?: string) => Promise<{ asset_id: string }>;
   addCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
   deleteCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
   react: (commentId: string, reactionEmoji: string, userReactions: string[]) => Promise<void>;
@@ -57,6 +63,8 @@ export type TCommentsOperations = {
     | undefined;
   userReactions: (commentId: string) => string[] | undefined;
   getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>) => string;
+} & {
+  replyOperations?: TCommentReplyOperations;
 };
 
 export type TIssueCommentMap = {

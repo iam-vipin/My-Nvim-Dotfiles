@@ -137,10 +137,7 @@ export const ProjectAutomationDetailsHeader = observer((props: TProps) => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={() => router.back()} isLoading={isInitializingProjects || !automationDetails}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={automationDetails.workspaceSlug}
-            projectId={automationDetails.project}
-          />
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

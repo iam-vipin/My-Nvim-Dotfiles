@@ -1,7 +1,6 @@
 "use client";
 
 import type { FC } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 
 export const WorklogEmptyScreen: FC = () => {
@@ -19,13 +18,12 @@ export const WorklogEmptyScreen: FC = () => {
           can log time in any work item in any project in your workspace.
         </p>
       </div>
-      <Image
+      <img
         src={resolvedEmptyStatePath}
-        alt={"Worklog empty state"}
+        alt="Worklog empty state"
         width={384}
         height={250}
-        layout="responsive"
-        lazyBoundary="100%"
+        className="my-4 w-full h-full object-cover"
       />
     </div>
   );

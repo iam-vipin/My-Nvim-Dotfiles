@@ -2,7 +2,8 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
-import { ECommentAttributeNames, TCommentMarkAttributes, TCommentMarkStorage } from "../types";
+import type { TCommentMarkAttributes, TCommentMarkStorage } from "../types";
+import { ECommentAttributeNames } from "../types";
 
 export type TCommentsOrderPluginOptions = {
   storage: TCommentMarkStorage;

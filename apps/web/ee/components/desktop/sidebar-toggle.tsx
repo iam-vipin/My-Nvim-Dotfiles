@@ -11,20 +11,20 @@ import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 
-export const SidebarToggle = observer(() => {
+export const DesktopSidebarToggle = observer(function DesktopSidebarToggle() {
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   // derived values
-  const isSidebarAccessible = !!workspaceSlug?.toString() || pathname.includes("/profile/");
+  const isSettingsPath = workspaceSlug && pathname.includes(`/${workspaceSlug}/settings`);
+  const isNotificationsPath = workspaceSlug && pathname.includes(`/${workspaceSlug}/notifications`);
+  const sidebarInaccessiblePaths = isSettingsPath || isNotificationsPath;
+  const isSidebarAccessible = workspaceSlug && !sidebarInaccessiblePaths;
   const isSidebarCollapsed = useMemo(() => sidebarCollapsed, [sidebarCollapsed]);
 
-  if (!isSidebarAccessible) {
-    return null;
-  }
-
+  if (!isSidebarAccessible) return null;
   return (
     <>
       <Tooltip tooltipContent={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"} position="bottom">

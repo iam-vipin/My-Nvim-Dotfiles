@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Globe2, Lock } from "lucide-react";
@@ -27,6 +25,7 @@ type Props = {
   showAccessSpecifier: boolean;
   showSubmitButton: boolean;
   editorRef: EditorRefApi | null;
+  submitButtonText?: string;
 };
 
 type TCommentAccessType = {
@@ -50,7 +49,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
-export const IssueCommentToolbar: React.FC<Props> = (props) => {
+export function IssueCommentToolbar(props: Props) {
   const { t } = useTranslation();
   const {
     accessSpecifier,
@@ -62,6 +61,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     showAccessSpecifier,
     showSubmitButton,
     editorRef,
+    submitButtonText = "common.comment",
   } = props;
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -177,11 +177,11 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
-              {t("common.comment")}
+              {t(submitButtonText)}
             </Button>
           </div>
         )}
       </div>
     </div>
   );
-};
+}

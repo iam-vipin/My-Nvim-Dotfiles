@@ -18,9 +18,6 @@ EPIC_FIELDS = [
     "labels",
     "start_date",
     "target_date",
-    "parent_id",
-    "parent",
-    # Note: Epics don't have cycle_ids/module_ids typically
 ]
 
 

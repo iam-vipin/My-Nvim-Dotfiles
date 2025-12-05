@@ -1,6 +1,7 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { MessageSquare } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useCallback } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useCallback } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 

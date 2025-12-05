@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 
 export interface OAuthState {
   workspace_id: string;

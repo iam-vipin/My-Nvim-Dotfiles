@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -5,10 +6,11 @@ import { useParams } from "next/navigation";
 import { AtSign } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, IWorkspace } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-import { CustomSelect, Loader, Logo, ToggleSwitch } from "@plane/ui";
+import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -20,12 +22,14 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { TFocus } from "@/plane-web/types";
 
 type TProps = {
+  workspaceId: string;
+  projectId: string;
   focus: TFocus;
   isLoading: boolean;
   setFocus: Dispatch<SetStateAction<TFocus>>;
 };
 export const FocusFilter = observer((props: TProps) => {
-  const { focus, setFocus, isLoading } = props;
+  const { focus, setFocus, isLoading, workspaceId, projectId } = props;
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -42,6 +46,23 @@ export const FocusFilter = observer((props: TProps) => {
       return updated;
     });
   };
+
+  // Change focus based on projectId
+  useEffect(() => {
+    if (projectId) {
+      setFocus({
+        isInWorkspaceContext: true,
+        entityType: "project_id",
+        entityIdentifier: projectId.toString(),
+      });
+    } else {
+      setFocus({
+        isInWorkspaceContext: true,
+        entityType: "workspace_id",
+        entityIdentifier: workspaceId?.toString() || "",
+      });
+    }
+  }, [projectId, workspaceId]);
 
   if (isLoading)
     return (

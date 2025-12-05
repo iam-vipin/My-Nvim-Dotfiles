@@ -1,34 +1,33 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { GithubIssue, GithubService, transformPlaneIssue, WebhookGitHubUser } from "@plane/etl/github";
+import type { GithubIssue, GithubService, WebhookGitHubUser } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssue, ExIssueLabel, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
+import { transformPlaneIssue } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
+import { GITHUB_LABEL } from "@/helpers/constants";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { getAPIClient } from "@/services/client";
-import { TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 
 const apiClient = getAPIClient();
 
 export const imagePrefix = encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github/");
 
 export const handleIssueWebhook = async (headers: TaskHeaders, mq: MQ, store: Store, payload: PlaneWebhookPayload) => {
-  // Check for the key in the store, if the key is present, then the issue is already synced
+  // Check if this webhook was triggered by our own GitHub->Plane sync (loop prevention)
+  // The GitHub->Plane handler sets a temporary key with the Plane issue ID
   if (payload && payload.id) {
-    const exist = await store.get(`silo:issue:${payload.id}`);
+    const exist = await store.get(`silo:issue:plane:${payload.id}`);
     if (exist) {
-      logger.info("[PLANE][ISSUE] Event Processed Successfully, confirmed by target");
-      // Remove the webhook from the store
-      await store.del(`silo:issue:${payload.id}`);
+      logger.info("[PLANE][ISSUE] Event triggered by GitHub->Plane sync, skipping to prevent loop");
+      // Remove the key so future legitimate webhooks are not blocked
+      await store.del(`silo:issue:plane:${payload.id}`);
       return true;
     }
   }
@@ -39,6 +38,9 @@ export const handleIssueWebhook = async (headers: TaskHeaders, mq: MQ, store: St
 
   await handleIssueSync(store, payload);
 };
+
+export const shouldSync = (labels: { name: string }[]): boolean =>
+  labels.some((label) => label.name.toLowerCase() === GITHUB_LABEL);
 
 const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
   try {
@@ -126,8 +128,9 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
       await Promise.all([addExternalId(), createLink()]);
     }
 
-    // Add the issue number to the store
-    await store.set(`silo:issue:${githubIssue?.data.number}`, "true");
+    // Set key with GitHub issue number so GitHub->Plane handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:issue:gh:${githubIssue?.data.number}`, "true", 5);
   } catch (error) {
     logger.error("[Plane][Github] Error handling issue create/update event", {
       error,
@@ -174,6 +177,7 @@ const createOrUpdateGitHubIssue = async (
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
     workspace_id: workspaceConnection.workspace_id,
     user_id: issue.updated_by != null ? issue.updated_by : issue.created_by,
+    // @ts-expect-error
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
   });
 

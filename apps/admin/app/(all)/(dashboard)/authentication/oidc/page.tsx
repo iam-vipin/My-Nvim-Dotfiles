@@ -2,24 +2,24 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
+// assets
+import OIDCLogo from "@/app/assets/logos/oidc-logo.svg";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";
 // hooks
 import { useInstance } from "@/hooks/store";
-// icons
-import OIDCLogo from "/public/logos/oidc-logo.svg";
 // plane admin hooks
 import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceOIDCConfigForm } from "./form";
 
-const InstanceOIDCAuthenticationPage = observer(() => {
+const InstanceOIDCAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
@@ -82,7 +82,7 @@ const InstanceOIDCAuthenticationPage = observer(() => {
           <AuthenticationMethodCard
             name="OIDC"
             description="Authenticate your users via the OpenID connect protocol."
-            icon={<Image src={OIDCLogo} height={24} width={24} alt="OIDC Logo" />}
+            icon={<img src={OIDCLogo} height={24} width={24} alt="OIDC Logo" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableOIDCConfig))}
@@ -119,5 +119,7 @@ const InstanceOIDCAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "OIDC Authentication - God Mode" }];
 
 export default InstanceOIDCAuthenticationPage;

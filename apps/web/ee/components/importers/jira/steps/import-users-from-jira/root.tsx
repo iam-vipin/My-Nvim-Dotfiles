@@ -64,7 +64,7 @@ export const ImportUsersFromJira: FC = observer(() => {
     }
     if (key === "userData" && !formData.userSkipToggle && typeof value === "string") {
       handleSyncJobConfig("users", value);
-      handleSyncJobConfig("skipUserImport", true);
+      handleSyncJobConfig("skipUserImport", formData.userSkipToggle);
     }
   };
 

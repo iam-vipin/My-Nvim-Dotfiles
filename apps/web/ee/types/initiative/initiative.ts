@@ -7,6 +7,14 @@ import type {
   TInitiativeStates,
 } from "@plane/types";
 
+export type TInitiativeLinkMetadata = {
+  title?: string;
+  favicon?: string;
+  favicon_url?: string;
+  url?: string;
+  error?: string;
+};
+
 export type TInitiative = {
   id: string;
   reactions?: TInitiativeReaction[];
@@ -58,7 +66,7 @@ export type TInitiativeLink = {
   deleted_at: string | null;
   title: string | null;
   url: string;
-  metadata: Record<string, unknown>;
+  metadata: TInitiativeLinkMetadata;
   created_by: string;
   updated_by: string | null;
   initiative: string;

@@ -1,4 +1,4 @@
-import { TAutomationActivityType } from "@plane/types";
+import type { TAutomationActivityType } from "@plane/types";
 
 export const AUTOMATION_ACTIVITY_TYPE_OPTIONS: {
   key: TAutomationActivityType;

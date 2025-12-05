@@ -1,4 +1,5 @@
 import type { TBaseLayoutType } from "@plane/types";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
 import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
 
@@ -8,7 +9,7 @@ interface GenericLayoutLoaderProps {
   customLoaders?: Partial<Record<TBaseLayoutType, React.ComponentType>>;
 }
 
-export const GenericLayoutLoader = ({ layout, customLoaders }: GenericLayoutLoaderProps) => {
+export function GenericLayoutLoader({ layout, customLoaders }: GenericLayoutLoaderProps) {
   const CustomLoader = customLoaders?.[layout];
   if (CustomLoader) return <CustomLoader />;
 
@@ -17,8 +18,10 @@ export const GenericLayoutLoader = ({ layout, customLoaders }: GenericLayoutLoad
       return <ListLayoutLoader />;
     case "kanban":
       return <KanbanLayoutLoader />;
+    case "gantt":
+      return <GanttLayoutLoader />;
     default:
       console.warn(`Unknown layout: ${layout}`);
       return null;
   }
-};
+}

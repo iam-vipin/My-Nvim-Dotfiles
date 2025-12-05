@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { TTemplateCategory } from "@plane/types";
+import type { TTemplateCategory } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
 

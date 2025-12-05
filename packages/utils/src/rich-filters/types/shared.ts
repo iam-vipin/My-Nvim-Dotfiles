@@ -1,5 +1,5 @@
 // plane imports
-import {
+import type {
   TFilterAndGroupNode,
   TFilterExpression,
   TFilterGroupNode,

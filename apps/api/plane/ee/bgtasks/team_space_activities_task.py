@@ -3,6 +3,7 @@ import json
 
 # Django imports
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from celery import shared_task
@@ -16,6 +17,8 @@ from plane.ee.models import (
 )
 from plane.db.models import Label, Project, User, Workspace
 from plane.utils.exception_logger import log_exception
+from plane.ee.bgtasks.notification_task import process_teamspace_notifications
+from plane.ee.serializers import TeamspaceActivitySerializer
 
 
 # Track Changes in name
@@ -611,7 +614,16 @@ def delete_view_activity(
 
 
 @shared_task
-def team_space_activity(type, requested_data, team_space_id, actor_id, slug, current_instance, epoch):
+def team_space_activity(
+    type,
+    requested_data,
+    team_space_id,
+    actor_id,
+    slug,
+    current_instance,
+    epoch,
+    notification=False,
+):
     try:
         # Get workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -654,7 +666,25 @@ def team_space_activity(type, requested_data, team_space_id, actor_id, slug, cur
             )
 
         # Save all the values to database
-        _ = TeamspaceActivity.objects.bulk_create(team_space_activities, batch_size=100, ignore_conflicts=True)
+        teamspace_activities_created = TeamspaceActivity.objects.bulk_create(
+            team_space_activities, batch_size=100, ignore_conflicts=True
+        )
+
+        if notification:
+            process_teamspace_notifications.delay(
+                teamspace_id=team_space.id,
+                workspace_id=workspace_id,
+                actor_id=actor_id,
+                activities_data=json.dumps(
+                    TeamspaceActivitySerializer(teamspace_activities_created, many=True).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                requested_data=requested_data,
+                current_instance=current_instance,
+                subscriber=False,
+                notification_type=type,
+            )
+
         return
 
     except Exception as e:

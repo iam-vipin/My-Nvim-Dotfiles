@@ -1,11 +1,12 @@
-import { RawCommands } from "@tiptap/core";
-import { MarkType } from "@tiptap/pm/model";
+import type { RawCommands } from "@tiptap/core";
+import type { MarkType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
 import { commentInteractionPluginKey } from "./plugins";
-import { ECommentAttributeNames, TCommentMarkAttributes } from "./types";
+import type { TCommentMarkAttributes } from "./types";
+import { ECommentAttributeNames } from "./types";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

@@ -30,6 +30,7 @@ export default {
     overview: "Vue d'ensemble",
     workflows: "Flux de travail",
     members_and_teamspaces: "Membres et espaces de travail",
+    open_in_full_screen: "Ouvrir {page} en plein écran",
   },
   updates: {
     add_update: "Ajouter une mise à jour",
@@ -161,6 +162,29 @@ export default {
       settings_sub_heading:
         "Transformez les demandes des clients en éléments de travail, attribuez une priorité en fonction des demandes et associez les états des éléments de travail aux enregistrements des clients. Bientôt, vous pourrez intégrer votre CRM ou outil de support pour une meilleure gestion du travail selon les attributs des clients.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilité d'ingestion",
+        notify_assignee: {
+          title: "Notifier les responsables",
+          description:
+            "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications",
+        },
+        toasts: {
+          set: {
+            loading: "Définition des responsables...",
+            success: {
+              title: "Succès !",
+              message: "Responsables définis avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Une erreur s'est produite lors de la définition des responsables. Veuillez réessayer.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Aucune intégration configurée",
@@ -205,6 +229,92 @@ export default {
         description: "Ajoutez des propriétés personnalisées à votre épique.",
       },
       disabled: "Désactivé",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Planification automatique des cycles",
+        description: "Maintenez les cycles en mouvement sans configuration manuelle.",
+        tooltip: "Créez automatiquement de nouveaux cycles selon votre planning choisi.",
+        edit_button: "Modifier",
+        form: {
+          cycle_title: {
+            label: "Titre du cycle",
+            placeholder: "Titre",
+            tooltip:
+              "Le titre sera complété par des numéros pour les cycles suivants. Par exemple : Conception - 1/2/3",
+            validation: {
+              required: "Le titre du cycle est requis",
+              max_length: "Le titre ne doit pas dépasser 255 caractères",
+            },
+          },
+          cycle_duration: {
+            label: "Durée du cycle",
+            unit: "Semaines",
+            validation: {
+              required: "La durée du cycle est requise",
+              min: "La durée du cycle doit être d'au moins 1 semaine",
+              max: "La durée du cycle ne peut pas dépasser 30 semaines",
+              positive: "La durée du cycle doit être positive",
+            },
+          },
+          cooldown_period: {
+            label: "Période de refroidissement",
+            unit: "jours",
+            tooltip: "Pause entre les cycles avant le début du suivant.",
+            validation: {
+              required: "La période de refroidissement est requise",
+              negative: "La période de refroidissement ne peut pas être négative",
+            },
+          },
+          start_date: {
+            label: "Jour de début du cycle",
+            validation: {
+              required: "La date de début est requise",
+              past: "La date de début ne peut pas être dans le passé",
+            },
+          },
+          number_of_cycles: {
+            label: "Nombre de cycles futurs",
+            validation: {
+              required: "Le nombre de cycles est requis",
+              min: "Au moins 1 cycle est requis",
+              max: "Impossible de planifier plus de 3 cycles",
+            },
+          },
+          auto_rollover: {
+            label: "Report automatique des éléments de travail",
+            tooltip:
+              "Le jour où un cycle se termine, déplacer tous les éléments de travail non terminés vers le cycle suivant.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Activation de la planification automatique des cycles",
+            loading_disable: "Désactivation de la planification automatique des cycles",
+            success: {
+              title: "Succès !",
+              message: "Planification automatique des cycles activée avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message: "Échec de l'activation de la planification automatique des cycles.",
+            },
+          },
+          save: {
+            loading: "Enregistrement de la configuration de planification automatique des cycles",
+            success: {
+              title: "Succès !",
+              message_create: "Configuration de planification automatique des cycles enregistrée avec succès.",
+              message_update: "Configuration de planification automatique des cycles mise à jour avec succès.",
+            },
+            error: {
+              title: "Erreur !",
+              message_create: "Échec de l'enregistrement de la configuration de planification automatique des cycles.",
+              message_update: "Échec de la mise à jour de la configuration de planification automatique des cycles.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -457,7 +567,7 @@ export default {
       },
       not_found: {
         title: "L'initiative n'existe pas",
-        description: "L'initiative que vous recherchez n'existe pas ou a été supprimée.",
+        description: "L'initiative que vous recherchez n'existe pas, a été archivée ou a été supprimée.",
         primary_button: {
           text: "Voir les autres initiatives",
         },
@@ -658,7 +768,12 @@ export default {
         app_description_title: {
           label: "Description longue",
           placeholder:
-            "Rédigez une longue description pour la place de marché. Appuyez sur ‘/’ pour afficher les commandes.",
+            "Rédigez une longue description pour la place de marché. Appuyez sur '/' pour afficher les commandes.",
+        },
+        authorization_grant_type: {
+          title: "Type de connexion",
+          description:
+            "Choisissez si votre application doit être installée une fois pour l'espace de travail ou permettre à chaque utilisateur de connecter son propre compte",
         },
         app_description_error: "La description de l'application est requise",
         app_slug_title: "Slug de l'application",
@@ -719,6 +834,10 @@ export default {
         categories_error: "Les catégories sont requises",
         invalid_categories_error: "Catégories invalides",
         categories_description: "Sélectionnez les catégories qui décrivent le mieux l'application",
+        supported_plans: "Plans Pris en Charge",
+        supported_plans_description:
+          "Sélectionnez les plans d'espace de travail qui peuvent installer cette application. Laissez vide pour autoriser tous les plans.",
+        select_plans: "Sélectionner les Plans",
         privacy_policy_url_title: "URL de la politique de confidentialité",
         privacy_policy_url_error: "La URL de la politique de confidentialité est requise",
         invalid_privacy_policy_url_error: "URL de la politique de confidentialité invalide",
@@ -791,8 +910,8 @@ export default {
         internal: "Interne",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Voir votre travail devenir plus intelligent et plus rapide avec l'IA qui est connectée de manière native à votre travail et à votre base de connaissances.",
       },
@@ -1513,7 +1632,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importez vos données Jira Server dans les projets Plane.",
+    jira_server_importer_description: "Importez vos données Jira Server/Data Center dans les projets Plane.",
     steps: {
       title_configure_plane: "Configurer Plane",
       description_configure_plane:

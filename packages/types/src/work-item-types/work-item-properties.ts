@@ -1,6 +1,6 @@
-import { TLogoProps } from "../common";
-import { TIssuePropertySettingsMap } from "../work-item-types/work-item-property-configurations";
-import { TIssuePropertyOption, IIssuePropertyOption } from "../work-item-types/work-item-property-option";
+import type { TLogoProps } from "../common";
+import type { TIssuePropertySettingsMap } from "../work-item-types/work-item-property-configurations";
+import type { TIssuePropertyOption, IIssuePropertyOption } from "../work-item-types/work-item-property-option";
 
 export enum EIssuePropertyType {
   TEXT = "TEXT",

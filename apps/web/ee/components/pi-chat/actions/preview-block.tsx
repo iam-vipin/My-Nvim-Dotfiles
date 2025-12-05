@@ -4,7 +4,7 @@ import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, Ep
 import { cn } from "@plane/utils";
 import type { TArtifact } from "@/plane-web/types";
 
-export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon") => {
+export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon", className?: string) => {
   switch (type) {
     case "project":
       return <ProjectIcon width={16} height={16} />;
@@ -27,7 +27,12 @@ export const getIcon = (type: string, color?: string, defaultRender: "text" | "i
           style={{ backgroundColor: color }}
         />
       ) : (
-        <div className="bg-custom-background-90 rounded-full py-0.5 px-2 capitalize text-xs text-custom-text-200 font-medium">
+        <div
+          className={cn(
+            "bg-custom-background-90 rounded-full py-0.5 px-2 capitalize text-xs text-custom-text-200 font-medium",
+            className
+          )}
+        >
           {type}
         </div>
       );

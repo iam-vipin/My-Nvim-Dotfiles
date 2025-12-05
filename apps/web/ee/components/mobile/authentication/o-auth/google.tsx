@@ -1,12 +1,11 @@
 "use client";
 
 import type { FC } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // images
-import GoogleLogo from "/public/logos/google-logo.svg";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 
 export type TGoogleAuthButton = {
   title: string;
@@ -32,7 +31,7 @@ export const GoogleAuthButton: FC<TGoogleAuthButton> = (props) => {
       }`}
       onClick={handleSignIn}
     >
-      <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />
+      <img src={GoogleLogo} alt="Google Logo" className="w-4 h-4 object-cover" />
       {title}
     </button>
   );

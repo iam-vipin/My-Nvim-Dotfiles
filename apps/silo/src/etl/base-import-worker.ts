@@ -1,15 +1,16 @@
-import { TJobStatus, PlaneEntities, E_JOB_STATUS } from "@plane/etl/core";
+import type { TJobStatus, PlaneEntities } from "@plane/etl/core";
+import { E_JOB_STATUS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { JobService } from "@/apps/engine/services/job.service";
 import { IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY } from "@/helpers/cache-keys";
 import { wait } from "@/helpers/delay";
 import { updateJobWithReport } from "@/helpers/job";
 import { captureException } from "@/logger";
 import { getAPIClient } from "@/services/client";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
-import { TBatch, TPaginationContext, UpdateEventType } from "@/worker/types";
+import type { TaskHandler, TaskHeaders } from "@/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TBatch, TPaginationContext, UpdateEventType } from "@/worker/types";
 import { migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {

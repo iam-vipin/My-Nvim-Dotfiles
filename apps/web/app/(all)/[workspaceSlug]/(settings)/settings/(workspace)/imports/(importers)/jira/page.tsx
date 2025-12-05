@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -10,7 +9,7 @@ import { AuthenticationRoot, StepsRoot, JiraDashboardRoot } from "@/plane-web/co
 //  plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 
-const JiraImporter: FC = observer(() => {
+function JiraImporter() {
   const {
     user,
     workspace,
@@ -80,6 +79,6 @@ const JiraImporter: FC = observer(() => {
       )}
     </Fragment>
   );
-});
+}
 
-export default JiraImporter;
+export default observer(JiraImporter);

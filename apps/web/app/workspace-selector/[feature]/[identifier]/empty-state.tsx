@@ -1,21 +1,20 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import emptyWorkspaceDarkPng from "@/app/assets/empty-state/marketplace/empty-workspace-dark.png?url";
+import emptyWorkspaceLightPng from "@/app/assets/empty-state/marketplace/empty-workspace-light.png?url";
 
 export const WorkspaceSelectorEmptyState = observer(() => {
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // derived values
-  const image = useResolvedAssetPath({
-    basePath: "/empty-state/marketplace/empty-workspace",
-    extension: "png",
-  });
+  const image = resolvedTheme === "light" ? emptyWorkspaceLightPng : emptyWorkspaceDarkPng;
 
   return (
     <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-8 items-center">
@@ -25,7 +24,7 @@ export const WorkspaceSelectorEmptyState = observer(() => {
       </div>
       <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10 w-full md:w-fit">
         <div className="w-full flex flex-col gap-2 items-center md:w-[450px]">
-          <Image src={image} alt="empty workspace" width={384} height={250} />
+          <img src={image} alt="empty workspace" width={384} height={250} />
           <div className="flex gap-2 flex-col md:flex-row">
             <a
               href="https://docs.plane.so/core-concepts/workspaces/overview"

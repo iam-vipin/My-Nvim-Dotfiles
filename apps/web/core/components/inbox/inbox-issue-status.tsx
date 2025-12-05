@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 // helpers
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import type { IInboxIssueStore } from "@plane/types";
 import { cn, findHowManyDaysLeft } from "@plane/utils";
 // store
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { ICON_PROPERTIES, InboxStatusIcon } from "./inbox-status-icon";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
   showDescription?: boolean;
 };
 
-export const InboxIssueStatus: React.FC<Props> = observer((props) => {
+export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props) {
   const { inboxIssue, iconSize = 16, showDescription = false } = props;
   //hooks
   const { t } = useTranslation();

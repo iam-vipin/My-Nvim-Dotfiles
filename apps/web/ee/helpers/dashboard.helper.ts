@@ -12,6 +12,7 @@ const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefi
   pi_chat: E_FEATURE_FLAGS.PI_CHAT,
   "workspace-dashboards": E_FEATURE_FLAGS.DASHBOARDS,
   projects: undefined,
+  stickies: undefined,
   team_spaces: E_FEATURE_FLAGS.TEAMSPACES,
   "all-issues": undefined,
   active_cycles: E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,

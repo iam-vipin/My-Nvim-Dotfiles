@@ -1,36 +1,50 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { TIssue } from "@plane/types";
+import { Card } from "@plane/ui";
 import { IssueModalProvider } from "@/ce/components/issues/issue-modal";
 import { EpicFormRoot } from "@/plane-web/components/epics/epic-modal/form";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 import { useWorkItemData } from "../useArtifactData";
+import { PiChatArtifactsFooter } from "./footer";
 
 interface TEpicDetailProps {
+  workspaceSlug: string;
+  activeChatId: string;
   data: TArtifact;
-  isSaving: boolean;
-  setIsSaving: (isSaving: boolean) => void;
-  handleSuccess: () => void;
-  handleError: (error: string) => void;
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
 }
 
 export const EpicDetail = observer((props: TEpicDetailProps) => {
-  const { data, setIsSaving, handleSuccess, handleError, updateArtifact } = props;
-  const updatedData = useWorkItemData(data.artifact_id);
+  const { data, workspaceSlug, activeChatId, updateArtifact } = props;
+  // state
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
+  // hooks
+  const updatedData = useWorkItemData(data.artifact_id);
   const projectId = data.parameters?.project?.id;
-
+  const handleOnSave = () => {
+    setIsSaving(false);
+    setShowSavedToast(true);
+    setTimeout(() => {
+      setShowSavedToast(false);
+      setError(null);
+    }, 1000);
+  };
   const handleOnChange = async (formData: Partial<TIssue> | null) => {
     if (!formData) return;
     setIsSaving(true);
     await updateArtifact(formData)
       .then(() => {
-        handleSuccess();
+        handleOnSave();
       })
       .catch((error) => {
         console.error(error);
-        handleError(error);
+        setError(error);
+        handleOnSave();
       });
   };
   const commonIssueModalProps = {
@@ -51,13 +65,25 @@ export const EpicDetail = observer((props: TEpicDetailProps) => {
     isProjectSelectionDisabled: false,
     convertToWorkItem: false,
     showActionButtons: false,
-    dataResetProperties: [data.artifact_id, updatedData],
   };
   return (
-    projectId && (
-      <IssueModalProvider>
-        <EpicFormRoot {...commonIssueModalProps} />
-      </IssueModalProvider>
-    )
+    <>
+      {projectId && (
+        <Card className="relative max-w-[700px] rounded-xl shadow-lg p-0 space-y-0">
+          <IssueModalProvider>
+            <EpicFormRoot {...commonIssueModalProps} key={data.artifact_id} />
+          </IssueModalProvider>
+        </Card>
+      )}
+      <PiChatArtifactsFooter
+        artifactsData={data}
+        workspaceSlug={workspaceSlug}
+        activeChatId={activeChatId}
+        artifactId={data.artifact_id}
+        isSaving={isSaving}
+        showSavedToast={showSavedToast}
+        error={error}
+      />
+    </>
   );
 });

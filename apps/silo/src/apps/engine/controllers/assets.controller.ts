@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get } from "@plane/decorators";
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { responseHandler } from "@/helpers/response-handler";
 import { getAPIClient } from "@/services/client";

@@ -1,4 +1,4 @@
-import { AsanaServiceProps } from "@/asana/types";
+import type { AsanaServiceProps } from "@/asana/types";
 import AsanaService from "./api.service";
 import { AsanaAuth } from "./auth.service";
 

@@ -1,4 +1,4 @@
-import { ExIssueType } from "./issue-types";
+import type { ExIssueType } from "./issue-types";
 
 // service types
 export type ClientOptions = {
@@ -25,6 +25,16 @@ type ExBase = {
 
 export type Optional<T extends object> = {
   [K in keyof T]?: T[K];
+};
+
+export type TProjectFeatures = {
+  epics: boolean;
+  modules: boolean;
+  cycles: boolean;
+  views: boolean;
+  pages: boolean;
+  intakes: boolean;
+  work_item_types: boolean;
 };
 
 export type Paginated<T> = {
@@ -206,6 +216,19 @@ export type ExIntakeIssue<T = ExIssue> = {
   extra: Record<string, any>;
 };
 
+export type TWorklog = {
+  id: string | undefined;
+  description: string | undefined;
+  logged_by: string | undefined;
+  duration: number | undefined;
+  workspace_id: string | undefined;
+  project_id: string | undefined;
+  created_by: string | undefined;
+  updated_by: string | undefined;
+  created_at: string | undefined;
+  updated_at: string | undefined;
+};
+
 /* ----------------- Project Type --------------------- */
 type IProject = {
   id: string;
@@ -254,6 +277,11 @@ type IProject = {
   project_lead: any;
   estimate: any;
   default_state: any;
+  is_project_updates_enabled: boolean;
+  is_epic_enabled: boolean;
+  is_workflow_enabled: boolean;
+  is_milestone_enabled: boolean;
+  is_automated_cycle_enabled: boolean;
 };
 
 export type ExProject = Partial<IProject> & Partial<ExBase>;

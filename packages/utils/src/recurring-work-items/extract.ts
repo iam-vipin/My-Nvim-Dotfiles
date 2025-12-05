@@ -1,12 +1,12 @@
 // plane imports
-import { TRecurringWorkItem, TWorkItemBlueprintFormData } from "@plane/types";
+import type { TRecurringWorkItem, TWorkItemBlueprintFormData } from "@plane/types";
 // local imports
 import { extractWorkItemFormDataBlueprint } from "../templates/work-item/blueprint/extract";
-import {
-  sanitizeWorkItemFormDataBlueprint,
+import type {
   TSanitizeWorkItemFormDataParams,
   TWorkItemSanitizationResult,
 } from "../templates/work-item/blueprint/sanitize";
+import { sanitizeWorkItemFormDataBlueprint } from "../templates/work-item/blueprint/sanitize";
 
 /**
  * Parameters for extracting and sanitizing recurring work item form data

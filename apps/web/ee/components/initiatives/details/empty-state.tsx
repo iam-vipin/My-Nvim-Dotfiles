@@ -3,12 +3,12 @@
 import type { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// assets
+import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import emptyIssue from "@/public/empty-state/issue.svg";
 
 type TInitiativeEmptyStateProps = {
   workspaceSlug: string;

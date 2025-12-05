@@ -1,5 +1,5 @@
-import { gitlabEntityConnectionSchema, gitlabWorkspaceConnectionSchema } from "@plane/etl/gitlab";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import type { gitlabEntityConnectionSchema, gitlabWorkspaceConnectionSchema } from "@plane/etl/gitlab";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 export type GitlabWorkspaceConnection = TWorkspaceConnection<typeof gitlabWorkspaceConnectionSchema>;
 export type GitlabEntityConnection = TWorkspaceEntityConnection<typeof gitlabEntityConnectionSchema>;

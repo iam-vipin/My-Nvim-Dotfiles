@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import { CustomAttachmentExtensionConfig } from "../attachments/extension-config";
 import { CommentsExtensionConfig } from "../comments/extension-config";
 import { DrawioExtensionConfig } from "../drawio/extension-config";

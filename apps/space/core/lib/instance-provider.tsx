@@ -1,24 +1,21 @@
-"use client";
-
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// plane imports
 import { SPACE_BASE_PATH } from "@plane/constants";
 import { PlaneLockup } from "@plane/propel/icons";
+// assets
+import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg?url";
+import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceFailureView } from "@/components/instance/instance-failure-view";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/use-user";
-// assets
-import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
 
-export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
+export const InstanceProvider = observer(function InstanceProvider({ children }: { children: React.ReactNode }) {
   const { fetchInstanceInfo, instance, error } = useInstance();
   const { fetchCurrentUser } = useUser();
   const { resolvedTheme } = useTheme();
@@ -55,7 +52,7 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
             </div>
           </div>
           <div className="absolute inset-0 z-0">
-            <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
+            <img src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
           </div>
           <div className="relative z-10 flex-grow">
             <div className="relative h-full w-full overflow-y-auto px-6 py-10 mx-auto flex justify-center items-center">

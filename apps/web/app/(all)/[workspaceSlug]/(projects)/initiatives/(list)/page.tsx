@@ -7,7 +7,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { InitiativesPageRoot } from "@/plane-web/components/initiatives/layout/page";
 
-const InitiativesPage = observer(() => {
+function InitiativesPage() {
   // store hooks
   const { currentWorkspace } = useWorkspace();
 
@@ -20,5 +20,5 @@ const InitiativesPage = observer(() => {
       <InitiativesPageRoot />
     </>
   );
-});
-export default InitiativesPage;
+}
+export default observer(InitiativesPage);

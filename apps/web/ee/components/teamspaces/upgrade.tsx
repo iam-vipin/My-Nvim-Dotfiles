@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
@@ -11,11 +10,11 @@ import { TEAMSPACE_UPGRADE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
+// assets
+import TeamsUpgradeDark from "@/app/assets/empty-state/teams/dark-upgrade.webp?url";
+import TeamsUpgradeLight from "@/app/assets/empty-state/teams/light-upgrade.webp?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import TeamsUpgradeDark from "@/public/empty-state/teams/dark-upgrade.webp";
-import TeamsUpgradeLight from "@/public/empty-state/teams/light-upgrade.webp";
 
 export const TeamspaceUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();
@@ -78,9 +77,9 @@ export const TeamspaceUpgrade: FC = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? TeamsUpgradeDark : TeamsUpgradeLight}
-          alt=""
+          alt="Teamspaces upgrade"
           className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain"
         />
       </div>

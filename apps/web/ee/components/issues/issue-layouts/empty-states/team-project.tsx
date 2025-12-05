@@ -32,9 +32,7 @@ export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const teamspaceProjectWorkItemFilter = projectId
-    ? useWorkItemFilterInstance(EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, projectId)
-    : undefined;
+  const teamspaceProjectWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, projectId);
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE

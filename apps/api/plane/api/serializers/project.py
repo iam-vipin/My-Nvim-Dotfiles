@@ -9,6 +9,9 @@ from plane.db.models import (
     WorkspaceMember,
     State,
     Estimate,
+    Issue,
+    IssueType,
+    ProjectIssueType,
 )
 
 from plane.utils.content_validator import (
@@ -16,8 +19,13 @@ from plane.utils.content_validator import (
 )
 from .base import BaseSerializer
 
+# ee imports
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.ee.models import WorkitemTemplate, ProjectFeature
+from plane.payment.flags.flag import FeatureFlag
 
-class ProjectCreateSerializer(BaseSerializer):
+
+class  ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 
@@ -171,7 +179,7 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
 
         if (
             validated_data.get("estimate", None) is not None
-            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate")).exists()
+            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate").id).exists()
         ):
             # Check if the estimate is a estimate in the project
             raise serializers.ValidationError("Estimate should be a estimate in the project")
@@ -283,3 +291,133 @@ class ProjectLiteSerializer(BaseSerializer):
             "cover_image_url",
         ]
         read_only_fields = fields
+
+
+class ProjectFeatureSerializer(serializers.Serializer):
+    """
+    Serializer for updating project features.
+    """
+
+    epics = serializers.BooleanField(required=False)
+    modules = serializers.BooleanField(required=False)
+    cycles = serializers.BooleanField(required=False)
+    views = serializers.BooleanField(required=False)
+    pages = serializers.BooleanField(required=False)
+    intakes = serializers.BooleanField(required=False)
+    work_item_types = serializers.BooleanField(required=False)
+
+    def validate_epics(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.EPICS, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Epics")
+        return value
+
+    def validate_work_item_types(self, value):
+        if not check_workspace_feature_flag(FeatureFlag.ISSUE_TYPES, self.context["slug"]):
+            raise serializers.ValidationError("Upgrade your plan to enable Work Item Types")
+        return value
+
+    def update(self, instance, validated_data):
+        project_feature_fields = [
+            "modules",
+            "cycles",
+            "views",
+            "pages",
+            "intakes",
+        ]
+        old_name_map = {
+            "modules": "module_view",
+            "cycles": "cycle_view",
+            "views": "issue_views_view",
+            "pages": "page_view",
+            "intakes": "intake_view",
+        }
+        for field in project_feature_fields:
+            if field in validated_data:
+                Project.objects.filter(id=self.context["project_id"]).update(
+                    **{old_name_map[field]: validated_data[field]}
+                )
+
+        project = Project.objects.get(id=self.context["project_id"])
+
+        if validated_data.get("work_item_types"):
+            # Check if default issue type already exists
+            if not ProjectIssueType.objects.filter(project_id=project.id, is_default=True).exists():
+                # Create default issue type
+                issue_type = IssueType.objects.create(
+                    workspace_id=project.workspace_id,
+                    name="Task",
+                    is_default=True,
+                    description="Default work item type with the option to add new properties",
+                    logo_props={
+                        "in_use": "icon",
+                        "icon": {"color": "#ffffff", "background_color": "#6695FF"},
+                    },
+                )
+
+                # Update existing issues to use the new default issue type
+                Issue.objects.filter(project_id=project.id, type_id__isnull=True).update(type_id=issue_type.id)
+
+                # Bridge the issue type with the project
+                ProjectIssueType.objects.create(
+                    project_id=project.id, issue_type_id=issue_type.id, level=0, is_default=True
+                )
+
+                # Update existing work item templates to use the new default issue type
+                work_item_type_template_schema = {
+                    "id": str(issue_type.id),
+                    "name": issue_type.name,
+                    "logo_props": issue_type.logo_props,
+                    "is_epic": issue_type.is_epic,
+                }
+                WorkitemTemplate.objects.filter(
+                    project_id=project.id, workspace=project.workspace, type__exact={}
+                ).update(type=work_item_type_template_schema)
+
+            # Enable issue types for the project
+            project.is_issue_type_enabled = True
+            project.save()
+
+        if validated_data.get("epics", None) is not None:
+            if validated_data.get("epics"):
+                # get or create the project feature
+                project_feature = ProjectFeature.objects.filter(project=project).first()
+                if not project_feature:
+                    project_feature = ProjectFeature.objects.create(project=project)
+
+                # Check if the epic issue type is already created for the project or not
+                project_issue_type = ProjectIssueType.objects.filter(project=project, issue_type__is_epic=True).first()
+
+                if not project_issue_type:
+                    # create the epic issue type
+                    epic = IssueType.objects.create(workspace=project.workspace, is_epic=True, level=1)
+
+                    # add it to the project epic issue type
+                    _ = ProjectIssueType.objects.create(project=project, issue_type=epic)
+
+                # enable epic issue type
+                project_feature.is_epic_enabled = True
+                project_feature.save()
+            else:
+                # get or create the project feature
+                project_feature = ProjectFeature.objects.filter(project=project).first()
+                if not project_feature:
+                    project_feature = ProjectFeature.objects.create(project=project)
+
+                if project_feature.is_epic_enabled:
+                    project_feature.is_epic_enabled = False
+                    project_feature.save()
+
+        # Refresh instance with updated project data
+        project = Project.objects.get(id=self.context["project_id"])
+        project_feature = ProjectFeature.objects.filter(project=project).first()
+        is_epic_enabled = project_feature.is_epic_enabled if project_feature else False
+
+        return {
+            "epics": is_epic_enabled,
+            "modules": project.module_view,
+            "cycles": project.cycle_view,
+            "views": project.issue_views_view,
+            "pages": project.page_view,
+            "intakes": project.intake_view,
+            "work_item_types": project.is_issue_type_enabled,
+        }

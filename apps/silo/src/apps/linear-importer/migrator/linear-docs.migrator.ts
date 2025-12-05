@@ -1,19 +1,15 @@
-import { PlanePageEntity } from "@plane/etl/core";
-import {
-  LinearConfig,
-  LinearService,
-  LinearDocumentEntity,
-  pullDocuments,
-  E_LinearDocsMigratorStep,
-} from "@plane/etl/linear";
+import type { PlanePageEntity } from "@plane/etl/core";
+import type { LinearConfig, LinearService, LinearDocumentEntity } from "@plane/etl/linear";
+import { pullDocuments, E_LinearDocsMigratorStep } from "@plane/etl/linear";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { PagesMigrator } from "@/etl/migrator/pages.migrator";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import { getAPIClient } from "@/services/client";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { createLinearClient } from "../helpers/migration-helpers";
 import { getTransformedDocuments } from "./tranformers";
 

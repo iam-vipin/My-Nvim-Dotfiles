@@ -1,5 +1,5 @@
-import { LOGICAL_OPERATOR, TSupportedOperators, TFilterValue } from "../../../rich-filters";
-import { SingleOrArray } from "../../../utils";
+import type { LOGICAL_OPERATOR, TSupportedOperators, TFilterValue } from "../../../rich-filters";
+import type { SingleOrArray } from "../../../utils";
 
 export type TAutomationConditionFilterProperty =
   | "payload.data.assignee_ids"

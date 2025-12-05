@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
@@ -13,7 +11,6 @@ import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-st
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
 
@@ -41,7 +38,7 @@ type Props = {
   handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
-export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
+export const InboxIssueActionsMobileHeader = observer(function InboxIssueActionsMobileHeader(props: Props) {
   const {
     inboxIssue,
     isSubmitting,

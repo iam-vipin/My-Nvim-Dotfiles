@@ -1,4 +1,4 @@
-import { HTMLElement } from "node-html-parser";
+import type { HTMLElement } from "node-html-parser";
 import { TConfluenceContentParserContext } from "@/apps/notion-importer/types";
 import { CONFLUENCE_ATTACHMENT_SOURCE_SELECTOR } from "@/apps/notion-importer/utils/html-helpers";
 import { ExtractBodyExtension } from "../../../common/content-parser";

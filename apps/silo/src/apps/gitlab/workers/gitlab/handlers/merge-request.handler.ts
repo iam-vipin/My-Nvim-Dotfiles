@@ -1,9 +1,10 @@
-import { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
+import type { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
-import { E_INTEGRATION_KEYS, TGitlabWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import type { TGitlabWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGitlabConnectionDetails } from "@/apps/gitlab/helpers/connection-details";
 import { GitlabIntegrationService } from "@/apps/gitlab/services/gitlab.service";
-import { GitlabConnectionDetails } from "@/apps/gitlab/types";
+import type { GitlabConnectionDetails } from "@/apps/gitlab/types";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { PullRequestBehaviour } from "@/lib/behaviours";
 import { getAPIClient } from "@/services/client";

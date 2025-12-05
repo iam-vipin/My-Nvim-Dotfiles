@@ -118,6 +118,7 @@ export const MilestonesDropdown: React.FC<Props> = observer((props) => {
         inputClassName="w-full bg-transparent py-1 text-sm text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
         optionsContainerClassName="mt-2 space-y-1"
         positionerClassName="z-50"
+        dataPreventOutsideClick
       >
         {milestoneOptions.map((option) => (
           <Combobox.Option

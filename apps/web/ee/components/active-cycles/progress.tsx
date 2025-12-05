@@ -1,13 +1,15 @@
 import type { FC } from "react";
+import { useTheme } from "next-themes";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator } from "@plane/ui";
+// assets
+import progressDark from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
+import progressLight from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle;
@@ -17,8 +19,10 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = (props) => {
   const { cycle } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // derived values
-  const progressResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/progress" });
+  const progressResolvedPath = resolvedTheme === "light" ? progressLight : progressDark;
 
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,

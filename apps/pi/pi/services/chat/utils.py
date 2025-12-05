@@ -1,12 +1,15 @@
 import json
+import re
 import uuid
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import Union
 
 from langchain_core.messages import AIMessage
+from langchain_core.messages import BaseMessage
 from langchain_core.messages import HumanMessage
 from pydantic import UUID4
 from sqlmodel import select
@@ -776,3 +779,40 @@ async def auto_populate_disambiguation_options(
         # Return empty list on error
 
     return options
+
+
+def conv_history_from_app_query(query: str) -> Tuple[str, str, List[BaseMessage]]:
+    """
+    Extract conversation history from an app query.
+
+    Args:
+        query: The query string to extract conversation history from
+
+    Returns:
+        Tuple of (current user message, conversation history string, list of BaseMessage objects)
+    """
+    # use the text before "πCurrent user messageπ:" as the conversation history and the text after it as the current user message
+    current_user_message_index = query.find("πCurrent user messageπ:")
+    conversation_history = ""
+    if current_user_message_index != -1:
+        conversation_history = query[:current_user_message_index].strip()
+        query = query[current_user_message_index + len("πCurrent user messageπ:") :].strip()
+
+    # Parse conversation history into User and Assistant messages
+    langchain_conv_history: List[BaseMessage] = []
+    if conversation_history.strip():
+        # Find all User: and Assistant: patterns
+        pattern = r"(User|Assistant):\s*(.*?)(?=(?:User|Assistant):|$)"
+        matches = re.findall(pattern, conversation_history, re.DOTALL)
+
+        for role, content in matches:
+            content = content.strip()
+            if not content:
+                continue
+            log.info(f"Conversation history role: {role}, content: {content}")
+            if role == "User":
+                langchain_conv_history.append(HumanMessage(content=content))
+            elif role == "Assistant":
+                langchain_conv_history.append(AIMessage(content=content))
+
+    return query, conversation_history, langchain_conv_history

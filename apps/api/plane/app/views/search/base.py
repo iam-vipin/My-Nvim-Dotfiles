@@ -262,21 +262,23 @@ class GlobalSearchEndpoint(BaseAPIView):
     def filter_initiatives(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
-        for field in fields:
-            q |= Q(**{f"{field}__icontains": query})
+        if query:
+            for field in fields:
+                q |= Q(**{f"{field}__icontains": query})
 
         return Initiative.objects.filter(q, workspace__slug=slug).distinct().values("name", "id", "workspace__slug")
 
     def filter_epics(self, query, slug, project_id, workspace_search):
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
-        for field in fields:
-            if field == "sequence_id":
-                sequences = re.findall(r"\b\d+\b", query)
-                for sequence_id in sequences:
-                    q |= Q(**{"sequence_id": sequence_id})
-            else:
-                q |= Q(**{f"{field}__icontains": query})
+        if query:
+            for field in fields:
+                if field == "sequence_id":
+                    sequences = re.findall(r"\b\d+\b", query)
+                    for sequence_id in sequences:
+                        q |= Q(**{"sequence_id": sequence_id})
+                else:
+                    q |= Q(**{f"{field}__icontains": query})
 
         epics = Issue.objects.filter(
             q,
@@ -296,14 +298,16 @@ class GlobalSearchEndpoint(BaseAPIView):
             "project_id",
             "workspace__slug",
             "type_id",
-        )
+        )[:30]
 
     def filter_teams(self, query, slug, project_id, workspace_search):
         fields = ["name"]
 
         q = Q()
-        for field in fields:
-            q |= Q(**{f"{field}__icontains": query})
+
+        if query:
+            for field in fields:
+                q |= Q(**{f"{field}__icontains": query})
 
         return (
             Teamspace.objects.filter(q, workspace__slug=slug, members__member_id=self.request.user.id)
@@ -412,7 +416,7 @@ class SearchEndpoint(BaseAPIView):
 
                     response_data["user_mention"] = list(users)
 
-                elif query_type == "project":
+                elif query_type == "project_mention":
                     fields = ["name", "identifier"]
                     q = Q()
 
@@ -429,9 +433,9 @@ class SearchEndpoint(BaseAPIView):
                         .distinct()
                         .values("name", "id", "identifier", "logo_props", "workspace__slug")[:count]
                     )
-                    response_data["project"] = list(projects)
+                    response_data["project_mention"] = list(projects)
 
-                elif query_type == "issue":
+                elif query_type == "issue_mention":
                     fields = ["name", "sequence_id", "project__identifier"]
                     q = Q()
 
@@ -447,6 +451,7 @@ class SearchEndpoint(BaseAPIView):
                     issues = (
                         Issue.issue_objects.filter(q, workspace__slug=slug, project_id__in=team_projects)
                         .order_by("-created_at")
+                        .select_related("state")
                         .accessible_to(self.request.user.id, slug)
                         .distinct()
                     )
@@ -458,11 +463,13 @@ class SearchEndpoint(BaseAPIView):
                         "project_id",
                         "priority",
                         "state_id",
+                        "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
-                    response_data["issue"] = list(issues)
+                    response_data["issue_mention"] = list(issues)
 
-                elif query_type == "cycle":
+                elif query_type == "cycle_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -495,9 +502,9 @@ class SearchEndpoint(BaseAPIView):
                         .distinct()
                     )
 
-                    response_data["cycle"] = list(cycles)
+                    response_data["cycle_mention"] = list(cycles)
 
-                elif query_type == "module":
+                elif query_type == "module_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -520,9 +527,9 @@ class SearchEndpoint(BaseAPIView):
                         "status",
                         "workspace__slug",
                     )[:count]
-                    response_data["module"] = list(modules)
+                    response_data["module_mention"] = list(modules)
 
-                elif query_type == "page":
+                elif query_type == "page_mention":
                     member_ids = TeamspaceMember.objects.filter(team_space_id=team_id).values_list(
                         "member_id", flat=True
                     )
@@ -561,7 +568,7 @@ class SearchEndpoint(BaseAPIView):
                             "workspace__slug",
                         )[:count]
                     )
-                    response_data["page"] = list(pages)
+                    response_data["page_mention"] = list(pages)
             return Response(response_data, status=status.HTTP_200_OK)
 
         if project_id:
@@ -615,7 +622,7 @@ class SearchEndpoint(BaseAPIView):
 
                     response_data["user_mention"] = list(users[:count])
 
-                elif query_type == "project":
+                elif query_type == "project_mention":
                     fields = ["name", "identifier"]
                     q = Q()
 
@@ -632,9 +639,9 @@ class SearchEndpoint(BaseAPIView):
                         .distinct()
                         .values("name", "id", "identifier", "logo_props", "workspace__slug")[:count]
                     )
-                    response_data["project"] = list(projects)
+                    response_data["project_mention"] = list(projects)
 
-                elif query_type == "issue":
+                elif query_type == "issue_mention":
                     fields = ["name", "sequence_id", "project__identifier"]
                     q = Q()
 
@@ -649,6 +656,7 @@ class SearchEndpoint(BaseAPIView):
 
                     issues = (
                         Issue.issue_objects.filter(q, workspace__slug=slug, project_id=project_id)
+                        .select_related("state")
                         .order_by("-created_at")
                         .distinct()
                         .accessible_to(self.request.user.id, slug)
@@ -662,12 +670,14 @@ class SearchEndpoint(BaseAPIView):
                         "project_id",
                         "priority",
                         "state_id",
+                        "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
 
-                    response_data["issue"] = list(issues)
+                    response_data["issue_mention"] = list(issues)
 
-                elif query_type == "cycle":
+                elif query_type == "cycle_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -710,9 +720,9 @@ class SearchEndpoint(BaseAPIView):
                         "workspace__slug",
                     )[:count]
 
-                    response_data["cycle"] = list(cycles)
+                    response_data["cycle_mention"] = list(cycles)
 
-                elif query_type == "module":
+                elif query_type == "module_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -736,9 +746,9 @@ class SearchEndpoint(BaseAPIView):
                         "workspace__slug",
                     )[:count]
 
-                    response_data["module"] = list(modules)
+                    response_data["module_mention"] = list(modules)
 
-                elif query_type == "page":
+                elif query_type == "page_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -811,7 +821,7 @@ class SearchEndpoint(BaseAPIView):
                     )
                     response_data["user_mention"] = list(users)
 
-                elif query_type == "project":
+                elif query_type == "project_mention":
                     fields = ["name", "identifier"]
                     q = Q()
 
@@ -828,9 +838,9 @@ class SearchEndpoint(BaseAPIView):
                         .distinct()
                         .values("name", "id", "identifier", "logo_props", "workspace__slug")[:count]
                     )
-                    response_data["project"] = list(projects)
+                    response_data["project_mention"] = list(projects)
 
-                elif query_type == "issue":
+                elif query_type == "issue_mention":
                     fields = ["name", "sequence_id", "project__identifier"]
                     q = Q()
 
@@ -845,6 +855,7 @@ class SearchEndpoint(BaseAPIView):
 
                     issues = (
                         Issue.issue_objects.filter(q, workspace__slug=slug)
+                        .select_related("state")
                         .order_by("-created_at")
                         .distinct()
                         .accessible_to(self.request.user.id, slug)
@@ -858,11 +869,13 @@ class SearchEndpoint(BaseAPIView):
                         "project_id",
                         "priority",
                         "state_id",
+                        "state__group",
+                        "state__color",
                         "type_id",
                     )[:count]
-                    response_data["issue"] = list(issues)
+                    response_data["issue_mention"] = list(issues)
 
-                elif query_type == "cycle":
+                elif query_type == "cycle_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -904,9 +917,9 @@ class SearchEndpoint(BaseAPIView):
                         "status",
                         "workspace__slug",
                     )[:count]
-                    response_data["cycle"] = list(cycles)
+                    response_data["cycle_mention"] = list(cycles)
 
-                elif query_type == "module":
+                elif query_type == "module_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -930,9 +943,9 @@ class SearchEndpoint(BaseAPIView):
                         "workspace__slug",
                     )[:count]
 
-                    response_data["module"] = list(modules)
+                    response_data["module_mention"] = list(modules)
 
-                elif query_type == "page":
+                elif query_type == "page_mention":
                     fields = ["name"]
                     q = Q()
 
@@ -959,5 +972,5 @@ class SearchEndpoint(BaseAPIView):
                             "workspace__slug",
                         )[:count]
                     )
-                    response_data["page"] = list(pages)
+                    response_data["page_mention"] = list(pages)
             return Response(response_data, status=status.HTTP_200_OK)

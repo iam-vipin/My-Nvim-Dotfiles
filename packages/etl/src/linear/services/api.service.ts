@@ -1,14 +1,6 @@
-import {
-  Comment,
-  Issue,
-  LinearClient,
-  LinearError,
-  Organization,
-  RatelimitedLinearError,
-  Team,
-  WorkflowState,
-} from "@linear/sdk";
-import { LinearComment } from "..";
+import type { Comment, Issue, LinearError, Organization, Team, WorkflowState } from "@linear/sdk";
+import { LinearClient, RatelimitedLinearError } from "@linear/sdk";
+import type { LinearComment } from "..";
 
 export type LinearProps =
   | {

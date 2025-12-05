@@ -57,6 +57,7 @@ class FileAsset(BaseModel):
         TEMPLATE_ATTACHMENT = "TEMPLATE_ATTACHMENT"
         LICENSE_FILE = "LICENSE_FILE"
         MILESTONE_DESCRIPTION = "MILESTONE_DESCRIPTION"
+        INTAKE_FORM_ATTACHMENT = "INTAKE_FORM_ATTACHMENT"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -86,6 +87,7 @@ class FileAsset(BaseModel):
             models.Index(fields=["entity_type"], name="asset_entity_type_idx"),
             models.Index(fields=["entity_identifier"], name="asset_entity_identifier_idx"),
             models.Index(fields=["entity_type", "entity_identifier"], name="asset_entity_idx"),
+            models.Index(fields=["asset"], name="asset_asset_idx"),
         ]
 
     def __str__(self):
@@ -137,6 +139,7 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             self.EntityTypeContext.PAGE_COMMENT_DESCRIPTION,
+            self.EntityTypeContext.INTAKE_FORM_ATTACHMENT,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

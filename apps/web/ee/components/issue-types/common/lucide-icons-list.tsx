@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Check, Search } from "lucide-react";
 // plane imports
 import { DEFAULT_BACKGROUND_COLORS } from "@plane/constants";
+import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
-import { ColorPicker, Input, LUCIDE_ICONS_LIST } from "@plane/ui";
+import { ColorPicker, Input } from "@plane/ui";
 import { generateIconColors } from "@plane/utils";
 
 export type TIconsListProps = {

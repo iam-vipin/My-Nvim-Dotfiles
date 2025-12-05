@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ArchiveIcon, PageIcon } from "@plane/propel/icons";
-import { Loader, Logo } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web imports
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
 
@@ -27,7 +28,6 @@ export const Badge = ({ text, icon }: { text: string; icon?: React.ReactNode }) 
 
 type Props = {
   pageId: string;
-
   editorRef?: React.RefObject<EditorRefApi>;
 };
 

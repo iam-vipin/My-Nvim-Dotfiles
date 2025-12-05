@@ -1,6 +1,8 @@
-import { ACTIONS, ENTITIES, EntityTypeValue, E_ISSUE_OBJECT_TYPE_SELECTION } from "../helpers/constants";
-import { PlainTextOption } from "../helpers/slack-options";
-import { E_MESSAGE_ACTION_TYPES, ShortcutActionPayload } from "../types/types";
+import type { EntityTypeValue } from "../helpers/constants";
+import { ACTIONS, ENTITIES, E_ISSUE_OBJECT_TYPE_SELECTION } from "../helpers/constants";
+import type { PlainTextOption } from "../helpers/slack-options";
+import type { ShortcutActionPayload } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export const createProjectSelectionModal = (
   projects: Array<PlainTextOption>,

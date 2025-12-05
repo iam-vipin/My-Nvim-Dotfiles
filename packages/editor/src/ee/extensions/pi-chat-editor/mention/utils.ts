@@ -2,9 +2,10 @@ import { ReactRenderer } from "@tiptap/react";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
 // local components
-import { PiChatEditorMentionsDropdown, PiChatEditorMentionsDropdownProps } from "./mentions-list-dropdown";
+import type { PiChatEditorMentionsDropdownProps } from "./mentions-list-dropdown";
+import { PiChatEditorMentionsDropdown } from "./mentions-list-dropdown";
 import type { PiChatMentionSearchCallbackResponse } from "./types";
 
 type TArgs = {

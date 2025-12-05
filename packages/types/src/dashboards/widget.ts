@@ -1,4 +1,4 @@
-import { LOGICAL_OPERATOR, TFilterExpression, TFilterValue } from "../rich-filters";
+import type { LOGICAL_OPERATOR, TFilterExpression, TFilterValue } from "../rich-filters";
 
 export enum EWidgetChartModels {
   BASIC = "BASIC",

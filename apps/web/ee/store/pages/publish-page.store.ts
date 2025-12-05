@@ -84,7 +84,7 @@ export class PublishPageStore implements IPublishPageStore {
    * Helper method to determine the page context based on current router state
    */
   private getPageContext = (pageID: string) => {
-    const { workspaceSlug, projectId, teamspaceId } = this.rootStore.router;
+    const { projectId, teamspaceId } = this.rootStore.router;
 
     // Check if page exists in project pages store
     if (projectId && this.rootStore.projectPages.data?.[pageID]) {
@@ -199,7 +199,7 @@ export class PublishPageStore implements IPublishPageStore {
     projectID: string,
     pageID: string,
     data: Partial<TPagePublishSettings>,
-    shouldSync?: boolean
+    _shouldSync?: boolean
   ) => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
@@ -265,7 +265,7 @@ export class PublishPageStore implements IPublishPageStore {
    * @param {string} pageID
    * @param {TPagePublishSettings} data
    */
-  publishWorkspacePage = async (pageID: string, data: Partial<TPagePublishSettings>, shouldSync?: boolean) => {
+  publishWorkspacePage = async (pageID: string, data: Partial<TPagePublishSettings>, _shouldSync?: boolean) => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
     const response = await this.publishPageService.publishWorkspacePage(workspaceSlug, pageID, data);

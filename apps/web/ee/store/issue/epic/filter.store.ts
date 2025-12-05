@@ -226,7 +226,7 @@ export class ProjectEpicsFilter extends IssueFilterHelperStore implements IProje
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.projectEpics.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.projectEpics.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

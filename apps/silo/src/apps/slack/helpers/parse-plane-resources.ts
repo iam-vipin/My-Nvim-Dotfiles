@@ -1,8 +1,9 @@
 import TurndownService from "turndown";
-import { PageSubType, PlaneResource } from "@plane/etl/slack";
+import type { PlaneResource } from "@plane/etl/slack";
+import { PageSubType } from "@plane/etl/slack";
 
 import { logger } from "@plane/logger";
-import { TWorkspaceConnection } from "@plane/types";
+import type { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { getPlaneContentParser } from "./content-parser";
 import { getPlaneToSlackUserMapFromWC } from "./user";

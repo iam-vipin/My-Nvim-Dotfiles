@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { JiraConfig } from "@plane/etl/jira";
 import type { TImportJob } from "@plane/types";
-import { useJiraImporter } from "@/plane-web/hooks/store";
 // assets
-import JiraLogo from "@/public/services/jira.svg";
+import JiraLogo from "@/app/assets/services/jira.svg?url";
+// plane web imports
+import { useJiraImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 

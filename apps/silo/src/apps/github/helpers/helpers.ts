@@ -1,10 +1,7 @@
-import { EGithubEntityConnectionType, GithubPullRequest } from "@plane/etl/github";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { GithubPullRequest } from "@plane/etl/github";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();

@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search, Crown } from "lucide-react";
 // ui
 import { Button } from "@plane/propel/button";
@@ -88,7 +86,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             </Button>
           </div>
           <span className="absolute left-0 top-0">
-            <Image
+            <img
               src={`/workspace-active-cycles/cta-l-1-${isDarkMode ? "dark" : "light"}.webp`}
               height={125}
               width={125}
@@ -99,7 +97,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image
+            <img
               src={`/workspace-active-cycles/cta-r-1-${isDarkMode ? "dark" : "light"}.webp`}
               height={420}
               width={500}
@@ -107,7 +105,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image
+            <img
               src={`/workspace-active-cycles/cta-r-2-${isDarkMode ? "dark" : "light"}.webp`}
               height={210}
               width={280}

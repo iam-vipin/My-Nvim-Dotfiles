@@ -1,7 +1,7 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
-import { TCalloutConfig } from "@/apps/notion-importer/types";
+import type { TCalloutConfig } from "@/apps/notion-importer/types";
 import { NOTION_COLOR_MAP } from "@/apps/notion-importer/utils/html-helpers";
+import type { IParserExtension } from "@/lib/parser";
 
 type TCalloutData = {
   icon: string;

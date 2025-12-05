@@ -7,12 +7,12 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
 // plane web components
 import { StepperNavigation, Dropdown } from "@/plane-web/components/importers/ui";
 // plane web types

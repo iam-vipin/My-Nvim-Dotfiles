@@ -1,4 +1,4 @@
-import { EGanttBlockType } from "./gantt";
+import type { EGanttBlockType } from "./gantt";
 
 export type TGanttBlockGroup = {
   type: EGanttBlockType;

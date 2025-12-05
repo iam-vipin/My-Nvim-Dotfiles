@@ -1,6 +1,6 @@
-import { ExIssueAttachment, ExState } from "@plane/sdk";
+import type { ExIssueAttachment, ExState } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import {
+import type {
   TClickUpPriorityConfig,
   TClickUpPriority,
   TClickUpStateConfig,

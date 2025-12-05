@@ -1,16 +1,16 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types
 import { commonWidgetClassName } from "..";
+import { CHART_ASSET_MAP } from "./helper";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
@@ -22,6 +22,8 @@ export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((prop
   const { activeBreakpoint, dashboardId, widgetId } = props;
   // store hooks
   const { getDashboardById } = useDashboards();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { isViewModeEnabled, toggleViewingMode } = dashboardDetails ?? {};
@@ -31,12 +33,10 @@ export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((prop
   const isWidgetSelected = isEditingWidget === widgetId;
   const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
   const isEditingEnabled = !isViewModeEnabled && !!canCurrentUserEditWidget;
+  const theme = resolvedTheme === "light" ? "light" : "dark";
+  const resolvedPath = chart_type ? CHART_ASSET_MAP[chart_type]?.[theme] : undefined;
   // translation
   const { t } = useTranslation();
-  // resolved asset
-  const resolvedPath = useResolvedAssetPath({
-    basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
-  });
 
   const handleConfigureWidget = () => {
     toggleEditWidget?.(widgetId);

@@ -25,7 +25,7 @@ export interface IApplicationStore {
   fetchApplication: (appSlug: string) => Promise<TUserApplication | undefined>;
   createApplication: (data: Partial<TUserApplication>) => Promise<TUserApplication | undefined>;
   updateApplication: (appSlug: string, data: Partial<TUserApplication>) => Promise<TUserApplication | undefined>;
-  deleteApplication: (applicationId: string, appSlug: string) => Promise<TUserApplication | undefined>;
+  deleteApplication: (appSlug: string) => Promise<void>;
   regenerateApplicationSecret: (applicationId: string) => Promise<TUserApplication | undefined>;
   checkApplicationSlug: (slug: string) => Promise<any>;
   fetchApplicationCategories: () => Promise<TApplicationCategory[] | undefined>;
@@ -162,21 +162,18 @@ export class ApplicationStore implements IApplicationStore {
    * @param applicationId - The application ID
    * @returns The deleted application
    */
-  deleteApplication = async (applicationId: string, appSlug: string): Promise<TUserApplication | undefined> => {
+  deleteApplication = async (appSlug: string): Promise<void> => {
     this.applicationsLoader = "init-loader";
     try {
       const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
       if (!workspaceSlug) {
         throw new Error("Workspace not found");
       }
-      const response = await this.applicationService.deleteApplication(workspaceSlug, applicationId);
-      if (response) {
-        runInAction(() => {
-          this.applicationsLoader = "loaded";
-          delete this.applicationsMap[workspaceSlug][appSlug];
-        });
-      }
-      return response;
+      await this.applicationService.deleteApplication(workspaceSlug, appSlug);
+      runInAction(() => {
+        this.applicationsLoader = "loaded";
+        delete this.applicationsMap[workspaceSlug][appSlug];
+      });
     } catch (error) {
       console.log(error);
       throw error;

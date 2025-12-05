@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import { TServiceAuthConfiguration, TImporterKeys } from "@/core/types";
+import type { TServiceAuthConfiguration, TImporterKeys } from "@/core/types";
 
 export class CredentialService {
   public axiosInstance: AxiosInstance;

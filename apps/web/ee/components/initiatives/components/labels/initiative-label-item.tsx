@@ -23,16 +23,8 @@ type Props = {
 };
 
 export const InitiativeLabelItem: React.FC<Props> = observer((props) => {
-  const {
-    label,
-    handleLabelDelete,
-    setIsUpdating,
-    isParentDragging,
-    isChild,
-    isLastChild,
-    onDrop,
-    labelOperationsCallbacks,
-  } = props;
+  const { label, handleLabelDelete, setIsUpdating, isParentDragging, isLastChild, onDrop, labelOperationsCallbacks } =
+    props;
 
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);

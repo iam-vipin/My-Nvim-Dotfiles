@@ -1,15 +1,15 @@
-"use client";
-
 // components
-import { AppHeader } from "@/components/core/app-header";
+import { Outlet } from "react-router";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectWorkItemDetailsHeader } from "./header";
 
-export default function ProjectIssueDetailsLayout({ children }: { children: React.ReactNode }) {
+export default function ProjectIssueDetailsLayout() {
   return (
     <>
-      <AppHeader header={<ProjectWorkItemDetailsHeader />} />
-      <ContentWrapper className="overflow-hidden">{children}</ContentWrapper>
+      <ProjectWorkItemDetailsHeader />
+      <ContentWrapper className="overflow-hidden">
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

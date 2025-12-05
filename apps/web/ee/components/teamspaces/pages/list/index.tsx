@@ -1,14 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageNavigationTabs, TPage, TPageDragPayload } from "@plane/types";
+// assets
+import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
+import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
+import archivedPageDark from "@/app/assets/empty-state/wiki/archived-dark.webp?url";
+import archivedPageLight from "@/app/assets/empty-state/wiki/archived-light.webp?url";
+import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?url";
+import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
+import publicPageDark from "@/app/assets/empty-state/wiki/public-dark.webp?url";
+import publicPageLight from "@/app/assets/empty-state/wiki/public-light.webp?url";
 // components
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
@@ -17,9 +25,8 @@ import { PageLoader } from "@/components/pages/loaders/page-loader";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
-import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 const storeType = EPageStoreType.TEAMSPACE;
 
@@ -42,11 +49,10 @@ export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
 
-  // plane hooks
-  const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
 
   // store hooks
-  const { getTeamspaceById } = useTeamspaces();
   const {
     filters,
     fetchPagesByType,
@@ -59,7 +65,10 @@ export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
   } = usePageStore(storeType);
 
   // derived values
-  const currentTeamspace = getTeamspaceById(teamspaceId);
+  const nameFilterResolvedPath = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
+  const allFiltersResolvedPath = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
+  const publicPageResolvedPath = resolvedTheme === "light" ? publicPageLight : publicPageDark;
+  const archivedPageResolvedPath = resolvedTheme === "light" ? archivedPageLight : archivedPageDark;
 
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
@@ -178,22 +187,6 @@ export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
     });
   }, [pageType, getPageById, isNestedPagesEnabled, workspaceSlug, movePageInternally]);
 
-  // Empty state images
-  const publicPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/public",
-  });
-  const archivedPageResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/pages/archived",
-  });
-  const resolvedFiltersImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/all-filters",
-    extension: "svg",
-  });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-  });
-
   if (isLoading) return <PageLoader />;
 
   // Empty states
@@ -230,9 +223,9 @@ export const TeamspacePagesListRoot: React.FC<Props> = observer((props) => {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
-            src={debouncedSearchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
-            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
+          <img
+            src={debouncedSearchQuery.length > 0 ? nameFilterResolvedPath : allFiltersResolvedPath}
+            className="h-36 sm:h-48 w-36 sm:w-48 mx-auto object-cover"
             alt="No matching pages"
           />
           <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>

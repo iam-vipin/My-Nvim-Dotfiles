@@ -1,4 +1,4 @@
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 
 export type TIssue = {
   id: string;

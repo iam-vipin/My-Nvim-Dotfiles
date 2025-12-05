@@ -2,12 +2,12 @@
 
 import { createContext, useEffect, useState, useMemo, useCallback } from "react";
 // todesktop
-import { nativeWindow, webContents } from "@todesktop/client-core";
+import { nativeWindow } from "@todesktop/client-core";
+import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 // mobx
 import { observer } from "mobx-react";
 
 export type TDesktopAppContext = {
-  pageTitle: string;
   isFullScreen: boolean;
 };
 
@@ -20,9 +20,8 @@ export type TDesktopAppProviderProps = {
 export const DesktopAppProvider = observer((props: TDesktopAppProviderProps) => {
   const { children } = props;
   // states
-  const [pageTitle, setPageTitle] = useState<string>(document.title);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-
+  // derived
   // handle theme change
   const handleThemeChange = useCallback(() => {
     const currentTheme = localStorage.getItem("theme") || "light";
@@ -30,16 +29,11 @@ export const DesktopAppProvider = observer((props: TDesktopAppProviderProps) => 
   }, []);
 
   useEffect(() => {
+    if (!isDesktopApp()) return;
+
     const cleanupFunctions: (() => Promise<void> | void)[] = [];
 
     // Setup observers
-    const setupTitleChangeObserver = async () => {
-      const unsubscribe = await webContents.on("page-title-updated", () => {
-        setPageTitle(document.title);
-      });
-      cleanupFunctions.push(unsubscribe);
-    };
-
     const setupFullScreenObservers = async () => {
       setIsFullScreen(await nativeWindow.isFullscreen());
 
@@ -60,7 +54,6 @@ export const DesktopAppProvider = observer((props: TDesktopAppProviderProps) => 
 
     // Call observers
     handleThemeChange();
-    setupTitleChangeObserver();
     setupFullScreenObservers();
     setupThemeObserver();
 
@@ -70,7 +63,7 @@ export const DesktopAppProvider = observer((props: TDesktopAppProviderProps) => 
     };
   }, [handleThemeChange]);
 
-  const contextValue = useMemo(() => ({ pageTitle, isFullScreen }), [pageTitle, isFullScreen]);
+  const contextValue = useMemo(() => ({ isFullScreen }), [isFullScreen]);
 
   return <DesktopAppContext.Provider value={contextValue}>{children}</DesktopAppContext.Provider>;
 });

@@ -1,5 +1,6 @@
 // plane imports
-import { FILTER_NODE_TYPE, TFilterExpression, TFilterProperty } from "@plane/types";
+import type { TFilterExpression, TFilterProperty } from "@plane/types";
+import { FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import { createOrGroupNode } from "../../factories/nodes/extended";
 import { isConditionNode, isGroupNode } from "../../types/core";

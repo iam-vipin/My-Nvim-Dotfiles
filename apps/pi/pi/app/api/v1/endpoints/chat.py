@@ -6,12 +6,14 @@ from typing import AsyncGenerator
 from typing import Coroutine
 from typing import Optional
 from typing import cast
+from urllib.parse import urlparse
 from uuid import UUID
 from uuid import uuid4
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from pydantic import UUID4
@@ -19,8 +21,10 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.v1.dependencies import cookie_schema
 from pi.app.api.v1.dependencies import is_valid_session
+from pi.app.api.v1.dependencies import validate_plane_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
@@ -34,8 +38,10 @@ from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
 from pi.app.models.message import MessageFlowStep
 from pi.app.schemas.chat import ActionBatchExecutionRequest
+from pi.app.schemas.chat import ArtifactData
 from pi.app.schemas.chat import ChatFeedback
 from pi.app.schemas.chat import ChatInitializationRequest
+from pi.app.schemas.chat import ChatInitResponse
 from pi.app.schemas.chat import ChatRequest
 from pi.app.schemas.chat import ChatSearchResponse
 from pi.app.schemas.chat import ChatSuggestionTemplate
@@ -54,6 +60,7 @@ from pi.app.utils.background_tasks import schedule_chat_search_upsert
 from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.actions.oauth_service import PlaneOAuthService
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.batch_execution_helpers import get_original_user_query
 from pi.services.chat.helpers.batch_execution_helpers import get_planned_actions_for_execution
@@ -73,6 +80,9 @@ from pi.services.retrievers.pg_store import retrieve_chat_history
 from pi.services.retrievers.pg_store import soft_delete_chat
 from pi.services.retrievers.pg_store import unfavorite_chat
 from pi.services.retrievers.pg_store import update_message_feedback
+from pi.services.retrievers.pg_store.message import get_message_by_id
+from pi.services.retrievers.pg_store.message import mark_assistant_response_as_replaced
+from pi.services.retrievers.pg_store.message import reconstruct_chat_request_from_message
 from pi.services.retrievers.pg_store.message import upsert_message
 from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
 
@@ -89,6 +99,182 @@ BATCH_EXECUTION_ERRORS = {
     "INVALID_SESSION": "Invalid Session",
     "INTERNAL_ERROR": "Internal server error",
 }
+
+
+@router.get("/start/", response_model=ChatInitResponse)
+async def chat_start(
+    workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
+    db: AsyncSession = Depends(get_async_session),
+    session: str = Depends(cookie_schema),
+):
+    """
+    Start/Bootstrap Pi chat - first API call when starting a chat session.
+    Checks OAuth authorization status and returns chat templates.
+
+    Usage: GET /api/v1/chat/start/?workspace_id=<uuid>
+
+    If authorized: returns is_authorized=true with full templates list
+    If not authorized: returns is_authorized=false with empty templates list
+    """
+    try:
+        # Validate session
+        auth = await is_valid_session(session)
+        if not auth.user:
+            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = auth.user.id
+    except Exception as e:
+        log.error(f"Error validating session: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
+
+    try:
+        oauth_service = PlaneOAuthService()
+
+        # Check if user has valid OAuth token for workspace
+        access_token = await oauth_service.get_valid_token(db=db, user_id=user_id, workspace_id=workspace_id)
+
+        if access_token:
+            # User is authorized - get templates
+            templates = tiles_factory()
+            return ChatInitResponse(is_authorized=True, templates=templates, oauth_url=None)
+        else:
+            # User is not authorized - return empty templates with OAuth URL
+            from pi.services.actions.oauth_url_encoder import OAuthUrlEncoder
+
+            redirect = urlparse(settings.plane_api.OAUTH_REDIRECT_URI)
+            base_url = f"{redirect.scheme}://{redirect.netloc}"
+
+            # Include BASE_PATH if configured
+            base_path = settings.plane_api.BASE_PATH or ""
+            if base_path and not base_path.startswith("/"):
+                base_path = f"/{base_path}"
+            base_path = base_path.rstrip("/")
+
+            # Build OAuth parameters (only user_id and workspace_id)
+            oauth_params = {
+                "user_id": str(user_id),
+                "workspace_id": str(workspace_id),
+            }
+
+            # Generate clean, encrypted OAuth URL
+            oauth_encoder = OAuthUrlEncoder()
+            oauth_url = oauth_encoder.generate_clean_oauth_url(f"{base_url}{base_path}", oauth_params)
+
+            return ChatInitResponse(is_authorized=False, templates=[], oauth_url=oauth_url)
+
+    except Exception as e:
+        log.error(f"Error in chat start: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Failed to initialize chat"})
+
+
+@router.post("/slack/answer/")
+async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSession = Depends(get_async_session)):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return JSONResponse(status_code=401, content={"detail": "Missing Authorization header"})
+        auth_response = await validate_plane_token(auth_header)
+        access_token = auth_response.plane_token
+    except Exception as e:
+        log.error(f"Error validating plane token: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid Plane token"})
+
+    chatbot = PlaneChatBot(llm=data.llm, token=access_token)
+
+    final_response = ""
+    actions_data = {}
+    clarification_data = {}
+    formatted_context = {}
+    response_type = "response"
+
+    # listen to all the stream chunks, join the chunks and return the complete response
+    # as json object
+    async with get_streaming_db_session() as stream_db:
+        base_iter = chatbot.process_query_stream(data, db=stream_db)
+        async for chunk in base_iter:
+            # Ignore all intermediate chunks
+            if chunk.startswith("πspecial reasoning block"):
+                continue
+            if chunk.startswith("πspecial actions blockπ: "):
+                response_type = "actions"
+                actions_data = json.loads(chunk.replace("πspecial actions blockπ: ", ""))
+            elif chunk.startswith("πspecial clarification blockπ: "):
+                response_type = "clarification"
+                clarification_data = json.loads(chunk.replace("πspecial clarification blockπ: ", ""))
+            final_response += chunk
+
+    if actions_data:
+        # Validate required fields before creating ActionBatchExecutionRequest
+        workspace_id = data.workspace_id
+        chat_id = data.chat_id
+        message_id_raw = actions_data.get("message_id")
+        artifact_id_raw = actions_data.get("artifact_id")
+        user_id = data.user_id
+
+        if not workspace_id or not chat_id or not message_id_raw or not artifact_id_raw or not user_id:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Missing required fields: workspace_id, chat_id, message_id, artifact_id, or user_id"},
+            )
+
+        # Convert message_id to UUID if it's a string
+        if isinstance(message_id_raw, str):
+            message_id = UUID(message_id_raw)
+        elif isinstance(message_id_raw, UUID):
+            message_id = message_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid message_id format"})
+
+        # Convert artifact_id to UUID if it's a string
+        if isinstance(artifact_id_raw, str):
+            artifact_id = UUID(artifact_id_raw)
+        elif isinstance(artifact_id_raw, UUID):
+            artifact_id = artifact_id_raw
+        else:
+            return JSONResponse(status_code=400, content={"detail": "Invalid artifact_id format"})
+
+        execution_data = await prepare_execution_data(
+            ActionBatchExecutionRequest(
+                workspace_id=workspace_id,
+                chat_id=chat_id,
+                message_id=message_id,
+                artifact_data=[ArtifactData(artifact_id=artifact_id, is_edited=False, action_data=actions_data)],
+                access_token=access_token,
+            ),
+            user_id,
+            db,
+        )
+        if not execution_data:
+            # Determine the specific error based on what failed
+            if not await get_planned_actions_for_execution(message_id, chat_id, db):
+                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_PLANNED_ACTIONS"]})
+            elif not await get_original_user_query(message_id, db):
+                return JSONResponse(status_code=404, content={"detail": BATCH_EXECUTION_ERRORS["NO_ORIGINAL_QUERY"]})
+            else:
+                # OAuth or workspace issue
+                return JSONResponse(
+                    status_code=401,
+                    content={
+                        "detail": BATCH_EXECUTION_ERRORS["OAUTH_REQUIRED"],
+                        "error_code": "OAUTH_REQUIRED",
+                        "workspace_id": str(data.workspace_id),
+                        "user_id": str(data.user_id),
+                    },
+                )
+
+        # Execute batch actions
+        context = await execute_batch_actions(execution_data, db)
+        formatted_context = format_execution_response(context)
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "response": final_response,
+            "actions_data": actions_data,
+            "context": formatted_context,
+            "response_type": response_type,
+            "clarification_data": clarification_data,
+        },
+    )
 
 
 @router.post("/get-answer/")
@@ -819,7 +1005,10 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
     """Second phase of two-step flow.
     Looks up the queued ChatRequest by token (message_id), deletes the queue
     entry, and then re-uses the existing /get-answer/ logic to start the SSE
-    stream via a pure GET endpoint."""
+    stream via a pure GET endpoint.
+
+    Also handles REGENERATE when called with an existing user message ID
+    (no QUEUE flow step present)."""
     try:
         auth = await is_valid_session(session)
         if not auth.user:
@@ -838,53 +1027,89 @@ async def stream_answer(token: UUID4, db: AsyncSession = Depends(get_async_sessi
     flow_step: MessageFlowStep | None = res.scalar_one_or_none()
 
     if not flow_step:
-        return JSONResponse(status_code=404, content={"detail": "Unknown or expired stream token"})
+        # REGENERATE FLOW: No QUEUE flow step means this is regenerate
+        log.info(f"No QUEUE flow step found for token {token}. Treating as regenerate request.")
+        # 1. Get the user message
+        user_message = await get_message_by_id(db, token)
 
-    # Parse the stored ChatRequest
-    try:
-        raw_data = flow_step.execution_data or {}
-        # Check if this is an OAuth message (has oauth_required field)
-        if flow_step.oauth_required:
-            # This is an OAuth message - check if OAuth is now complete
-            # by looking at the oauth_completed column
-            if flow_step.oauth_completed:
-                # OAuth is now complete! Process the request normally
-                log.info(f"OAuth completed for message {token}. Processing request.")
+        if not user_message:
+            log.warning(f"Message not found for token {token}")
+            return JSONResponse(status_code=404, content={"detail": "Message not found"})
 
-                # Control continues to the normal processing code below
-            else:
-                # OAuth is still required
-                return JSONResponse(
-                    status_code=401,
-                    content={
-                        "detail": "OAuth authorization still required. Please complete OAuth authentication first.",
-                        "error_code": "OAUTH_REQUIRED",
-                    },
-                )
+        # 2. Mark old assistant response as replaced BEFORE generating new one
+        # This ensures retrieve_chat_history() won't include it in context for new generation
+        marked = await mark_assistant_response_as_replaced(db, user_message.id)
+        if marked:
+            log.info(f"Marked old assistant response(s) as replaced for message {token}")
+        else:
+            log.info(f"No existing assistant response found for message {token} (first generation or already replaced)")
 
-        # Convert empty-string UUIDs to None so pydantic validation passes
-        for field in ["project_id", "workspace_id", "chat_id"]:
-            if field in raw_data and raw_data[field] == "":
-                raw_data[field] = None
-        raw_data["user_id"] = user_id
-        queued_request = ChatRequest.parse_obj(raw_data)
+        # 4. Reconstruct ChatRequest from user message
+        try:
+            queued_request = await reconstruct_chat_request_from_message(db, user_message, user_id)
+        except Exception as e:
+            log.error(f"Error reconstructing ChatRequest from message {token}: {e}")
+            return JSONResponse(status_code=500, content={"detail": "Failed to reconstruct request"})
 
-    except Exception as e:
-        log.error(f"Malformed execution_data for token {token}: {e!s}")
-        return JSONResponse(status_code=500, content={"detail": "Corrupted queued request"})
+        # 5. Pass token_id so new assistant message reuses same user message as parent
+        try:
+            queued_request.context["token_id"] = str(token)
+        except Exception as e:
+            log.warning(f"Failed to attach token_id to regenerate request context: {e!s}")
 
-    # Consume the queue entry so the token is single-use
-    await db.delete(flow_step)
-    await db.commit()
+        log.info(f"Regenerating response for message {token}")
 
-    # Pass the token/message_id forward so downstream processing reuses the same Message row
-    try:
-        queued_request.context["token_id"] = str(token)
-    except Exception as e:
-        log.warning(f"Failed to attach token_id to queued request context: {e!s}")
+        # 6. Stream new response (get_answer will call process_query_stream)
+        #    When process_query_stream calls retrieve_chat_history,
+        #    it will NOT see the old response because is_replaced=True
+        return await get_answer(data=queued_request, session=session)
 
-    # Delegate to existing get_answer for streaming
-    return await get_answer(data=queued_request, session=session)
+    else:
+        # NORMAL FLOW: QUEUE flow step exists, this is first generation
+        # Parse the stored ChatRequest
+        try:
+            raw_data = flow_step.execution_data or {}
+            # Check if this is an OAuth message (has oauth_required field)
+            if flow_step.oauth_required:
+                # This is an OAuth message - check if OAuth is now complete
+                # by looking at the oauth_completed column
+                if flow_step.oauth_completed:
+                    # OAuth is now complete! Process the request normally
+                    log.info(f"OAuth completed for message {token}. Processing request.")
+                    # Control continues to the normal processing code below
+                else:
+                    # OAuth is still required
+                    return JSONResponse(
+                        status_code=401,
+                        content={
+                            "detail": "OAuth authorization still required. Please complete OAuth authentication first.",
+                            "error_code": "OAUTH_REQUIRED",
+                        },
+                    )
+
+            # Convert empty-string UUIDs to None so pydantic validation passes
+            for field in ["project_id", "workspace_id", "chat_id"]:
+                if field in raw_data and raw_data[field] == "":
+                    raw_data[field] = None
+            raw_data["user_id"] = user_id
+            queued_request = ChatRequest.parse_obj(raw_data)
+
+        except Exception as e:
+            log.error(f"Malformed execution_data for token {token}: {e!s}")
+            return JSONResponse(status_code=500, content={"detail": "Corrupted queued request"})
+
+        # Consume the queue entry so the token is single-use (for normal flow)
+        await db.delete(flow_step)
+        await db.commit()
+
+        # Pass the token/message_id forward so downstream processing reuses the same Message row
+        try:
+            queued_request.context["token_id"] = str(token)
+        except Exception as e:
+            log.warning(f"Failed to attach token_id to queued request context: {e!s}")
+
+        # Delegate to existing get_answer for streaming
+        return await get_answer(data=queued_request, session=session)
 
 
 @router.post("/execute-action/")

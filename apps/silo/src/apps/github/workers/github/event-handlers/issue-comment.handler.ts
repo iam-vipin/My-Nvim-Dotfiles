@@ -1,24 +1,16 @@
-import {
-  EGithubEntityConnectionType,
-  GithubWebhookPayload,
-  transformGitHubComment,
-  WebhookGitHubComment,
-} from "@plane/etl/github";
+import type { GithubWebhookPayload, WebhookGitHubComment } from "@plane/etl/github";
+import { EGithubEntityConnectionType } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { getConnDetailsForGithubToPlaneSync } from "@/apps/github/helpers/helpers";
-
+import { transformGitHubComment } from "@/apps/github/helpers/transform";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { Store } from "@/worker/base";
+import type { Store } from "@/worker/base";
 import { shouldSync } from "./issue.handler";
 
 export type GithubCommentAction = "created" | "edited" | "deleted";
@@ -30,15 +22,16 @@ export type GithubCommentWebhookPayload = GithubWebhookPayload[
 };
 
 export const handleIssueComment = async (store: Store, action: GithubCommentAction, data: unknown) => {
+  // Check if this webhook was triggered by our own Plane->GitHub sync (loop prevention)
   // @ts-expect-error
   if (data && data.comment && data.comment.id) {
     // @ts-expect-error
-    const exist = await store.get(`silo:comment:${data.comment.id}`);
+    const exist = await store.get(`silo:comment:gh:${data.comment.id}`);
     if (exist) {
-      logger.info(`[ISSUE-COMMENT] Event Processed Successfully, confirmed by target`);
-      // Remove the webhook from the store
+      logger.info(`[ISSUE-COMMENT] Event triggered by Plane->GitHub sync, skipping to prevent loop`);
+      // Remove the key so future legitimate webhooks are not blocked
       // @ts-expect-error
-      await store.del(`silo:comment:${data.comment.id}`);
+      await store.del(`silo:comment:gh:${data.comment.id}`);
       return true;
     }
   }
@@ -177,7 +170,9 @@ export const syncCommentWithPlane = async (
       comment.id,
       planeComment
     );
-    await store.set(`silo:comment:${comment.id}`, "true");
+    // Set key with Plane comment ID so Plane->GitHub handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:comment:plane:${comment.id}`, "true", 5);
   } else {
     const createdComment = await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
@@ -185,7 +180,9 @@ export const syncCommentWithPlane = async (
       issue.id,
       planeComment
     );
-    await store.set(`silo:comment:${createdComment.id}`, "true");
+    // Set key with Plane comment ID so Plane->GitHub handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:comment:plane:${createdComment.id}`, "true", 5);
   }
 };
 

@@ -10,7 +10,7 @@ import {
   FloatingOverlay,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import { FC } from "react";
+import type { FC } from "react";
 // local imports
 import { EmbedLinkView } from "./embed-link-view";
 

@@ -30,6 +30,7 @@ def get_base_fields_for_entity(entity_type: str) -> List[str]:
     from .cycle import CYCLE_FIELDS
     from .epic import EPIC_FIELDS
     from .module import MODULE_FIELDS
+    from .page import PAGE_FIELDS
     from .project import PROJECT_FIELDS
     from .workitem import WORKITEM_FIELDS
 
@@ -39,6 +40,7 @@ def get_base_fields_for_entity(entity_type: str) -> List[str]:
         "project": PROJECT_FIELDS,
         "cycle": CYCLE_FIELDS,
         "module": MODULE_FIELDS,
+        "page": PAGE_FIELDS,
         "comment": COMMENT_FIELDS,
     }
 

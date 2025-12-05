@@ -1,9 +1,12 @@
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
-FROM goreleaser/goreleaser:v2.2.0 AS build
+FROM golang:1.25.4-alpine3.22 AS build
 WORKDIR /app
 
-RUN apk add build-base
+RUN apk update && \
+	apk upgrade && \
+	apk add git build-base && \
+	go install github.com/goreleaser/goreleaser/v2@latest
 
 ARG PRIVATE_KEY
 ENV PRIVATE_KEY=$PRIVATE_KEY

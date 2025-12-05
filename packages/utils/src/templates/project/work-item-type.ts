@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
+import type {
   EIssuePropertyType,
   IIssueProperty,
   IIssuePropertyOption,

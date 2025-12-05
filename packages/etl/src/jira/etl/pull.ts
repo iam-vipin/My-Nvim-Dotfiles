@@ -1,5 +1,4 @@
-import * as CSV from "csv-string";
-import {
+import type {
   Issue as IJiraIssue,
   ComponentWithIssueCount,
   Comment as JComment,
@@ -9,8 +8,9 @@ import {
   IssueTypeToContextMapping,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
-import { JiraService } from "@/jira/services";
-import {
+import Papa from "papaparse";
+import type { JiraService } from "@/jira/services";
+import type {
   ImportedJiraUser,
   JiraComment,
   JiraComponent,
@@ -28,17 +28,22 @@ import {
 } from "../helpers";
 
 export function pullUsers(users: string): ImportedJiraUser[] {
-  const jiraUsersObject = CSV.parse(users, { output: "objects" });
+  const jiraUsersObject = Papa.parse(users, { header: true, skipEmptyLines: true }).data;
   return removeArrayObjSpaces(jiraUsersObject) as ImportedJiraUser[];
 }
 
 export async function pullLabels(client: JiraService): Promise<string[]> {
   const labels: string[] = [];
-  await fetchPaginatedData(
-    (startAt) => client.getResourceLabels(startAt),
-    (values) => labels.push(...(values as string[])),
-    "values"
-  );
+  try {
+    await fetchPaginatedData(
+      (startAt) => client.getResourceLabels(startAt),
+      (values) => labels.push(...(values as string[])),
+      "values"
+    );
+  } catch (error) {
+    console.log("Error while pulling labels", error);
+  }
+
   return labels;
 }
 
@@ -59,8 +64,51 @@ export async function pullIssues(client: JiraService, projectKey: string, from?:
   return issues;
 }
 
+/**
+ * Pull issues using nextPageToken pagination (Jira Cloud Enhanced Search API)
+ * Note: Enhanced Search API does not return total count, only nextPageToken for pagination
+ */
+export async function pullIssuesV2(
+  ctx: {
+    client: JiraService;
+    nextPageToken?: string;
+    maxResults?: number;
+  },
+  projectKey: string,
+  // We are using this property for the pagination context
+  total = 0,
+  from?: Date
+): Promise<{
+  items: IJiraIssue[];
+  hasMore: boolean;
+  total?: number;
+  nextPageToken?: string;
+}> {
+  const { client, nextPageToken } = ctx;
+  const result = await client.getProjectIssues(projectKey, nextPageToken, from ? formatDateStringForHHMM(from) : "");
+
+  return {
+    items: result.issues || [],
+    hasMore: !!result.nextPageToken,
+    total: total,
+    nextPageToken: result.nextPageToken,
+  };
+}
+
 export async function pullComments(issues: IJiraIssue[], client: JiraService): Promise<any[]> {
-  return await pullCommentsInBatches(issues, 20, client);
+  const comments: JiraComment[] = [];
+
+  try {
+    // Pull comments for each issue
+    for (const issue of issues) {
+      const issueComments = await pullCommentsForIssue(issue, client);
+      comments.push(...issueComments);
+    }
+  } catch (error) {
+    console.log("Error while pulling comments for issues", error);
+  }
+
+  return comments;
 }
 
 export async function pullSprints(client: JiraService, projectId: string): Promise<JiraSprint[]> {
@@ -133,22 +181,14 @@ export const pullCommentsForIssue = async (issue: IJiraIssue, client: JiraServic
   return comments;
 };
 
-export const pullCommentsInBatches = async (
-  issues: IJiraIssue[],
-  batchSize: number,
-  client: JiraService
-): Promise<JiraComment[]> => {
-  const comments: JiraComment[] = [];
-  for (let i = 0; i < issues.length; i += batchSize) {
-    const batch = issues.slice(i, i + batchSize);
-    const batchComments = await Promise.all(batch.map((issue) => pullCommentsForIssue(issue, client)));
-    comments.push(...batchComments.flat());
+export const pullIssueTypes = async (client: JiraService, projectId: string): Promise<JiraIssueTypeDetails[]> => {
+  try {
+    return await client.getProjectIssueTypes(projectId);
+  } catch (error) {
+    console.log("Error while pulling issue types", error);
+    return [];
   }
-  return comments;
 };
-
-export const pullIssueTypes = async (client: JiraService, projectId: string): Promise<JiraIssueTypeDetails[]> =>
-  await client.getProjectIssueTypes(projectId);
 
 export const pullIssueFields = async (
   client: JiraService,
@@ -159,10 +199,11 @@ export const pullIssueFields = async (
   const customFields: JiraIssueField[] = [];
   try {
     // initialize fields
-    const fields: FieldDetails[] = await client.getCustomFields();
+    const allFields: FieldDetails[] = await client.getCustomFields();
+    const filteredFields = allFields.filter((field) => field.custom);
 
     // get all field contexts
-    for (const field of fields) {
+    for (const field of filteredFields) {
       // skip if field has no id
       if (!field.id) continue;
 
@@ -217,7 +258,11 @@ export const pullIssueFields = async (
               (startAt) => client.getIssueFieldOptions(field.id as string, Number(issueTypeContext.contextId), startAt),
               (values: CustomFieldContextOption[]) => {
                 values.map((value) => {
-                  if (field.id) fieldOptions.push({ ...value, fieldId: field.id });
+                  if (field.id)
+                    fieldOptions.push({
+                      ...value,
+                      fieldId: field.id.includes("customfield_") ? field.id.split("_").pop()! : field.id,
+                    });
                 });
               },
               "values"

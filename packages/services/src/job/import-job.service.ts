@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 // types
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { APIService } from "../api.service";
 
 export class ImportJobService<TJobConfig = object> extends APIService {

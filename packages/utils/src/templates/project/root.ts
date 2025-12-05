@@ -1,22 +1,20 @@
 // plane imports
-import {
-  ETemplateType,
+import type {
   IUserLite,
   TProjectTemplate,
   TProjectTemplateForm,
   TProjectTemplateFormData,
   TWorkItemBlueprintFormData,
 } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 // local imports
 import { extractTemplateBasicFormData } from "../base";
-import { TWorkItemBlueprintFormDataListInvalid } from "../work-item/blueprint/sanitize";
-import { buildProjectTemplateBlueprint, TBuildProjectTemplateBlueprintParams } from "./build";
+import type { TWorkItemBlueprintFormDataListInvalid } from "../work-item/blueprint/sanitize";
+import type { TBuildProjectTemplateBlueprintParams } from "./build";
+import { buildProjectTemplateBlueprint } from "./build";
 import { extractProjectCreationFormData, extractProjectTemplateFormData } from "./extract";
-import {
-  TSanitizeProjectCreationFormParams,
-  TSanitizeProjectTemplateFormDataParams,
-  sanitizeProjectCreationFormData,
-} from "./sanitize";
+import type { TSanitizeProjectCreationFormParams, TSanitizeProjectTemplateFormDataParams } from "./sanitize";
+import { sanitizeProjectCreationFormData } from "./sanitize";
 
 /**
  * Generic sanitization result for any project data

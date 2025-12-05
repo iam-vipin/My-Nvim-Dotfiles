@@ -22,13 +22,15 @@ const DEBOUNCE_DELAY = 900;
 type TProps = {
   query: string;
   flattenedSearchResults: TSearchResultItem[];
+  handleResultClick?: () => void;
   isSearching: boolean;
   setFlattenedSearchResults: (results: TSearchResultItem[]) => void;
   setIsSearching: (isSearching: boolean) => void;
 };
 
 export const SearchResults: React.FC<TProps> = observer((props) => {
-  const { query, flattenedSearchResults, setFlattenedSearchResults, isSearching, setIsSearching } = props;
+  const { query, flattenedSearchResults, handleResultClick, setFlattenedSearchResults, isSearching, setIsSearching } =
+    props;
   // params
   const { workspaceSlug } = useParams();
   // states
@@ -114,28 +116,31 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
   );
 
   const renderSearchFilters = () => (
-    <div className="flex gap-3 py-3 overflow-auto horizontal-scrollbar scrollbar-xs">
+    <div className="shrink-0 flex gap-3 p-3 overflow-auto horizontal-scrollbar scrollbar-xs">
       {SEARCH_FILTERS.map((filter) => (
         <button
           type="button"
           key={filter.key}
           onClick={() => setSearchFilter(filter.key)}
-          className={cn("flex w-fit items-center gap-2 text-xs font-medium rounded-md py-1.5 px-3 transition-all", {
-            "text-custom-text-200 bg-custom-background-90": searchFilter !== filter.key,
-            "hover:bg-custom-background-80": searchFilter !== filter.key && !isSearching,
-            "text-custom-primary-300 bg-custom-primary-200/15": searchFilter === filter.key,
-            "cursor-not-allowed opacity-60": isSearching,
-          })}
+          className={cn(
+            "shrink-0 flex w-fit items-center gap-2 text-xs font-medium rounded-md py-1.5 px-3 transition-all",
+            {
+              "text-custom-text-200 bg-custom-background-90": searchFilter !== filter.key,
+              "hover:bg-custom-background-80": searchFilter !== filter.key && !isSearching,
+              "text-custom-primary-300 bg-custom-primary-200/15": searchFilter === filter.key,
+              "cursor-not-allowed opacity-60": isSearching,
+            }
+          )}
           disabled={searchFilter === filter.key || isSearching}
         >
-          <span>{t(filter.i18n_label)}</span>
+          <span className="text-nowrap">{t(filter.i18n_label)}</span>
           {isSearching && searchFilter === filter.key ? (
             <Spinner className="size-3.5 animate-spin" />
-          ) : (
+          ) : getSearchResultsCount(filter.key) > 0 ? (
             <span className={cn("min-w-4 text-center", { "text-custom-text-350": searchFilter !== filter.key })}>
               {getSearchResultsCount(filter.key)}
             </span>
-          )}
+          ) : null}
         </button>
       ))}
     </div>
@@ -168,34 +173,28 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
     }
 
     return (
-      <>
-        {/* {query.length < MIN_SEARCH_LENGTH && flattenedSearchResults.length === 0 && (
-          <div className="text-sm text-custom-text-200 p-3 bg-custom-background-90 rounded-md">
-            {t("common.search.min_chars", { count: MIN_SEARCH_LENGTH })}
-          </div>
-        )} */}
-        <div className="flex flex-col transition-all duration-500 fade-in">
-          {filteredSearchResults.map((entity) => (
-            <Link
-              key={entity.id}
-              href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
-              className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
-            >
-              <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
-              <span className="flex-1 line-clamp-2">
-                {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </>
+      <div className="transition-all duration-500 fade-in">
+        {filteredSearchResults.map((entity) => (
+          <Link
+            key={entity.id}
+            href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
+            onClick={handleResultClick}
+            className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
+          >
+            <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
+            <span className="flex-1 line-clamp-2">
+              {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
+            </span>
+          </Link>
+        ))}
+      </div>
     );
   };
 
   return (
-    <div className="w-full h-full flex flex-col py-2">
+    <div className="size-full flex flex-col overflow-hidden py-2">
       {renderSearchFilters()}
-      <div className="flex-1 overflow-y-auto">{renderSearchResults()}</div>
+      <div className="h-full flex-1 px-3 overflow-y-auto vertical-scrollbar scrollbar-sm">{renderSearchResults()}</div>
     </div>
   );
 });

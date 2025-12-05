@@ -7,6 +7,9 @@ import { observer } from "mobx-react";
 import { stripTrailingSlash } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
+// plane web hooks
 // plane web components
 import type { TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
 import { AuthFormInput } from "@/plane-web/components/importers/ui/auth-form-input";
@@ -15,7 +18,6 @@ import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TJiraPATFormFields } from "@/plane-web/types/importers/jira-server";
-import JiraLogo from "@/public/services/jira.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 
@@ -125,7 +127,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
     <div className="space-y-6 w-full">
       <ImporterHeader
         config={{
-          serviceName: "Jira Server",
+          serviceName: "Jira Server/Data Center",
           logo: JiraLogo,
         }}
       />

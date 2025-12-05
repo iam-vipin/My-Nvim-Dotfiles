@@ -1,6 +1,6 @@
 // plane imports
-import { TLogoProps } from "../common";
-import { CompleteOrEmpty } from "../utils";
+import type { TLogoProps } from "../common";
+import type { CompleteOrEmpty } from "../utils";
 
 export enum ETemplateType {
   PROJECT = "project",

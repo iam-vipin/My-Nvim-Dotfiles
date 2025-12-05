@@ -8,3 +8,4 @@ export * from "./state";
 export * from "./teamspace";
 export * from "./user";
 export * from "./work-item-type";
+export * from "./milestone";

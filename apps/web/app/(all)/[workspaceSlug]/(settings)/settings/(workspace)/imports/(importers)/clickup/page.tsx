@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -12,7 +11,7 @@ import { ClickUpDashboardRoot } from "@/plane-web/components/importers/clickup/d
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { useClickUpImporter, useFlag } from "@/plane-web/hooks/store";
 
-const ClickUpImporter: FC = observer(() => {
+function ClickUpImporter() {
   const {
     user,
     workspace,
@@ -26,9 +25,6 @@ const ClickUpImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-
-  // feature flag
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CLICKUP_IMPORTER) || false;
 
   // validating the importer is authenticated or not
   const { isLoading: importerAuthIsLoading } = useSWR(
@@ -46,16 +42,6 @@ const ClickUpImporter: FC = observer(() => {
       resetImporterData();
     };
   }, [workspaceId, userId, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData, workspaceSlug]);
-
-  if (!isFeatureEnabled) {
-    return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">
-        <div className="flex flex-col items-center justify-center">
-          <div className="text-custom-text-200 text-2xl font-medium">ClickUp Importer is not enabled</div>
-        </div>
-      </div>
-    );
-  }
 
   if (importerAuthIsLoading) return <DashboardLoaderRoot />;
 
@@ -75,6 +61,6 @@ const ClickUpImporter: FC = observer(() => {
       )}
     </Fragment>
   );
-});
+}
 
-export default ClickUpImporter;
+export default observer(ClickUpImporter);

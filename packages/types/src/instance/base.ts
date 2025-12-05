@@ -1,6 +1,6 @@
-import { IUserLite } from "../users";
-import { IInstanceConfigExtended } from "./base-extended";
-import {
+import type { IUserLite } from "../users";
+import type { IInstanceConfigExtended } from "./base-extended";
+import type {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
@@ -10,7 +10,6 @@ import {
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
 // extended
-
 export type TProductType = "plane-ce" | "plane-one";
 
 export interface IInstanceInfo {
@@ -64,6 +63,7 @@ export interface IInstanceConfig extends IInstanceConfigExtended {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  is_self_managed: boolean;
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;

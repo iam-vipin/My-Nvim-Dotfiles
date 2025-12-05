@@ -1,4 +1,4 @@
-import { ExProject, PlaneUser } from "@plane/sdk";
+import type { ExProject, PlaneUser } from "@plane/sdk";
 import { getPlaneLogoUrl, getProjectUrl } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
 import { ACTIONS } from "../helpers/constants";

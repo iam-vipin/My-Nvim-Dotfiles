@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -26,12 +24,13 @@ export interface IssuesModalProps {
     loading: string;
   };
   isProjectSelectionDisabled?: boolean;
+  isTypeSelectDisabled?: boolean;
   templateId?: string;
   isConversionOperation?: boolean;
   allowedProjectIds?: string[];
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {
   // router params
   const { cycleId, moduleId } = useParams();
   // derived values

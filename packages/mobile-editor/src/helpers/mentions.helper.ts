@@ -1,13 +1,13 @@
-export const transformMentionSuggestions = (projectMembers: any): any[] =>
-  projectMembers.map((member: any) => ({
-    entity_name: "user_mention",
-    entity_identifier: `${member?.id}`,
-    id: `${member?.id}`,
-    type: "User",
-    title: `${member?.displayName}`,
-    subtitle: member?.email ?? "",
-    avatar: member?.avatarUrl,
-    redirect_uri: "",
+import { TMentionSuggestionResponse } from "@/types/mention";
+
+// It transforms the members list into a format suitable for the mention suggestions
+export const transformMentionSuggestions = (members: TMentionSuggestionResponse[]): TMentionSuggestionResponse[] =>
+  members.map((member: TMentionSuggestionResponse) => ({
+    id: member.id ?? "",
+    displayName: member?.displayName ?? "",
+    firstName: member?.firstName ?? "",
+    lastName: member?.lastName ?? "",
+    avatarUrl: member?.avatarUrl,
   }));
 
-export const transformMentionHighlights = (userId: any) => [userId];
+export const transformMentionHighlights = (userId: string) => [userId];

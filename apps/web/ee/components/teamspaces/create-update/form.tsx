@@ -7,14 +7,13 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import type { TTeamspace } from "@plane/types";
 import { EFileAssetType, EUserWorkspaceRoles } from "@plane/types";
 import { Input } from "@plane/ui";
 
 import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // store hooks
@@ -49,7 +48,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   const { getTeamspaceMemberIds } = useTeamspaces();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const teamspaceMemberIds = teamDetail?.id
     ? (getTeamspaceMemberIds(teamDetail.id) ?? [])
@@ -168,12 +167,26 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
                   entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
                 },
                 file,
-                workspaceSlug: workspaceSlug.toString(),
+                workspaceSlug: workspaceSlug,
               });
               return asset_id;
             } catch (error) {
               console.log("Error in uploading work item asset:", error);
               throw new Error("Asset upload failed. Please try again later.");
+            }
+          }}
+          duplicateFile={async (assetId: string) => {
+            try {
+              const { asset_id } = await duplicateEditorAsset({
+                assetId,
+                entityId: teamDetail?.id ?? "",
+                entityType: EFileAssetType.TEAM_SPACE_DESCRIPTION,
+                workspaceSlug: workspaceSlug,
+              });
+              return asset_id;
+            } catch (error) {
+              console.log("Error in duplicating teamspace asset:", error);
+              throw new Error("Asset duplication failed. Please try again later.");
             }
           }}
         />

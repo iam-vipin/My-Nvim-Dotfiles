@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { PlanePageEntity } from "@plane/etl/core";
-import { TImportJob } from "@plane/types";
+import type { PlanePageEntity } from "@plane/etl/core";
+import type { TImportJob } from "@plane/types";
 import { celeryProducer } from "@/worker";
 import { getCredentialsForMigration } from "./helpers";
 

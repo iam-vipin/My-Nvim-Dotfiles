@@ -81,7 +81,7 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {
-        const errorhandler = mobileAuthErrorHandler(error?.error_code.toString());
+        const errorhandler = mobileAuthErrorHandler(error?.error_code?.toString());
         if (errorhandler?.type) setErrorInfo(errorhandler);
         throw error;
       });

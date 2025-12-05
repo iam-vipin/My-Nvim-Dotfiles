@@ -435,6 +435,6 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
   getBlockIds = () => this.blockIds ?? [];
 
   /** Placeholder functions */
-  setBlockGroups = (groupData: TGanttBlockGroup[]) => {};
+  setBlockGroups = (_groupData: TGanttBlockGroup[]) => {};
   getGroupedBlockIds = () => [] as TGanttBlockGroup[];
 }

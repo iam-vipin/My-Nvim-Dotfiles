@@ -2,7 +2,7 @@
 import { Loader } from "@plane/ui";
 
 export const PageContentLoader = () => (
-  <div className="size-full">
+  <div className="size-full px-5">
     <Loader className="relative space-y-4">
       <div className="space-y-2">
         <div className="py-2">

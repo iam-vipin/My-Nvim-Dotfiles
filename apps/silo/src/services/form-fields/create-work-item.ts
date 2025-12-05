@@ -1,5 +1,5 @@
-import { FormField } from "@/types/form/base/fields";
-import { CreateWorkItemFormFieldsMetadata } from "@/types/form/workitem-form";
+import type { FormField } from "@/types/form/base/fields";
+import type { CreateWorkItemFormFieldsMetadata } from "@/types/form/workitem-form";
 import { OptionFormFieldsService } from "./options-fields";
 import { StaticFormFieldsService } from "./static-fields";
 

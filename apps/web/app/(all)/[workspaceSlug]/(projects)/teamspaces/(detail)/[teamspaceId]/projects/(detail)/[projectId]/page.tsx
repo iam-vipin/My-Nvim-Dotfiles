@@ -1,25 +1,20 @@
 "use client";
 
-import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core/page-title";
 // plane web components
 import { TeamspaceProjectWorkLayoutRoot } from "@/plane-web/components/issues/issue-layouts/roots/teamspace-project-root";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const TeamspaceProjectDetailPage = observer(() => {
-  const { teamspaceId } = useParams();
+function TeamspaceProjectDetailPage({ params }: Route.ComponentProps) {
+  const { teamspaceId } = params;
   // store
   const { getTeamspaceById } = useTeamspaces();
 
-  if (!teamspaceId) {
-    return <></>;
-  }
-
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId.toString());
+  const teamspace = getTeamspaceById(teamspaceId);
   const pageTitle = teamspace?.name ? `${teamspace?.name} - Work items` : undefined;
 
   return (
@@ -30,6 +25,6 @@ const TeamspaceProjectDetailPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
 export default TeamspaceProjectDetailPage;

@@ -23,7 +23,7 @@ export const SIDEBAR_MENU_ITEMS: {
   {
     key: "home",
     label: "Home",
-    href: `/pages`,
+    href: `/wiki`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: HomeIcon,

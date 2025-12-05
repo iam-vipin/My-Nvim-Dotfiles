@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/core";
 // local imports
-import { EAttachmentBlockAttributeNames, type TAttachmentBlockAttributes } from "./types";
+import { EAttachmentBlockAttributeNames } from "./types";
+import type { TAttachmentBlockAttributes } from "./types";
 
 export const DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES: TAttachmentBlockAttributes = {
   [EAttachmentBlockAttributeNames.SOURCE]: null,

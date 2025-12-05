@@ -8,7 +8,6 @@ import { useLocalStorage } from "@plane/hooks";
 // hooks
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useAppRail } from "@/hooks/use-app-rail";
 import { PiSidebar } from "@/plane-web/components/pi-chat/sidebar";
 
 export const PiAppSidebar: FC = observer(() => {
@@ -24,8 +23,6 @@ export const PiAppSidebar: FC = observer(() => {
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
-  // hooks
-  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
@@ -48,7 +45,6 @@ export const PiAppSidebar: FC = observer(() => {
         togglePeek={toggleSidebarPeek}
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
-        disablePeekTrigger={shouldRenderAppRail}
       >
         <PiSidebar />
       </ResizableSidebar>

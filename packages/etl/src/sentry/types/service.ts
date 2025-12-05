@@ -1,4 +1,4 @@
-import { ExState } from "@plane/sdk";
+import type { ExState } from "@plane/sdk";
 
 // Actor Types
 export interface SentryActor {

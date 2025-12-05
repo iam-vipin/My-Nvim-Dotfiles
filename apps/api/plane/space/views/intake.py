@@ -12,14 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import (
-    IntakeIssue,
-    Issue,
-    IssueLink,
-    FileAsset,
-    DeployBoard,
-    IssueType,
-)
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, IssueType, State, StateGroup
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -128,6 +121,22 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # get the triage state
+        triage_state = State.triage_objects.filter(
+            project_id=project_deploy_board.project_id, workspace_id=project_deploy_board.workspace_id
+        ).first()
+
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
+                project_id=project_deploy_board.project_id,
+                workspace_id=project_deploy_board.workspace_id,
+                color="#4E5355",
+                sequence=65000,
+                default=False,
+            )
+
         issue_type = IssueType.objects.filter(
             project_issue_types__project_id=project_deploy_board.project_id,
             is_default=True,
@@ -140,6 +149,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
+            state_id=triage_state.id,
             type=issue_type,
         )
 
@@ -208,6 +218,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 "project_id": project_deploy_board.project_id,
                 "user_id": request.user.id,
                 "slug": project_deploy_board.workspace.slug,
+                "allow_triage_state": True,
             },
         )
 

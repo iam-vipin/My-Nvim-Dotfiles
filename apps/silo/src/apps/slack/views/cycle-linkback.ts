@@ -1,4 +1,4 @@
-import { ExCycle, ExProject } from "@plane/sdk";
+import type { ExCycle, ExProject } from "@plane/sdk";
 import { env } from "@/env";
 import { getPlaneLogoUrl } from "@/helpers/urls";
 import { ACTIONS } from "../helpers/constants";

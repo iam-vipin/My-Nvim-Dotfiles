@@ -9,7 +9,6 @@ import { useLocalStorage } from "@plane/hooks";
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { WikiAppSidebar } from "./sidebar";
 
@@ -17,7 +16,6 @@ export const PagesAppSidebar: FC = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek, isAnySidebarDropdownOpen } = useAppTheme();
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
-  const { shouldRenderAppRail } = useAppRail();
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
   // handlers
@@ -38,7 +36,6 @@ export const PagesAppSidebar: FC = observer(() => {
         toggleCollapsed={toggleSidebar}
         togglePeek={toggleSidebarPeek}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
-        disablePeekTrigger={shouldRenderAppRail}
       >
         <WikiAppSidebar />
       </ResizableSidebar>

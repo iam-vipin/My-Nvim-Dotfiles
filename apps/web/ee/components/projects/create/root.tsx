@@ -5,17 +5,20 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { EFileAssetType } from "@plane/types";
 import type { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
 // types
 import type { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants
+import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 // hooks
+import { uploadCoverImage, getCoverImageType } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -42,7 +45,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
 export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((props) => {
   const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
   // store
-  const { addProjectToFavorites, createProject } = useProject();
+  const { addProjectToFavorites, createProject, updateProject } = useProject();
   const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -60,7 +63,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
   const { projectTemplateId, isApplyingTemplate, handleTemplateChange } = useProjectCreation();
   // form info
   const methods = useForm<TProject>({
-    defaultValues: { ...DEFAULT_PROJECT_FORM_VALUES, ...data },
+    defaultValues: { ...getProjectFormValues(), ...data },
     reValidateMode: "onChange",
   });
   const {
@@ -116,10 +119,32 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (coverImage?.startsWith("http")) {
-      formData.cover_image = coverImage;
-      formData.cover_image_asset = null;
+    let uploadedAssetUrl: string | null = null;
+
+    if (coverImage) {
+      const imageType = getCoverImageType(coverImage);
+
+      if (imageType === "local_static") {
+        try {
+          uploadedAssetUrl = await uploadCoverImage(coverImage, {
+            workspaceSlug: workspaceSlug.toString(),
+            entityIdentifier: "",
+            entityType: EFileAssetType.PROJECT_COVER,
+            isUserAsset: false,
+          });
+        } catch (error) {
+          console.error("Error uploading cover image:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: error instanceof Error ? error.message : "Failed to upload cover image",
+          });
+          return Promise.reject(error);
+        }
+      } else {
+        formData.cover_image = coverImage;
+        formData.cover_image_asset = null;
+      }
     }
 
     const createProjectService = projectTemplateId
@@ -133,9 +158,18 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
 
     return createProjectService(formData)
       .then(async (res) => {
-        if (coverImage && allowAssetStatusUpdate) {
+        if (uploadedAssetUrl) {
+          await updateCoverImageStatus(res.id, uploadedAssetUrl);
+          await updateProject(workspaceSlug.toString(), res.id, {
+            cover_image_url: uploadedAssetUrl,
+          });
+        } else if (allowAssetStatusUpdate && coverImage && coverImage.startsWith("http")) {
           await updateCoverImageStatus(res.id, coverImage);
+          await updateProject(workspaceSlug.toString(), res.id, {
+            cover_image_url: coverImage,
+          });
         }
+
         if (allowBulkAddMembers && membersPayload.length > 0) {
           bulkAddMembersToProject(workspaceSlug.toString(), res.id, {
             members: membersPayload,

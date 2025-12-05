@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { StopCircle, Download, Lock, LockOpen } from "lucide-react";
+import { StopCircle, Download, Lock, LockOpen, Pencil, Trash2 } from "lucide-react";
+// plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { CommentReplyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
-// core
+// components
 import { useQuickActionsFactory as useCoreQuickActionsFactory } from "@/components/common/quick-actions-factory";
+// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
+// plane web imports
 import { EndCycleModal } from "@/plane-web/components/cycles/end-cycle";
 import { ExportModal } from "@/plane-web/components/issues/issue-layouts/export-modal";
 import type { TExportProvider } from "@/plane-web/components/issues/issue-layouts/export-modal";
@@ -468,6 +473,44 @@ export const useQuickActionsFactory = () => {
       ) : null;
 
       return { items, modals };
+    },
+
+    // Reply menu items (EE-only)
+    createReplyEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "edit",
+      title: coreFactory.createCommentEditMenuItem(handler, shouldRender).title,
+      icon: Pencil,
+      action: handler,
+      shouldRender,
+    }),
+
+    createReplyDeleteMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
+      key: "delete",
+      title: coreFactory.createCommentDeleteMenuItem(handler, shouldRender).title,
+      icon: Trash2,
+      action: handler,
+      shouldRender,
+    }),
+
+    // EE feature: Comment Reply
+    useCommentReplyFeature: (props: {
+      commentId: string;
+      handleReply?: () => void;
+      shouldRender: boolean;
+    }): FeatureResult => {
+      const { t } = useTranslation();
+
+      const items = [
+        {
+          key: "reply",
+          title: t("common.actions.reply"),
+          icon: CommentReplyIcon,
+          action: props.handleReply || (() => {}),
+          shouldRender: props.shouldRender,
+        } as TContextMenuItem,
+      ];
+
+      return { items, modals: null };
     },
   };
 };

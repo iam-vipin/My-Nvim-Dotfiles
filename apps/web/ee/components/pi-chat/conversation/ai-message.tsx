@@ -20,10 +20,11 @@ type TProps = {
   dialogue?: TDialogue;
   isLatest?: boolean;
   isLoading?: boolean;
+  handleConvertToPage?: () => void;
 };
 export const AiMessage = observer((props: TProps) => {
   // props
-  const { dialogue, id = "", isLatest, isLoading } = props;
+  const { dialogue, id = "", isLatest, isLoading, handleConvertToPage } = props;
   // store
   const { workspaceSlug } = useParams();
   const { activeChatId, isPiTyping } = usePiChat();
@@ -42,14 +43,11 @@ export const AiMessage = observer((props: TProps) => {
             remarkPlugins={[remarkGfm]}
             className="pi-chat-root [&>*:first-child]:mt-0 animate-fade-in"
             components={{
-              a: ({ children, href }) =>
-                href?.startsWith(`${PI_URL}/api/v1/oauth/authorize/`) && !isLatest ? ( // NOTE: Prev auth links shouldn't be accessible
-                  <span className="!underline !text-custom-text-350">{children}</span>
-                ) : (
-                  <a href={href || ""} rel="noopener noreferrer">
-                    {children}
-                  </a>
-                ),
+              a: ({ children, href }) => (
+                <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
               table: ({ children }) => (
                 <div className="overflow-x-auto w-full my-4 border-custom-border-200">
                   <table className="min-w-full border-collapse">{children}</table>
@@ -73,6 +71,7 @@ export const AiMessage = observer((props: TProps) => {
             {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} />}
             {/* Action bar */}
             <ActionStatusBlock
+              workspaceSlug={workspaceSlug?.toString()}
               dialogue={dialogue}
               isLatest={isLatest}
               isPiTyping={isPiTyping}
@@ -86,7 +85,16 @@ export const AiMessage = observer((props: TProps) => {
 
         {/* Feedback bar */}
         {answer && (
-          <Feedback answer={answer} activeChatId={activeChatId} id={id} workspaceId={workspaceId} feedback={feedback} />
+          <Feedback
+            answer={answer}
+            activeChatId={activeChatId}
+            id={id}
+            workspaceId={workspaceId}
+            feedback={feedback}
+            queryId={query_id}
+            isLatest={!!isLatest}
+            handleConvertToPage={handleConvertToPage}
+          />
         )}
       </div>
     </div>

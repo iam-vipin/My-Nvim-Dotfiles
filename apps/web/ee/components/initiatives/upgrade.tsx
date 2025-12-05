@@ -3,7 +3,6 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
@@ -12,13 +11,13 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { EProductSubscriptionEnum } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
+// assets
+import InitiativesUpgradeDark from "@/app/assets/empty-state/initiatives/upgrade-dark.webp";
+import InitiativesUpgradeLight from "@/app/assets/empty-state/initiatives/upgrade-light.webp";
 // hooks
 import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-// assets
-import InitiativesUpgradeDark from "@/public/empty-state/initiatives/upgrade-dark.webp";
-import InitiativesUpgradeLight from "@/public/empty-state/initiatives/upgrade-light.webp";
 
 type Props = {
   workspaceSlug: string;
@@ -124,9 +123,9 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? InitiativesUpgradeDark : InitiativesUpgradeLight}
-          alt=""
+          alt="Initiatives upgrade"
           className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0 object-contain"
         />
       </div>

@@ -1,63 +1,68 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  CollaborativeDocumentEditorWithRef,
-  EditorRefApi,
-  TDisplayConfig,
-  TExtensions,
-  TRealtimeConfig,
-  TServerHandler,
-} from "@plane/editor";
+import { useEffect, useMemo, useRef, useState } from "react";
+// plane imports
+import type { EditorRefApi, TDisplayConfig, TMentionHandler, TRealtimeConfig } from "@plane/editor";
+import { CollaborativeDocumentEditorWithRef, TrailingNode } from "@plane/editor";
 import type { TWebhookConnectionQueryParams } from "@plane/types";
-import { IssueEmbedCard, IssueEmbedUpgradeCard, PageContentLoader } from "@/components";
+// components
+import { EditorMentionsRoot } from "@/components";
+// constants
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+// helpers
 import { callNative, generateRandomColor, getEditorFileHandlers } from "@/helpers";
-import { useMentions, useMobileEditor, useToolbar, useEditorFlagging, useDisableZoom } from "@/hooks";
+// hooks
+import {
+  useDisableZoom,
+  useEditorEmbeds,
+  useEditorFlagging,
+  useEditorMention,
+  useMobileEditor,
+  useRealtimePageEvents,
+  useToolbar,
+} from "@/hooks";
+// store
+import { usePages } from "@/hooks/store";
+// types
 import type { TDocumentEditorParams } from "@/types/editor";
 
-export const MobileDocumentEditor = () => {
-  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
-  const [initialParams, setInitialParams] = useState<TDocumentEditorParams | undefined>();
+const editorProps = {
+  scrollMargin: 80,
+  scrollThreshold: 80,
+};
 
+export const MobileDocumentEditor = () => {
+  const [initialParams, setInitialParams] = useState<TDocumentEditorParams | undefined>();
   // hooks
-  const { disabledExtensions, isIssueEmbedEnabled } = useEditorFlagging();
+  const {
+    document: { flagged: flaggedExtensions, disabled: disabledExtensions },
+  } = useEditorFlagging();
 
   const editorRef = useRef<EditorRefApi>(null);
   // It disables zooming in the editor.
   useDisableZoom();
+  const { updatePageProperties, isEditable } = useRealtimePageEvents({
+    currentPageId: initialParams?.pageId ?? "",
+    currentProjectId: initialParams?.projectId,
+    currentUserId: initialParams?.userId ?? "",
+    editorRef,
+  });
   // It keeps the native toolbar in sync with the editor state.
   const { updateActiveStates } = useToolbar(editorRef);
-
   const { handleEditorReady, onEditorFocus } = useMobileEditor(editorRef);
+  const { fetchMentions } = useEditorMention();
+  const { fetchPages: fetchSubPages } = usePages();
+  const { embedHandler } = useEditorEmbeds({
+    initialParams,
+    isIssueEmbedEnabled: !flaggedExtensions.includes("issue-embed"),
+    isNestedPagesEnabled: !flaggedExtensions.includes("nested-pages"),
+  });
 
-  const { mentionSuggestionsRef, mentionHighlightsRef } = useMentions();
-
-  const fileHandler = useMemo(
-    () =>
-      getEditorFileHandlers({
-        workspaceSlug: initialParams?.workspaceSlug ?? "",
-        workspaceId: initialParams?.workspaceId ?? "",
-        projectId: initialParams?.projectId ?? "",
-        baseApi: initialParams?.baseApi ?? "",
-      }),
-    [initialParams]
-  );
+  const fileHandler = useMemo(() => getEditorFileHandlers(), []);
 
   const displayConfig: TDisplayConfig = {
-    fontSize: "large-font",
+    fontSize: "mobile-font",
     fontStyle: "sans-serif",
+    lineSpacing: "mobile-regular",
   };
-
-  const handleServerConnect = useCallback(() => setHasConnectionFailed(false), []);
-
-  const handleServerError = useCallback(() => setHasConnectionFailed(true), []);
-
-  const serverHandler: TServerHandler = useMemo(
-    () => ({
-      onConnect: handleServerConnect,
-      onServerError: handleServerError,
-    }),
-    []
-  );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
     if (!initialParams) return undefined;
@@ -76,6 +81,7 @@ export const MobileDocumentEditor = () => {
           workspaceSlug: initialParams.workspaceSlug.toString(),
           documentType: initialParams.documentType.toString() as TWebhookConnectionQueryParams["documentType"],
           projectId: initialParams.projectId ?? "",
+          parentPageId: initialParams.parentPageId ?? undefined,
         },
       };
     } catch (error) {
@@ -84,18 +90,20 @@ export const MobileDocumentEditor = () => {
     }
   }, [initialParams]);
 
-  // Disabled extensions for the editor.
-  const resolvedDisabledExtensions: TExtensions[] = useMemo(
-    () => [...(disabledExtensions ?? []), "slash-commands"],
-    [disabledExtensions]
-  );
+  // Additional extensions for the editor.
+  const externalExtensions = useMemo(() => [TrailingNode], []);
 
-  const mentionHandler = useMemo(
+  const mentionHandler: TMentionHandler = useMemo(
     () => ({
-      suggestions: () => Promise.resolve(mentionSuggestionsRef.current),
-      highlights: () => Promise.resolve(mentionHighlightsRef.current),
+      searchCallback: async (query) => {
+        const res = await fetchMentions(query);
+        if (!res) throw new Error("Failed in fetching mentions");
+        return res;
+      },
+      renderComponent: (props) =>
+        initialParams && <EditorMentionsRoot {...props} currentUserId={initialParams.userId} />,
     }),
-    [mentionSuggestionsRef.current, mentionHighlightsRef.current]
+    [fetchMentions, initialParams]
   );
 
   const userConfig = useMemo(
@@ -105,45 +113,69 @@ export const MobileDocumentEditor = () => {
       name: initialParams?.userDisplayName ?? "",
       color: generateRandomColor(initialParams?.userId ?? ""),
     }),
-    [initialParams]
+    [initialParams?.userId, initialParams?.cookie, initialParams?.userDisplayName]
   );
 
   useEffect(() => {
-    callNative(CallbackHandlerStrings.getInitialDocumentEditorParams).then((params: TDocumentEditorParams) =>
-      setInitialParams(params)
-    );
+    try {
+      callNative(CallbackHandlerStrings.getInitialDocumentEditorParams).then((params: TDocumentEditorParams) => {
+        setInitialParams(params);
+        if (params?.pageId) fetchSubPages(params.pageId);
+      });
+    } catch (error) {
+      console.error("Error getting initial document editor params", error);
+    }
+    // It should only run once, to fetch the initial params
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (hasConnectionFailed) return null;
-
-  if (!realtimeConfig || !initialParams || !disabledExtensions) return <PageContentLoader />;
+  if (!realtimeConfig || !initialParams || !disabledExtensions) return null;
 
   return (
-    <div onClick={onEditorFocus} className="min-h-screen">
+    <div className="min-h-screen">
       <CollaborativeDocumentEditorWithRef
-        editable
-        placeholder={"Write something..."}
-        onTransaction={updateActiveStates}
-        id={initialParams?.pageId}
-        fileHandler={fileHandler}
-        handleEditorReady={handleEditorReady}
-        ref={editorRef}
-        containerClassName="min-h-screen p-0"
+        autofocus={false}
+        bubbleMenuEnabled={false}
+        containerClassName="min-h-screen p-0 !pb-32"
+        disabledExtensions={disabledExtensions}
         displayConfig={displayConfig}
-        editorClassName="pl-6 min-h-screen pb-32 pt-6"
-        mentionHandler={mentionHandler as any}
-        realtimeConfig={realtimeConfig}
-        serverHandler={serverHandler}
-        user={userConfig}
-        disabledExtensions={resolvedDisabledExtensions}
-        embedHandler={{
-          issue: {
-            widgetCallback: ({ issueId, projectId, workspaceSlug }) => {
-              if (!isIssueEmbedEnabled) return <IssueEmbedUpgradeCard />;
-              return <IssueEmbedCard issueId={issueId} projectId={projectId} workspaceSlug={workspaceSlug} />;
+        editable={isEditable ?? initialParams?.editable ?? false}
+        editorClassName="!px-5"
+        editorProps={editorProps}
+        extensions={externalExtensions}
+        extendedEditorProps={{
+          isSmoothCursorEnabled: false,
+          extensionOptions: {
+            attachmentComponent: {
+              onClick: (source) => callNative(CallbackHandlerStrings.onAttachmentBlockClick, source),
             },
           },
+          embedHandler,
         }}
+        extendedDocumentEditorProps={{
+          isSelfHosted: initialParams?.isSelfHosted ?? false,
+          onTitleFocus: () => callNative(CallbackHandlerStrings.onPageTitleTap),
+          titleContainerClassName: "px-4",
+        }}
+        fileHandler={fileHandler}
+        flaggedExtensions={flaggedExtensions}
+        handleEditorReady={handleEditorReady}
+        id={initialParams?.pageId}
+        dragDropEnabled={false}
+        isTouchDevice
+        documentLoaderClassName="px-4"
+        mentionHandler={mentionHandler}
+        onEditorFocus={() => {
+          const resolvedIsEditable = isEditable ?? initialParams?.editable ?? false;
+          if (!resolvedIsEditable) return;
+          onEditorFocus();
+        }}
+        onTransaction={() => updateActiveStates()}
+        placeholder={"Write something..."}
+        realtimeConfig={realtimeConfig}
+        ref={editorRef}
+        updatePageProperties={updatePageProperties}
+        user={userConfig}
       />
     </div>
   );

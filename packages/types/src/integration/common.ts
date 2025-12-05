@@ -1,4 +1,4 @@
-import { IState } from "../state";
+import type { IState } from "../state";
 
 export enum E_STATE_MAP_KEYS {
   DRAFT_MR_OPENED = "DRAFT_MR_OPENED",

@@ -1,4 +1,5 @@
-import { S3Client, GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import type { S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 
 export interface StorageProvider {
   getContentLength(fileId: string): Promise<number>;

@@ -16,7 +16,7 @@ import { StateService } from "@/services/state.service";
 import { UserService } from "@/services/user.service";
 
 // types
-import { ClientOptions } from "@/types/types";
+import type { ClientOptions } from "@/types/types";
 import { AssetService, IntakeService } from "./services";
 
 export class Client {

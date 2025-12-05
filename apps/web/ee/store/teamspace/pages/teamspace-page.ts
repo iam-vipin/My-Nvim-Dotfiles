@@ -57,6 +57,18 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
         if (!workspaceSlug || !teamspaceId || !page.id) throw new Error("Missing required fields.");
         return await teamspacePageService.duplicate(workspaceSlug, teamspaceId, page.id);
       },
+      download: async () => {
+        if (!workspaceSlug || !teamspaceId || !page.id) throw new Error("Missing required fields.");
+        await teamspacePageService.downloadPage(workspaceSlug, teamspaceId, page.id);
+      },
+      fetchEmbeds: async (embedType) => {
+        if (!workspaceSlug || !teamspaceId || !page.id) throw new Error("Missing required fields.");
+        return await teamspacePageService.fetchEmbeds(workspaceSlug, teamspaceId, page.id, embedType);
+      },
+      fetchMentions: async (mentionType) => {
+        if (!workspaceSlug || !teamspaceId || !page.id) throw new Error("Missing required fields.");
+        return await teamspacePageService.fetchMentions(workspaceSlug, teamspaceId, page.id, mentionType);
+      },
     });
     makeObservable(this, {
       // computed
@@ -242,6 +254,11 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug) return false;
+    const isNestedPagesEnabled = this.rootStore.teamspaceRoot.teamspacePage.isNestedPagesEnabled(workspaceSlug);
+    if (!isNestedPagesEnabled && !!this.parent_id) return false;
+
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 

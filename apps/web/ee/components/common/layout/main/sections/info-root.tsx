@@ -5,10 +5,11 @@ import React, { useEffect, useState } from "react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { EFileAssetType } from "@plane/types";
+// components
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // local imports
-import { DescriptionInput } from "../../../input/description-input";
 import { TitleInput } from "../../../input/title-input";
 import { SectionWrapper } from "../common/section-wrapper";
 
@@ -28,6 +29,7 @@ type TInfoSectionProps = {
   identifierElement?: React.ReactNode;
   iconElement?: React.ReactNode;
   titleElement?: React.ReactNode;
+  issueSequenceId?: number;
 };
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
@@ -47,6 +49,7 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
     identifierElement,
     iconElement,
     titleElement,
+    issueSequenceId,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -84,16 +87,17 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
         {indicatorElement && <>{indicatorElement}</>}
       </div>
       <DescriptionInput
-        editorRef={editorRef}
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        itemId={itemId}
-        initialValue={descriptionValue}
-        disabled={disabled}
-        onSubmit={onDescriptionSubmit}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
+        issueSequenceId={issueSequenceId}
         containerClassName="-ml-3 border-none min-h-[88px]"
+        disabled={disabled}
+        editorRef={editorRef}
+        entityId={itemId}
         fileAssetType={fileAssetType}
+        initialValue={descriptionValue}
+        onSubmit={onDescriptionSubmit}
+        projectId={projectId}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
+        workspaceSlug={workspaceSlug}
       />
       {actionElement && <div className="flex items-center justify-between w-full gap-2">{actionElement}</div>}
     </SectionWrapper>

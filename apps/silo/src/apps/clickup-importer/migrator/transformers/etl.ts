@@ -1,11 +1,4 @@
-import {
-  transformComment,
-  transformTask,
-  transformUser,
-  transformList,
-  transformTag,
-  transformState,
-  transformTaskType,
+import type {
   TClickUpConfig,
   TClickUpEntity,
   TClickUpTask,
@@ -16,21 +9,28 @@ import {
   TClickUpListsWithTasks,
   TClickUpUser,
   TClickUpCustomTaskType,
-  ClickUpContentParserConfig,
   ClickupAPIService,
   TClickUpCustomFieldWithTaskType,
+  TClickUpCustomField,
+  TClickUpStatus,
+} from "@plane/etl/clickup";
+import {
+  transformComment,
+  transformUser,
+  transformList,
+  transformTag,
+  transformState,
+  transformTaskType,
   transformCustomField,
   transformCustomFieldOption,
   transformCustomFieldValues,
-  TClickUpCustomField,
   transformCustomFieldForDefaultTaskType,
   CLICKUP_TASK_EXTERNAL_ID,
-  TClickUpStatus,
   transformProject,
 } from "@plane/etl/clickup";
-import { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import {
+import type {
   Client as PlaneClient,
   ExIssueComment,
   ExIssueLabel,
@@ -42,12 +42,15 @@ import {
   ExIssuePropertyOption,
   ExState,
 } from "@plane/sdk";
-import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { createProjects, enableIssueTypeForProject } from "@/etl/migrator/projects.migrator";
 import { createStates } from "@/etl/migrator/states.migrator";
 import { processBatchPromises } from "@/helpers/methods";
-import { APIClient, getAPIClient } from "@/services/client";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
+import type { ClickUpContentParserConfig } from "../../helpers/get-content-parser";
+import { transformTask } from "../../helpers/transform";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Clickup entities, responsible

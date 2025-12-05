@@ -1,7 +1,10 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
-import { findChildren, type Editor } from "@tiptap/core";
+import { findChildren } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
+// plane imports
+import { convertHTMLToMarkdown } from "@plane/utils";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // constants
@@ -9,19 +12,19 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // types
 import { getExtenedEditorRefHelpers } from "@/plane-editor/helpers/extended-editor-ref";
-import type { CoreEditorRefApi, EditorRefApi, TEditorCommands } from "@/types";
+import type { CoreEditorRefApi, EditorRefApi, IEditorProps, TEditorCommands } from "@/types";
 // local imports
 import { getParagraphCount } from "./common";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
-type TArgs = {
+type TArgs = Pick<IEditorProps, "getEditorMetaData"> & {
   editor: Editor | null;
   provider: HocuspocusProvider | undefined;
 };
 
 export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
-  const { editor, provider } = args;
+  const { editor, getEditorMetaData, provider } = args;
 
   const coreHelpers: CoreEditorRefApi = {
     blur: () => editor?.commands.blur(),
@@ -83,8 +86,15 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     }),
     getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.() ?? "";
-      return markdownOutput;
+      if (!editor) return "";
+      const editorHTML = editor.getHTML();
+      const metaData = getEditorMetaData(editorHTML);
+      // convert to markdown
+      const markdown = convertHTMLToMarkdown({
+        description_html: editorHTML,
+        metaData,
+      });
+      return markdown;
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;

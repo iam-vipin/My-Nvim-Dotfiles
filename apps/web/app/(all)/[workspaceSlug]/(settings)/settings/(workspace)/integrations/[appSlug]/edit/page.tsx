@@ -3,7 +3,6 @@
 import { observer } from "mobx-react";
 
 // component
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -18,26 +17,24 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const ApplicationEditPage = observer(() => {
+function ApplicationEditPage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { appSlug } = useParams();
+  const { appSlug } = params;
   const { updateApplication, getApplicationBySlug, fetchApplication, fetchApplicationCategories } = useApplications();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Edit Application` : undefined;
-  const application = getApplicationBySlug(appSlug?.toString() || "");
+  const application = getApplicationBySlug(appSlug);
 
   // state
-  const { data, isLoading } = useSWR(
-    appSlug ? APPLICATION_DETAILS(appSlug.toString()) : null,
-    appSlug ? async () => fetchApplication(appSlug.toString()) : null
-  );
+  const { data, isLoading } = useSWR(APPLICATION_DETAILS(appSlug), () => fetchApplication(appSlug));
 
-  useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
+  useSWR(APPLICATION_CATEGORIES_LIST(), () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TApplication>): Promise<TApplication | undefined> => {
     try {
@@ -74,6 +71,6 @@ const ApplicationEditPage = observer(() => {
       <CreateUpdateApplication formData={application} handleFormSubmit={handleFormSubmit} />
     </>
   );
-});
+}
 
-export default ApplicationEditPage;
+export default observer(ApplicationEditPage);

@@ -1,4 +1,5 @@
-import { createSentryAuth, SentryAuthService } from "@plane/etl/sentry";
+import type { SentryAuthService } from "@plane/etl/sentry";
+import { createSentryAuth } from "@plane/etl/sentry";
 import { env } from "@/env";
 
 export const sentryAuth = createSentryAuth({

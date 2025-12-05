@@ -1,7 +1,7 @@
 // plane constants
 import { API_BASE_URL } from "@plane/constants";
 // plane types
-import { TDashboardWidget, TDashboard, TDashboardWidgetsLayoutPayload, TDashboardWidgetData } from "@plane/types";
+import type { TDashboardWidget, TDashboard, TDashboardWidgetsLayoutPayload, TDashboardWidgetData } from "@plane/types";
 import { APIService } from "../api.service";
 
 export class WorkspaceDashboardsService extends APIService {

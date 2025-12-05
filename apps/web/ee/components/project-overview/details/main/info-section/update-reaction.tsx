@@ -1,18 +1,15 @@
 "use client";
 
 import type { FC } from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
-import { cn, formatTextList } from "@plane/utils";
-// components
-import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
-// components
-import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectReactions } from "@/plane-web/hooks/store/projects/use-project-reactions";
@@ -27,6 +24,8 @@ export type TProjectReaction = {
 export const ProjectReaction: FC<TProjectReaction> = observer((props) => {
   const { workspaceSlug, projectId, currentUser, disabled = false } = props;
 
+  // state
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   // hooks
   const {
     fetchProjectReactions,
@@ -104,49 +103,61 @@ export const ProjectReaction: FC<TProjectReaction> = observer((props) => {
     [workspaceSlug, projectId, currentUser, createProjectReaction, removeProjectReaction, userReactions]
   );
 
-  const getReactionUsers = (reaction: string): string => {
+  const getReactionUsers = (reaction: string): string[] => {
     if (!reactionIds || typeof reactionIds !== "object" || !Array.isArray(reactionIds?.[reaction])) {
-      return "";
+      return [];
     }
 
-    const _users = reactionIds[reaction].map((r) => getUserDetails(r.actor)?.display_name);
-    return formatTextList(_users as string[]);
+    const _users = reactionIds[reaction]
+      .map((r) => getUserDetails(r.actor)?.display_name)
+      .filter((name): name is string => !!name);
+    return _users;
+  };
+
+  // Transform reactions data to Propel EmojiReactionType format
+  const reactions: EmojiReactionType[] = useMemo(() => {
+    if (!reactionIds) return [];
+
+    return Object.keys(reactionIds)
+      .filter((reaction) => reactionIds[reaction]?.length > 0)
+      .map((reaction) => ({
+        emoji: stringToEmoji(reaction),
+        count: reactionIds[reaction].length,
+        reacted: userReactions.includes(reaction),
+        users: getReactionUsers(reaction),
+      }));
+  }, [reactionIds, userReactions]);
+
+  const handleReactionClick = (emoji: string) => {
+    if (disabled) return;
+    // Convert emoji back to decimal string format for the API
+    const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
+    const reactionString = emojiCodePoints.join("-");
+    projectReactionOperations.react(reactionString);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    // emoji is already in decimal string format from EmojiReactionPicker
+    projectReactionOperations.react(emoji);
   };
 
   return (
     <div className="relative flex items-center gap-1.5">
-      {!disabled && (
-        <ReactionSelector size="md" position="top" value={userReactions} onSelect={projectReactionOperations.react} />
-      )}
-      {reactionIds &&
-        Object.keys(reactionIds).map((reaction) => {
-          if (reactionIds[reaction].length === 0) return null;
-          return (
-            <Tooltip key={reaction} tooltipContent={getReactionUsers(reaction)}>
-              <button
-                type="button"
-                onClick={() => !disabled && projectReactionOperations.react(reaction)}
-                className={cn(
-                  "flex items-center gap-1 rounded-md border-[0.5px] border-custom-border-200 px-2 py-1 text-xs h-7",
-                  {
-                    "cursor-not-allowed opacity-75": disabled,
-                    "cursor-pointer hover:bg-custom-background-80": !disabled,
-                    "bg-custom-primary-100/10 text-custom-primary-100": userReactions.includes(reaction),
-                  }
-                )}
-              >
-                {renderEmoji(reaction)}
-                <span
-                  className={cn("text-custom-text-100", {
-                    "text-custom-primary-100": userReactions.includes(reaction),
-                  })}
-                >
-                  {reactionIds[reaction].length}
-                </span>
-              </button>
-            </Tooltip>
-          );
-        })}
+      <EmojiReactionPicker
+        isOpen={isPickerOpen}
+        handleToggle={setIsPickerOpen}
+        onChange={handleEmojiSelect}
+        disabled={disabled}
+        label={
+          <EmojiReactionGroup
+            reactions={reactions}
+            onReactionClick={handleReactionClick}
+            showAddButton={!disabled}
+            onAddReaction={() => setIsPickerOpen(true)}
+          />
+        }
+        placement="bottom-start"
+      />
     </div>
   );
 });

@@ -1,6 +1,6 @@
 import * as React from "react";
 // types
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const BasicDonutChartIcon: React.FC<ISvgIcons> = ({ height = "24", width = "24", className = "", ...rest }) => (
   <svg

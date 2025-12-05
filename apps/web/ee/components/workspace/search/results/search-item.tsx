@@ -10,6 +10,7 @@ import type {
 import { ESearchFilterKeys } from "@plane/constants";
 
 // ui
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleIcon,
   ModuleIcon,
@@ -20,7 +21,6 @@ import {
   TeamsIcon,
   ViewsIcon,
 } from "@plane/propel/icons";
-import { Logo } from "@plane/ui";
 // plane web components
 import { generateWorkItemLink } from "@plane/utils";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
@@ -117,7 +117,7 @@ export const SearchItems: {
       const redirectProjectId = page?.project_ids?.[0];
       return redirectProjectId
         ? `/${page?.workspace_slug}/projects/${redirectProjectId}/pages/${page?.id}`
-        : `/${page?.workspace_slug}/pages/${page?.id}`;
+        : `/${page?.workspace_slug}/wiki/${page?.id}`;
     },
     title: "Pages",
   },

@@ -1,10 +1,12 @@
-import { Editor } from "@tiptap/react";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Editor } from "@tiptap/react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
+import type { TCollabValue } from "@/contexts";
 import type {
   ICollaborativeDocumentEditorPropsExtended,
   IEditorProps,
@@ -16,38 +18,44 @@ import type {
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
+  disabledExtensions: IEditorProps["disabledExtensions"];
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  extendedEditorProps?: IEditorPropsExtended;
-  flaggedExtensions: IEditorProps["flaggedExtensions"];
-  disabledExtensions: IEditorProps["disabledExtensions"];
+  provider?: HocuspocusProvider;
+  state?: TCollabValue["state"];
 };
 
-export const PageRenderer = (props: Props) => {
+export function PageRenderer(props: Props) {
   const {
     aiHandler,
     bubbleMenuEnabled,
+    disabledExtensions,
     displayConfig,
     documentLoaderClassName,
     editor,
     editorContainerClassName,
-    id,
-    isLoading,
-    isTouchDevice,
-    tabIndex,
-    titleEditor,
     extendedEditorProps,
     flaggedExtensions,
-    disabledExtensions,
+    extendedDocumentEditorProps,
+    isLoading,
+    isTouchDevice,
+    id,
+    tabIndex,
+    titleEditor,
+    provider,
+    state,
   } = props;
+  const { isSelfHosted, titleContainerClassName } = extendedDocumentEditorProps ?? {};
 
   return (
     <div
@@ -59,14 +67,17 @@ export const PageRenderer = (props: Props) => {
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
-          {titleEditor && (
+          {titleEditor && !isSelfHosted && (
             <div className="relative w-full py-3">
               <EditorContainer
+                displayConfig={displayConfig}
                 editor={titleEditor}
+                editorContainerClassName={cn(
+                  "page-title-editor bg-transparent py-3 border-none",
+                  titleContainerClassName
+                )}
                 id={id + "-title"}
                 isTouchDevice={isTouchDevice}
-                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
-                displayConfig={displayConfig}
               >
                 <EditorContentWrapper
                   editor={titleEditor}
@@ -83,15 +94,18 @@ export const PageRenderer = (props: Props) => {
             editorContainerClassName={editorContainerClassName}
             id={id}
             isTouchDevice={isTouchDevice}
+            provider={provider}
+            state={state}
           >
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
             {editor.isEditable && !isTouchDevice && (
               <div>
                 {bubbleMenuEnabled && (
                   <EditorBubbleMenu
-                    flaggedExtensions={flaggedExtensions}
+                    disabledExtensions={disabledExtensions}
                     editor={editor}
                     extendedEditorProps={extendedEditorProps}
+                    flaggedExtensions={flaggedExtensions}
                   />
                 )}
                 <BlockMenu
@@ -107,4 +121,4 @@ export const PageRenderer = (props: Props) => {
       )}
     </div>
   );
-};
+}

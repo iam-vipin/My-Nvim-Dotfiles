@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExIssue, Paginated } from "@/types/types";
+import type { ClientOptions, ExIssue, Paginated } from "@/types/types";
 
 export class EpicService extends APIService {
   constructor(options: ClientOptions) {

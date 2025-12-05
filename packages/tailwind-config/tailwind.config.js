@@ -21,6 +21,7 @@ module.exports = {
       "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/propel/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/editor/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/mobile-editor/src/**/*.{js,ts,jsx,tsx}",
       "!../../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },

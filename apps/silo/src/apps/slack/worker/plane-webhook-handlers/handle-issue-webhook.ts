@@ -1,9 +1,9 @@
-import { TSlackIssueEntityData } from "@plane/etl/slack";
-import { PlaneWebhookPayload } from "@plane/sdk";
+import type { TSlackIssueEntityData } from "@plane/etl/slack";
+import type { PlaneWebhookPayload } from "@plane/sdk";
 import { Store } from "@/worker/base";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { getSlackToPlaneUserMapFromWC } from "../../helpers/user";
-import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
+import type { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
 import { createActivityLinkback } from "../../views/activity";
 
 export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {

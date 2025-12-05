@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
 // icons
 import { CalendarCheck } from "lucide-react";
@@ -24,6 +25,14 @@ import {
   renderFormattedDate,
   renderFormattedDateWithoutYear,
 } from "@plane/utils";
+// assets
+import assigneeDark from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
+import assigneeLight from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
+import labelDark from "@/app/assets/empty-state/active-cycle/label-dark.webp?url";
+import labelLight from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
+import priorityDark from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
+import priorityLight from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+import userPlaceholder from "@/app/assets/user.png?url";
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
@@ -35,7 +44,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -47,12 +55,14 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // hooks
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
   // derived values
-  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
-  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
-  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
+  const priorityResolvedPath = resolvedTheme === "light" ? priorityLight : priorityDark;
+  const assigneesResolvedPath = resolvedTheme === "light" ? assigneeLight : assigneeDark;
+  const labelsResolvedPath = resolvedTheme === "light" ? labelLight : labelDark;
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -261,7 +271,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                       title={
                         <div className="flex items-center gap-2">
                           <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                            <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                            <img src={userPlaceholder} height="100%" width="100%" className="rounded-full" alt="User" />
                           </div>
                           <span>No assignee</span>
                         </div>

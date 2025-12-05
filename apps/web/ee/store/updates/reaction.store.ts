@@ -83,7 +83,7 @@ export class UpdatesReactionStore implements IUpdatesReactionStore {
 
   // actions
   public createReaction = action(
-    async (callbackFn: () => Promise<TUpdateReaction>, updateId: string, reaction: string) => {
+    async (callbackFn: () => Promise<TUpdateReaction>, updateId: string, _reaction: string) => {
       const response = await callbackFn();
       runInAction(() => {
         if (!this.updateReactions[updateId]) this.updateReactions[updateId] = [response];

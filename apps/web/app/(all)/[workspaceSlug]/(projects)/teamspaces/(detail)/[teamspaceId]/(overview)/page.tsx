@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -11,28 +10,29 @@ import { TeamsOverviewRoot } from "@/plane-web/components/teamspaces/overview/ro
 import { useFlag, useTeamspaces, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/page";
 
-const TeamspaceOverviewPage = observer(() => {
+function TeamspaceOverviewPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, teamspaceId } = useParams();
+  const { workspaceSlug, teamspaceId } = params;
   // store
   const { fetchProjectAttributes } = useProjectAdvanced();
   const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const teamspaceProjectIds = getTeamspaceProjectIds(teamspaceId?.toString());
+  const teamspace = getTeamspaceById(teamspaceId);
+  const teamspaceProjectIds = getTeamspaceProjectIds(teamspaceId);
+  const isProjectGroupingFeatureFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
-    useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFeatureFlagEnabled;
   // fetch team project attributes
   useSWR(
-    workspaceSlug && isProjectGroupingEnabled && teamspaceProjectIds && teamspaceProjectIds.length > 0
+    isProjectGroupingEnabled && teamspaceProjectIds && teamspaceProjectIds.length > 0
       ? ["teamspaceProjectAttributes", workspaceSlug, isProjectGroupingEnabled, ...teamspaceProjectIds]
       : null,
-    workspaceSlug && isProjectGroupingEnabled && teamspaceProjectIds && teamspaceProjectIds.length > 0
+    isProjectGroupingEnabled && teamspaceProjectIds && teamspaceProjectIds.length > 0
       ? () =>
-          fetchProjectAttributes(workspaceSlug.toString(), {
+          fetchProjectAttributes(workspaceSlug, {
             project_ids: teamspaceProjectIds?.join(","),
           })
       : null
@@ -46,9 +46,9 @@ const TeamspaceOverviewPage = observer(() => {
     );
 
   // Empty state if teamspace is not found
-  if (!teamspaceId || !teamspace) return null;
+  if (!teamspace) return null;
 
-  return <TeamsOverviewRoot teamspaceId={teamspaceId.toString()} />;
-});
+  return <TeamsOverviewRoot teamspaceId={teamspaceId} />;
+}
 
-export default TeamspaceOverviewPage;
+export default observer(TeamspaceOverviewPage);

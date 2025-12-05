@@ -1,4 +1,4 @@
-import { ExtensionFileSetStorageKey as CoreExtensionFileSetStorageKey } from "@/ce/types/storage";
+import type { ExtensionFileSetStorageKey as CoreExtensionFileSetStorageKey } from "@/ce/types/storage";
 // local imports
 import type { AttachmentExtensionStorage } from "../extensions/attachments/types";
 

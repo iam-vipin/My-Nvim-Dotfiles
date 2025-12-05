@@ -251,7 +251,7 @@ export class TeamViewIssuesFilter extends IssueFilterHelperStore implements ITea
           });
 
           if (this.getShouldClearIssues(updatedDisplayFilters)) {
-            this.rootIssueStore.teamViewIssues.clear(true, true); // clear issues for local store when some filters like layout changes
+            this.rootIssueStore.teamViewIssues.clear(true); // clear issues for local store when some filters like layout changes
           }
 
           if (this.getShouldReFetchIssues(updatedDisplayFilters)) {

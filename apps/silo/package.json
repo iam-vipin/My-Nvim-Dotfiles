@@ -5,10 +5,20 @@
   "private": true,
   "author": "engineering@plane.so",
   "type": "module",
+  "main": "./dist/start.cjs",
+  "module": "./dist/start.mjs",
+  "types": "./dist/start.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/start.mjs",
+      "require": "./dist/start.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "nodemon --config \"./nodemon.json\"/",
-    "start": "node dist/start.cjs",
+    "start": "node .",
     "test": "jest",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --max-warnings 398",
@@ -42,7 +52,6 @@
     "bluebird": "^3.7.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "csv-string": "^4.1.1",
     "express": "^4.21.2",
     "express-winston": "^4.2.0",
     "jira.js": "^4.0.1",

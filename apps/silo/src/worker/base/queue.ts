@@ -2,7 +2,7 @@ import { logger } from "@plane/logger";
 import { env } from "@/env";
 import { MQConsumer } from "./consumer";
 import { MQProducer } from "./producer";
-import { TMQEntityOptions } from "./types";
+import type { TMQEntityOptions } from "./types";
 
 // An encapsulation of RabbitMQ producer and consumer
 export class MQ {

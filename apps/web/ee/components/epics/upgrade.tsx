@@ -3,7 +3,6 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { Crown } from "lucide-react";
@@ -11,10 +10,10 @@ import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
+import EpicsUpgradeDark from "@/app/assets/empty-state/epics/settings-dark.webp?url";
+import EpicsUpgradeLight from "@/app/assets/empty-state/epics/settings-light.webp?url";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.webp";
-import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.webp";
 
 export const EpicsUpgrade: FC = observer(() => {
   // store hooks
@@ -63,9 +62,9 @@ export const EpicsUpgrade: FC = observer(() => {
             <div className="flex gap-4 flex-wrap">{getUpgradeButton()}</div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? EpicsUpgradeDark : EpicsUpgradeLight}
-          alt=""
+          alt="Epics upgrade"
           className="max-h-[320px] self-end flex pb-0 xl:p-0 w-auto"
         />
       </div>

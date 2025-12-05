@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 //
 import { useGanttChart } from "../..";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";

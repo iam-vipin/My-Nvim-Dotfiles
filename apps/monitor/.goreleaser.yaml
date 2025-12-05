@@ -1,5 +1,7 @@
 version: 2
 
+project_name: prime-monitor
+
 builds:
   - main: ./main.go
     ldflags: "-s -w -X main.PRIVATE_KEY={{.Env.PRIVATE_KEY}}"

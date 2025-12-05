@@ -21,7 +21,7 @@ import { E_IMPORTER_STEPS } from "@/plane-web/types/importers";
 import { getWorkbookConfig } from "./workbook";
 
 export const ConfigureFlatfile: FC = observer(() => {
-  const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_FLATFILE_PUBLISHABLE_KEY;
+  const PUBLISHABLE_KEY = process.env.VITE_FLATFILE_PUBLISHABLE_KEY;
   if (!PUBLISHABLE_KEY)
     return (
       <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">

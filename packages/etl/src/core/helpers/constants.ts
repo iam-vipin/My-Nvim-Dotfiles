@@ -1,4 +1,4 @@
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 import { E_SILO_ERROR_CODES } from "../types/error";
 
 const entries = Object.entries(E_SILO_ERROR_CODES);

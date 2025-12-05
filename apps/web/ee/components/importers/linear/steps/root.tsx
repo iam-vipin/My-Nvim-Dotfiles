@@ -2,14 +2,14 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
+// assets
+import LinearLogo from "@/app/assets/services/linear.svg?url";
 // plane web components
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
 import { IMPORTER_LINEAR_STEPS } from "@/plane-web/constants/importers/linear";
 // plane web hooks
 import { useLinearImporter } from "@/plane-web/hooks/store";
-// assets
-import LinearLogo from "@/public/services/linear.svg";
 
 export const StepsRoot: FC = observer(() => {
   // hooks

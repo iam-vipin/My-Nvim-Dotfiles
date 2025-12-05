@@ -2,20 +2,17 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // components
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon } from "@plane/propel/icons";
-import { Logo } from "@/components/common/logo";
+// assets
+import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import type { TProjectMap } from "@/plane-web/types/integrations";
-// public images
-import GitlabLogo from "@/public/services/gitlab.svg";
 
 type TEntityForm = {
   value: TProjectMap;
@@ -68,7 +65,7 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
           onChange={(value: string | undefined) => handleChange("entityId", value || undefined)}
           iconExtractor={() => (
             <div className="w-4 h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-              <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />
+              <img src={GitlabLogo} alt="Gitlab Logo" className="w-full h-full object-cover" />
             </div>
           )}
           queryExtractor={(option) => option.name}

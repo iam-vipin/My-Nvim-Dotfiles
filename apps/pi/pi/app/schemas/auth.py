@@ -9,3 +9,4 @@ class User(BaseModel):
 class AuthResponse(BaseModel):
     is_authenticated: bool
     user: User | None = None
+    plane_token: str | None = None

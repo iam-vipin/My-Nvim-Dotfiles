@@ -1,9 +1,11 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { isChangeOrigin } from "@tiptap/extension-collaboration";
-import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { ECommentAttributeNames, TCommentMarkAttributes } from "../types";
+import type { TCommentMarkAttributes } from "../types";
+import { ECommentAttributeNames } from "../types";
 
 const COMMENT_DELETE_PLUGIN_KEY = new PluginKey("comment-delete-utility");
 

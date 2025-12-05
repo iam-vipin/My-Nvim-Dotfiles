@@ -19,6 +19,7 @@ from pi.app.models import WorkspaceVectorization  # noqa: F401
 from pi.app.models.action_artifact import ActionArtifact  # noqa: F401
 from pi.app.models.action_artifact import ActionArtifactVersion  # noqa: F401
 from pi.app.models.base import BaseModel
+from pi.app.models.message_clarification import MessageClarification  # noqa: F401
 from pi.app.models.oauth import PlaneOAuthState  # noqa: F401
 from pi.app.models.oauth import PlaneOAuthToken  # noqa: F401
 

@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -11,7 +10,7 @@ import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/
 import { LinearDashboardRoot } from "@/plane-web/components/importers/linear/dashboard/root";
 import { useLinearImporter } from "@/plane-web/hooks/store";
 
-const LinearImporter: FC = observer(() => {
+function LinearImporter() {
   const {
     user,
     workspace,
@@ -81,6 +80,6 @@ const LinearImporter: FC = observer(() => {
       )}
     </Fragment>
   );
-});
+}
 
-export default LinearImporter;
+export default observer(LinearImporter);

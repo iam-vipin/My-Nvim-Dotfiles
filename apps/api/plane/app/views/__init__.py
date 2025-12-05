@@ -3,7 +3,6 @@ from .project.base import (
     ProjectIdentifierEndpoint,
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
-    ProjectPublicCoverImagesEndpoint,
     DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )
@@ -18,6 +17,7 @@ from .project.member import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 from .user.base import (
@@ -79,7 +79,7 @@ from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 
-from .state.base import StateViewSet
+from .state.base import StateViewSet, IntakeStateEndpoint
 from .view.base import (
     WorkspaceViewViewSet,
     WorkspaceViewIssuesViewSet,
@@ -106,6 +106,7 @@ from .asset.v2 import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
     ProjectReuploadAssetEndpoint,
@@ -138,7 +139,7 @@ from .issue.attachment import (
     IssueAttachmentV2Endpoint,
 )
 
-from .issue.comment import IssueCommentViewSet, CommentReactionViewSet
+from .issue.comment import IssueCommentViewSet, CommentReactionViewSet, IssueCommentRepliesEndpoint
 
 from .issue.label import LabelViewSet, BulkCreateIssueLabelsEndpoint
 
@@ -223,7 +224,6 @@ from .notification.base import (
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
 )
-
 
 
 from .webhook.base import (

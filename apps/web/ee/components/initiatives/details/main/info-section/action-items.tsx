@@ -6,6 +6,7 @@ import { Link, Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
 import { EpicIcon, ProjectIcon } from "@plane/propel/icons";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { InitiativeActionButton } from "./action-button";
 import { InitiativeAttachmentActionButton } from "./attachment-button";
 import { InitiativeLinksActionButton } from "./link-button";
@@ -15,13 +16,16 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
 };
 
 export const InitiativeInfoActionItems: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled, toggleProjectModal, toggleEpicModal } = props;
+  const { workspaceSlug, initiativeId, disabled } = props;
   const { t } = useTranslation();
+  // store hooks
+  const {
+    initiative: { toggleProjectsModal, toggleEpicModal },
+  } = useInitiatives();
+
   return (
     <div className="flex gap-4 flex-col">
       <InitiativeReactions workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
@@ -54,7 +58,7 @@ export const InitiativeInfoActionItems: FC<Props> = observer((props) => {
             </div>
           }
           disabled={disabled}
-          onClick={() => toggleProjectModal(true)}
+          onClick={() => toggleProjectsModal(true)}
         />
         <InitiativeActionButton
           customButton={

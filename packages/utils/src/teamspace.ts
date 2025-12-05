@@ -1,5 +1,5 @@
 import { sortBy } from "lodash-es";
-import { TTeamspace, TTeamspaceFilters, TTeamspaceOrderByOptions } from "@plane/types";
+import type { TTeamspace, TTeamspaceFilters, TTeamspaceOrderByOptions } from "@plane/types";
 
 /**
  * @description filters team based on the filters and display filters

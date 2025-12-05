@@ -1,10 +1,15 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane imports
+import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
+// assets
+import allFiltersDark from "@/app/assets/empty-state/project/all-filters-dark.svg?url";
+import allFiltersLight from "@/app/assets/empty-state/project/all-filters-light.svg?url";
+import nameFilterDark from "@/app/assets/empty-state/project/name-filter-dark.svg?url";
+import nameFilterLight from "@/app/assets/empty-state/project/name-filter-light.svg?url";
 // components
 import { ListLayout } from "@/components/core/list/list-root";
 // hooks
@@ -12,7 +17,6 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces, useTeamspaceFilter } from "@/plane-web/hooks/store";
 // components
 import { TeamsLoader } from "./loader";
@@ -26,6 +30,8 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
   const { isEditingAllowed } = props;
   // plane hooks
   const { t } = useTranslation();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -37,11 +43,8 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE
   );
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/project/name-filter",
-    extension: "svg",
-  });
+  const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
+  const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
 
   if (!allTeamSpaceIds || loader === "init-loader") return <TeamsLoader />;
 
@@ -68,8 +71,8 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image
-            src={searchQuery.trim() === "" ? resolvedFiltersImage : resolvedNameFilterImage}
+          <img
+            src={searchQuery.trim() === "" ? resolvedAllFiltersImage : resolvedNameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching teamspace"
           />

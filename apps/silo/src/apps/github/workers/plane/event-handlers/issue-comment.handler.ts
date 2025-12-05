@@ -1,20 +1,17 @@
 import { E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { ContentParser, GithubService } from "@plane/etl/github";
+import type { GithubService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
-import {
-  E_INTEGRATION_KEYS,
-  TGithubEntityConnection,
-  TGithubWorkspaceConnection,
-  TWorkspaceCredential,
-} from "@plane/types";
+import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneWebhookPayload } from "@plane/sdk";
+import type { TGithubEntityConnection, TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
+import { GithubContentParser } from "@/apps/github/helpers/content-parser";
 import { getConnDetailsForPlaneToGithubSync } from "@/apps/github/helpers/helpers";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getAPIClient } from "@/services/client";
-import { TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
-import { imagePrefix } from "./issue.handler";
+import type { TaskHeaders } from "@/types";
+import type { MQ, Store } from "@/worker/base";
+import { imagePrefix, shouldSync } from "./issue.handler";
 
 const apiClient = getAPIClient();
 
@@ -26,14 +23,13 @@ export const handleIssueCommentWebhook = async (
 ) => {
   const payloadId = payload?.id ?? "";
 
-  // Store a key associated with the data in the store
-  // If the key is present, then we need to requeue all that task and process them again
+  // Check if this webhook was triggered by our own GitHub->Plane sync (loop prevention)
   if (payloadId) {
-    const exist = await store.get(`silo:comment:${payload.id}`);
+    const exist = await store.get(`silo:comment:plane:${payload.id}`);
     if (exist) {
-      logger.info("[PLANE][COMMENT] Event Processed Successfully, confirmed by target");
-      // Remove the webhook from the store
-      await store.del(`silo:comment:${payload.id}`);
+      logger.info("[PLANE][COMMENT] Event triggered by GitHub->Plane sync, skipping to prevent loop");
+      // Remove the key so future legitimate webhooks are not blocked
+      await store.del(`silo:comment:plane:${payload.id}`);
       return true;
     }
   }
@@ -100,6 +96,17 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       return;
     }
 
+    if (!shouldSync(issue.labels as unknown as ExIssueLabel[])) {
+      logger.info(`${ghIntegrationKey} Issue doesn't have a github label, skipping comment sync`, {
+        workspace: payload.workspace,
+        project: payload.project,
+        entityConnectionId: entityConnection.id,
+        ghIntegrationKey,
+        issueId: payload.issue,
+      });
+      return;
+    }
+
     const githubService = getGithubService(
       workspaceConnection as TGithubWorkspaceConnection,
       credentials.source_access_token,
@@ -122,7 +129,9 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       credentials,
       ghIntegrationKey
     );
-    await store.set(`silo:comment:${githubComment.data.id}`, "true");
+    // Set key with GitHub comment ID so GitHub->Plane handler can detect and skip
+    // Use 5 second TTL to allow the webhook loop back but expire quickly
+    await store.set(`silo:comment:gh:${githubComment.data.id}`, "true", 5);
 
     if (
       !comment.external_id ||
@@ -166,10 +175,11 @@ const createOrUpdateGitHubComment = async (
 
   const htmlToRemove = /Comment (updated|created) on GitHub By \[(.*?)\]\((.*?)\)/gim;
   const cleanHtml = comment.comment_html.replace(htmlToRemove, "");
-  const markdown = ContentParser.toMarkdown(cleanHtml, assetImagePrefix);
+  const markdown = GithubContentParser.toMarkdown(cleanHtml, assetImagePrefix);
 
   // Find the credentials for the comment creator
   const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    // @ts-expect-error
     source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
     workspace_id: entityConnection.workspace_id,
     user_id: comment.updated_by || comment.created_by,

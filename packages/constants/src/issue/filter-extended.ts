@@ -1,17 +1,13 @@
-import { IIssueFilterOptions, TIssueActivityComment } from "@plane/types";
+import type { IIssueFilterOptions, TIssueActivityComment } from "@plane/types";
 import {
   ISSUE_DISPLAY_PROPERTIES_KEYS,
   EPICS_DISPLAY_PROPERTIES_KEYS,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
-import {
-  EActivityFilterType,
-  TActivityFilters,
-  TFiltersLayoutOptions,
-  TIssueFiltersToDisplayByPageType,
-} from "./filter";
+import type { TActivityFilters, TFiltersLayoutOptions, TIssueFiltersToDisplayByPageType } from "./filter";
+import { EActivityFilterType } from "./filter";
 
-export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone"] as const;
+export const ADDITIONAL_WORK_ITEM_FILTERS_KEYS = ["name", "milestone_id"] as const;
 
 export const ADDITIONAL_WORK_ITEM_GROUP_BY_KEYS = ["milestone"] as const;
 

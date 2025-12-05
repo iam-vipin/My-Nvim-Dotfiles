@@ -1,15 +1,14 @@
 "use client";
 
 import type { FC } from "react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import type { EditorRefApi } from "@plane/editor";
+import { EmojiIconPickerTypes, EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { EFileAssetType } from "@plane/types";
-import { EmojiIconPickerTypes } from "@plane/ui";
 // plane web components
-import { Logo } from "@/components/common/logo";
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -19,15 +18,14 @@ import { InitiativeInfoActionItems } from "./info-section/action-items";
 import { InitiativeInfoIndicatorItem } from "./info-section/indicator-item";
 
 type Props = {
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
 };
 
 export const InitiativeInfoSection: FC<Props> = observer((props) => {
-  const { workspaceSlug, initiativeId, disabled = false, toggleProjectModal, toggleEpicModal } = props;
+  const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const {
@@ -45,6 +43,7 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
 
   return (
     <InfoSection
+      editorRef={editorRef}
       workspaceSlug={workspaceSlug}
       itemId={initiativeId}
       titleValue={initiative.name}
@@ -53,13 +52,7 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
       onDescriptionSubmit={async (value) => updateInitiative(workspaceSlug, initiativeId, { description_html: value })}
       indicatorElement={<InitiativeInfoIndicatorItem initiativeId={initiativeId} />}
       actionElement={
-        <InitiativeInfoActionItems
-          workspaceSlug={workspaceSlug}
-          initiativeId={initiativeId}
-          disabled={disabled}
-          toggleProjectModal={toggleProjectModal}
-          toggleEpicModal={toggleEpicModal}
-        />
+        <InitiativeInfoActionItems workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
       }
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
       disabled={disabled}

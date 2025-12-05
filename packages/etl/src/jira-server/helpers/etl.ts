@@ -1,11 +1,11 @@
-import {
+import type {
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version2/models";
-import { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
+import type { ExIssueAttachment, ExState, ExIssueProperty, ExIssuePropertyValue, TPropertyValue } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
+import type { IPriorityConfig, IStateConfig, JiraCustomFieldKeys, JiraIssueField } from "@/jira-server/types";
 import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
@@ -191,11 +191,11 @@ export const getPropertyValues = (
       break;
     case "com.atlassian.jira.plugin.system.customfieldtypes:userpicker":
       // Handle userpicker
-      if (value.accountId && value.displayName) {
+      if (value.emailAddress || value.displayName) {
         propertyValues.push({
           ...commonPropertyProp,
-          external_id: value.accountId,
-          value: value.displayName,
+          external_id: value.emailAddress ?? value.displayName,
+          value: value.emailAddress ?? value.displayName,
         });
       }
       break;
@@ -277,11 +277,11 @@ export const getPropertyValues = (
       // Handle multiuserpicker
       if (Array.isArray(value)) {
         value.forEach((val) => {
-          if (val.accountId && val.displayName) {
+          if (val.emailAddress || val.displayName) {
             propertyValues.push({
               ...commonPropertyProp,
-              external_id: val.accountId,
-              value: val.displayName,
+              external_id: val.emailAddress ?? val.displayName,
+              value: val.emailAddress ?? val.displayName,
             });
           }
         });

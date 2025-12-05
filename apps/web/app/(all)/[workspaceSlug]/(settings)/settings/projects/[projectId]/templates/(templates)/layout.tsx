@@ -1,10 +1,9 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/types";
@@ -13,15 +12,11 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useUserPermissions } from "@/hooks/store/user";
+import type { Route } from "./+types/layout";
 
-export type TProjectLevelTemplatesLayout = {
-  children: ReactNode;
-};
-
-const ProjectLevelTemplatesLayout: FC<TProjectLevelTemplatesLayout> = observer((props) => {
-  const { children } = props;
+function ProjectLevelTemplatesLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   // derived values
@@ -41,10 +36,12 @@ const ProjectLevelTemplatesLayout: FC<TProjectLevelTemplatesLayout> = observer((
           <ChevronLeftIcon className="w-4 h-4" />
           <div>Back to templates</div>
         </Link>
-        <div className="pb-14">{children}</div>
+        <div className="pb-14">
+          <Outlet />
+        </div>
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ProjectLevelTemplatesLayout;
+export default observer(ProjectLevelTemplatesLayout);

@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { ExIssueProperty, ExIssueType, ExIssuePropertyOption, Client as PlaneClient } from "@plane/sdk";
+import type { ExIssueProperty, ExIssueType, ExIssuePropertyOption, Client as PlaneClient } from "@plane/sdk";
 import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 
@@ -72,11 +72,7 @@ export const createOrUpdateIssueProperties = async (
         `Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
         {
           jobId: jobId,
-          error: {
-            message: error instanceof Error ? error.message : String(error),
-            stack: error instanceof Error ? error.stack : undefined,
-            name: error instanceof Error ? error.name : undefined,
-          },
+          error: error,
         }
       );
       return undefined;

@@ -1,6 +1,6 @@
-import { IState } from "../state";
-import { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
-import { TStateMap } from "./common";
+import type { IState } from "../state";
+import type { TWorkspaceConnection, TWorkspaceEntityConnection } from "../workspace";
+import type { TStateMap } from "./common";
 
 // entity types
 export enum E_ISSUE_STATE_MAP_KEYS {

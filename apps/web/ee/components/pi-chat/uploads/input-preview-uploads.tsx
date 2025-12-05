@@ -33,7 +33,7 @@ export const InputPreviewUploads = observer((props: Props) => {
       ))}
       {attachmentsUploadStatus &&
         attachmentsUploadStatus?.map((attachment) =>
-          attachment.file_type.includes("image") ? (
+          attachment.file_type && attachment.file_type.includes("image") ? (
             <ImagePreview
               attachment={attachment}
               loadingPercentage={attachment.progress}

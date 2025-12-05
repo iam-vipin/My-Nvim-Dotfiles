@@ -36,7 +36,8 @@ export const DesktopAppNavigation = observer(() => {
     observerNavigationEvents();
 
     return () => {
-      unsubscribeNavigationEvent && unsubscribeNavigationEvent();
+      if (!unsubscribeNavigationEvent) return;
+      unsubscribeNavigationEvent();
     };
   }, []);
 

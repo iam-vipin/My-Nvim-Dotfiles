@@ -19,4 +19,12 @@ from .comment import (
     remove_page_comment_reaction,
     remove_page_comment_reaction_async,
 )
+from .mention import (
+    get_page_mention,
+    get_page_mention_async,
+    get_page_mentions,
+    get_page_mentions_async,
+    is_page_mention_feature_flagged,
+    is_page_mention_feature_flagged_async,
+)
 from .shared import is_shared_page_feature_flagged, is_shared_page_feature_flagged_async

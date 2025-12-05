@@ -1,5 +1,6 @@
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { ReactNodeViewRenderer, NodeViewWrapper, type Editor } from "@tiptap/react";
+import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plane editor imports
@@ -8,7 +9,8 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 import type { TPageEmbedConfig } from "@/types";
 // extension config
 import { pageEmbedCommands } from "./commands";
-import { PageEmbedExtensionAttributes, PageEmbedExtensionConfig } from "./extension-config";
+import type { PageEmbedExtensionAttributes } from "./extension-config";
+import { PageEmbedExtensionConfig } from "./extension-config";
 import { PageEmbedOrderTrackerPlugin } from "./plugins/order-tracker-plugin";
 import { PreventPageEmbedDeletionPlugin } from "./plugins/prevent-deletion-page-embed";
 

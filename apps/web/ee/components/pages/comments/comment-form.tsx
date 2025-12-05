@@ -105,7 +105,7 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
   const watchedDescription = watch("description");
   const isEmpty = isCommentEmpty(watchedDescription?.description_html);
 
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
 
   const uploadCommentAsset = useCallback(
     async (blockId: string, file: File) => {
@@ -135,6 +135,18 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
     [uploadEditorAsset, page.project_ids, workspaceSlug, comment?.id]
   );
 
+  const duplicateCommentAsset = useCallback(
+    async (assetId: string, commentId: string) => {
+      if (!workspaceSlug || !duplicateEditorAsset) throw new Error("Missing duplicate configuration");
+      return duplicateEditorAsset({
+        assetId,
+        entityId: commentId,
+        entityType: EFileAssetType.PAGE_COMMENT_DESCRIPTION,
+        workspaceSlug,
+      });
+    },
+    [workspaceSlug, duplicateEditorAsset]
+  );
   const onFormSubmit = async (formData: Partial<TPageComment>) => {
     if (!formData.description || isEmpty || isSubmittingState) return;
 
@@ -226,6 +238,11 @@ export const PageCommentForm = observer((props: CommentBoxProps) => {
             value={null}
             uploadFile={async (blockId, file) => {
               const { asset_id } = await uploadCommentAsset(blockId, file);
+              setUploadedAssetIds((prev) => [...prev, asset_id]);
+              return asset_id;
+            }}
+            duplicateFile={async (assetId: string) => {
+              const { asset_id } = await duplicateCommentAsset(assetId, comment?.id ?? "");
               setUploadedAssetIds((prev) => [...prev, asset_id]);
               return asset_id;
             }}

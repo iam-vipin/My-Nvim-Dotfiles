@@ -9,6 +9,11 @@ from pydantic import UUID4
 from pydantic import BaseModel
 from pydantic import Field
 
+# import default llm from settings in config.py
+from pi import settings
+
+DEFAULT_LLM = settings.llm_model.DEFAULT
+
 
 class ArtifactData(BaseModel):
     """Single artifact in a batch execution."""
@@ -40,7 +45,7 @@ class PaginationResponse(BaseModel):
 
 class ChatRequest(BaseModel):
     query: str
-    llm: str = "gpt-4o"
+    llm: str = DEFAULT_LLM
     is_new: bool
     user_id: Optional[UUID4] = None
     chat_id: Optional[UUID4] = None
@@ -175,6 +180,8 @@ class ActionBatchExecutionRequest(BaseModel):
     execution_strategy: Optional[str] = "sequential"  # sequential, parallel (future)
     rollback_on_failure: Optional[bool] = False
 
+    access_token: Optional[str] = None
+
     # Artifact execution - unified approach
     artifact_data: Optional[List[ArtifactData]] = Field(default=None, description="List of artifacts to execute (each declares its own edit status)")
 
@@ -221,3 +228,17 @@ class GetThreadsPaginatedResponse(PaginationResponse):
     """Paginated response for user chat threads."""
 
     results: list[dict[str, Any]]
+
+
+class ChatInitRequest(BaseModel):
+    """Request to initialize chat - checks OAuth and gets templates"""
+
+    workspace_id: UUID4 = Field(description="Workspace ID to check")
+
+
+class ChatInitResponse(BaseModel):
+    """Response with OAuth status and chat templates for initialization"""
+
+    is_authorized: bool = Field(description="Whether user has valid authorization for workspace")
+    templates: List[Any] = Field(default_factory=list, description="Chat suggestion templates")
+    oauth_url: Optional[str] = Field(None, description="OAuth authorization URL if not authorized")

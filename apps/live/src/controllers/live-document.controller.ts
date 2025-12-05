@@ -12,7 +12,7 @@ import { serverAgentManager } from "@/agents/server-agent";
 import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
 // Import authentication middleware
-import { HocusPocusServerContext } from "@/types";
+import type { HocusPocusServerContext } from "@/types";
 
 // Types
 

@@ -11,9 +11,10 @@ type Props = {
   onRemove?: () => void;
 };
 
-function formatBytes(bytes: number) {
-  if (typeof bytes !== "number" || isNaN(bytes)) {
-    throw new Error("Input must be a number");
+function formatBytes(bytes: number | undefined | null): string {
+  // Handle invalid input gracefully
+  if (bytes === undefined || bytes === null || typeof bytes !== "number" || isNaN(bytes)) {
+    return "Unknown size";
   }
 
   const units = ["Bytes", "KB", "MB", "GB", "TB"];

@@ -1,4 +1,4 @@
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 
 export type WorkerEventType = "initiate" | "transform" | "push" | "finished";
 export type UpdateEventType =

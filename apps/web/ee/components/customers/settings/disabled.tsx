@@ -16,7 +16,9 @@ export const CustomerSettingsDisabled: FC<TCustomerSettingsDisabled> = (props) =
     <EmptyStateCompact
       assetKey="customer"
       title={t("settings_empty_state.customers_setting.title")}
-      actions={[{ label: t("settings_empty_state.customers_setting.cta_primary"), onClick: () => toggleCustomersFeature() }]}
+      actions={[
+        { label: t("settings_empty_state.customers_setting.cta_primary"), onClick: () => toggleCustomersFeature() },
+      ]}
       align="start"
       rootClassName="py-20"
     />

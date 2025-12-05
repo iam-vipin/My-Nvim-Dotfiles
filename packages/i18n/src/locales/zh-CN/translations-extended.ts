@@ -28,6 +28,7 @@ export default {
     overview: "概览",
     workflows: "工作流",
     members_and_teamspaces: "成员和团队空间",
+    open_in_full_screen: "在全屏中打开{page}",
   },
   updates: {
     add_update: "添加更新",
@@ -159,6 +160,28 @@ export default {
       settings_sub_heading:
         "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。",
     },
+    features: {
+      intake: {
+        heading: "接收责任",
+        notify_assignee: {
+          title: "通知负责人",
+          description: "对于新的接收请求，默认负责人将通过通知收到提醒",
+        },
+        toasts: {
+          set: {
+            loading: "正在设置负责人...",
+            success: {
+              title: "成功！",
+              message: "负责人设置成功。",
+            },
+            error: {
+              title: "错误！",
+              message: "设置负责人时出现问题。请重试。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "未配置集成",
@@ -203,6 +226,90 @@ export default {
         description: "为您的史诗添加自定义属性。",
       },
       disabled: "已禁用",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "自动安排周期",
+        description: "无需手动设置即可保持周期运行。",
+        tooltip: "根据您选择的计划自动创建新周期。",
+        edit_button: "编辑",
+        form: {
+          cycle_title: {
+            label: "周期标题",
+            placeholder: "标题",
+            tooltip: "标题将为后续周期添加编号。例如：设计 - 1/2/3",
+            validation: {
+              required: "周期标题为必填项",
+              max_length: "标题不得超过255个字符",
+            },
+          },
+          cycle_duration: {
+            label: "周期持续时间",
+            unit: "周",
+            validation: {
+              required: "周期持续时间为必填项",
+              min: "周期持续时间必须至少为1周",
+              max: "周期持续时间不得超过30周",
+              positive: "周期持续时间必须为正数",
+            },
+          },
+          cooldown_period: {
+            label: "冷却期",
+            unit: "天",
+            tooltip: "下一个周期开始前的周期间隔暂停期。",
+            validation: {
+              required: "冷却期为必填项",
+              negative: "冷却期不能为负数",
+            },
+          },
+          start_date: {
+            label: "周期开始日",
+            validation: {
+              required: "开始日期为必填项",
+              past: "开始日期不能是过去的日期",
+            },
+          },
+          number_of_cycles: {
+            label: "未来周期数",
+            validation: {
+              required: "周期数为必填项",
+              min: "至少需要1个周期",
+              max: "无法安排超过3个周期",
+            },
+          },
+          auto_rollover: {
+            label: "工作项自动结转",
+            tooltip: "在周期完成的当天，将所有未完成的工作项移至下一个周期。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "正在启用自动安排周期",
+            loading_disable: "正在禁用自动安排周期",
+            success: {
+              title: "成功！",
+              message: "自动安排周期已成功切换。",
+            },
+            error: {
+              title: "错误！",
+              message: "切换自动安排周期失败。",
+            },
+          },
+          save: {
+            loading: "正在保存自动安排周期配置",
+            success: {
+              title: "成功！",
+              message_create: "自动安排周期配置已成功保存。",
+              message_update: "自动安排周期配置已成功更新。",
+            },
+            error: {
+              title: "错误！",
+              message_create: "保存自动安排周期配置失败。",
+              message_update: "更新自动安排周期配置失败。",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -444,7 +551,7 @@ export default {
       },
       not_found: {
         title: "计划不存在",
-        description: "您要查找的计划不存在或已被删除。",
+        description: "您要查找的计划不存在、已被归档或已被删除。",
         primary_button: {
           text: "查看其他计划",
         },
@@ -638,7 +745,11 @@ export default {
         app_short_description_error: "应用简短描述为必填项",
         app_description_title: {
           label: "详细描述",
-          placeholder: "为市场编写详细描述。按 ‘/’ 查看命令。",
+          placeholder: "为市场编写详细描述。按 '/' 查看命令。",
+        },
+        authorization_grant_type: {
+          title: "连接类型",
+          description: "选择您的应用程序应该为工作区安装一次，还是让每个用户连接自己的账户",
         },
         app_description_error: "应用描述为必填项",
         app_slug_title: "应用别名",
@@ -693,6 +804,9 @@ export default {
         categories_error: "类别是必填项",
         invalid_categories_error: "无效的类别",
         categories_description: "选择最能描述应用的类别",
+        supported_plans: "支持的方案",
+        supported_plans_description: "选择可以安装此应用的工作区方案。留空以允许所有方案。",
+        select_plans: "选择方案",
         privacy_policy_url_title: "隐私政策URL",
         privacy_policy_url_error: "隐私政策URL是必填项",
         invalid_privacy_policy_url_error: "无效的隐私政策URL",
@@ -762,8 +876,8 @@ export default {
         internal: "内部",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。",
       },
     },
@@ -1438,7 +1552,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "将您的 Jira Server 数据导入到 Plane 项目中。",
+    jira_server_importer_description: "将您的 Jira Server/Data Center 数据导入到 Plane 项目中。",
     steps: {
       title_configure_plane: "配置 Plane",
       description_configure_plane: "请先在 Plane 中创建您打算迁移 Jira 数据的项目。创建项目后，在此处选择它。",

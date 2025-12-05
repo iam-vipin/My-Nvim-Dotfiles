@@ -1,10 +1,5 @@
-import {
-  EXTENDED_COMPARISON_OPERATOR,
-  TExtendedSupportedOperators,
-  TSupportedOperators,
-  TSupportedDateFilterOperators,
-  EXTENDED_EQUALITY_OPERATOR,
-} from "@plane/types";
+import type { TExtendedSupportedOperators, TSupportedOperators, TSupportedDateFilterOperators } from "@plane/types";
+import { EXTENDED_COMPARISON_OPERATOR, EXTENDED_EQUALITY_OPERATOR } from "@plane/types";
 
 /**
  * Extended operator labels

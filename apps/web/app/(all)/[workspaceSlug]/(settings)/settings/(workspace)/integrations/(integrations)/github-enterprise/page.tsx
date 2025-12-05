@@ -1,9 +1,8 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components components
@@ -13,18 +12,19 @@ import { SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { E_INTEGRATION_KEYS } from "@plane/types";
+// assets
+import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
+import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
+// plane web imports
 import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/github";
-// plane web hooks
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// public images
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
-import GithubDarkLogo from "@/public/services/github-dark.svg";
-import GithubLightLogo from "@/public/services/github-light.svg";
 
 const siloAppService = new SiloAppService();
 
-const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
+function GitHubEnterpriseIntegration() {
   // hooks
+  const searchParams = useSearchParams();
   const { resolvedTheme } = useTheme();
   const {
     workspace,
@@ -64,7 +64,7 @@ const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = ob
   );
 
   // error message
-  const errorCode = searchParams?.error;
+  const errorCode = searchParams?.get("error");
   useEffect(() => {
     if (!errorCode) {
       return;
@@ -118,7 +118,7 @@ const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = ob
       {/* header */}
       <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
         <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={githubLogo} layout="fill" objectFit="contain" alt="GitHub Logo" />
+          <img src={githubLogo} alt="GitHub Logo" />
         </div>
         <div>
           <div className="text-lg font-medium">GitHub Enterprise Server</div>
@@ -133,6 +133,6 @@ const GitHubEnterpriseIntegration: FC<{ searchParams?: { error: string } }> = ob
       {organization && <IntegrationRoot isEnterprise />}
     </div>
   );
-});
+}
 
-export default GitHubEnterpriseIntegration;
+export default observer(GitHubEnterpriseIntegration);

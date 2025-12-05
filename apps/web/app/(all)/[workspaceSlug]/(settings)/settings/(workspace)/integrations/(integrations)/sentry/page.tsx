@@ -1,9 +1,8 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
@@ -17,14 +16,16 @@ import { SentryIntegrationRoot } from "@/plane-web/components/integrations/sentr
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();
 
-const SentryIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
+function SentryIntegration({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
+  const searchParams = useSearchParams();
   // derived values
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "SENTRY_INTEGRATION");
+  const isFeatureEnabled = useFlag(workspaceSlug, "SENTRY_INTEGRATION");
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   // derived values
@@ -41,7 +42,7 @@ const SentryIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   const { t } = useTranslation();
 
   // error message
-  const errorCode = searchParams?.error;
+  const errorCode = searchParams.get("error");
   useEffect(() => {
     if (!errorCode) {
       return;
@@ -103,6 +104,6 @@ const SentryIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
       )}
     </div>
   );
-});
+}
 
-export default SentryIntegration;
+export default observer(SentryIntegration);

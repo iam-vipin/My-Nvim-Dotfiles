@@ -1,43 +1,30 @@
 "use client";
 
-import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import type { TPageNavigationTabs } from "@plane/types";
 // components
-import { PageHead } from "@/components/core/page-title";
 // plane web imports
 import { TeamspacePagesListView } from "@/plane-web/components/teamspaces/pages/pages-list-view";
-import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const storeType = EPageStoreType.TEAMSPACE;
+const getPageType = (pageType: string | null): TPageNavigationTabs => {
+  switch (pageType) {
+    case "archived":
+      return "archived";
+    default:
+      return "public";
+  }
+};
 
-const TeamspacePagesPage = observer(() => {
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
+function TeamspacePagesPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, teamspaceId } = params;
   const searchParams = useSearchParams();
 
-  const workspaceSlug = routerWorkspaceSlug!.toString();
-  const teamspaceId = routerTeamSpaceId!.toString();
-
-  // store hooks
-  const { getTeamspaceById } = useTeamspaces();
-
-  // derived values
-  const currentTeamspace = getTeamspaceById(teamspaceId);
-  const pageTitle = currentTeamspace?.name ? `Teamspace ${currentTeamspace?.name} - Pages` : undefined;
-
-  if (!workspaceSlug || !teamspaceId) return <></>;
-
   // Get current page type (only public/archived for teamspaces)
-  const currentPageType = (): TPageNavigationTabs => {
-    const pageType = searchParams.get("type");
-    if (pageType === "archived") return "archived";
-    return "public"; // Default to public
-  };
+  const pageType = getPageType(searchParams.get("type"));
 
-  return (
-    <TeamspacePagesListView pageType={currentPageType()} teamspaceId={teamspaceId} workspaceSlug={workspaceSlug} />
-  );
-});
+  return <TeamspacePagesListView pageType={pageType} teamspaceId={teamspaceId} workspaceSlug={workspaceSlug} />;
+}
 
 export default TeamspacePagesPage;

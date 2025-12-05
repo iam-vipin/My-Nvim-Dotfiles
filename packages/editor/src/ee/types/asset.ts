@@ -1,5 +1,5 @@
 // local imports
-import { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
+import type { ADDITIONAL_EXTENSIONS } from "../constants/extensions";
 
 export type TEditorAttachmentAsset = {
   href: string;

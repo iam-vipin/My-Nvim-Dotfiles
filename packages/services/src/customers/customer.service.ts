@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import {
+import type {
   ISearchIssueResponse,
   TCustomer,
   TCustomerListQuery,

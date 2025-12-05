@@ -1,15 +1,12 @@
-import axios, { AxiosInstance, AxiosError } from "axios";
+import type { AxiosInstance, AxiosError } from "axios";
+import axios from "axios";
 import { logger } from "@plane/logger";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getTokenCacheKey } from "@/helpers/cache-keys";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
-import {
-  PlaneOAuthTokenOptions,
-  PlaneOAuthTokenResponse,
-  EOAuthGrantType as PlaneOAuthGrantType,
-  PlaneOAuthAppInstallation,
-} from "@/types/oauth";
+import type { PlaneOAuthTokenOptions, PlaneOAuthTokenResponse, PlaneOAuthAppInstallation } from "@/types/oauth";
+import { EOAuthGrantType as PlaneOAuthGrantType } from "@/types/oauth";
 import { Store } from "@/worker/base";
 
 /**
@@ -199,7 +196,7 @@ class PlaneOAuthService {
    */
   getPlaneOAuthRedirectUrl(clientId: string, redirectUri: string, state: string): string {
     try {
-      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL
+      const baseUrl = env.IS_MULTI_TENANT === "1" ? env.API_BASE_URL : env.APP_BASE_URL;
       const data = new URLSearchParams({
         client_id: clientId,
         response_type: "code",

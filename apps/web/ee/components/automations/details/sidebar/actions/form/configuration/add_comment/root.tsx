@@ -30,6 +30,7 @@ export const AutomationActionAddCommentConfiguration: React.FC<TProps> = observe
           workspaceSlug={workspaceSlug}
           workspaceId={workspaceId}
           uploadFile={async () => ""} // TODO: Add upload file function
+          duplicateFile={async () => ""} // TODO: Add duplicate file function
           id={automationId}
           initialValue={value || "<p></p>"}
           showSubmitButton={false}

@@ -1,7 +1,7 @@
 import { SquareRadical } from "lucide-react";
 import React from "react";
 // types
-import { TMathComponentProps } from "../../types";
+import type { TMathComponentProps } from "../../types";
 // local components
 import { InlineMathContainer } from "./container";
 

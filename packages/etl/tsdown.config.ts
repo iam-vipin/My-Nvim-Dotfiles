@@ -19,4 +19,6 @@ export default defineConfig({
   dts: true,
   clean: true,
   minify: true,
+  sourcemap: true,
+  exports: true,
 });

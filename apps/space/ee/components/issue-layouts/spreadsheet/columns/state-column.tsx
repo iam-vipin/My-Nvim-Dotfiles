@@ -12,9 +12,11 @@ type Props = {
 export const SpreadsheetStateColumn: React.FC<Props> = observer((props) => {
   const { issue } = props;
 
+  if (!issue.state_id) return null;
+
   return (
     <div className="h-11 border-b-[0.5px] border-custom-border-200">
-      <IssueBlockState stateId={issue.state_id ?? undefined} shouldShowBorder={false} />
+      <IssueBlockState stateId={issue.state_id} shouldShowBorder={false} />
     </div>
   );
 });

@@ -1,6 +1,6 @@
 import * as Asana from "asana";
 // types
-import {
+import type {
   AsanaAttachment,
   AsanaCustomFieldSettings,
   AsanaProject,

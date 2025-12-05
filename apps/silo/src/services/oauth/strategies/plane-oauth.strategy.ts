@@ -1,8 +1,9 @@
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
-import { EOAuthGrantType, PlaneOAuthAppInstallation, PlaneOAuthTokenResponse } from "@/types/oauth";
+import type { PlaneOAuthAppInstallation, PlaneOAuthTokenResponse } from "@/types/oauth";
+import { EOAuthGrantType } from "@/types/oauth";
 import { planeOAuthService } from "../auth";
-import { OAuthState, OAuthStrategy, OAuthTokenResponse } from "../types";
+import type { OAuthState, OAuthStrategy, OAuthTokenResponse } from "../types";
 
 export class PlaneOAuthStrategy implements OAuthStrategy {
   private clientId: string;

@@ -3,14 +3,13 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import type { TProjectTemplateForm } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // plane web components
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 
 export const ProjectDetails = observer(() => {
@@ -33,7 +32,7 @@ export const ProjectDetails = observer(() => {
         {/* Cover Image */}
         {coverImage && (
           <img
-            src={getFileURL(coverImage)}
+            src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
             className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
             alt={t("project_cover_image_alt")}
           />

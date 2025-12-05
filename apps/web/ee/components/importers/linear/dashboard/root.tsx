@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { LinearConfig } from "@plane/etl/linear";
 import type { TImportJob } from "@plane/types";
-import { useLinearImporter } from "@/plane-web/hooks/store";
 // assets
-import LinearLogo from "@/public/services/linear.svg";
+import LinearLogo from "@/app/assets/services/linear.svg?url";
+// plane web imports
+import { useLinearImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 

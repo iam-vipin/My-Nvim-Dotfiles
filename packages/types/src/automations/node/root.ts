@@ -1,11 +1,11 @@
 // local imports
-import {
+import type {
   TAutomationActionNodeConfig,
   TAutomationNodeConfig,
   TAutomationConditionNodeConfig,
   TAutomationTriggerNodeConfig,
 } from "./configs";
-import {
+import type {
   TActionNodeHandlerName,
   TAutomationNodeHandlerName,
   TConditionNodeHandlerName,

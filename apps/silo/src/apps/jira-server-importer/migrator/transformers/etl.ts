@@ -1,14 +1,17 @@
 import { v4 as uuid } from "uuid";
-import { TIssuePropertyValuesPayload } from "@plane/etl/core";
-import {
+import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type {
   JiraCustomFieldKeys,
-  OPTION_CUSTOM_FIELD_TYPES,
-  transformIssueFieldOptions,
   IJiraIssue,
   IPriorityConfig,
   IStateConfig,
   JiraConfig,
   JiraEntity,
+  JiraIssueField,
+} from "@plane/etl/jira-server";
+import {
+  OPTION_CUSTOM_FIELD_TYPES,
+  transformIssueFieldOptions,
   transformComment,
   transformComponent,
   transformIssue,
@@ -18,8 +21,9 @@ import {
   transformUser,
   transformIssueFields,
   transformIssuePropertyValues,
+  transformDefaultPropertyValues,
 } from "@plane/etl/jira-server";
-import {
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -30,7 +34,9 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
+import { buildExternalId } from "../../v2/helpers/job";
+import type { TIssueTypesData } from "../../v2/types";
 
 export const getTransformedIssues = (
   job: TImportJob<JiraConfig>,
@@ -42,7 +48,17 @@ export const getTransformedIssues = (
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
 
   return entities.issues.map((issue: IJiraIssue): Partial<PlaneIssue> => {
-    const transformedIssue = transformIssue(resourceId, job.project_id, issue, resourceUrl, stateMap, priorityMap);
+    const transformedIssue = transformIssue(
+      {
+        resourceId,
+        projectId: job.project_id,
+        source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+      },
+      issue,
+      resourceUrl,
+      stateMap,
+      priorityMap
+    );
 
     if (job.config?.issueType && issue.fields.issuetype?.name) {
       const issueTypeValue = job.config.issueType;
@@ -65,7 +81,16 @@ export const getTransformedComments = (
   entities: JiraEntity
 ): Partial<ExIssueComment>[] => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
-  return entities.issue_comments.map((comment) => transformComment(resourceId, job.project_id, comment));
+  return entities.issue_comments.map((comment) =>
+    transformComment(
+      {
+        resourceId,
+        projectId: job.project_id,
+        source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+      },
+      comment
+    )
+  );
 };
 
 export const getTransformedUsers = (_job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<PlaneUser>[] =>
@@ -73,17 +98,44 @@ export const getTransformedUsers = (_job: TImportJob<JiraConfig>, entities: Jira
 
 export const getTransformedSprints = (job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExCycle>[] => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
-  return entities.sprints.map((sprint) => transformSprint(resourceId, job.project_id, sprint));
+  return entities.sprints.map((sprint) =>
+    transformSprint(
+      {
+        resourceId,
+        projectId: job.project_id,
+        source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+      },
+      sprint
+    )
+  );
 };
 
 export const getTransformedComponents = (job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExModule>[] => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
-  return entities.components.map((component) => transformComponent(resourceId, job.project_id, component));
+  return entities.components.map((component) =>
+    transformComponent(
+      {
+        resourceId,
+        projectId: job.project_id,
+        source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+      },
+      component
+    )
+  );
 };
 
 export const getTransformedIssueTypes = (job: TImportJob<JiraConfig>, entities: JiraEntity): Partial<ExIssueType>[] => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
-  return entities.issueTypes.map((issueType) => transformIssueType(resourceId, job.project_id, issueType));
+  return entities.issueTypes.map((issueType) =>
+    transformIssueType(
+      {
+        resourceId,
+        projectId: job.project_id,
+        source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+      },
+      issueType
+    )
+  );
 };
 
 export const getTransformedIssueFields = (
@@ -92,7 +144,16 @@ export const getTransformedIssueFields = (
 ): Partial<ExIssueProperty>[] => {
   const resourceId = job.config.resource ? job.config.resource.id : uuid();
   return entities.issueFields
-    .map((issueField) => transformIssueFields(resourceId, job.project_id, issueField))
+    .map((issueField) =>
+      transformIssueFields(
+        {
+          resourceId,
+          projectId: job.project_id,
+          source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+        },
+        issueField
+      )
+    )
     .filter((field) => field && field.property_type) as Partial<ExIssueProperty>[];
 };
 
@@ -108,7 +169,16 @@ export const getTransformedIssueFieldOptions = (
         OPTION_CUSTOM_FIELD_TYPES.includes(issueField.schema?.custom as JiraCustomFieldKeys)
     )
     .flatMap((issueField) =>
-      issueField?.options?.map((fieldOption) => transformIssueFieldOptions(resourceId, job.project_id, fieldOption))
+      issueField?.options?.map((fieldOption) =>
+        transformIssueFieldOptions(
+          {
+            resourceId,
+            projectId: job.project_id,
+            source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA,
+          },
+          fieldOption
+        )
+      )
     )
     .filter(Boolean) as Partial<ExIssuePropertyOption>[];
 };
@@ -140,12 +210,73 @@ export const getTransformedIssuePropertyValues = (
   entities.issues.forEach((issue: IJiraIssue) => {
     if (issue.id && issue.fields) {
       transformedIssuePropertyValues[`${projectId}_${resourceId}_${issue.id}`] = transformIssuePropertyValues(
-        resourceId,
-        projectId,
+        { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
         issue,
         planeIssuePropertiesMap,
         jiraCustomFieldMap
       );
+    }
+  });
+  return transformedIssuePropertyValues;
+};
+
+export const getTransformedIssuePropertyValuesV2 = (
+  job: TImportJob<JiraConfig>,
+  issues: IJiraIssue[],
+  issueFields: JiraIssueField[],
+  planeIssueProperties: Partial<ExIssueProperty>[],
+  issueTypes: TIssueTypesData
+): TIssuePropertyValuesPayload => {
+  const resourceId = job.config.resource ? job.config.resource.id : uuid();
+  const projectId = job.project_id;
+  const transformedIssuePropertyValues: TIssuePropertyValuesPayload = {};
+  // Get the plane issue properties map to only transform values for the properties that are present in the plane
+  const planeIssuePropertiesMap = new Map<string, Partial<ExIssueProperty>>(
+    planeIssueProperties
+      .filter((property) => property.external_id)
+      .map((property) => {
+        const customFieldKey = property.external_id?.split("_").pop();
+        return [`customfield_${customFieldKey}`, property];
+      })
+  );
+  // Get the jira custom field map to get the type of the custom field
+  const jiraCustomFieldMap = new Map<string, string>(
+    issueFields
+      .filter((property) => property.id && property.schema?.custom)
+      .map((property) => [property.id as string, property.schema?.custom as string])
+  );
+  // Transform values for each issue
+  issues.forEach((issue: IJiraIssue) => {
+    if (issue.id && issue.fields) {
+      const issueKey = `${projectId}_${resourceId}_${issue.id}`;
+      const issueTypeId = issueTypes.find(
+        (type) =>
+          issue.fields.issuetype?.id &&
+          type.external_id === buildExternalId(projectId, resourceId, issue.fields.issuetype?.id)
+      )?.id;
+
+      // Transform custom field property values
+      const customPropertyValues = transformIssuePropertyValues(
+        { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
+        issue,
+        planeIssuePropertiesMap,
+        jiraCustomFieldMap
+      );
+
+      // Transform default property values (fix versions, affected versions, reporter)
+      const defaultPropertyValues = issueTypeId
+        ? transformDefaultPropertyValues(
+            { resourceId, projectId, source: job.source as E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA },
+            issue,
+            issueTypeId
+          )
+        : {};
+
+      // Merge both custom and default property values
+      transformedIssuePropertyValues[issueKey] = {
+        ...customPropertyValues,
+        ...defaultPropertyValues,
+      };
     }
   });
   return transformedIssuePropertyValues;

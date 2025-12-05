@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
@@ -10,6 +10,10 @@ import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserWorkspaceRoles } from "@plane/types";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
+import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
+import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
+import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?url";
+import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
@@ -17,8 +21,6 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
-// plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -30,6 +32,8 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { pageType } = props;
   const { workspaceSlug } = useParams();
   const [isCreatingPage, setIsCreatingPage] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -48,6 +52,9 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const router = useAppRouter();
   // Debounce the search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
+  // derived values
+  const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
+  const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -93,12 +100,6 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     [allowPermissions]
   );
 
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-  });
-
   if (isLoading) return <PageLoader />;
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
@@ -116,7 +117,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
               state: "SUCCESS",
             },
           });
-          const pageId = `/${workspaceSlug}/pages/${res?.id}`;
+          const pageId = `/${workspaceSlug}/wiki/${res?.id}`;
           router.push(pageId);
         }
       })
@@ -214,8 +215,8 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
-            src={debouncedSearchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
+          <img
+            src={debouncedSearchQuery.length > 0 ? resolvedNameFilterImage : resolvedAllFiltersImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching pages"
           />

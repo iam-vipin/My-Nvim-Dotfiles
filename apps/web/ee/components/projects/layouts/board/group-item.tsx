@@ -102,7 +102,7 @@ export const ProjectBoardGroupItem: FC<ProjectBoardGroupItem> = observer((props)
         // orderBy={orderBy}
         isDraggingOverColumn={isDraggingOverColumn}
       />
-      <div className="h-max max-h-full rounded-md relative flex flex-col overflow-hidden bg-custom-background-90 p-2">
+      <div className="h-full rounded-md relative flex flex-col overflow-hidden bg-custom-background-90 p-2">
         {/* header */}
         <ProjectBoardGroupItemHeader
           groupByKey={groupByKey}

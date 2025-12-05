@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExPage } from "@/types/types";
+import type { ClientOptions, ExPage } from "@/types/types";
 
 export class PageService extends APIService {
   constructor(options: ClientOptions) {

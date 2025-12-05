@@ -1,5 +1,5 @@
-import { PlainTextOption } from "@slack/types";
-import { FormField } from "@/types/form/base";
+import type { PlainTextOption } from "@slack/types";
+import type { FormField } from "@/types/form/base";
 
 export enum TFormType {
   WORK_ITEM = "WORK_ITEM",

@@ -253,7 +253,7 @@ export const CreateUpdateRecurringWorkItem = observer((props: TCreateUpdateRecur
     router.back();
   };
 
-  if (isInitializingData || isPreloadingData) {
+  if (isInitializingData || isPreloadingData || (recurringWorkItemId && !preloadedData)) {
     return <RecurringWorkItemLoader />;
   }
 

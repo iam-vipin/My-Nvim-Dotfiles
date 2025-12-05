@@ -136,7 +136,7 @@ def get_catch_ups(workspace_slug: str, user_id: str, entity_identifier: Optional
         .order_by("entity_identifier")
     )
 
-    if entity_identifier is not None:
+    if entity_identifier is not None and entity_identifier != "":
         notifications = notifications.filter(entity_identifier=entity_identifier)
 
     catch_ups = []

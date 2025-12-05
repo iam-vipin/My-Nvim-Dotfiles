@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Post } from "@plane/decorators";
-import { SentryWebhookHeaders, SentryWebhookPayload } from "@plane/etl/sentry";
-import { ExIssue, PlaneWebhookPayloadBase } from "@plane/sdk";
+import type { SentryWebhookHeaders, SentryWebhookPayload } from "@plane/etl/sentry";
+import type { ExIssue, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";

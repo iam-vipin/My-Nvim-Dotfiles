@@ -1,6 +1,7 @@
-import { Issue as LinearIssue } from "@linear/sdk";
-import { LinearCycle, LinearService } from "@plane/etl/linear";
-import { TWorkspaceCredential } from "@plane/types";
+import type { Issue as LinearIssue } from "@linear/sdk";
+import type { LinearCycle } from "@plane/etl/linear";
+import { LinearService } from "@plane/etl/linear";
+import type { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 
 export const filterCyclesForIssues = (issues: LinearIssue[], cycles: LinearCycle[]): any[] => {

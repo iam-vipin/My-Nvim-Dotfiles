@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LinearAuthProps, LinearAuthState } from "@/linear/types";
+import type { LinearAuthProps, LinearAuthState } from "@/linear/types";
 
 export type LinearTokenResponse = {
   access_token: string;

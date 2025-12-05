@@ -1,9 +1,9 @@
 import { logger } from "@plane/logger";
-import { TWorkspaceCredential, TWorkspaceCredentialVerification } from "@plane/types";
+import type { TWorkspaceCredential, TWorkspaceCredentialVerification } from "@plane/types";
 import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions } from "@/types";
+import type { ClientOptions } from "@/types";
 export class WorkspaceCredentialAPIService extends APIService {
   constructor(options: ClientOptions) {
     super(options);

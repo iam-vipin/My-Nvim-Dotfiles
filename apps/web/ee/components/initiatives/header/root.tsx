@@ -6,13 +6,13 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon, ScopeIcon, OverviewIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
 import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
@@ -96,13 +96,12 @@ export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHead
       [EInitiativeNavigationItem.OVERVIEW]: <InitiativeOverviewHeaderActions />,
       [EInitiativeNavigationItem.SCOPE]: (
         <InitiativeScopeHeaderActions
-          workspaceSlug={workspaceSlug?.toString()}
           initiativeId={initiativeId?.toString()}
           disabled={!hasWorkspaceMemberLevelPermissions}
         />
       ),
     }),
-    [initiativeId, workspaceSlug, hasWorkspaceMemberLevelPermissions]
+    [initiativeId, hasWorkspaceMemberLevelPermissions]
   );
 
   if (!activeDetailOption) return null;

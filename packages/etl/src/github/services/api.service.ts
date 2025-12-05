@@ -1,6 +1,7 @@
 import { createAppAuth } from "@octokit/auth-app";
-import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
-import { GithubApiProps, GithubIssue } from "../types";
+import type { RestEndpointMethodTypes } from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
+import type { GithubApiProps, GithubIssue } from "../types";
 
 // Service connected with octokit and facilitating github data
 export class GithubService {

@@ -34,22 +34,12 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
-  toggleEpicModal: (value?: boolean) => void;
-  toggleProjectModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
-  const {
-    workspaceSlug,
-    initiativeId,
-    disabled,
-    toggleEpicModal,
-    toggleProjectModal,
-    handleInitiativeStateUpdate,
-    handleInitiativeLabelUpdate,
-  } = props;
+  const { workspaceSlug, initiativeId, disabled, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
 
   const {
     initiative: {
@@ -60,7 +50,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   } = useInitiatives();
   const { getUserDetails } = useMember();
   const {
-    initiative: { getInitiativesLabels, createInitiativeLabel },
+    initiative: { getInitiativesLabels, createInitiativeLabel, toggleEpicModal, toggleProjectsModal },
   } = useInitiatives();
 
   const { t } = useTranslation();
@@ -120,7 +110,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
           </div>
           <button
             className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
-            onClick={() => toggleProjectModal(true)}
+            onClick={() => toggleProjectsModal(true)}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
           </button>
@@ -173,7 +163,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.start_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
+            optionsClassName="z-[30]"
             showTooltip
             maxDate={getDate(initiative.end_date)}
           />
@@ -195,7 +185,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={initiative.end_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-6 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
+            optionsClassName="z-[30]"
             showTooltip
             minDate={getDate(initiative.start_date)}
           />

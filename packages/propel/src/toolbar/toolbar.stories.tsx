@@ -16,7 +16,7 @@ import {
   Globe2,
   Lock,
 } from "lucide-react";
-import { ListLayoutIcon } from "../icons";
+import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 
 const meta = {

@@ -6,12 +6,13 @@ import { format, startOfToday } from "date-fns";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICycle, TCycleProgress } from "@plane/types";
-import { BetaBadge, ControlLink, Loader } from "@plane/ui";
+import { ControlLink, Loader } from "@plane/ui";
 import { findHowManyDaysLeft } from "@plane/utils";
 import { CycleListItemAction } from "@/components/cycles/list/cycle-list-item-action";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
+import { BetaBadge } from "../../common/beta";
 import ProgressDonut from "./progress-donut";
 
 type Props = {
@@ -31,7 +32,7 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
   const progressToday = progress && progress.find((d) => d.date === format(startOfToday(), "yyyy-MM-dd"));
   // handlers
   const handleControlLinkClick = () => {
-    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`, { showProgress: false });
+    router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`);
   };
 
   const handleEventPropagation = (e: React.MouseEvent) => {

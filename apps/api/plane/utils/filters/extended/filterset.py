@@ -18,6 +18,9 @@ class ExtendedIssueFilterSet(IssueFilterSet):
     type_id = filters.UUIDFilter(field_name="type_id")
     type_id__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
 
+    milestone_id = filters.UUIDFilter(method="filter_milestone_id")
+    milestone_id__in = UUIDInFilter(method="filter_milestone_id_in", lookup_expr="in")
+
     customproperty_value = filters.CharFilter(method="filter_custom_property_value")
     customproperty_value__exact = filters.CharFilter(method="filter_custom_property_value_exact")
     customproperty_value__in = CharInFilter(method="filter_custom_property_value_in", lookup_expr="in")
@@ -126,7 +129,6 @@ class ExtendedIssueFilterSet(IssueFilterSet):
         # Build the filter based on the property type and lookup
         from plane.ee.models.issue_properties import IssueProperty, IssuePropertyValue, PropertyTypeEnum
 
-
         try:
             # Split the value into property_id and value
             # Format: custompropertyvalue__<lookup>=<property_id>;<value>
@@ -136,7 +138,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
                     return Q()
                 # If the value is a list, split the first element into property_id and value
                 property_id, _ = value[0].split(";")
-                # For each value in the list, split it into property_id and value               
+                # For each value in the list, split it into property_id and value
                 values = []
                 for val in value:
                     _, v = val.split(";")
@@ -262,6 +264,20 @@ class ExtendedIssueFilterSet(IssueFilterSet):
         except Exception as e:
             log_exception(e)
             return Q()
+    
+    def filter_milestone_id(self, queryset, name, value):
+        """Filter by milestone ID, excluding soft deleted milestones"""
+        return Q(
+            issue_milestone__milestone_id=value,
+            issue_milestone__deleted_at__isnull=True,
+        )
+
+    def filter_milestone_id_in(self, queryset, name, value):
+        """Filter by milestone IDs (in), excluding soft deleted milestones"""
+        return Q(
+            issue_milestone__milestone_id__in=value,
+            issue_milestone__deleted_at__isnull=True,
+        )
 
 
 class InitiativeFilterSet(BaseFilterSet):

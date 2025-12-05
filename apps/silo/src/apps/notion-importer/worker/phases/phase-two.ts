@@ -1,23 +1,20 @@
 import { E_JOB_STATUS } from "@plane/etl/core";
-import { ContentParser } from "@plane/etl/parser";
 import { logger } from "@plane/logger";
-import { TImportJob, TPage } from "@plane/types";
+import type { TImportJob, TPage } from "@plane/types";
 import { env } from "@/env";
 import { getProjectPageUrl, getTeamspacePageUrl, getWorkspacePageUrl } from "@/helpers/urls";
-import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
+import type { ContentParser } from "@/lib/parser";
+import type { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { getAPIClientInternal } from "@/services/client";
-import { TaskHeaders } from "@/types";
+import type { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
-import { EZipDriverType } from "../../drivers";
-import { IZipImportDriver } from "../../drivers/types";
-import {
-  EDocImporterDestinationType,
-  ENotionImporterKeyType,
-  TDocImporterJobConfig,
-  TNotionMigratorData,
-} from "../../types";
+import type { EZipDriverType } from "../../drivers";
+import type { IZipImportDriver } from "../../drivers/types";
+import type { TDocImporterJobConfig, TNotionMigratorData } from "../../types";
+import { EDocImporterDestinationType, ENotionImporterKeyType } from "../../types";
 import { getEmojiPayload } from "../../utils/html-helpers";
-import { NotionMigratorBase, PhaseProcessingContext } from "./base";
+import type { PhaseProcessingContext } from "./base";
+import { NotionMigratorBase } from "./base";
 
 const apiClient = getAPIClientInternal();
 

@@ -1,4 +1,4 @@
-import { type DocumentAction } from "@/types/document-action";
+import type { DocumentAction } from "@/types/document-action";
 
 /**
  * Registry of actions that can be performed on the document

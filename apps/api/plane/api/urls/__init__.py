@@ -11,10 +11,13 @@ from .user import urlpatterns as user_patterns
 from .work_item import urlpatterns as work_item_patterns
 from .work_item_type import urlpatterns as work_item_type_patterns
 from .invite import urlpatterns as invite_patterns
+from .sticky import urlpatterns as sticky_patterns
+from .workspace import urlpatterns as workspace_patterns
 
 # ee imports
 from plane.ee.urls.api import urlpatterns as ee_api_urls
-
+from .initiative import urlpatterns as initiative_patterns
+from .teamspace import urlpatterns as teamspace_patterns
 
 urlpatterns = [
     *asset_patterns,
@@ -29,7 +32,11 @@ urlpatterns = [
     *user_patterns,
     *work_item_patterns,
     *work_item_type_patterns,
+    *workspace_patterns,
     # ee url endpoints
     *ee_api_urls,
     *invite_patterns,
+    *sticky_patterns,
+    *initiative_patterns,
+    *teamspace_patterns,
 ]

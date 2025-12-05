@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Link, Code, Bookmark } from "lucide-react";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { EExternalEmbedAttributeNames } from "@/types";

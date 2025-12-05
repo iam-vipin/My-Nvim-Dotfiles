@@ -1,12 +1,20 @@
 import { useCallback, useMemo } from "react";
 import { AlignLeft } from "lucide-react";
 // plane imports
-import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { LayersIcon, MilestoneIcon, ProjectIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import type { EIssuePropertyType, IIssueProperty, IIssueType, IProject, TWorkItemFilterProperty } from "@plane/types";
+import type {
+  EIssuePropertyType,
+  IIssueProperty,
+  IIssueType,
+  IMilestoneInstance,
+  IProject,
+  TWorkItemFilterProperty,
+} from "@plane/types";
 import { EWorkItemTypeEntity } from "@plane/types";
-import { Logo } from "@plane/ui";
 import {
+  getMilestoneFilterConfig,
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,
   getWorkItemTypeFilterConfig,
@@ -23,20 +31,23 @@ import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/h
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
+import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
 import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";
+import { useMilestones } from "../store/use-milestone";
 
 export type TWorkItemFiltersEntityProps = TCoreWorkItemFiltersEntityProps & {
   workItemTypeIds?: string[];
   teamspaceProjectIds?: string[];
   customPropertyIds?: string[];
+  milestoneIds?: string[];
 };
 
 export type TUseWorkItemFiltersConfigProps = TCoreUseWorkItemFiltersConfigProps & TWorkItemFiltersEntityProps;
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds } = props;
+  const { workItemTypeIds, teamspaceProjectIds, workspaceSlug, projectId, customPropertyIds, milestoneIds } = props;
   // store hooks
   const {
     getIssuePropertyById,
@@ -46,6 +57,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     isWorkItemTypeEnabledForProject,
     loader: workItemTypesLoader,
   } = useIssueTypes();
+  const { getMilestoneById } = useMilestones();
   const { getProjectById } = useProject();
   // derived values
   const workItemFiltersConfig = useCoreWorkItemFiltersConfig(props);
@@ -68,7 +80,17 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         : [],
     [teamspaceProjectIds, getProjectById]
   );
+
+  // milestones list
+  const milestones: IMilestoneInstance[] | undefined =
+    projectId && milestoneIds
+      ? (milestoneIds
+          .map((milestoneId) => getMilestoneById(projectId, milestoneId))
+          .filter((milestone) => milestone) as IMilestoneInstance[])
+      : undefined;
+
   const isWorkItemTypesEnabled = isFilterEnabled("type_id") && workItemTypes !== undefined;
+  const isMilestonesEnabled = isFilterEnabled("milestone_id") && milestones !== undefined;
   const isWorkItemTypeFeatureEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
   const isEpicFeatureEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
   const workItemTypePropertiesLoader = projectId
@@ -77,7 +99,6 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const epicPropertiesLoader = projectId
     ? getProjectWorkItemPropertiesLoader(projectId, EWorkItemTypeEntity.EPIC)
     : undefined;
-
   // Check if all configuration loaders are ready
   const areAllConfigsInitialized = useMemo(() => {
     // Core configurations must be initialized first
@@ -196,12 +217,28 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isFilterEnabled, operatorConfigs]
   );
 
+  // milestones filter config
+  const milestoneFilterConfig = useMemo(
+    () =>
+      getMilestoneFilterConfig<TWorkItemFilterProperty>("milestone_id")({
+        isEnabled: isMilestonesEnabled,
+        filterIcon: (props) => <MilestoneIcon {...props} variant="custom" />,
+        getOptionIcon: (milestone) => (
+          <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-3.5" />
+        ),
+        milestones: milestones ?? [],
+        ...operatorConfigs,
+      }),
+    [isMilestonesEnabled, operatorConfigs, milestones]
+  );
+
   return {
     ...workItemFiltersConfig,
     areAllConfigsInitialized,
     configs: [
       workItemTypeFilterConfig,
       teamspaceProjectFilterConfig,
+      milestoneFilterConfig,
       ...workItemFiltersConfig.configs,
       workItemNameFilterConfig,
       ...customPropertyConfigs.configs,
@@ -209,6 +246,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     configMap: {
       team_project_id: teamspaceProjectFilterConfig,
       type_id: workItemTypeFilterConfig,
+      milestone_id: milestoneFilterConfig,
       ...workItemFiltersConfig.configMap,
       name: workItemNameFilterConfig,
       ...customPropertyConfigs.configMap,

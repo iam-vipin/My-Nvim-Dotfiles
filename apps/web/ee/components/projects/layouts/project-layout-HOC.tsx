@@ -1,10 +1,15 @@
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import Image from "next/image";
+import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
+// assets
+import projectsDark from "@/app/assets/empty-state/onboarding/projects-dark.webp?url";
+import projectsLight from "@/app/assets/empty-state/onboarding/projects-light.webp?url";
+import allFiltersDarkSvg from "@/app/assets/empty-state/project/all-filters-dark.svg?url";
+import allFiltersLightSvg from "@/app/assets/empty-state/project/all-filters-light.svg?url";
 // components
 import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -17,7 +22,6 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
@@ -47,6 +51,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
   const { layout } = props;
   // plane hooks
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { fetchStatus } = useProject();
   const { loading } = useProjectFilter();
@@ -57,8 +62,8 @@ export const ProjectLayoutHOC = observer((props: Props) => {
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.GALLERY);
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+  const resolvedPath = resolvedTheme === "light" ? projectsLight : projectsDark;
+  const resolvedFiltersImage = resolvedTheme === "light" ? allFiltersLightSvg : allFiltersDarkSvg;
 
   const hasProjectMemberPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
@@ -95,7 +100,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
+          <img src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
           <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}

@@ -2,8 +2,8 @@ import type { FC } from "react";
 import React from "react";
 import { TriangleAlert } from "lucide-react";
 // plane imports
+import { LUCIDE_ICONS_LIST } from "@plane/propel/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {

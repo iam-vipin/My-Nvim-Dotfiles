@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SentryAuthConfig, SentryAuthState, SentryAuthTokenResponse } from "../types";
+import type { SentryAuthConfig, SentryAuthState, SentryAuthTokenResponse } from "../types";
 
 /**
  * Service for handling Sentry OAuth authentication flows.

@@ -31,6 +31,7 @@ import {
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
+import { usePiChat } from "../hooks/store/use-pi-chat";
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -55,6 +56,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   const { initiative } = useInitiatives();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { getInstance } = usePiChat();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -68,7 +71,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
-
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,
@@ -215,6 +218,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && isTemplatePublishEnabled ? () => fetchTemplateCategories() : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  useSWR(workspaceId ? `PI_STARTER_${workspaceId}` : null, workspaceId ? () => getInstance(workspaceId) : null, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    errorRetryCount: 0,
+  });
 
   // loading state
   const isLoading = flagsLoader && !flagsError;

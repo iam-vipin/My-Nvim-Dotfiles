@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { PiChatDetail } from "@/plane-web/components/pi-chat/detail";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
-const NewChatPage = observer(() => {
+function NewChatPage() {
   // store hooks
   const { initPiChat } = usePiChat();
 
@@ -12,5 +12,5 @@ const NewChatPage = observer(() => {
     initPiChat();
   }, []);
   return <PiChatDetail isFullScreen isProjectLevel />;
-});
-export default NewChatPage;
+}
+export default observer(NewChatPage);

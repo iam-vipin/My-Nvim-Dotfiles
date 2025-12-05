@@ -1,3 +1,4 @@
+import type { ConfigurationParameters } from "@makeplane/plane-node-sdk";
 import {
   Configuration,
   CyclesApi,
@@ -10,7 +11,6 @@ import {
   MembersApi,
   WorkItemTypesApi,
   WorkItemPropertiesApi,
-  ConfigurationParameters,
 } from "@makeplane/plane-node-sdk";
 import { env } from "@/env";
 

@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
-import { E_FEATURE_FLAGS, PlaneEntities, E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { PlaneEntities } from "@plane/etl/core";
+import { E_FEATURE_FLAGS, E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import {
-  EIssuePropertyType,
+import type {
   ExCycle,
   ExIssue,
   ExIssueComment,
@@ -14,7 +14,8 @@ import {
   ExProject,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import { EIssuePropertyType } from "@plane/sdk";
+import type { TImportJob } from "@plane/types";
 import {
   IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY,
   IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY,
@@ -149,13 +150,13 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
       isIssueTypeFeatureEnabled && (!cachedIssueTypes || !cachedIssueProperties || !cachedIssuePropertyOptions);
 
     /* ------------------- Issue Type Creation -------------------- */
+    const planeProjectDetails = await protect<ExProject>(
+      planeClient.project.getProject.bind(planeClient.project),
+      job.workspace_slug,
+      job.project_id
+    );
     if (triggerIssueTypeStep) {
       // 2. Check if issue type is enabled for the project or not.
-      const planeProjectDetails = await protect<ExProject>(
-        planeClient.project.getProject.bind(planeClient.project),
-        job.workspace_slug,
-        job.project_id
-      );
       // Extract the issue types from the plane entities
       const isIssueTypeEnabledForProject = planeProjectDetails.is_issue_type_enabled;
       const { issue_types, issue_properties, issue_property_options } = planeEntities;
@@ -394,6 +395,15 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     // Batch Start Index
     const issueProcessIndex = meta.batch_start;
 
+    if (
+      (cycles.length > 0 || modules.length > 0) &&
+      (!planeProjectDetails?.cycle_view || !planeProjectDetails?.module_view)
+    ) {
+      await protect(planeClient.project.update.bind(planeClient.project), job.workspace_slug, job.project_id, {
+        ...(cycles.length > 0 && { cycle_view: true }),
+        ...(modules.length > 0 && { module_view: true }),
+      });
+    }
     const planeCycles = await createAllCycles(
       job.id,
       cycles as ExCycle[],

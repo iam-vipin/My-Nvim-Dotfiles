@@ -1,21 +1,15 @@
-import {
+import type {
   Issue as IJiraIssue,
   Attachment as JiraAttachment,
   Priority as JiraPriority,
   StatusDetails as JiraState,
 } from "jira.js/out/version2/models";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import {
-  IPriorityConfig,
-  IStateConfig,
-  JiraComponent,
-  JiraConfig,
-  JiraSprint,
-  JiraV2Service,
-} from "@plane/etl/jira-server";
+import type { IPriorityConfig, IStateConfig, JiraComponent, JiraConfig, JiraSprint } from "@plane/etl/jira-server";
+import { EJiraAuthenticationType, JiraV2Service } from "@plane/etl/jira-server";
 
-import { ExIssueAttachment, ExState } from "@plane/sdk";
-import { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { ExIssueAttachment, ExState } from "@plane/sdk";
+import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 
 export const getTargetState = (job: TImportJob<JiraConfig>, sourceState: JiraState): ExState | undefined => {
   /* TODO: Gracefully handle the case */
@@ -98,8 +92,14 @@ export const createJiraClient = (
   if (!credentials.source_access_token || !credentials.source_hostname || !credentials.source_auth_email) {
     throw new Error(`Missing credentials in job config for job ${job.id}`);
   }
+
+  const authenticationType =
+    job.source === E_IMPORTER_KEYS.JIRA ? EJiraAuthenticationType.BASIC : EJiraAuthenticationType.PERSONAL_ACCESS_TOKEN;
+
   return new JiraV2Service({
+    email: credentials.source_auth_email,
     patToken: credentials.source_access_token!,
     hostname: credentials.source_hostname,
+    authenticationType,
   });
 };

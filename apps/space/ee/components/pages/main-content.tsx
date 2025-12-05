@@ -11,13 +11,13 @@ import { EditorMentionsRoot } from "@/components/editor/embeds/mentions";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { usePublish } from "@/hooks/store/publish";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
+// plane web imports
 import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
-// plane web components
 import { WorkItemEmbedCard } from "@/plane-web/components/pages";
-// plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
-// local imports
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
 import { PageEmbedCardRoot } from "./page/root";
 import { PageHeader } from "./page-head";
 
@@ -33,22 +33,25 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   const publishSettings = usePublish(anchor);
   const { fetchPageDetails } = usePagesList();
   const pageDetails = usePage(anchor);
+  const { fetchEmbedsAndMentions, hasLoadedEmbedsAndMentions, id, description } = pageDetails ?? {};
 
   useSWR(anchor ? `PAGE_DETAILS_${anchor}` : null, anchor ? () => fetchPageDetails(anchor) : null, {
     revalidateIfStale: false,
-    revalidateOnFocus: false,
   });
   useSWR(
-    anchor && pageDetails ? `PAGE_ISSUE_EMBEDS_${anchor}` : null,
-    anchor && pageDetails ? () => pageDetails.fetchPageIssueEmbeds?.(anchor) : null,
+    anchor && fetchEmbedsAndMentions ? `PAGE_EMBEDS_AND_MENTIONS_${anchor}` : null,
+    anchor && fetchEmbedsAndMentions ? () => fetchEmbedsAndMentions(anchor) : null,
     {
       revalidateIfStale: false,
-      revalidateOnFocus: false,
     }
   );
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    anchor,
+  });
 
   const { document } = useEditorFlagging(anchor);
-  if (!publishSettings || !pageDetails || !pageDetails.id || !pageDetails.description) return null;
+  if (!publishSettings || !pageDetails || !id || !description || !hasLoadedEmbedsAndMentions) return null;
 
   return (
     <Row
@@ -60,11 +63,12 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
         <div className="size-full">
           <DocumentEditorWithRef
             editable={false}
+            getEditorMetaData={getEditorMetaData}
             ref={editorRef}
-            id={pageDetails.id}
+            id={id}
             disabledExtensions={document.disabled}
             flaggedExtensions={document.flagged}
-            value={pageDetails.description}
+            value={description}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getEditorFileHandlers({
               anchor,
@@ -72,12 +76,14 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
               uploadFile: async () => "",
             })}
             mentionHandler={{
-              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              renderComponent: (props) => (
+                <EditorMentionsRoot {...props} getMentionDetails={pageDetails.getMentionDetails} />
+              ),
             }}
             extendedEditorProps={{
               embedHandler: {
                 issue: {
-                  widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} issueId={issueId} />,
+                  widgetCallback: ({ issueId }) => <WorkItemEmbedCard anchor={anchor} workItemId={issueId} />,
                 },
                 externalEmbedComponent: {
                   widgetCallback: EmbedHandler,

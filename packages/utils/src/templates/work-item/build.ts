@@ -1,6 +1,7 @@
-import { TIssuePropertyValues, TWorkItemTemplate, TWorkItemTemplateForm } from "@plane/types";
+import type { TIssuePropertyValues, TWorkItemTemplate, TWorkItemTemplateForm } from "@plane/types";
 // local imports
-import { buildWorkItemBlueprint, TBuildWorkItemBlueprintBaseParams } from "./blueprint/build";
+import type { TBuildWorkItemBlueprintBaseParams } from "./blueprint/build";
+import { buildWorkItemBlueprint } from "./blueprint/build";
 
 /**
  * Parameters for building work item template blueprint

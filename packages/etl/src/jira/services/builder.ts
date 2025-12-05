@@ -1,4 +1,4 @@
-import { JiraProps } from "@/jira/types";
+import type { JiraProps } from "@/jira/types";
 import JiraService from "./api.service";
 import { JiraAuth } from "./auth.service";
 

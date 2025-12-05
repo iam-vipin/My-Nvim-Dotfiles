@@ -1,4 +1,5 @@
-import { Editor, Extension } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import { useCallback, useRef } from "react";
 
 /**

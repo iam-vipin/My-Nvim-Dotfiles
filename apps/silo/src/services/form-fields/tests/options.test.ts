@@ -1,6 +1,7 @@
 import { PriorityEnum } from "@makeplane/plane-node-sdk";
 import { Store } from "@/worker/base";
-import { FormUtils, OptionsEntity, GetOptionsForEntityParams } from "../form-utils";
+import type { GetOptionsForEntityParams } from "../form-utils";
+import { FormUtils, OptionsEntity } from "../form-utils";
 
 // Mock the dependencies
 jest.mock("@/helpers/plane-api-client-v2");

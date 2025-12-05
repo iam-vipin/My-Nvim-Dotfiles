@@ -1,5 +1,5 @@
-import { IProject, IProjectLite } from "./project";
-import { IWorkspaceLite } from "./workspace";
+import type { IProject, IProjectLite } from "./project";
+import type { IWorkspaceLite } from "./workspace";
 
 export type TPublishEntityType = "project" | "page";
 
@@ -13,7 +13,8 @@ export type TProjectPublishViewProps = {
   spreadsheet?: boolean;
 };
 
-export type TProjectDetails = IProjectLite & Pick<IProject, "cover_image" | "logo_props" | "description">;
+export type TProjectDetails = IProjectLite &
+  Pick<IProject, "cover_image" | "cover_image_url" | "logo_props" | "description">;
 
 export type TPublishSettings = {
   anchor: string | undefined;

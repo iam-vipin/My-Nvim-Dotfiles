@@ -2,7 +2,7 @@
 // file: /Users/saurabhkumar/work/plane-ee/silo/src/middleware/external-api-token.middleware.ts
 
 import axios from "axios";
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 

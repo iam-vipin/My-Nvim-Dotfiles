@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { PieChart, ChartNoAxesCombined, MonitorSmartphone, Download } from "lucide-react";
@@ -12,8 +10,12 @@ import { useTranslation } from "@plane/i18n";
 import { LayersIcon, ProjectIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import ffInsideDark from "@/app/assets/empty-state/dashboards/feature-flag/inside-dark.webp?url";
+import ffInsideLight from "@/app/assets/empty-state/dashboards/feature-flag/inside-light.webp?url";
+import ffOutsideDark from "@/app/assets/empty-state/dashboards/feature-flag/outside-dark.webp?url";
+import ffOutsideLight from "@/app/assets/empty-state/dashboards/feature-flag/outside-light.webp?url";
 // plane web imports
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
 const CARDS_LIST = [
@@ -54,8 +56,8 @@ export const DashboardsFeatureFlagFallback = observer(() => {
   const { resolvedTheme } = useTheme();
   // derived values
   const isDarkMode = resolvedTheme === "dark";
-  const insideAssetPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/feature-flag/inside" });
-  const outsideAssetPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/feature-flag/outside" });
+  const insideAssetPath = resolvedTheme === "light" ? ffInsideLight : ffInsideDark;
+  const outsideAssetPath = resolvedTheme === "light" ? ffOutsideLight : ffOutsideDark;
 
   return (
     <ContentWrapper>
@@ -85,10 +87,10 @@ export const DashboardsFeatureFlagFallback = observer(() => {
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute -bottom-px -right-px rounded-br-xl overflow-hidden">
-            <Image src={insideAssetPath} height={420} width={500} alt="r-1" />
+            <img src={insideAssetPath} height={420} width={500} alt="r-1" className="w-full h-full object-cover" />
           </span>
           <span className="absolute -bottom-4 right-1/2">
-            <Image src={outsideAssetPath} height={210} width={280} alt="r-2" />
+            <img src={outsideAssetPath} height={210} width={280} alt="r-2" className="w-full h-full object-cover" />
           </span>
         </div>
       </div>

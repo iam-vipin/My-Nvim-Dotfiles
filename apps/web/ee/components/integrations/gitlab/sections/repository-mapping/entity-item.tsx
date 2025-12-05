@@ -3,22 +3,21 @@
 import type { FC, ReactElement } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane web components
 import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TGitlabEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
-import { Logo } from "@/components/common/logo";
+// assets
+import GitlabLogo from "@/app/assets/services/gitlab.svg?url";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
-// public images
-import GitlabLogo from "@/public/services/gitlab.svg";
 
 type TEntityConnectionItem = {
   entityConnection: TGitlabEntityConnection;
@@ -85,7 +84,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       if (!project) return <></>;
       return <Logo logo={project.logo_props} size={14} />;
     } else if (entityconnection.type === EConnectionType.ENTITY) {
-      return <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />;
+      return <img src={GitlabLogo} alt="Gitlab Logo" className="w-full h-full object-cover" />;
     }
     return <></>;
   };

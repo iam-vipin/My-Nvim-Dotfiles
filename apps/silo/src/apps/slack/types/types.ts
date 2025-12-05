@@ -1,7 +1,7 @@
-import { ISlackChannel, ISlackUser, SlackService, TSlackPayload, TSlackUserAlertsConfig } from "@plane/etl/slack";
-import { IssueWithExpanded, PlaneActivity, Client as PlaneClient } from "@plane/sdk";
-import { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
-import { ENTITIES } from "../helpers/constants";
+import type { ISlackChannel, ISlackUser, SlackService, TSlackPayload, TSlackUserAlertsConfig } from "@plane/etl/slack";
+import type { IssueWithExpanded, PlaneActivity, Client as PlaneClient } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import type { ENTITIES } from "../helpers/constants";
 
 export interface ParsedIssueData {
   project: string;

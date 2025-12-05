@@ -1,5 +1,5 @@
-import { TProjectBaseActivity } from "../activity";
-import { TRecurringWorkItemRunLog } from "./run-log";
+import type { TProjectBaseActivity } from "../activity";
+import type { TRecurringWorkItemRunLog } from "./run-log";
 
 export type TRecurringWorkItemActivityFields =
   | "assignees"

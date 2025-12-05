@@ -29,6 +29,7 @@ export default {
     workflows: "İş Akışları",
     templates: "Şablonlar",
     members_and_teamspaces: "Üyeler ve Takım Alanları",
+    open_in_full_screen: "{page} öğesini tam ekranda aç",
   },
   updates: {
     add_update: "Güncelleme Ekle",
@@ -166,6 +167,28 @@ export default {
       settings_sub_heading:
         "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz.",
     },
+    features: {
+      intake: {
+        heading: "Alım sorumluluğu",
+        notify_assignee: {
+          title: "Atanan kişileri bildir",
+          description: "Yeni bir alım talebi için varsayılan atanan kişiler bildirimler aracılığıyla uyarılacaktır",
+        },
+        toasts: {
+          set: {
+            loading: "Atanan kişiler ayarlanıyor...",
+            success: {
+              title: "Başarılı!",
+              message: "Atanan kişiler başarıyla ayarlandı.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Atanan kişileri ayarlarken bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Konfigüre edilmiş entegrasyon yok",
@@ -220,6 +243,90 @@ export default {
         description: "Epiğinize özel propertiler ekleyin.",
       },
       disabled: "Deaktive",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Otomatik döngü planlaması",
+        description: "Döngüleri manuel kurulum olmadan devam ettirin.",
+        tooltip: "Seçtiğiniz programa göre otomatik olarak yeni döngüler oluşturun.",
+        edit_button: "Düzenle",
+        form: {
+          cycle_title: {
+            label: "Döngü başlığı",
+            placeholder: "Başlık",
+            tooltip: "Başlık, sonraki döngüler için numaralarla tamamlanacaktır. Örneğin: Tasarım - 1/2/3",
+            validation: {
+              required: "Döngü başlığı zorunludur",
+              max_length: "Başlık 255 karakteri aşmamalıdır",
+            },
+          },
+          cycle_duration: {
+            label: "Döngü süresi",
+            unit: "Hafta",
+            validation: {
+              required: "Döngü süresi zorunludur",
+              min: "Döngü süresi en az 1 hafta olmalıdır",
+              max: "Döngü süresi 30 haftayı aşamaz",
+              positive: "Döngü süresi pozitif olmalıdır",
+            },
+          },
+          cooldown_period: {
+            label: "Soğuma süresi",
+            unit: "gün",
+            tooltip: "Bir sonraki döngü başlamadan önce döngüler arası duraklatma.",
+            validation: {
+              required: "Soğuma süresi zorunludur",
+              negative: "Soğuma süresi negatif olamaz",
+            },
+          },
+          start_date: {
+            label: "Döngü başlangıç günü",
+            validation: {
+              required: "Başlangıç tarihi zorunludur",
+              past: "Başlangıç tarihi geçmişte olamaz",
+            },
+          },
+          number_of_cycles: {
+            label: "Gelecekteki döngü sayısı",
+            validation: {
+              required: "Döngü sayısı zorunludur",
+              min: "En az 1 döngü gereklidir",
+              max: "3'ten fazla döngü planlanamaz",
+            },
+          },
+          auto_rollover: {
+            label: "İş öğelerini otomatik devret",
+            tooltip: "Bir döngünün tamamlandığı gün, tüm bitmemiş iş öğelerini bir sonraki döngüye taşıyın.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Otomatik döngü planlaması etkinleştiriliyor",
+            loading_disable: "Otomatik döngü planlaması devre dışı bırakılıyor",
+            success: {
+              title: "Başarılı!",
+              message: "Otomatik döngü planlaması başarıyla değiştirildi.",
+            },
+            error: {
+              title: "Hata!",
+              message: "Otomatik döngü planlaması değiştirilemedi.",
+            },
+          },
+          save: {
+            loading: "Otomatik döngü planlaması yapılandırması kaydediliyor",
+            success: {
+              title: "Başarılı!",
+              message_create: "Otomatik döngü planlaması yapılandırması başarıyla kaydedildi.",
+              message_update: "Otomatik döngü planlaması yapılandırması başarıyla güncellendi.",
+            },
+            error: {
+              title: "Hata!",
+              message_create: "Otomatik döngü planlaması yapılandırması kaydedilemedi.",
+              message_update: "Otomatik döngü planlaması yapılandırması güncellenemedi.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -472,7 +579,7 @@ export default {
       },
       not_found: {
         title: "İnisiyatif mevcut değil",
-        description: "Aradığınız İnisiyatif mevcut değil veya silinmiş.",
+        description: "Aradığınız İnisiyatif mevcut değil, arşivlenmiş veya silinmiş.",
         primary_button: {
           text: "Diğer İnisiyatifleri Görüntüle",
         },
@@ -672,7 +779,12 @@ export default {
         app_short_description_error: "Aplikasyon kısa açıklaması gerekli",
         app_description_title: {
           label: "Uzun açıklama",
-          placeholder: "Pazar yeri için uzun bir açıklama yazın. Komutlar için ‘/’ tuşuna basın.",
+          placeholder: "Pazar yeri için uzun bir açıklama yazın. Komutlar için '/' tuşuna basın.",
+        },
+        authorization_grant_type: {
+          title: "Bağlantı türü",
+          description:
+            "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin",
         },
         app_description_error: "Aplikasyon açıklaması gerekli",
         app_slug_title: "Aplikasyon slag",
@@ -729,6 +841,10 @@ export default {
         categories_error: "Kategoriler gerekli",
         invalid_categories_error: "Geçersiz kategoriler",
         categories_description: "En iyi açıklamayı veren kategorileri seçin",
+        supported_plans: "Desteklenen Planlar",
+        supported_plans_description:
+          "Bu uygulamayı yükleyebilecek çalışma alanı planlarını seçin. Tüm planlara izin vermek için boş bırakın.",
+        select_plans: "Planları Seç",
         privacy_policy_url_title: "Gizlilik Politikası URL",
         privacy_policy_url_error: "Gizlilik Politikası URL gerekli",
         invalid_privacy_policy_url_error: "Geçersiz gizlilik politikası URL",
@@ -803,8 +919,8 @@ export default {
         internal: "Dahili",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın.",
       },
@@ -1507,7 +1623,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Jira Server verilerinizi Plane projelerine import edin.",
+    jira_server_importer_description: "Jira Server/Data Center verilerinizi Plane projelerine import edin.",
     steps: {
       title_configure_plane: "Plane'i Yapılandır",
       description_configure_plane:

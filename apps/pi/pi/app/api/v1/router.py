@@ -6,6 +6,7 @@ from pi.app.api.v1.endpoints import chat
 from pi.app.api.v1.endpoints import chat_ctas
 from pi.app.api.v1.endpoints import docs
 from pi.app.api.v1.endpoints import dupes
+from pi.app.api.v1.endpoints import health
 from pi.app.api.v1.endpoints import oauth
 from pi.app.api.v1.endpoints import transcription
 from pi.app.api.v1.endpoints.internal import llm
@@ -17,6 +18,7 @@ from pi.app.api.v1.endpoints.mobile import transcription as mobile_transcription
 # Router for endpoints
 plane_pi_router = APIRouter()
 
+plane_pi_router.include_router(health.router, tags=["health"])
 plane_pi_router.include_router(dupes.router, prefix="/dupes", tags=["dupes"])
 plane_pi_router.include_router(chat.router, prefix="/chat", tags=["chat"])
 plane_pi_router.include_router(chat_ctas.router, prefix="/chat-ctas", tags=["chat-ctas"])

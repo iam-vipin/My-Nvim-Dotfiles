@@ -2,6 +2,7 @@
 import type { FC } from "react";
 import { useParams } from "next/navigation";
 import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { CustomerRequestIcon, CustomersIcon, MilestoneIcon } from "@plane/propel/icons";
 import type {
@@ -18,7 +19,6 @@ import {
   SPREADSHEET_COLUMNS as CE_SPREAD_SHEET_COLUMNS,
   getScopeMemberIds as getCeScopeMemberIds,
 } from "@/ce/components/issues/issue-layouts/utils";
-import { Logo } from "@/components/common/logo";
 // store
 import { store } from "@/lib/store-context";
 import {

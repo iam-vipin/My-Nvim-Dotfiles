@@ -1,6 +1,6 @@
-import { TFileSignedURLResponse } from "../file";
-import { TBaseLayoutType } from "../base-layouts";
-import { EIssueLayoutTypes } from "../issues/base";
+import type { TBaseLayoutType } from "../base-layouts";
+import type { TFileSignedURLResponse } from "../file";
+import type { EIssueLayoutTypes } from "../issues/base";
 
 export enum EInitiativeNavigationItem {
   OVERVIEW = "overview",

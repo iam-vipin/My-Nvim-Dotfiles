@@ -1,9 +1,9 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import React from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // types
-import { MathNodeVariant, TMathComponentProps } from "../../types";
+import type { MathNodeVariant, TMathComponentProps } from "../../types";
 
 type TBlockMathContainerProps = TMathComponentProps & {
   selected?: boolean;

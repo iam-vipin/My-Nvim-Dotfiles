@@ -1,9 +1,9 @@
-import { TLogoProps } from "../common";
-import { TUserPermissions } from "../enums";
-import { TStateGroups } from "../state";
+import type { TLogoProps } from "../common";
+import type { TUserPermissions } from "../enums";
+import type { TStateGroups } from "../state";
 import type { IUser, IUserLite } from "../users";
 import type { IWorkspace } from "../workspace";
-import { TProjectExtended, TProjectIssuesSearchParamsExtended } from "./projects-extended";
+import type { TProjectExtended, TProjectIssuesSearchParamsExtended } from "./projects-extended";
 
 export enum EUserProjectRoles {
   ADMIN = 20,
@@ -110,6 +110,27 @@ export type TProjectMembership = {
 export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
+
+export type IProjectMemberNavigationPreferences = {
+  default_tab: string;
+  hide_in_more_menu: string[];
+};
+
+export type IProjectMemberPreferencesUpdate = {
+  navigation: IProjectMemberNavigationPreferences;
+};
+
+export type IProjectMemberPreferencesResponse = {
+  preferences: {
+    navigation: IProjectMemberNavigationPreferences;
+  };
+};
+
+export type IProjectMemberPreferencesFullResponse = IProjectMemberPreferencesResponse & {
+  project_id: string;
+  member_id: string;
+  workspace_id: string;
+};
 
 export interface IGithubRepository {
   id: string;

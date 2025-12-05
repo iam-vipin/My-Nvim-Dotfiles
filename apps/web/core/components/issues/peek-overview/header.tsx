@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -69,7 +67,7 @@ export type PeekOverviewHeaderProps = {
   isSubmitting: TNameDescriptionLoader;
 };
 
-export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
+export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader(props: PeekOverviewHeaderProps) {
   const {
     peekMode,
     setPeekMode,

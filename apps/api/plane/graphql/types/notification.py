@@ -8,52 +8,18 @@ import strawberry_django
 
 # Django imports
 from asgiref.sync import sync_to_async
-from django.db.models import Q
-from django.core.cache import cache
 
 # Strawberry imports
 from strawberry.scalars import JSON
 
 # Module imports
-from plane.db.models import Issue, Notification
+from plane.db.models import Notification
 from plane.graphql.types.project import ProjectType
 from plane.graphql.types.user import UserType
 from plane.graphql.utils.issue_activity import issue_activity_comment_string
 from plane.graphql.utils.timezone import user_timezone_converter
 
-
 _NO_VALUE = object()
-
-
-@sync_to_async
-def cache_notification_intake_id(issue_id: str) -> Optional[str]:
-    key = f"notification_intake_{issue_id}"
-    cache_key = cache.make_key(key)
-
-    cache_value = cache.get(cache_key, _NO_VALUE)
-
-    if cache_value is not _NO_VALUE:
-        return cache_value
-
-    issue = Issue.objects.filter(pk=issue_id, issue_intake__status__in=[0, 2, -2]).first()
-    intake_id = str(issue.issue_intake.id) if issue and issue.issue_intake else None
-    cache.set(cache_key, intake_id, timeout=60 * 5)
-    return intake_id
-
-
-@sync_to_async
-def cache_notification_epic_id(issue_id: str) -> Optional[bool]:
-    key = f"notification_epic_{issue_id}"
-    cache_key = cache.make_key(key)
-
-    cache_value = cache.get(cache_key, _NO_VALUE)
-
-    if cache_value is not _NO_VALUE:
-        return cache_value
-
-    issue = Issue.objects.filter(pk=issue_id).filter(Q(type__isnull=False) & Q(type__is_epic=True)).exists()
-    cache.set(cache_key, issue, timeout=60 * 5)
-    return issue
 
 
 @strawberry.type
@@ -103,6 +69,7 @@ class NotificationType:
     def receiver(self) -> int:
         return self.receiver_id
 
+    @strawberry.field
     def created_at(self, info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.created_at)
         return converted_date
@@ -141,36 +108,20 @@ class NotificationType:
         return await process_data()
 
     @strawberry.field
-    async def is_intake_issue(self) -> bool:
-        work_item_id = self.entity_identifier
-        if not work_item_id:
-            return False
-
-        intake_issue = await cache_notification_intake_id(work_item_id)
-        is_intake_issue = intake_issue is not None
-        return is_intake_issue
+    def is_mentioned_notification(self) -> bool:
+        return "mentioned" in self.sender.lower()
 
     @strawberry.field
-    async def intake_id(self) -> Optional[str]:
-        work_item_id = self.entity_identifier
-        if not work_item_id:
-            return None
-
-        intake_issue = await cache_notification_intake_id(work_item_id)
-        if not intake_issue:
-            return None
-
-        return str(intake_issue)
+    def is_intake_issue(self) -> bool:
+        return getattr(self, "is_intake_issue", False)
 
     @strawberry.field
-    async def is_mentioned_notification(self) -> bool:
-        return True if "mentioned" in self.sender.lower() else False
+    def intake_id(self) -> Optional[str]:
+        annotated_intake_id = self.__dict__.get("intake_id")
+        if annotated_intake_id is not None:
+            return str(annotated_intake_id)
+        return None
 
     @strawberry.field
-    async def is_epic(self) -> bool:
-        work_item_id = self.entity_identifier
-        if not work_item_id:
-            return False
-
-        is_epic_work_item = await cache_notification_epic_id(work_item_id)
-        return is_epic_work_item
+    def is_epic(self) -> bool:
+        return getattr(self, "is_epic_issue", False)

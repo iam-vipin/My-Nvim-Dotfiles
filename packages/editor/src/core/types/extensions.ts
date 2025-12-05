@@ -11,4 +11,6 @@ export type TExtensions =
   | "attachments"
   | "comments"
   | "mathematics"
-  | "drawio";
+  | "drawio"
+  | "copy-block-link"
+  | "selection-conversion";

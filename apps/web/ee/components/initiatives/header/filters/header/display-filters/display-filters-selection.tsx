@@ -14,33 +14,44 @@ type Props = {
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
   const { displayFilters, handleDisplayFiltersUpdate } = props;
 
+  const isDisplayFilterEnabled = (displayFilter: keyof TInitiativeDisplayFilters) => {
+    if (displayFilter === "group_by" && displayFilters?.layout === "gantt") {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* group by */}
-      <div className="py-2">
-        <FilterGroupBy
-          displayFilters={displayFilters}
-          groupByOptions={INITIATIVE_GROUP_BY_OPTIONS.map((option) => option.key)}
-          handleUpdate={(val) =>
-            handleDisplayFiltersUpdate({
-              group_by: val,
-            })
-          }
-        />
-      </div>
+      {isDisplayFilterEnabled("group_by") && (
+        <div className="py-2">
+          <FilterGroupBy
+            displayFilters={displayFilters}
+            groupByOptions={INITIATIVE_GROUP_BY_OPTIONS.map((option) => option.key)}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                group_by: val,
+              })
+            }
+          />
+        </div>
+      )}
 
       {/* order by */}
-      <div className="py-2">
-        <FilterOrderBy
-          selectedOrderBy={displayFilters?.order_by}
-          handleUpdate={(val) =>
-            handleDisplayFiltersUpdate({
-              order_by: val,
-            })
-          }
-          orderByOptions={INITIATIVE_ORDER_BY_OPTIONS.map((option) => option.key)}
-        />
-      </div>
+      {isDisplayFilterEnabled("order_by") && (
+        <div className="py-2">
+          <FilterOrderBy
+            selectedOrderBy={displayFilters?.order_by}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                order_by: val,
+              })
+            }
+            orderByOptions={INITIATIVE_ORDER_BY_OPTIONS.map((option) => option.key)}
+          />
+        </div>
+      )}
     </div>
   );
 });

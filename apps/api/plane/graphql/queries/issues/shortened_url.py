@@ -8,7 +8,7 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import Issue, Project, ProjectMember
+from plane.db.models import IntakeIssue, Issue, Project, ProjectMember
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.issues.meta import IssueShortenedMetaInfo
@@ -50,14 +50,22 @@ def get_project_id(workspace_slug, project_identifier):
 
 
 @sync_to_async
-def get_issue_id(workspace_slug: str, project_id: str, issue_sequence: str):
+def get_issue_details(workspace_slug: str, project_id: str, issue_sequence: str):
     try:
         issue = Issue.objects.only("id", "type").get(
             workspace__slug=workspace_slug,
             project_id=project_id,
             sequence_id=issue_sequence,
         )
-        return issue.id, issue.type.is_epic if issue.type else False
+
+        issue_intake = IntakeIssue.objects.filter(issue=issue, status__in=[-2, 0]).first()
+
+        return (
+            issue.id,
+            issue.type.is_epic if issue.type else False,
+            bool(issue_intake),
+            issue_intake.id if issue_intake else None,
+        )
     except Issue.DoesNotExist:
         message = "Issue not found."
         error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
@@ -104,6 +112,12 @@ class IssueShortenedMetaInfoQuery:
                 error_extensions = {"code": "UNAUTHORIZED", "statusCode": 403}
                 raise GraphQLError(message, extensions=error_extensions)
 
-        issue_id, is_epic = await get_issue_id(workspace_slug, project_id, issue_sequence)
+        issue_id, is_epic, is_intake, intake_id = await get_issue_details(workspace_slug, project_id, issue_sequence)
 
-        return IssueShortenedMetaInfo(project=str(project_id), work_item=str(issue_id), is_epic=is_epic)
+        return IssueShortenedMetaInfo(
+            project=str(project_id),
+            work_item=str(issue_id),
+            is_epic=is_epic,
+            is_intake=is_intake,
+            intake_id=str(intake_id) if intake_id else None,
+        )

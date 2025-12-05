@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 import { cn } from "../utils";
 import { EmbedLoading } from "./embed-loading";
 

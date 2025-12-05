@@ -3,7 +3,6 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
 import { getButtonStyling } from "@plane/propel/button";
@@ -28,34 +27,32 @@ import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services";
 import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+import type { Route } from "./+types/page";
 const workspaceService = new WorkspaceService();
 const teamspacePageService = new TeamspacePageService();
 const teamspacePageVersionService = new TeamspacePageVersionService();
 
 const storeType = EPageStoreType.TEAMSPACE;
 
-const TeamspacePageDetailsPage = observer(() => {
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId, pageId: routerPageId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const teamspaceId = routerTeamSpaceId?.toString();
-  const pageId = routerPageId?.toString();
+function TeamspacePageDetailsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, teamspaceId, pageId } = params;
   // store hooks
   const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
-    pageId: pageId?.toString() ?? "",
+    pageId,
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
-  const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const { id, name, updateDescription } = page ?? {};
   // entity search handler
   const fetchEntityCallback = useCallback(
     async (payload: TSearchEntityRequestPayload) =>
-      await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+      await workspaceService.searchEntity(workspaceSlug, {
         ...payload,
-        team_id: teamspaceId?.toString() ?? "",
+        team_id: teamspaceId,
       }),
     [teamspaceId, workspaceSlug]
   );
@@ -63,8 +60,8 @@ const TeamspacePageDetailsPage = observer(() => {
   const { getEditorFileHandlers } = useEditorConfig();
   // fetch page details
   const { error: pageDetailsError } = useSWR(
-    workspaceSlug && teamspaceId && pageId ? `TEAM_PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && teamspaceId && pageId ? () => fetchPageDetails(teamspaceId, pageId) : null,
+    `TEAM_PAGE_DETAILS_${pageId}`,
+    () => fetchPageDetails(teamspaceId, pageId),
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -75,23 +72,17 @@ const TeamspacePageDetailsPage = observer(() => {
   const pageRootHandlers: TPageRootHandlers = useMemo(
     () => ({
       create: createPage,
-      fetchAllVersions: async (pageId) => {
-        if (!workspaceSlug || !teamspaceId) return;
-        return await teamspacePageVersionService.fetchAllVersions(workspaceSlug, teamspaceId, pageId);
-      },
+      fetchAllVersions: async (pageId) =>
+        await teamspacePageVersionService.fetchAllVersions(workspaceSlug, teamspaceId, pageId),
       fetchDescriptionBinary: async () => {
-        if (!workspaceSlug || !teamspaceId || !id) return;
+        if (!id) return;
         return await teamspacePageService.fetchDescriptionBinary(workspaceSlug, teamspaceId, id);
       },
       fetchEntity: fetchEntityCallback,
-      fetchVersionDetails: async (pageId, versionId) => {
-        if (!workspaceSlug || !teamspaceId) return;
-        return await teamspacePageVersionService.fetchVersionById(workspaceSlug, teamspaceId, pageId, versionId);
-      },
-      restoreVersion: async (pageId, versionId) => {
-        if (!workspaceSlug || !teamspaceId) return;
-        return await teamspacePageVersionService.restoreVersion(workspaceSlug, teamspaceId, pageId, versionId);
-      },
+      fetchVersionDetails: async (pageId, versionId) =>
+        await teamspacePageVersionService.fetchVersionById(workspaceSlug, teamspaceId, pageId, versionId),
+      restoreVersion: async (pageId, versionId) =>
+        await teamspacePageVersionService.restoreVersion(workspaceSlug, teamspaceId, pageId, versionId),
       getRedirectionLink: (pageId) => {
         if (pageId) {
           return `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}`;
@@ -119,11 +110,20 @@ const TeamspacePageDetailsPage = observer(() => {
           });
           return asset_id;
         },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id,
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            workspaceSlug,
+          });
+          return asset_id;
+        },
         workspaceId,
         workspaceSlug,
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
+    [duplicateEditorAsset, getEditorFileHandlers, id, uploadEditorAsset, workspaceId, workspaceSlug]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(
@@ -179,6 +179,6 @@ const TeamspacePageDetailsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default TeamspacePageDetailsPage;
+export default observer(TeamspacePageDetailsPage);

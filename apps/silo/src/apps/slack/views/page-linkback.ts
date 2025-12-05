@@ -1,4 +1,4 @@
-import { ExPage } from "@plane/sdk";
+import type { ExPage } from "@plane/sdk";
 
 export const createPageLinkback = (page: ExPage, pageURL: string) => {
   const description = page?.description_stripped?.slice(0, 100);

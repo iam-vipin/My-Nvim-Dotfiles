@@ -8,3 +8,4 @@ from .page_descendants import (
 from .project import PageQuery
 from .user import UserPageQuery
 from .workspace import WorkspacePageQuery
+from .mention import ProjectPageMentionQuery, WorkspacePageMentionQuery

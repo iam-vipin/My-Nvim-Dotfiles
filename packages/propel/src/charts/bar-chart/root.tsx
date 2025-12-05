@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useCallback, useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
@@ -14,16 +12,14 @@ import {
 } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TBarChartProps } from "@plane/types";
+import type { TBarChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 import { barShapeVariants, DEFAULT_BAR_FILL_COLOR } from "./bar";
 
-const DEFAULT_BAR_FILL_COLOR = "#000000";
-
-export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
+export const BarChart = React.memo(function BarChart<K extends string, T extends string>(props: TBarChartProps<K, T>) {
   const {
     data,
     bars,

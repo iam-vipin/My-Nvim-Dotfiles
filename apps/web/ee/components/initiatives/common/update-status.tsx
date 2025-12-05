@@ -54,6 +54,8 @@ export const UpdateStatusPills = (props: TStatusPills) => {
     [EUpdateStatus.AT_RISK]: analytics?.at_risk_updates ?? 0,
     [EUpdateStatus.OFF_TRACK]: analytics?.off_track_updates ?? 0,
   };
+
+  const getStatusText = (status: string): string => capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase());
   // react-popper derived values
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom",
@@ -79,9 +81,11 @@ export const UpdateStatusPills = (props: TStatusPills) => {
               onClick={(e) => e.stopPropagation()}
             >
               <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
-                <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 bg-custom-background-100 hover:shadow-sm">
-                  <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
-                  <span className="text-xs font-medium text-custom-text-300">{count}</span>
+                <button className="flex items-center gap-1 border border-custom-border-300 rounded-md px-1 py-1 bg-custom-background-100">
+                  <UpdateStatusIcons size="xs" statusType={status as EUpdateStatus} showBackground={false} />
+                  <span className="text-xs font-semibold text-custom-text-300">
+                    {count} {getStatusText(status)}
+                  </span>
                 </button>
               </Tooltip>
             </Popover.Button>

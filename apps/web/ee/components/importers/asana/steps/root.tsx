@@ -3,13 +3,12 @@
 import type { FC } from "react";
 // plane web components
 import { observer } from "mobx-react";
-import { Stepper } from "@/plane-web/components/importers/ui";
-// plane web constants
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
-// plane web hooks
-import { useAsanaImporter } from "@/plane-web/hooks/store";
 // assets
-import AsanaLogo from "@/public/services/asana.svg";
+import AsanaLogo from "@/app/assets/services/asana.svg";
+// plane web imports
+import { Stepper } from "@/plane-web/components/importers/ui";
+import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
+import { useAsanaImporter } from "@/plane-web/hooks/store";
 
 export const StepsRoot: FC = observer(() => {
   // hooks

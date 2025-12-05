@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams, usePathname } from "next/navigation";
 import {
   ArrowDownToLine,
@@ -11,22 +12,27 @@ import {
   Users,
   Webhook,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+// plane imports
 import {
   EUserPermissionsLevel,
+  EUserPermissions,
   GROUPED_WORKSPACE_SETTINGS,
   WORKSPACE_SETTINGS_CATEGORIES,
-  EUserPermissions,
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
-import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon } from "@plane/propel/icons";
+import type { WORKSPACE_SETTINGS } from "@plane/constants";
+import { CustomersIcon, InitiativeIcon, PiIcon, ProjectStatesIcon, TeamsIcon, WikiIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import type { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { SettingsSidebar } from "@/components/settings/sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
-export const WORKSPACE_SETTINGS_ICONS = {
+export const WORKSPACE_SETTINGS_ICONS: Record<keyof typeof WORKSPACE_SETTINGS, LucideIcon | React.FC<ISvgIcons>> = {
   general: Building,
   members: Users,
   export: ArrowUpToLine,
@@ -42,28 +48,21 @@ export const WORKSPACE_SETTINGS_ICONS = {
   project_states: ProjectStatesIcon,
   applications: ToyBrick,
   "plane-intelligence": PiIcon,
+  wiki: WikiIcon,
 };
 
-export const WorkspaceActionIcons = ({
-  type,
-  size,
-  className,
-}: {
-  type: string;
-  size?: number;
-  className?: string;
-}) => {
+export function WorkspaceActionIcons({ type, size, className }: { type: string; size?: number; className?: string }) {
   if (type === undefined) return null;
   const Icon = WORKSPACE_SETTINGS_ICONS[type as keyof typeof WORKSPACE_SETTINGS_ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
-};
+}
 
 type TWorkspaceSettingsSidebarProps = {
   isMobile?: boolean;
 };
 
-export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) => {
+export function WorkspaceSettingsSidebar(props: TWorkspaceSettingsSidebarProps) {
   const { isMobile = false } = props;
   // router
   const pathname = usePathname();
@@ -94,4 +93,4 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
       actionIcons={WorkspaceActionIcons}
     />
   );
-};
+}

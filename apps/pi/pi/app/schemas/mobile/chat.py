@@ -1,4 +1,5 @@
 from pi.app.schemas.chat import ChatFeedback
+from pi.app.schemas.chat import ChatInitializationRequest
 from pi.app.schemas.chat import ChatRequest
 from pi.app.schemas.chat import ChatSearchRequest
 from pi.app.schemas.chat import ChatSearchResponse
@@ -20,6 +21,7 @@ from pi.app.schemas.chat import TitleRequest
 from pi.app.schemas.chat import UnfavoriteChatRequest
 
 ChatRequestMobile = ChatRequest
+ChatInitializationRequestMobile = ChatInitializationRequest
 TitleRequestMobile = TitleRequest
 GetThreadsMobile = GetThreads
 ChatTypeMobile = ChatType

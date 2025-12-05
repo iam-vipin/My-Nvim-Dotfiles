@@ -1,5 +1,5 @@
-import { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
-import {
+import type { IssueTypeDetails as JiraIssueTypeDetails } from "jira.js/out/version3/models";
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -10,8 +10,9 @@ import {
   PlaneUser,
   ExIssuePropertyOption,
 } from "@plane/sdk";
-import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
-import {
+import type { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS } from "@/core";
+import type {
   IJiraIssue,
   ImportedJiraUser,
   IPriorityConfig,
@@ -111,7 +112,7 @@ export const transformComment = (
   created_by: comment.author?.displayName,
   comment_html: comment.renderedBody ?? "<p></p>",
   actor: comment.author?.displayName,
-  issue: comment.issue_id,
+  issue: `${projectId}_${resourceId}_${comment.issue_id}`,
 });
 
 export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {

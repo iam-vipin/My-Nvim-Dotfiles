@@ -1,6 +1,5 @@
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
@@ -10,7 +9,7 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const BarChart = dynamic(() =>
+const BarChart = lazy(() =>
   import("@plane/propel/charts/bar-chart").then((mod) => ({
     default: mod.BarChart,
   }))
@@ -97,33 +96,35 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
   if (!widget) return null;
 
   return (
-    <BarChart
-      className="size-full"
-      data={parsedData.data}
-      bars={bars}
-      barSize={20}
-      margin={{
-        top: 20,
-        right: 16,
-        bottom: 20,
-        left: -10,
-      }}
-      xAxis={{
-        key: "name",
-      }}
-      yAxis={{
-        key: "count",
-      }}
-      legend={
-        showLegends
-          ? {
-              align: "center",
-              verticalAlign: "bottom",
-              layout: "horizontal",
-            }
-          : undefined
-      }
-      showTooltip={!!widgetConfig?.show_tooltip}
-    />
+    <Suspense fallback={<></>}>
+      <BarChart
+        className="size-full"
+        data={parsedData.data}
+        bars={bars}
+        barSize={20}
+        margin={{
+          top: 20,
+          right: 16,
+          bottom: 20,
+          left: -10,
+        }}
+        xAxis={{
+          key: "name",
+        }}
+        yAxis={{
+          key: "count",
+        }}
+        legend={
+          showLegends
+            ? {
+                align: "center",
+                verticalAlign: "bottom",
+                layout: "horizontal",
+              }
+            : undefined
+        }
+        showTooltip={!!widgetConfig?.show_tooltip}
+      />
+    </Suspense>
   );
 });

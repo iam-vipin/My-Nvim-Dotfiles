@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 // plane imports
 import { RichTextEditorWithRef } from "@plane/editor";
 import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
@@ -7,6 +7,7 @@ import type { MakeOptional } from "@plane/types";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
 import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -15,7 +16,7 @@ import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps" | "embedHandler">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
   workspaceId: string;
@@ -29,7 +30,10 @@ type RichTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+export const RichTextEditor = forwardRef(function RichTextEditor(
+  props: RichTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     anchor,
     containerClassName,
@@ -38,7 +42,13 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
+  // store hooks
   const { getMemberById } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    anchor,
+  });
+  // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
@@ -57,6 +67,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
+      getEditorMetaData={getEditorMetaData}
       flaggedExtensions={richTextEditorExtensions.flagged}
       extendedEditorProps={{
         embedHandler: {
@@ -66,10 +77,10 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         },
         isSmoothCursorEnabled: false,
       }}
+      {...rest}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
-      {...rest}
     />
   );
 });

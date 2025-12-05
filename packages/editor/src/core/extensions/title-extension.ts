@@ -1,4 +1,4 @@
-import { AnyExtension, Extensions } from "@tiptap/core";
+import type { AnyExtension, Extensions } from "@tiptap/core";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
 import Text from "@tiptap/extension-text";

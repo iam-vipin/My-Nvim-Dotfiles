@@ -5,10 +5,9 @@ import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/cons
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssue, IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";
-import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { IssueGanttBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
@@ -42,7 +41,7 @@ export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
     issues: { getIssueLoader, getPaginationData, groupedIssueIds, updateIssueDates },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
-  const { initGantt } = useTimeLineChart(ETimeLineTypeType.ISSUE);
+  const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   const { allowPermissions } = useUserPermissions();
   const { getBlockById } = useTimeLineChartStore();
 

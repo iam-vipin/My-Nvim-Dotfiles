@@ -1,9 +1,9 @@
-import { SlackService } from "@plane/etl/slack";
+import type { SlackService } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import { TWorkspaceConnection } from "@plane/types";
+import type { TWorkspaceConnection } from "@plane/types";
 import { getUserProfileUrl } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
-import { TSlackWorkspaceConnectionConfig } from "../types/types";
+import type { TSlackWorkspaceConnectionConfig } from "../types/types";
 
 export const getUserMarkdown = (
   planeToSlackUserMap: Map<string, string>,

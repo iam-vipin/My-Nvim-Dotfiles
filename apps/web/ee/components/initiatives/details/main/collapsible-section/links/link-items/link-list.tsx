@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 //
-import { IssueLinkItem } from "./link-item";
+import { InitiativeLinkItem } from "./link-item";
 import type { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
@@ -31,7 +31,7 @@ export const LinkList: FC<TLinkList> = observer((props) => {
   return (
     <div className="flex flex-col gap-2 py-4">
       {links.map((link) => (
-        <IssueLinkItem key={link.id} link={link} linkOperations={linkOperations} isNotAllowed={disabled} />
+        <InitiativeLinkItem key={link.id} link={link} linkOperations={linkOperations} isNotAllowed={disabled} />
       ))}
     </div>
   );

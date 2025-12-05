@@ -20,11 +20,13 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectMemberPreferenceSerializer,
 )
 
 from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.db.models.user import BotTypeEnum
+from plane.db.models.project import get_default_preferences
 from plane.ee.models import TeamspaceMember, TeamspaceProject, PageUser
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
@@ -270,6 +272,40 @@ class ProjectMemberViewSet(BaseViewSet):
         project_member_list.extend(self._process_teamspace_only_members(teamspace_members, project_member_ids))
 
         return Response(project_member_list, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve(self, request, slug, project_id, pk):
+        requesting_project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
+        )
+
+        project_member = (
+            ProjectMember.objects.filter(
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                member__is_bot=False,
+                is_active=True,
+            )
+            .select_related("project", "member", "workspace")
+            .first()
+        )
+
+        if not project_member:
+            return Response(
+                {"error": "Project member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if requesting_project_member.role > ROLE.GUEST.value:
+            serializer = ProjectMemberAdminSerializer(project_member)
+        else:
+            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
@@ -545,3 +581,30 @@ class UserProjectRolesEndpoint(BaseAPIView):
             project_roles[str(project_id)] = ROLE.MEMBER.value
 
         return Response(project_roles, status=status.HTTP_200_OK)
+
+
+class ProjectMemberPreferenceEndpoint(BaseAPIView):
+    def get_queryset(self, slug, project_id, member_id):
+        return ProjectMember.objects.get(
+            project_id=project_id,
+            member_id=member_id,
+            workspace__slug=slug,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+        serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response({"preferences": serializer.data["preferences"]}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+
+        serializer = ProjectMemberPreferenceSerializer(project_member)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,12 +1,16 @@
 import asyncio
 import base64
+import io
 import re
 import unicodedata
 from pathlib import Path
 from typing import Optional
+from typing import Tuple
 
 import boto3
 from botocore.client import Config
+from PIL import Image
+from pypdf import PdfReader
 
 from pi import logger
 from pi.app.models.message_attachment import MessageAttachment
@@ -19,6 +23,10 @@ S3_BUCKET = settings.AWS_S3_BUCKET
 S3_REGION = settings.AWS_S3_REGION
 
 allowed_attachment_types = ["image/jpeg", "image/png", "application/pdf", "image/gif", "image/webp"]
+
+# Heuristic size thresholds (in bytes)
+MIN_FILE_SIZE_BYTES = 32  # reject obviously empty/corrupt payloads
+MIN_PDF_SIZE_BYTES = 256  # PDFs below this are almost always bogus junk
 
 
 def get_s3_client():
@@ -153,3 +161,216 @@ def sanitize_filename(filename: str, max_length: int = 150) -> str:
         name = "file"
 
     return f"{name}{ext}"
+
+
+def detect_file_type(file_data: bytes) -> str:
+    """
+    Detect file type based on file signatures (magic bytes).
+
+    Args:
+        file_data: Raw file bytes
+
+    Returns:
+        Detected MIME type
+    """
+    if not file_data:
+        return "unknown"
+
+    # Check file signatures
+    if file_data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    elif file_data.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    elif file_data.startswith(b"GIF87a") or file_data.startswith(b"GIF89a"):
+        return "image/gif"
+    elif file_data.startswith(b"RIFF") and b"WEBP" in file_data[:12]:
+        return "image/webp"
+    elif file_data.startswith(b"%PDF-"):
+        return "application/pdf"
+    else:
+        return "unknown"
+
+
+async def validate_file_content(file_data: bytes, content_type: str, filename: str) -> Tuple[bool, str]:
+    """
+    Validate file content for malicious content.
+
+    Args:
+        file_data: Raw file bytes
+        content_type: Declared MIME type
+        filename: Original filename
+
+    Returns:
+        Tuple of (is_safe, error_message)
+    """
+    try:
+        # 1. Verify actual file type matches declared content type
+        detected_type = detect_file_type(file_data)
+        if detected_type != "unknown" and detected_type != content_type:
+            return False, f"File type mismatch: declared {content_type}, detected {detected_type}"
+
+        # 2. Check for suspicious file signatures
+        # Known malicious file signatures to block
+        malicious_signatures = [
+            b"\x4d\x5a",  # PE executable
+            b"\x7f\x45\x4c\x46",  # ELF executable
+            b"\xca\xfe\xba\xbe",  # Java class file
+            b"\xfe\xed\xfa",  # Mach-O executable
+        ]
+
+        for sig in malicious_signatures:
+            if file_data.startswith(sig):
+                return False, "File contains executable code"
+
+        # 3. For images, validate they're actually images
+        if content_type.startswith("image/"):
+            try:
+                Image.open(io.BytesIO(file_data)).verify()
+            except Exception:
+                return False, "Invalid image file"
+
+        # 4. For PDFs, check for embedded JavaScript or suspicious objects
+        if content_type == "application/pdf":
+            try:
+                pdf_content = file_data.decode("latin-1", errors="ignore")
+
+                # Check for high-risk patterns that are almost always malicious
+                high_risk_patterns = [
+                    "/Launch",  # Can execute external programs
+                    "eval(",
+                    "unescape(",
+                ]
+
+                for pattern in high_risk_patterns:
+                    if pattern in pdf_content:
+                        return False, f"PDF contains potentially malicious content: {pattern}"
+
+                # Check for JavaScript - only flag if combined with action triggers
+                has_javascript = "/JavaScript" in pdf_content or "/JS" in pdf_content
+                has_open_action = "/OpenAction" in pdf_content
+                has_embedded_file = "/EmbeddedFile" in pdf_content
+
+                # Flag if JavaScript is combined with auto-execution triggers
+                if has_javascript and has_open_action:
+                    return False, "PDF contains JavaScript with auto-execution (OpenAction)"
+
+                # EmbeddedFiles with JavaScript can be risky
+                if has_javascript and has_embedded_file:
+                    return False, "PDF contains JavaScript with embedded files"
+
+            except Exception:
+                # If we can't decode, it might be a binary PDF which is safer
+                pass
+
+            # Check if PDF is password-protected
+            is_protected, error_msg = is_pdf_password_protected(file_data)
+            if is_protected:
+                return False, f"Password-protected PDFs are not allowed: {error_msg}"
+
+        # 5. Check file size vs content (basic heuristic)
+        file_size = len(file_data)
+        if file_size < MIN_FILE_SIZE_BYTES:
+            return False, "File is empty or corrupted"
+
+        if content_type == "application/pdf" and file_size < MIN_PDF_SIZE_BYTES:
+            return False, "PDF appears to be incomplete"
+
+        return True, ""
+
+    except Exception as e:
+        return False, f"Content validation error: {str(e)}"
+
+
+async def scan_file_for_malware(file_data: bytes, content_type: str, filename: str) -> Tuple[bool, str]:
+    """
+    Comprehensive malware scanning for uploaded files.
+
+    Args:
+        file_data: Raw file bytes
+        content_type: Declared MIME type
+        filename: Original filename
+
+    Returns:
+        Tuple of (is_safe, error_message)
+    """
+    # Basic content validation
+    is_safe, error_msg = await validate_file_content(file_data, content_type, filename)
+    if not is_safe:
+        return False, error_msg
+
+    # Additional security checks
+    try:
+        # Check for embedded scripts in images
+        if content_type.startswith("image/"):
+            # Look for script tags or executable content in image data
+            suspicious_strings = [
+                b"<script",
+                b"javascript:",
+                b"vbscript:",
+                b"data:text/html",
+                b"<iframe",
+                b"<object",
+                b"<embed",
+            ]
+
+            for suspicious in suspicious_strings:
+                if suspicious in file_data.lower():
+                    return False, f"Image contains suspicious content: {suspicious.decode()}"
+
+        # Check for zip bombs or compressed content
+        if file_data.startswith(b"PK"):  # ZIP file signature
+            return False, "Compressed files are not allowed"
+
+        # Check for extremely large files that might be zip bombs (respect configured limit)
+        if len(file_data) > settings.FILE_SIZE_LIMIT:
+            return False, f"File exceeds configured limit ({settings.FILE_SIZE_LIMIT} bytes)"
+
+        return True, ""
+
+    except Exception as e:
+        return False, f"Malware scanning error: {str(e)}"
+
+
+def is_pdf_password_protected(file_data: bytes) -> Tuple[bool, str]:
+    """
+    Check if a PDF file is password-protected.
+
+    Args:
+        file_data: Raw PDF file bytes
+
+    Returns:
+        Tuple of (is_password_protected, error_message)
+    """
+    try:
+        # Create a BytesIO object from the file data
+        pdf_stream = io.BytesIO(file_data)
+
+        # Try to read the PDF
+        reader = PdfReader(pdf_stream)
+
+        # Check if the PDF is encrypted/password-protected
+        if reader.is_encrypted:
+            return True, "PDF is password-protected"
+
+        return False, ""
+
+    except Exception as e:
+        # If we can't read the PDF, it might be corrupted or not a valid PDF
+        # We'll allow it through and let other validation catch it
+        log.warning(f"Could not check PDF encryption status: {str(e)}")
+        return False, ""
+
+
+def get_file_hash(file_data: bytes) -> str:
+    """
+    Generate SHA-256 hash of file content for tracking and deduplication.
+
+    Args:
+        file_data: Raw file bytes
+
+    Returns:
+        SHA-256 hash as hex string
+    """
+    import hashlib
+
+    return hashlib.sha256(file_data).hexdigest()

@@ -6,15 +6,14 @@ import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
-import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Input, EmojiIconPickerTypes } from "@plane/ui";
+import { Input } from "@plane/ui";
 import { getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
 
 // components
-import { Logo } from "@/components/common/logo";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -59,7 +58,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const {
     initiative: { getInitiativesLabels, createInitiativeLabel },
   } = useInitiatives();
@@ -196,7 +195,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             try {
               const { asset_id } = await uploadEditorAsset({
                 blockId,
-                workspaceSlug: workspaceSlug.toString(),
+                workspaceSlug: workspaceSlug,
                 data: {
                   entity_identifier: initiativeDetail?.id ?? "",
                   entity_type: EFileAssetType.INITIATIVE_DESCRIPTION,
@@ -207,6 +206,20 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
             } catch (error) {
               console.log("Error in uploading initiative asset:", error);
               throw new Error("Asset upload failed. Please try again later.");
+            }
+          }}
+          duplicateFile={async (assetId: string) => {
+            try {
+              const { asset_id } = await duplicateEditorAsset({
+                assetId,
+                entityId: initiativeDetail?.id,
+                entityType: EFileAssetType.INITIATIVE_DESCRIPTION,
+                workspaceSlug: workspaceSlug,
+              });
+              return asset_id;
+            } catch (error) {
+              console.log("Error in duplicating initiative asset:", error);
+              throw new Error("Asset duplication failed. Please try again later.");
             }
           }}
         />

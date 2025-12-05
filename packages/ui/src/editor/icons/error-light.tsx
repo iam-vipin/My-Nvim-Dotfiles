@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 
 export const ErrorLight: React.FC<ISvgIcons> = ({ className, width = 86, height = 52 }) => (
   <svg

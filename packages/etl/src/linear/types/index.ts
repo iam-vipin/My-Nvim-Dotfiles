@@ -1,4 +1,4 @@
-import {
+import type {
   Attachment,
   Comment,
   Cycle,
@@ -12,8 +12,7 @@ import {
   Project,
   Document,
 } from "@linear/sdk";
-import { Client, ExProject, ExState } from "@plane/sdk";
-import { LinearService } from "../services";
+import type { ExProject, ExState } from "@plane/sdk";
 
 export type LinearAuthState = {
   workspaceId: string;
@@ -101,17 +100,6 @@ export type LinearCycle = {
 export type LinearProject = {
   project: Project;
   issues: Issue[];
-};
-
-export type LinearContentParserConfig = {
-  planeClient: Client;
-  linearService: LinearService;
-  workspaceSlug: string;
-  projectId: string;
-  fileDownloadHeaders: Record<string, string>;
-  apiBaseUrl: string;
-  appBaseUrl?: string;
-  userMap: Map<string, string>;
 };
 
 export type LinearComment = Comment & { issue_id: string; user_id: string };

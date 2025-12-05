@@ -1,19 +1,19 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane web components
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { AppSearchRoot } from "@/plane-web/components/workspace/search";
+import type { Route } from "./+types/page";
 
-const AppSearchPage = observer(() => {
+function AppSearchPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
 
   return (
-    <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="ADVANCED_SEARCH" fallback={<></>}>
+    <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="ADVANCED_SEARCH" fallback={<></>}>
       {isSidebarToggleVisible() && (
         <div className="block bg-custom-sidebar-background-100 p-4 md:hidden">
           <SidebarHamburgerToggle />
@@ -22,6 +22,6 @@ const AppSearchPage = observer(() => {
       <AppSearchRoot />
     </WithFeatureFlagHOC>
   );
-});
+}
 
-export default AppSearchPage;
+export default observer(AppSearchPage);

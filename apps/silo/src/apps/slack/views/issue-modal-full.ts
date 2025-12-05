@@ -1,8 +1,8 @@
-import { PlainTextElement } from "@slack/types";
+import type { PlainTextElement } from "@slack/types";
 import { ACTIONS, E_ISSUE_OBJECT_TYPE_SELECTION } from "../helpers/constants";
-import { PlainTextOption } from "../helpers/slack-options";
+import type { PlainTextOption } from "../helpers/slack-options";
 import { E_MESSAGE_ACTION_TYPES } from "../types/types";
-import {
+import type {
   CheckboxInputBlock,
   MultiExternalSelectInputBlock,
   PlainTextInputBlock,

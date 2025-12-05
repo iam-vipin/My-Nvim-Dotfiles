@@ -104,8 +104,7 @@ export class TeamViewIssues extends BaseIssuesStore implements ITeamViewIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
-        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
+        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
       });
 
       // get params from pagination options

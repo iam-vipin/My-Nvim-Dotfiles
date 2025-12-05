@@ -1,15 +1,14 @@
-"use client";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { CycleIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header, BetaBadge } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
-export const WorkspaceActiveCycleHeader = observer(() => {
+export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycleHeader() {
   const { t } = useTranslation();
   return (
     <Header>
@@ -25,7 +24,6 @@ export const WorkspaceActiveCycleHeader = observer(() => {
               }
             />
           </Breadcrumbs>
-          <BetaBadge />
         </div>
         <UpgradeBadge size="md" flag="WORKSPACE_ACTIVE_CYCLES" />
       </Header.LeftItem>

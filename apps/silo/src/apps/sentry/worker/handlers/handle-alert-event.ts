@@ -1,12 +1,15 @@
-import { SentryEventAlertWebhook } from "@plane/etl/sentry";
+import type { SentryEventAlertWebhook } from "@plane/etl/sentry";
 import { logger } from "@plane/logger";
-import { ExIssue } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
+import type { ExIssue } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
-import { APIClient, getAPIClient } from "@/services/client";
-import { Store } from "@/worker/base";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
+import type { Store } from "@/worker/base";
 import { getSentryConnectionDetails } from "../../helpers/connection";
-import { ESentryEntityConnectionType, ISentryTaskHandler, TSentryServices } from "../../types";
+import type { ISentryTaskHandler, TSentryServices } from "../../types";
+import { ESentryEntityConnectionType } from "../../types";
 
 /**
  * Alert Event Handler is responsible for handling Sentry alert webhooks
@@ -120,11 +123,19 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     const labels = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "labels");
     const state = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "state");
 
+    if (assigneeIds?.value && !Array.isArray(assigneeIds.value)) {
+      assigneeIds.value = [assigneeIds.value as string];
+    }
+
+    if (labels?.value && !Array.isArray(labels.value)) {
+      labels.value = [labels.value as string];
+    }
+
     return {
       type: type?.value as string,
       projectId: projectId?.value as string,
-      assigneeIds: (assigneeIds?.value as string[]) || [],
-      labels: (labels?.value as string[]) || [],
+      assigneeIds: assigneeIds?.value as string[],
+      labels: labels?.value as string[],
       state: state?.value as string,
     };
   }

@@ -21,13 +21,6 @@ export type TInitiativeLabelDropdownProps = {
   value: string[];
   onChange?: (value: string[]) => void;
   disabled?: boolean;
-  buttonVariant?:
-    | "border-with-text"
-    | "border-without-text"
-    | "background-with-text"
-    | "background-without-text"
-    | "transparent-with-text"
-    | "transparent-without-text";
   buttonClassName?: string;
   className?: string;
   tabIndex?: number;
@@ -187,6 +180,7 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
               handleCreateLabel(e);
             }
           }}
+          dataPreventOutsideClick
         >
           <div className="vertical-scrollbar scrollbar-sm max-h-48 space-y-1 overflow-y-scroll">
             {submitting ? (

@@ -1,8 +1,10 @@
-import { ReactNodeViewRenderer, NodeViewWrapper, Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
 // types
-import { TPageEmbedConfig } from "@/types";
+import type { TPageEmbedConfig } from "@/types";
 // extension config
-import { PageEmbedExtensionAttributes, PageEmbedExtensionConfig } from "./extension-config";
+import type { PageEmbedExtensionAttributes } from "./extension-config";
+import { PageEmbedExtensionConfig } from "./extension-config";
 
 type Props = {
   widgetCallback: TPageEmbedConfig["widgetCallback"];

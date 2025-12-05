@@ -3,11 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { DateRange } from "@plane/propel/calendar";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // core components
-import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // plane Web
@@ -16,6 +13,7 @@ import type { TInitiative } from "@/plane-web/types/initiative";
 // ee components
 import { EpicsDropdown } from "../../dropdowns/epics";
 // local components
+import { InitiativeDateRangeDropdown } from "./initiative-date-range-dropdown";
 import { InitiativeLabelDropdown } from "./labels/initiative-label-dropdown";
 import { PropertyBlockWrapper } from "./property-block-wrapper";
 import { InitiativeStateDropdown } from "./states/initiative-state-dropdown";
@@ -91,13 +89,6 @@ export const InitiativesBlockProperties = observer((props: Props) => {
     }
   };
 
-  const handleDateChange = (range: DateRange | undefined) => {
-    updateInitiative?.(workspaceSlug, initiative.id, {
-      start_date: range?.from ? renderFormattedPayloadDate(range.from) : null,
-      end_date: range?.to ? renderFormattedPayloadDate(range.to) : null,
-    });
-  };
-
   return (
     <div
       className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
@@ -107,22 +98,7 @@ export const InitiativesBlockProperties = observer((props: Props) => {
     >
       {/* dates */}
       <PropertyBlockWrapper>
-        <DateRangeDropdown
-          value={{
-            from: getDate(initiative.start_date) || undefined,
-            to: getDate(initiative.end_date) || undefined,
-          }}
-          onSelect={handleDateChange}
-          hideIcon={{
-            from: false,
-          }}
-          isClearable
-          mergeDates
-          buttonVariant={initiative.start_date || initiative.end_date ? "border-with-text" : "border-without-text"}
-          showTooltip
-          renderPlaceholder={false}
-          renderInPortal
-        />
+        <InitiativeDateRangeDropdown initiative={initiative} workspaceSlug={workspaceSlug} />
       </PropertyBlockWrapper>
 
       {/* projects */}

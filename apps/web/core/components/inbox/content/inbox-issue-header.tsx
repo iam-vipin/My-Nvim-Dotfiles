@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -10,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader, IInboxIssueStore } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
 import { ControlLink, CustomMenu, Row } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -22,8 +20,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// store
-import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
 import { DeclineIssueModal } from "../modals/decline-issue-modal";
@@ -43,7 +39,7 @@ type TInboxIssueActionsHeader = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
+export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader(props: TInboxIssueActionsHeader) {
   const {
     workspaceSlug,
     projectId,
@@ -250,6 +246,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
             default: t("add_to_project"),
             loading: t("adding"),
           }}
+          isTypeSelectDisabled
         />
         <DeclineIssueModal
           data={inboxIssue?.issue || {}}
@@ -257,16 +254,18 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           onClose={() => setDeclineIssueModal(false)}
           onSubmit={handleInboxIssueDecline}
         />
-        <DeleteInboxIssueModal
-          data={inboxIssue?.issue}
-          isOpen={deleteIssueModal}
-          onClose={() => setDeleteIssueModal(false)}
-          onSubmit={handleInboxIssueDelete}
-        />
+        {inboxIssue.issue && (
+          <DeleteInboxIssueModal
+            data={inboxIssue?.issue}
+            isOpen={deleteIssueModal}
+            onClose={() => setDeleteIssueModal(false)}
+            onSubmit={handleInboxIssueDelete}
+          />
+        )}
         <InboxIssueSnoozeModal
           isOpen={isSnoozeDateModalOpen}
           handleClose={() => setIsSnoozeDateModalOpen(false)}
-          value={inboxIssue?.snoozed_till}
+          value={inboxIssue.snoozed_till ?? undefined}
           onConfirm={handleInboxIssueSnooze}
         />
       </>

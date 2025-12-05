@@ -10,3 +10,5 @@ class IssueShortenedMetaInfo:
     project: strawberry.ID
     work_item: strawberry.ID
     is_epic: Optional[bool] = False
+    is_intake: Optional[bool] = False
+    intake_id: Optional[strawberry.ID] = None

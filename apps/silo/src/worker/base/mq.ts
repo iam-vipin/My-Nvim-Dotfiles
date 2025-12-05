@@ -3,7 +3,7 @@ import { logger } from "@plane/logger";
 import { env } from "@/env";
 import { shutdown } from "@/helpers/shutdown";
 import { captureException } from "@/logger";
-import { TMQEntityOptions } from "./types";
+import type { TMQEntityOptions } from "./types";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 

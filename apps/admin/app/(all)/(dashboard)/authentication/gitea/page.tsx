@@ -1,29 +1,23 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
+import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
-// icons
-import giteaLogo from "@/public/logos/gitea-logo.svg";
 //local components
+import type { Route } from "./+types/page";
 import { InstanceGiteaConfigForm } from "./form";
 
-const InstanceGiteaAuthenticationPage = observer(() => {
+const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthenticationPage() {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  // theme
-  const { resolvedTheme } = useTheme();
   // config
   const enableGiteaConfig = formattedConfig?.IS_GITEA_ENABLED ?? "";
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
@@ -68,7 +62,7 @@ const InstanceGiteaAuthenticationPage = observer(() => {
           <AuthenticationMethodCard
             name="Gitea"
             description="Allow members to login or sign up to plane with their Gitea accounts."
-            icon={<Image src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
+            icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
             config={
               <ToggleSwitch
                 value={isGiteaEnabled}
@@ -100,5 +94,6 @@ const InstanceGiteaAuthenticationPage = observer(() => {
     </>
   );
 });
+export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - God Mode" }];
 
 export default InstanceGiteaAuthenticationPage;

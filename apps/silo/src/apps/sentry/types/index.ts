@@ -1,6 +1,6 @@
-import { SentryApiService, SentryWebhookPayload } from "@plane/etl/sentry";
-import { Client } from "@plane/sdk";
-import { Store } from "@/worker/base";
+import type { SentryApiService, SentryWebhookPayload } from "@plane/etl/sentry";
+import type { Client } from "@plane/sdk";
+import type { Store } from "@/worker/base";
 
 export interface TSentryServices {
   planeClient: Client;

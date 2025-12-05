@@ -21,7 +21,7 @@ export const MovePageModalBody: React.FC<Props> = (props) => {
         <section className="mb-3 px-2">
           <div className="p-2 bg-custom-background-80 rounded flex items-center gap-2 text-custom-text-300">
             <AlertCircle className="shrink-0 size-3.5" />
-            <p className="text-xs font-medium">{t("pages.move_page.cannot_move_to_teamspace")}</p>
+            <p className="text-xs font-medium">{t("page_actions.move_page.cannot_move_to_teamspace")}</p>
           </div>
         </section>
       )}

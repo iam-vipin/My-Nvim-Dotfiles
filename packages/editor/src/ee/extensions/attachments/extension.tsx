@@ -5,7 +5,8 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import { CustomAttachmentNodeView, CustomAttachmentNodeViewProps } from "./components/node-view";
+import type { CustomAttachmentNodeViewProps } from "./components/node-view";
+import { CustomAttachmentNodeView } from "./components/node-view";
 import { CustomAttachmentExtensionConfig } from "./extension-config";
 import type { AttachmentExtensionOptions, AttachmentExtensionStorage, TAttachmentBlockAttributes } from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES, getAttachmentExtensionFileMap } from "./utils";

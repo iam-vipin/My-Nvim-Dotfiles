@@ -1,4 +1,4 @@
-import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse } from "@plane/types";
+import type { TIssue, TLogoProps, TProject, TFileSignedURLResponse, TPage } from "@plane/types";
 
 export enum EFeedback {
   POSITIVE = "positive",
@@ -80,13 +80,15 @@ export type TActions = {
   }[];
 };
 
-export type TUpdatedArtifact = Partial<TIssue> | Partial<TProject> | TArtifact | undefined;
+export type TUpdatedArtifact = Partial<TIssue> | Partial<TProject> | Partial<TPage> | TArtifact | undefined;
 
 export type TArtifact = {
   artifact_id: string;
   is_editable: boolean;
   is_executed: boolean;
   success: boolean;
+  error?: string;
+  message?: string;
   artifact_type: string;
   entity_id?: string;
   entity_url?: string;
@@ -101,6 +103,7 @@ export type TArtifact = {
     };
     logo_props?: TLogoProps;
     description?: string;
+    description_html?: string;
     properties: {
       [key: string]: {
         name: string;
@@ -119,6 +122,15 @@ export type TArtifact = {
   success?: boolean;
 };
 
+export type TArtifactWithEntity = TArtifact & {
+  entity?: {
+    entity_id: string;
+    entity_url: string;
+    issue_identifier: string;
+    entity_name: string;
+  };
+};
+
 export type TDialogue = {
   query_id?: string;
   answer_id?: string;
@@ -129,7 +141,7 @@ export type TDialogue = {
   reasoning?: string;
   isPiThinking: boolean;
   execution_status?: EExecutionStatus;
-  actions?: TArtifact[];
+  actions?: TArtifactWithEntity[];
   action_summary?: {
     completed: number;
     duration_seconds: number;
@@ -137,6 +149,7 @@ export type TDialogue = {
     total_planned: number;
   };
   attachment_ids?: string[];
+  action_error?: string;
 };
 
 export type TChatHistory = {
@@ -166,9 +179,7 @@ export type TAction = {
 export type TExecuteActionResponse = {
   status: string;
   message: string;
-  actions: Array<
-    TArtifact & { entity?: { entity_id: string; entity_url: string; issue_identifier: string; entity_name: string } }
-  >;
+  actions: TArtifactWithEntity[];
   action_summary?: {
     completed: number;
     duration_seconds: number;
@@ -201,11 +212,11 @@ interface IItem {
   target: string;
   redirect_uri: string;
   name?: string;
-  project__identifier?: string;
-  sequence_id?: string;
+  project__identifier?: string | null;
+  sequence_id?: string | null;
   title: string;
   subTitle: string | undefined;
-  type_id: string;
+  type_id: string | null;
   project_id: string;
 }
 
@@ -251,5 +262,23 @@ export type TPiAttachmentIdMap = {
   [chatId: string]: string[];
 };
 
+export type TInstanceResponse =
+  | {
+      is_authorized: true;
+      templates: TTemplate[];
+    }
+  | {
+      is_authorized: false;
+      oauth_url: string;
+    };
+
+export type TChatContextData = {
+  id: string;
+  type: string;
+  title: string | undefined;
+  subTitle?: string | undefined;
+  icon: React.ReactNode;
+} | null;
+
 // constants
-export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic"];
+export const EDITABLE_ARTIFACT_TYPES = ["workitem", "epic", "page", "cycle", "module"];

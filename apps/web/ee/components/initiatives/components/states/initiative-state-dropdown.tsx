@@ -16,13 +16,6 @@ export type TInitiativeStateDropdownProps = {
   value: TInitiativeStates;
   onChange?: (value: TInitiativeStates) => void;
   disabled?: boolean;
-  buttonVariant?:
-    | "border-with-text"
-    | "border-without-text"
-    | "background-with-text"
-    | "background-without-text"
-    | "transparent-with-text"
-    | "transparent-without-text";
   buttonClassName?: string;
   className?: string;
   tabIndex?: number;
@@ -128,6 +121,7 @@ export const InitiativeStateDropdown: FC<TInitiativeStateDropdownProps> = observ
           inputClassName="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
           optionsContainerClassName="mt-2 space-y-1"
           positionerClassName="z-50"
+          dataPreventOutsideClick
         >
           {stateOptions.map((option) => (
             <Combobox.Option

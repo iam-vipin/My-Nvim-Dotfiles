@@ -1,13 +1,12 @@
 "use client";
 
 import type { FC } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // images
-import githubLightModeImage from "/public/logos/github-black.png";
-import githubDarkModeImage from "/public/logos/github-dark.svg";
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-dark.svg?url";
 
 export type TGitHubAuthButton = {
   title: string;
@@ -33,7 +32,7 @@ export const GitHubAuthButton: FC<TGitHubAuthButton> = (props) => {
       }`}
       onClick={handleSignIn}
     >
-      <Image
+      <img
         src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}

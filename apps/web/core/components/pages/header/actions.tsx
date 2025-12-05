@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web components
 import { PageCommentControl } from "@/plane-web/components/pages/header/comment-control";
@@ -22,13 +20,13 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageHeaderActions: React.FC<Props> = observer((props) => {
+export const PageHeaderActions = observer(function PageHeaderActions(props: Props) {
   const { page, storeType } = props;
 
   return (
     <div className="flex items-center gap-1">
       <PageArchivedBadge page={page} />
-      <PageOfflineBadge />
+      <PageOfflineBadge page={page} />
       <PageLockControl page={page} storeType={storeType} />
       <PageMoveControl page={page} />
       <PageCopyLinkControl page={page} />

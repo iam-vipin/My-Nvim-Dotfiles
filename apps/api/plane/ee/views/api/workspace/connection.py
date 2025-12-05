@@ -23,11 +23,7 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
             )
             serializer = WorkspaceConnectionAPISerializer(connections, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        connection = (
-            WorkspaceConnection.objects.filter(id=pk)
-            .select_related("workspace")
-            .first()
-        )
+        connection = WorkspaceConnection.objects.filter(id=pk).select_related("workspace").first()
         serializer = WorkspaceConnectionAPISerializer(connection)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -42,9 +38,7 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
         if not workspace_connection:
             serializer = WorkspaceConnectionAPISerializer(data={**request.data})
         else:
-            serializer = WorkspaceConnectionAPISerializer(
-                workspace_connection, data=request.data, partial=True
-            )
+            serializer = WorkspaceConnectionAPISerializer(workspace_connection, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -54,9 +48,7 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
     def patch(self, request, pk):
         connection = WorkspaceConnection.objects.filter(id=pk).first()
 
-        serializer = WorkspaceConnectionAPISerializer(
-            connection, data=request.data, partial=True
-        )
+        serializer = WorkspaceConnectionAPISerializer(connection, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -66,23 +58,20 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
     def delete(self, request, pk):
         connection = WorkspaceConnection.objects.filter(id=pk).first()
         if not connection:
-            return Response(
-                {"error": "Connection not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Connection not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get deleted_by from query parameters
-        deleted_by_id = request.GET.get("deleted_by")
+        params = request.data.get("params", {})
 
-        # Get disconnect_meta from query parameters
-        disconnect_meta_encoded = request.GET.get("disconnect_meta")
+        # Get disconnect_meta, deleted_by_id from request data
+        disconnect_meta_encoded = params.get("disconnect_meta")
         disconnect_meta = None
+
+        deleted_by_id = params.get("deleted_by_id")
 
         if disconnect_meta_encoded:
             try:
                 # Decode the base64 string
-                disconnect_meta_json = base64.b64decode(disconnect_meta_encoded).decode(
-                    "utf-8"
-                )
+                disconnect_meta_json = base64.b64decode(disconnect_meta_encoded).decode("utf-8")
                 # Parse the JSON
                 disconnect_meta = json.loads(disconnect_meta_json)
             except (base64.binascii.Error, json.JSONDecodeError) as e:
@@ -110,9 +99,7 @@ class WorkspaceUserConnectionAPIView(BaseServiceAPIView):
         connections = WorkspaceConnection.objects.filter(workspace_id=workspace_id)
 
         # Fetch all workspace credentials for the given workspace and user
-        credentials = WorkspaceCredential.objects.filter(
-            workspace_id=workspace_id, user_id=user_id, is_active=True
-        )
+        credentials = WorkspaceCredential.objects.filter(workspace_id=workspace_id, user_id=user_id, is_active=True)
 
         # Create a map of credential sources for quick lookup
         credential_map = {credential.source: credential for credential in credentials}

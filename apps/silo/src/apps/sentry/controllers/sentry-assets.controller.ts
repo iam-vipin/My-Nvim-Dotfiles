@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get, Post } from "@plane/decorators";
-import { SentryCreateFields, SentryData, SentryLinkFields } from "@plane/etl/sentry";
-import { ExIssue } from "@plane/sdk";
+import type { SentryCreateFields, SentryData, SentryLinkFields } from "@plane/etl/sentry";
+import type { ExIssue } from "@plane/sdk";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";

@@ -1,8 +1,8 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
@@ -20,8 +20,9 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 
-const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
+function GitlabIntegration() {
   // hooks
+  const searchParams = useSearchParams();
   const {
     workspace,
     externalApiToken,
@@ -58,7 +59,7 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   );
 
   // error message
-  const errorCode = searchParams?.error;
+  const errorCode = searchParams.get("error");
   useEffect(() => {
     if (!errorCode) {
       return;
@@ -136,6 +137,6 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
       {organization && <IntegrationRoot isEnterprise={false} />}
     </div>
   );
-});
+}
 
-export default GitlabIntegration;
+export default observer(GitlabIntegration);

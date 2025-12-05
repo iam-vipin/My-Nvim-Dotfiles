@@ -2,7 +2,6 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ChevronLeftIcon } from "@plane/propel/icons";
@@ -19,17 +18,16 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { AutoScheduleCycles } from "@/plane-web/components/cycles/settings";
 // plane web imports
 import { PROJECT_BASE_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import type { Route } from "./+types/page";
 
-const CyclesFeatureSettingsPage = observer(() => {
-  const { workspaceSlug, projectId } = useParams();
+function CyclesFeatureSettingsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   // permissions
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   // project store
   const { getProjectById, updateProject } = useProject();
-  const currentProjectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
-
-  if (!workspaceSlug || !projectId) return null;
+  const currentProjectDetails = getProjectById(projectId);
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
     return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
@@ -39,8 +37,8 @@ const CyclesFeatureSettingsPage = observer(() => {
 
   const handleToggle = async () => {
     if (!currentProjectDetails) return;
-    const payload = { cycle_view: !Boolean(currentProjectDetails.cycle_view) };
-    const promise = updateProject(workspaceSlug.toString(), projectId.toString(), payload);
+    const payload = { cycle_view: !currentProjectDetails.cycle_view };
+    const promise = updateProject(workspaceSlug, projectId, payload);
     setPromiseToast(promise, {
       loading: "Updating project feature...",
       success: { title: "Success!", message: () => "Project feature updated successfully." },
@@ -81,7 +79,7 @@ const CyclesFeatureSettingsPage = observer(() => {
           </div>
 
           <ToggleSwitch
-            value={Boolean(currentProjectDetails?.cycle_view)}
+            value={!!currentProjectDetails?.cycle_view}
             onChange={handleToggle}
             disabled={!canPerformProjectAdminActions}
             size="sm"
@@ -93,6 +91,6 @@ const CyclesFeatureSettingsPage = observer(() => {
       {currentProjectDetails?.cycle_view && <AutoScheduleCycles />}
     </SettingsContentWrapper>
   );
-});
+}
 
-export default CyclesFeatureSettingsPage;
+export default observer(CyclesFeatureSettingsPage);

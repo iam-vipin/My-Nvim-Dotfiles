@@ -18,15 +18,19 @@ export const StatusOptions = {
   },
 };
 
-type TUpdateStatusIcons = {
+export type TUpdateStatusIcons = {
   statusType?: EUpdateStatus;
   showBackground?: boolean;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
   showText?: boolean;
   className?: string;
 };
 
 const sizes = {
+  xs: {
+    icon: 12,
+    container: "w-4 h-4",
+  },
   sm: {
     icon: 16,
     container: "w-6 h-6",

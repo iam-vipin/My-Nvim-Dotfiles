@@ -76,7 +76,7 @@ export const QuickActions: React.FC<Props> = (props) => {
     },
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}),
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),

@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
+import type { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
 import { processBatchPromises } from "@/helpers/methods";
 import { AssertAPIErrorResponse, protect } from "@/lib";
@@ -123,4 +123,45 @@ export const createAllModules = async (
   const createdModules = await processBatchPromises(modules, createOrUpdateModule, 2);
 
   return createdModules.filter((module) => module !== undefined) as { id: string; issues: string[] }[];
+};
+
+export const createAllModulesV2 = async (
+  jobId: string,
+  modules: ExModule[],
+  planeClient: PlaneClient,
+  workspaceSlug: string,
+  projectId: string
+): Promise<{ external_id: string; id: string }[]> => {
+  const createOrUpdateModule = async (module: ExModule): Promise<{ external_id: string; id: string } | undefined> => {
+    try {
+      const createdModule = await protect(
+        planeClient.modules.create.bind(planeClient.modules),
+        workspaceSlug,
+        projectId,
+        module
+      );
+      return { external_id: module.external_id, id: createdModule.id };
+    } catch (error) {
+      logger.warn(`Warning while creating the module: ${module.name}`, {
+        jobId: jobId,
+      });
+      if (AssertAPIErrorResponse(error)) {
+        if (error.error && error.error.includes("already exists")) {
+          logger.info(`[${jobId.slice(0, 7)}] Module "${module.name}" already exists. Skipping...`);
+          return { external_id: module.external_id, id: error.id };
+          // Get the id from the module
+        } else {
+          logger.error(`Error while creating the module: ${module.name}`, {
+            jobId: jobId,
+            error: error,
+          });
+        }
+      }
+      return undefined;
+    }
+  };
+
+  const createdModules = await processBatchPromises(modules, createOrUpdateModule, 2);
+
+  return createdModules.filter((module) => module !== undefined) as { external_id: string; id: string }[];
 };

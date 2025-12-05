@@ -1,4 +1,4 @@
-import { TAppKeys } from "@plane/etl/core";
+import type { TAppKeys } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import { getAppSecretValue } from "@/db/query";
 import { Store } from "@/worker/base";

@@ -46,6 +46,8 @@ from plane.ee.views.app.page import (
     ProjectPageCommentViewSet,
     ProjectPageCommentReactionViewSet,
     ProjectPageRestoreEndpoint,
+    WorkspacePageExportViewSet,
+    ProjectPageExportViewSet,
     PageExtendedViewSet,
     PageFavoriteExtendedViewSet,
     PagesDescriptionExtendedViewSet,
@@ -83,7 +85,8 @@ from plane.ee.views.app.dashboard import DashboardViewSet, DashboardQuickFilterE
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
     SubPagePublicEndpoint,
-    PagePublicIssuesEndpoint,
+    PagePublicMentionEndpoint,
+    PagePublicEmbedEndpoint,
     PageMetaDataEndpoint,
 )
 from plane.ee.views.space.views import (
@@ -94,6 +97,10 @@ from plane.ee.views.space.views import (
 from plane.ee.views.space.intake import (
     IntakePublishedIssueEndpoint,
     IntakeMetaPublishedIssueEndpoint,
+)
+from plane.ee.views.space.intake_form import (
+    IntakeFormSettingsEndpoint,
+    IntakeFormCreateWorkItemEndpoint,
 )
 
 # workspace connection views
@@ -108,6 +115,7 @@ from plane.ee.views.app.workspace.connection import (
 from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
 from plane.ee.views.app.workspace.issue import (
     WorkspaceIssueDetailEndpoint,
+    WorkspaceIssueRetrieveEndpoint,
     WorkspaceIssueBulkUpdateDateEndpoint,
 )
 
@@ -141,6 +149,7 @@ from plane.ee.views.app.page.live import (
     PagesLiveServerSubPagesViewSet,
 )
 from plane.ee.views.app.page.move import MovePageEndpoint
+from plane.ee.views.app.page.entities import PageEmbedEndpoint, PageMentionEndpoint
 
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
 

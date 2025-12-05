@@ -1,29 +1,32 @@
 "use client";
 
-import React, { useCallback } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { PlaneLockup } from "@plane/propel/icons";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // local imports
+import type { Route } from "./+types/page";
 import { ESupportedFeatures, WorkspaceSelector } from "./workspace-selector";
 
 const NOT_FOUND_CLASSNAME = "flex items-center justify-center h-full text-custom-text-100 text-lg font-medium";
 
-const WorkspacePickerPage = observer(() => {
+function isValidFeature(feature: string): feature is ESupportedFeatures {
+  return Object.values(ESupportedFeatures).includes(feature as ESupportedFeatures);
+}
+
+function WorkspacePickerPage({ params }: Route.ComponentProps) {
   // router
-  const { feature: featureFromRoute, identifier } = useParams();
-  const feature = featureFromRoute as ESupportedFeatures;
+  const { feature, identifier } = params;
   // hooks
   const { data: currentUser } = useUser();
   // derived values
-  const isFeatureSupported = Object.values(ESupportedFeatures).includes(feature);
+  const isFeatureSupported = isValidFeature(feature);
 
-  const renderContent = useCallback(() => {
+  const content = useMemo(() => {
     if (!isFeatureSupported) {
       return <div className={NOT_FOUND_CLASSNAME}>Invalid feature</div>;
     }
@@ -42,10 +45,10 @@ const WorkspacePickerPage = observer(() => {
           </Link>
           <div className="text-sm text-custom-text-100">{currentUser?.email}</div>
         </div>
-        {renderContent()}
+        {content}
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default WorkspacePickerPage;
+export default observer(WorkspacePickerPage);

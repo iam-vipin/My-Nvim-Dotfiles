@@ -1,9 +1,11 @@
 import type { Editor } from "@tiptap/core";
-import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 // plane editor imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // local imports
-import { ECommentAttributeNames, type TCommentMarkAttributes } from "../types";
+import { ECommentAttributeNames } from "../types";
+import type { TCommentMarkAttributes } from "../types";
 
 const COMMENT_RESTORE_PLUGIN_KEY = new PluginKey("comment-restore-utility");
 

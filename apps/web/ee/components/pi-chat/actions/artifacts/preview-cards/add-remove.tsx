@@ -27,6 +27,7 @@ export const AddRemovePreviewCard = observer((props: TProps) => {
             {data.action === "add" ? "to" : "from"} {artifactSubType}
             {properties && properties.length > 0 ? "s" : ""}
             {properties &&
+              Array.isArray(properties) &&
               properties.map(
                 (
                   property: {

@@ -134,14 +134,21 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.GLOBAL_VIEWS_TIMELINE)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug):
-        filters = issue_filters(request.query_params, "GET")
+        # Create a mutable copy of query params to remove sub_issue
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", "false")
+        query_params.pop("sub_issue", None)
+
+        filters = issue_filters(query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
         queryset = self.get_queryset()
+
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            queryset = queryset.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
@@ -254,9 +261,7 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
 
             start_date = update.get("start_date")
             target_date = update.get("target_date")
-            validate_dates = self.validate_dates(
-                issue.start_date, issue.target_date, start_date, target_date
-            )
+            validate_dates = self.validate_dates(issue.start_date, issue.target_date, start_date, target_date)
             if not validate_dates:
                 return Response(
                     {"message": "Start date cannot exceed target date"},
@@ -279,12 +284,8 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
             if target_date:
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps(
-                        {"target_date": update.get("target_date")}
-                    ),
-                    current_instance=json.dumps(
-                        {"target_date": str(issue.target_date)}
-                    ),
+                    requested_data=json.dumps({"target_date": update.get("target_date")}),
+                    current_instance=json.dumps({"target_date": str(issue.target_date)}),
                     issue_id=str(issue_id),
                     actor_id=str(request.user.id),
                     project_id=str(issue.project_id),
@@ -296,6 +297,27 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
         # Bulk update issues
         Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
 
-        return Response(
-            {"message": "Issues updated successfully"}, status=status.HTTP_200_OK
+        return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
+
+
+class WorkspaceIssueRetrieveEndpoint(BaseAPIView):
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, issue_id):
+        issue = (
+            Issue.issue_objects.filter(id=issue_id, workspace__slug=slug)
+            .select_related("state", "project")
+            .values(
+                "id",
+                "name",
+                "sequence_id",
+                "project__identifier",
+                "project_id",
+                "state__group",
+                "state__name",
+                "type_id",
+            )
+            .first()
         )
+
+        return Response(issue, status=status.HTTP_200_OK)

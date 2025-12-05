@@ -7,7 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { LICENSE_TRACKER_EVENTS } from "@plane/constants";
 import { PlaneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
-import { cn, getSubscriptionName } from "@plane/utils";
+import { getSubscriptionName } from "@plane/utils";
 // hooks
 import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -36,7 +36,7 @@ export const CloudEditionBadge = observer(() => {
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success" && currentSubscription === EProductSubscriptionEnum.PRO) {
-      router.replace(pathname, { showProgress: false });
+      router.replace(pathname);
       handleSuccessModalToggle(true);
     }
   }, [pathname, router, searchParams, currentSubscription, handleSuccessModalToggle]);

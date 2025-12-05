@@ -53,7 +53,7 @@ export const DefaultProperties: FC<Props> = (props) => {
   const { getIndex } = getTabIndex(ETabIndices.CUSTOMER_FORM);
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { currentWorkspace } = useWorkspace();
 
   // refs
@@ -251,6 +251,20 @@ export const DefaultProperties: FC<Props> = (props) => {
                   return asset_id;
                 } catch (error) {
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityId: customerId,
+                    entityType: EFileAssetType.CUSTOMER_DESCRIPTION,
+                    workspaceSlug,
+                  });
+                  onAssetUpload?.(asset_id);
+                  return asset_id;
+                } catch (error) {
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
             />

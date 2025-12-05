@@ -1,12 +1,14 @@
-import { ContentParser } from "@plane/etl/parser";
-import { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
+import type { SlackService, TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import { Client, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
+import type { Client as PlaneClient, ExIssue, ExIssuePropertyValue, IssueWithExpanded, PlaneUser } from "@plane/sdk";
+import type { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { downloadFile } from "@/helpers/utils";
-import { APIClient, getAPIClient } from "@/services/client";
+import type { ContentParser } from "@/lib/parser";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { getSlackContentParser } from "../../helpers/content-parser";
@@ -14,13 +16,9 @@ import { createSlackFormParser } from "../../helpers/field-parser/field-parser";
 import { parseLinkWorkItemFormData, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { getSlackThreadUrl } from "../../helpers/urls";
 import { enhanceUserMapWithSlackLookup, getSlackToPlaneUserMapFromWC } from "../../helpers/user";
-import { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
-import {
-  E_MESSAGE_ACTION_TYPES,
-  ShortcutActionPayload,
-  SlackPrivateMetadata,
-  TSlackConnectionDetails,
-} from "../../types/types";
+import type { TIntakeFormResult, TWorkItemFormResult } from "../../types/fields";
+import type { ShortcutActionPayload, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { createSlackIntakeLinkback } from "../../views/intake-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
@@ -348,20 +346,12 @@ export const handleCreateNewWorkItemViewSubmission = async (
     });
 
     if (data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE) {
-      await createIntakeIssueFromViewSubmission(
-        parsedData as TIntakeFormResult,
-        details,
-        metadata,
-        member,
-        details,
-        parser
-      );
+      await createIntakeIssueFromViewSubmission(parsedData as TIntakeFormResult, metadata, member, details, parser);
     } else {
       await createWorkItemFromViewSubmission(
         data.user.id,
         data.team.domain,
         parsedData as TWorkItemFormResult,
-        details,
         metadata as SlackPrivateMetadata<
           typeof ENTITIES.SHORTCUT_PROJECT_SELECTION | typeof ENTITIES.COMMAND_PROJECT_SELECTION
         >,
@@ -383,7 +373,6 @@ export const handleCreateNewWorkItemViewSubmission = async (
 
 async function createIntakeIssueFromViewSubmission(
   parsedData: TIntakeFormResult,
-  credentials: TSlackConnectionDetails,
   metadata: SlackPrivateMetadata,
   member: PlaneUser | undefined,
   details: TSlackConnectionDetails,
@@ -446,7 +435,6 @@ async function createWorkItemFromViewSubmission(
   userId: string,
   teamDomain: string,
   parsedData: TWorkItemFormResult,
-  credentials: TSlackConnectionDetails,
   metadata: SlackPrivateMetadata<
     typeof ENTITIES.SHORTCUT_PROJECT_SELECTION | typeof ENTITIES.COMMAND_PROJECT_SELECTION
   >,
@@ -454,7 +442,7 @@ async function createWorkItemFromViewSubmission(
   details: TSlackConnectionDetails,
   parser: ContentParser
 ) {
-  const { workspaceConnection, slackService, planeClient } = details;
+  const { workspaceConnection, slackService, planeClient, credentials } = details;
   let parsedDescription: string;
 
   try {
@@ -480,13 +468,11 @@ async function createWorkItemFromViewSubmission(
     issue = await planeClient.issue.update(workspaceConnection.workspace_slug, projectId, issueId, {
       ...parsedData.data,
       description_html: parsedDescription,
-      created_by: member?.id,
     });
   } else {
     issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.data.project, {
       ...parsedData.data,
       description_html: parsedDescription,
-      created_by: member?.id,
     });
 
     projectId = parsedData.data.project;
@@ -535,7 +521,6 @@ async function createWorkItemFromViewSubmission(
       userId,
       teamDomain,
       slackService,
-      apiClient,
       workspaceConnection,
       planeClient,
       parsedData.data.enable_thread_sync ?? false,
@@ -562,14 +547,13 @@ async function handleShortcutProjectSelection(
   userId: string,
   teamDomain: string,
   slackService: SlackService,
-  apiClient: any,
-  workspaceConnection: any,
-  planeClient: any,
+  workspaceConnection: TWorkspaceConnection,
+  planeClient: PlaneClient,
   enableThreadSync: boolean,
   metadata: SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
   linkBack: any,
   issue: ExIssue,
-  credentials: any
+  credentials: TWorkspaceCredential
 ) {
   if (metadata.entityPayload.message.ts && metadata.entityPayload.mode !== "update") {
     const response = await slackService.getMessage(
@@ -708,7 +692,7 @@ async function processCustomFields(params: {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  planeClient: Client;
+  planeClient: PlaneClient;
 }) {
   const { customFields, workspaceSlug, projectId, issueId, planeClient } = params;
 

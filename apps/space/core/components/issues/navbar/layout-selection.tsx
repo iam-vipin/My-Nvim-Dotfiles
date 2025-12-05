@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
@@ -21,17 +18,7 @@ type Props = {
   anchor: string;
 };
 
-// TODO: use from packages/constants and handle icons
-// export const SITES_ISSUE_LAYOUTS: {
-//   key: TIssueLayout;
-//   title: string;
-//   icon: any;
-// }[] = [
-//   { key: "list", title: "ListLayoutIcon", icon: ListLayoutIcon },
-//   { key: "kanban", title: "BoardLayoutIcon", icon: BoardLayoutIcon },
-// ];
-
-export const IssuesLayoutSelection: FC<Props> = observer((props) => {
+export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(props: Props) {
   const { anchor } = props;
   // hooks
   const { t } = useTranslation();

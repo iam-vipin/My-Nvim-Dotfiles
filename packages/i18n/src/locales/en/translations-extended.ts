@@ -17,6 +17,10 @@ export default {
     members_and_teamspaces: "Members & Teamspaces",
     recurring_work_items: "Recurring work items",
     milestones: "Milestones",
+    open_in_full_screen: "Open {page} in full screen",
+    actions: {
+      reply: "Reply",
+    },
   },
   issue: {
     relation: {
@@ -50,6 +54,45 @@ export default {
         },
         error: {
           message: "Failed to duplicate work item",
+        },
+      },
+    },
+    comments: {
+      replies: {
+        create: {
+          submit_button: "Add reply",
+          placeholder: "Add reply",
+        },
+        toast: {
+          fetch: {
+            error: {
+              message: "Failed to fetch replies",
+            },
+          },
+          create: {
+            success: {
+              message: "Reply created successfully",
+            },
+            error: {
+              message: "Failed to create reply",
+            },
+          },
+          update: {
+            success: {
+              message: "Reply updated successfully",
+            },
+            error: {
+              message: "Failed to update reply",
+            },
+          },
+          delete: {
+            success: {
+              message: "Reply deleted successfully",
+            },
+            error: {
+              message: "Failed to delete reply",
+            },
+          },
         },
       },
     },
@@ -186,6 +229,28 @@ export default {
       description:
         "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
     },
+    features: {
+      intake: {
+        heading: "Intake responsibility",
+        notify_assignee: {
+          title: "Notify assignees",
+          description: "For a new request to intake, default assignees will be alerted via notifications",
+        },
+        toasts: {
+          set: {
+            loading: "Setting assignees...",
+            success: {
+              title: "Success!",
+              message: "Assignees set successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Something went wrong while setting assignees. Please try again.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "No integrations configured",
@@ -250,6 +315,90 @@ export default {
     templates: {
       heading: "Templates",
       description: "Save 80% time spent on creating projects, work items, and pages when you use templates.",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Auto-schedule cycles",
+        description: "Keep cycles moving without manual setup.",
+        tooltip: "Automatically create new cycles based on your chosen schedule.",
+        edit_button: "Edit",
+        form: {
+          cycle_title: {
+            label: "Cycle Title",
+            placeholder: "Title",
+            tooltip: "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
+            validation: {
+              required: "Cycle title is required",
+              max_length: "Title must not exceed 255 characters",
+            },
+          },
+          cycle_duration: {
+            label: "Cycle Duration",
+            unit: "Weeks",
+            validation: {
+              required: "Cycle duration is required",
+              min: "Cycle duration must be at least 1 week",
+              max: "Cycle duration cannot exceed 30 weeks",
+              positive: "Cycle duration must be positive",
+            },
+          },
+          cooldown_period: {
+            label: "Cooldown Period",
+            unit: "days",
+            tooltip: "Pause between cycles before the next begins.",
+            validation: {
+              required: "Cooldown period is required",
+              negative: "Cooldown period cannot be negative",
+            },
+          },
+          start_date: {
+            label: "Cycle starts day",
+            validation: {
+              required: "Start date is required",
+              past: "Start date cannot be in the past",
+            },
+          },
+          number_of_cycles: {
+            label: "Number of future cycles",
+            validation: {
+              required: "Number of cycles is required",
+              min: "At least 1 cycle is required",
+              max: "Cannot schedule more than 3 cycles",
+            },
+          },
+          auto_rollover: {
+            label: "Auto-rollover work items",
+            tooltip: "On the day a cycle completes, move all unfinished work items into the next cycle.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Enabling auto-schedule cycles",
+            loading_disable: "Disabling auto-schedule cycles",
+            success: {
+              title: "Success!",
+              message: "Auto-schedule cycles toggled successfully.",
+            },
+            error: {
+              title: "Error!",
+              message: "Failed to toggle auto-schedule cycles.",
+            },
+          },
+          save: {
+            loading: "Saving auto-schedule cycles configuration",
+            success: {
+              title: "Success!",
+              message_create: "Auto-schedule cycles configuration saved successfully.",
+              message_update: "Auto-schedule cycles configuration updated successfully.",
+            },
+            error: {
+              title: "Error!",
+              message_create: "Failed to save auto-schedule cycles configuration.",
+              message_update: "Failed to update auto-schedule cycles configuration.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -500,7 +649,7 @@ export default {
       },
       not_found: {
         title: "Initiative does not exist",
-        description: "The Initiative you are looking for does not exist or has been deleted.",
+        description: "The initiative you are looking for does not exist, has been archived, or has been deleted.",
         primary_button: {
           text: "View other Initiatives",
         },
@@ -763,6 +912,11 @@ export default {
           label: "Long Description",
           placeholder: "Write a long description for marketplace. Press ‘/’ for commands.",
         },
+        authorization_grant_type: {
+          title: "Connection Type",
+          description:
+            "Choose if your app should be installed once for the workspace or let every user connect their own account",
+        },
         website: {
           title: "Website",
           description: "Link to your app's website.",
@@ -783,6 +937,11 @@ export default {
           description:
             "This is where we will send webhook events and updates from the workspaces where your app is installed.",
           placeholder: "https://example.com/webhook",
+        },
+        webhook_secret: {
+          label: "Webhook Secret",
+          description: "Secret used to verify incoming webhook requests.",
+          placeholder: "Enter a random secret key",
         },
         redirect_uris: {
           label: "Redirect URIs (space separated)",
@@ -860,6 +1019,10 @@ export default {
         categories_error: "Categories are required",
         invalid_categories_error: "Invalid categories",
         categories_description: "Select the categories that best describe the app",
+        supported_plans: "Supported Plans",
+        supported_plans_description:
+          "Select the workspace plans that can install this application. Leave empty to allow all plans.",
+        select_plans: "Select Plans",
         privacy_policy_url_title: "Privacy Policy URL",
         privacy_policy_url_error: "Privacy Policy URL is required",
         invalid_privacy_policy_url_error: "Invalid privacy policy URL",
@@ -898,8 +1061,8 @@ export default {
           "When this is enabled, Users can mention or assign Work Items to this application.",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "See your work get smarter and faster with AI that is natively connected to your work and knowledge base. ",
       },
@@ -1425,7 +1588,7 @@ export default {
     },
     project_updates: {
       title: "Project Notifications",
-      description: "Configure slack channels for project notifications",
+      description: "Configure Slack channels for project notifications",
       add_new_project_update: "Add new project notifications",
       project_updates_empty_state: "Projects connected with Slack Channels will appear here.",
       project_updates_form: {
@@ -1696,7 +1859,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Import your Jira Server data into Plane projects.",
+    jira_server_importer_description: "Import your Jira Server/Data Center data into Plane projects.",
     steps: {
       title_configure_plane: "Configure Plane",
       description_configure_plane:
@@ -2947,6 +3110,15 @@ export default {
           "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page.",
       },
     },
+    type_forms: {
+      select_types: {
+        title: "Select work item type",
+        search_placeholder: "Search for a work item type",
+      },
+      actions: {
+        select_properties: "Select properties",
+      },
+    },
   },
   recurring_work_items: {
     settings: {
@@ -3230,7 +3402,7 @@ export default {
       },
     },
   },
-  pages: {
+  page_actions: {
     move_page: {
       submit_button: {
         default: "Move",
@@ -3297,6 +3469,32 @@ export default {
     },
     search_menu: {
       go_to_advanced_search: "Go to advanced search",
+    },
+  },
+  wiki: {
+    upgrade_flow: {
+      title: "Upgrade to unlock Wiki",
+      description:
+        "Unlock public pages, version history, shared pages, real-time collaboration, and workspace pages for wikis, company-wide docs, and knowledge bases with Plane Pro.",
+      upgrade_button: {
+        text: "Upgrade",
+      },
+      learn_more_button: {
+        text: "Learn more",
+      },
+      download_button: {
+        text: "Download data",
+        loading: "Downloading",
+      },
+      tabs: {
+        nested_pages: "Nested Pages",
+        add_embeds: "Add embeds",
+        publish_pages: "Publish pages",
+        comments: "Comments",
+      },
+    },
+    nested_pages_download_banner: {
+      title: "Nested pages require a paid plan. Upgrade to unlock.",
     },
   },
 };

@@ -1,10 +1,7 @@
 // plane sdk
 // silo asana
+import type { AsanaConfig, AsanaEntity, AsanaTask, AsanaUser } from "@plane/etl/asana";
 import {
-  AsanaConfig,
-  AsanaEntity,
-  AsanaTask,
-  AsanaUser,
   getRandomColor,
   transformCustomFieldOptions,
   transformCustomFields,
@@ -14,8 +11,8 @@ import {
   transformComments,
 } from "@plane/etl/asana";
 // silo core
-import { TIssuePropertyValuesPayload } from "@plane/etl/core";
-import {
+import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type {
   ExIssueComment,
   ExIssueLabel,
   ExIssueProperty,
@@ -23,7 +20,7 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 
 /* ------------------ Transformers ----------------------
 This file contains transformers for Asana entities, responsible

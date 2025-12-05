@@ -17,6 +17,7 @@ from rest_framework import exceptions, status
 # Local application imports
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES
 from plane.authentication.models import (
+    Application,
     AccessToken,
     WorkspaceAppInstallation,
     Grant,
@@ -176,17 +177,37 @@ class CustomAuthorizationView(AuthorizationView):
 
 
 class CustomOAuth2Validator(OAuth2Validator):
+    def validate_response_type(self, client_id, response_type, client, request, *args, **kwargs):
+        """
+        Override to allow authorization code flow for all applications regardless of their authorization_grant_type.
+        This allows client-credentials apps to also support authorization code flow.
+        """
+        # Allow 'code' response type for all applications
+        if response_type == "code":
+            return True
+        
+        # For other response types, use the default validation
+        return super().validate_response_type(client_id, response_type, client, request, *args, **kwargs)
+
     def validate_grant_type(
         self, client_id, grant_type, client, request, *args, **kwargs
     ):
         """
-        Allow both authorization_code and client_credentials regardless of grant type
+        Allow both authorization_code and client_credentials for app with authorization grant type authorization_code
+        and allow only client_credentials for app with authorization grant type client_credentials
         """
         allowed_grant_types = [
             "authorization_code",
             "client_credentials",
             "refresh_token",
         ]
+        application = client
+        if not application:
+            return False
+        if application.authorization_grant_type == Application.GRANT_CLIENT_CREDENTIALS:
+            allowed_grant_types = [
+                "client_credentials",
+            ]
         return grant_type in allowed_grant_types
 
     def save_authorization_code(self, client_id, code, request, *args, **kwargs):

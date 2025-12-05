@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // hooks
 import type { JiraConfig } from "@plane/etl/jira";
 import type { TImportJob } from "@plane/types";
-import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // assets
-import JiraLogo from "@/public/services/jira.svg";
+import JiraLogo from "@/app/assets/services/jira.svg?url";
+// plane web imports
+import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // components
 import { BaseDashboard } from "../../common/dashboard/base-dashboard";
 
@@ -22,7 +23,7 @@ export const JiraServerDashboardRoot: FC = observer(() => {
         getWorkspaceName,
         getProjectName,
         getPlaneProject,
-        serviceName: "Jira Server",
+        serviceName: "Jira Server/Data Center",
         logo: JiraLogo,
         swrKey: "JIRA_SERVER_IMPORTER",
       }}

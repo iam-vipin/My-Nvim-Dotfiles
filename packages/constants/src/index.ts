@@ -1,5 +1,6 @@
 export * from "./ai";
 export * from "./analytics";
+export * from "./application";
 export * from "./auth";
 export * from "./automation";
 export * from "./chart";

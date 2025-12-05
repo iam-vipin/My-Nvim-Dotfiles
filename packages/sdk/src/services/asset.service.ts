@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExAsset, AssetUploadResponse } from "@/types/types";
+import type { ClientOptions, ExAsset, AssetUploadResponse } from "@/types/types";
 
 interface AssetResponse {
   asset_id: string;
@@ -67,10 +67,16 @@ export class AssetService extends APIService {
       external_source?: string;
     }
   ): Promise<string> {
+    let fileType = file.type;
+
+    // If the file type includes a semicolon, we need to remove the charset
+    if (fileType.includes(";")) {
+      fileType = fileType.split(";")[0];
+    }
     // First get the presigned URL
     const uploadResponse = await this.createAsset(workspaceSlug, {
       name,
-      type: file.type,
+      type: fileType,
       size,
       project_id: options?.project_id,
       external_id: options?.external_id,

@@ -2,12 +2,8 @@ import type { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import * as Y from "yjs";
 import { Controller, Middleware, Post } from "@plane/decorators";
-import {
-  BroadcastPayloadUnion,
-  CommonRealtimeFields,
-  createRealtimeEvent,
-  type TDocumentEventsClient,
-} from "@plane/editor/lib";
+import { createRealtimeEvent } from "@plane/editor/lib";
+import type { BroadcastPayloadUnion, CommonRealtimeFields, TDocumentEventsClient } from "@plane/editor/lib";
 import { logger } from "@plane/logger";
 import { serverAgentManager } from "@/agents/server-agent";
 import { requireSecretKey } from "@/lib/auth-middleware";

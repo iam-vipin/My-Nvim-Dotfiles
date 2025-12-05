@@ -453,8 +453,8 @@ class PlaneSDKAdapter:
                     except Exception as e:
                         log.warning(f"Failed to get current user for cycle ownership: {e}")
 
+            # Prepare cycle data
             cycle_data = {"name": name, **kwargs}
-            # log.debug(f"cycle_data payload prepared: {cycle_data}")
             if start_date:
                 cycle_data["start_date"] = datetime.fromisoformat(start_date.replace("Z", "+00:00"))
             if end_date:
@@ -464,13 +464,21 @@ class PlaneSDKAdapter:
             if owned_by:
                 cycle_data["owned_by"] = owned_by
 
+            # Create the request object
             cycle_request = CycleCreateRequest(**cycle_data)
-            # Log the serialized request to see exactly what fields are included
-            try:
-                cycle_request.model_dump() if hasattr(cycle_request, "model_dump") else cycle_request.dict()
-                # log.debug(f"CycleCreateRequest model dump: {dump}")
-            except Exception as dump_error:
-                log.warning(f"Failed to dump CycleCreateRequest model: {dump_error}")
+
+            # WORKAROUND: Backend API requires project_id in body when dates are present.
+            # We monkey-patch model_dump() to inject project_id when needed.
+            if (start_date or end_date) and project_id:
+                original_model_dump = cycle_request.model_dump
+
+                def model_dump_with_project_id(*args, **kwargs):
+                    result = original_model_dump(*args, **kwargs)
+                    result["project_id"] = project_id
+                    return result
+
+                # Use object.__setattr__ to bypass Pydantic's attribute protection
+                object.__setattr__(cycle_request, "model_dump", model_dump_with_project_id)
 
             # Call SDK method
             cycle = self.cycles.create_cycle(project_id=project_id, slug=workspace_slug, cycle_create_request=cycle_request)

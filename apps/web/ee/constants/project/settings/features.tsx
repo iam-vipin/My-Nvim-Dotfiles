@@ -1,4 +1,4 @@
-import { ListTodo, Mail, Zap } from "lucide-react";
+import { ListTodo, Mail, Users, Zap } from "lucide-react";
 // plane imports
 import { MilestoneIcon } from "@plane/propel/icons";
 import type {
@@ -12,16 +12,20 @@ import {
 } from "@/ce/constants/project/settings/features";
 
 export type TIntakeFeatureKeys = "in_app" | "email" | "form";
+export type TIntakeResponsibilityKeys = "notify_assignee";
 
 type TProjectOtherFeatureKeys = CE_TProjectOtherFeatureKeys | "is_milestone_enabled";
 
-type TIntakeFeatureList = {
+export type TIntakeFeatureList = {
   [key in TIntakeFeatureKeys]: TProperties & {
     hasOptions: boolean;
     hasHyperlink?: boolean;
     canShuffle?: boolean;
+    fieldName?: string;
   };
 };
+
+export type TIntakeResponsibilityList = { [key in TIntakeResponsibilityKeys]: TProperties };
 
 export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
   in_app: {
@@ -46,6 +50,7 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasHyperlink: false,
     canShuffle: true,
     key: "intake_email",
+    fieldName: "Email ID",
   },
   form: {
     property: "form",
@@ -59,6 +64,19 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
     hasHyperlink: true,
     canShuffle: true,
     key: "intake",
+    fieldName: "Default form URL",
+  },
+};
+
+export const INTAKE_RESPONSIBILITY_LIST: TIntakeResponsibilityList = {
+  notify_assignee: {
+    property: "notify_assignee",
+    title: "Notify assignees",
+    description: "For a new request to intake, default assignees will be alerted via notifications",
+    icon: <Users className="h-4 w-4 flex-shrink-0 text-custom-text-300" />,
+    isPro: false,
+    isEnabled: true,
+    key: "notify_assignee",
   },
 };
 

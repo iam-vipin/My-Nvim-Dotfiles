@@ -2,12 +2,11 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // components
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
-import { Logo } from "@/components/common/logo";
 // plane web components
 import { Dropdown } from "@/plane-web/components/importers/ui";
 // plane web hooks

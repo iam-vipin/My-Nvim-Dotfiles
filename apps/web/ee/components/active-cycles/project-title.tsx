@@ -1,8 +1,8 @@
 import type { FC } from "react";
 // types
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { IProject } from "@plane/types";
 // ui
-import { Logo } from "@/components/common/logo";
 
 export type ActiveCyclesProjectTitleProps = {
   project: Partial<IProject> | undefined;

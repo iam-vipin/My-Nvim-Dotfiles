@@ -1,6 +1,6 @@
-import { ContentParser } from "@plane/etl/parser";
-import { TZipFileNode } from "@/lib/zip-manager";
-import { TDocContentParserConfig } from "../types";
+import type { ContentParser } from "@/lib/parser";
+import type { TZipFileNode } from "@/lib/zip-manager";
+import type { TDocContentParserConfig } from "../types";
 
 /*
  * The entire process of importing for zip files is exactly the same

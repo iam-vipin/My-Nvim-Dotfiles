@@ -14,8 +14,10 @@ export type TApplication = {
   client_secret?: string;
   client_id?: string;
   redirect_uris: string;
+  authorization_grant_type?: string;
   allowed_origins: string;
   webhook_url?: string;
+  webhook_secret?: string;
   contact_email?: string;
   attachments: string[];
   categories: string[];
@@ -33,6 +35,8 @@ export type TApplication = {
   is_not_supported?: boolean;
   is_hardcoded?: boolean;
   is_default?: boolean;
+  supported_plans?: string[];
+  supported_environments?: string[];
 };
 
 export type TUserApplication = TApplication & {

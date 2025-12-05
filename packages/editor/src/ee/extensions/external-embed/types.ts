@@ -1,6 +1,6 @@
 import type { Node as ProseMirrorNode } from "@tiptap/core";
 import type { Range } from "@tiptap/react";
-import { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps } from "@/plane-editor/types/external-embed";
+import type { EExternalEmbedAttributeNames, ExternalEmbedNodeViewProps } from "@/plane-editor/types/external-embed";
 
 // Extension-specific Types
 export type ExternalEmbedProps = {

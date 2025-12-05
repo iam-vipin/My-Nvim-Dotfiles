@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
@@ -31,7 +28,7 @@ type Props = {
 
 type GithubConfigFormValues = Record<TInstanceGithubAuthenticationConfigurationKeys, string>;
 
-export const InstanceGithubConfigForm: FC<Props> = (props) => {
+export function InstanceGithubConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -241,14 +238,14 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}
                 </div>
-
-                {/* mobile service details */}
-                <GithubMobileForm />
               </div>
+
+              {/* mobile service details */}
+              <GithubMobileForm />
             </div>
           </div>
         </div>
       </div>
     </>
   );
-};
+}

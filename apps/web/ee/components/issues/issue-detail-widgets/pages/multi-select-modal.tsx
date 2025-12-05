@@ -8,11 +8,12 @@ import { Earth, Lock, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // hooks
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon, PageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssuePage, TIssueServiceType } from "@plane/types";
 import { EPageAccess } from "@plane/types";
-import { ToggleSwitch, Button, Logo, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
+import { ToggleSwitch, Button, ModalCore, EModalWidth, EModalPosition, Loader, Checkbox } from "@plane/ui";
 // types
 // components
 import { getPageName, getTabIndex } from "@plane/utils";

@@ -1,5 +1,7 @@
-import { type Selection, Plugin, PluginKey, TextSelection, Transaction } from "@tiptap/pm/state";
-import { type EditorView, Decoration, DecorationSet } from "@tiptap/pm/view";
+import type { TextSelection, Transaction, Selection } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
 import { codeMarkPluginKey } from "@/extensions/code-mark/utils";
 
 export const PROSEMIRROR_SMOOTH_CURSOR_CLASS = "prosemirror-smooth-cursor";

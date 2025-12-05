@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 import { cn } from "../utils";
 import { ThumbnailNotFoundDark } from "./icons/thumbnail-not-found-dark";
 import { ThumbnailNotFoundLight } from "./icons/thumbnail-not-found-light";

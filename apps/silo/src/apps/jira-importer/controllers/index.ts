@@ -1,10 +1,12 @@
-import axios, { AxiosInstance } from "axios";
-import { Request, Response } from "express";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { Request, Response } from "express";
 import { Controller, Get, Post } from "@plane/decorators";
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { createJiraService, fetchPaginatedData, JiraProject, JiraResource, JiraService } from "@plane/etl/jira";
+import type { JiraProject, JiraResource, JiraService } from "@plane/etl/jira";
+import { createJiraService, fetchPaginatedData } from "@plane/etl/jira";
 import { logger } from "@plane/logger";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { compareAndGetAdditionalUsers } from "@/helpers/additional-users";
 import { responseHandler } from "@/helpers/response-handler";

@@ -1,11 +1,6 @@
-import { ReactNode } from "react";
-import {
-  TMobileAuthErrorCodes,
-  TMobileAuthErrorInfo,
-  EMobileAuthErrorCodes,
-  EMobileErrorAlertType,
-  SUPPORT_EMAIL,
-} from "@plane/constants";
+import type { ReactNode } from "react";
+import type { TMobileAuthErrorCodes, TMobileAuthErrorInfo } from "@plane/constants";
+import { EMobileAuthErrorCodes, EMobileErrorAlertType, SUPPORT_EMAIL } from "@plane/constants";
 
 const mobileAuthErrorCodeMessages: {
   [key in TMobileAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };

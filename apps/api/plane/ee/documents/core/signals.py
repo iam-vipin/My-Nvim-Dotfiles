@@ -44,9 +44,7 @@ def update_index_on_bulk_create_update(sender, **kwargs):
 
         # Queue all objects as a single bulk update - batch processor will drain all queued items
         obj_ids = [str(obj.id) for obj in objs_list]
-        semantic_fields_changed = check_bulk_semantic_fields_changed(
-            model_name, objs_list
-        )
+        semantic_fields_changed = check_bulk_semantic_fields_changed(model_name, objs_list)
         queue_bulk_updates_for_batch(
             model_name=model_name,
             obj_ids=obj_ids,
@@ -84,9 +82,7 @@ class BatchedCelerySignalProcessor(CelerySignalProcessor):
             from django_opensearch_dsl.registries import registry
 
             if instance.__class__ in registry._models:
-                semantic_fields_changed = self._check_semantic_fields_changed(
-                    instance, **kwargs
-                )
+                semantic_fields_changed = self._check_semantic_fields_changed(instance, **kwargs)
 
             # Queue update for batch processing - cascade to related documents handled during batch processing
             transaction.on_commit(
@@ -122,9 +118,7 @@ class BatchedCelerySignalProcessor(CelerySignalProcessor):
             updated_fields = set(update_fields) if update_fields else set()
             semantic_fields_set = set(semantic_fields)
             if semantic_fields_set.intersection(updated_fields):
-                logger.info(
-                    f"Semantic fields in update_fields for {model_name} {instance.pk}, semantic fields changed"
-                )
+                logger.info(f"Semantic fields in update_fields for {model_name} {instance.pk}, semantic fields changed")
                 return True
         else:
             # Check if semantic fields have actually changed by comparing with original values
@@ -134,9 +128,7 @@ class BatchedCelerySignalProcessor(CelerySignalProcessor):
                     original_value = getattr(instance, original_attr)
                     current_value = getattr(instance, field, None)
                     if original_value != current_value:
-                        logger.info(
-                            f"Semantic field '{field}' changed for {model_name} {instance.pk}"
-                        )
+                        logger.info(f"Semantic field '{field}' changed for {model_name} {instance.pk}")
                         return True
 
         return False
@@ -149,9 +141,7 @@ class BatchedCelerySignalProcessor(CelerySignalProcessor):
 
         # Filter: Only process search-relevant models
         if not is_model_search_relevant(model_name):
-            logger.debug(
-                f"Skipping non-search-relevant model for deletion: {model_name}"
-            )
+            logger.debug(f"Skipping non-search-relevant model for deletion: {model_name}")
             return
 
         if self.instance_requires_update(instance):

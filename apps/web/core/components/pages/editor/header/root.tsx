@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { SmilePlus } from "lucide-react";
 // plane imports
 import type { EditorTitleRefApi } from "@plane/editor";
-import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { cn } from "@plane/utils";
 // plane web components
 import { PageTemplatePicker } from "@/plane-web/components/pages";
@@ -41,7 +41,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
           )}
         >
           {!isLogoSelected && (
-            <EmojiIconPicker
+            <EmojiPicker
               isOpen={isLogoPickerOpen}
               handleToggle={(val) => setIsLogoPickerOpen(val)}
               className="flex items-center justify-center"

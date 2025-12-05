@@ -1,4 +1,5 @@
-import { Extension, type Range } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
+import type { Range } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
 import type { Editor } from "@tiptap/react";
 import Suggestion from "@tiptap/suggestion";

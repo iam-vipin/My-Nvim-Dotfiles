@@ -1,9 +1,8 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Cloud } from "lucide-react";
 // plane web components
@@ -19,16 +18,18 @@ import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web constants
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
+import type { Route } from "./+types/page";
 
 const siloAppService = new SiloAppService();
 
-const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
+function SlackIntegration({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
+  const searchParams = useSearchParams();
   // store hooks
   const { fetchExternalApiToken, externalApiToken } = useSlackIntegration();
   // derived values
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.SLACK_INTEGRATION) || false;
+  const isFeatureEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.SLACK_INTEGRATION) || false;
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   // derived values
@@ -46,13 +47,13 @@ const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ s
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
-    workspaceSlug && !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN` : null,
-    workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug?.toString()) : null,
+    !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN` : null,
+    !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
     { errorRetryCount: 0 }
   );
 
   // error message
-  const errorCode = searchParams?.error;
+  const errorCode = searchParams.get("error");
   useEffect(() => {
     if (!errorCode) {
       return;
@@ -130,6 +131,6 @@ const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ s
       )}
     </div>
   );
-});
+}
 
-export default SlackIntegration;
+export default observer(SlackIntegration);

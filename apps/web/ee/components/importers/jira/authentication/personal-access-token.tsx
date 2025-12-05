@@ -7,6 +7,8 @@ import { observer } from "mobx-react";
 import { stripTrailingSlash } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web components
@@ -14,7 +16,6 @@ import type { TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-inpu
 import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
-import JiraLogo from "@/public/services/jira.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

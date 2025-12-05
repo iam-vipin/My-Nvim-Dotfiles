@@ -1,5 +1,5 @@
-import { TFilterValue } from "../expression";
-import { TBaseFilterFieldConfig } from "./shared";
+import type { TFilterValue } from "../expression";
+import type { TBaseFilterFieldConfig } from "./shared";
 
 /**
  * Extended filter types

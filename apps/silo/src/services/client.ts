@@ -6,7 +6,7 @@ import { ImportJobAPIService } from "@/services/job/import-job.service";
 import { WorkspaceConnectionAPIService } from "@/services/workspace/connection.service";
 import { WorkspaceCredentialAPIService } from "@/services/workspace/credential.service";
 import { WorkspaceEntityConnectionAPIService } from "@/services/workspace/entity-connection.service";
-import { ClientOptions } from "@/types";
+import type { ClientOptions } from "@/types";
 import { AssetApiService } from "./asset/asset.service";
 import { PageAPIService } from "./page/page.service";
 

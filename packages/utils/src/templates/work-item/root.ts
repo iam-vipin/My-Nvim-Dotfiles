@@ -1,15 +1,16 @@
 // plane imports
-import {
-  ETemplateType,
+import type {
   TIssuePropertyValues,
   TWorkItemTemplate,
   TWorkItemTemplateForm,
   TWorkItemTemplateFormData,
 } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 // local imports
 import { extractTemplateBasicFormData } from "../base";
-import { TSanitizeWorkItemFormDataParams, TWorkItemSanitizationResult } from "./blueprint/sanitize";
-import { buildWorkItemTemplateBlueprint, TBuildWorkItemTemplateBlueprintBaseParams } from "./build";
+import type { TSanitizeWorkItemFormDataParams, TWorkItemSanitizationResult } from "./blueprint/sanitize";
+import type { TBuildWorkItemTemplateBlueprintBaseParams } from "./build";
+import { buildWorkItemTemplateBlueprint } from "./build";
 import { extractAndSanitizeWorkItemTemplateFormData } from "./extract";
 
 export type TWorkItemTemplateDataToSanitizedFormDataParams = TSanitizeWorkItemFormDataParams & {

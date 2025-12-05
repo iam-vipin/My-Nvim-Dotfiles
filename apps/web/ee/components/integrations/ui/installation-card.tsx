@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import type { StaticImageData } from "next/image";
-import Image from "next/image";
 // ui
 import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -11,7 +9,7 @@ import { Loader } from "@plane/ui";
 type TInstallationCardProps = {
   providerName: string;
   providerDescription: string;
-  providerLogo: StaticImageData;
+  providerLogo: string;
   isConnectionLoading: boolean;
   isAppConnected: boolean;
   handleInstallation: () => Promise<void>;
@@ -33,7 +31,7 @@ export const InstallationCard = observer((props: TInstallationCardProps) => {
   return (
     <div className="flex-shrink-0 relative flex items-center gap-4 p-4 bg-custom-background-90 rounded-lg">
       <div className="flex-shrink-0 size-10 relative flex justify-center items-center overflow-hidden">
-        <Image src={providerLogo} layout="fill" objectFit="contain" alt={`${providerName} Logo`} />
+        <img src={providerLogo} alt={`${providerName} Logo`} className="w-full h-full object-cover" />
       </div>
       <div className="w-full h-full overflow-hidden">
         <div className="text-lg font-medium">{providerName}</div>

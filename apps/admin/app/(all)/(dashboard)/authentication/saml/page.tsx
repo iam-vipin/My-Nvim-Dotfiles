@@ -2,24 +2,24 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // ui
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
+// assets
+import SAMLLogo from "@/app/assets/logos/saml-logo.svg";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { PageHeader } from "@/components/common/page-header";
 // hooks
 import { useInstance } from "@/hooks/store";
-// icons
-import SAMLLogo from "/public/logos/saml-logo.svg";
 // plane admin hooks
 import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceSAMLConfigForm } from "./form";
 
-const InstanceSAMLAuthenticationPage = observer(() => {
+const InstanceSAMLAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
@@ -83,7 +83,7 @@ const InstanceSAMLAuthenticationPage = observer(() => {
             name="SAML"
             description="Authenticate your users via Security Assertion Markup Language
           protocol."
-            icon={<Image src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
+            icon={<img src={SAMLLogo} height={24} width={24} alt="SAML Logo" className="pl-0.5" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableSAMLConfig))}
@@ -119,5 +119,7 @@ const InstanceSAMLAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "SAML Authentication - God Mode" }];
 
 export default InstanceSAMLAuthenticationPage;

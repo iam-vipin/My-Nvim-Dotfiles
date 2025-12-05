@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
 import type { TImporterConfig } from "./common/dashboard/base-dashboard";
 export interface IImporterHeaderProps<T> {
@@ -14,7 +13,7 @@ const ImporterHeader = <T,>(props: IImporterHeaderProps<T>) => {
     <div className="relative flex flex-col justify-between w-full border-b border-custom-border-100 pb-3.5 gap-4">
       <div className="flex justify-between w-full">
         <div className="relative flex gap-3">
-          <Image src={logo} className="size-8" alt={`${serviceName} ${t("importers.logo")}`} />
+          <img src={logo} className="size-8" alt={`${serviceName} ${t("importers.logo")}`} />
           <div className="flex flex-col gap-1">
             <div className="text-xl font-medium my-auto">{serviceName}</div>
             {description && <div className="text-sm text-custom-text-200">{description}</div>}

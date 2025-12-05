@@ -1,4 +1,5 @@
-import { EExternalEmbedAttributeNames, EExternalEmbedEntityType, TExternalEmbedBlockAttributes } from "@/types";
+import type { TExternalEmbedBlockAttributes } from "@/types";
+import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@/types";
 
 export const DEFAULT_EXTERNAL_EMBED_ATTRIBUTES: TExternalEmbedBlockAttributes = {
   [EExternalEmbedAttributeNames.SOURCE]: null,

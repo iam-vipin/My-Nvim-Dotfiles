@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import { TWorkspaceUserConnection } from "@plane/types";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { TWorkspaceUserConnection } from "@plane/types";
 
 export class ConnectionService {
   public axiosInstance: AxiosInstance;

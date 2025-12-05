@@ -1,5 +1,5 @@
 import { clone, orderBy, update } from "lodash-es";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 
 // plane imports
@@ -43,25 +43,34 @@ export const ALL_INITIATIVES = "All Initiatives";
 
 type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
+export type TPeekInitiative = {
+  workspaceSlug: string;
+  initiativeId: string;
+};
+
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
   filteredInitiativesMap: Record<string, TInitiative> | undefined;
-
   initiativeIds: string[] | undefined;
 
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLabelsMap: Map<string, Map<string, TInitiativeLabel>>;
   initiativeAnalyticsMap: Record<string, TInitiativeAnalytics>;
+  initiativeTimelineItems: Record<string, TInitiative & { target_date?: string | null }>;
 
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
   initiativeAttachments: IInitiativeAttachmentStore;
   initiativeAnalyticsLoader: Record<string, TLoader>;
   initiativesLoader: boolean;
+  isAnyModalOpen: boolean;
+  isProjectsModalOpen: boolean;
+  isEpicModalOpen: boolean;
+  isAttachmentDeleteModalOpen: boolean;
   updatesStore: IUpdateStore;
   isInitiativeModalOpen: string | null;
   fetchingFilteredInitiatives: boolean;
-
+  peekInitiative: TPeekInitiative | undefined;
   initiativeLabelsService: InitiativeLabelsService;
 
   openCollapsibleSection: InitiativeCollapsible[];
@@ -70,7 +79,12 @@ export interface IInitiativeStore {
   setOpenCollapsibleSection: (section: InitiativeCollapsible[]) => void;
   setLastCollapsibleAction: (section: InitiativeCollapsible) => void;
   toggleOpenCollapsibleSection: (section: InitiativeCollapsible) => void;
+  toggleProjectsModal: (value?: boolean) => void;
+  toggleEpicModal: (value?: boolean) => void;
+  toggleDeleteAttachmentModal: (value?: boolean) => void;
   toggleInitiativeModal: (value?: string | null) => void;
+  setPeekInitiative: (peekInitiative: TPeekInitiative | undefined) => void;
+  getIsInitiativePeeked: (initiativeId: string) => boolean;
 
   currentGroupedInitiativeIds: Record<string, string[]> | undefined;
   currentGroupedFilteredInitiativeIds: Record<string, string[]> | undefined;
@@ -144,6 +158,10 @@ export class InitiativeStore implements IInitiativeStore {
 
   initiativesLoader: boolean = false;
   isInitiativeModalOpen: string | null = null;
+  peekInitiative: TPeekInitiative | undefined = undefined;
+  isProjectsModalOpen: boolean = false;
+  isEpicModalOpen: boolean = false;
+  isAttachmentDeleteModalOpen: boolean = false;
   openCollapsibleSection: InitiativeCollapsible[] = ["projects", "epics"];
   lastCollapsibleAction: InitiativeCollapsible | null = null;
 
@@ -171,6 +189,11 @@ export class InitiativeStore implements IInitiativeStore {
       initiativeAnalyticsMap: observable,
       initiativeLabelsMap: observable,
       isInitiativeModalOpen: observable,
+      isAttachmentDeleteModalOpen: observable.ref,
+      isProjectsModalOpen: observable.ref,
+      isEpicModalOpen: observable.ref,
+      isAnyModalOpen: computed,
+      peekInitiative: observable,
 
       openCollapsibleSection: observable.ref,
       lastCollapsibleAction: observable.ref,
@@ -199,6 +222,7 @@ export class InitiativeStore implements IInitiativeStore {
       toggleOpenCollapsibleSection: action,
       setLastCollapsibleAction: action,
       toggleInitiativeModal: action,
+      setPeekInitiative: action,
     });
 
     this.rootStore = _rootStore;
@@ -215,12 +239,35 @@ export class InitiativeStore implements IInitiativeStore {
     this.scope = new InitiativeScopeStore();
   }
 
+  get isAnyModalOpen() {
+    return Boolean(
+      this.initiativeLinks.isLinkModalOpen ||
+      this.isInitiativeModalOpen ||
+      this.isProjectsModalOpen ||
+      this.isEpicModalOpen ||
+      this.isAttachmentDeleteModalOpen
+    );
+  }
+
   get currentGroupedInitiativeIds() {
     const workspaceSlug = this.rootStore.router.workspaceSlug;
 
     if (!workspaceSlug) return;
 
     return this.getGroupedInitiativeIds(workspaceSlug, false);
+  }
+
+  get initiativeTimelineItems() {
+    const filteredInitiativesMap = this.filteredInitiativesMap;
+    if (!filteredInitiativesMap) return {};
+    const timelineItemsWithDates: Record<string, TInitiative & { target_date?: string | null }> = {};
+    Object.values(filteredInitiativesMap).forEach((initiative) => {
+      timelineItemsWithDates[initiative.id] = {
+        ...initiative,
+        target_date: initiative.end_date,
+      };
+    });
+    return timelineItemsWithDates;
   }
 
   get currentGroupedFilteredInitiativeIds() {
@@ -589,6 +636,13 @@ export class InitiativeStore implements IInitiativeStore {
   };
 
   toggleInitiativeModal = (value?: string | null) => (this.isInitiativeModalOpen = value ?? null);
+  toggleProjectsModal = (value?: boolean) => (this.isProjectsModalOpen = value ?? !this.isProjectsModalOpen);
+  toggleEpicModal = (value?: boolean) => (this.isEpicModalOpen = value ?? !this.isEpicModalOpen);
+  toggleDeleteAttachmentModal = (value?: boolean) =>
+    (this.isAttachmentDeleteModalOpen = value ?? !this.isAttachmentDeleteModalOpen);
+  setPeekInitiative = (peekInitiative: TPeekInitiative | undefined) => (this.peekInitiative = peekInitiative);
+
+  getIsInitiativePeeked = (initiativeId: string) => this.peekInitiative?.initiativeId === initiativeId;
 
   // ---------------------------------------- Label Methods -----------------------------------------
 

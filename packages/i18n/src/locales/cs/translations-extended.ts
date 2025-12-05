@@ -30,6 +30,7 @@ export default {
     workflows: "Workflow",
     templates: "Šablony",
     members_and_teamspaces: "Členové a týmové prostory",
+    open_in_full_screen: "Otevřít {page} na celou obrazovku",
   },
   updates: {
     progress: {
@@ -161,6 +162,28 @@ export default {
       settings_sub_heading:
         "Převeďte požadavky zákazníků na pracovní položky, přiřaďte prioritu podle požadavků a propojte stavy pracovních položek se záznamy zákazníků. Brzy budete moci integrovat váš CRM nebo nástroj podpory pro ještě lepší správu práce podle atributů zákazníků.",
     },
+    features: {
+      intake: {
+        heading: "Odpovědnost za příjem",
+        notify_assignee: {
+          title: "Upozornit přiřazené",
+          description: "Pro novou žádost o příjem budou výchozí přiřazení upozorněni prostřednictvím oznámení",
+        },
+        toasts: {
+          set: {
+            loading: "Nastavování přiřazených...",
+            success: {
+              title: "Úspěch!",
+              message: "Přiřazení úspěšně nastaveno.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Při nastavování přiřazených se něco pokazilo. Zkuste to prosím znovu.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Žádné integrace nejsou nakonfigurovány",
@@ -205,6 +228,90 @@ export default {
         description: "Přidejte vlastní vlastnosti k vaší epice.",
       },
       disabled: "Zakázáno",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatické plánování cyklů",
+        description: "Udržujte cykly v pohybu bez manuálního nastavení.",
+        tooltip: "Automaticky vytvářejte nové cykly na základě zvoleného rozvrhu.",
+        edit_button: "Upravit",
+        form: {
+          cycle_title: {
+            label: "Název cyklu",
+            placeholder: "Název",
+            tooltip: "K názvu budou přidána čísla pro následné cykly. Například: Design - 1/2/3",
+            validation: {
+              required: "Název cyklu je povinný",
+              max_length: "Název nesmí přesáhnout 255 znaků",
+            },
+          },
+          cycle_duration: {
+            label: "Trvání cyklu",
+            unit: "Týdny",
+            validation: {
+              required: "Trvání cyklu je povinné",
+              min: "Trvání cyklu musí být alespoň 1 týden",
+              max: "Trvání cyklu nemůže přesáhnout 30 týdnů",
+              positive: "Trvání cyklu musí být kladné",
+            },
+          },
+          cooldown_period: {
+            label: "Období chlazení",
+            unit: "dny",
+            tooltip: "Pauza mezi cykly před začátkem dalšího.",
+            validation: {
+              required: "Období chlazení je povinné",
+              negative: "Období chlazení nemůže být záporné",
+            },
+          },
+          start_date: {
+            label: "Den zahájení cyklu",
+            validation: {
+              required: "Datum zahájení je povinné",
+              past: "Datum zahájení nemůže být v minulosti",
+            },
+          },
+          number_of_cycles: {
+            label: "Počet budoucích cyklů",
+            validation: {
+              required: "Počet cyklů je povinný",
+              min: "Je vyžadován alespoň 1 cyklus",
+              max: "Nelze naplánovat více než 3 cykly",
+            },
+          },
+          auto_rollover: {
+            label: "Automatický převod pracovních položek",
+            tooltip: "V den dokončení cyklu přesunout všechny nedokončené pracovní položky do dalšího cyklu.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Povolování automatického plánování cyklů",
+            loading_disable: "Zakazování automatického plánování cyklů",
+            success: {
+              title: "Úspěch!",
+              message: "Automatické plánování cyklů bylo úspěšně přepnuto.",
+            },
+            error: {
+              title: "Chyba!",
+              message: "Nepodařilo se přepnout automatické plánování cyklů.",
+            },
+          },
+          save: {
+            loading: "Ukládání konfigurace automatického plánování cyklů",
+            success: {
+              title: "Úspěch!",
+              message_create: "Konfigurace automatického plánování cyklů byla úspěšně uložena.",
+              message_update: "Konfigurace automatického plánování cyklů byla úspěšně aktualizována.",
+            },
+            error: {
+              title: "Chyba!",
+              message_create: "Nepodařilo se uložit konfiguraci automatického plánování cyklů.",
+              message_update: "Nepodařilo se aktualizovat konfiguraci automatického plánování cyklů.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -457,7 +564,7 @@ export default {
       },
       not_found: {
         title: "Iniciativa neexistuje",
-        description: "Iniciativa, kterou hledáte, neexistuje nebo byla smazána.",
+        description: "Iniciativa, kterou hledáte, neexistuje, byla archivována nebo byla smazána.",
         primary_button: {
           text: "Zobrazit další iniciativy",
         },
@@ -657,7 +764,12 @@ export default {
         app_short_description_error: "Krátký popis aplikace je povinný",
         app_description_title: {
           label: "Dlouhý popis",
-          placeholder: "Napište dlouhý popis pro tržiště. Stiskněte ‘/’ pro příkazy.",
+          placeholder: "Napište dlouhý popis pro tržiště. Stiskněte '/' pro příkazy.",
+        },
+        authorization_grant_type: {
+          title: "Typ připojení",
+          description:
+            "Vyberte, zda má být vaše aplikace nainstalována jednou pro pracovní prostor nebo zda má každý uživatel připojit svůj vlastní účet",
         },
         app_description_error: "Popis aplikace je povinný",
         app_slug_title: "Slug aplikace",
@@ -715,6 +827,10 @@ export default {
         categories_error: "Kategorie jsou povinné",
         invalid_categories_error: "Neplatné kategorie",
         categories_description: "Vyberte kategorie, které nejlépe popisují aplikaci",
+        supported_plans: "Podporované Plány",
+        supported_plans_description:
+          "Vyberte plány pracovního prostoru, které mohou nainstalovat tuto aplikaci. Ponechte prázdné, chcete-li povolit všechny plány.",
+        select_plans: "Vybrat Plány",
         privacy_policy_url_title: "URL Zásad ochrany osobních údajů",
         privacy_policy_url_error: "URL Zásad ochrany osobních údajů je povinné",
         invalid_privacy_policy_url_error: "Neplatné URL Zásad ochrany osobních údajů",
@@ -789,8 +905,8 @@ export default {
         internal: "Interní",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Sledujte, jak se vaše práce stává chytřejší a rychlejší s AI, která je nativně propojena s vaší prací a znalostní základnou.",
       },
@@ -1494,7 +1610,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importujte svá Jira Server data do projektů Plane.",
+    jira_server_importer_description: "Importujte svá Jira Server/Data Center data do projektů Plane.",
     steps: {
       title_configure_plane: "Nastavte Plane",
       description_configure_plane:

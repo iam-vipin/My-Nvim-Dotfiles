@@ -84,6 +84,11 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.migrations": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.event_stream": {
             "level": "INFO",
             "handlers": ["console"],
@@ -103,6 +108,6 @@ LOGGING = {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,
-        }
+        },
     },
 }

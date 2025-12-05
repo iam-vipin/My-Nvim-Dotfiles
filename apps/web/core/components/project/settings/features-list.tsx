@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
@@ -27,7 +24,7 @@ type Props = {
   isAdmin: boolean;
 };
 
-export const ProjectFeaturesList: FC<Props> = observer((props) => {
+export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();
@@ -112,17 +109,11 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   </div>
                 </div>
                 <ProjectFeatureToggle
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
                   featureItem={featureItem}
                   value={isFeatureEnabled(featureItemKey)}
                   handleSubmit={handleSubmit}
                   disabled={!isAdmin}
                 />
-              </div>
-              <div className="pl-14">
-                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
               </div>
             </div>
           ))}

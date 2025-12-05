@@ -1,4 +1,4 @@
-import { TMessageActionPayload } from "@plane/etl/slack";
+import type { TMessageActionPayload } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
 import { E_INTEGRATION_KEYS } from "@plane/types";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";

@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -11,9 +10,10 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
-import WorkflowsUpgradeDark from "@/public/empty-state/workflows/upgrade-dark.webp";
-import WorkflowsUpgradeLight from "@/public/empty-state/workflows/upgrade-light.webp";
-import { UpgradeEmptyStateButton } from "../../workspace/upgrade-empty-state-button";
+import WorkflowsUpgradeDark from "@/app/assets/empty-state/workflows/upgrade-dark.webp?url";
+import WorkflowsUpgradeLight from "@/app/assets/empty-state/workflows/upgrade-light.webp?url";
+// plane web components
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 
 export const WorkflowUpgrade: FC = observer(() => {
   // router
@@ -48,9 +48,9 @@ export const WorkflowUpgrade: FC = observer(() => {
           </div>
         </div>
       </div>
-      <Image
+      <img
         src={resolvedTheme === "dark" ? WorkflowsUpgradeDark : WorkflowsUpgradeLight}
-        alt=""
+        alt="Workflows upgrade"
         className="max-h-[300px] self-end flex p-5 pb-0 xl:p-0"
       />
     </div>

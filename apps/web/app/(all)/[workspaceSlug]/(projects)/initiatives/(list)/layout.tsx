@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
 // components
+import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane-web
@@ -9,10 +9,12 @@ import { InitiativesFilterProvider } from "@/plane-web/components/initiatives/co
 // local components
 import { InitiativesListHeader } from "./header";
 
-const InitiativesListLayout = ({ children }: { children: ReactNode }) => (
+const InitiativesListLayout = () => (
   <InitiativesFilterProvider>
     <AppHeader header={<InitiativesListHeader />} />
-    <ContentWrapper>{children}</ContentWrapper>
+    <ContentWrapper>
+      <Outlet />
+    </ContentWrapper>
   </InitiativesFilterProvider>
 );
 

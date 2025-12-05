@@ -7,6 +7,8 @@ import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@pl
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+// assets
+import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
@@ -25,7 +27,7 @@ type Props = {
   toggleLoading: (value: boolean) => void;
 };
 
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
   const { isDefaultView, isLoading = false, toggleLoading } = props;
   // router
   const router = useAppRouter();

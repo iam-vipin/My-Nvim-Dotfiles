@@ -31,6 +31,7 @@ export default {
     workflows: "Alur Kerja",
     templates: "Templat",
     members_and_teamspaces: "Anggota & Teamspaces",
+    open_in_full_screen: "Buka {page} dalam layar penuh",
   },
   updates: {
     add_update: "Tambahkan update",
@@ -162,6 +163,29 @@ export default {
       settings_sub_heading:
         "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gabungkan status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan CRM atau alat Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan.",
     },
+    features: {
+      intake: {
+        heading: "Tanggung jawab penerimaan",
+        notify_assignee: {
+          title: "Beritahu yang ditugaskan",
+          description:
+            "Untuk permintaan penerimaan baru, yang ditugaskan secara default akan diberi peringatan melalui notifikasi",
+        },
+        toasts: {
+          set: {
+            loading: "Mengatur yang ditugaskan...",
+            success: {
+              title: "Berhasil!",
+              message: "Yang ditugaskan berhasil diatur.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Terjadi kesalahan saat mengatur yang ditugaskan. Silakan coba lagi.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Tidak ada integrasi yang dikonfigurasi",
@@ -206,6 +230,91 @@ export default {
         description: "Tambahkan properti kustom ke epic Anda.",
       },
       disabled: "Dinonaktifkan",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Penjadwalan otomatis siklus",
+        description: "Jaga agar siklus tetap berjalan tanpa pengaturan manual.",
+        tooltip: "Buat siklus baru secara otomatis berdasarkan jadwal yang Anda pilih.",
+        edit_button: "Edit",
+        form: {
+          cycle_title: {
+            label: "Judul siklus",
+            placeholder: "Judul",
+            tooltip: "Judul akan ditambahkan dengan nomor untuk siklus berikutnya. Misalnya: Desain - 1/2/3",
+            validation: {
+              required: "Judul siklus wajib diisi",
+              max_length: "Judul tidak boleh melebihi 255 karakter",
+            },
+          },
+          cycle_duration: {
+            label: "Durasi siklus",
+            unit: "Minggu",
+            validation: {
+              required: "Durasi siklus wajib diisi",
+              min: "Durasi siklus harus minimal 1 minggu",
+              max: "Durasi siklus tidak boleh melebihi 30 minggu",
+              positive: "Durasi siklus harus positif",
+            },
+          },
+          cooldown_period: {
+            label: "Periode pendinginan",
+            unit: "hari",
+            tooltip: "Jeda antara siklus sebelum siklus berikutnya dimulai.",
+            validation: {
+              required: "Periode pendinginan wajib diisi",
+              negative: "Periode pendinginan tidak boleh negatif",
+            },
+          },
+          start_date: {
+            label: "Hari mulai siklus",
+            validation: {
+              required: "Tanggal mulai wajib diisi",
+              past: "Tanggal mulai tidak boleh di masa lalu",
+            },
+          },
+          number_of_cycles: {
+            label: "Jumlah siklus mendatang",
+            validation: {
+              required: "Jumlah siklus wajib diisi",
+              min: "Setidaknya 1 siklus diperlukan",
+              max: "Tidak dapat menjadwalkan lebih dari 3 siklus",
+            },
+          },
+          auto_rollover: {
+            label: "Pemindahan otomatis item pekerjaan",
+            tooltip:
+              "Pada hari siklus selesai, pindahkan semua item pekerjaan yang belum selesai ke siklus berikutnya.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Mengaktifkan penjadwalan otomatis siklus",
+            loading_disable: "Menonaktifkan penjadwalan otomatis siklus",
+            success: {
+              title: "Berhasil!",
+              message: "Penjadwalan otomatis siklus berhasil diaktifkan.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message: "Gagal mengaktifkan penjadwalan otomatis siklus.",
+            },
+          },
+          save: {
+            loading: "Menyimpan konfigurasi penjadwalan otomatis siklus",
+            success: {
+              title: "Berhasil!",
+              message_create: "Konfigurasi penjadwalan otomatis siklus berhasil disimpan.",
+              message_update: "Konfigurasi penjadwalan otomatis siklus berhasil diperbarui.",
+            },
+            error: {
+              title: "Kesalahan!",
+              message_create: "Gagal menyimpan konfigurasi penjadwalan otomatis siklus.",
+              message_update: "Gagal memperbarui konfigurasi penjadwalan otomatis siklus.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -458,7 +567,7 @@ export default {
       },
       not_found: {
         title: "Inisiatif tidak ada",
-        description: "Inisiatif yang Anda cari tidak ada atau telah dihapus.",
+        description: "Inisiatif yang Anda cari tidak ada, telah diarsipkan, atau telah dihapus.",
         primary_button: {
           text: "Lihat Inisiatif lain",
         },
@@ -658,7 +767,12 @@ export default {
         app_short_description_error: "Deskripsi aplikasi singkat diperlukan",
         app_description_title: {
           label: "Deskripsi panjang",
-          placeholder: "Tulis deskripsi panjang untuk marketplace. Tekan ‘/’ untuk perintah.",
+          placeholder: "Tulis deskripsi panjang untuk marketplace. Tekan '/' untuk perintah.",
+        },
+        authorization_grant_type: {
+          title: "Jenis Koneksi",
+          description:
+            "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri",
         },
         app_description_error: "Deskripsi aplikasi diperlukan",
         app_slug_title: "Slug aplikasi",
@@ -715,6 +829,10 @@ export default {
         categories_error: "Kategori diperlukan",
         invalid_categories_error: "Kategori tidak valid",
         categories_description: "Pilih kategori yang paling sesuai dengan aplikasi",
+        supported_plans: "Paket yang Didukung",
+        supported_plans_description:
+          "Pilih paket workspace yang dapat menginstal aplikasi ini. Kosongkan untuk mengizinkan semua paket.",
+        select_plans: "Pilih Paket",
         privacy_policy_url_title: "URL Privacy Policy",
         privacy_policy_url_error: "URL Privacy Policy diperlukan",
         invalid_privacy_policy_url_error: "URL Privacy Policy tidak valid",
@@ -789,8 +907,8 @@ export default {
         internal: "Internal",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda.",
       },
@@ -1493,7 +1611,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Impor data Jira Server Anda ke dalam projek Plane.",
+    jira_server_importer_description: "Impor data Jira Server/Data Center Anda ke dalam projek Plane.",
     steps: {
       title_configure_plane: "Konfigurasi Plane",
       description_configure_plane:

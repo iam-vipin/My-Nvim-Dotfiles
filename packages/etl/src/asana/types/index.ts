@@ -1,5 +1,5 @@
 // plane sdk
-import { ExProject, ExState } from "@plane/sdk";
+import type { ExProject, ExState } from "@plane/sdk";
 
 // Auth States for Asana
 export type AsanaAuthState = {

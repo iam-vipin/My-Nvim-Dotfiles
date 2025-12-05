@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { DEFAULT_PROJECT_FORM_VALUES } from "@plane/constants";
 import { extractAndSanitizeProjectCreationFormData } from "@plane/utils";
 // store hooks
+import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import type { THandleTemplateChangeProps } from "@/plane-web/components/projects/create/project-creation-context";
@@ -51,7 +51,7 @@ export const ProjectCreationProvider = observer((props: TProjectCreationProvider
 
         // reset form values
         reset({
-          ...DEFAULT_PROJECT_FORM_VALUES,
+          ...getProjectFormValues(),
           ...sanitizedWorkItemFormData,
         });
       }

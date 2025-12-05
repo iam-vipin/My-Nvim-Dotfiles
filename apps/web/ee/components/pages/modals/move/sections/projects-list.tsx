@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // components
-import { Logo } from "@/components/common/logo";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // store

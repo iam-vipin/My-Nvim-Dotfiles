@@ -1,6 +1,6 @@
 // local imports
-import { TAutomationNodeEdge } from "./edge";
-import { TAutomationNode } from "./node";
+import type { TAutomationNodeEdge } from "./edge";
+import type { TAutomationNode } from "./node";
 
 export enum EAutomationScope {
   WORK_ITEM = "work-item",

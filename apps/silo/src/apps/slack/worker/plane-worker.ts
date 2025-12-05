@@ -1,8 +1,9 @@
 import { logger } from "@plane/logger";
-import { PlaneWebhookPayload } from "@plane/sdk";
+import type { PlaneWebhookPayload } from "@plane/sdk";
 import { captureException } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "@/worker/base";
+import type { TaskHeaders } from "@/types";
+import { TaskHandler } from "@/types";
+import type { MQ, Store } from "@/worker/base";
 import { E_SLACK_WORKER_EVENTS } from "../types/types";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";
 import { handleDMAlertWebhook } from "./plane-webhook-handlers/handle-dm-alerts";

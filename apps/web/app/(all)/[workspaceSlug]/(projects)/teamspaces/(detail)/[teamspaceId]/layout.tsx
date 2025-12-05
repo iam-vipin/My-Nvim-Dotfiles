@@ -1,39 +1,31 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/layout";
 
-export default function TeamspaceDetailLayout({ children }: { children: ReactNode }) {
+export default function TeamspaceDetailLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
+  const { workspaceSlug, teamspaceId } = params;
   // store hooks
   const { isCurrentUserMemberOfTeamspace, fetchTeamspaceDetails } = useTeamspaces();
   const { fetchTeamspaceViews } = useTeamspaceViews();
   // derived values
-  const workspaceSlug = routerWorkspaceSlug!.toString();
-  const teamspaceId = routerTeamSpaceId!.toString();
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
 
   // fetching teamspace details
   useSWR(
-    workspaceSlug && teamspaceId && isTeamspaceMember
-      ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${teamspaceId}_${isTeamspaceMember}`
-      : null,
-    workspaceSlug && teamspaceId && isTeamspaceMember ? () => fetchTeamspaceDetails(workspaceSlug, teamspaceId) : null,
+    isTeamspaceMember ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${teamspaceId}_${isTeamspaceMember}` : null,
+    isTeamspaceMember ? () => fetchTeamspaceDetails(workspaceSlug, teamspaceId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch teamspace views
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspaceViews", workspaceSlug, teamspaceId] : null,
-    () => (workspaceSlug && teamspaceId ? fetchTeamspaceViews(workspaceSlug, teamspaceId) : null),
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
+  useSWR(["teamspaceViews", workspaceSlug, teamspaceId], () => fetchTeamspaceViews(workspaceSlug, teamspaceId), {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
-  return <>{children}</>;
+  return <Outlet />;
 }

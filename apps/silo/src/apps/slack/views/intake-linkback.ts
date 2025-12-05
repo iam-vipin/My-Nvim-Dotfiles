@@ -1,4 +1,4 @@
-import { ExIntakeIssue, PlaneUser } from "@plane/sdk";
+import type { ExIntakeIssue, PlaneUser } from "@plane/sdk";
 import { getIntakeUrl } from "@/helpers/urls";
 import { invertStringMap } from "@/helpers/utils";
 import {

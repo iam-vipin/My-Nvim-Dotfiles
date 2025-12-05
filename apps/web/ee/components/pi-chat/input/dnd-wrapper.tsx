@@ -46,7 +46,6 @@ export const DndWrapper: FC<Props> = observer((props) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileIcon = getFileIcon("", 60);
-  let dragCounter = 0; // keeps track of nested dragenter/dragleave events
 
   // store hooks
   const {
@@ -62,11 +61,11 @@ export const DndWrapper: FC<Props> = observer((props) => {
       let successCount = 0;
       if (rejectedFiles.length === 0) {
         setIsUploading(true);
+        let chatIdToUse = chatId;
+        if (!chatIdToUse) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
         for (const file of acceptedFiles) {
           const currentFile: File = file;
           if (!currentFile) return;
-          let chatIdToUse = chatId;
-          if (!chatIdToUse) chatIdToUse = await createNewChat(focus, isProjectLevel, workspaceId);
           await createAttachment(currentFile, workspaceId, chatIdToUse)
             .then((res: TPiAttachment | void) => {
               if (!res) return;
@@ -76,13 +75,24 @@ export const DndWrapper: FC<Props> = observer((props) => {
             .catch((e: any) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: `Failed to upload ${currentFile.name}`,
+                title: `Failed to upload ${currentFile.name?.slice(0, 20)}...`,
                 message: typeof e?.detail === "string" ? e?.detail : "File could not be attached. Try uploading again.",
               });
             });
         }
+        setIsUploading(false);
+      } else {
+        for (const file of rejectedFiles) {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: `Failed to upload ${file.file.name?.slice(0, 20)}...`,
+            message:
+              file.errors.length > 0 && typeof file.errors[0]?.message === "string"
+                ? file.errors[0]?.message
+                : "File could not be attached. Try uploading again.",
+          });
+        }
       }
-      setIsUploading(false);
 
       if (successCount > 0) {
         setToast({
@@ -112,19 +122,27 @@ export const DndWrapper: FC<Props> = observer((props) => {
 
   useEffect(() => {
     if (!isFileUploadsEnabled) return;
+    let dragCounter = 0; // keeps track of nested dragenter/dragleave events
+
+    const isFileDrag = (e: DragEvent) => Array.from(e.dataTransfer?.types || []).includes("Files");
+
     const handleDragEnter = (e: DragEvent) => {
+      if (!isFileDrag(e)) return;
       e.preventDefault();
       dragCounter++;
       setIsDragging(true);
     };
 
     const handleDragLeave = (e: DragEvent) => {
+      if (!isFileDrag(e)) return;
       e.preventDefault();
       dragCounter--;
       if (dragCounter === 0) setIsDragging(false);
     };
 
-    const handleDrop = () => {
+    const handleDrop = (e: DragEvent) => {
+      if (!isFileDrag(e)) return;
+      e.preventDefault();
       dragCounter = 0;
       setIsDragging(false);
     };

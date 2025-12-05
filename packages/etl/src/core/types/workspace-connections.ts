@@ -1,4 +1,4 @@
-import { E_INTEGRATION_KEYS } from "@plane/constants";
+import type { E_INTEGRATION_KEYS } from "@plane/constants";
 
 // github workspace connection type and data
 export enum EGithubWorkspaceConnectionType {

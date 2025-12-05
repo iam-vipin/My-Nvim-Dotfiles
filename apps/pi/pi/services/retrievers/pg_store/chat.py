@@ -59,6 +59,26 @@ def parse_flow_step_content(content: str) -> Union[str, Dict[str, Any], List[Any
         return content
 
 
+async def get_chat_title(chat_id: UUID4, db: AsyncSession) -> Optional[str]:
+    """Fetch chat title from the database.
+
+    Args:
+        chat_id: The chat ID to fetch title for
+        db: Database session
+
+    Returns:
+        Chat title if found, None otherwise
+    """
+    try:
+        stmt = select(Chat).where(Chat.id == chat_id).where(Chat.deleted_at.is_(None))  # type: ignore[union-attr,arg-type]
+        result = await db.execute(stmt)
+        chat = result.scalar_one_or_none()
+        return chat.title if chat else None
+    except Exception as e:
+        log.error(f"Error fetching chat title for chat_id {chat_id}: {e}")
+        return None
+
+
 def _extract_success_message_from_result(result: str) -> Optional[str]:
     """Extract the nice success message from the tool result."""
     if not result:
@@ -305,7 +325,23 @@ async def extract_execution_status_from_flow_steps(
         if is_executed and is_successful:
             action_data["message"] = "Action completed successfully"
         elif is_executed and not is_successful:
-            action_data["error"] = "Action failed"
+            # Prefer the detailed execution_error from the flow step, then fall back to execution_result
+            error_message = None
+            try:
+                if getattr(step, "execution_error", None):
+                    error_message = str(step.execution_error)
+                elif step.execution_data and isinstance(step.execution_data, dict):
+                    exec_result = step.execution_data.get("execution_result")
+                    if exec_result:
+                        error_message = str(exec_result)
+            except Exception:
+                error_message = None
+
+            # Truncate very long errors to keep the response compact
+            if error_message:
+                action_data["error"] = f"{error_message[:200]}..." if len(error_message) > 200 else error_message
+            else:
+                action_data["error"] = None
 
         actions.append(action_data)
 
@@ -367,8 +403,13 @@ async def retrieve_chat_history(
         user_chat_preference_result = await db.execute(user_chat_preference_query)
         user_chat_preference = user_chat_preference_result.scalar_one_or_none()
 
-        # Step 4: Get messages for this chat ordered by sequence
-        message_query = select(Message).where(Message.chat_id == chat_id).order_by(Message.sequence)  # type: ignore[arg-type]
+        # Step 4: Get messages for this chat ordered by sequence (exclude replaced messages)
+        message_query = (
+            select(Message)
+            .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
+            .order_by(Message.sequence)  # type: ignore[arg-type]
+        )
         message_result = await db.execute(message_query)
         messages = list(message_result.scalars().all())
 
@@ -378,11 +419,12 @@ async def retrieve_chat_history(
         message_flow_steps_result = await db.execute(message_flow_steps_query)
         message_flow_steps = list(message_flow_steps_result.scalars().all())
 
-        # Step 5: Get most recent assistant message to extract LLM model
+        # Step 5: Get most recent assistant message to extract LLM model (exclude replaced messages)
         last_assistant_message_query = (
             select(Message)
             .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
             .where(Message.user_type == UserTypeChoices.ASSISTANT.value)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
             .order_by(desc(Message.created_at))  # type: ignore[arg-type]
             .limit(1)
         )

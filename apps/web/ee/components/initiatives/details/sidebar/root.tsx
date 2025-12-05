@@ -19,8 +19,6 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   disabled?: boolean;
-  toggleEpicModal: (value?: boolean) => void;
-  toggleProjectModal: (value?: boolean) => void;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
@@ -30,8 +28,6 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
     workspaceSlug,
     initiativeId,
     disabled = false,
-    toggleEpicModal,
-    toggleProjectModal,
     handleInitiativeStateUpdate,
     handleInitiativeLabelUpdate,
   } = props;
@@ -47,8 +43,6 @@ export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug}
           initiativeId={initiativeId}
           disabled={disabled}
-          toggleEpicModal={toggleEpicModal}
-          toggleProjectModal={toggleProjectModal}
           handleInitiativeStateUpdate={handleInitiativeStateUpdate}
           handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
         />

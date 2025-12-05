@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
-  FILTER_NODE_TYPE,
-  LOGICAL_OPERATOR,
+import type {
   TFilterConditionNode,
   TFilterExpression,
   TFilterNotGroupNode,
@@ -10,6 +8,7 @@ import {
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
+import { FILTER_NODE_TYPE, LOGICAL_OPERATOR } from "@plane/types";
 
 /**
  * Creates a NOT group node with a unique ID.

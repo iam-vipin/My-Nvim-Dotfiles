@@ -1,5 +1,5 @@
 import { HTMLElement, TextNode } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import type { IParserExtension } from "@/lib/parser";
 import { ExtractBodyExtension } from "../../../common/content-parser";
 
 export class ConfluenceExtractBodyExtension extends ExtractBodyExtension {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -54,7 +52,7 @@ export const defaultIssueData: Partial<TIssue> = {
   target_date: "",
 };
 
-export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
+export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props: TInboxIssueCreateRoot) {
   const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
@@ -159,14 +157,15 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
 
     await createInboxIssue(workspaceSlug, projectId, payload)
       .then(async (res) => {
+        if (!res?.issue) return;
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res.issue?.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
@@ -175,7 +174,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
         captureSuccess({
           eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
-            id: res?.issue?.id,
+            id: res.issue?.id,
           },
         });
         setToast({

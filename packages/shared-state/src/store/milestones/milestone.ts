@@ -1,22 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import type { TDescription, TMilestone, TMilestoneProgress } from "@plane/types";
-
-export interface IMilestoneInstance {
-  // observables
-  id: string;
-  title: string;
-  description?: TDescription;
-  target_date: string | null;
-  project_id: string;
-  workspace_id: string;
-  progress: TMilestoneProgress;
-  work_item_ids: string[];
-  // computed
-  progress_percentage: number;
-  // actions
-  updateProgress: (progress: TMilestoneProgress) => void;
-  update: (data: Partial<TMilestone>) => void;
-}
+import type { IMilestoneInstance, TDescription, TMilestone, TMilestoneProgress } from "@plane/types";
 
 export class MilestoneInstance implements IMilestoneInstance {
   // observables

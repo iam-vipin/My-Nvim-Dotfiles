@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash-es";
-import type { TIssue, TIssuePriorities } from "@plane/types";
+import type { ICycle, IModule, TIssue, TIssuePriorities, TPage } from "@plane/types";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TArtifact, TUpdatedArtifact } from "@/plane-web/types";
 
@@ -34,6 +34,45 @@ export const useWorkItemData = (artifactId: string): Partial<TIssue> => {
       };
 };
 
+export const usePageData = (artifactId: string): Partial<TPage> => {
+  const {
+    artifactsStore: { getArtifact, getArtifactByVersion },
+  } = usePiChat();
+
+  const originalData = getArtifact(artifactId);
+  const updatedData = getArtifactByVersion(artifactId, "updated");
+  const parameters = originalData?.parameters;
+
+  return !isEmpty(updatedData as Partial<TPage>)
+    ? (updatedData as Partial<TPage>)
+    : {
+        name: parameters?.name,
+        description_html: parameters?.description || parameters?.description_html || "",
+        logo_props: parameters?.logo_props,
+      };
+};
+
+export const useModuleData = (artifactId: string): Partial<IModule> => {
+  const {
+    artifactsStore: { getArtifact, getArtifactByVersion },
+  } = usePiChat();
+
+  const originalData = getArtifact(artifactId);
+  const updatedData = getArtifactByVersion(artifactId, "updated");
+  const parameters = originalData?.parameters;
+  return !isEmpty(updatedData as Partial<IModule>)
+    ? (updatedData as Partial<IModule>)
+    : {
+        name: parameters?.name,
+        description: parameters?.description || "",
+        start_date: parameters?.properties?.start_date?.name || null,
+        target_date: parameters?.properties?.end_date?.name || null,
+        member_ids: [],
+        lead_id: null,
+        status: "backlog",
+      };
+};
+
 export const useTemplateData = (artifactId: string): TArtifact | undefined => {
   const {
     artifactsStore: { getArtifact },
@@ -42,14 +81,41 @@ export const useTemplateData = (artifactId: string): TArtifact | undefined => {
   return getArtifact(artifactId);
 };
 
+export const useCycleData = (artifactId: string): Partial<ICycle> => {
+  const {
+    artifactsStore: { getArtifact, getArtifactByVersion },
+  } = usePiChat();
+
+  const originalData = getArtifact(artifactId);
+  const updatedData = getArtifactByVersion(artifactId, "updated");
+  const parameters = originalData?.parameters;
+  return !isEmpty(updatedData as Partial<ICycle>)
+    ? (updatedData as Partial<ICycle>)
+    : {
+        name: parameters?.name,
+        description: parameters?.description || "",
+        start_date: parameters?.properties?.start_date?.name || null,
+        end_date: parameters?.properties?.end_date?.name || null,
+      };
+};
+
 export const useArtifactData = (artifactId: string, artifactType?: string): TUpdatedArtifact => {
   const issueData = useWorkItemData(artifactId);
   const templateData = useTemplateData(artifactId);
+  const pageData = usePageData(artifactId);
+  const cycleData = useCycleData(artifactId);
+  const moduleData = useModuleData(artifactId);
   switch (artifactType) {
     case "workitem":
       return issueData;
+    case "page":
+      return pageData;
     case "epic":
       return issueData;
+    case "cycle":
+      return cycleData;
+    case "module":
+      return moduleData;
     default:
       return templateData;
   }

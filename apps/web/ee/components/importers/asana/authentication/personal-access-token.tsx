@@ -5,6 +5,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import AsanaLogo from "@/app/assets/services/asana.svg?url";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 // plane web components
@@ -13,7 +15,6 @@ import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
-import AsanaLogo from "@/public/services/asana.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

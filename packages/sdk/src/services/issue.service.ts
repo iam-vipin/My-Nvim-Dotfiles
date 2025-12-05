@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import {
+import type {
   AttachmentResponse,
   ClientOptions,
   ExcludedProps,
@@ -25,7 +25,9 @@ export class IssueService extends APIService {
     issueSequence: number,
     include_epics: boolean = false
   ): Promise<ExIssue> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?include_epics=${include_epics}`)
+    return this.get(
+      `/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?include_epics=${include_epics}`
+    )
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

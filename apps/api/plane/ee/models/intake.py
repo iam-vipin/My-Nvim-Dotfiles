@@ -41,6 +41,57 @@ class IntakeForm(ProjectBaseModel):
     def __str__(self):
         return f"{self.name}"
 
+    def create_update_form_fields(self, form_field_ids, user_id=None):
+        """
+        Create or update form fields for this intake form.
+
+        Args:
+            form_field_ids: List of IssueProperty IDs to create or update
+            user_id: ID of the user performing the operation (optional, uses existing values for updates)
+
+        Raises:
+            IntegrityError: If there's an error creating or updating the form fields
+        """
+        from django.db import IntegrityError
+        from plane.ee.models import IssueProperty
+
+        # Get valid field IDs from IssueProperty
+        valid_field_ids = list(
+            IssueProperty.objects.filter(
+                project_id=self.project_id, issue_type_id=self.work_item_type_id, pk__in=form_field_ids
+            ).values_list("id", flat=True)
+        )
+
+        # Get current fields for this intake form
+        current_field_ids = list(
+            IntakeFormField.objects.filter(intake_form=self).values_list("work_item_property", flat=True)
+        )
+
+        # Calculate fields to add and remove
+        fields_to_add = list(set(valid_field_ids) - set(current_field_ids))
+        fields_to_remove = list(set(current_field_ids) - set(valid_field_ids))
+
+        # Remove fields that are no longer needed
+        if fields_to_remove:
+            IntakeFormField.objects.filter(intake_form=self, work_item_property_id__in=fields_to_remove).delete()
+
+        # Add new fields
+        if fields_to_add:
+            try:
+                IntakeFormField.objects.bulk_create([
+                    IntakeFormField(
+                        intake_form=self,
+                        work_item_property_id=field_id,
+                        project_id=self.project_id,
+                        workspace_id=self.workspace_id,
+                        created_by_id=user_id or self.created_by_id,
+                        updated_by_id=user_id or self.updated_by_id,
+                    )
+                    for field_id in fields_to_add
+                ])
+            except IntegrityError:
+                raise IntegrityError("Error creating intake form fields")
+
 
 class IntakeFormField(ProjectBaseModel):
     intake_form = models.ForeignKey("ee.IntakeForm", on_delete=models.CASCADE, related_name="intake_form_fields")

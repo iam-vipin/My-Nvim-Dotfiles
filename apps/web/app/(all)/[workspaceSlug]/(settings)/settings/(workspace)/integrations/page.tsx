@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 
 // component
@@ -22,7 +21,7 @@ import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
 
 const siloAppService = new SiloAppService();
 
-const IntegrationsListPage = observer(() => {
+function WorkspaceIntegrationsPage() {
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -33,7 +32,7 @@ const IntegrationsListPage = observer(() => {
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Applications` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
   const applications = getApplicationsForWorkspace(workspaceSlug || "");
 
   const { data, isLoading } = useSWR(
@@ -65,7 +64,7 @@ const IntegrationsListPage = observer(() => {
           title={t("workspace_settings.settings.integrations.page_title")}
           description={t("workspace_settings.settings.integrations.page_description")}
           appendToRight={
-            <Link href={`create`}>
+            <Link href={`/${workspaceSlug}/settings/integrations/create`}>
               <Button variant="primary">Build your own</Button>
             </Link>
           }
@@ -75,6 +74,6 @@ const IntegrationsListPage = observer(() => {
       </section>
     </>
   );
-});
+}
 
-export default IntegrationsListPage;
+export default observer(WorkspaceIntegrationsPage);

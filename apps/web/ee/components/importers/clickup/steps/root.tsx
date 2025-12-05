@@ -2,14 +2,14 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
+// assets
+import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
 // plane web components
 import { Stepper } from "@/plane-web/components/importers/ui";
 // plane web constants
 import { IMPORTER_CLICKUP_STEPS } from "@/plane-web/constants/importers/clickup";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
-// assets
-import ClickUpLogo from "@/public/services/clickup.svg";
 
 export const StepsRoot: FC = observer(() => {
   // hooks

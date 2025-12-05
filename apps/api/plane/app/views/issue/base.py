@@ -56,11 +56,17 @@ from plane.db.models import (
     Project,
     ProjectMember,
     UserRecentVisit,
+    IssueActivity,
 )
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from plane.ee.models import CustomerRequestIssue, TeamspaceMember, TeamspaceProject, MilestoneIssue
+from plane.ee.models import (
+    CustomerRequestIssue,
+    TeamspaceMember,
+    TeamspaceProject,
+    MilestoneIssue,
+)
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -745,13 +751,37 @@ class IssueViewSet(BaseViewSet):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
         ):
             issue = issue.annotate(
                 milestone_id=Subquery(
                     MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
                         :1
                     ]
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                transferred_cycle_ids=Coalesce(
+                    Subquery(
+                        IssueActivity.objects.filter(
+                            issue_id=OuterRef("id"),
+                            field="cycles",
+                            verb__in=["created", "updated"],
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("new_identifier", distinct=True))
+                        .values("arr")[:1]
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 
@@ -1115,7 +1145,9 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
         ):
             queryset = queryset.annotate(
                 milestone_id=Subquery(
@@ -1308,7 +1340,9 @@ class IssueDetailEndpoint(BaseAPIView):
 
         # Annotate milestone_id if the MILESTONES feature flag is enabled
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
         ):
             queryset = queryset.annotate(
                 milestone_id=Subquery(
@@ -1370,7 +1404,13 @@ class IssueDetailEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        filters = issue_filters(request.query_params, "GET")
+        # Create a mutable copy of query params to remove sub_issue (EE specific logic)
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", "false")
+        query_params.pop("sub_issue", None)
+        # EE logic ends here
+
+        filters = issue_filters(query_params, "GET")
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features  # noqa: E501
         #  if it is true then show all the issues else show only the issues created by the user  # noqa: E501
@@ -1402,6 +1442,12 @@ class IssueDetailEndpoint(BaseAPIView):
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
         )
+
+        ## EE specific logic to show sub issues
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue = issue.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
+        # EE logic ends here
 
         project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
         if (
@@ -1713,13 +1759,37 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.MILESTONES, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
+            feature_key=FeatureFlag.MILESTONES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
         ):
             issue = issue.annotate(
                 milestone_id=Subquery(
                     MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
                         :1
                     ]
+                )
+            )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.AUTO_SCHEDULE_CYCLES,
+            slug=self.kwargs.get("slug"),
+            user_id=str(request.user.id),
+        ):
+            issue = issue.annotate(
+                transferred_cycle_ids=Coalesce(
+                    Subquery(
+                        IssueActivity.objects.filter(
+                            issue_id=OuterRef("id"),
+                            field="cycles",
+                            verb__in=["created", "updated"],
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("new_identifier", distinct=True))
+                        .values("arr")[:1]
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 

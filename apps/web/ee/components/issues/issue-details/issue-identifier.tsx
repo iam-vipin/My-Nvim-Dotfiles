@@ -65,8 +65,9 @@ type TIssueTypeIdentifier = {
 
 export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => {
   const { getWorkItemTypeById, issueTypeId, size = "sm" } = props;
-  // hooks
-  const issueType = getWorkItemTypeById ? getWorkItemTypeById(issueTypeId) : useIssueType(issueTypeId);
+  // derived values
+  const workItemTypeFromStore = useIssueType(issueTypeId);
+  const issueType = getWorkItemTypeById ? getWorkItemTypeById(issueTypeId) : workItemTypeFromStore;
 
   return (
     <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-start">

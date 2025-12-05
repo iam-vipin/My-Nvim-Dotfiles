@@ -1,12 +1,14 @@
 import { EditorContent, useEditor } from "@tiptap/react";
-import { forwardRef, MutableRefObject, useImperativeHandle } from "react";
+import type { MutableRefObject } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // plane editor imports
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { PiChatEditorExtensions } from "@/plane-editor/extensions/pi-chat-editor/extensions";
-import { EditorRefApi } from "@/types";
+import type { PiChatEditorMentionAttributes } from "@/plane-editor/extensions/pi-chat-editor/mention/types";
+import type { TPiChatEditorRefApi } from "@/types";
 
 type IItem = {
   id: string;
@@ -30,11 +32,12 @@ type PiChatEditorProps = {
   className?: string;
   setEditorCommand?: (command: any) => void;
   searchCallback?: (query: string) => Promise<any>;
-  forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  forwardedRef?: React.MutableRefObject<TPiChatEditorRefApi | null>;
   handleSubmit?: (e?: any) => void;
   editable?: boolean;
   content?: string;
   placeholder?: string;
+  onEditorReady?: () => void;
 };
 
 const PiChatEditor = (props: PiChatEditorProps) => {
@@ -47,6 +50,7 @@ const PiChatEditor = (props: PiChatEditorProps) => {
     forwardedRef,
     handleSubmit,
     placeholder,
+    onEditorReady,
   } = props;
   const editor = useEditor({
     editable,
@@ -59,6 +63,9 @@ const PiChatEditor = (props: PiChatEditorProps) => {
       setEditorCommand,
     }),
     content: content,
+    onCreate: () => {
+      onEditorReady?.();
+    },
   });
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -109,11 +116,20 @@ const PiChatEditor = (props: PiChatEditorProps) => {
 
   useImperativeHandle(
     forwardedRef,
-    () =>
-      getEditorRefHelpers({
+    () => ({
+      ...getEditorRefHelpers({
         editor,
         provider: undefined,
+        getEditorMetaData: () => ({
+          file_assets: [],
+          user_mentions: [],
+        }),
       }),
+      addChatContext: (attributes: PiChatEditorMentionAttributes) => {
+        if (!editor) return false;
+        return editor.commands.addChatContext(attributes);
+      },
+    }),
     [editor]
   );
 
@@ -133,8 +149,8 @@ const PiChatEditor = (props: PiChatEditorProps) => {
   );
 };
 
-const PiChatEditorWithRef = forwardRef<EditorRefApi, PiChatEditorProps>((props, ref) => (
-  <PiChatEditor {...props} forwardedRef={ref as MutableRefObject<EditorRefApi | null>} />
+const PiChatEditorWithRef = forwardRef<TPiChatEditorRefApi, PiChatEditorProps>((props, ref) => (
+  <PiChatEditor {...props} forwardedRef={ref as MutableRefObject<TPiChatEditorRefApi | null>} />
 ));
 
 PiChatEditorWithRef.displayName = "PiChatEditorWithRef";

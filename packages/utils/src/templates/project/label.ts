@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 
 /**
  * Mock create or update label

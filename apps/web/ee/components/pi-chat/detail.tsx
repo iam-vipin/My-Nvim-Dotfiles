@@ -7,29 +7,32 @@ import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { useUser } from "@/hooks/store/user";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
+import type { TChatContextData } from "@/plane-web/types";
 import { Loading } from "./conversation/loading";
 import { Messages } from "./conversation/messages";
 import { scrollIntoViewHelper } from "./helper";
 import { InputBox } from "./input";
+import { UnauthorizedView } from "./unauthorized";
 
 type TProps = {
   isFullScreen?: boolean;
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
+  contextData?: TChatContextData;
 };
 export const PiChatDetail = observer((props: TProps) => {
-  const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false } = props;
+  const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false, contextData } = props;
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(false);
   // router
   const pathName = usePathname();
   // store hooks
-  const { isAuthorized, isLoading, activeChatId } = usePiChat();
+  const { isAuthorized: isChatAuthorized, isWorkspaceAuthorized, isLoading, activeChatId } = usePiChat();
   const { data: currentUser } = useUser();
   // derived values
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
   return (
     <>
-      {isAuthorized ? (
+      {isChatAuthorized && isWorkspaceAuthorized ? (
         <div
           className={cn(
             "px-page-x relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full",
@@ -68,6 +71,7 @@ export const PiChatDetail = observer((props: TProps) => {
             )}
             {/* Chat Input */}
             <InputBox
+              contextData={contextData}
               isProjectLevel={isProjectLevel}
               isFullScreen={isFullScreen}
               activeChatId={activeChatId}
@@ -75,8 +79,10 @@ export const PiChatDetail = observer((props: TProps) => {
             />
           </div>
         </div>
-      ) : (
+      ) : isWorkspaceAuthorized ? (
         <NotAuthorizedView className="bg-transparent" />
+      ) : (
+        <UnauthorizedView />
       )}
     </>
   );

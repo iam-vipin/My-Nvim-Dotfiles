@@ -1,5 +1,5 @@
-import { TLoader } from "../issues/base";
-import { IUserLite } from "../users";
+import type { TLoader } from "../issues/base";
+import type { IUserLite } from "../users";
 
 export type TIssuePropertyAction = "created" | "updated" | "deleted";
 

@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 import { Loader, RefreshCcw, ExternalLink } from "lucide-react";
@@ -55,7 +54,7 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
       {/* header */}
       <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90 p-4">
         <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={logo} layout="fill" objectFit="contain" alt={`${serviceName} Logo`} />
+          <img src={logo} alt={`${serviceName} Logo`} className="w-full h-full object-cover" />
         </div>
         <div className="w-full h-full overflow-hidden">
           <div className="text-lg font-medium">{serviceName}</div>

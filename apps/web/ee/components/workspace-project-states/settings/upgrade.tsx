@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
@@ -10,13 +9,13 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { cn } from "@plane/utils";
+// assets
+import StateDark from "@/app/assets/projects/dark-upgrade.svg?url";
+import StateLight from "@/app/assets/projects/light-upgrade.svg?url";
+import StateDarkStandalone from "@/app/assets/projects/states-dark.svg?url";
+import StateLightStandalone from "@/app/assets/projects/states-light.svg?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import StateDark from "@/public/projects/dark-upgrade.svg";
-import StateLight from "@/public/projects/light-upgrade.svg";
-import StateDarkStandalone from "@/public/projects/states-dark.svg";
-import StateLightStandalone from "@/public/projects/states-light.svg";
 
 const Upgrade = observer(() => {
   const { resolvedTheme } = useTheme();
@@ -63,14 +62,14 @@ const Upgrade = observer(() => {
           </div>
         </div>
       </div>
-      <Image
+      <img
         src={resolvedTheme === "dark" ? StateDark : StateLight}
-        alt=""
+        alt="Project states upgrade"
         className="max-h-[300px] self-end hidden xl:flex"
       />
-      <Image
+      <img
         src={resolvedTheme === "dark" ? StateDarkStandalone : StateLightStandalone}
-        alt=""
+        alt="Project states upgrade"
         className="max-h-[300px] self-end flex xl:hidden p-5 pb-0"
       />
     </div>

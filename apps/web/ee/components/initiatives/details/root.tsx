@@ -1,28 +1,18 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
-
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TInitiativeStates } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
-
-// components
-import { ProjectMultiSelectModal } from "@/components/project/multi-select-modal";
-
 // hooks
-import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-
 // plane web imports
 import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { EpicPeekOverview } from "@/plane-web/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
-
 // local imports
 import { InitiativeEmptyState } from "../details/empty-state";
-import { WorkspaceEpicsListModal } from "./main/collapsible-section/epics/workspace-epic-modal";
 import { InitiativeMainContentRoot } from "./main/root";
 import { InitiativeSidebarRoot } from "./sidebar/root";
 
@@ -33,55 +23,22 @@ type Props = {
 
 export const InitiativeDetailRoot = observer((props: Props) => {
   const { workspaceSlug, initiativeId } = props;
-
-  // states
-  const [isProjectsOpen, setIsProjectsOpen] = useState(false);
-  const [isEpicModalOpen, setIsEpicModalOpen] = useState(false);
-
   // store hooks
   const {
-    initiative: {
-      getInitiativeById,
-      updateInitiative,
-      fetchInitiativeAnalytics,
-      epics: { addEpicsToInitiative, getInitiativeEpicsById },
-    },
+    initiative: { getInitiativeById, updateInitiative, fetchInitiativeAnalytics },
   } = useInitiatives();
-  const { workspaceProjectIds } = useProject();
   const { allowPermissions } = useUserPermissions();
 
   const { t } = useTranslation();
 
   // derived values
   const initiative = getInitiativeById(initiativeId);
-  const projectsIds = initiative?.project_ids ?? [];
   const isEditable = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
   // handlers
-  const handleProjectsUpdate = async (initiativeProjectIds: string[]) => {
-    if (!initiativeId) return;
-
-    await updateInitiative(workspaceSlug?.toString(), initiativeId, { project_ids: initiativeProjectIds })
-      .then(async () => {
-        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("toast.success"),
-          message: t("initiatives.toast.project_update_success"),
-        });
-      })
-      .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.success"),
-          message: error?.error ?? t("initiatives.toast.project_update_error"),
-        });
-      });
-  };
-
   const handleInitiativeLabelUpdate = (labelIds: string[]) => {
     if (!initiativeId) return;
     try {
@@ -93,20 +50,6 @@ export const InitiativeDetailRoot = observer((props: Props) => {
         title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("initiatives.toast.label_update_error"),
-      });
-    }
-  };
-
-  const handleAddEpicToInitiative = async (epicIds: string[]) => {
-    try {
-      addEpicsToInitiative(workspaceSlug?.toString(), initiativeId, epicIds).then(async () => {
-        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
-      });
-    } catch {
-      setToast({
-        title: t("toast.error"),
-        type: TOAST_TYPE.ERROR,
-        message: t("initiatives.toast.epic_update_error"),
       });
     }
   };
@@ -126,46 +69,18 @@ export const InitiativeDetailRoot = observer((props: Props) => {
     }
   };
 
-  const toggleEpicModal = (value?: boolean) => setIsEpicModalOpen(value || !isEpicModalOpen);
-  const toggleProjectsModal = (value?: boolean) => setIsProjectsOpen(value || !isProjectsOpen);
-
   return (
     <LayoutRoot
       renderEmptyState={!initiative}
       emptyStateComponent={<InitiativeEmptyState workspaceSlug={workspaceSlug} />}
     >
-      <InitiativeMainContentRoot
-        workspaceSlug={workspaceSlug}
-        initiativeId={initiativeId}
-        disabled={!isEditable}
-        toggleEpicModal={toggleEpicModal}
-        toggleProjectModal={toggleProjectsModal}
-      />
+      <InitiativeMainContentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={!isEditable} />
       <InitiativeSidebarRoot
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
         disabled={!isEditable}
-        toggleEpicModal={toggleEpicModal}
-        toggleProjectModal={toggleProjectsModal}
         handleInitiativeStateUpdate={handleInitiativeStateUpdate}
         handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
-      />
-      <ProjectMultiSelectModal
-        isOpen={isProjectsOpen}
-        onClose={() => setIsProjectsOpen(false)}
-        onSubmit={handleProjectsUpdate}
-        selectedProjectIds={projectsIds ?? []}
-        projectIds={workspaceProjectIds || []}
-      />
-      <WorkspaceEpicsListModal
-        workspaceSlug={workspaceSlug}
-        isOpen={isEpicModalOpen}
-        searchParams={{}}
-        selectedEpicIds={getInitiativeEpicsById(initiativeId) ?? []}
-        handleClose={() => setIsEpicModalOpen(false)}
-        handleOnSubmit={async (data) => {
-          handleAddEpicToInitiative(data.map((epic) => epic.id));
-        }}
       />
       <EpicPeekOverview />
     </LayoutRoot>

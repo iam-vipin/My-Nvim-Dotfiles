@@ -1,6 +1,6 @@
-import { IInstanceConfig } from "./instance";
-import { IUser } from "./users";
-import { IWorkspaceMemberInvitation } from "./workspace";
+import type { IInstanceConfig } from "./instance";
+import type { IUser } from "./users";
+import type { IWorkspaceMemberInvitation } from "./workspace";
 
 // instance types
 export type TInstanceConfig = IInstanceConfig;

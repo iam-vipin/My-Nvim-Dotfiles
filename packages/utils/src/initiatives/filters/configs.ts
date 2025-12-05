@@ -1,20 +1,12 @@
 // plane imports
-import {
-  COLLECTION_OPERATOR,
-  EQUALITY_OPERATOR,
-  IUserLite,
-  TInitiativeStates,
-  TFilterProperty,
-  TInitiativeLabel,
-} from "@plane/types";
+import type { IUserLite, TInitiativeStates, TFilterProperty, TInitiativeLabel } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateDateFilterParams } from "../../rich-filters";
 import {
   createFilterConfig,
   createOperatorConfigEntry,
   getMultiSelectConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateDateFilterParams,
   getMemberMultiSelectConfig,
   getSupportedDateOperators,
 } from "../../rich-filters";

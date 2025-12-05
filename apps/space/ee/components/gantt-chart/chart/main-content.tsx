@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import type { ChartDataType, IGanttBlock, TGanttViews } from "../";
 import {

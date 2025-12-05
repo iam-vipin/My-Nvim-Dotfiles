@@ -77,16 +77,16 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: t("pages.move_page.toasts.success.title"),
-          message: t("pages.move_page.toasts.success.message"),
+          title: t("page_actions.move_page.toasts.success.title"),
+          message: t("page_actions.move_page.toasts.success.message"),
         });
         handleClose();
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("pages.move_page.toasts.error.title"),
-          message: t("pages.move_page.toasts.error.message"),
+          title: t("page_actions.move_page.toasts.error.title"),
+          message: t("page_actions.move_page.toasts.error.message"),
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

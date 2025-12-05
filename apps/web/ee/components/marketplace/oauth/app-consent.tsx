@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import { CircleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -12,11 +12,11 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IWorkspace, TUserApplication } from "@plane/types";
 import { cn, CustomMenu } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+import ConnectSvg from "@/app/assets/marketplace/connect.svg?url";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import type { TConsentParams } from "@/plane-web/services/marketplace";
 import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
-import ConnectSvg from "@/public/marketplace/connect.svg";
 import { AuthService } from "@/services/auth.service";
 import {
   ApplicationPermissionText,
@@ -28,6 +28,7 @@ type TAppConsentProps = {
   application: Partial<TUserApplication>;
   consentParams: TConsentParams;
   workspaceSlug: string;
+  workspaceAppInstallations: Record<string, boolean>;
   workspacePermissions: Record<string, "allowed" | "not_allowed">;
   disableDropdown: boolean;
 };
@@ -37,10 +38,18 @@ const applicationService = new ApplicationService();
 const authService = new AuthService();
 
 export const AppConsent = observer(
-  ({ application, consentParams, workspaceSlug, workspacePermissions = {}, disableDropdown }: TAppConsentProps) => {
+  ({
+    application,
+    consentParams,
+    workspaceSlug,
+    workspacePermissions = {},
+    workspaceAppInstallations = {},
+    disableDropdown,
+  }: TAppConsentProps) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { userSettings } = useUser();
+    const workspaceSlugFromParams = workspaceSlug;
 
     // if workspaceSlug is not available in URL, pick last visited workspace's slug from settings
     if (!workspaceSlug) {
@@ -48,14 +57,51 @@ export const AppConsent = observer(
     }
 
     const { workspaces } = useWorkspace();
-    const workspacesList = Object.values(workspaces ?? {});
-    const workspaceFromParams = workspacesList.find((workspace) => workspace.slug === workspaceSlug);
+    const allWorkspacesList = Object.values(workspaces ?? {});
 
-    const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace>(workspaceFromParams ?? workspacesList[0]);
+    // Fetch supported workspace IDs from API (API handles filtering based on supported_plans)
+    const { data: supportedWorkspaceIds, isLoading: isLoadingWorkspaces } = useSWR<string[]>(
+      consentParams.client_id ? `supported-workspace-ids-${consentParams.client_id}` : null,
+      async () => {
+        if (!consentParams.client_id) return [];
+        return (await applicationService.getSupportedWorkspaceIds(consentParams.client_id)) ?? [];
+      }
+    );
+
+    // Filter workspaces from store based on supported workspace IDs
+    const workspacesList = useMemo(() => {
+      // Wait for API to load before filtering
+      if (supportedWorkspaceIds === undefined || supportedWorkspaceIds === null) {
+        return [];
+      }
+
+      // Filter workspaces to only include supported ones
+      const supportedIdsSet = new Set(supportedWorkspaceIds);
+      return allWorkspacesList.filter((workspace) => supportedIdsSet.has(workspace.id));
+    }, [allWorkspacesList, supportedWorkspaceIds]);
+
+    const workspaceFromParams = useMemo(
+      () => (workspacesList || []).find((workspace) => workspace.slug === workspaceSlug),
+      [workspacesList, workspaceSlug]
+    );
+
+    const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | undefined>(undefined);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 
+    // Initialize selected workspace only once when workspaces list is available
+    useEffect(() => {
+      if (!selectedWorkspace && workspacesList.length > 0) {
+        const initialWorkspace = workspaceFromParams ?? workspacesList[0];
+        setSelectedWorkspace(initialWorkspace);
+      }
+    }, [workspacesList, workspaceFromParams, selectedWorkspace]);
+
     const hasPermissions = workspacePermissions?.[selectedWorkspace?.id?.toString() ?? ""] === "allowed";
+    const isInstalled = useMemo(
+      () => workspaceAppInstallations?.[selectedWorkspace?.id?.toString() ?? ""] ?? false,
+      [workspaceAppInstallations, selectedWorkspace]
+    );
     const handleWorkspaceChange = (workspace: IWorkspace) => {
       setSelectedWorkspace(workspace);
     };
@@ -98,19 +144,23 @@ export const AppConsent = observer(
       if (csrfToken === undefined) {
         fetchCsrfToken();
       }
-    }, [csrfToken]);
+      // redirect only if the workspace slug is available from the params
+      if (isInstalled && workspaceSlugFromParams) {
+        handleAccept();
+      }
+    }, [csrfToken, isInstalled]);
 
     return (
       <div className="flex flex-col gap-y-4 justify-center items-center">
         <div className="flex items-center space-x-4">
           {application?.logo_url ? (
-            <Image src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
+            <img src={getFileURL(application?.logo_url ?? "") ?? ""} alt="Plane logo" className="w-10 h-10" />
           ) : (
             <div className="w-10 h-10 flex items-center justify-center rounded-md bg-custom-primary-500 text-white capitalize">
               {application?.name?.[0] ?? "..."}
             </div>
           )}
-          <Image src={ConnectSvg} alt="Connect" className="w-5 h-5" />
+          <img src={ConnectSvg} alt="Connect" className="w-5 h-5" />
           <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
         </div>
         <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application?.name })}</h1>
@@ -139,32 +189,45 @@ export const AppConsent = observer(
           <div className="text-sm text-custom-text-300 font-medium">
             {t("workspace_settings.settings.applications.choose_workspace_to_connect_app_with")}
           </div>
-          <CustomMenu
-            maxHeight={"md"}
-            className="flex flex-grow justify-center text-sm text-custom-text-200"
-            placement="bottom-start"
-            customButton={
-              <div className="flex flex-grow gap-1.5 justify-between items-center text-sm text-custom-text-200 w-full overflow-hidden">
-                <WorkspaceDetails workspace={selectedWorkspace} />
-                <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
-              </div>
-            }
-            customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-custom-background-100 text-custom-text-200 text-sm w-40"
-            closeOnSelect
-            disabled={disableDropdown}
-          >
-            {workspacesList.map((workspace, index) => (
-              <CustomMenu.MenuItem
-                key={workspace.id}
-                onClick={() => {
-                  handleWorkspaceChange(workspace);
-                }}
-                className="flex items-center gap-2"
-              >
-                <WorkspaceDetails workspace={workspace} />
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
+          {isLoadingWorkspaces ? (
+            <div className="text-sm text-custom-text-400">Loading workspaces...</div>
+          ) : workspacesList.length > 0 ? (
+            <CustomMenu
+              maxHeight={"md"}
+              className="flex flex-grow justify-center text-sm text-custom-text-200"
+              placement="bottom-start"
+              customButton={
+                <div className="flex flex-grow gap-1.5 justify-between items-center text-sm text-custom-text-200 w-full overflow-hidden">
+                  {selectedWorkspace ? (
+                    <WorkspaceDetails workspace={selectedWorkspace} />
+                  ) : (
+                    <span className="text-custom-text-400">Select workspace...</span>
+                  )}
+                  <ChevronDownIcon className="ml-auto h-4 w-4 text-custom-text-200" />
+                </div>
+              }
+              customButtonClassName="flex flex-grow border border-custom-border-200 rounded-md p-2 bg-custom-background-100 text-custom-text-200 text-sm w-40"
+              closeOnSelect
+              disabled={disableDropdown}
+            >
+              {workspacesList.map((workspace) => (
+                <CustomMenu.MenuItem
+                  key={workspace.id}
+                  onClick={() => {
+                    handleWorkspaceChange(workspace);
+                  }}
+                  className={cn(
+                    "flex items-center gap-2",
+                    selectedWorkspace?.id === workspace.id && "bg-custom-background-80"
+                  )}
+                >
+                  <WorkspaceDetails workspace={workspace} />
+                </CustomMenu.MenuItem>
+              ))}
+            </CustomMenu>
+          ) : (
+            <div className="text-sm text-custom-text-400">No workspaces available for this application.</div>
+          )}
           {hasPermissions ? (
             <>
               <div className="flex flex-col gap-y-2">

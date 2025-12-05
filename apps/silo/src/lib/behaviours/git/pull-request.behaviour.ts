@@ -4,19 +4,21 @@
  */
 
 import { logger } from "@plane/logger";
-import { Client, ExIssue } from "@plane/sdk";
+import type { Client, ExIssue } from "@plane/sdk";
 import { env } from "@/env";
 import { CONSTANTS, E_STATE_MAP_KEYS } from "@/helpers/constants";
-import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
-import { verifyEntityConnections } from "@/types";
-import {
+import type { IssueReference, IssueWithReference } from "@/helpers/parser";
+import { getReferredIssues } from "@/helpers/parser";
+import type { verifyEntityConnections } from "@/types";
+import type {
   IPullRequestService,
   IPullRequestDetails,
   TPullRequestError,
   IPullRequestEventData,
   IGitComment,
 } from "@/types/behaviours/git";
-import { Either, left, right } from "@/types/either";
+import type { Either } from "@/types/either";
+import { left, right } from "@/types/either";
 
 /**
  * Pull Request Behaviour

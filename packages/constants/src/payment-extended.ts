@@ -1,4 +1,5 @@
-import { EProductSubscriptionEnum, TAddWorkspaceSeatsModal } from "@plane/types";
+import type { TAddWorkspaceSeatsModal } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 
 // Product subscription tiers
 export enum EProductSubscriptionTier {

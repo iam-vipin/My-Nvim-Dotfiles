@@ -154,16 +154,16 @@ export const BUSINESS_PLAN_FEATURES_MAP = [
   //   comingSoon: true,
   // },
   {
-    label: "Decision + Loops Automation",
-    comingSoon: true,
+    label: "Automations",
+    comingSoon: false,
   },
   // {
   //   label: "SLAs",
   //   comingSoon: true,
   // },
   {
-    label: "Baselines And Deviations",
-    comingSoon: true,
+    label: "Initiatives",
+    comingSoon: false,
   },
 ];
 

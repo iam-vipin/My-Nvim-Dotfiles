@@ -4,8 +4,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import type { TGroupedIssues, TPaginationData, ICalendarDate } from "@plane/types";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // plane web
 import { MONTHS_LIST } from "@/plane-web/constants/calendar";
 import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper";

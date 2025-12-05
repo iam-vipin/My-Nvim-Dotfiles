@@ -1,7 +1,8 @@
 import type { RawCommands } from "@tiptap/core";
 import type { NodeType } from "@tiptap/pm/model";
 import { v4 as uuidv4 } from "uuid";
-import { EDrawioAttributeNames, TDrawioBlockAttributes } from "./types";
+import type { TDrawioBlockAttributes } from "./types";
+import { EDrawioAttributeNames } from "./types";
 import { DEFAULT_DRAWIO_ATTRIBUTES } from "./utils/attribute";
 
 export const drawioCommands = (nodeType: NodeType): Partial<RawCommands> => ({

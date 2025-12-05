@@ -1,6 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import { ClientOptions, ExcludedProps, ExIssueLabel, Optional, Paginated } from "@/types/types";
+import type { ClientOptions, ExcludedProps, ExIssueLabel, Optional, Paginated } from "@/types/types";
 
 export class LabelService extends APIService {
   constructor(options: ClientOptions) {

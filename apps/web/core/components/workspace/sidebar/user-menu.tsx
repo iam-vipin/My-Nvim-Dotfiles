@@ -1,17 +1,15 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { DraftIcon, HomeIcon, InboxIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
+import { DraftIcon, HomeIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
 
-export const SidebarUserMenu = observer(() => {
+export const SidebarUserMenu = observer(function SidebarUserMenu() {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -39,13 +37,6 @@ export const SidebarUserMenu = observer(() => {
       href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: YourWorkIcon,
-    },
-    {
-      key: "notifications",
-      labelTranslationKey: "sidebar.inbox",
-      href: `/${workspaceSlug.toString()}/notifications/`,
-      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: InboxIcon,
     },
     {
       key: "drafts",

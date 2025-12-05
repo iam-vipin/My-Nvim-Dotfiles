@@ -151,23 +151,6 @@ class PlaneOAuthService:
 
             return response.json()
 
-    async def get_app_installation_details(self, access_token: str) -> Optional[Dict[str, Any]]:
-        """Fetch app installation details including workspace info"""
-
-        headers = {"Authorization": f"Bearer {access_token}"}
-
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{self.base_url}/auth/o/app-installation/",
-                headers=headers,
-            )
-
-            if response.status_code != 200:
-                raise Exception(f"Failed to fetch app installation: {response.text}")
-
-            data = response.json()
-            return data[0] if data else None
-
     async def save_tokens(
         self,
         db: AsyncSession,

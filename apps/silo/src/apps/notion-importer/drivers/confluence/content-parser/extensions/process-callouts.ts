@@ -1,6 +1,6 @@
-import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
-import { TCalloutConfig } from "@/apps/notion-importer/types";
+import type { HTMLElement } from "node-html-parser";
+import type { TCalloutConfig } from "@/apps/notion-importer/types";
+import type { IParserExtension } from "@/lib/parser";
 import { CalloutParserExtension } from "../../../common/content-parser/extensions/process-callouts";
 
 enum EConfluenceNoteType {

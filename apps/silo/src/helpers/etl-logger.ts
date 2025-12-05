@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { E_KNOWN_ETL_PHASE, E_KNOWN_ETL_ASSET } from "@/types/etl";
+import type { E_KNOWN_ETL_PHASE, E_KNOWN_ETL_ASSET } from "@/types/etl";
 
 type LoggerContext = {
   jobId: string;

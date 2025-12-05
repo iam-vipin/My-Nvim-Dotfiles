@@ -3,12 +3,11 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import type { TPageTemplateForm } from "@plane/types";
 import { Input } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
 // plane web imports
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 // local imports

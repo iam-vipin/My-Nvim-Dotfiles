@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Delete, Get, Post } from "@plane/decorators";
 import { responseHandler } from "@/helpers/response-handler";
 import { useValidateUserAuthentication } from "@/lib/decorators";

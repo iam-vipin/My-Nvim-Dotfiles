@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -47,6 +45,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { pageId: routePageId } = useParams();
 
   const handleDelete = async () => {
+    if (!pageId) return;
     setIsDeleting(true);
     await removePage({ pageId })
       .then(() => {
@@ -88,6 +87,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
 
     setIsDeleting(false);
   };
+
+  if (!page || !page.id) return null;
 
   return (
     <AlertModalCore

@@ -3,6 +3,8 @@ import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
+// plane imports
+import type { TCustomComponentsMetaData } from "@plane/utils";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
@@ -10,6 +12,7 @@ import type {
   IEditorPropsExtended,
   TExtendedEditorCommands,
   ICollaborativeDocumentEditorPropsExtended,
+  TPiChatEditorApi,
 } from "@/plane-editor/types/editor-extended";
 // types
 import type {
@@ -156,6 +159,8 @@ export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
 
 export type EditorTitleRefApi = EditorRefApi;
 
+export type TPiChatEditorRefApi = CoreEditorRefApi & TPiChatEditorApi;
+
 // editor props
 export type IEditorProps = {
   autofocus?: boolean;
@@ -170,6 +175,7 @@ export type IEditorProps = {
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  getEditorMetaData: (htmlContent: string) => TCustomComponentsMetaData;
   handleEditorReady?: (value: boolean) => void;
   id: string;
   initialValue: Content;

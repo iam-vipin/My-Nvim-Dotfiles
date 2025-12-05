@@ -4,12 +4,7 @@ import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
-  EProjectPriority,
-  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
-  PROJECT_UNSPLASH_COVERS,
-  RANDOM_EMOJI_CODES,
-} from "@plane/constants";
+import { EProjectPriority, PROJECT_TEMPLATE_TRACKER_ELEMENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -30,6 +25,7 @@ import {
   projectTemplateDataToSanitizedFormData,
 } from "@plane/utils";
 // root store
+import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { rootStore } from "@/lib/store-context";
@@ -50,6 +46,7 @@ import { ProjectTemplateLoader } from "./loader";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
+import { getProjectFormValues } from "@/ce/components/projects/create/utils";
 
 export enum EProjectFormOperation {
   CREATE = "create",
@@ -91,7 +88,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
         value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
       },
     },
-    cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+    cover_image_url: DEFAULT_COVER_IMAGE_URL,
     network: 2,
     project_lead: "",
     // attributes
@@ -168,13 +165,28 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     defaultValues,
   });
   const {
-    watch,
-    reset,
-    handleSubmit,
     formState: { isSubmitting },
+    getValues,
+    handleSubmit,
+    reset,
+    watch,
   } = methods;
   // derived values
   const isDirty = Object.keys(methods.formState.dirtyFields).length > 0;
+  const getWorkItemTypeById = useCallback(
+    (workItemTypeId: string) => {
+      const helpers = projectTemplateFormGettersHelpers(getValues("project"));
+      return helpers.getWorkItemTypeById(workItemTypeId);
+    },
+    [getValues]
+  );
+  const getCustomPropertyById = useCallback(
+    (customPropertyId: string) => {
+      const helpers = projectTemplateFormGettersHelpers(getValues("project"));
+      return helpers.getCustomPropertyById(customPropertyId);
+    },
+    [getValues]
+  );
 
   /**
    * Reset the local states
@@ -219,7 +231,6 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
       if (!templateId || loader === "init-loader") return;
       const templateDetails = getTemplateById(templateId)?.asJSON;
       if (!templateDetails) return;
-      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
 
       setIsApplyingTemplate(true);
 
@@ -236,8 +247,8 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
         getWorkspaceProjectStateIds: getProjectStateIdsByWorkspaceId,
         getWorkspaceMemberIds,
-        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
-        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
+        getWorkItemTypeById,
+        getCustomPropertyById,
       });
 
       // Set the preloaded data and invalid IDs
@@ -259,19 +270,19 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
    */
   useEffect(() => {
     const updateDefaultFormData = async () => {
-      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
       // Generate default form data
       const additionalDefaultValueForReset = await generateAdditionalProjectTemplateFormData({
         workspaceSlug: workspaceSlug?.toString(),
         projectId: preloadedData?.template?.id ?? "",
+        coverImageUrl: DEFAULT_COVER_IMAGE_URL,
         createWorkItemTypeInstance: (params) =>
           new IssueType({
             root: rootStore,
             ...params,
           }),
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
-        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
-        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
+        getWorkItemTypeById,
+        getCustomPropertyById,
       });
       // Reset the form with the default values
       if (preloadedData) {

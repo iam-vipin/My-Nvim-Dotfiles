@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi.app.models import Chat
 from pi.app.models import LlmModelPricing
 from pi.app.models import Message
 from pi.app.models import MessageFeedback
@@ -23,6 +24,9 @@ from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import MessageFeedbackTypeChoices
 from pi.app.models.enums import MessageMetaStepType
 from pi.app.models.enums import UserTypeChoices
+from pi.app.models.message_attachment import MessageAttachment
+from pi.app.schemas.chat import ChatRequest
+from pi.config import LLMModels
 from pi.services.retrievers.pg_store.json_serializer import sanitize_execution_data
 
 log = logger.getChild(__name__)
@@ -163,12 +167,17 @@ async def update_message_feedback(
 
 async def get_chat_messages(chat_id: UUID4, db: AsyncSession) -> Union[List[Message], Tuple[int, Dict[str, str]]]:
     """
-    Retrieves all messages for a chat ordered by sequence.
+    Retrieves all messages for a chat ordered by sequence (excluding replaced messages).
     Returns either a list of messages (success) or a tuple of (status_code, response_content) for errors
     """
     try:
-        # Get messages for this chat ordered by sequence
-        messages_query = select(Message).where(Message.chat_id == chat_id).order_by(Message.sequence)  # type: ignore[arg-type]
+        # Get messages for this chat ordered by sequence (exclude replaced messages)
+        messages_query = (
+            select(Message)
+            .where(Message.chat_id == chat_id)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
+            .order_by(Message.sequence)  # type: ignore[arg-type]
+        )
         result = await db.execute(messages_query)
         messages = list(result.scalars().all())  # Convert to list for correct typing
 
@@ -521,3 +530,126 @@ async def upsert_message_meta(
         await db.rollback()
         log.error(f"create_message_meta failed. message_id={message_id}, error={e}")
         return {"message": "error", "error": str(e)}
+
+
+async def mark_assistant_response_as_replaced(db: AsyncSession, user_message_id: UUID4) -> bool:
+    """
+    Mark the assistant response(s) for a user message as replaced.
+
+    Args:
+        db: Database session
+        user_message_id: The user message ID whose assistant responses should be marked
+
+    Returns:
+        True if any messages were marked, False otherwise
+    """
+    try:
+        # First, get the user message to find its sequence and chat_id
+        user_msg_stmt = select(Message).where(Message.id == user_message_id)  # type: ignore[arg-type]
+        user_msg_result = await db.execute(user_msg_stmt)
+        user_message = user_msg_result.scalar_one_or_none()
+
+        if not user_message:
+            log.warning(f"User message {user_message_id} not found")
+            return False
+
+        # Find assistant message(s) that come after this user message (by sequence)
+        # in the same chat and are not already replaced
+        stmt = (
+            select(Message)
+            .where(Message.chat_id == user_message.chat_id)  # type: ignore[arg-type]
+            .where(Message.sequence > user_message.sequence)  # type: ignore[arg-type]
+            .where(Message.user_type == UserTypeChoices.ASSISTANT.value)  # type: ignore[arg-type]
+            .where(~Message.is_replaced)  # type: ignore[arg-type]
+            .order_by(Message.sequence)  # type: ignore[arg-type]
+            .limit(1)  # Only mark the immediate next assistant response
+        )
+        result = await db.execute(stmt)
+        old_assistant_message = result.scalar_one_or_none()
+
+        if not old_assistant_message:
+            log.info(f"No assistant message found to mark as replaced for user message {user_message_id}")
+            return False
+
+        # Mark as replaced
+        old_assistant_message.is_replaced = True
+
+        await db.commit()
+        log.info(
+            f"Marked assistant message {old_assistant_message.id} (sequence {old_assistant_message.sequence}) "
+            f"as replaced for user message {user_message_id}"
+        )
+        return True
+
+    except Exception as e:
+        log.error(f"Error marking assistant response as replaced: {e}")
+        await db.rollback()
+        return False
+
+
+async def get_message_by_id(db: AsyncSession, message_id: UUID4) -> Optional[Message]:
+    """
+    Get a message by ID.
+
+    Args:
+        db: Database session
+        message_id: Message ID to retrieve
+
+    Returns:
+        Message object if found, None otherwise
+    """
+    try:
+        stmt = select(Message).where(Message.id == message_id)  # type: ignore[arg-type]
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
+    except Exception as e:
+        log.error(f"Error getting message {message_id}: {e}")
+        return None
+
+
+async def reconstruct_chat_request_from_message(db: AsyncSession, user_message: Message, user_id: UUID4):
+    """
+    Reconstruct a ChatRequest from an existing user message for regeneration.
+
+    Args:
+        db: Database session
+        user_message: The user message to reconstruct from
+        user_id: User ID making the request
+
+    Returns:
+        ChatRequest object ready for streaming
+    """
+
+    # Get chat details
+    chat_stmt = select(Chat).where(Chat.id == user_message.chat_id)  # type: ignore[arg-type]
+    chat_result = await db.execute(chat_stmt)
+    chat = chat_result.scalar_one_or_none()
+
+    # Get attachments for this message
+    attachments_stmt = (
+        select(MessageAttachment)
+        .where(MessageAttachment.message_id == user_message.id)  # type: ignore[arg-type]
+        .where(MessageAttachment.status == "uploaded")  # type: ignore[arg-type]
+        .where(MessageAttachment.deleted_at.is_(None))  # type: ignore[union-attr]
+    )
+    attachments_result = await db.execute(attachments_stmt)
+    attachments = attachments_result.scalars().all()
+    attachment_ids = [att.attachment_id for att in attachments] if attachments else []
+
+    # Reconstruct ChatRequest
+    return ChatRequest(
+        query=user_message.content or "",
+        chat_id=user_message.chat_id,
+        user_id=user_id,
+        llm=user_message.llm_model or LLMModels.DEFAULT,
+        is_new=False,  # Always false for regenerate
+        is_temp=False,
+        workspace_id=chat.workspace_id if chat else None,
+        workspace_slug=chat.workspace_slug if chat else None,
+        workspace_in_context=chat.workspace_in_context if chat else False,
+        is_project_chat=chat.is_project_chat if chat else False,
+        project_id=None,  # Will be resolved from context if needed
+        attachment_ids=attachment_ids,
+        context={"token_id": str(user_message.id)},  # Reuse same message ID
+        source="web",
+    )

@@ -1,15 +1,13 @@
 import { E_SILO_ERROR_CODES } from "@plane/etl/core";
-import {
-  createGithubAuth,
-  createGithubService,
-  createGithubUserService,
+import type {
   GithubAuthorizeState,
   GithubAuthService,
   GithubPlaneOAuthState,
   GithubService,
   GithubUserAuthState,
 } from "@plane/etl/github";
-import {
+import { createGithubAuth, createGithubService, createGithubUserService } from "@plane/etl/github";
+import type {
   E_INTEGRATION_KEYS,
   TGithubAppConfig,
   TGithubWorkspaceConnection,
@@ -20,7 +18,7 @@ import {
 } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
 import { env } from "@/env";
-import { OAuthState, OAuthStrategy, OAuthTokenResponse } from "@/services/oauth/types";
+import type { OAuthState, OAuthStrategy, OAuthTokenResponse } from "@/services/oauth/types";
 import { ESourceAuthorizationType } from "@/types/oauth";
 import { Store } from "@/worker/base/store";
 import { GITHUB_ENTERPRISE_CONFIG_KEY } from "../../../apps/github-enterprise/helpers";

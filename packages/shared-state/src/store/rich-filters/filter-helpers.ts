@@ -1,10 +1,10 @@
 import { cloneDeep } from "lodash-es";
 import { action, makeObservable, observable, toJS } from "mobx";
 // plane imports
-import { DEFAULT_FILTER_EXPRESSION_OPTIONS, TAutoVisibilityOptions, TExpressionOptions } from "@plane/constants";
-import {
+import type { TAutoVisibilityOptions, TExpressionOptions } from "@plane/constants";
+import { DEFAULT_FILTER_EXPRESSION_OPTIONS } from "@plane/constants";
+import type {
   IFilterAdapter,
-  LOGICAL_OPERATOR,
   TSupportedOperators,
   TFilterConditionNode,
   TFilterExpression,
@@ -14,6 +14,7 @@ import {
   TLogicalOperator,
   TFilterConditionPayload,
 } from "@plane/types";
+import { LOGICAL_OPERATOR } from "@plane/types";
 import {
   addAndCondition,
   addOrCondition,
@@ -26,7 +27,7 @@ import {
   wrapInNotGroup,
 } from "@plane/utils";
 // local imports
-import { type IFilterInstance } from "./filter";
+import type { IFilterInstance } from "./filter";
 
 type TFilterInstanceHelperParams<P extends TFilterProperty, E extends TExternalFilter> = {
   adapter: IFilterAdapter<P, E>;
@@ -79,9 +80,10 @@ export interface IFilterInstanceHelper<P extends TFilterProperty, E extends TExt
  * @template K - The filter property type extending TFilterProperty
  * @template E - The external filter type extending TExternalFilter
  */
-export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternalFilter>
-  implements IFilterInstanceHelper<P, E>
-{
+export class FilterInstanceHelper<
+  P extends TFilterProperty,
+  E extends TExternalFilter,
+> implements IFilterInstanceHelper<P, E> {
   // parent filter instance
   private _filterInstance: IFilterInstance<P, E>;
   // adapter

@@ -1,5 +1,5 @@
 // plane sdk
-import {
+import type {
   ExIssueAttachment,
   ExIssueComment,
   ExIssueProperty,
@@ -21,7 +21,7 @@ import {
 } from "@/asana/helpers";
 // types
 import { CUSTOM_FIELD_ATTRIBUTES } from "@/asana/helpers/custom-field-etl";
-import {
+import type {
   AsanaCustomFieldSettings,
   AsanaEnumOption,
   AsanaTag,
@@ -32,7 +32,8 @@ import {
   PriorityConfigSettings,
   StateConfig,
 } from "@/asana/types";
-import { E_IMPORTER_KEYS, TPropertyValuesPayload } from "@/core";
+import type { TPropertyValuesPayload } from "@/core";
+import { E_IMPORTER_KEYS } from "@/core";
 
 export const transformTask = (
   task: AsanaTask,

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -12,7 +11,7 @@ import type { TProperties } from "@/ce/constants/project";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 export type TIntakeFeatureList = {
   [key: string]: TProperties & {
@@ -32,7 +31,7 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
   const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
-  const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
 
   if (!workspaceSlug || !projectId) return null;
 
@@ -46,7 +45,6 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
 
   return (
     <>
-      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3", className)}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
@@ -54,7 +52,13 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
             const feature = featureList[featureKey];
 
             return (
-              <div key={featureKey} className={cn("gap-x-8 gap-y-3 bg-custom-background-100 py-3")}>
+              <div
+                key={featureKey}
+                className={cn(
+                  "gap-x-8 gap-y-3 py-3",
+                  isTooltip ? "bg-custom-background-100" : "bg-custom-background-90"
+                )}
+              >
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
                   <div className="flex gap-2 w-full">
                     <div
@@ -110,7 +114,7 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
                               >
                                 <ToggleSwitch
                                   value={false}
-                                  onChange={(e) => {}}
+                                  onChange={() => {}}
                                   size="sm"
                                   className={isAdmin ? "opacity-30" : ""}
                                   disabled={!isAdmin}

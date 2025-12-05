@@ -1,19 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+import { v4 as uuidv4 } from "uuid";
 import { ArrowUp, Disc, Square } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { EditorRefApi } from "@plane/editor";
+
 import { PiChatEditorWithRef } from "@plane/editor";
+import type { TPiChatEditorRefApi } from "@plane/editor";
 import { cn, isCommentEmpty, joinUrlPath } from "@plane/utils";
 // hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import type { TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
+import type { TChatContextData, TFocus, TPiAttachment, TPiLoaders } from "@/plane-web/types";
 // local imports
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import AudioRecorder, { SPEECH_LOADERS } from "../converse/voice-input";
@@ -34,6 +37,7 @@ type TProps = {
   shouldRedirect?: boolean;
   isProjectLevel?: boolean;
   showProgress?: boolean;
+  contextData?: TChatContextData;
 };
 
 export const InputBox = observer((props: TProps) => {
@@ -44,6 +48,7 @@ export const InputBox = observer((props: TProps) => {
     isProjectLevel = false,
     showProgress = false,
     isFullScreen = false,
+    contextData,
   } = props;
 
   // store hooks
@@ -60,21 +65,32 @@ export const InputBox = observer((props: TProps) => {
   } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // router
-  const { workspaceSlug, projectId, chatId: routeChatId } = useParams();
+  const { workspaceSlug, projectId, workItem, chatId: routeChatId } = useParams();
   const router = useRouter();
+  const { getProjectByIdentifier } = useProject();
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
-  const chatFocus = getChatFocus(activeChatId, projectId?.toString(), workspaceId?.toString());
+  const [projectIdentifier] = workItem?.split("-") ?? [];
+  const projectDetails = getProjectByIdentifier(projectIdentifier);
+  const projectIdToUse = projectDetails?.id || projectId || "";
+  const chatFocus = getChatFocus(activeChatId);
   const attachmentsUploadStatus = getAttachmentsUploadStatusByChatId(activeChatId || "");
   // state
-  const [focus, setFocus] = useState<TFocus>(chatFocus);
+  const [focus, setFocus] = useState<TFocus>(
+    chatFocus || {
+      isInWorkspaceContext: true,
+      entityType: projectIdToUse ? "project_id" : "workspace_id",
+      entityIdentifier: projectIdToUse?.toString() || workspaceId?.toString() || "",
+    }
+  );
   const [loader, setLoader] = useState<TPiLoaders>("");
   const [attachments, setAttachments] = useState<TPiAttachment[]>([]);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
-  const editorRef = useRef<EditorRefApi>(null);
+  const editorRef = useRef<TPiChatEditorRefApi>(null);
 
   useSWR(`PI_MODELS`, () => fetchModels(workspaceId), {
     revalidateOnFocus: false,
@@ -85,6 +101,17 @@ export const InputBox = observer((props: TProps) => {
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
+
+  const addContext = useCallback((): void => {
+    if (!contextData) return;
+
+    editorRef.current?.addChatContext({
+      id: uuidv4(),
+      label: contextData.subTitle || contextData.title || "",
+      entity_identifier: contextData.id,
+      target: contextData.type,
+    });
+  }, [contextData]);
 
   const handleSubmit = useEvent(async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -118,6 +145,7 @@ export const InputBox = observer((props: TProps) => {
       attachmentIds
     );
     editorCommands.current?.clear();
+    addContext();
     setLoader("");
     setAttachments([]);
   });
@@ -127,10 +155,10 @@ export const InputBox = observer((props: TProps) => {
     abortStream(activeChatId || "");
   };
 
-  const getMentionSuggestions = async (query: string) => {
+  const getMentionSuggestions = useEvent(async (query) => {
     const response = await searchCallback(workspaceSlug.toString(), query, focus);
     return formatSearchQuery(response);
-  };
+  });
 
   useEffect(() => {
     if (chatFocus) {
@@ -141,7 +169,14 @@ export const InputBox = observer((props: TProps) => {
       };
       setFocus(presentFocus);
     }
-  }, [isChatLoading]);
+  }, [isChatLoading, chatFocus]);
+
+  // Adding context for the sidecar
+  useEffect(() => {
+    if (isEditorReady) {
+      addContext();
+    }
+  }, [contextData, isEditorReady, addContext]);
 
   if (!workspaceId) return;
   return (
@@ -198,39 +233,50 @@ export const InputBox = observer((props: TProps) => {
                 className={cn("flex-1  max-h-[250px] min-h-[70px]", {
                   "absolute w-0": SPEECH_LOADERS.includes(loader),
                 })}
+                onEditorReady={() => setIsEditorReady(true)}
                 ref={editorRef}
               />
               <div className="flex w-full gap-3 justify-between">
                 {/* Focus */}
                 {!SPEECH_LOADERS.includes(loader) && (
-                  <FocusFilter focus={focus} setFocus={setFocus} isLoading={isChatLoading && !!activeChatId} />
+                  <FocusFilter
+                    workspaceId={workspaceId}
+                    projectId={projectIdToUse}
+                    focus={focus}
+                    setFocus={setFocus}
+                    isLoading={isChatLoading && !!activeChatId}
+                  />
                 )}
                 <div className="flex items-center w-full justify-end gap-2">
-                  {/* speech recorder */}
-                  <WithFeatureFlagHOC
-                    workspaceSlug={workspaceSlug?.toString()}
-                    flag={E_FEATURE_FLAGS.PI_CONVERSE}
-                    fallback={<></>}
-                  >
-                    <AudioRecorder
-                      workspaceId={workspaceId}
-                      chatId={activeChatId}
-                      editorRef={editorRef}
-                      createNewChat={createNewChat}
-                      isProjectLevel={isProjectLevel}
-                      loader={loader}
-                      setLoader={setLoader}
-                      isFullScreen={isFullScreen}
-                      focus={focus}
-                    />
-                  </WithFeatureFlagHOC>
-                  <WithFeatureFlagHOC
-                    workspaceSlug={workspaceSlug?.toString()}
-                    flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
-                    fallback={<></>}
-                  >
-                    {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
-                  </WithFeatureFlagHOC>
+                  <div className="flex w-full justify-end">
+                    {/* speech recorder */}
+                    <WithFeatureFlagHOC
+                      workspaceSlug={workspaceSlug?.toString()}
+                      flag={E_FEATURE_FLAGS.PI_CONVERSE}
+                      fallback={<></>}
+                    >
+                      <AudioRecorder
+                        workspaceId={workspaceId}
+                        chatId={activeChatId}
+                        editorRef={editorRef}
+                        createNewChat={createNewChat}
+                        isProjectLevel={isProjectLevel}
+                        loader={loader}
+                        setLoader={setLoader}
+                        isFullScreen={isFullScreen}
+                        focus={focus}
+                      />
+                    </WithFeatureFlagHOC>
+                    {!SPEECH_LOADERS.includes(loader) && (
+                      <WithFeatureFlagHOC
+                        workspaceSlug={workspaceSlug?.toString()}
+                        flag={E_FEATURE_FLAGS.PI_FILE_UPLOADS}
+                        fallback={<></>}
+                      >
+                        {workspaceId && <AttachmentActionButton open={open} isLoading={isUploading} />}
+                      </WithFeatureFlagHOC>
+                    )}
+                  </div>
                   {!SPEECH_LOADERS.includes(loader) && (
                     <button
                       className={cn(

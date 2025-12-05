@@ -1,5 +1,6 @@
 import { ENTITIES } from "../helpers/constants";
-import { E_MESSAGE_ACTION_TYPES, MetadataPayloadShort } from "../types/types";
+import type { MetadataPayloadShort } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export const createWebLinkModal = (payload: MetadataPayloadShort) => ({
   type: "modal",

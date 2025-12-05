@@ -1,5 +1,5 @@
 import { EUserWorkspaceRoles } from "@plane/types";
-import { IWorkspaceSidebarNavigationItem } from "./workspace";
+import type { IWorkspaceSidebarNavigationItem } from "./workspace";
 
 export const EXTENDED_WORKSPACE_SETTINGS = {
   integrations: {
@@ -71,6 +71,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     href: `/settings/plane-intelligence`,
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/plane-intelligence/`,
+  },
+  wiki: {
+    key: "wiki",
+    i18n_label: "workspace_settings.settings.wiki.title",
+    href: `/settings/wiki`,
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/wiki/`,
   },
 };
 

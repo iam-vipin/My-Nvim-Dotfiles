@@ -4,6 +4,7 @@ import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ArchiveIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
@@ -11,13 +12,13 @@ import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
 import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TProject } from "@/plane-web/types/projects";
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 
 type Props = {
   project: TProject;
@@ -118,7 +119,7 @@ export const Details: React.FC<Props> = observer((props) => {
     },
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}),
+      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (isOwner || isMember),
@@ -134,10 +135,7 @@ export const Details: React.FC<Props> = observer((props) => {
       <div className="relative ">
         <div>
           <img
-            src={getFileURL(
-              project.cover_image_url ??
-                "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-            )}
+            src={getCoverImageDisplayURL(project.cover_image_url, DEFAULT_COVER_IMAGE_URL)}
             alt={project.name}
             className="relative w-full rounded-t object-cover h-[120px]"
             // ref={projectCardRef}

@@ -62,6 +62,7 @@ class ProjectModuleExportEndpoint(BaseAPIView):
             token_id=exporter.token,
             multiple=False,
             slug=slug,
+            export_type="issue",
         )
 
         # Return the response

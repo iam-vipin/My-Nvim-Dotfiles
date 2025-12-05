@@ -9,6 +9,7 @@ from django.db.models import Q
 from .project import ProjectBaseModel, ProjectMember
 from .base import BaseModel
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+from plane.ee.models import IntakeForm
 
 
 class IssueTypeQuerySet(SoftDeletionQuerySet):
@@ -25,13 +26,11 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
 
         base_query = Q(project_issue_types__project_id__in=member_project_ids)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.TEAMSPACES, user_id=user_id, slug=slug):
             ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member_id=user_id, workspace__slug=slug
-            ).values_list("team_space_id", flat=True)
+            teamspace_ids = TeamspaceMember.objects.filter(member_id=user_id, workspace__slug=slug).values_list(
+                "team_space_id", flat=True
+            )
 
             member_project_ids = ProjectMember.objects.filter(
                 member_id=user_id, workspace__slug=slug, is_active=True
@@ -45,8 +44,7 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
             )
 
             return self.filter(
-                Q(project_issue_types__project_id__in=teamspace_project_ids)
-                | base_query,
+                Q(project_issue_types__project_id__in=teamspace_project_ids) | base_query,
             )
 
         return self.filter(base_query)
@@ -56,9 +54,7 @@ class IssueTypeManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return IssueTypeQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True
-        )
+        return IssueTypeQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
@@ -82,6 +78,12 @@ class IssueType(BaseModel):
         verbose_name = "Issue Type"
         verbose_name_plural = "Issue Types"
         db_table = "issue_types"
+
+    def save(self, *args, **kwargs):
+        # If the issue type is not active, then if any form should be also deactivated
+        if not self.is_active:
+            IntakeForm.objects.filter(work_item_type_id=self.id).update(is_active=False)
+        super(IssueType, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name

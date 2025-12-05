@@ -27,6 +27,8 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
+// plane web imports
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web components
@@ -73,7 +75,7 @@ type Props = {
   onCollaborationStateChange?: (state: CollaborationState) => void;
 };
 
-export const PageEditorBody: React.FC<Props> = observer((props) => {
+export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const {
     config,
     editorForwardRef,
@@ -94,7 +96,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   // states
   const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   // refs
   const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
@@ -108,27 +109,26 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     isContentEditable,
     editor: { editorRef, updateAssetsList },
     setSyncingStatus,
+    getMentionDetails,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
 
-  // Simple animation effect that triggers on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100); // Slightly longer delay for smoother coordination
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // use editor mention
   const { fetchMentions } = useEditorMention({
+    enableAdvancedMentions: true,
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug,
+    projectId,
     storeType,
+  });
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
   });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
@@ -158,8 +158,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   useEffect(() => {
     setSyncingStatus("syncing");
     onCollaborationStateChange?.({
-      connectionStatus: "connecting",
-      syncStatus: "syncing",
+      stage: { kind: "connecting" },
+      isServerSynced: false,
+      isServerDisconnected: false,
     });
   }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
@@ -182,13 +183,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         // Pass full state to parent
         onCollaborationStateChange?.(state);
 
-        // Update local syncing status for UI
-        if (state.connectionStatus === "disconnected") {
+        // Map collaboration stage to UI syncing status
+        // Stage → UI mapping: disconnected → error | synced → synced | all others → syncing
+        if (state.stage.kind === "disconnected") {
           setSyncingStatus("error");
-        } else if (state.connectionStatus === "connected" && state.syncStatus === "synced") {
+        } else if (state.stage.kind === "synced") {
           setSyncingStatus("synced");
         } else {
-          // Handles "connecting", "reconnecting", "connected but not synced", etc.
+          // initial, connecting, awaiting-sync, reconnecting → show as syncing
           setSyncingStatus("syncing");
         }
       },
@@ -239,11 +241,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   );
 
   const isPageLoading = pageId === undefined || !realtimeConfig;
+
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
-      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -267,13 +270,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-        <div
-          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
-          style={{
-            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
-            animationDelay: "100ms",
-          }}
-        >
+        <div>
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
               <PageEditorHeaderRoot
@@ -295,13 +292,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             titleRef={titleEditorRef}
             containerClassName="h-full p-0 pb-64"
             displayConfig={displayConfig}
+            getEditorMetaData={getEditorMetaData}
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);
                 if (!res) throw new Error("Failed in fetching mentions");
                 return res;
               },
-              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              renderComponent: (props) => <EditorMentionsRoot {...props} getMentionDetails={getMentionDetails} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}
             onAssetChange={updateAssetsList}

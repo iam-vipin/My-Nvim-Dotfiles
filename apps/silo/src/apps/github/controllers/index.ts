@@ -1,11 +1,8 @@
 import crypto from "crypto";
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 import { Controller, Get, Post, Middleware } from "@plane/decorators";
 import { E_ENTITY_CONNECTION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
-import {
-  createGithubAuth,
-  createGithubService,
-  createGithubUserService,
+import type {
   GithubAuthorizeState,
   GithubInstallation,
   GithubPlaneOAuthState,
@@ -13,9 +10,11 @@ import {
   GithubUserAuthState,
   GithubWebhookPayload,
 } from "@plane/etl/github";
+import { createGithubAuth, createGithubService, createGithubUserService } from "@plane/etl/github";
 import { logger } from "@plane/logger";
-import { ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceConnection } from "@plane/types";
+import type { ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
@@ -26,7 +25,8 @@ import { getAPIClient } from "@/services/client";
 import { planeOAuthService } from "@/services/oauth";
 import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
-import { E_GITHUB_DISCONNECT_SOURCE, GithubUserMap } from "../types";
+import type { GithubUserMap } from "../types";
+import { E_GITHUB_DISCONNECT_SOURCE } from "../types";
 
 export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
@@ -721,6 +721,7 @@ export default class GithubController {
             repositoryName: issuePayload.repository.name,
             issueNumber: issuePayload.issue.number,
             eventActorId: issuePayload?.sender?.id,
+            action: issuePayload.action,
           },
           Number(env.DEDUP_INTERVAL)
         );

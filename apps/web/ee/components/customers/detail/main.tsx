@@ -7,15 +7,18 @@ import { ExternalLink } from "lucide-react";
 import { CUSTOMER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import type { TCustomerPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
+import type { TCustomerPayload } from "@plane/types";
+// components
 import { Tabs } from "@plane/ui";
-// hooks
 import { formatURLForDisplay } from "@plane/utils";
+// components
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { DescriptionInput } from "@/plane-web/components/common/input/description-input";
 import { TitleInput } from "@/plane-web/components/common/input/title-input";
 import { MainWrapper } from "@/plane-web/components/common/layout/main/main-wrapper";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";
@@ -182,16 +185,18 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
       {/* Description Editor */}
       <div className="border-custom-border-200 border-b-[0.5px] pb-3">
         <DescriptionInput
-          workspaceSlug={workspaceSlug}
-          itemId={customerId}
-          initialValue={customer.description_html}
-          swrDescription={customer.description_html}
-          onSubmit={(value: string) => handleUpdateCustomer({ description_html: value })}
-          fileAssetType={EFileAssetType.CUSTOMER_DESCRIPTION}
-          setIsSubmitting={setIsSubmitting}
           containerClassName="border-none min-h-[88px]"
           disabled={!isEditable}
           disabledExtensions={["attachments"]}
+          entityId={customerId}
+          fileAssetType={EFileAssetType.CUSTOMER_DESCRIPTION}
+          initialValue={customer.description_html}
+          onSubmit={async (value: string) => {
+            await handleUpdateCustomer({ description_html: value });
+          }}
+          setIsSubmitting={setIsSubmitting}
+          swrDescription={customer.description_html}
+          workspaceSlug={workspaceSlug}
         />
       </div>
       <Tabs

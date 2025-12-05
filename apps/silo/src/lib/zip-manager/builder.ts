@@ -1,6 +1,7 @@
 import { Store } from "@/worker/base";
-import { StorageProvider, S3StorageProvider } from "./storage-provider";
-import { TZipManagerOptions } from "./types";
+import type { StorageProvider } from "./storage-provider";
+import { S3StorageProvider } from "./storage-provider";
+import type { TZipManagerOptions } from "./types";
 import { ZipManager } from "./zip-manager";
 
 export function createZipManager(options: TZipManagerOptions): ZipManager {

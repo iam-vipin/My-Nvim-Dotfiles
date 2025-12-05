@@ -4,7 +4,6 @@ import logging
 import zipfile
 from typing import List
 from uuid import UUID
-import os
 
 # Third party imports
 from celery import shared_task
@@ -14,14 +13,14 @@ from django.db.models import Prefetch
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, IssueRelation
+from plane.db.models import ExporterHistory, Issue, IssueRelation, StateGroup
 from plane.ee.models import CustomerRequestIssue, InitiativeEpic
+from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
 from plane.utils.exporters import Exporter, IssueExportSchema
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
-from plane.utils.issue_filters import issue_filters
-from plane.settings.storage import S3Storage
 from plane.utils.host import base_host
+from plane.utils.issue_filters import issue_filters
 
 # Logger
 logger = logging.getLogger("plane.worker")
@@ -29,19 +28,20 @@ logger = logging.getLogger("plane.worker")
 
 class _FakeDjangoRequest:
     def __init__(self):
-        from django.http import QueryDict
         from urllib.parse import urlparse
-        
+
+        from django.http import QueryDict
+
         self.GET = QueryDict(mutable=True)
-        
+
         # Get the public URL from environment variables
         web_url = base_host(is_app=True, request=None)
         parsed_url = urlparse(web_url)
-        
+
         # Add scheme and host attributes needed by S3Storage
         self.scheme = parsed_url.scheme or "http"
         self._host = parsed_url.netloc or "localhost"
-    
+
     def get_host(self):
         return self._host
 
@@ -60,7 +60,6 @@ class _ExportFilterView:
 
     def __init__(self, request):
         self.request = request
-
 
 
 def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
@@ -83,9 +82,12 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
     """
     file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
 
-    logger.info("Uploading export file to S3", {
-        "file_name": file_name,
-    })
+    logger.info(
+        "Uploading export file to S3",
+        {
+            "file_name": file_name,
+        },
+    )
 
     expires_in = 7 * 24 * 60 * 60
 
@@ -117,9 +119,12 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
 
     # Update the exporter instance with the presigned url
     if presigned_url:
-        logger.info("Uploaded export file to S3", {
-            "file_name": file_name,
-        })
+        logger.info(
+            "Uploaded export file to S3",
+            {
+                "file_name": file_name,
+            },
+        )
         exporter_instance.url = presigned_url
         exporter_instance.status = "completed"
         exporter_instance.key = file_name
@@ -127,12 +132,13 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
         exporter_instance.status = "failed"
         logger.error("Failed to upload export file to S3")
 
-    logger.info("Saving exporter instance", {
-        "exporter_instance": exporter_instance,
-    })
+    logger.info(
+        "Saving exporter instance",
+        {
+            "exporter_instance": exporter_instance,
+        },
+    )
     exporter_instance.save(update_fields=["status", "url", "key"])
-
-
 
 
 @shared_task
@@ -143,12 +149,14 @@ def issue_export_task(
     token_id: str,
     multiple: bool,
     slug: str,
+    export_type: str | None = None,
 ):
     """
     Export issues from the workspace.
     provider (str): The provider to export the issues to csv | json | xlsx.
     token_id (str): The export object token id.
     multiple (bool): Whether to export the issues to multiple files per project.
+    export_type (str | None): The type of export (epic, intake, issue, etc.).
     """
 
     logger.info(f"Export started for work-items for project {project_ids} in workspace {workspace_id}")
@@ -158,14 +166,32 @@ def issue_export_task(
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
-        logger.info("Building base queryset for issues", {
-            "workspace_id": workspace_id,
-            "type": exporter_instance.type,
-        })
+        logger.info(
+            "Building base queryset for issues",
+            {
+                "workspace_id": workspace_id,
+                "type": exporter_instance.type,
+                "export_type": export_type,
+            },
+        )
 
-        # Build base queryset for issues
+        # Build base queryset with export_type-specific manager and filters
+        if export_type == "epic":
+            # Use issue_and_epics_objects manager for epics with epic filter
+            base_queryset = Issue.issue_and_epics_objects.filter(type__is_epic=True)
+        elif export_type == "intake":
+            # Use objects manager for intake with triage state filter
+            base_queryset = Issue.objects.filter(state__group=StateGroup.TRIAGE.value)
+        elif export_type == "issue":
+            # Use issue_objects manager for regular issues (workitem, cycle, module, view)
+            base_queryset = Issue.issue_objects.all()
+        else:
+            # Default: Use objects manager to export all types of issues (workspace export)
+            base_queryset = Issue.objects.all()
+
+        # Apply common filters
         workspace_issues = (
-            Issue.objects.filter(
+            base_queryset.filter(
                 workspace__id=workspace_id,
                 project_id__in=project_ids,
                 project__project_projectmember__member=exporter_instance.initiated_by_id,
@@ -215,9 +241,12 @@ def issue_export_task(
 
         # Apply filters if present
         rich_filters = exporter_instance.rich_filters
-        logger.info("Applying rich filters", {
-            "rich_filters": rich_filters,
-        })
+        logger.info(
+            "Applying rich filters",
+            {
+                "rich_filters": rich_filters,
+            },
+        )
         if rich_filters:
             backend = ComplexFilterBackend()
             fake_request = _FakeDRFRequest()
@@ -229,16 +258,17 @@ def issue_export_task(
                 filter_data=rich_filters,
             )
 
-
         # Apply legacy filters if present
         filters = exporter_instance.filters
-        logger.info("Applying legacy filters", {
-            "filters": filters,
-        })
+        logger.info(
+            "Applying legacy filters",
+            {
+                "filters": filters,
+            },
+        )
         if filters:
             filters = issue_filters(filters, "GET")
             workspace_issues = workspace_issues.filter(**filters)
-
 
         # Create exporter for the specified format
         try:
@@ -249,22 +279,24 @@ def issue_export_task(
             )
         except ValueError as e:
             # Invalid format type
-            logger.error("Invalid format type", {
-                "error": str(e),
-            })
+            logger.error(
+                "Invalid format type",
+                {
+                    "error": str(e),
+                },
+            )
             exporter_instance = ExporterHistory.objects.get(token=token_id)
             exporter_instance.status = "failed"
             exporter_instance.reason = str(e)
             exporter_instance.save(update_fields=["status", "reason"])
             return
 
-
         logger.info(
             "Creating files",
             {
                 "multiple": multiple,
                 "project_ids": project_ids,
-            }
+            },
         )
         files = []
         if multiple:

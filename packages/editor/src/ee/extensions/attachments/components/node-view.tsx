@@ -1,7 +1,10 @@
-import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
+// plane utils
+import { cn } from "@plane/utils";
 // local imports
-import { type AttachmentExtension, type TAttachmentBlockAttributes } from "../types";
+import type { AttachmentExtension, TAttachmentBlockAttributes } from "../types";
 import { CustomAttachmentBlock } from "./block";
 import { CustomAttachmentFlaggedState } from "./flagged-state";
 import { CustomAttachmentUploader } from "./uploader";
@@ -15,7 +18,7 @@ export type CustomAttachmentNodeViewProps = Omit<NodeViewProps, "extension"> & {
 };
 
 export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> = (props) => {
-  const { extension, node } = props;
+  const { editor, extension, node } = props;
   // states
   const [resolvedSource, setResolvedSource] = useState<string | null>(null);
   // refs
@@ -24,6 +27,7 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
   const { src } = node.attrs;
   const isAttachmentUploaded = !!src;
   const isExtensionFlagged = extension.options.isFlagged;
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   useEffect(() => {
     if (!src || resolvedSource) return;
@@ -35,7 +39,11 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
   }, [extension.options, resolvedSource, src]);
 
   return (
-    <NodeViewWrapper className="editor-attachment-component">
+    <NodeViewWrapper
+      className={cn("editor-attachment-component", {
+        "touch-select-none": isTouchDevice,
+      })}
+    >
       {isExtensionFlagged ? (
         <div className="p-0 mx-0 py-2 not-prose">
           <CustomAttachmentFlaggedState />
@@ -43,7 +51,11 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
       ) : (
         <div className="p-0 mx-0 py-2 not-prose" ref={attachmentComponentRef} contentEditable={false}>
           {isAttachmentUploaded ? (
-            <>{resolvedSource && <CustomAttachmentBlock {...props} resolvedSource={resolvedSource} />}</>
+            <>
+              {resolvedSource && (
+                <CustomAttachmentBlock {...props} isTouchDevice={isTouchDevice} resolvedSource={resolvedSource} />
+              )}
+            </>
           ) : (
             <CustomAttachmentUploader {...props} />
           )}

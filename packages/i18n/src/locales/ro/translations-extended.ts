@@ -31,6 +31,7 @@ export default {
     workflows: "Fluxuri de lucru",
     templates: "Șabloane",
     members_and_teamspaces: "Membri și spații de echipă",
+    open_in_full_screen: "Deschide {page} pe tot ecranul",
   },
   updates: {
     add_update: "Adaugă actualizare",
@@ -162,6 +163,28 @@ export default {
       settings_sub_heading:
         "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilitate de primire",
+        notify_assignee: {
+          title: "Notifică persoanele desemnate",
+          description: "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări",
+        },
+        toasts: {
+          set: {
+            loading: "Setarea persoanelor desemnate...",
+            success: {
+              title: "Succes!",
+              message: "Persoanele desemnate au fost setate cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Ceva a mers greșit la setarea persoanelor desemnate. Vă rugăm să încercați din nou.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Nicio integrare configurată",
@@ -208,6 +231,91 @@ export default {
         description: "Adaugă proprietăți personalizate la epicul tău.",
       },
       disabled: "Dezactivat",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Programare automată a ciclurilor",
+        description: "Mențineți ciclurile în mișcare fără configurare manuală.",
+        tooltip: "Creați automat cicluri noi pe baza programului ales.",
+        edit_button: "Editează",
+        form: {
+          cycle_title: {
+            label: "Titlul ciclului",
+            placeholder: "Titlu",
+            tooltip: "Titlul va fi completat cu numere pentru ciclurile următoare. De exemplu: Design - 1/2/3",
+            validation: {
+              required: "Titlul ciclului este obligatoriu",
+              max_length: "Titlul nu trebuie să depășească 255 de caractere",
+            },
+          },
+          cycle_duration: {
+            label: "Durata ciclului",
+            unit: "Săptămâni",
+            validation: {
+              required: "Durata ciclului este obligatorie",
+              min: "Durata ciclului trebuie să fie de cel puțin 1 săptămână",
+              max: "Durata ciclului nu poate depăși 30 de săptămâni",
+              positive: "Durata ciclului trebuie să fie pozitivă",
+            },
+          },
+          cooldown_period: {
+            label: "Perioadă de răcire",
+            unit: "zile",
+            tooltip: "Pauză între cicluri înainte de începerea următorului.",
+            validation: {
+              required: "Perioada de răcire este obligatorie",
+              negative: "Perioada de răcire nu poate fi negativă",
+            },
+          },
+          start_date: {
+            label: "Ziua de început a ciclului",
+            validation: {
+              required: "Data de început este obligatorie",
+              past: "Data de început nu poate fi în trecut",
+            },
+          },
+          number_of_cycles: {
+            label: "Numărul de cicluri viitoare",
+            validation: {
+              required: "Numărul de cicluri este obligatoriu",
+              min: "Este necesar cel puțin 1 ciclu",
+              max: "Nu se pot programa mai mult de 3 cicluri",
+            },
+          },
+          auto_rollover: {
+            label: "Transfer automat al elementelor de lucru",
+            tooltip:
+              "În ziua în care se completează un ciclu, mutați toate elementele de lucru nefinalizate în ciclul următor.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Se activează programarea automată a ciclurilor",
+            loading_disable: "Se dezactivează programarea automată a ciclurilor",
+            success: {
+              title: "Succes!",
+              message: "Programarea automată a ciclurilor a fost comutată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message: "Nu s-a putut comuta programarea automată a ciclurilor.",
+            },
+          },
+          save: {
+            loading: "Se salvează configurația programării automate a ciclurilor",
+            success: {
+              title: "Succes!",
+              message_create: "Configurația programării automate a ciclurilor a fost salvată cu succes.",
+              message_update: "Configurația programării automate a ciclurilor a fost actualizată cu succes.",
+            },
+            error: {
+              title: "Eroare!",
+              message_create: "Nu s-a putut salva configurația programării automate a ciclurilor.",
+              message_update: "Nu s-a putut actualiza configurația programării automate a ciclurilor.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -460,7 +568,7 @@ export default {
       },
       not_found: {
         title: "Inițiativa nu există",
-        description: "Inițiativa pe care o cauți nu există sau a fost ștearsă.",
+        description: "Inițiativa pe care o cauți nu există, a fost arhivată sau a fost ștearsă.",
         primary_button: {
           text: "Vezi alte Inițiative",
         },
@@ -660,7 +768,12 @@ export default {
         app_short_description_error: "Descrierea scurtă a aplicației este obligatorie",
         app_description_title: {
           label: "Descriere lungă",
-          placeholder: "Scrieți o descriere lungă pentru piață. Apăsați ‘/’ pentru comenzi.",
+          placeholder: "Scrieți o descriere lungă pentru piață. Apăsați '/' pentru comenzi.",
+        },
+        authorization_grant_type: {
+          title: "Tipul conexiunii",
+          description:
+            "Alege dacă aplicația ta trebuie instalată o dată pentru spațiul de lucru sau să permită fiecărui utilizator să își conecteze propriul cont",
         },
         app_description_error: "Descrierea aplicației este obligatorie",
         app_slug_title: "Slug-ul aplicației",
@@ -719,6 +832,10 @@ export default {
         categories_error: "Categorii sunt obligatorii",
         invalid_categories_error: "Categorii sunt inva",
         categories_description: "Selectează categorii care descriu cel mai bine aplicația",
+        supported_plans: "Planuri Suportate",
+        supported_plans_description:
+          "Selectează planurile de spațiu de lucru care pot instala această aplicație. Lasă gol pentru a permite toate planurile.",
+        select_plans: "Selectează Planuri",
         privacy_policy_url_title: "URL-ul politică de confidențialitate",
         privacy_policy_url_error: "Privacy Policy URL is required",
         invalid_privacy_policy_url_error: "URL-ul politică de confidențialitate este invalid",
@@ -794,8 +911,8 @@ export default {
         internal: "Intern",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe.",
       },
@@ -1507,7 +1624,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importă datele tale Jira Server în proiectele Plane.",
+    jira_server_importer_description: "Importă datele tale Jira Server/Data Center în proiectele Plane.",
     steps: {
       title_configure_plane: "Configurează Plane",
       description_configure_plane:

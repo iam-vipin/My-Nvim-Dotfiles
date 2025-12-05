@@ -1,4 +1,4 @@
-import { TClickUpPriority } from "./entities";
+import type { TClickUpPriority } from "./entities";
 // Feature configurations
 export type TClickUpDueDatesFeature = {
   enabled: boolean;

@@ -264,29 +264,38 @@ def get_workitem_tools(method_executor, context):
         # Resolve state name to UUID if needed
         resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
 
+        # Build update data with only non-None values to avoid overwriting existing fields
+        update_data = {
+            k: v
+            for k, v in {
+                "name": name,
+                "description_html": description_html,
+                "priority": priority,
+                "state": resolved_state,
+                "assignees": assignees,
+                "labels": labels,
+                "start_date": start_date,
+                "target_date": target_date,
+                "type_id": type_id,
+                "parent": parent,
+                "module_id": module_id,
+                "cycle_id": cycle_id,
+                "estimate_point": estimate_point,
+                "point": point,
+                "external_id": external_id,
+                "external_source": external_source,
+                "is_draft": is_draft,
+            }.items()
+            if v is not None
+        }
+
         result = await method_executor.execute(
             "workitems",
             "update",
             issue_id=issue_id,
-            name=name,
-            description_html=description_html,
             project_id=project_id,
             workspace_slug=workspace_slug,
-            priority=priority,
-            state=resolved_state,
-            assignees=assignees,
-            labels=labels,
-            start_date=start_date,
-            target_date=target_date,
-            type_id=type_id,
-            parent=parent,
-            module_id=module_id,
-            cycle_id=cycle_id,
-            estimate_point=estimate_point,
-            point=point,
-            external_id=external_id,
-            external_source=external_source,
-            is_draft=is_draft,
+            **update_data,
         )
 
         if result["success"]:
@@ -463,27 +472,36 @@ def get_workitem_tools(method_executor, context):
         # Resolve state name to UUID if needed
         resolved_state = await resolve_state_to_uuid(state, project_id, workspace_slug)
 
+        # Build update data with only non-None values to avoid overwriting existing fields
+        # Note: type_id is intentionally omitted to preserve epic type
+        update_data = {
+            k: v
+            for k, v in {
+                "name": name,
+                "description_html": description_html,
+                "priority": priority,
+                "state": resolved_state,
+                "assignees": assignees,
+                "labels": labels,
+                "start_date": start_date,
+                "target_date": target_date,
+                "parent": parent,
+                "estimate_point": estimate_point,
+                "point": point,
+                "external_id": external_id,
+                "external_source": external_source,
+                "is_draft": is_draft,
+            }.items()
+            if v is not None
+        }
+
         result = await method_executor.execute(
             "workitems",
             "update",
             issue_id=issue_id,
             project_id=project_id,
             workspace_slug=workspace_slug,
-            name=name,
-            description_html=description_html,
-            priority=priority,
-            state=resolved_state,
-            assignees=assignees,
-            labels=labels,
-            start_date=start_date,
-            target_date=target_date,
-            # Note: type_id is intentionally omitted to preserve epic type
-            parent=parent,
-            estimate_point=estimate_point,
-            point=point,
-            external_id=external_id,
-            external_source=external_source,
-            is_draft=is_draft,
+            **update_data,
         )
 
         if result["success"]:

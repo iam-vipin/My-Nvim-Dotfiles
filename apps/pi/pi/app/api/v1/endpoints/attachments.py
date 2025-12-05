@@ -2,6 +2,9 @@ import uuid
 
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import File
+from fastapi import Form
+from fastapi import UploadFile
 from fastapi.responses import JSONResponse
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -12,15 +15,13 @@ from pi.app.api.v1.dependencies import is_valid_session
 from pi.app.models.message_attachment import MessageAttachment
 from pi.app.schemas.attachment import AttachmentCompleteRequest
 from pi.app.schemas.attachment import AttachmentDetailResponse
-from pi.app.schemas.attachment import AttachmentResponse
-from pi.app.schemas.attachment import AttachmentUploadRequest
-from pi.app.schemas.attachment import AttachmentUploadResponse
-from pi.app.schemas.attachment import S3UploadData
 from pi.app.utils.attachments import allowed_attachment_types
+from pi.app.utils.attachments import detect_file_type
 from pi.app.utils.attachments import get_presigned_url_download
 from pi.app.utils.attachments import get_presigned_url_preview
 from pi.app.utils.attachments import get_s3_client
 from pi.app.utils.attachments import sanitize_filename
+from pi.app.utils.attachments import scan_file_for_malware
 from pi.config import settings
 from pi.core.db.plane_pi.lifecycle import get_async_session
 
@@ -33,11 +34,13 @@ S3_BUCKET = settings.AWS_S3_BUCKET
 
 @router.post("/upload-attachment/")
 async def create_attachment_upload(
-    data: AttachmentUploadRequest,
+    file: UploadFile = File(...),
+    workspace_id: str = Form(...),
+    chat_id: str = Form(...),
     db: AsyncSession = Depends(get_async_session),
     session: str = Depends(cookie_schema),
 ):
-    """Step 1: Create attachment record and generate S3 pre-signed upload URL"""
+    """Receive file, scan for security, then upload to S3 if safe"""
     try:
         auth = await is_valid_session(session)
         if not auth.user:
@@ -46,30 +49,49 @@ async def create_attachment_upload(
     except Exception as e:
         log.error(f"Error validating session: {e!s}")
         return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-
     try:
-        # Validate file size (10MB for images, 50MB for PDFs)
+        # Read file into memory
+        file_data = await file.read()
+        file_size = len(file_data)
+
+        # Validate file size
         max_size = settings.FILE_SIZE_LIMIT
-        if data.file_size > max_size:
+        if file_size > max_size:
             return JSONResponse(status_code=413, content={"detail": "File size exceeds limit"})
 
+        # Detect MIME type from file content (more secure than trusting client)
+        content_type = detect_file_type(file_data)
+        if content_type == "unknown":
+            # Fallback to content_type header if detection fails
+            content_type = file.content_type or "application/octet-stream"
+
         # Validate file type
-        if data.content_type not in allowed_attachment_types:
+        if content_type not in allowed_attachment_types:
             return JSONResponse(status_code=415, content={"detail": "Unsupported file type"})
 
-        sanitized_filename = sanitize_filename(data.filename)
+        # 🔒 SECURITY SCAN BEFORE UPLOADING TO S3
+        log.info(f"Scanning file before S3 upload: {file.filename}")
+        is_safe, error_message = await scan_file_for_malware(file_data, content_type, file.filename or "attachment")
+
+        if not is_safe:
+            log.warning(f"File rejected during pre-upload scan: {error_message}")
+            return JSONResponse(status_code=400, content={"detail": f"File rejected: {error_message}"})
+
+        log.info(f"File passed security scan: {file.filename}")
+
+        sanitized_filename = sanitize_filename(file.filename or "attachment")
 
         # Create attachment record
         attachment = MessageAttachment(
             original_filename=sanitized_filename,
-            content_type=data.content_type,
-            file_size=data.file_size,
-            file_type=MessageAttachment.get_file_type_from_mime(data.content_type),
+            content_type=content_type,
+            file_size=file_size,
+            file_type=MessageAttachment.get_file_type_from_mime(content_type),
             status="pending",
-            file_path="",  # Will be set after generating
-            workspace_id=data.workspace_id,
-            chat_id=data.chat_id,
-            message_id=None,  # Will be set later when message is created
+            file_path="",
+            workspace_id=workspace_id,
+            chat_id=chat_id,
+            message_id=None,
             user_id=user_id,
         )
 
@@ -78,47 +100,36 @@ async def create_attachment_upload(
         await db.refresh(attachment)
 
         # Generate S3 file path
-        file_path = attachment.generate_file_path(data.workspace_id, data.chat_id)
+        file_path = attachment.generate_file_path(uuid.UUID(workspace_id), uuid.UUID(chat_id))
         attachment.file_path = file_path
 
-        # Generate pre-signed POST data for S3 upload
+        # Upload DIRECTLY to S3 (since we already have the clean file data)
         s3_client = get_s3_client()
-        presigned_post = s3_client.generate_presigned_post(
-            Bucket=S3_BUCKET,
-            Key=file_path,
-            Fields={"Content-Type": data.content_type},
-            Conditions=[
-                {"Content-Type": data.content_type},
-                ["content-length-range", 1, settings.FILE_SIZE_LIMIT],
-            ],
-            ExpiresIn=600,  # 5 minutes
-        )
+        s3_client.put_object(Bucket=S3_BUCKET, Key=file_path, Body=file_data, ContentType=content_type)
 
+        # Mark as uploaded immediately
+        attachment.status = "uploaded"
         await db.commit()
 
+        log.info(f"File scanned and uploaded successfully: {file_path}")
+
         # Prepare response
-        attachment_response = AttachmentResponse(
-            id=str(attachment.id),
-            filename=attachment.original_filename,
-            content_type=attachment.content_type,
-            file_size=attachment.file_size,
-            file_type=attachment.file_type,
-            status=attachment.status,
-        )
+        download_url = get_presigned_url_download(attachment)
 
         return JSONResponse(
-            content=AttachmentUploadResponse(
-                upload_data=S3UploadData(
-                    url=presigned_post["url"],
-                    fields=presigned_post["fields"],
-                ),
-                attachment_id=str(attachment.id),
-                attachment=attachment_response,
+            content=AttachmentDetailResponse(
+                id=str(attachment.id),
+                filename=attachment.original_filename,
+                content_type=attachment.content_type,
+                file_size=attachment.file_size,
+                file_type=attachment.file_type,
+                status=attachment.status,
+                attachment_url=download_url,
             ).model_dump()
         )
 
     except Exception as e:
-        log.error(f"Error creating attachment upload: {e!s}")
+        log.error(f"Error in secure file upload: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
@@ -128,7 +139,7 @@ async def complete_attachment_upload(
     db: AsyncSession = Depends(get_async_session),
     session: str = Depends(cookie_schema),
 ):
-    """Step 3: Complete attachment upload and optionally link to message"""
+    """Complete attachment upload - only for failed uploads or linking to messages"""
     try:
         auth = await is_valid_session(session)
         if not auth.user:
@@ -151,10 +162,26 @@ async def complete_attachment_upload(
         if not attachment:
             return JSONResponse(status_code=404, content={"detail": "Attachment not found"})
 
+        # Only process if attachment is in pending state (upload failed)
+        if attachment.status == "uploaded":
+            # Already uploaded, just return the attachment details
+            download_url = get_presigned_url_download(attachment)
+            return JSONResponse(
+                content=AttachmentDetailResponse(
+                    id=str(attachment.id),
+                    filename=attachment.original_filename,
+                    content_type=attachment.content_type,
+                    file_size=attachment.file_size,
+                    file_type=attachment.file_type,
+                    status=attachment.status,
+                    attachment_url=download_url,
+                ).model_dump()
+            )
+
         if attachment.status != "pending":
             return JSONResponse(status_code=409, content={"detail": "Attachment already processed"})
 
-        # Verify file exists in S3 before marking as uploaded
+        # For pending attachments, verify file exists in S3 (no re-scanning needed)
         try:
             s3_client = get_s3_client()
             s3_client.head_object(Bucket=S3_BUCKET, Key=attachment.file_path)
@@ -163,7 +190,7 @@ async def complete_attachment_upload(
             log.error(f"S3 file verification failed for {attachment.file_path}: {s3_error}")
             return JSONResponse(status_code=400, content={"detail": "File not found in S3. Please upload the file first."})
 
-        # Update attachment status only after S3 verification
+        # Update attachment status to uploaded (file was already scanned during upload-attachment)
         attachment.status = "uploaded"
         download_url = get_presigned_url_download(attachment)
 

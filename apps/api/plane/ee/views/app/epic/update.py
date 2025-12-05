@@ -15,6 +15,8 @@ from plane.db.models import Workspace, Issue
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import EntityUpdates, UpdateReaction, EntityTypeEnum
 from plane.ee.utils.nested_issue_children import get_all_related_issues
+from plane.bgtasks.email_notification_task import create_emaillogs_for_epic_updates
+from plane.utils.host import base_host
 
 
 class EpicsUpdateViewSet(BaseAPIView):
@@ -40,9 +42,7 @@ class EpicsUpdateViewSet(BaseAPIView):
         )
         update_status = None
 
-        completed_sub_issues = (
-            sub_issues["completed_sub_issues"] + sub_issues["cancelled_sub_issues"]
-        )
+        completed_sub_issues = sub_issues["completed_sub_issues"] + sub_issues["cancelled_sub_issues"]
 
         if request.data.get("parent"):
             parent_update = EntityUpdates.objects.get(
@@ -63,6 +63,10 @@ class EpicsUpdateViewSet(BaseAPIView):
                 completed_issues=completed_sub_issues,
             )
 
+            # Create email logs
+            create_emaillogs_for_epic_updates.delay(
+                serializer.data, request.user.id, origin=base_host(request=request, is_app=True), verb="created"
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -164,9 +168,7 @@ class EpicsUpdatesReactionViewSet(BaseAPIView):
     def post(self, request, slug, project_id, epic_id, update_id):
         serializer = UpdateReactionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, actor_id=request.user.id, update_id=update_id
-            )
+            serializer.save(project_id=project_id, actor_id=request.user.id, update_id=update_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

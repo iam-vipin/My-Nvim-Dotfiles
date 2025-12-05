@@ -69,7 +69,7 @@ export const WorkItemBlueprintDetails = <T extends FieldValues>(props: TWorkItem
   const {
     project: { getProjectMemberIds: getProjectMemberIdsFromStore },
   } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // form context
   const {
     control,
@@ -181,6 +181,20 @@ export const WorkItemBlueprintDetails = <T extends FieldValues>(props: TWorkItem
                 } catch (error) {
                   console.log("Error in uploading work item asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityType: assetEntityType,
+                    projectId: projectId ?? undefined,
+                    workspaceSlug: workspaceSlug || "",
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in duplicating work item asset:", error);
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
             />

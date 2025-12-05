@@ -1,17 +1,13 @@
-"use client";
-
 import type { FC } from "react";
-import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
+import { useCommentMenuItems } from "@/components/common/quick-actions-helper";
 import { useUser } from "@/hooks/store/user";
 
 type TCommentCard = {
@@ -28,53 +24,29 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
   const { data: currentUser } = useUser();
   // derived values
   const isAuthor = currentUser?.id === comment.actor;
-  const canEdit = isAuthor;
-  const canDelete = isAuthor;
-  // translation
-  const { t } = useTranslation();
 
-  const MENU_ITEMS: TContextMenuItem[] = useMemo(
-    () => [
-      {
-        key: "edit",
-        action: setEditMode,
-        title: t("common.actions.edit"),
-        icon: Pencil,
-        shouldRender: canEdit,
-      },
-      {
-        key: "copy_link",
-        action: () => activityOperations.copyCommentLink(comment.id),
-        title: t("common.actions.copy_link"),
-        icon: Link,
-        shouldRender: showCopyLinkOption,
-      },
-      {
-        key: "access_specifier",
-        action: () =>
-          activityOperations.updateComment(comment.id, {
-            access:
-              comment.access === EIssueCommentAccessSpecifier.INTERNAL
-                ? EIssueCommentAccessSpecifier.EXTERNAL
-                : EIssueCommentAccessSpecifier.INTERNAL,
-          }),
-        title:
+  const MENU_ITEMS: TContextMenuItem[] = useCommentMenuItems({
+    comment: {
+      id: comment.id,
+      actor: comment.actor,
+      access: comment.access,
+    },
+    isAuthor,
+    showAccessSpecifier,
+    showCopyLinkOption,
+    handleEdit: setEditMode,
+    handleCopyLink: () => activityOperations.copyCommentLink(comment.id),
+    handleToggleAccess: () =>
+      activityOperations.updateComment(comment.id, {
+        access:
           comment.access === EIssueCommentAccessSpecifier.INTERNAL
-            ? t("issue.comments.switch.public")
-            : t("issue.comments.switch.private"),
-        icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? Globe2 : Lock,
-        shouldRender: showAccessSpecifier,
-      },
-      {
-        key: "delete",
-        action: () => activityOperations.removeComment(comment.id),
-        title: t("common.actions.delete"),
-        icon: Trash2,
-        shouldRender: canDelete,
-      },
-    ],
-    [activityOperations, canDelete, canEdit, comment, setEditMode, showAccessSpecifier, showCopyLinkOption]
-  );
+            ? EIssueCommentAccessSpecifier.EXTERNAL
+            : EIssueCommentAccessSpecifier.INTERNAL,
+      }),
+    handleDelete: () => activityOperations.removeComment(comment.id),
+  });
+
+  if (MENU_ITEMS.length === 0) return null;
 
   return (
     <CustomMenu ellipsis closeOnSelect>

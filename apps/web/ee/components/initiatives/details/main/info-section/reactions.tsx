@@ -1,16 +1,13 @@
 "use client";
 
 import type { FC } from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
-import { cn, formatTextList } from "@plane/utils";
-// components
-import { ReactionSelector } from "@/components/issues/issue-detail/reactions";
-// helpers
-import { renderEmoji } from "@/helpers/emoji.helper";
+import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -26,6 +23,8 @@ export type TIssueReaction = {
 
 export const InitiativeReactions: FC<TIssueReaction> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled = false } = props;
+  // state
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   // hooks
   const {
     initiative: { getInitiativeById, addInitiativeReaction, deleteInitiativeReaction },
@@ -86,55 +85,60 @@ export const InitiativeReactions: FC<TIssueReaction> = observer((props) => {
   const groupedReactionEmojis = getGroupedReactions(reactions);
 
   // get Reaction Users
-  const getReactionUsers = (reactionEmoji: string): string => {
+  const getReactionUsers = (reactionEmoji: string): string[] => {
     const reactionUsers = (groupedReactionEmojis?.[reactionEmoji] || [])
       .map((reaction) => (reaction ? getUserDetails(reaction.actor)?.display_name : null))
       .filter((displayName): displayName is string => !!displayName);
 
-    const formattedUsers = formatTextList(reactionUsers);
-    return formattedUsers;
+    return reactionUsers;
   };
 
   const userReactionEmojis = userReactions?.map((reaction) => reaction.reaction) ?? [];
+
+  // Transform reactions data to Propel EmojiReactionType format
+  const reactionsList: EmojiReactionType[] = useMemo(() => {
+    if (!groupedReactionEmojis) return [];
+
+    return Object.keys(groupedReactionEmojis)
+      .filter((reactionEmoji) => groupedReactionEmojis[reactionEmoji]?.length > 0)
+      .map((reactionEmoji) => ({
+        emoji: stringToEmoji(reactionEmoji),
+        count: groupedReactionEmojis[reactionEmoji].length,
+        reacted: userReactionEmojis.includes(reactionEmoji),
+        users: getReactionUsers(reactionEmoji),
+      }));
+  }, [groupedReactionEmojis, userReactionEmojis]);
+
+  const handleReactionClick = (emoji: string) => {
+    if (disabled) return;
+    // Convert emoji back to decimal string format for the API
+    const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
+    const reactionString = emojiCodePoints.join("-");
+    issueReactionOperations.react(reactionString);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    // emoji is already in decimal string format from EmojiReactionPicker
+    issueReactionOperations.react(emoji);
+  };
+
   return (
     <div className="relative flex items-center gap-1.5">
-      {!disabled && (
-        <ReactionSelector
-          size="md"
-          position="top"
-          value={userReactionEmojis}
-          onSelect={issueReactionOperations.react}
-        />
-      )}
-      {groupedReactionEmojis &&
-        Object.keys(groupedReactionEmojis || {}).map(
-          (reactionEmoji) =>
-            groupedReactionEmojis[reactionEmoji]?.length > 0 && (
-              <>
-                <Tooltip tooltipContent={getReactionUsers(reactionEmoji)}>
-                  <button
-                    type="button"
-                    onClick={() => !disabled && issueReactionOperations.react(reactionEmoji)}
-                    key={reactionEmoji}
-                    className={cn(
-                      "flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100",
-                      userReactionEmojis.includes(reactionEmoji)
-                        ? "bg-custom-primary-100/10"
-                        : "bg-custom-background-80",
-                      {
-                        "cursor-not-allowed": disabled,
-                      }
-                    )}
-                  >
-                    <span>{renderEmoji(reactionEmoji)}</span>
-                    <span className={userReactionEmojis.includes(reactionEmoji) ? "text-custom-primary-100" : ""}>
-                      {(groupedReactionEmojis || {})[reactionEmoji].length}{" "}
-                    </span>
-                  </button>
-                </Tooltip>
-              </>
-            )
-        )}
+      <EmojiReactionPicker
+        isOpen={isPickerOpen}
+        handleToggle={setIsPickerOpen}
+        onChange={handleEmojiSelect}
+        disabled={disabled}
+        label={
+          <EmojiReactionGroup
+            reactions={reactionsList}
+            onReactionClick={handleReactionClick}
+            showAddButton={!disabled}
+            onAddReaction={() => setIsPickerOpen(true)}
+          />
+        }
+        placement="bottom-start"
+      />
     </div>
   );
 });

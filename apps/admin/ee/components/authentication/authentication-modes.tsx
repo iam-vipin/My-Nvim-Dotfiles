@@ -1,13 +1,20 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Mails, KeyRound } from "lucide-react";
+import { KeyRound, Mails } from "lucide-react";
 import type {
   TInstanceAuthenticationMethodKeys as TBaseAuthenticationMethods,
   TInstanceAuthenticationModes,
   TInstanceEnterpriseAuthenticationMethodKeys,
 } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
+// assets
+import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
+import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
+import SAMLLogo from "@/app/assets/logos/saml-logo.svg?url";
 // plane ce components
 import { getAuthenticationModes as getCEAuthenticationModes } from "@/ce/components/authentication/authentication-modes";
 // components
@@ -21,14 +28,6 @@ import { PasswordLoginConfiguration } from "@/components/authentication/password
 // plane admin imports
 import { OIDCConfiguration, SAMLConfiguration } from "@/plane-admin/components/authentication";
 import { useInstanceFlag } from "@/plane-admin/hooks/store/use-instance-flag";
-// images
-import giteaLogo from "@/public/logos/gitea-logo.svg";
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-import GoogleLogo from "@/public/logos/google-logo.svg";
-import OIDCLogo from "@/public/logos/oidc-logo.svg";
-import SAMLLogo from "@/public/logos/saml-logo.svg";
 
 type TInstanceAuthenticationMethodKeys = TBaseAuthenticationMethods | TInstanceEnterpriseAuthenticationMethodKeys;
 
@@ -68,7 +67,7 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
@@ -76,7 +75,7 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -89,28 +88,28 @@ export const getAuthenticationModes: (props: TGetAuthenticationModeProps) => TIn
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "gitea",
     name: "Gitea",
     description: "Allow members to log in or sign up to plane with their Gitea accounts.",
-    icon: <Image src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
+    icon: <img className="h-5 w-5" src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "oidc",
     name: "OIDC",
     description: "Authenticate your users via the OpenID Connect protocol.",
-    icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
+    icon: <img src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
     config: <OIDCConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "saml",
     name: "SAML",
     description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-    icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
+    icon: <img src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
     config: <SAMLConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
 ];

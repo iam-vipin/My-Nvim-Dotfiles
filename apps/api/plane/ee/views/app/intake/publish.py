@@ -9,11 +9,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from plane.ee.views.base import BaseViewSet
+from plane.ee.views.base import BaseViewSet, BaseAPIView
 from plane.ee.permissions import ProjectMemberPermission
 from plane.db.models import DeployBoard, Intake
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.models import IntakeForm
 
 
 class ProjectInTakePublishViewSet(BaseViewSet):
@@ -29,15 +30,11 @@ class ProjectInTakePublishViewSet(BaseViewSet):
     def regenerate(self, request, slug, project_id, type=None):
         # generate the entity name
         entity_name = (
-            DeployBoard.DeployBoardType.INTAKE_EMAIL
-            if type == "intake_email"
-            else DeployBoard.DeployBoardType.INTAKE
+            DeployBoard.DeployBoardType.INTAKE_EMAIL if type == "intake_email" else DeployBoard.DeployBoardType.INTAKE
         )
 
         # fetch the deploy board
-        deploy_board = DeployBoard.objects.get(
-            entity_name=entity_name, project_id=project_id, workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_name=entity_name, project_id=project_id, workspace__slug=slug)
 
         # Update the anchor
         new_anchor = uuid4().hex
@@ -54,3 +51,16 @@ class ProjectInTakePublishViewSet(BaseViewSet):
             anchor = f"{slug}-{new_anchor}@{email_domain}"
 
         return Response({"anchor": anchor}, status=status.HTTP_200_OK)
+
+
+class IntakeFormRegenerateViewSet(BaseAPIView):
+    permission_classes = [ProjectMemberPermission]
+
+    models = IntakeForm
+
+    def get(self, request, slug, project_id, pk):
+        intake_form = self.models.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        new_anchor = uuid4().hex
+        intake_form.anchor = new_anchor
+        intake_form.save(update_fields=["anchor"])
+        return Response({"anchor": intake_form.anchor}, status=status.HTTP_200_OK)

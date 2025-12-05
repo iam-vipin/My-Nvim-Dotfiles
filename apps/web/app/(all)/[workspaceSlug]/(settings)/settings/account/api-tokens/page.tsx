@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -21,7 +19,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const apiTokenService = new APITokenService();
 
-const ApiTokensPage = observer(() => {
+function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
@@ -106,6 +104,6 @@ const ApiTokensPage = observer(() => {
       </section>
     </div>
   );
-});
+}
 
-export default ApiTokensPage;
+export default observer(ApiTokensPage);

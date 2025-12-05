@@ -1,7 +1,9 @@
-import { ContentParser, IParserExtension, PTagCustomComponentExtension } from "@plane/etl/parser";
-import { EZipNodeType, TZipFileNode } from "@/lib/zip-manager/types";
-import { ZipManager } from "@/lib/zip-manager/zip-manager";
-import { TDocContentParserConfig } from "../../types";
+import type { IParserExtension } from "@/lib/parser";
+import { ContentParser, PTagCustomComponentExtension } from "@/lib/parser";
+import type { TZipFileNode } from "@/lib/zip-manager/types";
+import { EZipNodeType } from "@/lib/zip-manager/types";
+import type { ZipManager } from "@/lib/zip-manager/zip-manager";
+import type { TDocContentParserConfig } from "../../types";
 import { ExtractBodyExtension } from "../common/content-parser/extensions/extract-body";
 import { CalloutParserExtension } from "../common/content-parser/extensions/process-callouts";
 import {
@@ -12,7 +14,7 @@ import { NotionFileParserExtension } from "../common/content-parser/extensions/p
 import { NotionImageParserExtension } from "../common/content-parser/extensions/process-images";
 import { ProcessLinksExtension } from "../common/content-parser/extensions/process-links";
 import { NotionPageParserExtension } from "../common/content-parser/extensions/process-page";
-import { IZipImportDriver } from "../types";
+import type { IZipImportDriver } from "../types";
 
 export class NotionImportDriver implements IZipImportDriver {
   constructor(private readonly zipManager: ZipManager) {}

@@ -1,22 +1,21 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { BetaBadge } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import PiDark from "@/app/assets/empty-state/pi/chat-dark.webp?url";
+import PiLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
+import PiChatLogo from "@/app/assets/logos/pi.png?url";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-// assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import PiDark from "@/public/empty-state/pi/chat-dark.webp";
-import PiLight from "@/public/empty-state/pi/chat-light.webp";
-import PiChatLogo from "@/public/logos/pi.png";
+import { BetaBadge } from "../common/beta";
 
 export const EmptyPiChat = observer(() => {
   // store hooks
@@ -31,7 +30,7 @@ export const EmptyPiChat = observer(() => {
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>
       <div className="flex justify-between h-8">
         <div className="flex gap-1">
-          <Image width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto" />
+          <img width={16} height={16} src={PiChatLogo} alt="Plane AI" className="my-auto w-full h-full object-cover" />
           <span className="font-medium text-sm my-auto "> Plane AI</span>
           <BetaBadge />
         </div>
@@ -43,7 +42,7 @@ export const EmptyPiChat = observer(() => {
             Whether you need quick guidance, task updates, or help brainstorming ideas, this intelligent assistant is
             here 24/7 to make managing work easier{" "}
           </p>
-          <Image
+          <img
             src={resolvedTheme?.includes("dark") ? PiDark : PiLight}
             className="w-full max-h-[400px]"
             alt="Project empty state"

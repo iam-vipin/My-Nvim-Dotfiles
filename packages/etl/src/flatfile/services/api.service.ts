@@ -1,6 +1,6 @@
 import { FlatfileClient } from "@flatfile/api";
-import { RecordWithLinks } from "@flatfile/api/api";
-import { FlatfileServiceConfig } from "../types";
+import type { RecordWithLinks } from "@flatfile/api/api";
+import type { FlatfileServiceConfig } from "../types";
 
 /**
  * @class FlatfileService

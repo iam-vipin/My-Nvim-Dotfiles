@@ -41,7 +41,7 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
 
   const { t } = useTranslation();
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const {
     createMilestone,
     updateMilestone,
@@ -235,6 +235,20 @@ export const CreateUpdateMilestoneModal = (props: Props) => {
                       return asset_id;
                     } catch (_error) {
                       throw new Error("Asset upload failed. Please try again later.");
+                    }
+                  }}
+                  duplicateFile={async (assetId: string) => {
+                    try {
+                      const { asset_id } = await duplicateEditorAsset({
+                        assetId,
+                        entityId: data?.id,
+                        entityType: EFileAssetType.MILESTONE_DESCRIPTION,
+                        projectId,
+                        workspaceSlug,
+                      });
+                      return asset_id;
+                    } catch (_error) {
+                      throw new Error("Asset duplication failed. Please try again later.");
                     }
                   }}
                 />

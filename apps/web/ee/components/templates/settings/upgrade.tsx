@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -10,11 +9,11 @@ import { useTheme } from "next-themes";
 import type { TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
-// plane web imports
-import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 // assets
-import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
-import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
+import TemplatesUpgradeDark from "@/app/assets/empty-state/templates/upgrade-dark.webp?url";
+import TemplatesUpgradeLight from "@/app/assets/empty-state/templates/upgrade-light.webp?url";
+// plane web components
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 
 type TTemplatesUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;
@@ -59,9 +58,9 @@ export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTe
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? TemplatesUpgradeDark : TemplatesUpgradeLight}
-          alt=""
+          alt="Templates upgrade"
           className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0 w-auto"
         />
       </div>

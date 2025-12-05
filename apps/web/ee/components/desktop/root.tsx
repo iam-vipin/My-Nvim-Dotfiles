@@ -1,49 +1,42 @@
 "use client";
 
-import type { FC } from "react";
-// to desktop
-import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
-// mobx
+import { useMemo } from "react";
+import { isDesktopApp as isDesktopAppFn } from "@todesktop/client-core/platform/todesktop";
 import { observer } from "mobx-react";
 // helpers
 import { cn } from "@plane/utils";
 // desktop app components
-import { SidebarToggle, DesktopAppNavigation, useDesktopApp, DesktopAppProvider } from "@/plane-web/components/desktop";
+import {
+  DesktopSidebarToggle,
+  DesktopAppNavigation,
+  useDesktopApp,
+  DesktopAppProvider,
+} from "@/plane-web/components/desktop";
 
-const DesktopAppRoot: FC = observer(() => {
+const DesktopHeaderRoot = observer(function DesktopHeaderRoot() {
   // store hooks
-  const { pageTitle, isFullScreen } = useDesktopApp();
+  const { isFullScreen } = useDesktopApp();
+  // derived values
+  const isDesktopApp = useMemo(() => isDesktopAppFn(), []);
 
+  if (!isDesktopApp) return null;
   return (
-    <>
-      <div className="header fixed top-0 left-0 flex gap-4 items-center w-full h-8">
-        <div
-          className={cn(
-            "flex flex-shrink-0 gap-0.5 items-center justify-end w-[160px] transition-all duration-300 ease-in-out",
-            {
-              "pl-3 justify-start": isFullScreen,
-            }
-          )}
-        >
-          <SidebarToggle />
-          <DesktopAppNavigation />
-        </div>
-        <div className="flex gap-2 grow items-center justify-center">
-          {/* page title */}
-          <div className="text-xs font-semibold text-custom-text-300 truncate">{pageTitle}</div>
-        </div>
-        <div className="w-[70px] flex flex-shrink-0 items-center justify-start" />
-      </div>
-    </>
+    <div
+      className={cn("flex flex-shrink-0 gap-0.5 transition-all duration-300 ease-in-out", {
+        "pl-12": isFullScreen,
+        "pl-20": !isFullScreen,
+      })}
+    >
+      <DesktopSidebarToggle />
+      <DesktopAppNavigation />
+    </div>
   );
 });
 
-export const DesktopAppProviderRoot: FC = observer(() => {
-  if (!isDesktopApp()) return null;
-
+export const DesktopHeaderProvider = observer(function DesktopHeaderProvider() {
   return (
     <DesktopAppProvider>
-      <DesktopAppRoot />
+      <DesktopHeaderRoot />
     </DesktopAppProvider>
   );
 });

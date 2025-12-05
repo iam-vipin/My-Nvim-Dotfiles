@@ -1,4 +1,4 @@
-import { TInitiativeDisplayFilters, TInitiativeStates } from "@plane/types";
+import type { TInitiativeDisplayFilters, TInitiativeStates } from "@plane/types";
 
 export enum EInitiativeNavigationItem {
   OVERVIEW = "overview",

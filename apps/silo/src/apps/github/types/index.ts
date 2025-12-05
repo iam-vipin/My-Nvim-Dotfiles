@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
-import { MergeRequestEvent } from "../helpers/helpers";
+import type { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import type { MergeRequestEvent } from "../helpers/helpers";
 
 const webhooksUserSchema = z.object({
   avatar_url: z.string().url().optional(),
@@ -93,4 +93,23 @@ export type PullRequestWebhookActions =
 export enum E_GITHUB_DISCONNECT_SOURCE {
   ROUTE_DISCONNECT = "route-disconnect",
   WEBHOOK_DISCONNECT = "webhook-disconnect",
+}
+
+export enum IssueWebhookActions {
+  ASSIGNED = "assigned",
+  CLOSED = "closed",
+  DELETED = "deleted",
+  DEMILestoned = "demilestoned",
+  EDITED = "edited",
+  LABELED = "labeled",
+  LOCKED = "locked",
+  MILESTONED = "milestoned",
+  OPENED = "opened",
+  PINNED = "pinned",
+  REOPENED = "reopened",
+  TRANSFERRED = "transferred",
+  UNASSIGNED = "unassigned",
+  UNLABELED = "unlabeled",
+  UNLOCKED = "unlocked",
+  UNPINNED = "unpinned",
 }

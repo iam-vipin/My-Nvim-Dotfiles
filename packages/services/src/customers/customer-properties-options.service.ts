@@ -1,7 +1,7 @@
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // types
-import {
+import type {
   IIssuePropertyOptionsService,
   TCreateIssuePropertyOptionPayload,
   TDeleteIssuePropertyOptionPayload,

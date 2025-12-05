@@ -30,6 +30,7 @@ export default {
     workflows: "Workflowy",
     templates: "Szablony",
     members_and_teamspaces: "Członkowie i tymacz",
+    open_in_full_screen: "Otwórz {page} na pełnym ekranie",
   },
   updates: {
     add_update: "Dodaj aktualizację",
@@ -161,6 +162,28 @@ export default {
       settings_sub_heading:
         "Przenieś prośby klientów do elementów pracy, przypisz priorytet według próśb i zbierz stany elementów pracy w rejestrach klientów. Wkrótce zaintregujesz się z CRM lub narzędziem wsparcia, aby jeszcze lepiej zarządzać pracą według atrybutów klienta.",
     },
+    features: {
+      intake: {
+        heading: "Odpowiedzialność za przyjęcie",
+        notify_assignee: {
+          title: "Powiadom przypisanych",
+          description: "Dla nowego żądania przyjęcia domyślni przypisani zostaną powiadomieni poprzez powiadomienia",
+        },
+        toasts: {
+          set: {
+            loading: "Ustawianie przypisanych...",
+            success: {
+              title: "Sukces!",
+              message: "Przypisani ustawieni pomyślnie.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Coś poszło nie tak podczas ustawiania przypisanych. Spróbuj ponownie.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Brak skonfigurowanych integracji",
@@ -206,6 +229,90 @@ export default {
         description: "Dodaj niestandardowe właściwości do swojego epiku.",
       },
       disabled: "Wyłączone",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatyczne planowanie cykli",
+        description: "Utrzymuj cykle w ruchu bez ręcznej konfiguracji.",
+        tooltip: "Automatycznie twórz nowe cykle na podstawie wybranego harmonogramu.",
+        edit_button: "Edytuj",
+        form: {
+          cycle_title: {
+            label: "Tytuł cyklu",
+            placeholder: "Tytuł",
+            tooltip: "Tytuł zostanie uzupełniony o numery dla kolejnych cykli. Na przykład: Projekt - 1/2/3",
+            validation: {
+              required: "Tytuł cyklu jest wymagany",
+              max_length: "Tytuł nie może przekraczać 255 znaków",
+            },
+          },
+          cycle_duration: {
+            label: "Czas trwania cyklu",
+            unit: "Tygodnie",
+            validation: {
+              required: "Czas trwania cyklu jest wymagany",
+              min: "Czas trwania cyklu musi wynosić co najmniej 1 tydzień",
+              max: "Czas trwania cyklu nie może przekraczać 30 tygodni",
+              positive: "Czas trwania cyklu musi być dodatni",
+            },
+          },
+          cooldown_period: {
+            label: "Okres ochłodzenia",
+            unit: "dni",
+            tooltip: "Przerwa między cyklami przed rozpoczęciem następnego.",
+            validation: {
+              required: "Okres ochłodzenia jest wymagany",
+              negative: "Okres ochłodzenia nie może być ujemny",
+            },
+          },
+          start_date: {
+            label: "Dzień rozpoczęcia cyklu",
+            validation: {
+              required: "Data rozpoczęcia jest wymagana",
+              past: "Data rozpoczęcia nie może być w przeszłości",
+            },
+          },
+          number_of_cycles: {
+            label: "Liczba przyszłych cykli",
+            validation: {
+              required: "Liczba cykli jest wymagana",
+              min: "Wymagany jest co najmniej 1 cykl",
+              max: "Nie można zaplanować więcej niż 3 cykle",
+            },
+          },
+          auto_rollover: {
+            label: "Automatyczne przenoszenie elementów pracy",
+            tooltip: "W dniu zakończenia cyklu przenieś wszystkie niedokończone elementy pracy do następnego cyklu.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Włączanie automatycznego planowania cykli",
+            loading_disable: "Wyłączanie automatycznego planowania cykli",
+            success: {
+              title: "Sukces!",
+              message: "Automatyczne planowanie cykli zostało pomyślnie przełączone.",
+            },
+            error: {
+              title: "Błąd!",
+              message: "Nie udało się przełączyć automatycznego planowania cykli.",
+            },
+          },
+          save: {
+            loading: "Zapisywanie konfiguracji automatycznego planowania cykli",
+            success: {
+              title: "Sukces!",
+              message_create: "Konfiguracja automatycznego planowania cykli została pomyślnie zapisana.",
+              message_update: "Konfiguracja automatycznego planowania cykli została pomyślnie zaktualizowana.",
+            },
+            error: {
+              title: "Błąd!",
+              message_create: "Nie udało się zapisać konfiguracji automatycznego planowania cykli.",
+              message_update: "Nie udało się zaktualizować konfiguracji automatycznego planowania cykli.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -458,7 +565,7 @@ export default {
       },
       not_found: {
         title: "Inicjatywa nie istnieje",
-        description: "Inicjatywa, której szukasz, nie istnieje lub została usunięta.",
+        description: "Inicjatywa, której szukasz, nie istnieje, została zarchiwizowana lub została usunięta.",
         primary_button: {
           text: "Zobacz inne Inicjatywy",
         },
@@ -657,7 +764,12 @@ export default {
         app_short_description_error: "Krótki opis aplikacji jest wymagany",
         app_description_title: {
           label: "Długi opis",
-          placeholder: "Napisz długi opis dla marketplace. Naciśnij ‘/’, aby zobaczyć polecenia.",
+          placeholder: "Napisz długi opis dla marketplace. Naciśnij '/', aby zobaczyć polecenia.",
+        },
+        authorization_grant_type: {
+          title: "Typ połączenia",
+          description:
+            "Wybierz, czy Twoja aplikacja ma być zainstalowana raz dla obszaru roboczego, czy pozwolić każdemu użytkownikowi na połączenie własnego konta",
         },
         app_description_error: "Opis aplikacji jest wymagany",
         app_slug_title: "Slug aplikacji",
@@ -716,6 +828,10 @@ export default {
         categories_error: "Kategorie są wymagane",
         invalid_categories_error: "Nieprawidłowe kategorie",
         categories_description: "Wybierz kategorie, które najlepiej opisują aplikację",
+        supported_plans: "Obsługiwane Plany",
+        supported_plans_description:
+          "Wybierz plany obszaru roboczego, które mogą zainstalować tę aplikację. Pozostaw puste, aby zezwolić na wszystkie plany.",
+        select_plans: "Wybierz Plany",
         privacy_policy_url_title: "URL Polityki Prywatności",
         privacy_policy_url_error: "URL Polityki Prywatności jest wymagany",
         invalid_privacy_policy_url_error: "Nieprawidłowy URL Polityki Prywatności",
@@ -790,8 +906,8 @@ export default {
         internal: "Wewnętrzny",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy.",
       },

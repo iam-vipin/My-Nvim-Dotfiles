@@ -5,22 +5,23 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { RefreshCcw } from "lucide-react";
+import { InboxIcon, RefreshCcw } from "lucide-react";
 // plane imports
-import { EProjectFeatureKey, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
+import { EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header, Popover, Loader } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-// local components
 import { useFlag } from "@/plane-web/hooks/store";
+// local imports
 import IntakeTooltip from "../intake-tooltip";
 import { IntakeHeaderQuickActions } from "./quick-actions";
 
@@ -88,10 +89,16 @@ export const ProjectInboxHeader: FC = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-1">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={currentProjectDetails?.id?.toString() ?? ""}
-              featureKey={EProjectFeatureKey.INTAKE}
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Intake"
+                  href={`/${workspaceSlug}/projects/${projectId}/intake/`}
+                  icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                  isLast
+                />
+              }
               isLast
             />
           </Breadcrumbs>

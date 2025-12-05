@@ -1,4 +1,9 @@
-import { EIssuePropertyType, IIssueProperty, TIssuePropertyValues, TWorkItemBlueprintFormData } from "@plane/types";
+import type {
+  EIssuePropertyType,
+  IIssueProperty,
+  TIssuePropertyValues,
+  TWorkItemBlueprintFormData,
+} from "@plane/types";
 // local imports
 import { isValidId, partitionValidIds } from "../../../common";
 

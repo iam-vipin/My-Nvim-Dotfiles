@@ -1,6 +1,7 @@
 import { isChangeOrigin } from "@tiptap/extension-collaboration";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { type EditorState, Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
 // plane imports
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
 

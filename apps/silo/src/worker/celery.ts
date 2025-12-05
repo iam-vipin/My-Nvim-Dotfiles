@@ -1,7 +1,7 @@
 import { logger } from "@plane/logger";
 import { env } from "@/env";
 import { MQ } from "./base";
-import { TMQEntityOptions } from "./base/types";
+import type { TMQEntityOptions } from "./base/types";
 
 export class CeleryProducer {
   private mq: MQ | undefined;

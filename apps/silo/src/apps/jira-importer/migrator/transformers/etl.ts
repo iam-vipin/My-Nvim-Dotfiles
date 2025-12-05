@@ -1,14 +1,16 @@
 import { v4 as uuid } from "uuid";
-import { TIssuePropertyValuesPayload } from "@plane/etl/core";
-import {
+import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
+import type {
   JiraCustomFieldKeys,
-  OPTION_CUSTOM_FIELD_TYPES,
-  transformIssueFieldOptions,
   IJiraIssue,
   IPriorityConfig,
   IStateConfig,
   JiraConfig,
   JiraEntity,
+} from "@plane/etl/jira";
+import {
+  OPTION_CUSTOM_FIELD_TYPES,
+  transformIssueFieldOptions,
   transformComment,
   transformComponent,
   transformIssue,
@@ -19,7 +21,7 @@ import {
   transformIssueFields,
   transformIssuePropertyValues,
 } from "@plane/etl/jira";
-import {
+import type {
   ExCycle,
   ExIssueComment,
   ExIssueLabel,
@@ -30,7 +32,7 @@ import {
   ExIssue as PlaneIssue,
   PlaneUser,
 } from "@plane/sdk";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 
 /* ------------------ Transformers ----------------------
 The file contains transformers for the jira entities, responsible

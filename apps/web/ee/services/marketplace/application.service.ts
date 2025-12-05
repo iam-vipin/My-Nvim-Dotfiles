@@ -45,8 +45,8 @@ export class ApplicationService extends APIService {
       });
   }
 
-  async deleteApplication(workspaceSlug: string, applicationId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/applications/${applicationId}/`)
+  async deleteApplication(workspaceSlug: string, appSlug: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/applications/${appSlug}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -112,9 +112,17 @@ export class ApplicationService extends APIService {
 
   async getApplicationPermissions(
     applicationId: string
-  ): Promise<{ workspace_id: string; state: boolean }[] | undefined> {
+  ): Promise<{ workspace_id: string; state: string; is_installed: boolean }[] | undefined> {
     return this.get(`/api/workspaces-check-app-installation-allowed/${applicationId}/`)
       .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getSupportedWorkspaceIds(clientId: string): Promise<string[] | undefined> {
+    return this.get(`/api/applications/${clientId}/supported-workspaces/`)
+      .then((res) => res?.data?.workspace_ids)
       .catch((err) => {
         throw err?.response?.data;
       });

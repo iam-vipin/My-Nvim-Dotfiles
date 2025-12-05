@@ -54,6 +54,18 @@ export class ProjectPage extends BasePage implements TProjectPage {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
         return await projectPageService.duplicate(workspaceSlug, projectId, page.id);
       },
+      download: async () => {
+        if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
+        await projectPageService.downloadPage(workspaceSlug, projectId, page.id);
+      },
+      fetchEmbeds: async (embedType) => {
+        if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
+        return await projectPageService.fetchEmbeds(workspaceSlug, projectId, page.id, embedType);
+      },
+      fetchMentions: async (mentionType) => {
+        if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
+        return await projectPageService.fetchMentions(workspaceSlug, projectId, page.id, mentionType);
+      },
     });
     makeObservable(this, {
       // computed
@@ -276,6 +288,11 @@ export class ProjectPage extends BasePage implements TProjectPage {
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug) return false;
+    const isNestedPagesEnabled = this.rootStore.projectPages.isNestedPagesEnabled(workspaceSlug);
+    if (!isNestedPagesEnabled && !!this.parent_id) return false;
+
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 

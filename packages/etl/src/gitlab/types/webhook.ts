@@ -1,4 +1,4 @@
-import { GitlabIssue, GitlabLabel, GitlabMergeRequest, GitlabNote, GitlabProject, GitlabUser } from "./common";
+import type { GitlabIssue, GitlabLabel, GitlabMergeRequest, GitlabNote, GitlabProject, GitlabUser } from "./common";
 
 // Base webhook event type
 export interface GitlabWebhookEvent {

@@ -1,7 +1,7 @@
 import type { SetStateAction, Dispatch } from "react";
 import React, { useRef, useState } from "react";
 import { Check, LoaderCircle, MicIcon } from "lucide-react";
-import type { EditorRefApi } from "@plane/editor";
+import type { TPiChatEditorRefApi } from "@plane/editor";
 import { CloseIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn } from "@plane/utils";
@@ -14,7 +14,7 @@ export const SPEECH_LOADERS = ["recording", "transcribing"];
 type TProps = {
   workspaceId: string;
   chatId: string | undefined;
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: React.RefObject<TPiChatEditorRefApi>;
   isProjectLevel: boolean;
   isFullScreen: boolean;
   focus: TFocus;

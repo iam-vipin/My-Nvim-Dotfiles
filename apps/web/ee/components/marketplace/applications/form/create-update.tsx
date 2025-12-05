@@ -4,14 +4,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Book, Camera } from "lucide-react";
+import { Book, Camera, Check, ChevronDown } from "lucide-react";
 // plane imports
+import { EApplicationAuthorizationGrantType, AUTHORIZATION_GRANT_TYPES_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
 import { EFileAssetType } from "@plane/types";
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { cn, Dropdown, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
@@ -28,22 +29,16 @@ import { InputField } from "./fields/input-field";
 import { RichTextField } from "./fields/rich-text-field";
 import { FormSection } from "./form-section";
 import { SelectCategories } from "./select-categories";
+import { SelectSupportedPlans } from "./select-supported-plans";
 import { UploadAppAttachments } from "./upload-attachments";
 
 type Props = {
   formData?: Partial<TUserApplication>;
   handleFormSubmit: (data: Partial<TUserApplication>) => Promise<Partial<TUserApplication> | undefined>;
 };
-
-const redirectURIsRegex =
-  /^(https?:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/\S*)?)(?:\s+(https?:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/\S*)?))*$/gim;
 const singleUrlRegex =
   /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
-const allowedOriginsRegex =
-  /^(?:(?:https?:\/\/)?(?:[\w-]+(?:\.[\w-]+)+))(?:\s+(?:(?:https?:\/\/)?(?:[\w-]+(?:\.[\w-]+)+)))*$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const relativeUrlRegex = /^(\/[a-zA-Z0-9_\-\/]+|https?:\/\/[^\s]+)$/;
-
 const defaultFormData: Partial<TUserApplication> = {
   id: undefined,
   name: "",
@@ -52,6 +47,7 @@ const defaultFormData: Partial<TUserApplication> = {
   slug: "",
   company_name: "",
   webhook_url: "",
+  webhook_secret: "",
   redirect_uris: "",
   allowed_origins: "",
   logo_url: "",
@@ -60,6 +56,8 @@ const defaultFormData: Partial<TUserApplication> = {
   attachments: [],
   attachments_urls: [],
   is_mentionable: false,
+  authorization_grant_type: EApplicationAuthorizationGrantType.AUTHORIZATION_CODE,
+  supported_plans: [],
 };
 
 export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
@@ -246,6 +244,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             placeholder={t("workspace_settings.settings.applications.app_slug_title")}
             onChange={(value) => handleTextChange("slug", value)}
             error={errors.slug}
+            disabled={Boolean(watch("id"))}
           />
           <InputField
             id="company_name"
@@ -319,6 +318,39 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             onChange={(value) => handleTextChange("website", value)}
             error={errors.website}
           />
+          <div className="space-y-2">
+            <div className="text-xs text-custom-text-100 font-medium">
+              {t("workspace_settings.settings.applications.authorization_grant_type.title")}
+            </div>
+            <Dropdown
+              onChange={(value: string) => setValue("authorization_grant_type", value)}
+              value={
+                watch("authorization_grant_type")?.toString() ?? EApplicationAuthorizationGrantType.AUTHORIZATION_CODE
+              }
+              keyExtractor={(option) => option.data}
+              options={Object.values(EApplicationAuthorizationGrantType).map((type) => ({
+                data: type.toString(),
+                value: type.toString(),
+              }))}
+              disableSearch
+              buttonContainerClassName="bg-custom-background-100 border border-custom-border-200 rounded-md px-2 py-1"
+              buttonContent={(isOpen, val) => (
+                <span className="flex items-center justify-between gap-1 text-sm text-custom-text-300 w-60">
+                  {val ? AUTHORIZATION_GRANT_TYPES_MAP[val as EApplicationAuthorizationGrantType] : t("common.select")}
+                  <ChevronDown size={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
+                </span>
+              )}
+              renderItem={(option) => (
+                <span className="flex items-center gap-1">
+                  {AUTHORIZATION_GRANT_TYPES_MAP[option.value as EApplicationAuthorizationGrantType]}
+                  {option.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                </span>
+              )}
+            />
+            <div className="text-xs text-custom-text-300">
+              {t("workspace_settings.settings.applications.authorization_grant_type.description")}
+            </div>
+          </div>
           <div className="text-xs text-custom-text-300 flex items-center gap-2">
             <ToggleSwitch
               value={watch("is_mentionable") ?? false}
@@ -354,14 +386,18 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             description={t("workspace_settings.settings.applications.webhook_url.description")}
             placeholder={t("workspace_settings.settings.applications.webhook_url.placeholder")}
             register={register}
-            validation={{
-              pattern: {
-                value: singleUrlRegex,
-                message: t("workspace_settings.settings.applications.invalid_webhook_url_error"),
-              },
-            }}
             onChange={(value) => handleTextChange("webhook_url", value)}
             error={errors.webhook_url}
+          />
+          <InputField
+            id="webhook_secret"
+            type="text"
+            label={t("workspace_settings.settings.applications.webhook_secret.label")}
+            description={t("workspace_settings.settings.applications.webhook_secret.description")}
+            placeholder={t("workspace_settings.settings.applications.webhook_secret.placeholder")}
+            register={register}
+            onChange={(value) => handleTextChange("webhook_secret", value)}
+            error={errors.webhook_secret}
           />
           <InputField
             id="redirect_uris"
@@ -372,10 +408,6 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             register={register}
             validation={{
               required: t("workspace_settings.settings.applications.redirect_uris_error"),
-              pattern: {
-                value: redirectURIsRegex,
-                message: t("workspace_settings.settings.applications.invalid_redirect_uris_error"),
-              },
             }}
             onChange={(value) => handleTextChange("redirect_uris", value)}
             error={errors.redirect_uris}
@@ -394,6 +426,17 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                 handleChange={(value) => setValue("categories", value)}
               />
             )}
+          </div>
+        </FormSection>
+        <FormSection title={t("workspace_settings.settings.applications.supported_plans")} collapsible>
+          <div tabIndex={6} className="flex flex-col gap-1">
+            <div className="text-sm text-custom-text-300">
+              {t("workspace_settings.settings.applications.supported_plans_description")}
+            </div>
+            <SelectSupportedPlans
+              value={watch("supported_plans") ?? []}
+              handleChange={(value) => setValue("supported_plans", value)}
+            />
           </div>
         </FormSection>
         <FormSection title={"Compliance & Support"} collapsible>

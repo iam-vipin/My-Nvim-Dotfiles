@@ -7,7 +7,6 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
@@ -61,7 +60,7 @@ export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
   // swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // fetch teamspace view issue filters
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && teamspaceId && viewId
       ? `TEAMSPACE_VIEW_ISSUE_FILTERS_${workspaceSlug}_${teamspaceId}_${viewId}`
       : null,
@@ -81,16 +80,7 @@ export const TeamspaceViewLayoutRoot: React.FC = observer(() => {
     [issuesFilter, workspaceSlug, teamspaceId, viewId]
   );
 
-  if (!workspaceSlug || !teamspaceId || !viewId) return <></>;
-
-  if (isLoading && !workItemFilters) {
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-  }
-
+  if (!workspaceSlug || !teamspaceId || !viewId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.TEAM_VIEW}>
       <TeamspaceLevelWorkItemFiltersHOC

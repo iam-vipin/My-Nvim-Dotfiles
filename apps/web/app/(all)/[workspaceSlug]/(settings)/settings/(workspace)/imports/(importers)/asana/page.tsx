@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -11,7 +10,7 @@ import { AsanaDashboardRoot } from "@/plane-web/components/importers/asana/dashb
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
-const AsanaImporter: FC = observer(() => {
+function AsanaImporter() {
   const {
     user,
     workspace,
@@ -78,6 +77,6 @@ const AsanaImporter: FC = observer(() => {
       )}
     </Fragment>
   );
-});
+}
 
-export default AsanaImporter;
+export default observer(AsanaImporter);

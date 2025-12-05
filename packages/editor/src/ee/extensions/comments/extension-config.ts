@@ -11,14 +11,8 @@ import {
   TrackCommentDeletionPlugin,
   TrackCommentRestorationPlugin,
 } from "./plugins";
-import {
-  TCommentMarkOptions,
-  TCommentMarkStorage,
-  ECommentMarkCSSClasses,
-  ECommentAttributeNames,
-  DEFAULT_COMMENT_ATTRIBUTES,
-  TCommentMarkAttributes,
-} from "./types";
+import type { TCommentMarkOptions, TCommentMarkStorage, TCommentMarkAttributes } from "./types";
+import { ECommentMarkCSSClasses, ECommentAttributeNames, DEFAULT_COMMENT_ATTRIBUTES } from "./types";
 
 declare module "@tiptap/core" {
   interface Storage {

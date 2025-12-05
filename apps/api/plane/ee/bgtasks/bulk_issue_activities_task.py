@@ -9,10 +9,9 @@ from celery import shared_task
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 
 # Module imports
+from plane.app.serializers import IssueActivitySerializer
 from plane.db.models import (
     Issue,
     IssueActivity,
@@ -25,7 +24,7 @@ from plane.db.models import (
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
-
+from plane.bgtasks.notification_task import process_workitem_notifications
 
 # Track changes in issue labels
 def track_labels(
@@ -340,7 +339,7 @@ def bulk_issue_activity(
                 )
 
         if notification:
-            notifications.delay(
+            process_workitem_notifications.delay(
                 type=type,
                 issue_id=issue_id,
                 actor_id=actor_id,

@@ -4,6 +4,7 @@ import { IssueService } from "@/plane-web/services/issue/issue.service";
 import type { IIssueDetail as IIssueDetailCore } from "@/store/issue/issue-details/root.store";
 import { IssueDetail as IssueDetailCore } from "@/store/issue/issue-details/root.store";
 import type { IIssueRootStore } from "@/store/issue/root.store";
+import { IssueCommentStoreExtended } from "./comments/comment.store";
 import { WorkItemPagesStore } from "./page.store";
 
 export interface IIssueDetail extends IIssueDetailCore {
@@ -33,6 +34,9 @@ export class IssueDetail extends IssueDetailCore implements IIssueDetail {
     this.workItemService = new IssueService(serviceType);
     this.rootStore = rootStore;
     this.pages = new WorkItemPagesStore(rootStore);
+
+    // Override comment store with extended version that includes replies
+    this.comment = new IssueCommentStoreExtended(this, serviceType);
   }
 
   // actions

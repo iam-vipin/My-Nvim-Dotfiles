@@ -11,6 +11,7 @@ from .parameters import (
     PROJECT_ID_PARAMETER,
     TYPE_ID_PARAMETER,
     PROPERTY_ID_PARAMETER,
+    TEAMSPACE_ID_PARAMETER,
 )
 from .responses import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE, NOT_FOUND_RESPONSE
 
@@ -404,4 +405,81 @@ def page_docs(**kwargs):
         },
     }
 
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def initiative_docs(**kwargs):
+    """Decorator for initiative management endpoints"""
+    defaults = {
+        "tags": ["Initiatives"],
+        "summary": "Endpoints for initiative create/update/delete and fetch initiative details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def initiative_entity_docs(**kwargs):
+    """Decorator for initiative entity management endpoints"""
+    defaults = {
+        "tags": ["Initiatives"],
+        "summary": "Endpoints for initiative entity create/update/delete and fetch initiative entity details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def sticky_docs(**kwargs):
+    """Decorator for sticky management endpoints"""
+    defaults = {
+        "tags": ["Stickies"],
+        "summary": "Endpoints for sticky create/update/delete and fetch sticky details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def teamspace_docs(**kwargs):
+    """Decorator for teamspace management endpoints"""
+    defaults = {
+        "tags": ["Teamspaces"],
+        "summary": "Endpoints for teamspace create/update/delete and fetch teamspace details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+def teamspace_entity_docs(**kwargs):
+    """Decorator for teamspace entity management endpoints"""
+    defaults = {
+        "tags": ["Teamspaces"],
+        "summary": "Endpoints for teamspace entity create/update/delete and fetch teamspace entity details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER, TEAMSPACE_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
     return extend_schema(**_merge_schema_options(defaults, kwargs))

@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { TImportJob } from "@plane/types";
-import { TImporterKeys, propertiesToOmit } from "@/core/types";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { TImportJob } from "@plane/types";
+import type { TImporterKeys, propertiesToOmit } from "@/core/types";
 
 export class JobService<TSyncJobConfig extends object> {
   public axiosInstance: AxiosInstance;

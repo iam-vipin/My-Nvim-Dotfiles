@@ -13,14 +13,14 @@ import type {
   TAiModels,
   TChatHistory,
   TDialogue,
-  TExecuteActionResponse,
   TFocus,
   TInitPayload,
   TQuery,
-  TTemplate,
   TUserThreads,
   TArtifact,
   TUpdatedArtifact,
+  TFollowUpResponse,
+  TInstanceResponse,
 } from "@/plane-web/types";
 import { ESource, EExecutionStatus } from "@/plane-web/types";
 import { ArtifactsStore } from "./artifacts";
@@ -37,6 +37,7 @@ export interface IPiChatStore {
   activeModel: TAiModels | undefined;
   models: TAiModels[];
   isAuthorized: boolean;
+  isWorkspaceAuthorized: boolean;
   favoriteChats: string[];
   isLoading: boolean;
   isPiTyping: boolean;
@@ -49,7 +50,7 @@ export interface IPiChatStore {
   geUserThreadsByWorkspaceId: (workspaceId: string | undefined) => TUserThreads[];
   geFavoriteChats: () => TUserThreads[];
   getChatById: (chatId: string) => TChatHistory;
-  getChatFocus: (chatId: string | undefined, projectId: string | undefined, workspaceId: string | undefined) => TFocus;
+  getChatFocus: (chatId: string | undefined) => TFocus | undefined;
   // actions
   initPiChat: (chatId?: string) => void;
   fetchChatById: (chatId: string, workspaceId: string | undefined) => void;
@@ -63,7 +64,7 @@ export interface IPiChatStore {
     callbackUrl: string,
     attachmentIds: string[]
   ) => Promise<void>;
-  getTemplates: (workspaceId: string | undefined) => Promise<TTemplate[]>;
+  getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => void;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<IFormattedValue>;
   sendFeedback: (
@@ -73,7 +74,7 @@ export interface IPiChatStore {
     workspaceId?: string,
     feedbackMessage?: string
   ) => Promise<void>;
-  executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<TExecuteActionResponse | undefined>;
+  executeAction: (workspaceId: string, chatId: string, actionId: string) => Promise<string[] | undefined>;
   fetchModels: (workspaceId?: string) => Promise<void>;
   abortStream: (chatId: string) => void;
   setActiveModel: (model: TAiModels) => void;
@@ -103,7 +104,15 @@ export interface IPiChatStore {
     chat_id: string,
     entity_type: string,
     artifactData: TUpdatedArtifact
-  ) => Promise<void>;
+  ) => Promise<TFollowUpResponse>;
+  convertToPage: (
+    description: string,
+    workspaceSlug: string,
+    projectId: string | undefined,
+    chatId: string
+  ) => Promise<{
+    page_url: string;
+  }>;
 }
 
 export class PiChatStore implements IPiChatStore {
@@ -113,6 +122,7 @@ export class PiChatStore implements IPiChatStore {
   models: TAiModels[] = [];
   activeModel: TAiModels | undefined = undefined;
   isAuthorized = true;
+  isWorkspaceAuthorized = true;
   chatMap: Record<string, TChatHistory> = {};
   piThreads: string[] = [];
   projectThreads: string[] = [];
@@ -144,6 +154,7 @@ export class PiChatStore implements IPiChatStore {
       isPiTypingMap: observable,
       isLoadingMap: observable,
       isAuthorized: observable,
+      isWorkspaceAuthorized: observable,
       isLoadingThreads: observable,
       favoriteChats: observable,
       isPiChatDrawerOpen: observable.ref,
@@ -156,7 +167,7 @@ export class PiChatStore implements IPiChatStore {
       // actions
       initPiChat: action,
       getAnswer: action,
-      getTemplates: action,
+      getInstance: action,
       fetchUserThreads: action,
       searchCallback: action,
       sendFeedback: action,
@@ -173,6 +184,7 @@ export class PiChatStore implements IPiChatStore {
       togglePiArtifactsDrawer: action,
       executeAction: action,
       followUp: action,
+      convertToPage: action,
       abortStream: action,
     });
 
@@ -220,24 +232,16 @@ export class PiChatStore implements IPiChatStore {
 
   getChatById = computedFn((chatId: string) => this.chatMap[chatId]);
 
-  getChatFocus = computedFn(
-    (chatId: string | undefined, projectId: string | undefined, workspaceId: string | undefined) => {
-      const chat = chatId && this.chatMap[chatId];
-      if (chat) {
-        return {
-          isInWorkspaceContext: chat.is_focus_enabled,
-          entityType: chat.focus_project_id ? "project_id" : "workspace_id",
-          entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
-        };
-      }
-
+  getChatFocus = computedFn((chatId: string | undefined) => {
+    const chat = chatId && this.chatMap[chatId];
+    if (chat) {
       return {
-        isInWorkspaceContext: true,
-        entityType: projectId ? "project_id" : "workspace_id",
-        entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
+        isInWorkspaceContext: chat.is_focus_enabled,
+        entityType: chat.focus_project_id ? "project_id" : "workspace_id",
+        entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
       };
     }
-  );
+  });
 
   getGroupedArtifactsByDialogue = computedFn((chatId: string, messageId: string) => {
     const dialogue = this.chatMap[chatId]?.dialogueMap[messageId];
@@ -252,10 +256,25 @@ export class PiChatStore implements IPiChatStore {
     dialogue.actions.forEach((action) => {
       const artifact = this.artifactsStore.getArtifact(action.artifact_id);
       if (!artifact) return;
+
+      // Pull in error/message/entity info from the action as a backup.
+      // This way, users still see why an action failed even after a page refresh.
+      const mergedArtifact: TArtifact = {
+        ...artifact,
+        action: artifact.action || action.action,
+        artifact_type: artifact.artifact_type || action.artifact_type,
+        entity_name: artifact.entity_name || action.entity?.entity_name,
+        entity_url: artifact.entity_url || action.entity?.entity_url,
+        // If we have live artifact error/message, use that; otherwise, fall back
+        // to the error/message that came back with the chat history.
+        error: artifact.error ?? action.error,
+        message: artifact.message ?? action.message,
+      };
+
       if (action.success) {
-        response.successful.push(artifact);
+        response.successful.push(mergedArtifact);
       } else {
-        response.failed.push(artifact);
+        response.failed.push(mergedArtifact);
       }
     });
     return response;
@@ -355,9 +374,10 @@ export class PiChatStore implements IPiChatStore {
     return payload;
   };
 
-  getTemplates = async (workspaceId: string | undefined) => {
-    const response = await this.piChatService.listTemplates(workspaceId);
-    return response?.templates;
+  getInstance = async (workspaceId: string): Promise<TInstanceResponse> => {
+    const response = await this.piChatService.getInstance(workspaceId);
+    this.isWorkspaceAuthorized = response.is_authorized;
+    return response;
   };
 
   getStreamingAnswer = async (
@@ -702,11 +722,11 @@ export class PiChatStore implements IPiChatStore {
 
   searchCallback = async (workspace: string, search: string, focus: TFocus): Promise<IFormattedValue> => {
     const filteredProjectId = focus.entityType === "project_id" ? focus.entityIdentifier : undefined;
-    let params: { search: string; projectId?: string } = { search };
+    let params: { search: string; project_id?: string } = { search };
     if (filteredProjectId) {
       params = {
         ...params,
-        projectId: filteredProjectId,
+        project_id: filteredProjectId,
       };
     }
     const response = await this.workspaceService.searchAcrossWorkspace(workspace, params);
@@ -864,11 +884,7 @@ export class PiChatStore implements IPiChatStore {
     this.isPiArtifactsDrawerOpen = value;
   };
 
-  executeAction = async (
-    workspaceId: string,
-    chatId: string,
-    actionId: string
-  ): Promise<TExecuteActionResponse | undefined> => {
+  executeAction = async (workspaceId: string, chatId: string, actionId: string): Promise<string[] | undefined> => {
     const dialogue = {
       ...this.chatMap[chatId].dialogueMap[actionId],
     };
@@ -903,6 +919,7 @@ export class PiChatStore implements IPiChatStore {
         artifact_data: artifactData,
       });
       // update artifacts
+      const actionableEntities: string[] = [];
       response.actions?.forEach((action) => {
         this.artifactsStore.updateArtifact(action.artifact_id, "original", {
           entity_id: action.entity?.entity_id,
@@ -911,18 +928,27 @@ export class PiChatStore implements IPiChatStore {
           issue_identifier: action.entity?.issue_identifier,
           is_executed: true,
           success: action.success,
+          error: action.error,
+          message: action.message,
         });
+        if (action.success) {
+          actionableEntities.push(action.artifact_type);
+        }
       });
       // update dialogue
       dialogue.execution_status = EExecutionStatus.COMPLETED;
+      dialogue.action_error = undefined;
       dialogue.action_summary = response.action_summary;
       dialogue.actions = response.actions;
       this.updateDialogue(chatId, actionId, dialogue);
 
-      return response;
+      return actionableEntities;
     } catch (error) {
       console.error(error);
       dialogue.execution_status = EExecutionStatus.COMPLETED;
+      dialogue.action_error =
+        (error as any)?.error ?? (error as any)?.detail ?? (error as any)?.message ?? "Unable to execute action.";
+      dialogue.action_summary = undefined;
       this.updateDialogue(chatId, actionId, dialogue);
       throw error;
     }
@@ -954,6 +980,24 @@ export class PiChatStore implements IPiChatStore {
       } else {
         throw new Error("Failed to follow up");
       }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  convertToPage = async (description: string, workspaceSlug: string, projectId: string | undefined, chatId: string) => {
+    const payload = {
+      description_html: description,
+      workspace_slug: workspaceSlug,
+      page_type: projectId ? "project" : "workspace",
+      project_id: projectId,
+      chat_id: chatId,
+    };
+    try {
+      const response = await this.piChatService.convertToPage(payload);
+      return response;
     } catch (error) {
       console.error(error);
       throw error;

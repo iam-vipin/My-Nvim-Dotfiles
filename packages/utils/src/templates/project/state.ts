@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 
 type TMockCreateOrUpdateStateParams = {
   workspaceSlug: string;

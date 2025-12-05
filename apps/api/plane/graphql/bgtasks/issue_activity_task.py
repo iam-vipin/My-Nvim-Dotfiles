@@ -13,7 +13,7 @@ from django.db.models import Q
 
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
+from plane.bgtasks.notification_task import process_workitem_notifications
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.db.models import (
     CommentReaction,
@@ -1800,13 +1800,13 @@ def issue_activity(
                 )
 
         if notification:
-            notifications.delay(
-                type=type,
+            process_workitem_notifications.delay(
+                notification_type=type,
                 issue_id=issue_id,
                 actor_id=actor_id,
                 project_id=project_id,
                 subscriber=subscriber,
-                issue_activities_created=json.dumps(
+                activities_data=json.dumps(
                     IssueActivitySerializer(issue_activities_created, many=True).data,
                     cls=DjangoJSONEncoder,
                 ),

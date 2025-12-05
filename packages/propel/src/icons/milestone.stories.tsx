@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { MilestoneIcon, MilestoneIconVariant } from "./milestone";
+import type { MilestoneIconVariant } from "./milestone";
+import { MilestoneIcon } from "./milestone";
 
 const meta: Meta<typeof MilestoneIcon> = {
   title: "Icons/MilestoneIcon",

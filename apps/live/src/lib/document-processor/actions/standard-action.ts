@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { type DocumentAction } from "@/types/document-action";
+import type { DocumentAction } from "@/types/document-action";
 import { deleteNode, findAllElementsRecursive } from "@/utils";
 import { ActionRegistry } from "../registries/action-registry";
 

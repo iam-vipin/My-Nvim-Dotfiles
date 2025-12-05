@@ -1,8 +1,8 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Sigma } from "lucide-react";
 import React from "react";
 // types
-import { TMathComponentProps } from "../../types";
+import type { TMathComponentProps } from "../../types";
 // local components
 import { BlockMathContainer } from "./container";
 

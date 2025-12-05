@@ -1,10 +1,10 @@
 "use client";
 
-import type { FC } from "react";
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_FEATURE_FLAGS } from "@plane/constants";
+import NotionLogo from "@/app/assets/services/notion.svg?url";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-importer";
 import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
@@ -12,16 +12,14 @@ import { useFlag } from "@/plane-web/hooks/store";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { EZipDriverType } from "@/plane-web/types/importers/zip-importer";
-import NotionLogo from "@/public/services/notion.svg";
 
-const NotionImporter: FC = observer(() => {
+function NotionImporter() {
   const {
     // Properties
     workspace,
     user,
     externalApiToken,
     dashboardView,
-
     // Actions
     fetchProjects,
     fetchExternalApiToken,
@@ -105,6 +103,6 @@ const NotionImporter: FC = observer(() => {
   };
 
   return <Fragment>{dashboardView ? <ZipImporterDashboard {...props} /> : <StepsRoot {...props} />}</Fragment>;
-});
+}
 
-export default NotionImporter;
+export default observer(NotionImporter);

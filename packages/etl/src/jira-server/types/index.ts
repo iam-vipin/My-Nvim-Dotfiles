@@ -1,4 +1,4 @@
-import {
+import type {
   Comment as JComment,
   ComponentWithIssueCount,
   Priority as JiraPriority,
@@ -10,12 +10,19 @@ import {
   IssueTypeDetails as JiraIssueTypeDetails,
   CustomFieldContextOption,
 } from "jira.js/out/version2/models";
-import { ExProject, ExState } from "@plane/sdk";
+import type { ExProject, ExState } from "@plane/sdk";
 
 export type JiraProps = {
   hostname: string;
   patToken: string;
+  email: string;
+  authenticationType: EJiraAuthenticationType;
 };
+
+export enum EJiraAuthenticationType {
+  BASIC = "basic",
+  PERSONAL_ACCESS_TOKEN = "personalAccessToken",
+}
 
 export type ImportedJiraUser = {
   user_id: string;
@@ -33,6 +40,7 @@ export type JiraApiUser = {
   key: string;
   name: string;
   emailAddress?: string;
+  accountType?: string;
   avatarUrls: {
     "16x16": string;
     "24x24": string;

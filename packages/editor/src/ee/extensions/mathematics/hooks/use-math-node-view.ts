@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // plane constants
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
-import { EMathAttributeNames, TMathAttributes, MathematicsExtension, TMathNodeType } from "../types";
+import type { TMathAttributes, MathematicsExtension, TMathNodeType } from "../types";
+import { EMathAttributeNames } from "../types";
 // utils
 import { validateLaTeX } from "../utils/latex-validator";
 

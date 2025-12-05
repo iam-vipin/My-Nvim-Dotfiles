@@ -1,9 +1,7 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -13,17 +11,13 @@ import { useUser } from "@/hooks/store";
 // plane admin hooks
 import { useInstanceFeatureFlags } from "@/plane-admin/hooks/store/use-instance-feature-flag";
 // local components
+import type { Route } from "./+types/layout";
 import { AdminHeader } from "./header";
 import { AdminSidebar } from "./sidebar";
 
-type TAdminLayout = {
-  children: ReactNode;
-};
-
-const AdminLayout: FC<TAdminLayout> = (props) => {
-  const { children } = props;
+function AdminLayout(_props: Route.ComponentProps) {
   // router
-  const router = useRouter();
+  const { replace } = useRouter();
   // store hooks
   const { isUserLoggedIn } = useUser();
   // plane admin hooks
@@ -36,10 +30,8 @@ const AdminLayout: FC<TAdminLayout> = (props) => {
   );
 
   useEffect(() => {
-    if (isUserLoggedIn === false) {
-      router.push("/");
-    }
-  }, [router, isUserLoggedIn]);
+    if (isUserLoggedIn === false) replace("/");
+  }, [replace, isUserLoggedIn]);
 
   if ((flagsLoader && !flagsError) || isUserLoggedIn === undefined) {
     return (
@@ -55,7 +47,9 @@ const AdminLayout: FC<TAdminLayout> = (props) => {
         <AdminSidebar />
         <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
           <AdminHeader />
-          <div className="h-full w-full overflow-hidden">{children}</div>
+          <div className="h-full w-full overflow-hidden">
+            <Outlet />
+          </div>
         </main>
         <NewUserPopup />
       </div>
@@ -63,6 +57,6 @@ const AdminLayout: FC<TAdminLayout> = (props) => {
   }
 
   return <></>;
-};
+}
 
 export default observer(AdminLayout);

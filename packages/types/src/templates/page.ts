@@ -1,6 +1,6 @@
 // plane imports
-import { TPage } from "../page/core";
-import { ETemplateType, TBaseTemplate } from "./base";
+import type { TPage } from "../page/core";
+import type { ETemplateType, TBaseTemplate } from "./base";
 
 export type TPageTemplateData = Pick<TPage, "description_html" | "id" | "logo_props" | "name" | "workspace"> & {
   project: string | undefined;

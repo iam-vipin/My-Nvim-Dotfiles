@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -24,10 +22,11 @@ import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { TeamspaceUpgrade } from "@/plane-web/components/teamspaces/upgrade";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/page";
 
-const TeamspaceSettingsPage = observer(() => {
+function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -35,12 +34,12 @@ const TeamspaceSettingsPage = observer(() => {
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Teamspaces` : undefined;
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isTeamspacesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
 
-  if (!workspaceSlug || !currentWorkspace?.id) return <></>;
+  if (!currentWorkspace?.id) return <></>;
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
@@ -52,7 +51,7 @@ const TeamspaceSettingsPage = observer(() => {
       const payload = {
         [EWorkspaceFeatures.IS_TEAMSPACES_ENABLED]: !isTeamspacesFeatureEnabled,
       };
-      const toggleTeamsFeaturePromise = updateWorkspaceFeature(workspaceSlug.toString(), payload);
+      const toggleTeamsFeaturePromise = updateWorkspaceFeature(workspaceSlug, payload);
       setPromiseToast(toggleTeamsFeaturePromise, {
         loading: "Updating teamspaces feature...",
         success: {
@@ -68,7 +67,7 @@ const TeamspaceSettingsPage = observer(() => {
       captureSuccess({
         eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
         payload: {
-          workspace_slug: workspaceSlug.toString(),
+          workspace_slug: workspaceSlug,
         },
       });
     } catch (error) {
@@ -76,7 +75,7 @@ const TeamspaceSettingsPage = observer(() => {
       captureError({
         eventName: isTeamspacesFeatureEnabled ? TEAMSPACE_TRACKER_EVENTS.DISABLE : TEAMSPACE_TRACKER_EVENTS.ENABLE,
         payload: {
-          workspace_slug: workspaceSlug.toString(),
+          workspace_slug: workspaceSlug,
         },
       });
     }
@@ -89,7 +88,7 @@ const TeamspaceSettingsPage = observer(() => {
         title={t("workspace_settings.settings.teamspaces.heading")}
         description={t("workspace_settings.settings.teamspaces.description")}
       />
-      <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
+      <WithFeatureFlagHOC flag="TEAMSPACES" fallback={<TeamspaceUpgrade />} workspaceSlug={workspaceSlug}>
         <div className="px-4 py-6 flex items-center justify-between gap-2 border-b border-custom-border-100 w-full">
           <div className="flex items-center gap-4">
             <div className="size-10 bg-custom-background-90 rounded-md flex items-center justify-center">
@@ -120,6 +119,6 @@ const TeamspaceSettingsPage = observer(() => {
       </WithFeatureFlagHOC>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default TeamspaceSettingsPage;
+export default observer(TeamspaceSettingsPage);

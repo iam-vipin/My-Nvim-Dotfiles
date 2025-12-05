@@ -1,7 +1,9 @@
-import { Response } from "express";
+import type { Response } from "express";
 import { E_SILO_ERROR_CODES, E_INTEGRATION_ENTITY_CONNECTION_MAP } from "@plane/etl/core";
-import { PlaneUser } from "@plane/sdk";
-import { TWorkspaceConnection, E_INTEGRATION_KEYS } from "@plane/types";
+import { logger } from "@plane/logger";
+import type { PlaneUser } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
@@ -10,7 +12,8 @@ import { EOAuthGrantType } from "@/types/oauth";
 import { planeOAuthService } from "./auth";
 import { convertIntegrationKeyToProvider } from "./helpers";
 import { OAuthStrategyManager } from "./strategy-manager";
-import { OAuthState, OAuthConnectionStatus, E_INTEGRATION_DISCONNECT_SOURCE, IntegrationUserMap } from "./types";
+import type { OAuthState, OAuthConnectionStatus, IntegrationUserMap } from "./types";
+import { E_INTEGRATION_DISCONNECT_SOURCE } from "./types";
 
 const PLANE_OAUTH_SUPPORTED_PROVIDERS = [
   E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
@@ -146,6 +149,12 @@ export class OAuthController {
       const providerString = convertIntegrationKeyToProvider(provider);
       const redirectBase = `${env.APP_BASE_URL}/${JSON.parse(Buffer.from(state, "base64").toString()).workspace_slug}/settings/integrations/${providerString}/`;
 
+      logger.error(`OAuth handleCallback error for provider: ${providerString}`, {
+        error: error.message,
+        errorStack: error.stack,
+        provider: providerString,
+      });
+
       if (error.message === E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT) {
         res.status(400).redirect(`${redirectBase}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
         return;
@@ -215,7 +224,7 @@ export class OAuthController {
       await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
         workspace_id: authState.workspace_id,
         user_id: authState.user_id,
-        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
         source_access_token: response.access_token,
         source_refresh_token: response.refresh_token || "",
         target_access_token: authState.plane_api_token,
@@ -369,7 +378,7 @@ export class OAuthController {
       await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
         workspace_id: authState.workspace_id,
         user_id: authState.user_id,
-        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+        source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
         source_access_token: response.access_token,
         source_refresh_token: response.refresh_token || "",
         source_identifier: response.identifier as string,
@@ -458,7 +467,7 @@ export class OAuthController {
     const credentials = await integrationConnectionHelper.getUserWorkspaceCredentials({
       workspace_id: workspaceId,
       user_id: userId,
-      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
     });
 
     return {
@@ -471,7 +480,7 @@ export class OAuthController {
     const credentials = await integrationConnectionHelper.getUserWorkspaceCredentials({
       workspace_id: workspaceId,
       user_id: userId,
-      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider],
+      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[provider as keyof typeof E_INTEGRATION_ENTITY_CONNECTION_MAP],
     });
 
     if (!credentials.length) return;

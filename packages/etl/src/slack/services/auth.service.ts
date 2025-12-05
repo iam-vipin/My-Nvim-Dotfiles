@@ -1,6 +1,7 @@
-import axios, { AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import axios from "axios";
 import { getUserAuthScopes, getWorkspaceAuthScopes } from "../helpers";
-import {
+import type {
   SlackAuthConfig,
   SlackAuthPayload,
   SlackBotTokenResponse,

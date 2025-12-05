@@ -1,17 +1,18 @@
 import { logger } from "@plane/logger";
-import {
+import type {
   BooleanField,
   DateField,
-  E_KNOWN_FIELD_KEY,
   FormField,
   NumberField,
   RelationField,
   SelectField,
   TextField,
 } from "@/types/form/base";
-import { SlackBlockValue } from "../types/fields";
+import { E_KNOWN_FIELD_KEY } from "@/types/form/base";
+import type { SlackBlockValue } from "../types/fields";
 import { extractRichTextElements } from "./parse-issue-form";
-import { convertToSlackOption, convertToSlackOptions, PlainTextOption } from "./slack-options";
+import type { PlainTextOption } from "./slack-options";
+import { convertToSlackOption, convertToSlackOptions } from "./slack-options";
 
 export const getSlackBlock = (projectId: string, field: FormField, currentValue?: SlackBlockValue) => {
   switch (field.type) {

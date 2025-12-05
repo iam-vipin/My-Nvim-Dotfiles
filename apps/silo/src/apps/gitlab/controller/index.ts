@@ -1,21 +1,19 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Delete, Get, Post } from "@plane/decorators";
 import { E_SILO_ERROR_CODES } from "@plane/etl/core";
-import {
-  createGitLabAuth,
-  createGitLabService,
-  EConnectionType,
+import type {
   GitLabAuthorizeState,
   GitlabEntityData,
-  GitlabEntityType,
   GitlabPlaneOAuthState,
   GitlabWebhook,
   GitlabWebhookEvent,
   IGitlabEntity,
 } from "@plane/etl/gitlab";
+import { createGitLabAuth, createGitLabService, EConnectionType, GitlabEntityType } from "@plane/etl/gitlab";
 import { logger } from "@plane/logger";
-import { ExIssueLabel } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceEntityConnection } from "@plane/types";
+import type { ExIssueLabel } from "@plane/sdk";
+import type { TWorkspaceEntityConnection } from "@plane/types";
+import { E_INTEGRATION_KEYS } from "@plane/types";
 import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";

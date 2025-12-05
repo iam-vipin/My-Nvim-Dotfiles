@@ -1,8 +1,12 @@
+import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
+import initiativesGanttDark from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-dark.webp?url";
+import initiativesGanttLight from "@/app/assets/empty-state/initiatives/scope/initiatives-gantt-light.webp?url";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
-import { TimeLineTypeContext, ETimeLineTypeType } from "@/components/gantt-chart/contexts";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { AddScopeButton } from "../../common/add-scope-button";
 import { ScopeGanttChartRoot } from "./chart/chart-root";
 
@@ -19,10 +23,11 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
   const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled } = props;
 
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
 
   const isEmpty = epicIds.length === 0 && projectIds.length === 0;
 
-  const resolvedAssetPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/scope/initiatives-gantt" });
+  const resolvedAssetPath = resolvedTheme === "light" ? initiativesGanttLight : initiativesGanttDark;
 
   if (isEmpty)
     return (
@@ -32,8 +37,6 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
         description={t("initiatives.scope.empty_state.description")}
         customPrimaryButton={
           <AddScopeButton
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
             disabled={disabled}
             customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
           />
@@ -42,7 +45,7 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
     );
 
   return (
-    <TimeLineTypeContext.Provider value={ETimeLineTypeType.GROUPED}>
+    <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.GROUPED}>
       <ScopeGanttChartRoot
         epicIds={epicIds}
         projectIds={projectIds}

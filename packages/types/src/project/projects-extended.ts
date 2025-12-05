@@ -1,4 +1,4 @@
-import { EUpdateStatus } from "../enums";
+import type { EUpdateStatus } from "../enums";
 
 export enum EProjectPriority {
   NONE = "none",
@@ -79,7 +79,7 @@ export type TProjectAttributesResponse = TProjectAttributes & {
 };
 
 export type TProjectExtended = TProjectAttributes & {
-  description_html?: string | undefined;
+  description_html?: string | null | undefined;
   project_name?: string;
   update_status?: EUpdateStatus | undefined;
   initiative_ids?: string[];

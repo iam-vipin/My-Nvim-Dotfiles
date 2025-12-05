@@ -293,45 +293,44 @@ _DEFAULT_CONFIGS = {
         reasoning_effort="low",
         use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
     ),
+    "gpt5_1_default": LLMConfig(
+        model="gpt-5.1",
+        streaming=False,
+    ),
+    "gpt5_1_stream": LLMConfig(
+        model="gpt-5.1",
+        streaming=True,
+    ),
 }
 
+
 # Anthropic configs
+def _create_anthropic_config(
+    model: str,
+    streaming: bool = False,
+    temperature: float = 0.2,
+) -> LLMConfig:
+    """Factory function to create Anthropic LLM configurations with consistent defaults."""
+    return LLMConfig(
+        model=model,
+        temperature=temperature,
+        streaming=streaming,
+        base_url=settings.llm_config.CLAUDE_BASE_URL,
+        api_key=settings.llm_config.CLAUDE_API_KEY,
+    )
+
+
 _ANTHROPIC_CONFIGS = {
-    "claude-sonnet-4-0-default": LLMConfig(
-        model=settings.llm_model.CLAUDE_SONNET_4_0,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    ),
-    "claude-sonnet-4-0-stream": LLMConfig(
-        model=settings.llm_model.CLAUDE_SONNET_4_0,
-        temperature=0.2,
-        streaming=True,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    ),
-    "claude-sonnet-4-0-decomposer": LLMConfig(
-        model=settings.llm_model.CLAUDE_SONNET_4_0,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    ),
-    "claude-sonnet-4-0-fast": LLMConfig(
-        model=settings.llm_model.CLAUDE_SONNET_4_0,
-        temperature=0.2,
-        streaming=False,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    ),
-    "claude-sonnet-4-0-fast-stream": LLMConfig(
-        model=settings.llm_model.CLAUDE_SONNET_4_0,
-        temperature=0.2,
-        streaming=True,
-        base_url=settings.llm_config.CLAUDE_BASE_URL,
-        api_key=settings.llm_config.CLAUDE_API_KEY,
-    ),
+    "claude-sonnet-4-0-default": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
+    "claude-sonnet-4-0-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
+    "claude-sonnet-4-0-decomposer": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
+    "claude-sonnet-4-0-fast": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0),
+    "claude-sonnet-4-0-fast-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_0, streaming=True),
+    "claude-sonnet-4-5-default": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
+    "claude-sonnet-4-5-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
+    "claude-sonnet-4-5-decomposer": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
+    "claude-sonnet-4-5-fast": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5),
+    "claude-sonnet-4-5-fast-stream": _create_anthropic_config(settings.llm_model.CLAUDE_SONNET_4_5, streaming=True),
 }
 
 # LiteLLM configs
@@ -459,6 +458,11 @@ def get_chat_llm(llm_name: str) -> Any:
                 reasoning_effort="low",
                 use_responses_api=settings.llm_config.GPT5_USE_RESPONSES_API,  # Configurable via env var
             )
+        elif llm_name.lower() == "gpt-5.1":
+            config = LLMConfig(
+                model="gpt-5.1",
+                streaming=True,
+            )
         elif llm_name.lower() in ["claude-sonnet-4"]:
             config = LLMConfig(
                 model=settings.llm_model.LITE_LLM_CLAUDE_SONNET_4,
@@ -468,12 +472,14 @@ def get_chat_llm(llm_name: str) -> Any:
                 api_key=settings.llm_config.LITE_LLM_API_KEY,
             )
         elif llm_name.lower() == "claude-sonnet-4-0":
-            config = LLMConfig(
+            config = _create_anthropic_config(
                 model=settings.llm_model.CLAUDE_SONNET_4_0,
-                temperature=0.2,
                 streaming=True,
-                base_url=settings.llm_config.CLAUDE_BASE_URL,
-                api_key=settings.llm_config.CLAUDE_API_KEY,
+            )
+        elif llm_name.lower() == "claude-sonnet-4-5":
+            config = _create_anthropic_config(
+                model=settings.llm_model.CLAUDE_SONNET_4_5,
+                streaming=True,
             )
         else:
             # Fallback to default (GPT-4.1)
@@ -523,6 +529,15 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
                 config,
                 max_completion_tokens=4096,
             )
+        elif model == "claude-sonnet-4-5":
+            config = LLMConfig(
+                model=settings.llm_model.CLAUDE_SONNET_4_5,
+                temperature=0.2,
+                streaming=False,
+                base_url=settings.llm_config.CLAUDE_BASE_URL,
+                api_key=settings.llm_config.CLAUDE_API_KEY,
+            )
+            return create_openai_llm(config, max_completion_tokens=4096)
         elif model in ["gpt-5-standard", "gpt-5-fast"]:
             # GPT-5 doesn't support temperature or frequency_penalty
             # Don't use responses_api for SQL generation to avoid structured output formatting
@@ -543,6 +558,13 @@ def get_sql_agent_llm(operation_type: str, llm_model: str = settings.llm_model.G
                 config,
                 max_completion_tokens=8192,  # Increased from 4096 to handle reasoning tokens
             )
+        elif model == "gpt-5.1":
+            # GPT-5.1 basic config for SQL generation
+            config = LLMConfig(
+                model="gpt-5.1",
+                streaming=False,
+            )
+            return create_openai_llm(config, max_completion_tokens=4096)
         else:
             config = LLMConfig(model=model, temperature=0.2, streaming=False)
             return create_openai_llm(

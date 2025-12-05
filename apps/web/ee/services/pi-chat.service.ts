@@ -1,15 +1,14 @@
 // constants
 import type { AxiosRequestConfig } from "axios";
 import { PI_URL } from "@plane/constants";
-import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
+
 // services
 import { APIService } from "@/services/api.service";
-import { FileUploadService } from "@/services/file-upload.service";
 import type {
   TFeedback,
   TQuery,
   TSearchQuery,
-  TTemplate,
+  TInstanceResponse,
   TUserThreads,
   TAiModels,
   TInitPayload,
@@ -19,13 +18,9 @@ import type {
   TArtifact,
   TFollowUpResponse,
   TUpdatedArtifact,
-  TPiAttachmentUploadResponse,
   TPiAttachment,
 } from "../types";
 
-type TTemplateResponse = {
-  templates: TTemplate[];
-};
 type TChatHistoryResponse = {
   results: {
     chat_id: string;
@@ -66,11 +61,8 @@ export const getPiFileURL = (path: string): string | undefined => {
 };
 
 export class PiChatService extends APIService {
-  private fileUploadService: FileUploadService;
   constructor() {
     super(PI_URL);
-    // upload service
-    this.fileUploadService = new FileUploadService();
   }
 
   // initiatialize chat
@@ -123,11 +115,11 @@ export class PiChatService extends APIService {
     return r;
   }
 
-  // fetch templates
-  async listTemplates(workspaceId: string | undefined): Promise<TTemplateResponse> {
-    return this.get(`/api/v1/chat/get-templates/`, {
+  // fetch instance
+  async getInstance(workspaceId: string): Promise<TInstanceResponse> {
+    return this.get(`/api/v1/chat/start/`, {
       params: {
-        ...(workspaceId && { workspace_id: workspaceId }),
+        workspace_id: workspaceId,
       },
     })
       .then((response) => response?.data)
@@ -290,7 +282,11 @@ export class PiChatService extends APIService {
     return this.post(`/api/v1/chat/execute-action/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw (
+          error?.response?.data ?? {
+            error: error?.message ?? "Unable to execute action",
+          }
+        );
       });
   }
 
@@ -350,38 +346,53 @@ export class PiChatService extends APIService {
     chatId: string,
     uploadProgressHandler: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TPiAttachment | void> {
-    const fileMetaData = await getFileMetaDataForUpload(file);
+    // Create FormData to send file directly to backend
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("workspace_id", workspaceId);
+    formData.append("chat_id", chatId);
+    formData.append("filename", file.name);
+    formData.append("file_size", file.size.toString());
 
-    const response = await this.post(`/api/v1/attachments/upload-attachment/`, {
-      filename: fileMetaData.name,
-      file_size: fileMetaData.size,
-      content_type: fileMetaData.type,
-      workspace_id: workspaceId,
-      chat_id: chatId,
+    // Upload file directly to backend (backend will scan and upload to S3)
+    const response = await this.post(`/api/v1/attachments/upload-attachment/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: uploadProgressHandler,
     })
-      .then(async (response) => {
-        const signedURLResponse: TPiAttachmentUploadResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(
-          signedURLResponse.upload_data.url,
-          fileUploadPayload,
-          uploadProgressHandler
-        );
-        const finalResponse = await this.completeAttachmentUpload(signedURLResponse.attachment_id, chatId);
-        return finalResponse;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        // Handle security-related errors with better messages
+        const errorData = error?.response?.data;
+        const errorMessage = errorData?.detail || errorData?.message || "Upload failed";
+
+        throw {
+          detail: errorMessage,
+          message: errorMessage,
+          isSecurityError:
+            errorMessage.includes("Malware") ||
+            errorMessage.includes("rejected") ||
+            errorMessage.includes("dangerous") ||
+            errorMessage.includes("mismatch"),
+          status: error?.response?.status,
+        };
       });
     return response;
   }
 
-  // complete attachment upload
-  async completeAttachmentUpload(attachmentId: string, chatId: string): Promise<TPiAttachment> {
-    return this.patch(`/api/v1/attachments/complete-upload/`, {
-      attachment_id: attachmentId,
-      chat_id: chatId,
-    })
+  // convert to page
+  async convertToPage(data: {
+    chat_id: string;
+    name?: string;
+    description_html: string;
+    workspace_slug: string;
+    page_type: string;
+    project_id: string | undefined;
+  }): Promise<{
+    page_url: string;
+  }> {
+    return this.post(`/api/v1/chat-ctas/save-as-page/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

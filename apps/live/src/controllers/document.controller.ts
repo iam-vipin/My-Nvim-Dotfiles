@@ -7,7 +7,7 @@ import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 import { logger } from "@plane/logger";
 import { requireSecretKey } from "@/lib/auth-middleware";
 import { AppError } from "@/lib/errors";
-import { type TConvertDocumentRequestBody } from "@/types";
+import type { TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation
 const convertDocumentSchema = z.object({

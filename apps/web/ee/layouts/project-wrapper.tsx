@@ -4,6 +4,11 @@ import useSWR from "swr";
 // ce imports
 import type { IProjectAuthWrapper } from "@/ce/layouts/project-wrapper";
 // hooks
+import {
+  EPICS_PROPERTIES_AND_OPTIONS,
+  PROJECT_WORKFLOWS,
+  WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS,
+} from "@/constants/fetch-keys";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // layouts
 import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
@@ -24,47 +29,38 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchWorkflowStates } = useProjectState();
   const { fetchMilestones, isMilestonesEnabled } = useMilestones();
   // derived values
-  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
-  const isEpicEnabled = isEpicEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
-  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "WORKFLOWS");
-  const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
+  const isEpicEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
+  const isWorkflowFeatureFlagEnabled = useFlag(workspaceSlug, "WORKFLOWS");
+  const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
   // fetching all work item types and properties
   useSWR(
-    workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? ["workItemTypesPropertiesAndOptions", workspaceSlug, projectId, isWorkItemTypeEnabled]
-      : null,
-    workspaceSlug && projectId && isWorkItemTypeEnabled
-      ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
-      : null,
+    isWorkItemTypeEnabled ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
+    isWorkItemTypeEnabled ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching all epic types and properties
   useSWR(
-    workspaceSlug && projectId && isEpicEnabled
-      ? ["epicsPropertiesAndOptions", workspaceSlug, projectId, isEpicEnabled]
-      : null,
-    workspaceSlug && projectId && isEpicEnabled
-      ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug.toString(), projectId.toString())
-      : null,
+    isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(workspaceSlug, projectId) : null,
+    isEpicEnabled ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching project level workflow states
   useSWR(
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? `PROJECT_WORKFLOWS_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && isWorkflowFeatureFlagEnabled
-      ? () => fetchWorkflowStates(workspaceSlug.toString(), projectId.toString())
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
+    isWorkflowFeatureFlagEnabled ? PROJECT_WORKFLOWS(workspaceSlug, projectId) : null,
+    () => fetchWorkflowStates(workspaceSlug, projectId),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
   );
 
   // fetching project level milestones
   useSWR(
-    projectId && workspaceSlug && isMilestonesFeatureEnabled ? `PROJECT_MILESTONES_${projectId}` : null,
-    projectId && workspaceSlug && isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
+    isMilestonesFeatureEnabled ? `PROJECT_MILESTONES_${projectId}` : null,
+    isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

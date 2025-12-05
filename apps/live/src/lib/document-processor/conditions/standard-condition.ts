@@ -1,5 +1,5 @@
-import { TPage } from "@plane/types";
-import { type ActionCondition } from "@/types/document-action";
+import type { TPage } from "@plane/types";
+import type { ActionCondition } from "@/types/document-action";
 import { ConditionRegistry } from "../registries/condition-registry";
 
 export const isDeletedAndInDocument: ActionCondition = {

@@ -5,19 +5,14 @@
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./lib": {
-      "import": "./dist/lib.js",
-      "require": "./dist/lib.cjs"
-    },
+    ".": "./dist/index.js",
+    "./lib": "./dist/lib.js",
     "./package.json": "./package.json",
+    "./styles.css": "./dist/styles/index.css",
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
@@ -42,13 +37,14 @@
     "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
-    "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
+    "buffer": "^6.0.3",
     "@tiptap/extension-collaboration": "^2.22.3",
     "@tiptap/extension-collaboration-cursor": "^2.22.3",
     "@tiptap/extension-document": "^2.22.3",
@@ -93,6 +89,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.1.3",
     "@types/node": "catalog:",
     "@types/tldjs": "^2.3.4",
     "@types/react": "catalog:",

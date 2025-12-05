@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const ScopeIcon: React.FC<ISvgIcons> = ({ className = "text-current", width = 16, height = 16, ...rest }) => (
   <svg

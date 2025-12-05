@@ -11,6 +11,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   workspaceSlug: string;
   workspaceId: string;
   uploadFile?: (blockId: string, file: File) => Promise<string>;
+  duplicateFile?: (assetId: string) => Promise<string>;
   initialValue?: string;
   searchEntityCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 };
@@ -26,6 +27,7 @@ export const RichTextField = <T extends FieldValues>(props: Props<T>) => {
     workspaceSlug,
     workspaceId,
     uploadFile,
+    duplicateFile,
     initialValue,
     searchEntityCallback,
     error,
@@ -59,6 +61,7 @@ export const RichTextField = <T extends FieldValues>(props: Props<T>) => {
             )}
             displayConfig={{ fontSize: "small-font" }}
             uploadFile={uploadFile ?? (() => Promise.reject())}
+            duplicateFile={duplicateFile ?? (() => Promise.reject())}
             disabledExtensions={["attachments"]}
           />
         )}

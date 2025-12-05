@@ -1,19 +1,16 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { EInboxIssueSource } from "@plane/types";
 // hooks
-import { capitalizeFirstLetter } from "@plane/utils";
+import { capitalizeFirstLetter, replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueActivityBlockComponent } from "./";
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) => {
+export const IssueDefaultActivity = observer(function IssueDefaultActivity(props: TIssueDefaultActivity) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -36,7 +33,10 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
           source && source !== EInboxIssueSource.IN_APP ? (
             <span>
               created the work item via{" "}
-              <span className="font-medium">{capitalizeFirstLetter(source.toLowerCase() || "")}</span>.
+              <span className="font-medium">
+                {capitalizeFirstLetter(replaceUnderscoreIfSnakeCase(source).toLowerCase() || "")}
+              </span>
+              .
             </span>
           ) : (
             <span> created the work item.</span>

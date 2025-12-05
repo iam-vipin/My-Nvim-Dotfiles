@@ -29,6 +29,7 @@ export default {
     workflows: "워크플로우",
     templates: "템플릿",
     members_and_teamspaces: "멤버와 팀스페이스",
+    open_in_full_screen: "전체 화면으로 {page} 열기",
   },
   updates: {
     add_update: "업데이트 추가",
@@ -160,6 +161,28 @@ export default {
       settings_sub_heading:
         "고객 요청을 작업 항목으로 가져오고, 요청에 따라 우선순위를 지정하고, 작업 항목의 상태를 고객 기록에 통합합니다. 곧 CRM이나 지원 도구와 통합하여 고객 속성별로 더 나은 작업 관리를 제공할 예정입니다.",
     },
+    features: {
+      intake: {
+        heading: "인테이크 책임",
+        notify_assignee: {
+          title: "담당자에게 알림",
+          description: "새로운 인테이크 요청의 경우 기본 담당자가 알림을 통해 알림을 받습니다",
+        },
+        toasts: {
+          set: {
+            loading: "담당자 설정 중...",
+            success: {
+              title: "성공!",
+              message: "담당자가 성공적으로 설정되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "담당자 설정 중 문제가 발생했습니다. 다시 시도해 주세요.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "구성된 인테그레이션 없음",
@@ -204,6 +227,90 @@ export default {
         description: "에픽에 커스텀 프로퍼티를 추가하세요.",
       },
       disabled: "비활성화됨",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "사이클 자동 일정",
+        description: "수동 설정 없이 사이클을 유지합니다.",
+        tooltip: "선택한 일정에 따라 새로운 사이클을 자동으로 생성합니다.",
+        edit_button: "편집",
+        form: {
+          cycle_title: {
+            label: "사이클 제목",
+            placeholder: "제목",
+            tooltip: "제목은 후속 사이클에 번호가 추가됩니다. 예: 디자인 - 1/2/3",
+            validation: {
+              required: "사이클 제목은 필수입니다",
+              max_length: "제목은 255자를 초과할 수 없습니다",
+            },
+          },
+          cycle_duration: {
+            label: "사이클 기간",
+            unit: "주",
+            validation: {
+              required: "사이클 기간은 필수입니다",
+              min: "사이클 기간은 최소 1주 이상이어야 합니다",
+              max: "사이클 기간은 30주를 초과할 수 없습니다",
+              positive: "사이클 기간은 양수여야 합니다",
+            },
+          },
+          cooldown_period: {
+            label: "쿨다운 기간",
+            unit: "일",
+            tooltip: "다음 사이클이 시작되기 전 사이클 간 휴지 기간입니다.",
+            validation: {
+              required: "쿨다운 기간은 필수입니다",
+              negative: "쿨다운 기간은 음수일 수 없습니다",
+            },
+          },
+          start_date: {
+            label: "사이클 시작일",
+            validation: {
+              required: "시작일은 필수입니다",
+              past: "시작일은 과거일 수 없습니다",
+            },
+          },
+          number_of_cycles: {
+            label: "미래 사이클 수",
+            validation: {
+              required: "사이클 수는 필수입니다",
+              min: "최소 1개의 사이클이 필요합니다",
+              max: "3개 이상의 사이클을 예약할 수 없습니다",
+            },
+          },
+          auto_rollover: {
+            label: "작업 항목 자동 이월",
+            tooltip: "사이클이 완료되는 날, 완료되지 않은 모든 작업 항목을 다음 사이클로 이동합니다.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "사이클 자동 일정 활성화 중",
+            loading_disable: "사이클 자동 일정 비활성화 중",
+            success: {
+              title: "성공!",
+              message: "사이클 자동 일정이 성공적으로 전환되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message: "사이클 자동 일정 전환에 실패했습니다.",
+            },
+          },
+          save: {
+            loading: "사이클 자동 일정 구성 저장 중",
+            success: {
+              title: "성공!",
+              message_create: "사이클 자동 일정 구성이 성공적으로 저장되었습니다.",
+              message_update: "사이클 자동 일정 구성이 성공적으로 업데이트되었습니다.",
+            },
+            error: {
+              title: "오류!",
+              message_create: "사이클 자동 일정 구성 저장에 실패했습니다.",
+              message_update: "사이클 자동 일정 구성 업데이트에 실패했습니다.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -453,7 +560,7 @@ export default {
       },
       not_found: {
         title: "이니셔티브가 존재하지 않습니다",
-        description: "찾고 있는 이니셔티브가 존재하지 않거나 삭제되었습니다.",
+        description: "찾고 있는 이니셔티브가 존재하지 않거나, 보관되었거나, 삭제되었습니다.",
         primary_button: {
           text: "다른 이니셔티브 보기",
         },
@@ -651,7 +758,11 @@ export default {
         app_short_description_error: "앱 간단 설명은 필수입니다",
         app_description_title: {
           label: "긴 설명",
-          placeholder: "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 ‘/’ 키를 누르세요.",
+          placeholder: "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 '/' 키를 누르세요.",
+        },
+        authorization_grant_type: {
+          title: "연결 유형",
+          description: "앱을 워크스페이스에 한 번 설치할지, 각 사용자가 자신의 계정을 연결할 수 있도록 할지 선택하세요",
         },
         app_description_error: "앱 설명은 필수입니다",
         app_slug_title: "앱 슬러그",
@@ -708,6 +819,10 @@ export default {
         categories_error: "카테고리는 필수입니다",
         invalid_categories_error: "유효하지 않은 카테고리",
         categories_description: "앱을 가장 잘 설명하는 카테고리를 선택하세요",
+        supported_plans: "지원되는 플랜",
+        supported_plans_description:
+          "이 애플리케이션을 설치할 수 있는 워크스페이스 플랜을 선택하세요. 비워두면 모든 플랜이 허용됩니다.",
+        select_plans: "플랜 선택",
         privacy_policy_url_title: "개인정보 보호 정책 URL",
         privacy_policy_url_error: "개인정보 보호 정책 URL은 필수입니다",
         invalid_privacy_policy_url_error: "유효하지 않은 개인정보 보호 정책 URL",
@@ -781,8 +896,8 @@ export default {
         internal: "내부",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요.",
       },
     },

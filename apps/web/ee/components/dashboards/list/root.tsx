@@ -1,12 +1,14 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// components
+// assets
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import listSearchDark from "@/app/assets/empty-state/dashboards/list-search-dark.webp?url";
+import listSearchLight from "@/app/assets/empty-state/dashboards/list-search-light.webp?url";
+// components
 import { ListLayout } from "@/components/core/list";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // local components
@@ -19,10 +21,12 @@ export const DashboardsListLayoutRoot = observer(() => {
     getDashboardById,
     workspaceDashboards: { currentWorkspaceFetchStatus, isAnyDashboardAvailable, currentWorkspaceFilteredDashboardIds },
   } = useDashboards();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // translation
   const { t } = useTranslation();
   // derived values
-  const searchEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list-search" });
+  const searchEmptyStateResolvedPath = resolvedTheme === "light" ? listSearchLight : listSearchDark;
 
   if (!currentWorkspaceFetchStatus) {
     return <DashboardsListLayoutLoader />;

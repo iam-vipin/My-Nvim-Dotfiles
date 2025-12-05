@@ -1,9 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
+import { Outlet } from "react-router";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -13,10 +12,11 @@ import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+import type { Route } from "./+types/layout";
 
-const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
+function InitiativesLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store
   const { currentWorkspace } = useWorkspace();
   // plane web stores
@@ -31,16 +31,16 @@ const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
     <WorkspaceAccessWrapper pageKey="initiatives">
       {shouldUpgrade ? (
         <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
-          <InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />
+          <InitiativesUpgrade workspaceSlug={workspaceSlug} redirect />
         </div>
       ) : (
         <>
           <PageHead title={pageTitle} />
-          {children}
+          <Outlet />
         </>
       )}
     </WorkspaceAccessWrapper>
   );
-});
+}
 
-export default InitiativesLayout;
+export default observer(InitiativesLayout);

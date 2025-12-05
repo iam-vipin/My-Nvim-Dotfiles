@@ -1,13 +1,13 @@
-import { DirectConnection, Hocuspocus } from "@hocuspocus/server";
+import type { DirectConnection, Hocuspocus } from "@hocuspocus/server";
 import type { Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import type { Doc } from "yjs";
 import { logger } from "@plane/logger";
-import { type TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 import { DocumentProcessor } from "@/lib/document-processor/document-processor";
 import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
-import { HocusPocusServerContext } from "@/types";
+import type { HocusPocusServerContext } from "@/types";
 
 /**
  * Metadata for a stored connection

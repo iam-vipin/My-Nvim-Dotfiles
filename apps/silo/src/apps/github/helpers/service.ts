@@ -1,5 +1,5 @@
 import { createGithubService, createGithubUserService } from "@plane/etl/github";
-import { TGithubWorkspaceConnection } from "@plane/types";
+import type { TGithubWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 
 /**

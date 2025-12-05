@@ -1,4 +1,4 @@
-import { PlaneUser } from "@plane/sdk";
+import type { PlaneUser } from "@plane/sdk";
 
 // Mock implementations for missing helpers
 export const replaceIssueNumber = (text: string, projectId: string) => text;

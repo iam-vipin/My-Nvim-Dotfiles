@@ -1,7 +1,7 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import { CollaborationCursor } from "@tiptap/extension-collaboration-cursor";
 // types
-import { TUserDetails } from "@/types";
+import type { TUserDetails } from "@/types";
 
 type Props = {
   provider: HocuspocusProvider;

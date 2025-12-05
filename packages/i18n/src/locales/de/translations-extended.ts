@@ -31,6 +31,7 @@ export default {
     workflows: "Arbeitsabläufe",
     templates: "Vorlagen",
     members_and_teamspaces: "Mitglieder & Teamspaces",
+    open_in_full_screen: "{page} im Vollbild öffnen",
   },
   updates: {
     add_update: "Aktualisieren",
@@ -162,6 +163,29 @@ export default {
       settings_sub_heading:
         "Bringen Sie Kundenanfragen zu Arbeitsaufgaben, weisen Sie Priorität nach Anfragen zu und führen Sie den Status von Arbeitsaufgaben in Kundendatensätzen zusammen. Bald werden Sie mit Ihrem CRM oder Support-Tool für eine noch bessere Arbeitsverwaltung nach Kundenattributen integrieren können.",
     },
+    features: {
+      intake: {
+        heading: "Intake-Verantwortung",
+        notify_assignee: {
+          title: "Zuständige benachrichtigen",
+          description:
+            "Für eine neue Intake-Anfrage werden die Standard-Zuständigen über Benachrichtigungen informiert",
+        },
+        toasts: {
+          set: {
+            loading: "Zuständige werden festgelegt...",
+            success: {
+              title: "Erfolg!",
+              message: "Zuständige erfolgreich festgelegt.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Beim Festlegen der Zuständigen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Keine Integrationen konfiguriert",
@@ -208,6 +232,91 @@ export default {
         description: "Fügen Sie benutzerdefinierte Eigenschaften zu Ihrer Epic hinzu.",
       },
       disabled: "Deaktiviert",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Automatische Zyklusplanung",
+        description: "Halten Sie Zyklen ohne manuelle Einrichtung in Bewegung.",
+        tooltip: "Erstellen Sie automatisch neue Zyklen basierend auf Ihrem gewählten Zeitplan.",
+        edit_button: "Bearbeiten",
+        form: {
+          cycle_title: {
+            label: "Zyklustitel",
+            placeholder: "Titel",
+            tooltip: "Der Titel wird für nachfolgende Zyklen mit Nummern ergänzt. Zum Beispiel: Design - 1/2/3",
+            validation: {
+              required: "Zyklustitel ist erforderlich",
+              max_length: "Der Titel darf 255 Zeichen nicht überschreiten",
+            },
+          },
+          cycle_duration: {
+            label: "Zyklusdauer",
+            unit: "Wochen",
+            validation: {
+              required: "Zyklusdauer ist erforderlich",
+              min: "Die Zyklusdauer muss mindestens 1 Woche betragen",
+              max: "Die Zyklusdauer darf 30 Wochen nicht überschreiten",
+              positive: "Die Zyklusdauer muss positiv sein",
+            },
+          },
+          cooldown_period: {
+            label: "Abkühlungsphase",
+            unit: "Tage",
+            tooltip: "Pause zwischen Zyklen, bevor der nächste beginnt.",
+            validation: {
+              required: "Abkühlungsphase ist erforderlich",
+              negative: "Die Abkühlungsphase darf nicht negativ sein",
+            },
+          },
+          start_date: {
+            label: "Zyklus-Starttag",
+            validation: {
+              required: "Startdatum ist erforderlich",
+              past: "Das Startdatum darf nicht in der Vergangenheit liegen",
+            },
+          },
+          number_of_cycles: {
+            label: "Anzahl zukünftiger Zyklen",
+            validation: {
+              required: "Anzahl der Zyklen ist erforderlich",
+              min: "Mindestens 1 Zyklus ist erforderlich",
+              max: "Es können nicht mehr als 3 Zyklen geplant werden",
+            },
+          },
+          auto_rollover: {
+            label: "Automatische Übertragung von Arbeitselementen",
+            tooltip:
+              "Am Tag der Zyklusbeendigung werden alle unvollendeten Arbeitselemente in den nächsten Zyklus verschoben.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Automatische Zyklusplanung wird aktiviert",
+            loading_disable: "Automatische Zyklusplanung wird deaktiviert",
+            success: {
+              title: "Erfolg!",
+              message: "Automatische Zyklusplanung erfolgreich aktiviert.",
+            },
+            error: {
+              title: "Fehler!",
+              message: "Aktivierung der automatischen Zyklusplanung fehlgeschlagen.",
+            },
+          },
+          save: {
+            loading: "Konfiguration der automatischen Zyklusplanung wird gespeichert",
+            success: {
+              title: "Erfolg!",
+              message_create: "Konfiguration der automatischen Zyklusplanung erfolgreich gespeichert.",
+              message_update: "Konfiguration der automatischen Zyklusplanung erfolgreich aktualisiert.",
+            },
+            error: {
+              title: "Fehler!",
+              message_create: "Speichern der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+              message_update: "Aktualisierung der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -462,7 +571,7 @@ export default {
       },
       not_found: {
         title: "Initiative existiert nicht",
-        description: "Die Initiative, nach der Sie suchen, existiert nicht oder wurde gelöscht.",
+        description: "Die Initiative, nach der Sie suchen, existiert nicht, wurde archiviert oder wurde gelöscht.",
         primary_button: {
           text: "Andere Initiativen anzeigen",
         },
@@ -664,7 +773,12 @@ export default {
         app_short_description_error: "Kurze App-Beschreibung ist erforderlich",
         app_description_title: {
           label: "Lange Beschreibung",
-          placeholder: "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie ‘/’ für Befehle.",
+          placeholder: "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie '/' für Befehle.",
+        },
+        authorization_grant_type: {
+          title: "Verbindungstyp",
+          description:
+            "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll",
         },
         app_description_error: "App-Beschreibung ist erforderlich",
         app_slug_title: "App-Slug",
@@ -725,6 +839,10 @@ export default {
         categories_error: "Kategorien sind erforderlich",
         invalid_categories_error: "Ungültige Kategorien",
         categories_description: "Wählen Sie die Kategorien, die am besten zu der App passen",
+        supported_plans: "Unterstützte Pläne",
+        supported_plans_description:
+          "Wählen Sie die Workspace-Pläne aus, die diese Anwendung installieren können. Leer lassen, um alle Pläne zu erlauben.",
+        select_plans: "Pläne Auswählen",
         privacy_policy_url_title: "Datenschutzerklärung URL",
         privacy_policy_url_error: "Datenschutzerklärung URL ist erforderlich",
         invalid_privacy_policy_url_error: "Ungültige Datenschutzerklärung URL",

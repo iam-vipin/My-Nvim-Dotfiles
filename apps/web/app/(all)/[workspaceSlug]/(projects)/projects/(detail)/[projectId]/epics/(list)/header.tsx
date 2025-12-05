@@ -4,18 +4,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { EpicIcon } from "@plane/propel/icons";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
 import { HeaderFilters } from "@/components/issues/filters";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
@@ -24,8 +25,6 @@ import { EpicLayoutQuickActions } from "@/plane-web/components/epics/quick-actio
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const EpicsHeader = observer(() => {
-  // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
@@ -34,7 +33,7 @@ export const EpicsHeader = observer(() => {
   const {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.EPIC);
-  const { currentProjectDetails, loader } = useProject();
+  const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   // derived values
@@ -58,14 +57,18 @@ export const EpicsHeader = observer(() => {
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
-            <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={currentProjectDetails?.id?.toString() ?? ""}
-                featureKey={EProjectFeatureKey.EPICS}
-                isLast
-              />
-            </Breadcrumbs>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Epics"
+                  href={`/${workspaceSlug}/projects/${projectId}/epics/`}
+                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  isLast
+                />
+              }
+              isLast
+            />
             {issuesCount > 0 ? (
               <Tooltip
                 isMobile={isMobile}

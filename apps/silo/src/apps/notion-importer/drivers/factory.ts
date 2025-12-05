@@ -1,7 +1,7 @@
-import { ZipManager } from "@/lib/zip-manager";
+import type { ZipManager } from "@/lib/zip-manager";
 import { ConfluenceImportDriver } from "./confluence/driver";
 import { NotionImportDriver } from "./notion/driver";
-import { IZipImportDriver } from "./types";
+import type { IZipImportDriver } from "./types";
 
 export enum EZipDriverType {
   NOTION = "NOTION",

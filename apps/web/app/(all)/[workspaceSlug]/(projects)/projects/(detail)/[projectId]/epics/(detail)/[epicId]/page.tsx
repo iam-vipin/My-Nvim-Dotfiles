@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { observer } from "mobx-react";
-import { redirect, useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import useSWR from "swr";
+import { redirect } from "react-router";
+// assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -12,55 +12,55 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { EpicService } from "@/plane-web/services/issue-types";
-// assets
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
+// types
+import type { Route } from "./+types/page";
 
 const epicService = new EpicService();
 
-const EpicDetailsPage = observer(() => {
-  // router
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  const { workspaceSlug, projectId, epicId } = params;
+
+  try {
+    const data = await epicService.getEpicMetaFromURL(workspaceSlug, projectId, epicId);
+
+    if (data) {
+      throw redirect(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
+    }
+
+    return { error: true, workspaceSlug, projectId };
+  } catch (error) {
+    // If it's a redirect, rethrow it
+    if (error instanceof Response) {
+      throw error;
+    }
+    // Otherwise return error state
+    return { error: true, workspaceSlug, projectId };
+  }
+}
+
+export default function EpicDetailsPage({ loaderData }: Route.ComponentProps) {
   const router = useAppRouter();
-  const { workspaceSlug, projectId, epicId } = useParams();
-  // hooks
   const { resolvedTheme } = useTheme();
 
-  const { data, isLoading, error } = useSWR(
-    workspaceSlug && projectId && epicId ? `ISSUE_DETAIL__META_${workspaceSlug}_${projectId}_${epicId}` : null,
-    workspaceSlug && projectId && epicId
-      ? () => epicService.getEpicMetaFromURL(workspaceSlug.toString(), projectId.toString(), epicId.toString())
-      : null
-  );
-
-  useEffect(() => {
-    if (data) {
-      redirect(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
-    }
-  }, [workspaceSlug, data]);
+  if (loaderData.error) {
+    return (
+      <div className="flex items-center justify-center size-full">
+        <EmptyState
+          image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+          title="Epic does not exist"
+          description="The epic you are looking for does not exist, has been archived, or has been deleted."
+          primaryButton={{
+            text: "View other epics",
+            onClick: () => router.push(`/${loaderData.workspaceSlug}/projects/${loaderData.projectId}/epics`),
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div className="flex items-center justify-center size-full">
-        {error ? (
-          <EmptyState
-            image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-            title="Epic does not exist"
-            description="The epic you are looking for does not exist, has been archived, or has been deleted."
-            primaryButton={{
-              text: "View other epics",
-              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/epics`),
-            }}
-          />
-        ) : isLoading ? (
-          <>
-            <LogoSpinner />
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-    </>
+    <div className="flex items-center justify-center size-full">
+      <LogoSpinner />
+    </div>
   );
-});
-
-export default EpicDetailsPage;
+}

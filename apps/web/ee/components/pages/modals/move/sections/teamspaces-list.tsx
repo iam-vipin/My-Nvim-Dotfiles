@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { Logo } from "@/components/common/logo";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports

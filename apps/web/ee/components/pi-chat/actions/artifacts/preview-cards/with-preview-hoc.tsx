@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { cn } from "@plane/utils";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
@@ -13,9 +14,10 @@ interface IPreviewHOC {
   shouldToggleSidebar?: boolean;
   showEdited?: boolean;
 }
-
-export const WithPreviewHOC = observer((props: IPreviewHOC) => {
+const BaseWithPreviewHOC = observer((props: IPreviewHOC) => {
   const { children, artifactId, shouldToggleSidebar = true, showEdited = true } = props;
+  // router
+  const pathname = usePathname();
   // store hooks
   const {
     togglePiArtifactsDrawer,
@@ -26,6 +28,7 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
   // derived
   const updatedArtifact = getArtifactByVersion(artifactId, "updated");
   const originalArtifact = getArtifact(artifactId);
+  const isFullScreen = pathname.split("/").includes("pi-chat");
   return (
     <button
       className={cn(
@@ -34,7 +37,7 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
           "border-custom-primary-100": artifactId === artifactIdInUse,
         }
       )}
-      disabled={!shouldToggleSidebar}
+      disabled={!shouldToggleSidebar || !isFullScreen}
       onClick={() => {
         togglePiArtifactsDrawer(artifactId ?? "");
         toggleSidebar(true);
@@ -57,3 +60,34 @@ export const WithPreviewHOC = observer((props: IPreviewHOC) => {
     </button>
   );
 });
+
+const PreviewProperties = (props: { children: React.ReactNode }) => {
+  const { children } = props;
+  return (
+    <div
+      className={cn(
+        "flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-sm text-custom-text-300",
+        "[&>*:not(:last-child)]:after:content-['']",
+        "[&>*:not(:last-child)]:after:inline-block",
+        "[&>*:not(:last-child)]:after:w-1 [&>*:not(:last-child)]:after:h-1",
+        "[&>*:not(:last-child)]:after:bg-custom-background-80",
+        "[&>*:not(:last-child)]:after:rounded-full",
+        "[&>*:not(:last-child)]:after:mx-1",
+        "[&>*:not(:last-child)]:after:align-middle",
+        "[&>*:not(:last-child)]:after:flex-shrink-0"
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+// 👇 Extend type manually here
+interface WithPreviewHOCType extends React.FC<IPreviewHOC> {
+  PreviewProperties: typeof PreviewProperties;
+}
+
+const WithPreviewHOC = BaseWithPreviewHOC as WithPreviewHOCType;
+WithPreviewHOC.PreviewProperties = PreviewProperties;
+
+export { WithPreviewHOC };

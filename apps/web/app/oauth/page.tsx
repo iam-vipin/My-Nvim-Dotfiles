@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -21,7 +20,7 @@ import { AppConsent } from "@/plane-web/components/marketplace";
 import { ApplicationService } from "@/plane-web/services/marketplace";
 
 const applicationService = new ApplicationService();
-const OAuthPage = observer(() => {
+function OAuthPage() {
   const searchParams = useSearchParams();
   const {
     workspace_slug,
@@ -45,8 +44,13 @@ const OAuthPage = observer(() => {
   });
 
   const application = data?.application;
-  const applicationPermissions = data?.applicationPermissions?.reduce((acc: any, curr: any) => {
+  const applicationPermissions = data?.applicationPermissions?.reduce((acc, curr) => {
     acc[curr.workspace_id] = curr.state;
+    return acc;
+  }, {} as any);
+
+  const workspaceAppInstallations = data?.applicationPermissions?.reduce((acc: any, curr: any) => {
+    acc[curr.workspace_id] = curr.is_installed;
     return acc;
   }, {} as any);
 
@@ -94,6 +98,7 @@ const OAuthPage = observer(() => {
                     state,
                     claims,
                   }}
+                  workspaceAppInstallations={workspaceAppInstallations}
                   workspacePermissions={applicationPermissions}
                 />
               </div>
@@ -103,6 +108,6 @@ const OAuthPage = observer(() => {
       </AuthenticationWrapper>
     </DefaultLayout>
   );
-});
+}
 
-export default OAuthPage;
+export default observer(OAuthPage);

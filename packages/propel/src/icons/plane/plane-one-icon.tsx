@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const PlaneOneIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg className={className} viewBox="0 0 26 13" fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>

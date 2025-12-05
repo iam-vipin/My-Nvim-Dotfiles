@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -19,13 +17,15 @@ import { ModuleStatusSelect } from "@/components/modules";
 import { useUser } from "@/hooks/store/user/user-user";
 
 type Props = {
-  handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
-  handleClose: () => void;
+  handleFormSubmit?: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
+  handleClose?: () => void;
   status: boolean;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
-  data?: IModule;
+  data?: Partial<IModule>;
   isMobile?: boolean;
+  showActionButtons?: boolean;
+  onChange?: (values: Partial<IModule>) => void;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -37,7 +37,17 @@ const defaultValues: Partial<IModule> = {
 };
 
 export const ModuleForm: React.FC<Props> = (props) => {
-  const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  const {
+    handleFormSubmit,
+    handleClose,
+    status,
+    projectId,
+    setActiveProject,
+    data,
+    isMobile = false,
+    showActionButtons = true,
+    onChange,
+  } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
   // form info
@@ -46,6 +56,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
     handleSubmit,
     control,
     reset,
+    getValues,
   } = useForm<IModule>({
     defaultValues: {
       project_id: projectId,
@@ -62,11 +73,15 @@ export const ModuleForm: React.FC<Props> = (props) => {
   const { t } = useTranslation();
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
-    await handleFormSubmit(formData, dirtyFields);
+    await handleFormSubmit?.(formData, dirtyFields);
 
     reset({
       ...defaultValues,
     });
+  };
+  const handleOnChange = () => {
+    if (!onChange) return;
+    onChange(getValues());
   };
 
   useEffect(() => {
@@ -125,7 +140,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   name="name"
                   type="text"
                   value={value}
-                  onChange={onChange}
+                  onChange={(e) => {
+                    onChange(e);
+                    handleOnChange();
+                  }}
                   hasError={Boolean(errors?.name)}
                   placeholder={t("title")}
                   className="w-full text-base"
@@ -145,7 +163,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                   id="description"
                   name="description"
                   value={value}
-                  onChange={onChange}
+                  onChange={(e) => {
+                    onChange(e);
+                    handleOnChange();
+                  }}
                   placeholder={t("description")}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
@@ -173,6 +194,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                       onSelect={(val) => {
                         onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
                         onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                        handleOnChange();
                       }}
                       placeholder={{
                         from: t("start_date"),
@@ -188,7 +210,12 @@ export const ModuleForm: React.FC<Props> = (props) => {
               )}
             />
             <div className="h-7">
-              <ModuleStatusSelect control={control} error={errors.status} tabIndex={getIndex("status")} />
+              <ModuleStatusSelect
+                control={control}
+                error={errors.status}
+                tabIndex={getIndex("status")}
+                handleOnChange={handleOnChange}
+              />
             </div>
             <Controller
               control={control}
@@ -197,7 +224,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                 <div className="h-7">
                   <MemberDropdown
                     value={value}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      onChange(e);
+                      handleOnChange();
+                    }}
                     projectId={projectId}
                     multiple={false}
                     buttonVariant="border-with-text"
@@ -214,7 +244,10 @@ export const ModuleForm: React.FC<Props> = (props) => {
                 <div className="h-7">
                   <MemberDropdown
                     value={value}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      onChange(e);
+                      handleOnChange();
+                    }}
                     projectId={projectId}
                     multiple
                     buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
@@ -228,20 +261,22 @@ export const ModuleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          {t("cancel")}
-        </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
-          {status
-            ? isSubmitting
-              ? t("updating")
-              : t("project_module.update_module")
-            : isSubmitting
-              ? t("creating")
-              : t("project_module.create_module")}
-        </Button>
-      </div>
+      {showActionButtons && (
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+          <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+            {t("cancel")}
+          </Button>
+          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+            {status
+              ? isSubmitting
+                ? t("updating")
+                : t("project_module.update_module")
+              : isSubmitting
+                ? t("creating")
+                : t("project_module.create_module")}
+          </Button>
+        </div>
+      )}
     </form>
   );
 };

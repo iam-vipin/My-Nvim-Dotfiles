@@ -1,8 +1,8 @@
 import { autorun } from "mobx";
-// Store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IBaseTimelineStore } from "ce/store/timeline/base-timeline.store";
 import { BaseTimeLineStore } from "ce/store/timeline/base-timeline.store";
+// Store
 
 export interface IProjectsTimeLineStore extends IBaseTimelineStore {
   isDependencyEnabled: boolean;

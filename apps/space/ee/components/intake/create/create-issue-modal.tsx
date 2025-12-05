@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
@@ -8,19 +7,21 @@ import { PlaneLogo } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { cn } from "@plane/utils";
+// assets
+import GridBgDark from "@/app/assets/images/grid-bg-dark.svg?url";
+import GridBgLight from "@/app/assets/images/grid-bg-light.svg?url";
 // plane web imports
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
-// assets
-import GridBgDark from "@/public/images/grid-bg-dark.svg";
-import GridBgLight from "@/public/images/grid-bg-light.svg";
 // local imports
 import IntakeInfo from "../info";
 import IssueForm from "./form";
 import FormSuccess from "./success";
+
 type TProps = {
   project: Partial<IProject>;
   anchor: string;
 };
+
 export type TFormData = {
   email: string;
   username: string;
@@ -87,7 +88,7 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
 
   return (
     <div className="w-full h-full flex flex-col bg-custom-background-100 ">
-      {!success && <Image src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
+      {!success && <img src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
       <div className="flex justify-between pt-6 px-page-x z-10">
         <div className="flex gap-2 items-center">
           <PlaneLogo className="h-6 w-auto text-custom-text-100" />

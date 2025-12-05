@@ -11,7 +11,6 @@ export const renderAdditionalValue = (
   newValue: string | undefined,
   oldValue: string | undefined
 ) => {
-  console.log("notificationField", { notificationField, newValue, oldValue });
   if (notificationField === "page") return getPageName(newValue || oldValue || "");
   return newValue;
 };

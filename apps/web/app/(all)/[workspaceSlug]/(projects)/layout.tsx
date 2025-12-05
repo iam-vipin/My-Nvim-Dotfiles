@@ -1,33 +1,26 @@
-"use client";
-
 import { observer } from "mobx-react";
+import { Outlet } from "react-router";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
-import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
-import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { ProjectAppSidebar } from "./_sidebar";
+import { ExtendedProjectSidebar } from "./extended-project-sidebar";
 
-const WorkspaceLayoutContent = observer(({ children }: { children: React.ReactNode }) => (
-  <>
-    <ProjectsAppPowerKProvider />
-    <WorkspaceAuthWrapper>
+function WorkspaceLayout() {
+  return (
+    <>
+      <ProjectsAppPowerKProvider />
       <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
         <div id="full-screen-portal" className="inset-0 absolute w-full" />
         <div className="relative flex size-full overflow-hidden">
           <ProjectAppSidebar />
+          <ExtendedProjectSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-            {children}
+            <Outlet />
           </main>
         </div>
       </div>
-    </WorkspaceAuthWrapper>
-  </>
-));
-
-export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthenticationWrapper>
-      <WorkspaceLayoutContent>{children}</WorkspaceLayoutContent>
-    </AuthenticationWrapper>
+    </>
   );
 }
+
+export default observer(WorkspaceLayout);

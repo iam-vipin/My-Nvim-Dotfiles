@@ -14,10 +14,10 @@ export type PiChatEditorMentionAttributes = {
   [EPiChatEditorAttributeNames.ID]: string | null;
   [EPiChatEditorAttributeNames.LABEL]: string | null;
   [EPiChatEditorAttributeNames.TARGET]: string | null;
-  [EPiChatEditorAttributeNames.SELF]: boolean;
-  [EPiChatEditorAttributeNames.REDIRECT_URI]: string;
+  [EPiChatEditorAttributeNames.SELF]?: boolean;
+  [EPiChatEditorAttributeNames.REDIRECT_URI]?: string;
   [EPiChatEditorAttributeNames.ENTITY_IDENTIFIER]: string | null;
-  [EPiChatEditorAttributeNames.ENTITY_NAME]: string | null;
+  [EPiChatEditorAttributeNames.ENTITY_NAME]?: string | null;
 };
 
 export type PiChatEditorMentionItem = {

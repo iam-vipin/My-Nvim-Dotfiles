@@ -20,18 +20,18 @@ export const MovePageModalInput: React.FC<Props> = (props) => {
 
   const placeholder = useMemo(() => {
     if (teamspaceId) {
-      return t("pages.move_page.placeholders.teamspace_to_all");
+      return t("page_actions.move_page.placeholders.teamspace_to_all");
     }
     if (projectId) {
       if (canPageBeMovedToTeamspace) {
-        return t("pages.move_page.placeholders.project_to_all");
+        return t("page_actions.move_page.placeholders.project_to_all");
       }
-      return t("pages.move_page.placeholders.project_to_project");
+      return t("page_actions.move_page.placeholders.project_to_project");
     }
     if (canPageBeMovedToTeamspace) {
-      return t("pages.move_page.placeholders.workspace_to_all");
+      return t("page_actions.move_page.placeholders.workspace_to_all");
     }
-    return t("pages.move_page.placeholders.workspace_to_project");
+    return t("page_actions.move_page.placeholders.workspace_to_project");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canPageBeMovedToTeamspace, projectId, teamspaceId]);
 

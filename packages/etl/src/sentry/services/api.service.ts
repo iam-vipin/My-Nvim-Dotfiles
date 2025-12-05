@@ -1,5 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import { SentryExternalLink, SentryIssue, SentryIssueStatus } from "../types/service";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type { SentryExternalLink, SentryIssue, SentryIssueStatus } from "../types/service";
 
 /**
  * Service for interacting with Sentry API endpoints.

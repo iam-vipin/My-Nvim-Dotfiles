@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect, useRef } from "react";
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Network } from "lucide-react";
 // plane imports
@@ -25,7 +23,9 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = observer((props) => {
+export const IssueActivityBlockComponent = observer(function IssueActivityBlockComponent(
+  props: TIssueActivityBlockComponent
+) {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
@@ -56,7 +56,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = obs
       }`}
       ref={activityBlockRef}
     >
-      <div className="absolute left-[13px] top-0 bottom-0 w-0.5 bg-custom-background-80" aria-hidden />
+      <div className="absolute left-[13px] top-0 bottom-0 w-px bg-custom-background-80" aria-hidden />
       <div
         className={cn(
           "flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-center z-[4] bg-custom-background-80 transition-border duration-1000 border-2 border-transparent",

@@ -9,14 +9,14 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IProject, TGithubEntityConnection } from "@plane/types";
 import { ModalCore } from "@plane/ui";
+// assets
+import GithubDarkLogo from "@/app/assets/services/github-dark.svg?url";
+import GithubLightLogo from "@/app/assets/services/github-light.svg?url";
 // plane web components
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
-// public images
-import GithubDarkLogo from "@/public/services/github-dark.svg";
-import GithubLightLogo from "@/public/services/github-light.svg";
 import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 import { EditProjectIssueSyncForm } from "./form/edit";
 

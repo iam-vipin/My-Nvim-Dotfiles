@@ -1,6 +1,6 @@
-import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import type { HTMLElement } from "node-html-parser";
 import { logger } from "@plane/logger";
+import type { IParserExtension } from "@/lib/parser";
 
 export type ExtractBodyExtensionConfig = {
   selector: string;

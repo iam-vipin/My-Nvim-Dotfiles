@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, PageIcon, TeamsIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, CustomMenu } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Logo } from "@/components/common/logo";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { PageBreadcrumbItem } from "@/components/pages/editor/breadcrumb-page-item";

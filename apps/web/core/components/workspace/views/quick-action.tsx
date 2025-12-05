@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -9,10 +7,10 @@ import type { IWorkspaceView } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
+import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -22,7 +20,7 @@ type Props = {
   view: IWorkspaceView;
 };
 
-export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);

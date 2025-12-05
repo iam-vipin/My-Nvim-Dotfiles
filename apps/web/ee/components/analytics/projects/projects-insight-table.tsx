@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { ProjectInsightColumns } from "@plane/types";
-import { Logo } from "@plane/ui";
 // components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
@@ -71,7 +72,9 @@ const ProjectsInsightTable = observer(() => {
                 ) : (
                   <ProjectIcon className="h-4 w-4" />
                 )}
-                {row.original.name}
+                <Tooltip tooltipContent={row.original.name} position="top-start">
+                  <span className="text-ellipsis overflow-hidden max-w-[30rem]">{row.original.name}</span>
+                </Tooltip>
               </div>
               <TrendPiece
                 percentage={

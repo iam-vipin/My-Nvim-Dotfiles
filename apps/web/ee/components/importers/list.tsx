@@ -1,17 +1,16 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
-// components
+// assets
+import AsanaLogo from "@/app/assets/services/asana.svg?url";
+import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
+import ConfluenceLogo from "@/app/assets/services/confluence.svg?url";
+import JiraLogo from "@/app/assets/services/jira.svg?url";
+import LinearLogo from "@/app/assets/services/linear.svg?url";
+import NotionLogo from "@/app/assets/services/notion.svg?url";
+// plane web imports
 import { ImportersListItem } from "@/plane-web/components/importers";
-// plane web types
 import type { TFeatureFlags } from "@/plane-web/types/feature-flag";
-// logos
-import AsanaLogo from "@/public/services/asana.svg";
-import ClickUpLogo from "@/public/services/clickup.svg";
-import ConfluenceLogo from "@/public/services/confluence.svg";
-import JiraLogo from "@/public/services/jira.svg";
-import LinearLogo from "@/public/services/linear.svg";
-import NotionLogo from "@/public/services/notion.svg";
 
 export type ImporterProps = {
   flag: TFeatureFlags;
@@ -35,7 +34,7 @@ export const IMPORTERS_LIST: ImporterProps[] = [
   {
     flag: E_FEATURE_FLAGS.JIRA_SERVER_IMPORTER,
     key: "jira-server",
-    title: "Jira Server",
+    title: "Jira Server/Data Center",
     i18n_description: "jira_server_importer.jira_server_importer_description",
     logo: JiraLogo,
     beta: true,

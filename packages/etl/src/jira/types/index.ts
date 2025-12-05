@@ -1,4 +1,4 @@
-import {
+import type {
   Comment as JComment,
   ComponentWithIssueCount,
   Priority as JiraPriority,
@@ -10,7 +10,7 @@ import {
   IssueTypeDetails as JiraIssueTypeDetails,
   CustomFieldContextOption,
 } from "jira.js/out/version3/models";
-import { ExProject, ExState } from "@plane/sdk";
+import type { ExProject, ExState } from "@plane/sdk";
 
 export type JiraProps =
   | {

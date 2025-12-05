@@ -1,6 +1,3 @@
-"use client";
-
-import { WORKSPACE_SETTINGS_ICONS } from "app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/sidebar";
 import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel, WORKSPACE_SETTINGS } from "@plane/constants";
@@ -11,13 +8,14 @@ import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
+import { WORKSPACE_SETTINGS_ICONS } from "app/(all)/[workspaceSlug]/(settings)/settings/(workspace)/sidebar";
 
 type Props = {
   context: TPowerKContext;
   handleSelect: (href: string) => void;
 };
 
-export const PowerKOpenWorkspaceSettingsMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenWorkspaceSettingsMenu = observer(function PowerKOpenWorkspaceSettingsMenu(props: Props) {
   const { context, handleSelect } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -5,6 +5,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+// assets
+import ClickUpLogo from "@/app/assets/services/clickup.svg?url";
 // plane web hooks
 import { useClickUpImporter } from "@/plane-web/hooks/store";
 // plane web components
@@ -13,7 +15,6 @@ import { AuthFormInput } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import type { TImporterPATError } from "@/plane-web/types";
 import type { TClickUpPATFormFields } from "@/plane-web/types/importers/clickup";
-import ClickUpLogo from "@/public/services/clickup.svg";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 

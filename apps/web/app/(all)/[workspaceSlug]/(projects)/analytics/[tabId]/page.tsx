@@ -1,15 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { Tabs } from "@plane/ui";
-import type { TabItem } from "@plane/ui";
+import { Tabs } from "@plane/propel/tabs";
 // components
+import { cn } from "@plane/utils";
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
 // hooks
@@ -18,19 +18,10 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
-import { useFlag } from "@/plane-web/hooks/store";
+import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
+import type { Route } from "./+types/page";
 
-type Props = {
-  params: {
-    tabId: string;
-    workspaceSlug: string;
-  };
-};
-
-const AnalyticsPage = observer((props: Props) => {
-  // props
-  const { params } = props;
+function AnalyticsPage({ params }: Route.ComponentProps) {
   const { tabId } = params;
 
   // hooks
@@ -45,6 +36,10 @@ const AnalyticsPage = observer((props: Props) => {
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
 
+  const pageTitle = currentWorkspace?.name
+    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+    : undefined;
+
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -52,27 +47,21 @@ const AnalyticsPage = observer((props: Props) => {
   );
 
   const workspaceSlug = params.workspaceSlug;
-  const isAnalyticsTabsEnabled = useFlag(workspaceSlug.toString(), "ANALYTICS_ADVANCED");
+  const ANALYTICS_TABS = useAnalyticsTabs(workspaceSlug.toString());
 
-  // derived values
-  const pageTitle = currentWorkspace?.name
-    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
-    : undefined;
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t, isAnalyticsTabsEnabled), [isAnalyticsTabsEnabled, t]);
-  const tabs: TabItem[] = useMemo(
-    () =>
-      ANALYTICS_TABS.map((tab) => ({
-        key: tab.key,
-        label: tab.label,
-        content: <tab.content />,
-        onClick: () => {
-          router.push(`/${currentWorkspace?.slug}/analytics/${tab.key}`);
-        },
-        disabled: tab.isDisabled,
-      })),
-    [ANALYTICS_TABS, router, currentWorkspace?.slug]
-  );
-  const defaultTab = tabId || ANALYTICS_TABS[0].key;
+  const [selectedTab, setSelectedTab] = useState(tabId || ANALYTICS_TABS[0]?.key);
+
+  useEffect(() => {
+    if (tabId) {
+      setSelectedTab(tabId);
+    }
+  }, [tabId]);
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+    router.push(`/${currentWorkspace?.slug}/analytics/${value}`);
+  };
 
   return (
     <>
@@ -80,19 +69,48 @@ const AnalyticsPage = observer((props: Props) => {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden bg-custom-background-100 justify-between items-center  ">
-              <Tabs
-                tabs={tabs}
-                storageKey={`analytics-page-${currentWorkspace?.id}`}
-                defaultTab={defaultTab}
-                size="md"
-                tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
-                tabListClassName="my-2 w-auto"
-                tabClassName="px-3"
-                tabPanelClassName="h-full overflow-hidden overflow-y-auto px-2"
-                storeInLocalStorage={false}
-                actions={<AnalyticsFilterActions />}
-              />
+            <div className="flex h-full overflow-hidden bg-custom-background-100 ">
+              <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
+                <div className={"flex flex-col w-full h-full"}>
+                  <div
+                    className={cn(
+                      "px-6 py-2 border-b border-custom-border-200 flex items-center gap-4 overflow-hidden w-full justify-between"
+                    )}
+                  >
+                    <Tabs.List className={"my-2 overflow-x-auto flex w-fit"}>
+                      {ANALYTICS_TABS.map((tab) => (
+                        <Tabs.Trigger
+                          key={tab.key}
+                          value={tab.key}
+                          disabled={tab.isDisabled}
+                          size="md"
+                          className="px-3"
+                          onClick={() => {
+                            if (!tab.isDisabled) {
+                              handleTabChange(tab.key);
+                            }
+                          }}
+                        >
+                          {tab.label}
+                        </Tabs.Trigger>
+                      ))}
+                    </Tabs.List>
+
+                    <div className="flex-shrink-0">
+                      <AnalyticsFilterActions />
+                    </div>
+                  </div>
+                  {ANALYTICS_TABS.map((tab) => (
+                    <Tabs.Content
+                      key={tab.key}
+                      value={tab.key}
+                      className={"h-full overflow-hidden overflow-y-auto px-2"}
+                    >
+                      <tab.content />
+                    </Tabs.Content>
+                  ))}
+                </div>
+              </Tabs>
             </div>
           ) : (
             <EmptyStateDetailed
@@ -115,6 +133,6 @@ const AnalyticsPage = observer((props: Props) => {
       )}
     </>
   );
-});
+}
 
-export default AnalyticsPage;
+export default observer(AnalyticsPage);

@@ -1,5 +1,6 @@
-import { DrawioNodeViewProps } from "../components/node-view";
-import { TDrawioExtension, EDrawioAttributeNames } from "../types";
+import type { DrawioNodeViewProps } from "../components/node-view";
+import type { TDrawioExtension } from "../types";
+import { EDrawioAttributeNames } from "../types";
 import { base64ToFile } from "./base64-to-file";
 
 // Helper function to create diagram files with error handling

@@ -24,7 +24,7 @@ type TInboxContentRoot = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
+export const InboxContentRoot = observer(function InboxContentRoot(props: TInboxContentRoot) {
   const {
     workspaceSlug,
     projectId,
@@ -69,10 +69,10 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   const isEditable =
     allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
-    inboxIssue?.issue.created_by === currentUser?.id;
+    inboxIssue?.issue?.created_by === currentUser?.id;
 
   const isGuest = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
-  const isOwner = inboxIssue?.issue.created_by === currentUser?.id;
+  const isOwner = inboxIssue?.issue?.created_by === currentUser?.id;
   const readOnly = !isOwner && isGuest;
 
   if (!inboxIssue) return <></>;

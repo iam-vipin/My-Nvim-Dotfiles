@@ -15,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teamspaces/root";
 
-export const AppSidebar: FC = observer(() => {
+export const AppSidebar = observer(function AppSidebar() {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { groupedFavorites } = useFavorite();

@@ -1,16 +1,20 @@
 import { useMemo } from "react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { TCommentsOperations } from "@plane/types";
 import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
+// hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+// plane web imports
+import { useCommentRepliesOperations } from "@/plane-web/components/comments/replies/helper";
 
-export const useCommentOperations = (
+export const useWorkItemCommentOperations = (
   workspaceSlug: string | undefined,
   projectId: string | undefined,
   issueId: string | undefined
@@ -27,13 +31,15 @@ export const useCommentOperations = (
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
   // derived values
   const issueDetails = issueId ? getIssueById(issueId) : undefined;
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
   // translation
   const { t } = useTranslation();
+  // reply operations
+  const replyOperations = useCommentRepliesOperations(workspaceSlug, projectId, issueId);
 
   const operations: TCommentsOperations = useMemo(() => {
     // Define operations object with all methods
@@ -136,6 +142,21 @@ export const useCommentOperations = (
           throw new Error(t("issue.comments.upload.error"));
         }
       },
+      duplicateCommentAsset: async (assetId, commentId) => {
+        try {
+          if (!workspaceSlug || !projectId) throw new Error("Missing fields");
+          const res = await duplicateEditorAsset({
+            assetId,
+            entityId: commentId || undefined,
+            entityType: EFileAssetType.COMMENT_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          return res;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
+        }
+      },
       addCommentReaction: async (commentId, reaction) => {
         try {
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
@@ -187,9 +208,19 @@ export const useCommentOperations = (
         const formattedUsers = formatTextList(reactionUsers);
         return formattedUsers;
       },
+      replyOperations,
     };
     return ops;
-  }, [workspaceSlug, projectId, issueId, createComment, updateComment, uploadEditorAsset, removeComment]);
+  }, [
+    workspaceSlug,
+    projectId,
+    issueId,
+    createComment,
+    updateComment,
+    uploadEditorAsset,
+    removeComment,
+    replyOperations,
+  ]);
 
   return operations;
 };

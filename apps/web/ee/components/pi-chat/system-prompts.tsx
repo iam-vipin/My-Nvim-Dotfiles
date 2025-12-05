@@ -78,7 +78,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
       onClick={handleClick}
       disabled={isPiTyping || isInitializing}
     >
-      <div className="flex items-center gap-2">
+      <div className="items-center gap-2 hidden md:flex">
         {isInitializing ? (
           <Spinner className="size-[20px] animate-spin text-pi-400" />
         ) : (
@@ -93,7 +93,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
         )}
       </div>
 
-      <span className="text-left text-sm break-words">{prompt.text}</span>
+      <span className="text-left text-sm break-words line-clamp-2">{prompt.text}</span>
     </button>
   );
 };

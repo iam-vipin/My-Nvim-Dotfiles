@@ -1,16 +1,15 @@
 import type { FC } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Info } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { BetaBadge } from "@plane/ui";
 // plane web components
 import type { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { BetaBadge } from "../common/beta";
 
 export type IntegrationListItemProps = {
   provider: IntegrationProps;
@@ -36,7 +35,7 @@ export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
       className="flex flex-col max-w-[300px] justify-between gap-2 rounded-md border border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0"
     >
       <div className="relative h-12 w-12 flex-shrink-0 bg-custom-background-90 rounded flex items-center justify-center">
-        <Image src={provider.logo} alt={`${provider.key} Logo`} width={32} height={32} />
+        <img src={provider.logo} alt={`${provider.key} Logo`} className="w-full h-full object-cover" />
       </div>
 
       <div className="relative flex items-center gap-2">

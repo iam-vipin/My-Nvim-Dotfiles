@@ -111,8 +111,12 @@ export class PiChatAttachmentStore implements IPiChatAttachmentStore {
       console.error("Error in uploading chat attachment:", error);
       throw error;
     } finally {
+      // Cancel any pending debounced updates
+      this.debouncedUpdateProgress.cancel();
+
+      // Remove the attachment from upload status map
       runInAction(() => {
-        if (this.attachmentsUploadStatusMap[chatId]) {
+        if (this.attachmentsUploadStatusMap[chatId] && this.attachmentsUploadStatusMap[chatId][tempId]) {
           delete this.attachmentsUploadStatusMap[chatId][tempId];
         }
       });

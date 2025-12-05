@@ -5,12 +5,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 import type { IntakeInsightColumns } from "@plane/types";
 // components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services

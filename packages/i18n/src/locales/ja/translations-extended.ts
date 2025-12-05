@@ -28,6 +28,7 @@ export default {
     overview: "概要",
     workflows: "ワークフロー",
     members_and_teamspaces: "メンバーとチームスペース",
+    open_in_full_screen: "{page}をフルスクリーンで開く",
   },
   updates: {
     add_update: "更新を追加",
@@ -159,6 +160,28 @@ export default {
       settings_sub_heading:
         "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。",
     },
+    features: {
+      intake: {
+        heading: "受付責任",
+        notify_assignee: {
+          title: "担当者に通知",
+          description: "新しい受付リクエストの場合、デフォルトの担当者が通知を通じてアラートを受け取ります",
+        },
+        toasts: {
+          set: {
+            loading: "担当者を設定中...",
+            success: {
+              title: "成功！",
+              message: "担当者が正常に設定されました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "担当者の設定中に問題が発生しました。もう一度お試しください。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "設定された統合がありません",
@@ -203,6 +226,90 @@ export default {
         description: "エピックにカスタムプロパティを追加します。",
       },
       disabled: "無効",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "サイクルの自動スケジュール",
+        description: "手動設定なしでサイクルを維持します。",
+        tooltip: "選択したスケジュールに基づいて新しいサイクルを自動的に作成します。",
+        edit_button: "編集",
+        form: {
+          cycle_title: {
+            label: "サイクルタイトル",
+            placeholder: "タイトル",
+            tooltip: "タイトルは後続のサイクルに番号が追加されます。例：デザイン - 1/2/3",
+            validation: {
+              required: "サイクルタイトルは必須です",
+              max_length: "タイトルは255文字を超えてはいけません",
+            },
+          },
+          cycle_duration: {
+            label: "サイクル期間",
+            unit: "週",
+            validation: {
+              required: "サイクル期間は必須です",
+              min: "サイクル期間は少なくとも1週間である必要があります",
+              max: "サイクル期間は30週を超えてはいけません",
+              positive: "サイクル期間は正の値である必要があります",
+            },
+          },
+          cooldown_period: {
+            label: "クールダウン期間",
+            unit: "日",
+            tooltip: "次のサイクルが始まる前のサイクル間の休止期間。",
+            validation: {
+              required: "クールダウン期間は必須です",
+              negative: "クールダウン期間は負の値にはできません",
+            },
+          },
+          start_date: {
+            label: "サイクル開始日",
+            validation: {
+              required: "開始日は必須です",
+              past: "開始日を過去の日付にすることはできません",
+            },
+          },
+          number_of_cycles: {
+            label: "将来のサイクル数",
+            validation: {
+              required: "サイクル数は必須です",
+              min: "少なくとも1つのサイクルが必要です",
+              max: "3つを超えるサイクルをスケジュールすることはできません",
+            },
+          },
+          auto_rollover: {
+            label: "作業項目の自動繰り越し",
+            tooltip: "サイクルが完了した日に、未完了のすべての作業項目を次のサイクルに移動します。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "サイクルの自動スケジュールを有効化中",
+            loading_disable: "サイクルの自動スケジュールを無効化中",
+            success: {
+              title: "成功！",
+              message: "サイクルの自動スケジュールが正常に切り替えられました。",
+            },
+            error: {
+              title: "エラー！",
+              message: "サイクルの自動スケジュールの切り替えに失敗しました。",
+            },
+          },
+          save: {
+            loading: "サイクルの自動スケジュール設定を保存中",
+            success: {
+              title: "成功！",
+              message_create: "サイクルの自動スケジュール設定が正常に保存されました。",
+              message_update: "サイクルの自動スケジュール設定が正常に更新されました。",
+            },
+            error: {
+              title: "エラー！",
+              message_create: "サイクルの自動スケジュール設定の保存に失敗しました。",
+              message_update: "サイクルの自動スケジュール設定の更新に失敗しました。",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -454,7 +561,7 @@ export default {
       },
       not_found: {
         title: "イニシアチブが存在しません",
-        description: "お探しのイニシアチブは存在しないか、削除されました。",
+        description: "お探しのイニシアチブは存在しないか、アーカイブされたか、削除されました。",
         primary_button: {
           text: "他のイニシアチブを表示",
         },
@@ -653,7 +760,12 @@ export default {
         app_description_title: {
           label: "詳細な説明",
           placeholder:
-            "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには ‘/’ を押してください。",
+            "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには '/' を押してください。",
+        },
+        authorization_grant_type: {
+          title: "接続タイプ",
+          description:
+            "アプリをワークスペースに一度インストールするか、各ユーザーが自分のアカウントを接続できるようにするかを選択してください",
         },
         app_description_error: "アプリの説明は必須です",
         app_slug_title: "アプリのスラッグ",
@@ -712,6 +824,10 @@ export default {
         categories_error: "カテゴリーは必須です",
         invalid_categories_error: "無効なカテゴリー",
         categories_description: "アプリを最もよく説明するカテゴリーを選択してください",
+        supported_plans: "サポートされているプラン",
+        supported_plans_description:
+          "このアプリケーションをインストールできるワークスペースプランを選択してください。空のままにすると、すべてのプランが許可されます。",
+        select_plans: "プランを選択",
         privacy_policy_url_title: "プライバシーポリシーURL",
         privacy_policy_url_error: "プライバシーポリシーURLは必須です",
         invalid_privacy_policy_url_error: "無効なプライバシーポリシーURL",
@@ -785,8 +901,8 @@ export default {
         internal: "内部",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。",
       },
     },
@@ -1486,7 +1602,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Jira ServerのデータをPlaneプロジェクトにインポートします。",
+    jira_server_importer_description: "Jira Server/Data CenterのデータをPlaneプロジェクトにインポートします。",
     steps: {
       title_configure_plane: "Planeを設定",
       description_configure_plane:

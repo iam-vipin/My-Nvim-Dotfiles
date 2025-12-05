@@ -1,6 +1,6 @@
-import { PropertyTypeEnum, RelationTypeEnum } from "@makeplane/plane-node-sdk";
-import { SelectOption, UserOption } from "./field-options";
-import { FieldValidation, TextValidation, NumberValidation, DateValidation, FileValidation } from "./validations";
+import type { PropertyTypeEnum, RelationTypeEnum } from "@makeplane/plane-node-sdk";
+import type { SelectOption, UserOption } from "./field-options";
+import type { FieldValidation, TextValidation, NumberValidation, DateValidation, FileValidation } from "./validations";
 
 export enum E_KNOWN_FIELD_KEY {
   ISSUE_TYPE = "issue_type",

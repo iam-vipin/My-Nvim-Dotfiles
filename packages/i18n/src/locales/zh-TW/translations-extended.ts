@@ -29,6 +29,7 @@ export default {
     workflows: "工作流程",
     templates: "模板",
     members_and_teamspaces: "成員和團隊空間",
+    open_in_full_screen: "以全螢幕開啟{page}",
   },
   updates: {
     add_update: "新增更新",
@@ -160,6 +161,28 @@ export default {
       settings_sub_heading:
         "將客戶請求帶入工作項目，根據請求分配優先級，並將工作項目狀態匯總到客戶記錄中。很快，您將與您的 CRM 或支援工具整合，以實現更好的客戶屬性工作管理。",
     },
+    features: {
+      intake: {
+        heading: "接收責任",
+        notify_assignee: {
+          title: "通知負責人",
+          description: "對於新的接收請求，預設負責人將透過通知收到提醒",
+        },
+        toasts: {
+          set: {
+            loading: "正在設定負責人...",
+            success: {
+              title: "成功！",
+              message: "負責人設定成功。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "設定負責人時出現問題。請重試。",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "未配置整合",
@@ -204,6 +227,90 @@ export default {
         description: "為您的史詩添加自定義屬性。",
       },
       disabled: "已停用",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "自動排程週期",
+        description: "無需手動設定即可保持週期運作。",
+        tooltip: "根據您選擇的排程自動建立新週期。",
+        edit_button: "編輯",
+        form: {
+          cycle_title: {
+            label: "週期標題",
+            placeholder: "標題",
+            tooltip: "標題將為後續週期添加編號。例如：設計 - 1/2/3",
+            validation: {
+              required: "週期標題為必填項",
+              max_length: "標題不得超過255個字元",
+            },
+          },
+          cycle_duration: {
+            label: "週期持續時間",
+            unit: "週",
+            validation: {
+              required: "週期持續時間為必填項",
+              min: "週期持續時間必須至少為1週",
+              max: "週期持續時間不得超過30週",
+              positive: "週期持續時間必須為正數",
+            },
+          },
+          cooldown_period: {
+            label: "冷卻期",
+            unit: "天",
+            tooltip: "下一個週期開始前的週期間隔暫停期。",
+            validation: {
+              required: "冷卻期為必填項",
+              negative: "冷卻期不能為負數",
+            },
+          },
+          start_date: {
+            label: "週期開始日",
+            validation: {
+              required: "開始日期為必填項",
+              past: "開始日期不能是過去的日期",
+            },
+          },
+          number_of_cycles: {
+            label: "未來週期數",
+            validation: {
+              required: "週期數為必填項",
+              min: "至少需要1個週期",
+              max: "無法排程超過3個週期",
+            },
+          },
+          auto_rollover: {
+            label: "工作項自動結轉",
+            tooltip: "在週期完成的當天，將所有未完成的工作項移至下一個週期。",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "正在啟用自動排程週期",
+            loading_disable: "正在停用自動排程週期",
+            success: {
+              title: "成功！",
+              message: "自動排程週期已成功切換。",
+            },
+            error: {
+              title: "錯誤！",
+              message: "切換自動排程週期失敗。",
+            },
+          },
+          save: {
+            loading: "正在儲存自動排程週期設定",
+            success: {
+              title: "成功！",
+              message_create: "自動排程週期設定已成功儲存。",
+              message_update: "自動排程週期設定已成功更新。",
+            },
+            error: {
+              title: "錯誤！",
+              message_create: "儲存自動排程週期設定失敗。",
+              message_update: "更新自動排程週期設定失敗。",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -443,7 +550,7 @@ export default {
       },
       not_found: {
         title: "倡議不存在",
-        description: "您正在尋找的倡議不存在或已被刪除。",
+        description: "您正在尋找的倡議不存在、已被歸檔或已被刪除。",
         primary_button: {
           text: "查看其他倡議",
         },
@@ -637,7 +744,11 @@ export default {
         app_short_description_error: "應用簡短描述為必填項",
         app_description_title: {
           label: "詳細描述",
-          placeholder: "為市集撰寫詳細描述。按 ‘/’ 查看指令。",
+          placeholder: "為市集撰寫詳細描述。按 '/' 查看指令。",
+        },
+        authorization_grant_type: {
+          title: "連接類型",
+          description: "選擇您的應用程式應該為工作區安裝一次，還是讓每個使用者連接自己的帳戶",
         },
         app_description_error: "應用描述為必填項",
         app_slug_title: "應用別名",
@@ -690,6 +801,9 @@ export default {
         categories_error: "類別是必填項",
         invalid_categories_error: "無效的類別",
         categories_description: "選擇最能描述應用的類別",
+        supported_plans: "支援的方案",
+        supported_plans_description: "選擇可以安裝此應用程式的工作區方案。留空以允許所有方案。",
+        select_plans: "選擇方案",
         privacy_policy_url_title: "隱私政策URL",
         privacy_policy_url_error: "隱私政策URL是必填項",
         invalid_privacy_policy_url_error: "無效的隱私政策URL",
@@ -761,8 +875,8 @@ export default {
         internal: "內部",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description: "使用與您的工作和知識庫原生連接的 AI，讓您的任務變得更智能、更快速。",
       },
     },
@@ -1436,7 +1550,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "將您的 Jira Server 數據導入到 Plane 專案中。",
+    jira_server_importer_description: "將您的 Jira Server/Data Center 數據導入到 Plane 專案中。",
     steps: {
       title_configure_plane: "配置 Plane",
       description_configure_plane: "請先在 Plane 中創建您打算遷移 Jira 數據的專案。專案創建後，在此處選擇它。",

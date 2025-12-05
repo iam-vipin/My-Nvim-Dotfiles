@@ -1,6 +1,6 @@
-import { ExIssueAttachment, ExState } from "@plane/sdk";
+import type { ExIssueAttachment, ExState } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
-import { IPriorityConfig, IStateConfig } from "@/linear/types";
+import type { IPriorityConfig, IStateConfig } from "@/linear/types";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: string): ExState | undefined => {
   const targetState = stateMap.find((state: IStateConfig) => {

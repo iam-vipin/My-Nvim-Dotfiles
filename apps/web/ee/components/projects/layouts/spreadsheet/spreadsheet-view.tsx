@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 // plane imports
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // plane web imports
 import { SPREADSHEET_PROPERTY_LIST } from "@/plane-web/constants/project/spreadsheet";
@@ -30,12 +29,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
-  if (!projectIds || projectIds.length === 0)
-    return (
-      <div className="grid h-full w-full place-items-center">
-        <LogoSpinner />
-      </div>
-    );
+  if (!projectIds || projectIds.length === 0) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div ref={portalRef} className="spreadsheet-menu-portal" />

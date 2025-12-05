@@ -1,4 +1,4 @@
-import { TAutomation } from "./root";
+import type { TAutomation } from "./root";
 
 export type TCreateUpdateModalPayload = (Partial<TAutomation> & { id: string }) | null;
 

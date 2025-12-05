@@ -1,11 +1,11 @@
 // local imports
+import type { TDashboardWidget } from "@plane/types";
 import {
   EWidgetChartModels,
   EWidgetChartTypes,
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
-  TDashboardWidget,
 } from "@plane/types";
 import { E_FEATURE_FLAGS } from "../feature-flag";
 import { EWidgetGridBreakpoints } from "./enums";

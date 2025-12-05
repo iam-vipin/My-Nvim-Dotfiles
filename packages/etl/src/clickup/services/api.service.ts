@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, RawAxiosResponseHeaders } from "axios";
+import type { AxiosInstance, RawAxiosResponseHeaders } from "axios";
+import axios from "axios";
 import { getWaitTimeInMs } from "../helpers";
-import {
+import type {
   TClickUpComment,
   TClickUpCustomField,
   TClickUpCustomTaskType,

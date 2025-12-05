@@ -1,8 +1,9 @@
-import { SentryInstallationWebhook } from "@plane/etl/sentry";
+import type { SentryInstallationWebhook } from "@plane/etl/sentry";
 import { logger } from "@plane/logger";
 import { E_INTEGRATION_KEYS } from "@plane/types";
-import { APIClient, getAPIClient } from "@/services/client";
-import { Store } from "@/worker/base";
+import type { APIClient } from "@/services/client";
+import { getAPIClient } from "@/services/client";
+import type { Store } from "@/worker/base";
 
 /**
  * Installation Handler is responsible for handling Sentry installation webhooks

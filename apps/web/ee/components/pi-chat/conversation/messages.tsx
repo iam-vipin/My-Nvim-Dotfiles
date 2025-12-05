@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { IUser } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { scrollIntoViewHelper } from "../helper";
+import { SavePageModal } from "../modals/save-page-modal";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
 import { NewConversation } from "./new-converstaion";
@@ -28,16 +29,18 @@ export const Messages = observer((props: TProps) => {
     setHasMoreMessages,
   } = props;
   // store
-  const { activeChat, regenerateAnswer } = usePiChat();
+  const { activeChat, regenerateAnswer, convertToPage } = usePiChat();
   // ref
   const containerRef = useRef(null);
+  // state
+  const [savePageQueryId, setSavePageQueryId] = useState<string | undefined>(undefined);
   // router
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("message_token");
   const routerChatId = searchParams.get("chat_id");
-  const { chatId } = useParams();
+  const { chatId, workspaceSlug } = useParams();
   // handlers
   const checkIfHasMore = () => {
     const el: HTMLElement | null = containerRef.current;
@@ -57,6 +60,25 @@ export const Messages = observer((props: TProps) => {
       router.push(pathname);
     }
   };
+  const handleConvertToPage = async (
+    projectId: string | undefined
+  ): Promise<
+    | {
+        page_url: string;
+      }
+    | undefined
+  > => {
+    if (!savePageQueryId) return;
+    const message = activeChat?.dialogueMap[savePageQueryId];
+    const response = await convertToPage(
+      message.answer?.toString() || "",
+      workspaceSlug?.toString() || "",
+      projectId,
+      activeChat?.chat_id?.toString() || ""
+    );
+    return response;
+  };
+
   useEffect(() => {
     const el: HTMLElement | null = containerRef.current;
     if (!el) return;
@@ -105,7 +127,12 @@ export const Messages = observer((props: TProps) => {
         return (
           <div key={index} className="space-y-4">
             <MyMessage message={message.query} id={index.toString()} attachments={message.attachment_ids} />
-            <AiMessage dialogue={message} id={index.toString()} isLatest={index === activeChat?.dialogue.length - 1} />
+            <AiMessage
+              dialogue={message}
+              id={index.toString()}
+              isLatest={index === activeChat?.dialogue.length - 1}
+              handleConvertToPage={() => message.query_id && setSavePageQueryId(message.query_id)}
+            />
           </div>
         );
       })}
@@ -115,6 +142,13 @@ export const Messages = observer((props: TProps) => {
       {isLoading && <MyMessage isLoading={isLoading} />}
       {/* observer element */}
       <div id="observer-element" />
+      {/* save page modal */}
+      <SavePageModal
+        workspaceSlug={workspaceSlug?.toString() || ""}
+        isOpen={!!savePageQueryId}
+        handleModalClose={() => setSavePageQueryId(undefined)}
+        handleConvertToPage={handleConvertToPage}
+      />
     </div>
   );
 });

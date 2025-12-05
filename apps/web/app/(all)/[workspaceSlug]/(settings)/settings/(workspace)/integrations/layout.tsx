@@ -1,9 +1,13 @@
 "use client";
+
+import { Outlet } from "react-router";
 // components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 
-const IntegrationsLayout = ({ children }: { children: React.ReactNode }) => (
-  <SettingsContentWrapper size="md">{children}</SettingsContentWrapper>
+const IntegrationsLayout = () => (
+  <SettingsContentWrapper size="md">
+    <Outlet />
+  </SettingsContentWrapper>
 );
 
 export default IntegrationsLayout;

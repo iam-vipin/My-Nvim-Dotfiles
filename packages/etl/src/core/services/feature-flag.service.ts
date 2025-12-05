@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 // types
-import { TFeatureFlags } from "@/core/types";
+import type { TFeatureFlags } from "@/core/types";
 
 export class FeatureFlagService {
   public axiosInstance: AxiosInstance;
@@ -13,7 +14,19 @@ export class FeatureFlagService {
   async featureFlags(payload: { workspace_slug: string; user_id: string; flag_key: TFeatureFlags }): Promise<boolean> {
     return this.axiosInstance
       .post(`/api/feature-flags/`, payload)
-      .then((response) => response?.data?.value)
-      .catch(() => false);
+      .then((response) =>
+        response.data.values ? (response.data.values[payload.flag_key] ?? false) : (response.data.value ?? false)
+      )
+      .catch((error) => {
+        console.error(`Error getting feature flag`, { payload, error: error });
+        return false;
+      });
+  }
+
+  async getAllFeatureFlags(payload: { workspace_slug: string; user_id: string }): Promise<Record<string, boolean>> {
+    return this.axiosInstance
+      .post(`/api/feature-flags/`, payload)
+      .then((response) => response?.data?.values)
+      .catch(() => {});
   }
 }

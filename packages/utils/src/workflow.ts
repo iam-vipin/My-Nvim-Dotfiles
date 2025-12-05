@@ -1,6 +1,6 @@
 import { sortBy, values } from "lodash-es";
 // plane imports
-import {
+import type {
   IStateTransition,
   IStateTransitionTree,
   TWorkflowChangeHistoryKeys,

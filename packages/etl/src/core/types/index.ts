@@ -3,7 +3,7 @@ export * from "./workspace-connections";
 export * from "./entity-connections";
 export * from "./error";
 
-import {
+import type {
   ExIssueProperty,
   ExCycle,
   ExIssue,
@@ -16,7 +16,7 @@ import {
   ExIssuePropertyOption,
   ExPage,
 } from "@plane/sdk";
-import { E_INTEGRATION_KEYS } from "@plane/types";
+import type { E_INTEGRATION_KEYS } from "@plane/types";
 
 export type TServiceCredentials = {
   id: string;

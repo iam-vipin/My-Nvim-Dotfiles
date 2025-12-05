@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Shapes } from "lucide-react";
 // plane imports
@@ -12,7 +10,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 
-export const WorkspaceDashboardHeader = observer(() => {
+export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHeader() {
   // plane hooks
   const { t } = useTranslation();
   // hooks

@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 
 // component
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -12,25 +11,26 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 // hooks
+import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/plane-web/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const ApplicationCreatePage = observer(() => {
+function ApplicationCreatePage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { createApplication, fetchApplicationCategories } = useApplications();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Create Application` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Build your own app` : undefined;
 
-  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
+  useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TUserApplication>) => {
     try {
@@ -71,6 +71,6 @@ const ApplicationCreatePage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ApplicationCreatePage;
+export default observer(ApplicationCreatePage);

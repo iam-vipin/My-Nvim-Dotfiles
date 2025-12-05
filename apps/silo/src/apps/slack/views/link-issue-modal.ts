@@ -1,5 +1,5 @@
-import { PlainTextElement } from "@slack/types";
-import { ExState, IssueWithExpanded } from "@plane/sdk";
+import type { PlainTextElement } from "@slack/types";
+import type { ExState, IssueWithExpanded } from "@plane/sdk";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { ACTIONS, ENTITIES } from "../helpers/constants";
 import { E_MESSAGE_ACTION_TYPES } from "../types/types";

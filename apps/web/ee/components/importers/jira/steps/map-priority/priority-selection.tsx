@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { JiraPriority } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 // plane web components

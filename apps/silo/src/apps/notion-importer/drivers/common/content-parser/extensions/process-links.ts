@@ -1,5 +1,5 @@
-import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
+import type { HTMLElement } from "node-html-parser";
+import type { IParserExtension } from "@/lib/parser";
 
 /*
  *

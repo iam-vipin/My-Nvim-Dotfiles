@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -7,12 +8,11 @@ import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web stores
 import type { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
+import { CHART_ASSET_MAP } from "./helper";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
@@ -23,15 +23,15 @@ export const DashboardWidgetUpgradeRequiredState: React.FC<Props> = observer((pr
   const { activeBreakpoint, widget } = props;
   // store hooks
   const { togglePaidPlanModal } = useWorkspaceSubscription();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // derived values
   const { chart_type, height } = widget ?? {};
   const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
+  const theme = resolvedTheme === "light" ? "light" : "dark";
+  const resolvedPath = chart_type ? CHART_ASSET_MAP[chart_type]?.[theme] : undefined;
   // translation
   const { t } = useTranslation();
-  // resolved asset
-  const resolvedPath = useResolvedAssetPath({
-    basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
-  });
 
   return (
     <div className="size-full grid place-items-center px-4 overflow-hidden">

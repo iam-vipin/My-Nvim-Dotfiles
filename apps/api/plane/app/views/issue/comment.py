@@ -13,7 +13,7 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseViewSet
-from plane.app.serializers import IssueCommentSerializer, CommentReactionSerializer
+from plane.app.serializers import IssueCommentSerializer, CommentReactionSerializer, IssueCommentReplySerializer
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueComment, ProjectMember, CommentReaction, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -22,6 +22,7 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
+from plane.app.views.base import BaseAPIView
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -70,9 +71,7 @@ class IssueCommentViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to comment on the issue"},
@@ -157,6 +156,17 @@ class IssueCommentViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueCommentRepliesEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, issue_id, pk):
+        replies = IssueComment.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, parent_id=pk
+        )
+
+        serializer = IssueCommentReplySerializer(replies, many=True).data
+        return Response(serializer, status=status.HTTP_200_OK)
 
 
 class CommentReactionViewSet(BaseViewSet):

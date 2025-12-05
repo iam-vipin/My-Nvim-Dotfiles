@@ -6,10 +6,11 @@
  * and performs the task
  */
 
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import { Controller, Get, Post, Put } from "@plane/decorators";
-import { E_JOB_STATUS, TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
+import type { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
+import { E_JOB_STATUS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
 import { responseHandler } from "@/helpers/response-handler";
 import { useValidateUserAuthentication } from "@/lib/decorators";

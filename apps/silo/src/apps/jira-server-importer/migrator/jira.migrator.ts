@@ -1,9 +1,7 @@
-import { Issue as IJiraIssue } from "jira.js/out/version2/models";
-import { PlaneEntities } from "@plane/etl/core";
+import type { Issue as IJiraIssue } from "jira.js/out/version2/models";
+import type { PlaneEntities } from "@plane/etl/core";
+import type { JiraConfig, JiraEntity, TJiraIssueWithChildren } from "@plane/etl/jira-server";
 import {
-  JiraConfig,
-  JiraEntity,
-  TJiraIssueWithChildren,
   pullComments,
   pullComponents,
   pullIssueFields,
@@ -14,13 +12,13 @@ import {
   pullUsers,
 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { createETLLogger } from "@/helpers/etl-logger";
 import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
 import { E_KNOWN_ETL_ASSET, E_KNOWN_ETL_PHASE } from "@/types/etl";
-import { TBatch } from "@/worker/types";
+import type { TBatch } from "@/worker/types";
 import { createJiraClient, filterComponentsForIssues, filterSprintsForIssues } from "../helpers/migration-helpers";
 import {
   getTransformedComments,

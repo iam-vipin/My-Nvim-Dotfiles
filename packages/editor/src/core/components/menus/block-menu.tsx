@@ -9,24 +9,38 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { JSONContent } from "@tiptap/core";
-import { type Editor, useEditorState } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2, Link, Code, Bookmark } from "lucide-react";
+import type { Editor } from "@tiptap/react";
+import type { LucideIcon } from "lucide-react";
+import { Copy, Link2, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { generateUniqueID, UniqueIDAttribute } from "@/extensions/unique-id/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // hooks
 import { useBlockMenu } from "@/plane-editor/hooks/use-block-menu";
 // types
-import { EExternalEmbedAttributeNames, IEditorProps } from "@/types";
+import { EExternalEmbedAttributeNames } from "@/types";
+import type { IEditorProps, IEditorPropsExtended } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  originUrl?: IEditorPropsExtended["originUrl"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 export type MenuItem = {
@@ -61,7 +75,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor, flaggedExtensions, disabledExtensions } = props;
+  const { editor, flaggedExtensions, disabledExtensions, originUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -175,7 +189,44 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const CORE_MENU_ITEMS: MenuItem[] = [
+  const MENU_ITEMS: MenuItem[] = [
+    {
+      icon: Link2,
+      key: "copy-link",
+      label: "Copy link",
+      isDisabled: disabledExtensions?.includes("copy-block-link"),
+      onClick: () => {
+        const { selection, tr } = editor.state;
+        const selectedNode = selection.content().content.firstChild;
+        let nodeId = selectedNode?.attrs?.[UniqueIDAttribute];
+        if (!nodeId) {
+          nodeId = generateUniqueID();
+          tr.setNodeMarkup(selection.from, undefined, {
+            ...selectedNode?.attrs,
+            [UniqueIDAttribute]: nodeId,
+          });
+        }
+        tr.setMeta("addToHistory", false);
+        editor.view.dispatch(tr);
+
+        let urlToCopy: string;
+        const currentPageUrl = window.location.href.split("#")[0];
+        const baseWorkItemUrl = originUrl;
+        if (baseWorkItemUrl) {
+          urlToCopy = nodeId ? `${baseWorkItemUrl}#${nodeId}` : baseWorkItemUrl;
+        } else {
+          urlToCopy = nodeId ? `${currentPageUrl}#${nodeId}` : currentPageUrl;
+        }
+
+        copyUrlToClipboard(urlToCopy).then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Link Copied!",
+            message: "Link copied to clipboard.",
+          });
+        });
+      },
+    },
     {
       icon: Trash2,
       key: "delete",
@@ -245,9 +296,10 @@ export const BlockMenu = (props: Props) => {
         }
       },
     },
+    ...getNodeOptions(editor),
   ];
 
-  const MENU_ITEMS = [...additionalMenuItems, ...CORE_MENU_ITEMS];
+  const ALL_MENU_ITEMS = [...additionalMenuItems, ...MENU_ITEMS];
 
   if (!isOpen) {
     return null;
@@ -273,7 +325,7 @@ export const BlockMenu = (props: Props) => {
         )}
         {...getFloatingProps()}
       >
-        {MENU_ITEMS.map((item) => {
+        {ALL_MENU_ITEMS.map((item) => {
           if (item.isDisabled) return null;
 
           return (

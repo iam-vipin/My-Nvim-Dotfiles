@@ -1,5 +1,6 @@
 import type { MarkType } from "@tiptap/pm/model";
-import { type EditorState, type Plugin, type Transaction, TextSelection } from "@tiptap/pm/state";
+import { TextSelection } from "@tiptap/pm/state";
+import type { EditorState, Plugin, Transaction } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { CodemarkState, CursorMetaTr } from "./types";
 import { MAX_MATCH, safeResolve } from "./utils";

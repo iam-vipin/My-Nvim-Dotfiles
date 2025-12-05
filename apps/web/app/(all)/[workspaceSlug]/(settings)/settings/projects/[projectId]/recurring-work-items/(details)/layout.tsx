@@ -1,9 +1,8 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -14,17 +13,11 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+import type { Route } from "./+types/layout";
 
-type TRecurringWorkItemsDetailsLayout = {
-  children: ReactNode;
-};
-
-const RecurringWorkItemsDetailsLayout: FC<TRecurringWorkItemsDetailsLayout> = observer((props) => {
-  const { children } = props;
+function RecurringWorkItemsDetailsLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
-  const projectId = routerProjectId?.toString();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   // derived values
@@ -44,10 +37,12 @@ const RecurringWorkItemsDetailsLayout: FC<TRecurringWorkItemsDetailsLayout> = ob
           <ChevronLeftIcon className="w-4 h-4" />
           <div>Back to recurring work items</div>
         </Link>
-        <div className="pb-14">{children}</div>
+        <div className="pb-14">
+          <Outlet />
+        </div>
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default RecurringWorkItemsDetailsLayout;
+export default observer(RecurringWorkItemsDetailsLayout);

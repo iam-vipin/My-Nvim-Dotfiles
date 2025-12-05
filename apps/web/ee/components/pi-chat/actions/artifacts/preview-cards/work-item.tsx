@@ -36,25 +36,8 @@ export const WorkItemPreviewCard = observer((props: TProps) => {
           {/* title */}
           <div className="truncate text-sm font-medium text-start">{data.name}</div>
         </div>
-        {data.description_html && (
-          <div className="text-sm text-custom-text-300 text-start line-clamp-2">
-            {stripAndTruncateHTML(data.description_html)}
-          </div>
-        )}
         {/* properties */}
-        <div
-          className={cn(
-            "flex flex-wrap gap-2 items-center [&>*]:p-0 [&>*]:hover:bg-transparent text-sm text-custom-text-300",
-            "[&>*:not(:last-child)]:after:content-['']",
-            "[&>*:not(:last-child)]:after:inline-block",
-            "[&>*:not(:last-child)]:after:w-1 [&>*:not(:last-child)]:after:h-1",
-            "[&>*:not(:last-child)]:after:bg-custom-background-80",
-            "[&>*:not(:last-child)]:after:rounded-full",
-            "[&>*:not(:last-child)]:after:mx-1",
-            "[&>*:not(:last-child)]:after:align-middle",
-            "[&>*:not(:last-child)]:after:flex-shrink-0"
-          )}
-        >
+        <WithPreviewHOC.PreviewProperties>
           {data.state_id && workspaceSlug && (
             <ReadonlyState
               value={data.state_id}
@@ -105,7 +88,7 @@ export const WorkItemPreviewCard = observer((props: TProps) => {
               workspaceSlug={workspaceSlug?.toString()}
             />
           )}
-        </div>
+        </WithPreviewHOC.PreviewProperties>
       </div>
     </WithPreviewHOC>
   );

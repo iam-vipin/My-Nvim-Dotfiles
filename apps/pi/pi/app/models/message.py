@@ -58,6 +58,14 @@ class Message(BaseModel, table=True):
         default=None,
     )
 
+    # Regenerate/versioning fields
+    is_replaced: bool = Field(
+        default=False,
+        nullable=False,
+        description="Whether this message was replaced by regeneration (hidden from history)",
+        sa_column_kwargs={"server_default": text("false")},
+    )
+
     # Relationships
     message_feedbacks: List["MessageFeedback"] = Relationship(back_populates="message", sa_relationship_kwargs={"lazy": "selectin"})
 

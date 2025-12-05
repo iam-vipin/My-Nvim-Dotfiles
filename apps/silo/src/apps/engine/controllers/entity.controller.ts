@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Controller, Get, Post, Put, Delete } from "@plane/decorators";
 import { logger } from "@plane/logger";
-import { TWorkspaceEntityConnection } from "@plane/types";
+import type { TWorkspaceEntityConnection } from "@plane/types";
 import { responseHandler } from "@/helpers/response-handler";
 import { useValidateUserAuthentication } from "@/lib/decorators";
 import { getAPIClient } from "@/services/client";

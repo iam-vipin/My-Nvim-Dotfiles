@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TBaseIssue, TCustomerRequestCreateResponse, TCustomerRequest } from "@plane/types";
+import type { TBaseIssue, TCustomerRequestCreateResponse, TCustomerRequest } from "@plane/types";
 // services
 import { APIService } from "../api.service";
 import { FileUploadService } from "../file/file-upload.service";

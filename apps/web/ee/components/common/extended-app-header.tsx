@@ -1,54 +1,28 @@
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
-import { E_FEATURE_FLAGS } from "@plane/constants";
-import { PiIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import { cn } from "@plane/utils";
+import { useParams } from "react-router";
+// components
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
+// hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
-import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-import { isSidebarToggleVisible } from "../desktop/helper";
+import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 
 export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
   const { header } = props;
   // router
-  const pathname = usePathname();
-  const { workspaceSlug } = useParams();
+  const { projectId, workItem } = useParams();
   // store hooks
-  const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();
   const { sidebarCollapsed } = useAppTheme();
-  const shouldRenderPiChat =
-    useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.PI_CHAT) &&
-    isPiAllowed(pathname.replace(`/${workspaceSlug}`, "")) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  // preferences
+  const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  // derived values
+  const shouldShowSidebarToggleButton = projectPreferences.navigationMode === "accordion" || (!projectId && !workItem);
 
   return (
     <>
-      {isSidebarToggleVisible() && sidebarCollapsed && <AppSidebarToggleButton />}
+      {sidebarCollapsed && shouldShowSidebarToggleButton && <AppSidebarToggleButton />}
       <div className="flex items-center gap-2 divide-x divide-custom-border-100 w-full">
         <div className="w-full flex-1">{header}</div>
-        {shouldRenderPiChat && (
-          <div className="pl-2">
-            <Tooltip tooltipContent="Ask AI" position="bottom">
-              <button
-                className={cn(
-                  "transition-colors p-2 rounded bg-custom-sidebar-background-80  hover:bg-custom-primary-100/10 hover:text-custom-primary-200  text-custom-text-350 grid place-items-center w-full",
-                  {
-                    "bg-custom-primary-100/10 !text-custom-primary-200": isPiChatDrawerOpen,
-                  }
-                )}
-                onClick={() => togglePiChatDrawer()}
-              >
-                <PiIcon className="size-3.5" />
-              </button>
-            </Tooltip>
-          </div>
-        )}
       </div>
     </>
   );

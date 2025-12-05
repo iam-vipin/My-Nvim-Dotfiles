@@ -8,6 +8,9 @@ from django.db.models import (
     Value,
     When,
     Subquery,
+    Func,
+    F,
+    Prefetch,
 )
 from django.utils import timezone
 from django.db import transaction
@@ -39,6 +42,7 @@ from plane.authentication.serializers import (
     ApplicationCategorySerializer,
 )
 from plane.db.models import Workspace, WorkspaceMember
+from plane.ee.models import WorkspaceLicense
 from plane.ee.views.base import BaseAPIView
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
@@ -99,6 +103,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "logo_asset",
             "company_name",
             "webhook_url",
+            "webhook_secret",
             "redirect_uris",
             "allowed_origins",
             "attachments",
@@ -157,12 +162,18 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 # Get all applications that is either owned by workspace
                 # OR published
                 # or feature flag enabled
+                # or is installed in the workspace
                 applications = (
                     Application.objects.filter(
                         Q(application_owners__workspace__slug=slug)
                         | Q(published_at__isnull=False)
                         | Q(slug__in=enabled_apps_slugs)
+                        | Q(
+                            workspace_app_installations__workspace__slug=slug,
+                            workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
+                        )
                     )
+                    .filter(deleted_at__isnull=True)
                     .select_related("logo_asset")
                     .prefetch_related("attachments", "categories")
                 )
@@ -204,10 +215,15 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 Application.objects.filter(
                     Q(slug=app_slug, application_owners__workspace__slug=slug)
                     | Q(published_at__isnull=False, slug=app_slug)
+                    | Q(
+                        workspace_app_installations__workspace__slug=slug,
+                        workspace_app_installations__status=WorkspaceAppInstallation.Status.INSTALLED,
+                    )
                 )
                 .select_related(
                     "logo_asset",
                 )
+                .filter(deleted_at__isnull=True)
                 .first()
             )
 
@@ -242,15 +258,10 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def delete(self, request, slug, pk):
-        application = Application.objects.filter(
-            id=pk, application_owners__workspace__slug=slug
-        ).first()
-        if not application:
-            return Response(
-                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        application.delete()
+    def delete(self, request, slug, app_slug):
+        application = Application.objects.filter(slug=app_slug, application_owners__workspace__slug=slug).first()
+        if application:
+            application.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -534,8 +545,7 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
         )
         # create a map of workspace id and installation
         workspace_app_installations_map = {
-            workspace_app_installation.workspace_id: True
-            for workspace_app_installation in workspace_app_installations
+            workspace_app_installation.workspace_id: workspace_app_installation for workspace_app_installation in workspace_app_installations
         }
 
         # check the role of the user in the workspace
@@ -547,22 +557,78 @@ class OAuthWorkspacesCheckAppInstallationAllowedEndpoint(BaseAPIView):
 
         for workspace_id in workspace_ids:
             user_workspace_member = workspace_members_map.get(workspace_id)
-            is_installed = workspace_app_installations_map.get(workspace_id)
+            workspace_app_installation = workspace_app_installations_map.get(workspace_id)
+            is_installed = workspace_app_installation is not None
             installation_state = WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
-            if user_workspace_member["role"] == ROLE.ADMIN.value:
+            is_token_present = False
+            if user_workspace_member["role"] == ROLE.ADMIN.value or (
+              user_workspace_member["role"] == ROLE.MEMBER.value and is_installed
+            ):
                 installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
-            elif user_workspace_member["role"] == ROLE.MEMBER.value and is_installed:
-                installation_state = WorkspaceAppInstallation.InstallationState.ALLOWED
-            else:
-                installation_state = (
-                    WorkspaceAppInstallation.InstallationState.NOT_ALLOWED
+
+            # get token user based on application authorization grant type
+            if workspace_app_installation:
+                token_user = (
+                    workspace_app_installation.app_bot
+                    if application.authorization_grant_type == Application.GRANT_CLIENT_CREDENTIALS
+                    else request.user
                 )
+                # check if access token is already present for the token user
+                if AccessToken.objects.filter(
+                    application=application,
+                    workspace=workspace_id,
+                    user=token_user,
+                    expires__gt=timezone.now(),
+                ).exists():
+                    is_token_present = True
 
             workspace_app_installations_data.append(
                 {
                     "workspace_id": workspace_id,
                     "state": installation_state,
+                    "is_installed": is_token_present,
                 }
             )
 
         return Response(workspace_app_installations_data, status=status.HTTP_200_OK)
+
+
+class OAuthApplicationSupportedWorkspacesEndpoint(BaseAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, client_id: str) -> Response:
+        """
+        Get workspaces that the user has access to and that are supported by the application.
+        Filters workspaces based on the application's supported_plans field.
+        """
+        # Get the application
+        application = Application.objects.filter(
+            client_id=client_id, deleted_at__isnull=True
+        ).first()
+        
+        if not application:
+            return Response(
+                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get supported plans from the application
+        supported_plans = application.supported_plans or []
+        
+        # 1. Get workspace IDs where user is an active member
+        workspace_ids = WorkspaceMember.objects.filter(
+            member=request.user, is_active=True
+        ).values_list("workspace_id", flat=True)
+        
+        # 2. Build filter dictionary based on supported_plans condition
+        filter_kwargs = {"id__in": workspace_ids}
+        if supported_plans:
+            filter_kwargs["license__plan__in"] = supported_plans
+        
+        # Filter workspaces and get only IDs (convert UUIDs to strings)
+        supported_workspace_ids = [
+            str(workspace_id)
+            for workspace_id in Workspace.objects.filter(**filter_kwargs).values_list("id", flat=True)
+        ]
+        
+        # 3. Return the workspace IDs
+        return Response({"workspace_ids": supported_workspace_ids}, status=status.HTTP_200_OK)

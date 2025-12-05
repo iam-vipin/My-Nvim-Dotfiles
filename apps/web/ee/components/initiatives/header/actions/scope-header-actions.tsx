@@ -7,12 +7,11 @@ import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-sc
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
-  workspaceSlug: string;
   initiativeId: string;
   disabled: boolean;
 };
 
-export const InitiativeScopeHeaderActions = observer(({ workspaceSlug, initiativeId, disabled }: Props) => {
+export const InitiativeScopeHeaderActions = observer(({ initiativeId, disabled }: Props) => {
   const { t } = useTranslation();
 
   const {
@@ -37,12 +36,7 @@ export const InitiativeScopeHeaderActions = observer(({ workspaceSlug, initiativ
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <AddScopeButton
-        workspaceSlug={workspaceSlug}
-        initiativeId={initiativeId}
-        disabled={disabled}
-        customButton={<Button>{t("initiatives.scope.add_scope")}</Button>}
-      />
+      <AddScopeButton disabled={disabled} customButton={<Button>{t("initiatives.scope.add_scope")}</Button>} />
     </div>
   );
 });

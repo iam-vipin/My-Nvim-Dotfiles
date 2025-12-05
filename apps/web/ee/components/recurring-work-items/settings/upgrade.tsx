@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -10,11 +9,11 @@ import { useTheme } from "next-themes";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+// assets
+import RecurringWorkItemsUpgradeDark from "@/app/assets/empty-state/recurring-work-items/upgrade-dark.webp?url";
+import RecurringWorkItemsUpgradeLight from "@/app/assets/empty-state/recurring-work-items/upgrade-light.webp?url";
 // plane web imports
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
-// assets
-import RecurringWorkItemsUpgradeDark from "@/public/empty-state/recurring-work-items/upgrade-dark.webp";
-import RecurringWorkItemsUpgradeLight from "@/public/empty-state/recurring-work-items/upgrade-light.webp";
 
 export const RecurringWorkItemsUpgrade: FC = observer(() => {
   // router
@@ -55,7 +54,7 @@ export const RecurringWorkItemsUpgrade: FC = observer(() => {
             </div>
           </div>
         </div>
-        <Image
+        <img
           src={resolvedTheme === "dark" ? RecurringWorkItemsUpgradeDark : RecurringWorkItemsUpgradeLight}
           alt="recurring work items"
           className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0 w-auto"

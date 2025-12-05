@@ -1,27 +1,18 @@
-import { SlackService, TSlackUserAlertsConfig } from "@plane/etl/slack";
+import type { SlackService, TSlackUserAlertsConfig } from "@plane/etl/slack";
 import { logger } from "@plane/logger";
-import {
-  Client,
-  E_PLANE_WEBHOOK_EVENT,
-  ExIssue,
-  ExIssueComment,
-  PlaneActivity,
-  PlaneWebhookPayloadBase,
-} from "@plane/sdk";
-import { TWorkspaceConnection } from "@plane/types";
+import type { Client, ExIssue, ExIssueComment, PlaneActivity, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_PLANE_WEBHOOK_EVENT } from "@plane/sdk";
+import type { TWorkspaceConnection } from "@plane/types";
 import { getSlackDMAlertKey } from "@/helpers/cache-keys";
 import { processBatchPromises } from "@/helpers/methods";
 import { extractUserMentionFromHtml } from "@/helpers/parser";
 import { getIssueUrlFromSequenceId } from "@/helpers/urls";
 import { E_KNOWN_FIELD_KEY } from "@/types/form/base";
-import { Store } from "@/worker/base";
+import type { Store } from "@/worker/base";
 import { getAssigneeDmAlertText, getCommentDmAlertText, getIssueDescriptionDmAlertText } from "../helpers/activity";
 import { getSlackMarkdownFromPlaneHtml } from "../helpers/parse-plane-resources";
 import { createSlackHyperlinkMarkdown } from "../helpers/slack-options";
-import {
-  ESlackDMAlertActivityAction,
-  ESlackDMAlertActivityType,
-  ESlackDMAlertType,
+import type {
   TSlackDMAlert,
   TSlackDMAlertActivity,
   TSlackDMAlertBlockPayload,
@@ -29,7 +20,8 @@ import {
   TSlackDMBlockFormationCtx,
   TSlackDMWorkItemDisplayInfo,
 } from "../types/alerts";
-import { TSlackWorkspaceConnectionConfig } from "../types/types";
+import { ESlackDMAlertActivityAction, ESlackDMAlertActivityType, ESlackDMAlertType } from "../types/alerts";
+import type { TSlackWorkspaceConnectionConfig } from "../types/types";
 import { createCommentLinkback } from "../views/comments";
 
 /**

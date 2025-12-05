@@ -1,5 +1,5 @@
 // plane imports
-import {
+import type {
   IIssueLabel,
   IIssueType,
   IState,
@@ -11,12 +11,12 @@ import {
   TProjectTemplateForm,
 } from "@plane/types";
 // local imports
+import type { TBuildWorkItemBlueprintBaseParams } from "../work-item/blueprint/build";
 import {
   buildCustomPropertyBlueprint,
   buildLabelsBlueprint,
   buildWorkItemBlueprint,
   buildWorkItemTypeBlueprint,
-  TBuildWorkItemBlueprintBaseParams,
 } from "../work-item/blueprint/build";
 import { projectTemplateFormGettersHelpers } from "./helper";
 

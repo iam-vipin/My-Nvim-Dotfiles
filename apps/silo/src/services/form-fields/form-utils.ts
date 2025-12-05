@@ -1,7 +1,8 @@
 import { PriorityEnum } from "@makeplane/plane-node-sdk";
 import { SILO_FORM_OPTIONS_CACHE_KEY } from "@/helpers/cache-keys";
-import { getPlaneClientV2, PlaneClientV2 } from "@/helpers/plane-api-client-v2";
-import { SelectOption } from "@/types/form/base";
+import type { PlaneClientV2 } from "@/helpers/plane-api-client-v2";
+import { getPlaneClientV2 } from "@/helpers/plane-api-client-v2";
+import type { SelectOption } from "@/types/form/base";
 import { Store } from "@/worker/base";
 
 export interface ProjectConfig {

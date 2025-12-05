@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -73,9 +71,10 @@ export interface IssueFormProps {
   convertToWorkItem?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+  isTypeSelectDisabled?: boolean;
 }
 
-export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
+export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -101,6 +100,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     convertToWorkItem = false,
     showActionButtons = true,
     dataResetProperties = [],
+    isTypeSelectDisabled = false,
   } = props;
 
   // states
@@ -398,7 +398,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       control={control}
                       projectId={projectId}
                       editorRef={editorRef}
-                      disabled={!!data?.sourceIssueId}
+                      disabled={!!data?.sourceIssueId || isTypeSelectDisabled}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />

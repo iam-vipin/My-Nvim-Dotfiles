@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useParams } from "next/navigation";
 // plane imports
 import type { TExtensions } from "@plane/editor";
 import { E_INTEGRATION_KEYS } from "@plane/types";
@@ -17,6 +18,8 @@ import { EWorkspaceFeatures } from "../types/workspace-feature";
  */
 export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => {
   const { workspaceSlug, storeType } = props;
+  // params
+  const { pageId } = useParams();
   // store hooks
   const { getIntegrations } = useFeatureFlags();
   // feature flags
@@ -27,8 +30,10 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
+  const isEditorCopyBlockLinkEnabled = useFlag(workspaceSlug, "EDITOR_COPY_BLOCK_LINK");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
+  const isEditorSelectionConversionEnabled = useFlag(workspaceSlug, "EDITOR_SELECTION_CONVERSION");
   // check integrations
   const integrations = getIntegrations(workspaceSlug);
   const hasDrawioIntegration = integrations.includes(E_INTEGRATION_KEYS.DRAWIO);
@@ -36,7 +41,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the document editor
   const document = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(),
+      disabled: new Set<TExtensions>(["selection-conversion"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -44,7 +49,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the rich text editor
   const richText = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(),
+      disabled: new Set<TExtensions>(["selection-conversion"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -52,7 +57,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   // disabled and flagged in the lite text editor
   const liteText = useMemo(
     () => ({
-      disabled: new Set<TExtensions>(["external-embed"]),
+      disabled: new Set<TExtensions>(["external-embed", "selection-conversion"]),
       flagged: new Set<TExtensions>(),
     }),
     []
@@ -88,9 +93,18 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
     liteText.flagged.add("external-embed");
   }
 
+  if (!isEditorCopyBlockLinkEnabled) {
+    document.disabled.add("copy-block-link");
+    richText.disabled.add("copy-block-link");
+  }
+
   // check for drawio integration
   if (!hasDrawioIntegration) {
     document.flagged.add("drawio");
+  }
+
+  if (pageId && isEditorSelectionConversionEnabled) {
+    document.disabled.delete("selection-conversion");
   }
 
   return {

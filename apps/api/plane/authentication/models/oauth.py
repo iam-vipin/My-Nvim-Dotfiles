@@ -17,6 +17,8 @@ from oauth2_provider.models import (
 
 from plane.app.permissions.base import ROLE
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
+from plane.authentication.bgtasks.app_delete_updates import app_delete_updates
+from plane.authentication.bgtasks.app_logo_asset_updates import app_logo_asset_updates
 from plane.db.mixins import SoftDeleteModel, UserAuditModel
 from plane.db.models import (
     BaseModel,
@@ -28,12 +30,14 @@ from plane.db.models import (
 )
 from plane.db.models.user import BotTypeEnum
 from plane.utils.html_processor import strip_tags
+from plane.authentication.utils.oauth_utils import create_bot_user_avatar_asset
 
 
 def custom_app_slug_validator(value):
-    if not re.match(r'^[a-z0-9-]+$', value):
+    if not re.match(r"^[a-z0-9-]+$", value):
         raise ValidationError("Slug must contain only lowercase letters, numbers and hyphens")
     return value
+
 
 # oauth models
 class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
@@ -80,6 +84,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     publish_requested_at = models.DateTimeField(null=True)
     company_name = models.CharField(max_length=255)
     webhook_url = models.URLField(max_length=800, null=True, blank=True)
+    webhook_secret = models.CharField(max_length=255, null=True, blank=True)
     attachments = models.ManyToManyField(
         "db.FileAsset",
         related_name="applications",
@@ -142,8 +147,16 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
             old_instance = Application.objects.get(id=self.id)
             if self.webhook_url != old_instance.webhook_url:
                 app_webhook_url_updates.delay(self.id)
+            # update app bot user imates
+            if self.logo_asset != old_instance.logo_asset:
+                app_logo_asset_updates.delay(self.id)
 
         super(Application, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        with transaction.atomic():
+            app_delete_updates.delay(self.id)
+            super(Application, self).delete(*args, **kwargs)
 
 
 class Grant(AbstractGrant):
@@ -292,56 +305,60 @@ class WorkspaceAppInstallation(BaseModel):
         ]
 
     def save(self, *args, **kwargs):
-        # create bot user and attach
-        if not self.app_bot:
-            username = f"{self.workspace.slug}_{self.application.slug}_bot"
-            # check if any old installation exists with the same app and workspace
-            # it would have been marked as inactive by the uninstall endpoint
-            existing_installation = WorkspaceAppInstallation.all_objects.filter(
-                application=self.application,
-                workspace=self.workspace,
-            ).first()
-            if existing_installation:
-                # make that bot active in case it was marked as inactive by the uninstall endpoint and use that bot
-                if not existing_installation.app_bot.is_active:
-                    existing_installation.app_bot.is_active = True
-                    existing_installation.app_bot.save()
-                self.app_bot = existing_installation.app_bot
-            else:
-                # create a new bot user
-                bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
-                self.app_bot = User.objects.create(
-                    username=username,
-                    display_name=f"{self.application.name} Bot",
-                    first_name=f"{self.application.name}",
-                    last_name="Bot",
-                    is_bot=True,
-                    bot_type=bot_type,
-                    email=f"{username}@plane.so",
-                    password=make_password(uuid.uuid4().hex),
-                    is_password_autoset=True,
-                )
-
-            # add this user to the workspace members
-            WorkspaceMember.objects.create(member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value)
-
-        if self.status == self.Status.INSTALLED:
-            # add this user as a project member to all the projects in the workspace using bulk_create
-            ProjectMember.objects.bulk_create(
-                [
-                    ProjectMember(
-                        workspace=self.workspace,
-                        member=self.app_bot,
-                        project=project,
-                        role=ROLE.MEMBER.value,
+        with transaction.atomic():
+            # create bot user and attach
+            if not self.app_bot:
+                username = f"{self.workspace.slug}_{self.application.slug}_bot"
+                # check if any old installation exists with the same app and workspace
+                # it would have been marked as inactive by the uninstall endpoint
+                existing_installation = WorkspaceAppInstallation.all_objects.filter(
+                    application=self.application,
+                    workspace=self.workspace,
+                ).first()
+                if existing_installation:
+                    # make that bot active in case it was marked as inactive by the uninstall endpoint and use that bot
+                    if not existing_installation.app_bot.is_active:
+                        existing_installation.app_bot.is_active = True
+                        existing_installation.app_bot.save()
+                    self.app_bot = existing_installation.app_bot
+                else:
+                    # create a new bot user
+                    bot_type = BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
+                    self.app_bot = User.objects.create(
+                        username=username,
+                        display_name=f"{self.application.name} Bot",
+                        first_name=f"{self.application.name}",
+                        last_name="Bot",
+                        is_bot=True,
+                        bot_type=bot_type,
+                        email=f"{username}@plane.so",
+                        password=make_password(uuid.uuid4().hex),
+                        is_password_autoset=True,
                     )
-                    for project in Project.objects.filter(workspace=self.workspace)
-                ],
-                ignore_conflicts=True,
-            )
-            # create the webhook for the app installation
-            self._create_webhook()
-        super(WorkspaceAppInstallation, self).save(*args, **kwargs)
+                    user_avatar_asset = create_bot_user_avatar_asset(self.application.logo_asset, self.app_bot)
+                    self.app_bot.avatar_asset = user_avatar_asset
+                    self.app_bot.save()
+
+                # add this user to the workspace members
+                WorkspaceMember.objects.create(member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value)
+
+            if self.status == self.Status.INSTALLED:
+                # add this user as a project member to all the projects in the workspace using bulk_create
+                ProjectMember.objects.bulk_create(
+                    [
+                        ProjectMember(
+                            workspace=self.workspace,
+                            member=self.app_bot,
+                            project=project,
+                            role=ROLE.MEMBER.value,
+                        )
+                        for project in Project.objects.filter(workspace=self.workspace)
+                    ],
+                    ignore_conflicts=True,
+                )
+                # create the webhook for the app installation
+                self._create_webhook()
+            super(WorkspaceAppInstallation, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """
@@ -404,6 +421,8 @@ class WorkspaceAppInstallation(BaseModel):
                 is_new_webhook = False
 
             webhook.url = self.application.webhook_url
+            if self.application.webhook_secret:
+                webhook.secret_key = self.application.webhook_secret
             webhook.is_active = True
             # In future, below config comes from the app installation screen
             webhook.project = True

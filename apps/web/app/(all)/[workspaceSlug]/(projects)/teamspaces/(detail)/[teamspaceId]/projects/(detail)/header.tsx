@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, TeamsIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";

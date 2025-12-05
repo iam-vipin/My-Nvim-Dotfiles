@@ -42,7 +42,7 @@ export const RightSidePanel = observer((props: TProps) => {
         "transform transition-all duration-300 ease-in-out",
         "shadow-lg z-20",
         isFullScreen ? "md:relative" : "absolute right-0",
-        isSidePanelOpen ? "translate-x-0 w-[260px]" : "px-0 translate-x-[100%] w-0",
+        isSidePanelOpen ? "w-[260px]" : "px-0 w-0 hidden",
         isMobile ? "fixed top-0 right-0 h-full" : "absolute right-0 top-0"
       )}
     >

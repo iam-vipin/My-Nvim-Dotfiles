@@ -6,9 +6,7 @@ import type { E_FEATURE_FLAGS } from "@plane/constants";
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
 // store
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// plane web hooks
-import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import { useFeatureFlags, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TUpgradeBadge = {
   className?: string;
@@ -22,8 +20,9 @@ export const UpgradeBadge: FC<TUpgradeBadge> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
+  const { getFeatureFlag } = useFeatureFlags();
   // derived values
-  const isFeatureEnabled = flag ? useFlag(workspaceSlug?.toString(), flag) : false;
+  const isFeatureEnabled = flag ? getFeatureFlag(workspaceSlug?.toString(), flag, false) : false;
   const isSubscribedToPro = currentWorkspaceSubscribedPlanDetail?.product === EProductSubscriptionEnum.PRO;
 
   if (!currentWorkspaceSubscribedPlanDetail || isFeatureEnabled || isSubscribedToPro) {

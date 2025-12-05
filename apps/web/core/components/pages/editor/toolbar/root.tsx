@@ -19,7 +19,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
+export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
   const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
   // translation
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
           )}
         >
           <div className="max-w-full w-full flex items-center justify-between">
-            {editorRef && <PageToolbar editorRef={editorRef} />}
+            <div className="flex-1">{editorRef && <PageToolbar editorRef={editorRef} />}</div>
             <div className="flex items-center gap-2">
               <PageCollaboratorsList page={page} />
               {!isNavigationPaneOpen && (

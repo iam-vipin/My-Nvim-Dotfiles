@@ -9,7 +9,6 @@ import { ISSUE_DISPLAY_FILTERS_BY_PAGE, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { CalendarLayout } from "@/components/issues/issue-layouts/calendar/roots/project-root";
 import { KanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/project-root";
 import { ListLayout } from "@/components/issues/issue-layouts/list/roots/project-root";
@@ -72,7 +71,7 @@ export const TeamspaceLayoutRoot: FC = observer(() => {
   // fetch all issue properties
   useWorkspaceIssueProperties(workspaceSlug);
   // fetch teamspace issue filters
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && teamspaceId ? `TEAMSPACE_ISSUE_FILTERS_${workspaceSlug}_${teamspaceId}` : null,
     async () => {
       if (workspaceSlug && teamspaceId) {
@@ -82,15 +81,7 @@ export const TeamspaceLayoutRoot: FC = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !teamspaceId) return <></>;
-
-  if (isLoading && !issuesFilter?.getIssueFilters(teamspaceId))
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!workspaceSlug || !teamspaceId || !issuesFilter?.getIssueFilters(teamspaceId)) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.TEAM}>
       <TeamspaceLevelWorkItemFiltersHOC

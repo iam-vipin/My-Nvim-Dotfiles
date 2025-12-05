@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
@@ -10,8 +9,8 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // assets
-import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
-import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
+import CustomerUpgradeDark from "@/app/assets/empty-state/customers/customer-upgrade-dark.webp?url";
+import CustomerUpgradeLight from "@/app/assets/empty-state/customers/customer-upgrade-light.webp?url";
 // local imports
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
@@ -39,9 +38,9 @@ export const CustomerUpgrade: FC = observer(() => {
               </div>
             </div>
           </div>
-          <Image
+          <img
             src={resolvedTheme === "dark" ? CustomerUpgradeDark : CustomerUpgradeLight}
-            alt=""
+            alt="Customer upgrade"
             className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0"
           />
         </div>

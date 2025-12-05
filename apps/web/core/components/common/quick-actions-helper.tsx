@@ -229,3 +229,45 @@ export const useIntakeHeaderMenuItems = (props: {
 
   return { items, modals };
 };
+
+interface UseCommentMenuItemsProps {
+  comment: {
+    id: string;
+    actor: string;
+    access: number | string;
+  };
+  isAuthor: boolean;
+  showAccessSpecifier: boolean;
+  showCopyLinkOption: boolean;
+  handleEdit: () => void;
+  handleCopyLink: () => void;
+  handleToggleAccess: () => void;
+  handleDelete: () => void;
+}
+
+export const useCommentMenuItems = (props: UseCommentMenuItemsProps): TContextMenuItem[] => {
+  const factory = useQuickActionsFactory();
+  const {
+    comment,
+    isAuthor,
+    showAccessSpecifier,
+    showCopyLinkOption,
+    handleEdit,
+    handleCopyLink,
+    handleToggleAccess,
+    handleDelete,
+  } = props;
+
+  // Check if access is INTERNAL (0 or "INTERNAL")
+  const isInternal = comment.access === 0 || comment.access === "INTERNAL" || comment.access === "0";
+
+  // Assemble final menu items - order defined here
+  const items = [
+    factory.createCommentEditMenuItem(handleEdit, isAuthor),
+    factory.createCommentCopyLinkMenuItem(handleCopyLink, showCopyLinkOption),
+    factory.createCommentAccessSpecifierMenuItem(handleToggleAccess, isInternal, showAccessSpecifier),
+    factory.createCommentDeleteMenuItem(handleDelete, isAuthor),
+  ].filter((item) => item.shouldRender !== false);
+
+  return items;
+};

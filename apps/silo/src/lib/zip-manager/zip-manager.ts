@@ -1,13 +1,13 @@
 import { logger } from "@plane/logger";
-import { Store } from "@/worker/base";
+import type { Store } from "@/worker/base";
 import {
   extractZipTableOfContents,
   extractDirectoryFromZip,
   extractFileFromZip,
   extractCentralDirectoryData,
 } from "./extractor";
-import { StorageProvider } from "./storage-provider";
-import { TZipFileNode } from "./types";
+import type { StorageProvider } from "./storage-provider";
+import type { TZipFileNode } from "./types";
 import { ZipStream } from "./zip-stream";
 
 const TOC_KEY = "toc";

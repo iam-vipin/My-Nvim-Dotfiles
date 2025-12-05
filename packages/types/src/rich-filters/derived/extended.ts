@@ -1,5 +1,5 @@
-import { TFilterValue } from "../expression";
-import {
+import type { TFilterValue } from "../expression";
+import type {
   TBooleanFilterFieldConfig,
   TDateFilterFieldConfig,
   TDateRangeFilterFieldConfig,
@@ -9,9 +9,9 @@ import {
   TSingleSelectFilterFieldConfig,
   TTextFilterFieldConfig,
 } from "../field-types";
-import { TExtendedOperatorSpecificConfigs, TOperatorSpecificConfigs } from "../operator-configs";
-import { TCoreSupportedDateFilterOperators, TCoreSupportedSelectFilterOperators } from "./core";
-import { TFilterOperatorHelper } from "./shared";
+import type { TExtendedOperatorSpecificConfigs, TOperatorSpecificConfigs } from "../operator-configs";
+import type { TCoreSupportedDateFilterOperators, TCoreSupportedSelectFilterOperators } from "./core";
+import type { TFilterOperatorHelper } from "./shared";
 
 // -------- DATE FILTER OPERATORS --------
 

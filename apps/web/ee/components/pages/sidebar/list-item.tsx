@@ -7,13 +7,13 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, Loader } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 import { cn, getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -53,6 +53,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   // refs
   const listItemContentRef = useRef<HTMLDivElement>(null);
+  const expandTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // navigation
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -76,7 +77,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     name,
   } = page ?? {};
 
-  const isNestedPagesDisabledForPage = useMemo(
+  const shouldHideListItem = useMemo(
     () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
     [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
   );
@@ -104,11 +105,9 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const pageContent = useMemo(() => {
     const baseName = getPageName(name);
     const isRestricted = !canCurrentUserAccessPage;
-    const needsUpgrade = isNestedPagesDisabledForPage;
     const isArchived = !!archived_at;
 
     const displayName = (() => {
-      if (needsUpgrade) return "Please upgrade to view";
       if (isRestricted) return "Restricted Access";
       return baseName;
     })();
@@ -116,7 +115,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     return {
       tooltipText: baseName,
       logo: (() => {
-        if (isRestricted || needsUpgrade) {
+        if (isRestricted) {
           return <RestrictedPageIcon className="size-3.5" />;
         }
         if (logo_props?.in_use) {
@@ -129,13 +128,12 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
       })(),
       status: {
         isRestricted,
-        needsUpgrade,
         isArchived,
-        hasAccess: !isRestricted && !needsUpgrade,
+        hasAccess: !isRestricted,
       },
       displayName,
     };
-  }, [canCurrentUserAccessPage, isNestedPagesDisabledForPage, archived_at, logo_props, isDescriptionEmpty, name]);
+  }, [canCurrentUserAccessPage, archived_at, logo_props, isDescriptionEmpty, name]);
 
   // Memoize event handlers to prevent recreation
   const handleMouseEnter = useCallback(() => setIsHovering(true), []);
@@ -215,25 +213,42 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     const element = listItemContentRef.current;
     if (!element || !page || !page.id) return;
 
-    return combine(
+    const cleanup = combine(
       dropTargetForElements({
         element,
         onDragEnter: () => {
           setIsDropping(true);
-          if (setExpandedPageIds) {
-            if (!expandedPageIds.includes(pageId)) {
-              setExpandedPageIds([...expandedPageIds, pageId]);
-            }
-          } else {
-            setLocalIsExpanded(true);
+          // Clear any existing timer
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
           }
+          // Set new timer to expand after 1 second
+          expandTimerRef.current = setTimeout(() => {
+            if (setExpandedPageIds) {
+              if (!expandedPageIds.includes(pageId)) {
+                setExpandedPageIds([...expandedPageIds, pageId]);
+              }
+            } else {
+              setLocalIsExpanded(true);
+            }
+          }, 1000);
         },
         onDragLeave: () => {
           setIsDropping(false);
+          // Clear the expand timer when drag leaves
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
+            expandTimerRef.current = null;
+          }
         },
         onDrop: ({ location, self, source }) => {
           // toggle drop state to off
           setIsDropping(false);
+          // Clear the expand timer on drop
+          if (expandTimerRef.current) {
+            clearTimeout(expandTimerRef.current);
+            expandTimerRef.current = null;
+          }
 
           if (location.current.dropTargets[0]?.element !== self.element) return;
           // get data of the dropped page(source)
@@ -290,6 +305,15 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         },
       })
     );
+
+    return () => {
+      cleanup();
+      // Clear any pending timer on unmount
+      if (expandTimerRef.current) {
+        clearTimeout(expandTimerRef.current);
+        expandTimerRef.current = null;
+      }
+    };
   }, [
     expandedPageIds,
     getPageById,
@@ -335,7 +359,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         style={contentStyle}
       >
         <div className="size-4 flex-shrink-0 grid place-items-center">
-          {shouldShowSubPagesButton && isHovering ? (
+          {isFetchingSubPages || (shouldShowSubPagesButton && isHovering) ? (
             <button
               type="button"
               onClick={handleSubPagesToggle}

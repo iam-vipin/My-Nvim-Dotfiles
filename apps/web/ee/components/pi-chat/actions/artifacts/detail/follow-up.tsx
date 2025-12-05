@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUp } from "lucide-react";
-import type { EditorRefApi } from "@plane/editor";
+import type { TPiChatEditorRefApi } from "@plane/editor";
 import { PiChatEditorWithRef } from "@plane/editor";
 import { FilledCheck, FilledCross } from "@plane/propel/icons";
 import { cn } from "@plane/ui";
 import { isCommentEmpty } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import useEvent from "@/plane-web/hooks/use-event";
-import { formatSearchQuery } from "../../../helper";
 import { useArtifactData } from "../useArtifactData";
+import type { TUpdatedArtifact } from "@/plane-web/types";
 
 type TProps = {
   projectId: string;
@@ -19,6 +19,7 @@ type TProps = {
   artifactId: string;
   messageId: string;
   artifactType: string;
+  onSubmit?: (artifactData: TUpdatedArtifact) => void;
 };
 
 type TEditCommands = {
@@ -27,25 +28,20 @@ type TEditCommands = {
 };
 
 export const FollowUpDetail = observer((props: TProps) => {
-  const { projectId, workspaceId, workspaceSlug, artifactId, messageId, artifactType } = props;
+  const { projectId, workspaceId, artifactId, messageId, artifactType, onSubmit } = props;
   // states
   const [isThinking, setIsThinking] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [error, setError] = useState<string | null>(null);
   //ref
   const editorCommands = useRef<TEditCommands | null>(null);
-  const editorRef = useRef<EditorRefApi>(null);
+  const editorRef = useRef<TPiChatEditorRefApi>(null);
   // store hooks
-  const { searchCallback, getChatFocus, followUp, activeChatId } = usePiChat();
-  const chatFocus = getChatFocus(activeChatId, projectId?.toString(), workspaceId?.toString());
+  const { followUp, activeChatId } = usePiChat();
   // hooks
   const artifactData = useArtifactData(artifactId, artifactType);
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
-  };
-  const getMentionSuggestions = async (query: string) => {
-    const response = await searchCallback(workspaceSlug?.toString() || "", query, chatFocus);
-    return formatSearchQuery(response);
   };
 
   const handleSubmit = useEvent(async (e?: React.FormEvent) => {
@@ -54,8 +50,11 @@ export const FollowUpDetail = observer((props: TProps) => {
     if (isThinking || !query || isCommentEmpty(query) || !workspaceId) return;
     setIsThinking(true);
     await followUp(artifactId, query, messageId, projectId, workspaceId, activeChatId, artifactType, artifactData)
-      .then(() => {
-        setShowAlert(true);
+      .then((response) => {
+        if (response.success) {
+          setShowAlert(true);
+          onSubmit?.(response.artifact_data);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -80,7 +79,7 @@ export const FollowUpDetail = observer((props: TProps) => {
       {/* Follow Up input */}
       {!isThinking && !showAlert && (
         <div className="flex justify-between items-end gap-2 w-[300px]">
-          <div className="max-h-[35px] overflow-scroll my-auto flex-1">
+          <div className="max-h-[100px] overflow-scroll my-auto flex-1">
             <PiChatEditorWithRef
               setEditorCommand={(command) => {
                 setEditorCommands({ ...command });
@@ -105,14 +104,14 @@ export const FollowUpDetail = observer((props: TProps) => {
       )}
       {/* thinking */}
       {isThinking && (
-        <div className="flex items-center gap-2 p-1">
+        <div className="flex items-center gap-2 p-1 w-full text-nowrap">
           <div className="w-2 h-4 rounded-[1px] pi-cursor animate-vertical-scale" />
           <div className="flex gap-2 items-center shimmer">Taking required actions</div>
         </div>
       )}
       {/* alert */}
       {showAlert && (
-        <div className="flex justify-center items-center gap-2 text-base text-custom-text-200 p-1">
+        <div className="w-full flex justify-center items-center gap-2 text-base text-custom-text-200 p-1 text-nowrap">
           {error ? (
             <FilledCross width={16} height={16} />
           ) : (

@@ -1,5 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import {
+import type { AxiosInstance } from "axios";
+import axios from "axios";
+import type {
+  Message,
   SlackConversationHistoryResponse,
   SlackMessageResponse,
   SlackTokenRefreshResponse,
@@ -7,7 +9,7 @@ import {
   SlackUserResponse,
   UnfurlMap,
 } from "../types";
-import { SlackAuthService } from "./auth.service";
+import type { SlackAuthService } from "./auth.service";
 
 export class SlackService {
   private client: AxiosInstance;
@@ -370,6 +372,41 @@ export class SlackService {
         channels: [],
         error: error instanceof Error ? error.message : "Failed to fetch Slack channels",
       };
+    }
+  }
+
+  async addReaction(channel: string, ts: string, emojiName: string) {
+    await this.client.post("reactions.add", {
+      channel,
+      timestamp: ts,
+      name: emojiName,
+    });
+  }
+
+  async removeReaction(channel: string, ts: string, emojiName: string) {
+    await this.client.post("reactions.remove", {
+      channel,
+      timestamp: ts,
+      name: emojiName,
+    });
+  }
+
+  async fetchPreviousMessagesInThread(channel: string, threadTs: string): Promise<Message[]> {
+    try {
+      const response = await this.client.get("conversations.replies", {
+        params: {
+          channel: channel,
+          ts: threadTs,
+          limit: 20,
+        },
+      });
+
+      const threadedMessagesResponse: SlackConversationHistoryResponse = response.data;
+
+      return threadedMessagesResponse.messages || [];
+    } catch (error) {
+      console.error("Error fetching all messages in thread:", error);
+      throw error;
     }
   }
 }

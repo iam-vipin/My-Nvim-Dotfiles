@@ -5,6 +5,7 @@ import { Controller, Get } from "@plane/decorators";
 // helpers
 import { env } from "@/env";
 import { handleAuthentication } from "@/lib/auth";
+import { AppError } from "@/lib/errors";
 import { IframelyAPI } from "@/services/iframely.service";
 
 @Controller("/iframely")
@@ -73,8 +74,8 @@ export class IframelyController {
 
       res.json(response);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
+      if (error instanceof AppError) {
+        const status = error.statusCode || 500;
         let errorMessage = "An error occurred while fetching the embed data";
         let errorCode = "UNKNOWN_ERROR";
 
@@ -100,18 +101,16 @@ export class IframelyController {
             errorMessage = "The content server took too long to respond";
             errorCode = "TIMEOUT";
             break;
+          default:
+            errorMessage = "An unexpected error occurred";
+            errorCode = "SERVER_ERROR";
         }
 
-        return res.status(status || 500).json({
+        return res.status(status).json({
           error: errorMessage,
           code: errorCode,
         });
       }
-
-      res.status(500).json({
-        error: "An unexpected error occurred",
-        code: "SERVER_ERROR",
-      });
     }
   }
 }

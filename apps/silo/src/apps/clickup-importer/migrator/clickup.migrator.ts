@@ -1,26 +1,24 @@
+import type { TClickUpConfig, TClickUpEntity, TClickUpTask, TClickUpTaskWithComments } from "@plane/etl/clickup";
 import {
   ClickUpPullService,
   E_CLICKUP_ADDITIONAL_DATA_MIGRATOR_STEPS,
   E_CLICKUP_IMPORT_PHASE,
   getUniqueTasks,
-  TClickUpConfig,
-  TClickUpEntity,
-  TClickUpTask,
-  TClickUpTaskWithComments,
 } from "@plane/etl/clickup";
-import { E_IMPORTER_KEYS, PlaneEntities } from "@plane/etl/core";
+import type { PlaneEntities } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { logger } from "@plane/logger";
-import { TImportJob } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { wait } from "@/helpers/delay";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getJobCredentials, getJobData, resetJobIfStarted } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { TaskHeaders } from "@/types";
+import type { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
-import { MQ, Store } from "@/worker/base";
-import { TBatch, TPaginationContext, TBatchPullResult } from "@/worker/types";
+import type { MQ, Store } from "@/worker/base";
+import type { TBatch, TPaginationContext, TBatchPullResult } from "@/worker/types";
 import { getClickUpClient } from "../helpers";
 import { ClickUpBulkTransformer } from "./transformers/etl";
 

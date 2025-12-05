@@ -1,3 +1,3 @@
 import { ECommentAttributeNames } from "./types";
 
-export const getCommentSelector = (commentId: string) => `[${ECommentAttributeNames.COMMENT_ID}=${commentId}]`;
+export const getCommentSelector = (commentId: string) => `[${ECommentAttributeNames.COMMENT_ID}="${commentId}"]`;

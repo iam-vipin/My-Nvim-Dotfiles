@@ -1,5 +1,5 @@
-import { TZipFileNode } from "@/lib/zip-manager";
-import { EZipDriverType } from "../drivers";
+import type { TZipFileNode } from "@/lib/zip-manager";
+import type { EZipDriverType } from "../drivers";
 
 export enum ENotionImporterKeyType {
   PAGE = "PAGE",

@@ -31,6 +31,7 @@ export default {
     workflows: "Fluxos de trabalho",
     templates: "Modelos",
     members_and_teamspaces: "Membros e espaços de equipe",
+    open_in_full_screen: "Abrir {page} em tela cheia",
   },
   updates: {
     add_update: "Adicionar atualização",
@@ -162,6 +163,29 @@ export default {
       settings_sub_heading:
         "Traga solicitações de clientes para itens de trabalho, atribua prioridade por solicitações e agrupe os estados dos itens de trabalho em registros de clientes. Em breve, você poderá integrar com seu CRM ou ferramenta de Suporte para uma gestão de trabalho ainda melhor por atributos de cliente.",
     },
+    features: {
+      intake: {
+        heading: "Responsabilidade de recebimento",
+        notify_assignee: {
+          title: "Notificar responsáveis",
+          description:
+            "Para uma nova solicitação de recebimento, os responsáveis padrão serão alertados via notificações",
+        },
+        toasts: {
+          set: {
+            loading: "Definindo responsáveis...",
+            success: {
+              title: "Sucesso!",
+              message: "Responsáveis definidos com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Algo deu errado ao definir os responsáveis. Por favor, tente novamente.",
+            },
+          },
+        },
+      },
+    },
     empty_state: {
       integrations: {
         title: "Nenhuma integração configurada",
@@ -206,6 +230,91 @@ export default {
         description: "Adicione propriedades personalizadas ao seu épico.",
       },
       disabled: "Desativado",
+    },
+    cycles: {
+      auto_schedule: {
+        heading: "Agendamento automático de ciclos",
+        description: "Mantenha os ciclos em movimento sem configuração manual.",
+        tooltip: "Crie automaticamente novos ciclos com base na programação escolhida.",
+        edit_button: "Editar",
+        form: {
+          cycle_title: {
+            label: "Título do ciclo",
+            placeholder: "Título",
+            tooltip: "O título será acrescido de números para os ciclos subsequentes. Por exemplo: Design - 1/2/3",
+            validation: {
+              required: "O título do ciclo é obrigatório",
+              max_length: "O título não deve exceder 255 caracteres",
+            },
+          },
+          cycle_duration: {
+            label: "Duração do ciclo",
+            unit: "Semanas",
+            validation: {
+              required: "A duração do ciclo é obrigatória",
+              min: "A duração do ciclo deve ser de pelo menos 1 semana",
+              max: "A duração do ciclo não pode exceder 30 semanas",
+              positive: "A duração do ciclo deve ser positiva",
+            },
+          },
+          cooldown_period: {
+            label: "Período de resfriamento",
+            unit: "dias",
+            tooltip: "Pausa entre ciclos antes do início do próximo.",
+            validation: {
+              required: "O período de resfriamento é obrigatório",
+              negative: "O período de resfriamento não pode ser negativo",
+            },
+          },
+          start_date: {
+            label: "Dia de início do ciclo",
+            validation: {
+              required: "A data de início é obrigatória",
+              past: "A data de início não pode estar no passado",
+            },
+          },
+          number_of_cycles: {
+            label: "Número de ciclos futuros",
+            validation: {
+              required: "O número de ciclos é obrigatório",
+              min: "Pelo menos 1 ciclo é obrigatório",
+              max: "Não é possível agendar mais de 3 ciclos",
+            },
+          },
+          auto_rollover: {
+            label: "Transferência automática de itens de trabalho",
+            tooltip:
+              "No dia em que um ciclo for concluído, mover todos os itens de trabalho não concluídos para o próximo ciclo.",
+          },
+        },
+        toast: {
+          toggle: {
+            loading_enable: "Ativando agendamento automático de ciclos",
+            loading_disable: "Desativando agendamento automático de ciclos",
+            success: {
+              title: "Sucesso!",
+              message: "Agendamento automático de ciclos ativado com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message: "Falha ao ativar o agendamento automático de ciclos.",
+            },
+          },
+          save: {
+            loading: "Salvando configuração de agendamento automático de ciclos",
+            success: {
+              title: "Sucesso!",
+              message_create: "Configuração de agendamento automático de ciclos salva com sucesso.",
+              message_update: "Configuração de agendamento automático de ciclos atualizada com sucesso.",
+            },
+            error: {
+              title: "Erro!",
+              message_create: "Falha ao salvar a configuração de agendamento automático de ciclos.",
+              message_update: "Falha ao atualizar a configuração de agendamento automático de ciclos.",
+            },
+          },
+        },
+      },
     },
   },
   teamspaces: {
@@ -459,7 +568,7 @@ export default {
       },
       not_found: {
         title: "Iniciativa não existe",
-        description: "A Iniciativa que você está procurando não existe ou foi excluída.",
+        description: "A Iniciativa que você está procurando não existe, foi arquivada ou foi excluída.",
         primary_button: {
           text: "Ver outras Iniciativas",
         },
@@ -659,7 +768,12 @@ export default {
         app_short_description_error: "Descrição curta do aplicativo é obrigatória",
         app_description_title: {
           label: "Descrição longa",
-          placeholder: "Escreva uma descrição longa para o marketplace. Pressione ‘/’ para comandos.",
+          placeholder: "Escreva uma descrição longa para o marketplace. Pressione '/' para comandos.",
+        },
+        authorization_grant_type: {
+          title: "Tipo de conexão",
+          description:
+            "Escolha se seu aplicativo deve ser instalado uma vez para o workspace ou permitir que cada usuário conecte sua própria conta",
         },
         app_description_error: "Descrição do aplicativo é obrigatória",
         app_slug_title: "Slug do aplicativo",
@@ -716,6 +830,10 @@ export default {
         categories_error: "Categorias são obrigatórias",
         invalid_categories_error: "Categorias inválidas",
         categories_description: "Selecione as categorias que melhor descrevem o aplicativo",
+        supported_plans: "Planos Suportados",
+        supported_plans_description:
+          "Selecione os planos de workspace que podem instalar esta aplicação. Deixe vazio para permitir todos os planos.",
+        select_plans: "Selecionar Planos",
         privacy_policy_url_title: "URL da Política de Privacidade",
         privacy_policy_url_error: "URL da Política de Privacidade é obrigatória",
         invalid_privacy_policy_url_error: "URL da Política de Privacidade inválida",
@@ -791,8 +909,8 @@ export default {
         internal: "Interno",
       },
       "plane-intelligence": {
-        title: "Plane Intelligence",
-        heading: "Plane Intelligence",
+        title: "Plane AI",
+        heading: "Plane AI",
         description:
           "Veja seu trabalho se tornar mais inteligente e mais rápido com IA que está conectada de forma nativa ao seu trabalho e base de conhecimentos.",
       },
@@ -1506,7 +1624,7 @@ export default {
     },
   },
   jira_server_importer: {
-    jira_server_importer_description: "Importe seus dados do Jira Server para projetos do Plane.",
+    jira_server_importer_description: "Importe seus dados do Jira Server/Data Center para projetos do Plane.",
     steps: {
       title_configure_plane: "Configurar Plane",
       description_configure_plane:

@@ -1,12 +1,8 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 //types
-import {
-  EDrawioAttributeNames,
-  TDrawioBlockAttributes,
-  type TDrawioExtension,
-  type InsertDrawioCommandProps,
-} from "./types";
+import { EDrawioAttributeNames } from "./types";
+import type { TDrawioBlockAttributes, TDrawioExtension, InsertDrawioCommandProps } from "./types";
 // utils
 import { DEFAULT_DRAWIO_ATTRIBUTES } from "./utils/attribute";
 

@@ -1,4 +1,4 @@
-import { TImportJob, TImportReport, TWorkspaceCredential } from "@plane/types";
+import type { TImportJob, TImportReport, TWorkspaceCredential } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 
 export const updateJobWithReport = async (

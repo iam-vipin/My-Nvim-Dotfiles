@@ -1,15 +1,18 @@
 "use client";
 
+import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { TeamspacePageDetailHeader } from "./header";
 
-export default function TeamspacePageDetailLayout({ children }: { children: React.ReactNode }) {
+export default function TeamspacePageDetailLayout() {
   return (
     <>
       <AppHeader header={<TeamspacePageDetailHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

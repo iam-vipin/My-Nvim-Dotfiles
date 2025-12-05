@@ -1,25 +1,19 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
 import { ChevronLeftIcon } from "@plane/propel/icons";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
+import type { Route } from "./+types/layout";
 
-type TImporterLayout = {
-  children: ReactNode;
-};
-
-const ImporterLayout: FC<TImporterLayout> = observer((props) => {
-  const { children } = props;
-
+function ImporterLayout({ params }: Route.ComponentProps) {
   // router params
-  const { workspaceSlug: workspaceSlugParam } = useParams();
+  const { workspaceSlug } = params;
 
   // hooks
   const { currentWorkspace } = useWorkspace();
@@ -27,12 +21,11 @@ const ImporterLayout: FC<TImporterLayout> = observer((props) => {
 
   // derived values
   const siloBaseUrl = encodeURI(SILO_BASE_URL + SILO_BASE_PATH) || undefined;
-  const workspaceSlug = workspaceSlugParam?.toString() || undefined;
   const workspaceId = currentWorkspace?.id || undefined;
   const userId = currentUser?.id || undefined;
 
   // check if workspace exists
-  if (!workspaceSlug || !workspaceId || !userId || !siloBaseUrl) return null;
+  if (!workspaceId || !userId || !siloBaseUrl) return null;
 
   return (
     <SettingsContentWrapper size="lg">
@@ -43,9 +36,9 @@ const ImporterLayout: FC<TImporterLayout> = observer((props) => {
         <ChevronLeftIcon className="size-4" />
         <span>Back to Imports</span>
       </Link>
-      {children}
+      <Outlet />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ImporterLayout;
+export default observer(ImporterLayout);

@@ -5,7 +5,7 @@ import { PlusIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ScopeIcon } from "@plane/propel/icons";
-import { CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
+import { Button, CircularProgressIndicator, ControlLink, Loader } from "@plane/ui";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common/empty-state";
 import { SectionWrapper } from "@/plane-web/components/common/layout/main/common/section-wrapper";
@@ -43,33 +43,31 @@ const DataCard = (props: TDataCardProps) => {
   return (
     <ControlLink
       href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-      className="group bg-custom-background-90 rounded-md p-3 w-full space-y-2 hover:cursor-pointer hover:bg-custom-background-80 transition-colors block"
+      className="group rounded-md py-3 px-4 w-full hover:cursor-pointer hover:bg-custom-background-80 transition-colors flex justify-between border border-custom-border-100 bg-custom-background-100"
       onClick={handleControlLinkClick}
     >
-      <div className="flex w-full justify-between text-custom-text-300 ">
+      <div className="flex w-full justify-between text-custom-text-300 flex-1 ">
         <div className="flex gap-2 items-center">
           <div className="font-semibold text-base capitalize">{type}s</div>
           <span className="text-custom-text-400 font-medium text-xs">{count}</span>
         </div>
       </div>
       {data ? (
-        <div className="border border-custom-border-100 bg-custom-background-100 rounded-md p-2 flex md:flex-row flex-col gap-2 justify-between w-full">
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="text-custom-text-350 font-medium text-sm">Progress</div>
+        <div className="rounded-md flex gap-3 justify-between items-center">
+          <div className="flex flex-col gap-3">
             <div className="flex gap-2 items-center">
               <CircularProgressIndicator
                 percentage={progress}
                 strokeWidth={4}
-                size={24}
+                size={18}
                 strokeColor="stroke-green-500"
               />
-              <span className="flex items-baseline text-custom-text-200 justify-center">
-                <span className="font-semibold">{progress}%</span>
+              <span className="flex items-baseline text-custom-text-200 justify-center text-sm">
+                <span>{progress}%</span>
               </span>
             </div>
           </div>
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="text-custom-text-350 font-medium text-sm">Updates</div>
+          <div className="flex flex-col gap-3">
             <div role="group" aria-label="update-status-pills">
               <UpdateStatusPills
                 defaultTab={type}
@@ -86,9 +84,23 @@ const DataCard = (props: TDataCardProps) => {
           </div>
         </div>
       ) : (
-        <Loader className="w-full h-full">
-          <Loader.Item height="71px" width="100%" />
-        </Loader>
+        <div className="rounded-md flex gap-3 justify-between items-center">
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2 items-center">
+              <Loader>
+                <Loader.Item height="18px" width="18px" />
+              </Loader>
+              <Loader>
+                <Loader.Item height="14px" width="40px" />
+              </Loader>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Loader>
+              <Loader.Item height="20px" width="120px" />
+            </Loader>
+          </div>
+        </div>
       )}
     </ControlLink>
   );
@@ -97,17 +109,17 @@ const DataCard = (props: TDataCardProps) => {
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  toggleProjectModal: (value?: boolean) => void;
-  toggleEpicModal: (value?: boolean) => void;
   disabled?: boolean;
 };
 export const ScopeBreakdown = observer((props: Props) => {
-  const { workspaceSlug, initiativeId, toggleProjectModal, toggleEpicModal, disabled } = props;
+  const { workspaceSlug, initiativeId, disabled } = props;
   const {
     initiative: {
       getInitiativeAnalyticsById,
       getInitiativeById,
       epics: { getInitiativeEpicsById },
+      toggleProjectsModal,
+      toggleEpicModal,
     },
   } = useInitiatives();
 
@@ -132,18 +144,24 @@ export const ScopeBreakdown = observer((props: Props) => {
       <div className="flex justify-between items-center">
         <div className="text-custom-text-300 font-semibold text-base">{t("initiatives.scope.breakdown")}</div>
         {/* button */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-            className="text-custom-primary-100 font-medium text-sm"
+            className=" font-medium text-sm text-custom-text-200"
           >
             {t("initiatives.scope.view_scope")}
           </Link>
           <AddScopeButton
             disabled={disabled}
-            workspaceSlug={workspaceSlug}
-            initiativeId={initiativeId}
-            customButton={<PlusIcon className="size-4" />}
+            customButton={
+              <Button
+                variant="link-neutral"
+                size="sm"
+                className="!p-1 bg-custom-background-80 hover:bg-custom-background-90"
+              >
+                <PlusIcon className="size-4" />
+              </Button>
+            }
           />
         </div>
       </div>
@@ -153,19 +171,17 @@ export const ScopeBreakdown = observer((props: Props) => {
           heading={t("initiatives.scope.empty_state.title")}
           subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
-          actionElement={
-            <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
-          }
+          actionElement={<AddScopeButton disabled={disabled} />}
         />
       ) : (
-        <div className="grid gap-4 w-full grid-cols-1 @sm:grid-cols-1 @md:grid-cols-2">
+        <div className="grid w-full grid-cols-1 @sm:grid-cols-1 bg-custom-background-90 rounded-lg p-2 gap-2">
           {/* Projects */}
           {shouldShowProjectsCard && (
             <DataCard
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
               type="project"
-              onAdd={toggleProjectModal}
+              onAdd={toggleProjectsModal}
               data={initiativeAnalytics?.project}
               count={projectsCount}
             />

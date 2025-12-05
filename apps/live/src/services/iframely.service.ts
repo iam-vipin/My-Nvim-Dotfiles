@@ -1,6 +1,6 @@
 // services
 import { logger } from "@plane/logger";
-import { IframelyResponse } from "@plane/types";
+import type { IframelyResponse } from "@plane/types";
 // types
 // helpers
 import { env } from "@/env";

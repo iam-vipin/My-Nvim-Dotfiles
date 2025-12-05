@@ -1,4 +1,4 @@
-import {
+import type {
   InputBlock,
   StaticSelect,
   PlainTextInput,

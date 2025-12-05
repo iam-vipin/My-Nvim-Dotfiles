@@ -1,5 +1,9 @@
-import { AnalyticsTableDataMapExtended, TAnalyticsGraphsExtended, TAnalyticsTabsExtended } from "./analytics-extended";
-import { TChartData } from "./charts";
+import type {
+  AnalyticsTableDataMapExtended,
+  TAnalyticsGraphsExtended,
+  TAnalyticsTabsExtended,
+} from "./analytics-extended";
+import type { TChartData } from "./charts";
 
 export enum ChartXAxisProperty {
   STATES = "STATES",

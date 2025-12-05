@@ -30,7 +30,6 @@ class FeatureFlag(Enum):
     CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     # Pro file size limit
     FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
-
     # Intake form
     INTAKE_FORM = "INTAKE_FORM"
     # Intake email
@@ -94,6 +93,12 @@ class FeatureFlag(Enum):
     AUTO_SCHEDULE_CYCLES = "AUTO_SCHEDULE_CYCLES"
     # Exports
     ADVANCED_EXPORTS = "ADVANCED_EXPORTS"
+    # Intake responsibility
+    INTAKE_RESPONSIBILITY = "INTAKE_RESPONSIBILITY"
+    # Intake form workitem types
+    WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM"
+    # PI Chat
+    PI_CHAT = "PI_CHAT"
 
 
 class AdminFeatureFlag(Enum):

@@ -3,6 +3,7 @@ import type {
   EViewAccess,
   IBlockUpdateDependencyData,
   ISearchIssueResponse,
+  TEditorWorkItemMention,
   TWorkspaceEpicsSearchParams,
 } from "@plane/types";
 // helpers
@@ -34,7 +35,7 @@ export class WorkspaceService extends CoreWorkspaceService {
 
   async searchAcrossWorkspace(
     workspaceSlug: string,
-    params: { search: string; workspace_search?: boolean; projectId?: string }
+    params: { search: string; workspace_search?: boolean; project_id?: string }
   ) {
     return this.get(`/api/workspaces/${workspaceSlug}/search/`, { params }).then((response) => response?.data);
   }
@@ -66,5 +67,9 @@ export class WorkspaceService extends CoreWorkspaceService {
 
   async updateWorkItemDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[]): Promise<void> {
     return this.post(`/api/workspaces/${workspaceSlug}/issue-dates/`, { updates }).then((response) => response?.data);
+  }
+
+  async retrieveWorkspaceWorkItem(workspaceSlug: string, workItemId: string): Promise<TEditorWorkItemMention> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/${workItemId}/`).then((response) => response?.data);
   }
 }

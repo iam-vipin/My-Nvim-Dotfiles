@@ -38,9 +38,7 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
             if relation["relation"] == "parent_id":
                 parent_id_relations.add((ex_issue_id, relation["identifier"]))
             else:
-                all_relations.add(
-                    (ex_issue_id, relation["identifier"], relation["relation"])
-                )
+                all_relations.add((ex_issue_id, relation["identifier"], relation["relation"]))
 
     # Get all issues from database
     issues = Issue.objects.filter(
@@ -73,9 +71,7 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
         )
     with transaction.atomic():
         with connection.cursor() as cur:
-            cur.execute(
-                "SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)"
-            )
+            cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
             # Bulk create relations, ignoring any duplicates
             IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
 
@@ -89,10 +85,6 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
             continue
 
         with connection.cursor() as cur:
-            cur.execute(
-                "SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)"
-            )
+            cur.execute("SELECT set_config('plane.initiator_type', 'SYSTEM.IMPORT', true)")
             # Update parent_id
-            Issue.objects.filter(id=issue_id).update(
-                parent_id=parent_id, updated_by_id=user_id
-            )
+            Issue.objects.filter(id=issue_id).update(parent_id=parent_id, updated_by_id=user_id)

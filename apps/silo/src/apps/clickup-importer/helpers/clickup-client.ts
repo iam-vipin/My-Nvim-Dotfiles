@@ -1,5 +1,5 @@
 import { ClickupAPIService } from "@plane/etl/clickup";
-import { TWorkspaceCredential } from "@plane/types";
+import type { TWorkspaceCredential } from "@plane/types";
 
 export const getClickUpClient = (credentials: TWorkspaceCredential): ClickupAPIService => {
   if (!credentials.source_access_token) {

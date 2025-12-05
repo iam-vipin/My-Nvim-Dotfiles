@@ -2,6 +2,7 @@ from .project import (
     ProjectListCreateAPIEndpoint,
     ProjectDetailAPIEndpoint,
     ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectFeatureAPIEndpoint,
 )
 
 from .state import (
@@ -46,7 +47,12 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint, ProjectMemberSiloEndpoint
+from .member import (
+    ProjectMemberListCreateAPIEndpoint,
+    ProjectMemberDetailAPIEndpoint,
+    WorkspaceMemberAPIEndpoint,
+    ProjectMemberSiloEndpoint,
+)
 from .user import UserEndpoint
 
 from .customer import (
@@ -70,6 +76,10 @@ from .intake import (
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
 from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
-from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
+
+from .sticky import StickyViewSet
+from .initiative import InitiativeViewSet, InitiativeLabelViewSet
+from .teamspace import TeamspaceViewSet
+from .work_item_search import WorkItemAdvancedSearchEndpoint

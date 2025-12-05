@@ -1,6 +1,6 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@plane/etl/parser";
 import { NOTION_COLOR_MAP } from "@/apps/notion-importer/utils/html-helpers";
+import type { IParserExtension } from "@/lib/parser";
 
 export class NotionBlockColorParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {

@@ -4,8 +4,9 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
-import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
+import { EpicIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -66,10 +67,17 @@ export const ProjectEpicDetailsHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={currentProjectDetails?.id?.toString() ?? ""}
-              featureKey={EProjectFeatureKey.EPICS}
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Epics"
+                  href={`/${workspaceSlug}/projects/${projectId}/epics/`}
+                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
+                  isLast
+                />
+              }
+              isLast
             />
 
             <Breadcrumbs.Item

@@ -1,14 +1,9 @@
 // plane imports
-import { EQUALITY_OPERATOR, TFilterProperty, TIssueType, COLLECTION_OPERATOR, TSupportedOperators } from "@plane/types";
+import type { TFilterProperty, TIssueType, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 /**
  * Work item type filter specific params

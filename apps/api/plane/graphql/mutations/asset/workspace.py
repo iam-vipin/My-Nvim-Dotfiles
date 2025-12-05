@@ -2,33 +2,34 @@
 import uuid
 from typing import Optional
 
+# Third-party imports
+import strawberry
+from asgiref.sync import sync_to_async
+
 # Django imports
 from django.conf import settings
 from django.utils import timezone
 
 # Strawberry imports
-import strawberry
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
 from strawberry.exceptions import GraphQLError
-
-# Third-party imports
-from asgiref.sync import sync_to_async
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
 
 # Module imports
-from plane.graphql.utils.feature_flag import validate_feature_flag
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.db.models import FileAsset, Project, Workspace
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.db.models import Workspace, Project, FileAsset
-from plane.settings.storage import S3Storage
 from plane.graphql.types.asset import (
-    FileAssetType,
     AssetPresignedUrlResponseType,
     FileAssetAssetType,
+    FileAssetType,
     WorkspaceAssetEnumType,
 )
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
-from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.graphql.utils.feature_flag import validate_feature_flag
+from plane.settings.storage import S3Storage
 
 
 def get_entity_id_field(entity_type, entity_identifier):
@@ -50,14 +51,6 @@ def get_entity_id_field(entity_type, entity_identifier):
 @sync_to_async
 def get_assets_by_ids(slug, asset_ids):
     return list(FileAsset.objects.filter(workspace__slug=slug, id__in=asset_ids))
-
-
-@sync_to_async
-def get_workspace(slug):
-    try:
-        return Workspace.objects.get(slug=slug)
-    except Workspace.DoesNotExist:
-        return None
 
 
 @sync_to_async
@@ -200,7 +193,7 @@ class WorkspaceAssetMutation:
                 size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
 
         # Get the workspace
-        workspace = await get_workspace(slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         if workspace is None:
             message = "Workspace not found."
             error_extensions = {"code": "WORKSPACE_NOT_FOUND", "statusCode": 404}

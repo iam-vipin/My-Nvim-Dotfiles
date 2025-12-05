@@ -12,7 +12,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import FileAsset
 from plane.graphql.helpers import (
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -85,7 +85,7 @@ class EpicAttachmentQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         issue_attachments = await get_epic_attachments(
@@ -110,7 +110,7 @@ class EpicAttachmentQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         issue_attachment = await get_epic_attachment(

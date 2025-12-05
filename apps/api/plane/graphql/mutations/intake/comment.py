@@ -18,7 +18,7 @@ from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
     get_intake_work_item_async,
     get_project,
-    get_workspace,
+    get_workspace_async,
     is_project_intakes_enabled_async,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
@@ -46,7 +46,7 @@ class IntakeWorkItemCommentMutation:
         await is_project_intakes_enabled_async(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 

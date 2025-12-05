@@ -25,9 +25,9 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     State,
-    Workspace,
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import get_workspace_async
 from plane.graphql.permissions.project import ProjectMemberPermission
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.types.issues.base import (
@@ -38,16 +38,6 @@ from plane.graphql.types.issues.base import (
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
 from plane.graphql.utils.workflow import WorkflowStateManager
-
-
-@sync_to_async
-def get_workspace(slug):
-    try:
-        return Workspace.objects.get(slug=slug)
-    except Workspace.DoesNotExist:
-        message = "Workspace not found"
-        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
-        raise GraphQLError(message, extensions=error_extensions)
 
 
 @sync_to_async
@@ -118,7 +108,7 @@ class IssueMutationV2:
         user = info.context.user
         user_id = str(user.id)
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -337,7 +327,7 @@ class IssueMutationV2:
         user = info.context.user
         user_id = str(user.id)
 
-        workspace = await get_workspace(slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         project_details = await get_project(project)

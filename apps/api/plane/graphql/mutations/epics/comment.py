@@ -16,7 +16,7 @@ from strawberry.types import Info
 from plane.db.models import IssueComment
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -48,7 +48,7 @@ class EpicCommentMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # getting workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         comment_html = comment_input.comment_html

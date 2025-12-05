@@ -20,7 +20,7 @@ from plane.graphql.helpers import (
     get_epic,
     get_project,
     get_project_default_state,
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
     is_work_item_type_feature_flagged,
@@ -66,7 +66,7 @@ class EpicWorkItemsMutation:
         epic_id = str(epic_details.id)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 

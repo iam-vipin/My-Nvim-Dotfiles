@@ -19,7 +19,7 @@ from plane.db.models import CommentReaction
 from plane.graphql.helpers import (
     get_intake_work_item_async,
     get_project,
-    get_workspace,
+    get_workspace_async,
     is_project_intakes_enabled_async,
 )
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
@@ -121,7 +121,7 @@ class IntakeWorkItemCommentReactionMutation:
         await is_project_intakes_enabled_async(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -202,7 +202,7 @@ class IntakeWorkItemCommentReactionMutation:
         await is_project_intakes_enabled_async(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
 
         # get the project

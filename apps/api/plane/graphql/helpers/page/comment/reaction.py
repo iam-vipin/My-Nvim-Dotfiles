@@ -16,7 +16,7 @@ from plane.graphql.types.page.comment.reaction import PageCommentReactionType
 
 # Local Imports
 from .feature_flag import is_page_comment_feature_flagged
-from ...workspace import _get_workspace
+from ...workspace import get_workspace
 from ...project import _get_project
 
 
@@ -143,7 +143,7 @@ def add_page_comment_reaction(
             }
             raise GraphQLError(message, extensions=error_extensions)
 
-        workspace = _get_workspace(workspace_slug=workspace_slug)
+        workspace = get_workspace(slug=workspace_slug)
         workspace_id = workspace.id
 
         comment_reaction_data = {

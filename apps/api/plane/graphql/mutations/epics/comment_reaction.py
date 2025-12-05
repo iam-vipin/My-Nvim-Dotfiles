@@ -16,7 +16,7 @@ from strawberry.types import Info
 # Module imports
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.db.models import CommentReaction
-from plane.graphql.helpers import get_epic, get_workspace
+from plane.graphql.helpers import get_epic, get_workspace_async
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.issues.comment_reaction import (
@@ -110,7 +110,7 @@ class EpicCommentReactionMutation:
         user = info.context.user
         user_id = str(user.id)
 
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         await get_epic(workspace_slug=slug, project_id=project, epic_id=epic)

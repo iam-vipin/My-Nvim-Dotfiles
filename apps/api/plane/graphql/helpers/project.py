@@ -1,3 +1,7 @@
+"""
+Project Helper Functions for GraphQL Operations.
+"""
+
 # Python Imports
 from typing import Optional
 

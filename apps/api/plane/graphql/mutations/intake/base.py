@@ -25,7 +25,7 @@ from plane.graphql.helpers import (
     get_project_member,
     get_project_triage_states_async,
     get_triage_state_async,
-    get_workspace,
+    get_workspace_async,
     is_project_intakes_enabled_async,
     is_project_settings_enabled_by_settings_key_async,
 )
@@ -57,7 +57,7 @@ class IntakeWorkItemMutation:
         user_id = str(user.id)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -212,7 +212,7 @@ class IntakeWorkItemMutation:
         user_id = str(user.id)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -394,7 +394,7 @@ class IntakeWorkItemMutation:
     @strawberry.mutation(extensions=[PermissionExtension(permissions=[ProjectPermission([Roles.ADMIN])])])
     async def delete_intake_work_item(self, info: Info, slug: str, project: str, intake_work_item: str) -> bool:
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
 
         # get the project

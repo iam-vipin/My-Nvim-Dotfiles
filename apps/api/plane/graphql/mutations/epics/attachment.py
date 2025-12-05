@@ -24,7 +24,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import FileAsset
 from plane.graphql.helpers import (
     get_project,
-    get_workspace,
+    get_workspace_async,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
@@ -145,7 +145,7 @@ class EpicAttachmentMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_slug = workspace.slug
         workspace_id = str(workspace.id)
 
@@ -219,7 +219,7 @@ class EpicAttachmentMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         epic_attachment = await get_epic_attachment(
@@ -273,7 +273,7 @@ class EpicAttachmentMutation:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         # get the workspace
-        workspace = await get_workspace(workspace_slug=slug)
+        workspace = await get_workspace_async(slug=slug)
         workspace_id = str(workspace.id)
 
         epic_attachment = await get_epic_attachment(

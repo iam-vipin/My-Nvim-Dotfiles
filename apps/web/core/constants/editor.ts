@@ -18,6 +18,7 @@ import {
   Italic,
   ListOrdered,
   ListTodo,
+  Paperclip,
   Strikethrough,
   Table,
   TextQuote,
@@ -168,9 +169,19 @@ export const IMAGE_ITEM = {
   extraProps: {},
 } as ToolbarMenuItem<"image">;
 
-const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
+export const ATTACHMENT_ITEM = {
+  itemKey: "attachment",
+  renderKey: "attachment",
+  name: "Attachment",
+  icon: Paperclip,
+  editors: ["lite", "document"],
+  extraProps: {},
+} as ToolbarMenuItem<"attachment">;
+
+const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image" | "attachment">[] = [
   { itemKey: "table", renderKey: "table", name: "Table", icon: Table, editors: ["document"] },
   IMAGE_ITEM,
+  ATTACHMENT_ITEM,
 ];
 
 export const TOOLBAR_ITEMS: {

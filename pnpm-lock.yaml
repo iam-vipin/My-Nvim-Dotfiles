@@ -58,8 +58,8 @@ catalogs:
       specifier: 4.17.21
       version: 4.17.21
     lucide-react:
-      specifier: 0.469.0
-      version: 0.469.0
+      specifier: 0.542.0
+      version: 0.542.0
     mobx:
       specifier: 6.12.0
       version: 6.12.0
@@ -184,7 +184,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -679,7 +679,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
@@ -890,7 +890,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       markdown-to-jsx:
         specifier: ^7.5.0
         version: 7.7.10(react@18.3.1)
@@ -1234,7 +1234,7 @@ importers:
         version: 3.3.0
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       nanoid:
         specifier: 3.3.8
         version: 3.3.8
@@ -1624,7 +1624,7 @@ importers:
         version: 0.3.0(react@18.3.1)(typescript@5.8.3)
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1892,7 +1892,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -2022,7 +2022,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
-        version: 0.469.0(react@18.3.1)
+        version: 0.542.0(react@18.3.1)
       mdast:
         specifier: ^3.0.0
         version: 3.0.0
@@ -8726,8 +8726,8 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
-  lucide-react@0.469.0:
-    resolution: {integrity: sha512-28vvUnnKQ/dBwiCQtwJw7QauYnE7yd2Cyp4tTTJpvglX4EMpbflcdBgrgToX2j71B3YvugK/NH3BGUk+E/p/Fw==}
+  lucide-react@0.542.0:
+    resolution: {integrity: sha512-w3hD8/SQB7+lzU2r4VdFyzzOzKnUjTZIF/MQJGSSvni7Llewni4vuViRppfRAa2guOsY5k4jZyxw/i9DQHv+dw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -19944,7 +19944,7 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  lucide-react@0.469.0(react@18.3.1):
+  lucide-react@0.542.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 

@@ -1,12 +1,15 @@
 import { useEditorState } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
 import { Code, Link, Bookmark } from "lucide-react";
+import { VideoIcon, FileAttachmentIcon } from "@plane/propel/icons";
 import { useCallback } from "react";
 // constants
 import type { MenuItem } from "@/components/menus";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // plane imports
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { EAttachmentBlockAttributeNames } from "@/plane-editor/extensions/attachments/types";
+import { isVideoMimeType } from "@/plane-editor/extensions/attachments/utils";
 // types
 import type { IEditorProps } from "@/types";
 import { EExternalEmbedAttributeNames } from "@/types";
@@ -30,6 +33,7 @@ type useBlockMenuProps = {
 export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, onMenuClose }: useBlockMenuProps) => {
   const isEmbedFlagged =
     flaggedExtensions?.includes("external-embed") || disabledExtensions?.includes("external-embed");
+  const isVideoAttachmentsFlagged = flaggedExtensions?.includes("video-attachments");
 
   const editorState = useEditorState({
     editor,
@@ -43,6 +47,11 @@ export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, on
       const isEmbedActive = editor.isActive(ADDITIONAL_EXTENSIONS.EXTERNAL_EMBED);
       const isRichCard = firstChild?.attrs[EExternalEmbedAttributeNames.IS_RICH_CARD];
       const isNotEmbeddable = firstChild?.attrs[EExternalEmbedAttributeNames.HAS_EMBED_FAILED];
+
+      const isAttachmentActive = editor.isActive(ADDITIONAL_EXTENSIONS.ATTACHMENT);
+      const attachmentFileType = firstChild?.attrs[EAttachmentBlockAttributeNames.FILE_TYPE] ?? "";
+      const isVideoAttachment = isAttachmentActive && attachmentFileType && isVideoMimeType(attachmentFileType);
+      const isAttachmentPreview = firstChild?.attrs[EAttachmentBlockAttributeNames.PREVIEW] === true;
 
       if (firstChild) {
         for (let i = 0; i < firstChild.childCount; i++) {
@@ -70,6 +79,8 @@ export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, on
         linkUrl,
         isRichCard,
         isNotEmbeddable,
+        isVideoAttachment,
+        isAttachmentPreview,
       };
     },
   });
@@ -135,6 +146,23 @@ export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, on
     onMenuClose();
   }, [editor, editorState.linkUrl, onMenuClose]);
 
+  const handleToggleAttachmentPreview = useCallback(
+    (showPreview: boolean) => {
+      const { state } = editor;
+      const { selection } = state;
+      const node = selection.content().content.firstChild;
+      if (node && node.type.name === ADDITIONAL_EXTENSIONS.ATTACHMENT) {
+        const tr = state.tr.setNodeMarkup(selection.from, undefined, {
+          ...node.attrs,
+          [EAttachmentBlockAttributeNames.PREVIEW]: showPreview,
+        });
+        editor.view.dispatch(tr);
+      }
+      onMenuClose();
+    },
+    [editor, onMenuClose]
+  );
+
   const menuItems: MenuItem[] = [
     {
       icon: Link,
@@ -163,6 +191,26 @@ export const useBlockMenu = ({ editor, flaggedExtensions, disabledExtensions, on
       // label :"externalEmbedComponent.block_menu.convert_to_richcard"
       isDisabled: !editorState.isLinkEmbeddable || !editorState.linkUrl || editorState.isRichCard || isEmbedFlagged,
       onClick: handleConvertToRichCard,
+    },
+    {
+      icon: VideoIcon,
+      key: "show-video-preview",
+      label: "Show preview",
+      isDisabled:
+        !editorState.isVideoAttachment ||
+        editorState.isAttachmentPreview ||
+        isVideoAttachmentsFlagged,
+      onClick: () => handleToggleAttachmentPreview(true),
+    },
+    {
+      icon: FileAttachmentIcon,
+      key: "show-as-attachment",
+      label: "Show as attachment",
+      isDisabled:
+        !editorState.isVideoAttachment ||
+        !editorState.isAttachmentPreview ||
+        isVideoAttachmentsFlagged,
+      onClick: () => handleToggleAttachmentPreview(false),
     },
   ];
 

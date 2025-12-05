@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -36,7 +37,7 @@ type Props = {
   originUrl?: IEditorPropsExtended["originUrl"];
 };
 export type BlockMenuOption = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;
@@ -44,7 +45,7 @@ export type BlockMenuOption = {
 };
 
 export type MenuItem = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;

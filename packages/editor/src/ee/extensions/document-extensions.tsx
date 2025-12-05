@@ -1,5 +1,5 @@
 import type { AnyExtension, Extensions } from "@tiptap/core";
-import { Paperclip, PenTool, Presentation } from "lucide-react";
+import { PenTool, Presentation } from "lucide-react";
 // plane imports
 import { LayersIcon, PageIcon } from "@plane/propel/icons";
 import { ADDITIONAL_EXTENSIONS } from "@plane/utils";
@@ -22,8 +22,6 @@ import {
 // types
 import type { TExtensions } from "@/types";
 // local imports
-import { insertAttachment } from "../helpers/editor-commands";
-import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCaret } from "./collaboration-caret";
 import { CommentsExtension } from "./comments";
 import { DrawioExtension } from "./drawio/extension";
@@ -94,22 +92,6 @@ const slashCommandRegistry: {
         pushAfter: "issue-embed",
       };
     },
-  },
-  {
-    // Attachment slash command
-    isEnabled: (disabledExtensions, flaggedExtensions) =>
-      !disabledExtensions.includes("attachments") && !flaggedExtensions.includes("attachments"),
-    getOption: () => ({
-      commandKey: "attachment",
-      key: "attachment",
-      title: "Attachment",
-      description: "Insert a file",
-      searchTerms: ["image", "photo", "picture", "pdf", "media", "upload", "audio", "video", "file", "attachment"],
-      icon: <Paperclip className="size-3.5" />,
-      command: ({ editor, range }) => insertAttachment({ editor, event: "insert", range }),
-      section: "general",
-      pushAfter: "image",
-    }),
   },
   {
     // Draw.io diagram slash command
@@ -229,18 +211,6 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
         onNodesPosChanged: pageConfig.onNodesPosChanged,
       });
     },
-  },
-  {
-    // Attachment extension
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
-    getExtension: ({ flaggedExtensions, fileHandler, isEditable, extendedEditorProps }) =>
-      CustomAttachmentExtension({
-        fileHandler,
-        isFlagged: flaggedExtensions.includes("attachments"),
-        isEditable,
-      }).configure({
-        onClick: extendedEditorProps?.extensionOptions?.attachmentComponent?.onClick,
-      }),
   },
   {
     // Comment mark extension (for styling)

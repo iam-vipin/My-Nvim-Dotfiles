@@ -9,18 +9,20 @@ import type { CustomAttachmentNodeViewProps } from "./components/node-view";
 import { CustomAttachmentNodeView } from "./components/node-view";
 import { CustomAttachmentExtensionConfig } from "./extension-config";
 import type { AttachmentExtensionOptions, AttachmentExtensionStorage, TAttachmentBlockAttributes } from "./types";
+import { EAttachmentBlockAttributeNames } from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES, getAttachmentExtensionFileMap } from "./utils";
 
 type Props = {
   fileHandler: TFileHandler;
   isEditable: boolean;
   isFlagged: boolean;
+  isVideoAttachmentsFlagged?: boolean;
 };
 
 export const CustomAttachmentExtension = (props: Props) => {
-  const { fileHandler, isEditable, isFlagged } = props;
+  const { fileHandler, isEditable, isFlagged, isVideoAttachmentsFlagged } = props;
   // derived values
-  const { checkIfAssetExists, getAssetSrc, restore } = fileHandler;
+  const { checkIfAssetExists, getAssetDownloadSrc, getAssetSrc, restore } = fileHandler;
 
   return CustomAttachmentExtensionConfig.extend<AttachmentExtensionOptions, AttachmentExtensionStorage>({
     selectable: isEditable,
@@ -31,8 +33,10 @@ export const CustomAttachmentExtension = (props: Props) => {
 
       return {
         checkIfAttachmentExists: checkIfAssetExists,
+        getAttachmentDownloadSource: getAssetDownloadSrc,
         getAttachmentSource: getAssetSrc,
         isFlagged,
+        isVideoAttachmentsFlagged,
         restoreAttachment: restore,
         uploadAttachment: upload,
       };
@@ -44,7 +48,6 @@ export const CustomAttachmentExtension = (props: Props) => {
       return {
         fileMap: new Map(),
         deletedAttachmentSet: new Map(),
-        errorMap: new Map(),
         maxFileSize,
         // escape markdown for attachments
         markdown: {
@@ -58,7 +61,7 @@ export const CustomAttachmentExtension = (props: Props) => {
         insertAttachmentComponent:
           (props) =>
           ({ commands }) => {
-            const { event, file, pos } = props;
+            const { event, file, pos, preview, acceptedFileType } = props;
             // generate a unique id to keep track of dropped
             // files' data and for logging transactions
             const fileId = uuidv4();
@@ -80,7 +83,9 @@ export const CustomAttachmentExtension = (props: Props) => {
             // create default attributes
             const attributes: TAttachmentBlockAttributes = {
               ...DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES,
-              id: fileId,
+              [EAttachmentBlockAttributeNames.ID]: fileId,
+              [EAttachmentBlockAttributeNames.PREVIEW]: preview ?? false,
+              [EAttachmentBlockAttributeNames.ACCEPTED_FILE_TYPE]: acceptedFileType ?? "all",
             };
 
             if (pos) {

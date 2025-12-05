@@ -1,23 +1,29 @@
-import { File } from "lucide-react";
+import { File, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 // plane imports
 import { convertBytesToSize } from "@plane/utils";
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
-import { getAttachmentBlockId } from "../utils";
+import { getAttachmentBlockId, isVideoMimeType } from "../utils";
 import type { CustomAttachmentNodeViewProps } from "./node-view";
+import { CustomAttachmentVideoPreview } from "./video-preview";
 
 type Props = CustomAttachmentNodeViewProps & {
-  resolvedSource: string;
   isTouchDevice: boolean;
+  resolvedDownloadSource: string;
+  resolvedSource: string;
 };
 
 export const CustomAttachmentBlock: React.FC<Props> = (props) => {
-  const { extension, node, resolvedSource, isTouchDevice } = props;
+  const { editor, extension, node, resolvedDownloadSource, resolvedSource, isTouchDevice, selected } = props;
+
   // states
   const [hasCheckedExistence, setHasCheckedExistence] = useState(false);
   // derived values
   const { src } = node.attrs;
+  const isPreview = node.attrs[EAttachmentBlockAttributeNames.PREVIEW];
+  const fileType = node.attrs[EAttachmentBlockAttributeNames.FILE_TYPE] ?? "";
+  const isVideo = isVideoMimeType(fileType);
   // extension options
   const { onClick } = extension.options;
 
@@ -36,29 +42,54 @@ export const CustomAttachmentBlock: React.FC<Props> = (props) => {
       }
     };
     checkExistence();
-  }, [extension.options, hasCheckedExistence, src]);
+  }, [hasCheckedExistence, src, extension.options]);
+
+  if (isPreview && isVideo) {
+    return (
+      <CustomAttachmentVideoPreview
+        {...props}
+        resolvedDownloadSource={resolvedDownloadSource}
+        resolvedSource={resolvedSource}
+        onDownloadClick={onClick}
+      />
+    );
+  }
 
   return (
-    <a
+    <div
+      key={node.attrs.id}
       id={getAttachmentBlockId(node.attrs.id ?? "")}
-      href={isTouchDevice ? undefined : resolvedSource}
       className="py-3 px-2 rounded-lg bg-custom-background-90 hover:bg-custom-background-80 border border-custom-border-300 flex items-start gap-2 transition-colors"
       contentEditable={false}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => {
-        if (isTouchDevice) onClick?.(resolvedSource);
-      }}
     >
-      <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
-        <File className="flex-shrink-0 size-8 text-custom-text-300" />
-      </div>
-      <div className="truncate">
-        <p className="not-prose text-sm truncate">{node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}</p>
-        <p className="not-prose text-xs text-custom-text-300">
-          {convertBytesToSize(Number(node.attrs[EAttachmentBlockAttributeNames.FILE_SIZE] || 0))}
-        </p>
-      </div>
-    </a>
+      <a
+        href={isTouchDevice ? undefined : resolvedSource}
+        className="flex items-start gap-2 flex-1 min-w-0"
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => {
+          if (isTouchDevice) onClick?.(resolvedSource);
+        }}
+      >
+        <div className="flex-shrink-0 mt-1 size-8 grid place-items-center">
+          <File className="flex-shrink-0 size-8 text-custom-text-300" />
+        </div>
+        <div className="truncate">
+          <p className="not-prose text-sm truncate">{node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}</p>
+          <p className="not-prose text-xs text-custom-text-300">
+            {convertBytesToSize(Number(node.attrs[EAttachmentBlockAttributeNames.FILE_SIZE] || 0))}
+          </p>
+        </div>
+      </a>
+      <a
+        href={resolvedDownloadSource}
+        download={node.attrs[EAttachmentBlockAttributeNames.FILE_NAME]}
+        className="flex-shrink-0 mt-1 p-1.5 rounded hover:bg-custom-background-80 text-custom-text-300 hover:text-custom-text-200 transition-colors"
+        title="Download"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <Download className="size-4" />
+      </a>
+    </div>
   );
 };

@@ -57,6 +57,7 @@
     "./toolbar": "./dist/toolbar/index.js",
     "./tooltip": "./dist/tooltip/index.js",
     "./utils": "./dist/utils/index.js",
+    "./video-player": "./dist/video-player/index.js",
     "./package.json": "./package.json",
     "./styles/fonts.css": "./dist/styles/fonts/index.css",
     "./styles/fonts": "./dist/styles/fonts/index.css",
@@ -99,5 +100,8 @@
     "storybook": "9.1.10",
     "tsdown": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

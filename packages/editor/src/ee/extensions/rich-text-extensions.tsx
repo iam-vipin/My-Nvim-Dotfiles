@@ -1,5 +1,4 @@
 import type { AnyExtension, Extensions } from "@tiptap/core";
-import { Paperclip } from "lucide-react";
 // core imports
 import type {
   TRichTextEditorAdditionalExtensionsProps,
@@ -10,9 +9,6 @@ import type { TSlashCommandAdditionalOption } from "@/extensions/slash-commands/
 import { SlashCommands } from "@/extensions/slash-commands/root";
 // types
 import type { TExtensions } from "@/types";
-// local imports
-import { insertAttachment } from "../helpers/editor-commands";
-import { CustomAttachmentExtension } from "./attachments/extension";
 
 /**
  * Registry for slash commands
@@ -21,23 +17,7 @@ import { CustomAttachmentExtension } from "./attachments/extension";
 const slashCommandRegistry: {
   isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
   getOption: (props: TRichTextEditorAdditionalExtensionsProps) => TSlashCommandAdditionalOption | null;
-}[] = [
-  {
-    isEnabled: (disabledExtensions, flaggedExtensions) =>
-      !disabledExtensions.includes("attachments") && !flaggedExtensions.includes("attachments"),
-    getOption: () => ({
-      commandKey: "attachment",
-      key: "attachment",
-      title: "Attachment",
-      description: "Insert a file",
-      searchTerms: ["image", "photo", "picture", "pdf", "media", "upload", "audio", "video", "file", "attachment"],
-      icon: <Paperclip className="size-3.5" />,
-      command: ({ editor, range }) => insertAttachment({ editor, event: "insert", range }),
-      section: "general",
-      pushAfter: "image",
-    }),
-  },
-];
+}[] = [];
 
 const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   {
@@ -56,17 +36,6 @@ const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
         flaggedExtensions,
       });
     },
-  },
-  {
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
-    getExtension: ({ flaggedExtensions, fileHandler, extendedEditorProps }) =>
-      CustomAttachmentExtension({
-        fileHandler,
-        isFlagged: flaggedExtensions.includes("attachments"),
-        isEditable: true,
-      }).configure({
-        onClick: extendedEditorProps?.extensionOptions?.attachmentComponent?.onClick,
-      }),
   },
 ];
 

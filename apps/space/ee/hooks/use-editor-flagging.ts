@@ -19,8 +19,10 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     }
   }, [anchor, fetchFeatureFlag, hasFetchedFeatureFlag]);
 
-  const isMathematicsEnabled = getFeatureFlag(anchor, "EDITOR_MATHEMATICS", true);
-  const isExternalEmbedEnabled = getFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS", true);
+  const isEditorAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_ATTACHMENTS", false);
+  const isVideoAttachmentsEnabled = getFeatureFlag(anchor, "EDITOR_VIDEO_ATTACHMENTS", false);
+  const isMathematicsEnabled = getFeatureFlag(anchor, "EDITOR_MATHEMATICS", false);
+  const isExternalEmbedEnabled = getFeatureFlag(anchor, "EDITOR_EXTERNAL_EMBEDS", false);
 
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
@@ -43,6 +45,17 @@ export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType
     documentFlagged.push("external-embed");
     richTextFlagged.push("external-embed");
     liteTextFlagged.push("external-embed");
+  }
+
+  if (!isEditorAttachmentsEnabled) {
+    documentFlagged.push("attachments");
+    richTextFlagged.push("attachments");
+    liteTextFlagged.push("attachments");
+  }
+  if (!isVideoAttachmentsEnabled) {
+    documentFlagged.push("video-attachments");
+    richTextFlagged.push("video-attachments");
+    liteTextFlagged.push("video-attachments");
   }
 
   return {

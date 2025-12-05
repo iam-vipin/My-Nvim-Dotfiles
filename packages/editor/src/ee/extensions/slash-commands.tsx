@@ -1,12 +1,13 @@
 // extensions
-import { FileCode2, Sigma, SquareRadical } from "lucide-react";
+import { FileCode2, Paperclip, Sigma, SquareRadical } from "lucide-react";
+import { VideoIcon } from "@plane/propel/icons";
 import type { TSlashCommandAdditionalOption } from "@/extensions";
 // types
 import { EExternalEmbedAttributeNames } from "@/plane-editor/types/external-embed";
 import type { CommandProps, IEditorProps, TExtensions } from "@/types";
 // plane editor
 import { ProBadge } from "../components/badges/pro-badge";
-import { insertBlockMath, insertExternalEmbed, insertInlineMath } from "../helpers/editor-commands";
+import { insertAttachment, insertBlockMath, insertExternalEmbed, insertInlineMath } from "../helpers/editor-commands";
 import { EMBED_SEARCH_TERMS } from "./external-embed/constants";
 
 type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions">;
@@ -15,6 +16,22 @@ const coreSlashCommandRegistry: {
   isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
   getOption: (props: Props) => TSlashCommandAdditionalOption;
 }[] = [
+  {
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("attachments") && !flaggedExtensions.includes("attachments"),
+    getOption: () => ({
+      commandKey: "attachment",
+      key: "attachment",
+      title: "Attachment",
+      description: "Insert a file",
+      searchTerms: ["image", "photo", "picture", "pdf", "media", "upload", "audio", "video", "file", "attachment"],
+      icon: <Paperclip className="size-3.5" />,
+      command: ({ editor, range }) =>
+        insertAttachment({ editor, event: "insert", range, acceptedFileType: "all" }),
+      section: "general",
+      pushAfter: "image",
+    }),
+  },
   {
     // Block equation slash command
     isEnabled: (disabledExtensions, flaggedExtensions) =>
@@ -69,6 +86,30 @@ const coreSlashCommandRegistry: {
       badge: flaggedExtensions?.includes("external-embed") ? <ProBadge /> : undefined,
       section: "general",
       pushAfter: "code",
+    }),
+  },
+  {
+    // Video attachment slash command
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !flaggedExtensions?.includes("video-attachments") && !disabledExtensions?.includes("attachments"),
+    getOption: ({ flaggedExtensions }) => ({
+      commandKey: "attachment",
+      key: "video",
+      title: "Video",
+      icon: <VideoIcon className="size-3.5" />,
+      description: "Insert a video",
+      searchTerms: ["video", "mp4", "mov", "media", "clip"],
+      command: ({ editor, range }: CommandProps) =>
+        insertAttachment({
+          editor,
+          range,
+          event: "insert",
+          preview: true,
+          acceptedFileType: "video",
+        }),
+      badge: flaggedExtensions?.includes("video-attachments") ? <ProBadge /> : undefined,
+      section: "general",
+      pushAfter: "attachment",
     }),
   },
 ];

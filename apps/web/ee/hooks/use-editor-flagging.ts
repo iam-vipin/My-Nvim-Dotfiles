@@ -30,6 +30,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
+  const isEditorVideoAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_VIDEO_ATTACHMENTS");
   const isEditorCopyBlockLinkEnabled = useFlag(workspaceSlug, "EDITOR_COPY_BLOCK_LINK");
   const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   const isExternalEmbedEnabled = useFlag(workspaceSlug, "EDITOR_EXTERNAL_EMBEDS");
@@ -78,6 +79,12 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   if (!isEditorAttachmentsEnabled) {
     document.flagged.add("attachments");
     richText.flagged.add("attachments");
+    liteText.flagged.add("attachments");
+  }
+  if (!isEditorVideoAttachmentsEnabled) {
+    document.flagged.add("video-attachments");
+    richText.flagged.add("video-attachments");
+    liteText.flagged.add("video-attachments");
   }
   if (!isEditorMathematicsEnabled) {
     document.flagged.add("mathematics");

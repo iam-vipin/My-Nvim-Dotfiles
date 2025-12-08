@@ -8,22 +8,22 @@ type TEditorSrcArgs = {
 };
 
 /**
- * @description generate the file source using assetId
+ * @description generate the file source using assetId for inline viewing
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
   const { assetId, projectId, workspaceSlug } = args;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`);
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`);
   }
   return url;
 };
 
 /**
- * @description generate the file source using assetId
+ * @description generate the file source using assetId for downloading
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
@@ -97,4 +97,19 @@ export enum CORE_EXTENSIONS {
   EMOJI = "emoji",
 }
 
-export enum ADDITIONAL_EXTENSIONS {}
+export enum ADDITIONAL_EXTENSIONS {
+  PAGE_EMBED_COMPONENT = "pageEmbedComponent",
+  COLLABORATION_CARET = "collaborationCursor",
+  ATTACHMENT = "attachmentComponent",
+  COMMENTS = "commentMark",
+  MATHEMATICS = "mathematics",
+  INLINE_MATH = "inlineMath",
+  BLOCK_MATH = "blockMath",
+  EXTERNAL_EMBED = "externalEmbedComponent",
+  PAGE_LINK_COMPONENT = "pageLinkComponent",
+  DRAWIO = "drawIoComponent",
+}
+
+export enum PI_CHAT_EXTENSIONS {
+  MENTION = "mention",
+}

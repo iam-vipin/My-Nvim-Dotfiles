@@ -26,6 +26,9 @@ from plane.db.models import (
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 def transfer_cycle_issues(
@@ -51,9 +54,7 @@ def transfer_cycle_issues(
         dict: Response data with success or error message
     """
     # Get the new cycle
-    new_cycle = Cycle.objects.filter(
-        workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-    ).first()
+    new_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=new_cycle_id).first()
 
     # Check if new cycle is already completed
     if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
@@ -216,9 +217,7 @@ def transfer_cycle_issues(
         assignee_estimate_distribution = [
             {
                 "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
+                "assignee_id": (str(item["assignee_id"]) if item["assignee_id"] else None),
                 "avatar_url": item.get("avatar_url"),
                 "total_estimates": item["total_estimates"],
                 "completed_estimates": item["completed_estimates"],
@@ -310,9 +309,7 @@ def transfer_cycle_issues(
             )
         )
         .values("display_name", "assignee_id", "avatar_url")
-        .annotate(
-            total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False))
-        )
+        .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
         .annotate(
             completed_issues=Count(
                 "id",
@@ -360,9 +357,7 @@ def transfer_cycle_issues(
         .annotate(color=F("labels__color"))
         .annotate(label_id=F("labels__id"))
         .values("label_name", "color", "label_id")
-        .annotate(
-            total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False))
-        )
+        .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
         .annotate(
             completed_issues=Count(
                 "id",
@@ -409,9 +404,7 @@ def transfer_cycle_issues(
     )
 
     # Get the current cycle and save progress snapshot
-    current_cycle = Cycle.objects.filter(
-        workspace__slug=slug, project_id=project_id, pk=cycle_id
-    ).first()
+    current_cycle = Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id).first()
 
     current_cycle.progress_snapshot = {
         "total_issues": old_cycle.total_issues,
@@ -461,9 +454,7 @@ def transfer_cycle_issues(
         )
 
     # Bulk update cycle issues
-    cycle_issues = CycleIssue.objects.bulk_update(
-        updated_cycles, ["cycle_id"], batch_size=100
-    )
+    cycle_issues = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
     # Capture Issue Activity
     issue_activity.delay(
@@ -475,12 +466,35 @@ def transfer_cycle_issues(
         current_instance=json.dumps(
             {
                 "updated_cycle_issues": update_cycle_issue_activity,
-                "created_cycle_issues": [],
+                "created_cycle_issues": "[]",
             }
         ),
         epoch=int(timezone.now().timestamp()),
         notification=True,
         origin=base_host(request=request, is_app=True),
     )
+
+    # EE Code start here
+
+    # Trigger the entity issue state activity task for removal of issues
+    entity_issue_state_activity_task.delay(
+        issue_cycle_data=[
+            {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(cycle_id)} for cycle_issue in updated_cycles
+        ],
+        user_id=str(user_id),
+        slug=slug,
+        action="REMOVED",
+    )
+
+    # trigger the entity issue state activity task for adding issues
+    entity_issue_state_activity_task.delay(
+        issue_cycle_data=[
+            {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(new_cycle_id)} for cycle_issue in updated_cycles
+        ],
+        user_id=str(user_id),
+        slug=slug,
+        action="ADDED",
+    )
+    # EE code end here
 
     return {"success": True}

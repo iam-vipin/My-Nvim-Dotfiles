@@ -13,7 +13,8 @@ export type TProjectPublishViewProps = {
   spreadsheet?: boolean;
 };
 
-export type TProjectDetails = IProjectLite & Pick<IProject, "cover_image" | "logo_props" | "description">;
+export type TProjectDetails = IProjectLite &
+  Pick<IProject, "cover_image" | "cover_image_url" | "logo_props" | "description">;
 
 export type TPublishSettings = {
   anchor: string | undefined;

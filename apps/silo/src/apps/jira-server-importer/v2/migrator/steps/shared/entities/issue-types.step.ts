@@ -1,0 +1,340 @@
+import type { IssueTypeDetails } from "jira.js/out/version2/models";
+import { v4 as uuid } from "uuid";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import type { E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { JiraConfig } from "@plane/etl/jira-server";
+import { pullIssueTypesV2, transformIssueType } from "@plane/etl/jira-server";
+import { logger } from "@plane/logger";
+import type { ExIssueType, ExProject } from "@plane/sdk";
+import type { TImportJob } from "@plane/types";
+import { withCache } from "@/apps/jira-server-importer/v2/helpers/cache";
+import { createEmptyContext, createPaginationContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
+import type {
+  IStep,
+  IStorageService,
+  TIssueTypesData,
+  TJobContext,
+  TStepExecutionContext,
+  TStepExecutionInput,
+} from "@/apps/jira-server-importer/v2/types";
+import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
+import { createOrUpdateIssueTypes } from "@/etl/migrator/issue-types/issue-type.migrator";
+import { getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
+import { protect } from "@/lib";
+
+/**
+ * Jira Server Issue Types Step
+ * Pulls issue types from Jira Server paginated, transforms to Plane issue types, and pushes
+ *
+ * Handles Epic types and conflict resolution automatically
+ */
+export class JiraIssueTypesStep implements IStep {
+  name = EJiraStep.ISSUE_TYPES;
+  dependencies = [];
+
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
+
+  private readonly PAGE_SIZE = 50;
+
+  /**
+   * Check if issue types feature is enabled for the workspace and project
+   */
+  private async shouldExecute(input: TStepExecutionInput): Promise<boolean> {
+    const { jobContext } = input;
+    const { job, planeClient } = jobContext;
+
+    // Ensure if the issue types are enabled for the project or not.
+    const featureFlagService = await getPlaneFeatureFlagService();
+    const isIssueTypeFeatureEnabled = await withCache(
+      "ISSUE_TYPE_FF",
+      job,
+      async () =>
+        await featureFlagService.featureFlags({
+          workspace_slug: job.workspace_slug,
+          user_id: job.initiator_id,
+          flag_key: E_FEATURE_FLAGS.ISSUE_TYPES,
+        })
+    );
+
+    // Ensure that the current project has issue types enabled.
+    const planeProjectDetails = await withCache(
+      "PROJECT_CONFIGURATION",
+      job,
+      async () =>
+        await protect<ExProject>(
+          planeClient.project.getProject.bind(planeClient.project),
+          job.workspace_slug,
+          job.project_id
+        )
+    );
+    // Extract the issue types from the plane entities
+    const isIssueTypeEnabledForProject = planeProjectDetails.is_issue_type_enabled;
+    return (isIssueTypeFeatureEnabled && isIssueTypeEnabledForProject) ?? false;
+  }
+
+  async execute(input: TStepExecutionInput): Promise<TStepExecutionContext> {
+    const { jobContext, storage, previousContext } = input;
+    const { job } = jobContext;
+
+    try {
+      // Check if issue types are enabled before proceeding
+      const shouldExecute = await this.shouldExecute(input);
+      if (!shouldExecute) {
+        logger.info(`[${job.id}] [${this.name}] Skipping - issue types not enabled`, {
+          jobId: job.id,
+        });
+        return {
+          pageCtx: { startAt: 0, hasMore: false, totalProcessed: 0 },
+          results: { pulled: 0, pushed: 0, errors: [] },
+        };
+      }
+
+      const projectId = job.config?.project?.id;
+      if (!projectId) {
+        throw new Error("Project ID not found in job config");
+      }
+
+      // Get pagination state
+      const startAt = previousContext?.pageCtx.startAt ?? 0;
+      const totalProcessed = previousContext?.pageCtx.totalProcessed ?? 0;
+
+      logger.info(`[${jobContext.job.id}] [${this.name}] Starting execution`, {
+        jobId: job.id,
+        startAt,
+        totalProcessed,
+      });
+
+      // Pull issue types from Jira Server (paginated)
+      const pulled = await this.pull(jobContext, projectId, startAt);
+
+      if (pulled.items.length === 0) {
+        logger.info(`[${jobContext.job.id}] [${this.name}] No issue types found`, { jobId: job.id });
+        return createEmptyContext();
+      }
+
+      // Transform to Plane issue types
+      const transformed = this.transform(job, pulled.items);
+
+      // Push to Plane (handles epics, conflicts, create/update)
+      const pushedCount = await this.push(jobContext, transformed, storage);
+
+      return createPaginationContext({
+        hasMore: pulled.hasMore,
+        startAt: startAt,
+        pageSize: this.PAGE_SIZE,
+        pulled: pulled.items.length,
+        pushed: pushedCount,
+        totalProcessed: totalProcessed + pulled.items.length,
+      });
+    } catch (error) {
+      logger.error(`[${jobContext.job.id}] [${this.name}] Step failed`, {
+        jobId: job.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Pull one page of issue types from Jira Server
+   */
+  protected async pull(jobContext: TJobContext, projectId: string, startAt: number) {
+    const result = await pullIssueTypesV2(
+      {
+        client: jobContext.sourceClient,
+        startAt,
+        maxResults: this.PAGE_SIZE,
+      },
+      projectId
+    );
+
+    logger.info(`[${jobContext.job.id}] [${this.name}] Pulled issue types from Jira Server`, {
+      jobId: jobContext.job.id,
+      count: result.items.length,
+      hasMore: result.hasMore,
+      startAt,
+    });
+
+    return result;
+  }
+
+  /**
+   * Transform Jira issue types to Plane issue types
+   */
+  private transform(job: TImportJob<JiraConfig>, jiraIssueTypes: IssueTypeDetails[]): Partial<ExIssueType>[] {
+    const resourceId = job.config.resource ? job.config.resource.id : uuid();
+
+    return jiraIssueTypes.map((issueType) =>
+      transformIssueType({ resourceId, projectId: job.project_id, source: this.source }, issueType)
+    );
+  }
+
+  /**
+   * Push issue types to Plane and store mappings
+   * Orchestrates the create/update flow with epic handling
+   */
+  private async push(
+    jobContext: TJobContext,
+    issueTypes: Partial<ExIssueType>[],
+    storage: IStorageService
+  ): Promise<number> {
+    const { job } = jobContext;
+
+    // Fetch what already exists in Plane
+    const existingIssueTypes = await this.fetchExistingIssueTypes(jobContext);
+    const defaultIssueType = existingIssueTypes.find((type) => type.is_default);
+
+    // Decide what to create vs update
+    const { toCreate, toUpdate, epicIssueType } = this.separateCreateAndUpdate(issueTypes, existingIssueTypes);
+
+    // Create/update issue types
+    const [created, updated] = await Promise.all([
+      this.putIssueTypes(jobContext, toCreate, "create"),
+      this.putIssueTypes(jobContext, toUpdate, "update"),
+    ]);
+
+    // Collect all issue types for mapping storage
+    const allIssueTypes: ExIssueType[] = [...created, ...updated];
+
+    // Include default type if present
+    if (defaultIssueType) {
+      allIssueTypes.push(defaultIssueType);
+    }
+
+    // Include epic type if present (with mutated external_id/source)
+    if (epicIssueType) {
+      allIssueTypes.push(epicIssueType);
+    }
+
+    // Store mappings for this page
+    await this.storeIssueTypeMappings(job, allIssueTypes, storage);
+
+    return allIssueTypes.length;
+  }
+
+  /**
+   * Fetch existing issue types from Plane
+   */
+  private async fetchExistingIssueTypes(jobContext: TJobContext): Promise<ExIssueType[]> {
+    const { job, planeClient } = jobContext;
+    const existingIssueTypes = await withCache(
+      this.name,
+      job,
+      async () => await planeClient.issueType.fetch(job.workspace_slug, job.project_id)
+    );
+
+    logger.info(`[${job.id}] [${this.name}] Found existing issue types`, {
+      jobId: job.id,
+      count: existingIssueTypes.length,
+    });
+
+    return existingIssueTypes;
+  }
+
+  /**
+   * Separate issue types into create vs update buckets
+   * Handles Epic and Default type special cases
+   */
+  private separateCreateAndUpdate(
+    issueTypes: Partial<ExIssueType>[],
+    existingIssueTypes: ExIssueType[]
+  ): { toCreate: Partial<ExIssueType>[]; toUpdate: Partial<ExIssueType>[]; epicIssueType: ExIssueType | null } {
+    const epicIssueType = existingIssueTypes.find((type) => type.is_epic);
+
+    const toCreate = issueTypes.filter((issueType) => {
+      const isEpic = issueType.is_epic;
+
+      if (isEpic) {
+        // We need to update the existing epic issue type in order to add the external_id and external_source
+        if (epicIssueType) {
+          epicIssueType.external_id = issueType.external_id || "";
+          epicIssueType.external_source = issueType.external_source || "";
+        }
+
+        return false;
+      }
+
+      // Check if already exists by external_id
+      const existing = existingIssueTypes.find((existing) => existing.external_id === issueType.external_id);
+      return !existing;
+    });
+
+    const toUpdate = issueTypes
+      .filter((issueType) => {
+        // Epic: don't include in update flow
+        if (issueType.is_epic) {
+          return false;
+        }
+
+        // Non-epic: update if exists
+        const existing = existingIssueTypes.find((existing) => existing.external_id === issueType.external_id);
+        return !!existing;
+      })
+      .map((issueType) => {
+        // Map to existing non-epic
+        const existing = existingIssueTypes.find((existing) => existing.external_id === issueType.external_id);
+        return { id: existing!.id, ...issueType };
+      });
+
+    return { toCreate, toUpdate, epicIssueType: epicIssueType || null };
+  }
+
+  /**
+   * Create or update issue types in Plane
+   */
+  private async putIssueTypes(
+    jobContext: TJobContext,
+    issueTypes: Partial<ExIssueType>[],
+    method: "create" | "update"
+  ): Promise<ExIssueType[]> {
+    if (issueTypes.length === 0) return [];
+    const { job, planeClient } = jobContext;
+
+    logger.info(`[${job.id}] [${this.name}] Putting Issue Types: ${method} mode`, {
+      jobId: job.id,
+      count: issueTypes.length,
+    });
+
+    return await createOrUpdateIssueTypes({
+      jobId: job.id,
+      issueTypes,
+      planeClient,
+      workspaceSlug: job.workspace_slug,
+      projectId: job.project_id,
+      method: method,
+    });
+  }
+
+  /**
+   * Store issue type mappings for this page
+   */
+  private async storeIssueTypeMappings(
+    job: TImportJob,
+    issueTypes: ExIssueType[],
+    storage: IStorageService
+  ): Promise<void> {
+    // Store mappings: external_id -> issue_type_id
+    const validIssueTypes = issueTypes.filter((type) => type.external_id && type.id);
+    const mappings = validIssueTypes.map((type) => ({
+      externalId: type.external_id!,
+      planeId: type.id!,
+    }));
+
+    await storage.storeMapping(job.id, this.name, mappings);
+
+    // Store raw issue types data for dependent steps
+    const issueTypesData: TIssueTypesData = validIssueTypes.map((type) => ({
+      id: type.id!,
+      external_id: type.external_id!,
+      name: type.name || "",
+      is_default: type.is_default || false,
+      is_epic: type.is_epic || false,
+    }));
+    await storage.storeData(job.id, this.name, issueTypesData, "external_id");
+
+    logger.info(`[${job.id}] [${this.name}] Stored mappings for page`, {
+      jobId: job.id,
+      mappingsCount: mappings.length,
+    });
+  }
+}

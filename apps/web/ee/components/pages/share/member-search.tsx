@@ -1,5 +1,3 @@
-"use client";
-
 import React, { memo } from "react";
 import { Search } from "lucide-react";
 import { CustomSearchSelect, Avatar } from "@plane/ui";
@@ -17,22 +15,24 @@ type TMemberSearchProps = {
   canCurrentUserChangeAccess?: boolean;
 };
 
-export const MemberOption = memo<{ member: { display_name: string; avatar_url: string } }>(({ member }) => (
-  <div className="flex w-full items-center gap-2 h-5">
-    <Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />
-    <div className="truncate">
-      <span className="font-medium">{member.display_name}</span>
+export const MemberOption = memo(function MemberOption({
+  member,
+}: {
+  member: { display_name: string; avatar_url: string };
+}) {
+  return (
+    <div className="flex w-full items-center gap-2 h-5">
+      <Avatar name={member.display_name} src={getFileURL(member.avatar_url)} size="md" />
+      <div className="truncate">
+        <span className="font-medium">{member.display_name}</span>
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
 MemberOption.displayName = "MemberOption";
 
-export const MemberSearch = ({
-  memberOptions,
-  onSelectMember,
-  canCurrentUserChangeAccess = true,
-}: TMemberSearchProps) => {
+export function MemberSearch({ memberOptions, onSelectMember, canCurrentUserChangeAccess = true }: TMemberSearchProps) {
   if (!canCurrentUserChangeAccess) {
     return null;
   }
@@ -53,6 +53,6 @@ export const MemberSearch = ({
       options={memberOptions}
     />
   );
-};
+}
 
 MemberSearch.displayName = "MemberSearch";

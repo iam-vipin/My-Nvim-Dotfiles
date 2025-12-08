@@ -15,7 +15,7 @@ type TInstallationCardProps = {
   handleInstallation: () => Promise<void>;
 };
 
-export const InstallationCard = observer((props: TInstallationCardProps) => {
+export const InstallationCard = observer(function InstallationCard(props: TInstallationCardProps) {
   const { providerName, providerDescription, providerLogo, isConnectionLoading, isAppConnected, handleInstallation } =
     props;
   // states

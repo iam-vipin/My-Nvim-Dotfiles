@@ -20,7 +20,7 @@ type Props = {
   dashboardId: string;
 };
 
-export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props) => {
+export const DashboardsWidgetsListEmptyState = observer(function DashboardsWidgetsListEmptyState(props: Props) {
   const { dashboardId } = props;
   // states
   const [isAddingWidget, setIsAddingWidget] = useState(false);

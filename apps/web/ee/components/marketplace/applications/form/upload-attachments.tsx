@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import type { Accept } from "react-dropzone";
@@ -31,7 +29,7 @@ type Props = {
 
 const ACCEPTED_FILE_TYPES: Accept = { "image/*": [".png", ".jpg", ".jpeg", ".webp"] };
 
-export const UploadAppAttachments: React.FC<Props> = observer((props) => {
+export const UploadAppAttachments = observer(function UploadAppAttachments(props: Props) {
   const { onFilesFinalise, initialValue, entityType, hasError } = props;
   // states
   const [allImages, setAllImages] = useState<string[]>(initialValue ?? []);
@@ -253,7 +251,7 @@ type TImagePreviewProps = {
   onRemove: () => void;
 };
 
-const ImagePreview: React.FC<TImagePreviewProps> = (props) => {
+function ImagePreview(props: TImagePreviewProps) {
   const { image, isURL, onRemove, isLoading } = props;
   // derived values
   const imageSrc = isURL ? getFileURL(image as string) : URL.createObjectURL(image as File);
@@ -273,6 +271,6 @@ const ImagePreview: React.FC<TImagePreviewProps> = (props) => {
       <img loading="lazy" src={imageSrc} alt="Uploaded preview" className="h-full w-full object-cover rounded-md" />
     </div>
   );
-};
+}
 
 export default UploadAppAttachments;

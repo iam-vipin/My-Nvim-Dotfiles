@@ -1,12 +1,10 @@
-"use client";
-
 import type { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
 // plane web types
 import type { TWorklogDownloadStatus } from "@/plane-web/types";
 
-export const WorklogDownloadStatus: FC<{ status: TWorklogDownloadStatus | undefined; loader: boolean }> = (props) => {
+export function WorklogDownloadStatus(props: { status: TWorklogDownloadStatus | undefined; loader: boolean }) {
   const { status, loader } = props;
   // hooks
 
@@ -23,4 +21,4 @@ export const WorklogDownloadStatus: FC<{ status: TWorklogDownloadStatus | undefi
       {loader ? "Refreshing..." : status}
     </span>
   );
-};
+}

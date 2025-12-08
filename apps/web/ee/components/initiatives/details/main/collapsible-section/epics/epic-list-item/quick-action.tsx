@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
@@ -22,7 +20,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
+export const EpicQuickActions = observer(function EpicQuickActions(props: Props) {
   const { workspaceSlug, initiativeId, epicId, disabled } = props;
   //  store hooks
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";

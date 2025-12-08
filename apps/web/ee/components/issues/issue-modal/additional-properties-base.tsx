@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import type { IIssueType, TIssuePropertyValues } from "@plane/types";
@@ -28,7 +26,9 @@ type TIssueAdditionalPropertiesBaseProps = {
  * Use the wrapper component for automatic store integration.
  * Required Issue Modal context to be available in the parent component.
  */
-export const IssueAdditionalPropertiesBase: React.FC<TIssueAdditionalPropertiesBaseProps> = observer((props) => {
+export const IssueAdditionalPropertiesBase = observer(function IssueAdditionalPropertiesBase(
+  props: TIssueAdditionalPropertiesBaseProps
+) {
   const {
     areCustomPropertiesInitializing = false,
     arePropertyValuesInitializing = false,

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -63,7 +61,7 @@ export interface EpicFormProps {
   dataResetProperties?: any[];
 }
 
-export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
+export const EpicFormRoot = observer(function EpicFormRoot(props: EpicFormProps) {
   const {
     data,
     issueTitleRef,

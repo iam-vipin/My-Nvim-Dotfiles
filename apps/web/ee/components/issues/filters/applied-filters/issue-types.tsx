@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CloseIcon } from "@plane/propel/icons";
@@ -14,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedIssueTypeFilters: React.FC<Props> = observer((props) => {
+export const AppliedIssueTypeFilters = observer(function AppliedIssueTypeFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

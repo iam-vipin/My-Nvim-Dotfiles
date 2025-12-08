@@ -7,7 +7,7 @@ const messages = [
   "All set! Just a few seconds more",
 ];
 
-export const ProjectCreateLoader = () => {
+export function ProjectCreateLoader() {
   const [loadingMessage, setLoadingMessage] = useState(messages[0]);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -44,4 +44,4 @@ export const ProjectCreateLoader = () => {
       </div>
     </div>
   );
-};
+}

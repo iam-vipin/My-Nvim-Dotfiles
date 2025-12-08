@@ -22,7 +22,9 @@ type TCreateUpdateProjectTemplateProps = {
   templateId?: string;
 };
 
-export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProjectTemplateProps) => {
+export const CreateUpdateProjectTemplate = observer(function CreateUpdateProjectTemplate(
+  props: TCreateUpdateProjectTemplateProps
+) {
   const { workspaceSlug, templateId } = props;
   // router
   const router = useAppRouter();

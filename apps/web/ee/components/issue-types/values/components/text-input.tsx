@@ -26,7 +26,7 @@ type TTextValueInputProps = {
   onTextValueChange: (value: string[]) => void;
 };
 
-export const TextValueInput = observer((props: TTextValueInputProps) => {
+export const TextValueInput = observer(function TextValueInput(props: TTextValueInputProps) {
   const {
     propertyDetail,
     value,

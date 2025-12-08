@@ -36,7 +36,7 @@ type TPopoverFilterInputProps = {
   placeholder?: string;
 };
 
-export const PopoverFilterInput = observer((props: TPopoverFilterInputProps) => {
+export const PopoverFilterInput = observer(function PopoverFilterInput(props: TPopoverFilterInputProps) {
   const {
     buttonClassName,
     children,

@@ -435,7 +435,7 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
   getBlockIds = () => this.blockIds ?? [];
 
   /** Placeholder functions */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   setBlockGroups = (_groupData: TGanttBlockGroup[]) => {};
   getGroupedBlockIds = () => [] as TGanttBlockGroup[];
 }

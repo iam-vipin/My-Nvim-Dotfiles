@@ -248,7 +248,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
 /**
  * Returns all enabled extensions for the document editor
  */
-export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
+export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   // Filter enabled extensions and flatten the result
@@ -258,4 +258,4 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return documentExtensions;
-};
+}

@@ -14,10 +14,10 @@ type Props = {
   ganttContainerRef: RefObject<HTMLDivElement>;
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
 };
 
-export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+export const GanttChartSidebar = observer(function GanttChartSidebar(props: Props) {
   const { blockIds, sidebarToRender, getBlockById, loadMoreBlocks, canLoadMoreBlocks, ganttContainerRef, title } =
     props;
 

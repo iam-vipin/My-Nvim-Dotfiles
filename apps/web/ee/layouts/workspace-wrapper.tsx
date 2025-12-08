@@ -32,7 +32,7 @@ import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-project
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
 import { usePiChat } from "../hooks/store/use-pi-chat";
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   // props
   const { children } = props;
   // router
@@ -71,7 +71,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
     workspaceSlug ? `WORKSPACE_FLAGS_${workspaceSlug}` : null,

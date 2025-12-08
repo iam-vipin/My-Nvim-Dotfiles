@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ import type { TInitiative } from "@/plane-web/types/initiative";
 import { getGroupList } from "../../utils";
 import { InitiativeGanttBlock, InitiativeGanttSidebarBlock } from "../initiative-gantt-block";
 
-export const InitiativeGanttLayout = observer(() => {
+export const InitiativeGanttLayout = observer(function InitiativeGanttLayout() {
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
   const { getUserDetails, workspace } = useMember();

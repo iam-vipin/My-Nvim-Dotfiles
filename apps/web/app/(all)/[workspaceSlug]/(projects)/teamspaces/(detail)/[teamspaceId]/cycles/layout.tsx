@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet } from "react-router";
 import { ETeamspaceNavigationItem } from "@plane/constants";
 // components

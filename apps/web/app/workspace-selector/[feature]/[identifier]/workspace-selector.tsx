@@ -46,7 +46,7 @@ type TWorkspaceSelectorProps = {
   identifier: string;
 };
 
-export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
+export const WorkspaceSelector = observer(function WorkspaceSelector(props: TWorkspaceSelectorProps) {
   const { feature, identifier } = props;
   // router
   const router = useAppRouter();

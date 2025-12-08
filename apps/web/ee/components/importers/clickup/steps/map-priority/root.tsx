@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -22,7 +20,7 @@ type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.MAP_PRIORI
 
 const currentStepKey = E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES;
 
-export const MapPriorityRoot: FC = observer(() => {
+export const MapPriorityRoot = observer(function MapPriorityRoot() {
   // hooks
   const {
     priorities,
@@ -39,7 +37,7 @@ export const MapPriorityRoot: FC = observer(() => {
   const clickUpSpaceId = importerData[E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP]?.spaceId;
   const clickUpPriorityForSpace = ((clickUpSpaceId && getClickUpPriorityIdsBySpaceId(clickUpSpaceId)) || [])
     .map((id) => (clickUpSpaceId && getClickUpPriorityById(clickUpSpaceId, id)) || undefined)
-    .filter((clickUpPriority) => clickUpPriority != undefined && clickUpPriority != null) as TClickUpPriority[];
+    .filter((clickUpPriority) => clickUpPriority != undefined && clickUpPriority != null);
 
   // states
   const [formData, setFormData] = useState<TFormData>({});
@@ -111,7 +109,7 @@ export const MapPriorityRoot: FC = observer(() => {
         const result = fuse.search(clickUpPriority.priority);
 
         if (result.length > 0) {
-          const planeState = result[0].item as TPlanePriorityData;
+          const planeState = result[0].item;
           if (clickUpPriority.id && planeState.key) {
             handleFormData(clickUpPriority.id, planeState.key);
           }

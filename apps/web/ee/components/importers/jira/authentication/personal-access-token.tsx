@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,7 @@ import type { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
 import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 
-export const PersonalAccessTokenAuth: FC = observer(() => {
+export const PersonalAccessTokenAuth = observer(function PersonalAccessTokenAuth() {
   // hooks
   const {
     auth: { authWithPAT },

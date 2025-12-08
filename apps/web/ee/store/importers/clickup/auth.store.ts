@@ -93,7 +93,7 @@ export class ClickUpAuthStore implements IClickUpAuthStore {
       this.isLoading = false;
       return response;
     } catch (error) {
-      set(this.authentication, [userId], error as unknown as TServiceAuthConfiguration);
+      set(this.authentication, [userId], error as TServiceAuthConfiguration);
       this.isLoading = false;
       throw error;
     }
@@ -141,7 +141,7 @@ export class ClickUpAuthStore implements IClickUpAuthStore {
       this.isLoading = false;
       return response;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
       throw error;
     }
@@ -172,7 +172,7 @@ export class ClickUpAuthStore implements IClickUpAuthStore {
       return response;
     } catch (error) {
       console.log("error", error);
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
       throw error;
     }

@@ -17,7 +17,7 @@ type TProjectStatesProps = {
   projectId: string;
 };
 
-export const ProjectStates = observer((props: TProjectStatesProps) => {
+export const ProjectStates = observer(function ProjectStates(props: TProjectStatesProps) {
   const { workspaceSlug, projectId } = props;
   // plane hooks
   const { t } = useTranslation();

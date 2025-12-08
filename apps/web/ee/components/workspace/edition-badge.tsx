@@ -6,7 +6,7 @@ import { CloudEditionBadge, SelfHostedEditionBadge } from "@/plane-web/component
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const WorkspaceEditionBadge = observer(() => {
+export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
   // hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values

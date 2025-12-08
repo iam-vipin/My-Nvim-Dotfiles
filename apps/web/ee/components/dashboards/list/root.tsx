@@ -15,7 +15,7 @@ import { useDashboards } from "@/plane-web/hooks/store";
 import { DashboardListItem } from "./list-item";
 import { DashboardsListLayoutLoader } from "./loader";
 
-export const DashboardsListLayoutRoot = observer(() => {
+export const DashboardsListLayoutRoot = observer(function DashboardsListLayoutRoot() {
   // store hooks
   const {
     getDashboardById,

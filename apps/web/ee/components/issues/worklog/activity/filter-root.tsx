@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane constants
@@ -14,7 +12,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web hooks
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 
-export const ActivityFilterRoot: FC<TActivityFilterRoot> = observer((props) => {
+export const ActivityFilterRoot = observer(function ActivityFilterRoot(props: TActivityFilterRoot) {
   const { selectedFilters, toggleFilter, isIntakeIssue = false, projectId } = props;
   // hooks
   const { currentWorkspace } = useWorkspace();

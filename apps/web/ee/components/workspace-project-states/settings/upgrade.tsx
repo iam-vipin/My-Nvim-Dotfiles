@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -17,7 +15,7 @@ import StateLightStandalone from "@/app/assets/projects/states-light.svg?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-const Upgrade = observer(() => {
+const Upgrade = observer(function Upgrade() {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
@@ -41,7 +39,12 @@ const Upgrade = observer(() => {
           </div>
           <div className="flex mt-6 gap-4 flex-wrap">
             {isSelfManagedUpgradeDisabled ? (
-              <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+              <a
+                href="https://prime.plane.so/"
+                target="_blank"
+                className={getButtonStyling("primary", "md")}
+                rel="noreferrer"
+              >
                 <Crown className="h-3.5 w-3.5" />
                 Get Pro
               </a>
@@ -76,8 +79,10 @@ const Upgrade = observer(() => {
   );
 });
 
-export const WorkspaceProjectStatesUpgrade: FC = () => (
-  <div className="w-full">
-    <Upgrade />
-  </div>
-);
+export function WorkspaceProjectStatesUpgrade() {
+  return (
+    <div className="w-full">
+      <Upgrade />
+    </div>
+  );
+}

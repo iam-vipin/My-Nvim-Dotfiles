@@ -13,12 +13,7 @@ type TOptionSelectProps = {
   required?: boolean;
 };
 
-export const OptionSelect: React.FC<TOptionSelectProps> = ({
-  property,
-  options,
-  isPreview = false,
-  required = false,
-}) => {
+export function OptionSelect({ property, options, isPreview = false, required = false }: TOptionSelectProps) {
   const {
     control,
     formState: { errors },
@@ -137,4 +132,4 @@ export const OptionSelect: React.FC<TOptionSelectProps> = ({
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

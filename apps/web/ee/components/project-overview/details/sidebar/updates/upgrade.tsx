@@ -5,7 +5,7 @@ type TProps = {
   projectId: string;
 };
 
-export const UpgradeUpdates = (props: TProps) => {
+export function UpgradeUpdates(props: TProps) {
   const { workspaceSlug, projectId } = props;
   const router = useRouter();
   return (
@@ -25,4 +25,4 @@ export const UpgradeUpdates = (props: TProps) => {
       rootClassName="p-10"
     />
   );
-};
+}

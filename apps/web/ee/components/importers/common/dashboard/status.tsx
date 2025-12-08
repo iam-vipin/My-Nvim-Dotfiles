@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TJobStatus } from "@plane/etl/core";
@@ -27,7 +25,7 @@ const STATUS_CLASSNAMES: { [key in TJobStatus]: string } = {
   [E_JOB_STATUS.CANCELLED]: "text-red-500 border border-red-500 bg-red-500/10",
 };
 
-export const SyncJobStatus: FC<TSyncJobStatusProps> = observer((props) => {
+export const SyncJobStatus = observer(function SyncJobStatus(props: TSyncJobStatusProps) {
   const { status } = props;
   const { t } = useTranslation();
 

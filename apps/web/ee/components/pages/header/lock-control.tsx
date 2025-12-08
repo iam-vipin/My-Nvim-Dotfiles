@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageLockControl = observer(({ page, storeType }: Props) => {
+export const PageLockControl = observer(function PageLockControl({ page, storeType }: Props) {
   // Initial state: if locked, then "locked", otherwise default to "neutral"
   const [displayState, setDisplayState] = useState<LockDisplayState>(page.is_locked ? "locked" : "neutral");
   // Show lock options popup state (Restored)

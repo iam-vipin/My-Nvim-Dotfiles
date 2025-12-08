@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { CalendarDays, Link2, Signal, Paperclip } from "lucide-react";
 // plane imports

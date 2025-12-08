@@ -10,7 +10,7 @@ type Props = {
   defaultProvider?: TExportProvider;
 };
 
-export const ExportModal: React.FC<Props> = (props) => {
+export function ExportModal(props: Props) {
   const { isOpen, onClose, onConfirm, defaultProvider = null } = props;
   const [provider, setProvider] = useState<TExportProvider | null>(defaultProvider);
 
@@ -50,4 +50,4 @@ export const ExportModal: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

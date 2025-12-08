@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { EpicView } from "./view";
 
-export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
+export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkItemPeekOverview) {
   const { embedIssue = false, embedRemoveCurrentNotification } = props;
   // store hook
   const { allowPermissions } = useUserPermissions();

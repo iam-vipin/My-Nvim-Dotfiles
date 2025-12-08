@@ -26,7 +26,7 @@ type TIssueTypeDropdownProps = {
   variant?: TIssueTypeDropdownVariant;
 };
 
-export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
+export const IssueTypeDropdown = observer(function IssueTypeDropdown(props: TIssueTypeDropdownProps) {
   const {
     issueTypeId,
     projectId,

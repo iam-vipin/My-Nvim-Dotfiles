@@ -1,5 +1,3 @@
-"use client";
-
 import { Layers2, Layers3, UsersRound, SignalHigh, ReceiptText } from "lucide-react";
 // plane web components
 import {

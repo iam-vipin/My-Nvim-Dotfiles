@@ -20,7 +20,7 @@ type TDeleteWorkspace = {
   workspace: IWorkspace | null;
 };
 
-export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => {
+export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(props: TDeleteWorkspace) {
   const { workspace } = props;
   // router
   const { workspaceSlug } = useParams();

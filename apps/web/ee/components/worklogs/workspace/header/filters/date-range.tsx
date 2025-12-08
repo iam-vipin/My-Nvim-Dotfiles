@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,9 @@ type TWorkspaceWorklogFilterDateRange = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogFilterDateRange: FC<TWorkspaceWorklogFilterDateRange> = observer((props) => {
+export const WorkspaceWorklogFilterDateRange = observer(function WorkspaceWorklogFilterDateRange(
+  props: TWorkspaceWorklogFilterDateRange
+) {
   const { workspaceSlug } = props;
   // hooks
   const { filters, updateFilters } = useWorkspaceWorklogs();

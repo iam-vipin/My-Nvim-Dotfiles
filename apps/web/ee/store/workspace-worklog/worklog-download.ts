@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import { set } from "lodash-es";
 import { computed, makeObservable, observable, runInAction } from "mobx";
 // plane web store

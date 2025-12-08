@@ -11,7 +11,7 @@ interface IWithFeatureFlagHOC {
   children: ReactNode;
 }
 
-export const WithFeatureFlagHOC = observer((props: IWithFeatureFlagHOC) => {
+export const WithFeatureFlagHOC = observer(function WithFeatureFlagHOC(props: IWithFeatureFlagHOC) {
   const { workspaceSlug, flag, fallback, children } = props;
   // check if the feature flag is enabled
   const isFeatureEnabled = useFlag(workspaceSlug, flag);

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { isEmpty } from "lodash-es";
@@ -20,7 +19,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicRelationsOverviewRoot: FC<Props> = observer((props) => {
+export const EpicRelationsOverviewRoot = observer(function EpicRelationsOverviewRoot(props: Props) {
   const { workspaceSlug, epicId, disabled = false } = props;
   // store hooks
   const {

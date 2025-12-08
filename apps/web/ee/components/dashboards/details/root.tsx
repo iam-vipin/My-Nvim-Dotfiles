@@ -14,7 +14,7 @@ type Props = {
   dashboardId: string;
 };
 
-export const DashboardsWidgetsListRoot: React.FC<Props> = observer((props) => {
+export const DashboardsWidgetsListRoot = observer(function DashboardsWidgetsListRoot(props: Props) {
   const { className, dashboardId } = props;
   // store hooks
   const { getDashboardById } = useDashboards();

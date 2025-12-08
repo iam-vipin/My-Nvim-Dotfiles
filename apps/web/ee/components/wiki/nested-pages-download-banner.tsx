@@ -20,7 +20,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const NestedPagesDownloadBanner: React.FC<Props> = observer((props) => {
+export const NestedPagesDownloadBanner = observer(function NestedPagesDownloadBanner(props: Props) {
   const { page, storeType, workspaceSlug } = props;
   // states
   const [isDownloading, setIsDownloading] = useState(false);

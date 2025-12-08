@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import type { LucideProps } from "lucide-react";
@@ -24,7 +22,7 @@ type TSidebarRootProps = {
   defaultTab: string;
 };
 
-export const SidebarRoot: FC<TSidebarRootProps> = (props) => {
+export function SidebarRoot(props: TSidebarRootProps) {
   const { isSidebarOpen, tabs, storageKey, defaultTab } = props;
   return (
     <SidebarWrapper isSidebarOpen={isSidebarOpen}>
@@ -38,4 +36,4 @@ export const SidebarRoot: FC<TSidebarRootProps> = (props) => {
       />
     </SidebarWrapper>
   );
-};
+}

@@ -8,7 +8,7 @@ type TwitterEmbedProps = {
 };
 
 // User for rendering blockquote components with script in a iframe
-export const TwitterEmbed = ({ iframelyData }: TwitterEmbedProps) => {
+export function TwitterEmbed({ iframelyData }: TwitterEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const uniqueId = useRef(`embed-${Math.random().toString(36).substring(2, 9)}`);
   const [iframeHeight, setIframeHeight] = useState<number>(250);
@@ -65,7 +65,7 @@ export const TwitterEmbed = ({ iframelyData }: TwitterEmbedProps) => {
       />
     </div>
   );
-};
+}
 
 const SRC_DOC_CONTENT = (iframelyData: IframelyResponse, uniqueId: string) => `
     <!DOCTYPE html>

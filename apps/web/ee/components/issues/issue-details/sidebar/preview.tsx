@@ -18,7 +18,7 @@ type TProps = {
   styles: { [key: string]: React.CSSProperties };
   workspaceSlug: string;
 };
-export const CustomerPreview: FC<TProps> = (props) => {
+export function CustomerPreview(props: TProps) {
   const { customer, setPopperElement, styles, workspaceSlug } = props;
   // hooks
   const { t } = useTranslation();
@@ -134,16 +134,19 @@ export const CustomerPreview: FC<TProps> = (props) => {
       </div>
     </div>
   );
-};
+}
 type TPreviewProps = {
   name: string;
   children: ReactNode;
 };
-const PreviewProperty: FC<TPreviewProps> = (props) => (
-  <div className="flex h-8 gap-2 items-center">
-    <div className="w-2/5 flex-shrink-0">
-      <span className="text-sm text-custom-text-300">{props.name}</span>
+
+function PreviewProperty(props: TPreviewProps) {
+  return (
+    <div className="flex h-8 gap-2 items-center">
+      <div className="w-2/5 flex-shrink-0">
+        <span className="text-sm text-custom-text-300">{props.name}</span>
+      </div>
+      <div className="w-3/5 flex-grow truncate">{props.children}</div>
     </div>
-    <div className="w-3/5 flex-grow truncate">{props.children}</div>
-  </div>
-);
+  );
+}

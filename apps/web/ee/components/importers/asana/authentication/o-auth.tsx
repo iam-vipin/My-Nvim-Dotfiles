@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -9,7 +7,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
-export const OAuth: FC = observer(() => {
+export const OAuth = observer(function OAuth() {
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // hooks

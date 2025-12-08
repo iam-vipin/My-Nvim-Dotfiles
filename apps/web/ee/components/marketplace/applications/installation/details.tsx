@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -62,7 +60,9 @@ export const workspaceLevelPermissions = permissions.filter(
   (permission) => permission.enitity_type === EntityType.WORKSPACE
 );
 
-export const ApplicationInstallationDetails: React.FC<ApplicationInstallationDetailsProps> = observer((props) => {
+export const ApplicationInstallationDetails = observer(function ApplicationInstallationDetails(
+  props: ApplicationInstallationDetailsProps
+) {
   const { app } = props;
   const { currentWorkspace } = useWorkspace();
 
@@ -141,7 +141,7 @@ export const ApplicationInstallationDetails: React.FC<ApplicationInstallationDet
   );
 });
 
-export const ApplicationPermissionText: React.FC<{ permission: ApplicationPermission }> = (props) => {
+export function ApplicationPermissionText(props: { permission: ApplicationPermission }) {
   const { permission } = props;
   const { t } = useTranslation();
   return (
@@ -150,4 +150,4 @@ export const ApplicationPermissionText: React.FC<{ permission: ApplicationPermis
       <div className="text-sm text-custom-text-100">{t(permission.i18n_description)}</div>
     </div>
   );
-};
+}

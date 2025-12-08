@@ -15,7 +15,7 @@ import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspace
 import { AddSeatsModal, RemoveUnusedSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats";
 import { useDashboards, useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
+export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props: TWorkspaceLevelModalsProps) {
   // router
   const { workspaceSlug } = props;
   // store hooks

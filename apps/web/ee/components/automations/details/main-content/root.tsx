@@ -12,7 +12,7 @@ type TProps = {
   automationId: string;
 };
 
-export const AutomationDetailsMainContentRoot: React.FC<TProps> = observer((props) => {
+export const AutomationDetailsMainContentRoot = observer(function AutomationDetailsMainContentRoot(props: TProps) {
   const { automationId } = props;
   // store hooks
   const {

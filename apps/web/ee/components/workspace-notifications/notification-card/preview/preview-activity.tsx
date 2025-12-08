@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
@@ -17,7 +15,7 @@ export type TNotificationPreviewActivity = {
   projectId: string;
 };
 
-export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (props) => {
+export function NotificationPreviewActivity(props: TNotificationPreviewActivity) {
   const { notification, workspaceId, workspaceSlug, ends, projectId } = props;
   const notificationField = notification?.data?.issue_activity.field || undefined;
   // const notificationTriggeredBy = notification.triggered_by_details || undefined;
@@ -44,4 +42,4 @@ export const NotificationPreviewActivity: FC<TNotificationPreviewActivity> = (pr
       </IssueActivityBlock>
     </div>
   );
-};
+}

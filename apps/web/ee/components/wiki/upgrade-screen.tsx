@@ -51,7 +51,7 @@ const TABS_LIST = [
   },
 ];
 
-export const WikiUpgradeScreen: React.FC<Props> = observer((props) => {
+export const WikiUpgradeScreen = observer(function WikiUpgradeScreen(props: Props) {
   const { workspaceSlug } = props;
   // states
   const [isDownloading, setIsDownloading] = useState(false);

@@ -74,7 +74,7 @@ const stripCommentMarksFromJSON = (node: JSONContent | null | undefined): JSONCo
   return sanitizedNode;
 };
 
-export const BlockMenu = (props: Props) => {
+export function BlockMenu(props: Props) {
   const { editor, flaggedExtensions, disabledExtensions, originUrl } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
@@ -350,4 +350,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

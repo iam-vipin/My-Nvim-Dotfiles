@@ -23,7 +23,7 @@ type TPropertyTypeDropdownProps = {
   isUpdateAllowed: boolean;
 };
 
-export const PropertyTypeDropdown = observer((props: TPropertyTypeDropdownProps) => {
+export const PropertyTypeDropdown = observer(function PropertyTypeDropdown(props: TPropertyTypeDropdownProps) {
   const {
     propertyType,
     propertyRelationType,

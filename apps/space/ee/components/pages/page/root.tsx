@@ -15,16 +15,18 @@ export const getPageName = (name: string | undefined) => {
   return name;
 };
 
-export const ArchivedBadge: React.FC = () => (
-  <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-custom-text-300" />} />
-);
+export function ArchivedBadge() {
+  return <Badge text="Archived" icon={<ArchiveIcon className="size-2.5 text-custom-text-300" />} />;
+}
 
-export const Badge = ({ text, icon }: { text: string; icon?: React.ReactNode }) => (
-  <div className="py-0 px-2 text-xs rounded text-custom-text-300 bg-custom-background-80/70 flex items-center gap-1">
-    {icon}
-    {text}
-  </div>
-);
+export function Badge({ text, icon }: { text: string; icon?: React.ReactNode }) {
+  return (
+    <div className="py-0 px-2 text-xs rounded text-custom-text-300 bg-custom-background-80/70 flex items-center gap-1">
+      {icon}
+      {text}
+    </div>
+  );
+}
 
 type Props = {
   pageId: string;
@@ -41,7 +43,7 @@ type PageDisplayState = {
   bgColor?: string;
 };
 
-export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
+export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Props) {
   const router = useRouter();
 
   const { pageId } = props;

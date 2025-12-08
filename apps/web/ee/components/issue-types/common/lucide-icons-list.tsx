@@ -12,7 +12,7 @@ export type TIconsListProps = {
   onChange: (val: TLogoProps["icon"], shouldClose: boolean) => void;
 };
 
-export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
+export function LucideIconsList(props: TIconsListProps) {
   const { defaultBackgroundColor, onChange } = props;
   // states
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -127,4 +127,4 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
       </div>
     </>
   );
-};
+}

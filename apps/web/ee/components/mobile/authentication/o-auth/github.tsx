@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 // helpers
@@ -13,7 +11,7 @@ export type TGitHubAuthButton = {
   invitationId?: string;
 };
 
-export const GitHubAuthButton: FC<TGitHubAuthButton> = (props) => {
+export function GitHubAuthButton(props: TGitHubAuthButton) {
   // props
   const { title, invitationId } = props;
   // hooks
@@ -41,4 +39,4 @@ export const GitHubAuthButton: FC<TGitHubAuthButton> = (props) => {
       {title}
     </button>
   );
-};
+}

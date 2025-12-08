@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { WorkItemsIcon } from "@plane/propel/icons";
@@ -12,7 +10,9 @@ type TIntakeAdditionalInformationProps = {
   workItemDetails: TIssue & TIntakeIssueExtended;
 };
 
-export const IntakeAdditionalInformation: React.FC<TIntakeAdditionalInformationProps> = observer((props) => {
+export const IntakeAdditionalInformation = observer(function IntakeAdditionalInformation(
+  props: TIntakeAdditionalInformationProps
+) {
   const { workItemDetails } = props;
 
   // derived values

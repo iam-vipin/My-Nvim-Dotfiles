@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -15,7 +13,7 @@ import PiUpgradeLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const PiChatUpgrade: FC = observer(() => {
+export const PiChatUpgrade = observer(function PiChatUpgrade() {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
@@ -30,6 +28,7 @@ export const PiChatUpgrade: FC = observer(() => {
           href="https://prime.plane.so/"
           target="_blank"
           className={getButtonStyling("primary", "md")}
+          rel="noreferrer"
         >
           Upgrade to higher subscription
         </a>

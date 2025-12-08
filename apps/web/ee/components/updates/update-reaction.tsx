@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ export type TUpdateReaction = {
   entityType: EUpdateEntityType;
 };
 
-export const UpdateReaction: FC<TUpdateReaction> = observer((props) => {
+export const UpdateReaction = observer(function UpdateReaction(props: TUpdateReaction) {
   const {
     workspaceSlug,
     entityId,

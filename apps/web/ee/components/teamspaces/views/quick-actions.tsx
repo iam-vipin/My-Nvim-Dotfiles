@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
@@ -27,7 +25,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickActions(props: Props) {
   const { parentRef, teamspaceId, view, workspaceSlug } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);

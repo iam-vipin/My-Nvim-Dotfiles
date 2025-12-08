@@ -32,7 +32,9 @@ export type TPropertyListItem = {
   href?: string;
 };
 
-export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSidebarPropertiesProps) => {
+export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSidebarProperties(
+  props: TTeamsOverviewSidebarPropertiesProps
+) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();

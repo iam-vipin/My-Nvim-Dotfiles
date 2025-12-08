@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ export type TitleInputProps = {
   disabled?: boolean;
 };
 
-export const TitleInput: FC<TitleInputProps> = observer((props) => {
+export const TitleInput = observer(function TitleInput(props: TitleInputProps) {
   const { value, isSubmitting, setIsSubmitting, onSubmit, className, containerClassName, disabled } = props;
   // states
   const [title, setTitle] = useState("");

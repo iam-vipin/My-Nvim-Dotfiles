@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +18,7 @@ type Props = {
   count: number;
 };
 
-export const EpicsSection: React.FC<Props> = observer((props) => {
+export const EpicsSection = observer(function EpicsSection(props: Props) {
   const { workspaceSlug, initiativeId, disabled, toggleEpicModal, isOpen, onToggle, count } = props;
   const { t } = useTranslation();
 

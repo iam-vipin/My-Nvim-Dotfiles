@@ -42,7 +42,9 @@ type TSelectionDropdownProps<T extends FieldValues> = {
   workspaceSlug: string;
 } & (TUseMobxData | TUsePropsData);
 
-export const SelectionDropdown = observer(<T extends FieldValues>(props: TSelectionDropdownProps<T>) => {
+export const SelectionDropdown = observer(function SelectionDropdown<T extends FieldValues>(
+  props: TSelectionDropdownProps<T>
+) {
   const {
     allowProjectSelection,
     fieldPaths,

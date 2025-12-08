@@ -33,7 +33,7 @@ type IssueBlockProps = {
   isEpic?: boolean;
 };
 
-const IssueBlock = observer((props: IssueBlockProps) => {
+const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { blockId, handleClose, className = "", isEpic = false } = props;
   // hooks
   const { workspaceSlug } = useParams();
@@ -103,7 +103,7 @@ type DependencyPathProps = {
   isEpic?: boolean;
 };
 
-export const DependencyPathModal = observer((props: DependencyPathProps) => {
+export const DependencyPathModal = observer(function DependencyPathModal(props: DependencyPathProps) {
   const { relation, handleClose, isEpic = false } = props;
   const { workspaceSlug, projectId } = useParams();
   // state

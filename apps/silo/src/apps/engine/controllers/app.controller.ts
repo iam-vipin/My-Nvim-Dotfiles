@@ -57,7 +57,7 @@ export class AppController {
     const { workspaceId } = req.params;
     try {
       const allConnections = await integrationConnectionHelper.getWorkspaceConnections({
-        workspace_id: workspaceId as string,
+        workspace_id: workspaceId,
       });
 
       // Extract unique connection types

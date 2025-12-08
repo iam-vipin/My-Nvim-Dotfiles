@@ -15,7 +15,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
+export function AreaChartAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -146,4 +146,4 @@ export const AreaChartAppearanceConfig: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

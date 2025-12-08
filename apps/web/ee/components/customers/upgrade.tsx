@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -14,7 +12,7 @@ import CustomerUpgradeLight from "@/app/assets/empty-state/customers/customer-up
 // local imports
 import { UpgradeEmptyStateButton } from "../workspace/upgrade-empty-state-button";
 
-export const CustomerUpgrade: FC = observer(() => {
+export const CustomerUpgrade = observer(function CustomerUpgrade() {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
   const { t } = useTranslation();

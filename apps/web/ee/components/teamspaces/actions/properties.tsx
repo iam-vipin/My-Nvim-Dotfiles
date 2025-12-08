@@ -18,7 +18,7 @@ type TTeamPropertiesProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamProperties = observer((props: TTeamPropertiesProps) => {
+export const TeamProperties = observer(function TeamProperties(props: TTeamPropertiesProps) {
   const { teamspaceId, isEditingAllowed } = props;
   // hooks
   const { getUserDetails } = useMember();

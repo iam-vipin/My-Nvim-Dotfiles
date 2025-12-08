@@ -10,7 +10,11 @@ type PageCommentAvatarProps = {
   className?: string;
 };
 
-export const PageCommentAvatar = observer(({ userId, size = "sm", className = "" }: PageCommentAvatarProps) => {
+export const PageCommentAvatar = observer(function PageCommentAvatar({
+  userId,
+  size = "sm",
+  className = "",
+}: PageCommentAvatarProps) {
   const {
     workspace: { getWorkspaceMemberDetails },
   } = useMember();

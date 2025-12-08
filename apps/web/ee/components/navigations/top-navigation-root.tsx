@@ -27,7 +27,7 @@ import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
 
-export const TopNavigationRoot = observer(() => {
+export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
   const { config } = useInstance();
   const { togglePiChatDrawer, isPiChatDrawerOpen } = usePiChat();

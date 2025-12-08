@@ -16,7 +16,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   searchEntityCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 };
 
-export const RichTextField = <T extends FieldValues>(props: Props<T>) => {
+export function RichTextField<T extends FieldValues>(props: Props<T>) {
   const {
     id,
     placeholder,
@@ -68,4 +68,4 @@ export const RichTextField = <T extends FieldValues>(props: Props<T>) => {
       />
     </FieldWrapper>
   );
-};
+}

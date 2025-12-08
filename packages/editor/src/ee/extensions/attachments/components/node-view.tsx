@@ -17,7 +17,7 @@ export type CustomAttachmentNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TAttachmentBlockAttributes>) => void;
 };
 
-export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> = (props) => {
+export function CustomAttachmentNodeView(props: CustomAttachmentNodeViewProps) {
   const { editor, extension, node } = props;
   // states
   const [resolvedSource, setResolvedSource] = useState<string | null>(null);
@@ -76,4 +76,4 @@ export const CustomAttachmentNodeView: React.FC<CustomAttachmentNodeViewProps> =
       )}
     </NodeViewWrapper>
   );
-};
+}

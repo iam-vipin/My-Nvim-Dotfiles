@@ -10,11 +10,11 @@ import type { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@p
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const PieChart = lazy(() =>
-  import("@plane/propel/charts/pie-chart").then((mod) => ({
+const PieChart = lazy(function PieChart() {
+  return import("@plane/propel/charts/pie-chart").then((mod) => ({
     default: mod.PieChart,
-  }))
-);
+  }));
+});
 
 const THIN_PIECES_GROUP_KEY = "pie-chart-group-thin-pieces";
 
@@ -58,7 +58,7 @@ const parsePieChartData = (
   return updatedData;
 };
 
-export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardPieChartWidget = observer(function DashboardPieChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget } = props;
   // derived values
   const { height, width } = widget ?? {};

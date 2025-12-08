@@ -17,7 +17,9 @@ type TIssueAdditionalPropertyValuesProps = {
   variant: TPropertyValueVariant;
 };
 
-export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyValuesProps> = observer((props) => {
+export const IssueAdditionalPropertyValues = observer(function IssueAdditionalPropertyValues(
+  props: TIssueAdditionalPropertyValuesProps
+) {
   const {
     getWorkItemTypeById,
     handlePropertyValueChange,

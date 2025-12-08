@@ -16,7 +16,7 @@ import { getAttachmentExtensionFileMap, getMimeTypesFromFileType } from "../util
 import type { CustomAttachmentNodeViewProps } from "./node-view";
 import { CustomAttachmentUploaderDetails } from "./uploader-details";
 
-export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> = (props) => {
+export function CustomAttachmentUploader(props: CustomAttachmentNodeViewProps) {
   const { editor, extension, getPos, node, updateAttributes } = props;
   // states
   const [fileBeingUploaded, setFileBeingUploaded] = useState<File | null>(null);
@@ -219,4 +219,4 @@ export const CustomAttachmentUploader: React.FC<CustomAttachmentNodeViewProps> =
       />
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -19,7 +17,7 @@ type TTemplatesUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;
 };
 
-export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTemplatesUpgradeProps) => {
+export const TemplatesUpgrade = observer(function TemplatesUpgrade(props: TTemplatesUpgradeProps) {
   const { flag } = props;
   // router
   const { workspaceSlug } = useParams();

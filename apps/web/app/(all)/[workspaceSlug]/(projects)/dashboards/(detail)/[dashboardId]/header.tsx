@@ -18,7 +18,7 @@ import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashbo
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
-export const WorkspaceDashboardDetailsHeader = observer(() => {
+export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashboardDetailsHeader() {
   // refs
   const parentRef = useRef(null);
   // states

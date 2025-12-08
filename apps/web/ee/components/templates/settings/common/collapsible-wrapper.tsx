@@ -22,7 +22,9 @@ type TTemplateCollapsibleWrapper = {
   title: string;
 };
 
-export const TemplateCollapsibleWrapper = observer((props: TTemplateCollapsibleWrapper) => {
+export const TemplateCollapsibleWrapper = observer(function TemplateCollapsibleWrapper(
+  props: TTemplateCollapsibleWrapper
+) {
   const {
     title,
     children,

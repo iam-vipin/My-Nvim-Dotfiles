@@ -24,7 +24,7 @@ import { InitiativeGanttLayout } from "./layouts/gantt";
 import { InitiativeKanbanLayout } from "./layouts/kanban";
 import { InitiativesListLayout } from "./layouts/list";
 
-export const InitiativesRoot = observer(() => {
+export const InitiativesRoot = observer(function InitiativesRoot() {
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();

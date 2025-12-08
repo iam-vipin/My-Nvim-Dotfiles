@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -22,7 +20,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
+export const InitiativeMainContentRoot = observer(function InitiativeMainContentRoot(props: Props) {
   const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();

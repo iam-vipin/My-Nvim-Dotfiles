@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -11,7 +9,7 @@ interface IUserAuthenticationProps {
   isEnterprise: boolean;
 }
 
-export const UserAuthentication: FC<IUserAuthenticationProps> = observer(({ isEnterprise }) => {
+export const UserAuthentication = observer(function UserAuthentication({ isEnterprise }: IUserAuthenticationProps) {
   // hooks
   const {
     auth: { workspaceConnectionIds, workspaceConnectionById },

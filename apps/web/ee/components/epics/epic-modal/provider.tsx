@@ -30,7 +30,7 @@ type TEpicModalProviderProps = {
 
 const epicPropertyValuesService = new IssuePropertyValuesService(EIssueServiceType.EPICS);
 
-export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
+export const EpicModalProvider = observer(function EpicModalProvider(props: TEpicModalProviderProps) {
   const { children } = props;
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(null);

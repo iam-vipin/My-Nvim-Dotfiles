@@ -10,7 +10,7 @@ type TProps = {
   variant: "default" | "destructive";
 };
 
-export const AutomationDetailsSidebarActionFormHeaderButton: React.FC<TProps> = (props) => {
+export function AutomationDetailsSidebarActionFormHeaderButton(props: TProps) {
   const { children, isDisabled, onClick, tooltipMessage, variant } = props;
 
   return (
@@ -37,4 +37,4 @@ export const AutomationDetailsSidebarActionFormHeaderButton: React.FC<TProps> = 
       </span>
     </Tooltip>
   );
-};
+}

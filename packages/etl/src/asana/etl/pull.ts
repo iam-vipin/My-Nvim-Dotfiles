@@ -197,7 +197,13 @@ export async function pullComments(client: AsanaService, tasks: AsanaTask[]): Pr
       comments.push(
         ...response.data
           .filter((story: any) => story.type && story.type === "comment")
-          .map((story: any) => ({ ...story, task_gid: task.gid }) as AsanaTaskComment)
+          .map(
+            (story: any) =>
+              ({
+                ...story,
+                task_gid: task.gid,
+              }) as AsanaTaskComment
+          )
       );
 
       // Update pagination

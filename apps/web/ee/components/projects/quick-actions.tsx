@@ -21,7 +21,7 @@ type Props = {
   project: TProject;
 };
 
-export const QuickActions: React.FC<Props> = (props) => {
+export function QuickActions(props: Props) {
   const { workspaceSlug, project } = props;
   //states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -145,4 +145,4 @@ export const QuickActions: React.FC<Props> = (props) => {
       </CustomMenu>
     </>
   );
-};
+}

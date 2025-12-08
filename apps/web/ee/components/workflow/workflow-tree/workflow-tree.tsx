@@ -13,7 +13,7 @@ type Props = {
   parentStateId: string;
 };
 
-export const WorkflowTree = observer((props: Props) => {
+export const WorkflowTree = observer(function WorkflowTree(props: Props) {
   const { parentStateId } = props;
   // plane hooks
   const { t } = useTranslation();

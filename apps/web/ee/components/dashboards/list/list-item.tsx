@@ -14,7 +14,7 @@ type Props = {
   id: string;
 };
 
-export const DashboardListItem: React.FC<Props> = observer((props) => {
+export const DashboardListItem = observer(function DashboardListItem(props: Props) {
   const { getDashboardDetails, id } = props;
   // refs
   const parentRef = useRef(null);

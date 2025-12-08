@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 
 type TSidebarContentWrapperProps = {
@@ -8,7 +6,7 @@ type TSidebarContentWrapperProps = {
   actionElement?: ReactNode;
 };
 
-export const SidebarContentWrapper: FC<TSidebarContentWrapperProps> = (props) => {
+export function SidebarContentWrapper(props: TSidebarContentWrapperProps) {
   const { title, children, actionElement } = props;
   return (
     <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden px-6 pb-6">
@@ -23,4 +21,4 @@ export const SidebarContentWrapper: FC<TSidebarContentWrapperProps> = (props) =>
       </div>
     </div>
   );
-};
+}

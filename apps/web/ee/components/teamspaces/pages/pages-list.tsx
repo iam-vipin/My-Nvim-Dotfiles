@@ -38,7 +38,7 @@ type Props = {
   teamspaceId: string;
 };
 
-export const TeamspacePagesList = observer((props: Props) => {
+export const TeamspacePagesList = observer(function TeamspacePagesList(props: Props) {
   const { teamspaceId } = props;
   // router
   const router = useAppRouter();

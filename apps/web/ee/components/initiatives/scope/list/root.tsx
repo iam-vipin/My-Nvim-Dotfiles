@@ -23,7 +23,7 @@ type Props = {
   handleAddProject: () => void;
 };
 
-export const InitiativeScopeListView = observer((props: Props) => {
+export const InitiativeScopeListView = observer(function InitiativeScopeListView(props: Props) {
   const { epicIds, projectIds, workspaceSlug, initiativeId, disabled, handleAddEpic, handleAddProject } = props;
 
   const { t } = useTranslation();

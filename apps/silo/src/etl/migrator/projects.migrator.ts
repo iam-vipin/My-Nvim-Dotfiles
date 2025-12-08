@@ -48,7 +48,7 @@ export const createProjects = async (
 
   const createdProjects = await processBatchPromises(projects, createProject, 2);
 
-  return createdProjects.filter((project) => project !== undefined) as ExProject[];
+  return createdProjects.filter((project) => project !== undefined);
 };
 
 export const enableIssueTypeForProject = async (

@@ -20,7 +20,7 @@ type Props = {
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
+export const DashboardsWidgetsGridRoot = observer(function DashboardsWidgetsGridRoot(props: Props) {
   const { dashboardId } = props;
   // states
   const [activeBreakpoint, setActiveBreakpoint] = useState<EWidgetGridBreakpoints>(EWidgetGridBreakpoints.MD);

@@ -19,7 +19,7 @@ export const useRealtimeEvents = (props: {
     const handleStatelessMessage = (payload: { payload: string }) => {
       try {
         // Parse the payload as our BroadcastPayloadUnion
-        const event = JSON.parse(payload.payload as string) as BroadcastedEventUnion;
+        const event = JSON.parse(payload.payload) as BroadcastedEventUnion;
 
         // CRITICAL: Check for force_close message FIRST (before other event handling)
         if ((event as any).type === "force_close") {

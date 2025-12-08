@@ -45,7 +45,7 @@ export abstract class SeparatorBasedFilterAdapter<
 
   toInternal(externalFilter: E): TFilterExpression<K> | null {
     if (!externalFilter || Object.keys(externalFilter).length === 0) return null;
-    return this._convertExpressionToInternal(externalFilter as Record<string, unknown>);
+    return this._convertExpressionToInternal(externalFilter);
   }
 
   toExternal(internalFilter: TFilterExpression<K> | null): E {

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -15,7 +14,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const PagesActionButton: FC<Props> = observer((props) => {
+export const PagesActionButton = observer(function PagesActionButton(props: Props) {
   const { customButton, disabled = false, workItemId, issueServiceType } = props;
   // store hooks
   const { togglePagesModal } = useIssueDetail(issueServiceType);

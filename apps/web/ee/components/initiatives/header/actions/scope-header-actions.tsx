@@ -11,7 +11,10 @@ type Props = {
   disabled: boolean;
 };
 
-export const InitiativeScopeHeaderActions = observer(({ initiativeId, disabled }: Props) => {
+export const InitiativeScopeHeaderActions = observer(function InitiativeScopeHeaderActions({
+  initiativeId,
+  disabled,
+}: Props) {
   const { t } = useTranslation();
 
   const {

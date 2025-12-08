@@ -16,7 +16,7 @@ type TProps = {
   workspaceSlug: string;
 };
 
-export const AutomationActionConfigurationRoot: React.FC<TProps> = (props) => {
+export function AutomationActionConfigurationRoot(props: TProps) {
   const { automationId, editorRef, isDisabled, selectedHandlerName, projectId, workspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -38,4 +38,4 @@ export const AutomationActionConfigurationRoot: React.FC<TProps> = (props) => {
       )}
     </div>
   );
-};
+}

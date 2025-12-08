@@ -37,7 +37,7 @@ type PageDisplayState = {
 };
 
 // Component that renders page embed content once embedPageId is defined
-export const PageEmbedContent: React.FC<Props> = observer((props) => {
+export const PageEmbedContent = observer(function PageEmbedContent(props: Props) {
   const {
     embedPageId,
     previewDisabled = false,

@@ -4,7 +4,9 @@ import { observer } from "mobx-react";
 import type { TPageHeaderExtraActionsProps } from "@/ce/components/pages/extra-actions";
 import { PagePublishActions } from "./publish-actions";
 
-export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProps> = observer((props) => {
+export const PageDetailsHeaderExtraActions = observer(function PageDetailsHeaderExtraActions(
+  props: TPageHeaderExtraActionsProps
+) {
   const { page, storeType } = props;
 
   if (!page.canCurrentUserEditPage) return null;

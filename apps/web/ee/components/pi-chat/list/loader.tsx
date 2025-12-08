@@ -1,8 +1,8 @@
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 
-const PiChatListLoader = () =>
-  Array.from({ length: 3 }).map((_, index) => (
+function PiChatListLoader() {
+  return Array.from({ length: 3 }).map((_, index) => (
     <Loader
       key={index}
       className={cn(
@@ -13,5 +13,6 @@ const PiChatListLoader = () =>
       <Loader.Item width="100px" height="18px" />
     </Loader>
   ));
+}
 
 export default PiChatListLoader;

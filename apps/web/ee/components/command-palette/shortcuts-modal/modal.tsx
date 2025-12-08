@@ -13,7 +13,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const PagesAppShortcutsModal: FC<Props> = (props) => {
+export function PagesAppShortcutsModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [query, setQuery] = useState("");
@@ -83,4 +83,4 @@ export const PagesAppShortcutsModal: FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

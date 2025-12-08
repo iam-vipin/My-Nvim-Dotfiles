@@ -62,7 +62,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
 
     const { workspaceConnection, entityConnectionForRepository: entityConnection } =
       await getConnDetailsForGithubToPlaneSync({
-        wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+        wsAdminCredentials: wsAdminCredentials,
         isEnterprise: data.isEnterprise,
         type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
         repositoryId: data.repositoryId.toString(),
@@ -77,11 +77,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
 
     let issue: ExIssue | null = null;
 
-    const ghService = getGithubService(
-      workspaceConnection as TGithubWorkspaceConnection,
-      data.installationId.toString(),
-      data.isEnterprise
-    );
+    const ghService = getGithubService(workspaceConnection, data.installationId.toString(), data.isEnterprise);
     const ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
     const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
     // replace the issue body with the html body
@@ -181,7 +177,7 @@ export const syncIssueWithPlane = async (store: Store, action: IssueWebhookActio
             return l.id;
           }
         })
-        .filter((l) => l !== undefined) as string[];
+        .filter((l) => l !== undefined);
     }
 
     if (planeIssue.created_by) {

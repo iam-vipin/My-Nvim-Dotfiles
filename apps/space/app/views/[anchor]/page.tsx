@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // components
@@ -9,7 +7,7 @@ import { usePublish } from "@/hooks/store/publish";
 // plane-web
 import { ViewLayoutsRoot } from "@/plane-web/components/issue-layouts/root";
 
-const ViewsPage = observer(() => {
+const ViewsPage = observer(function ViewsPage() {
   // params
   const params = useParams<{ anchor: string }>();
   const { anchor } = params;

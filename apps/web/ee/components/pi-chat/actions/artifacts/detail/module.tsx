@@ -16,7 +16,7 @@ interface TModuleDetailProps {
   activeChatId: string;
 }
 
-export const ModuleDetail = observer((props: TModuleDetailProps) => {
+export const ModuleDetail = observer(function ModuleDetail(props: TModuleDetailProps) {
   const { data, updateArtifact, workspaceSlug, activeChatId } = props;
   // hooks
   const { isMobile } = usePlatformOS();

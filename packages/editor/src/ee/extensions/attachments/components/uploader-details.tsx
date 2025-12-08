@@ -15,7 +15,7 @@ type Props = {
   maxFileSize: number;
 };
 
-export const CustomAttachmentUploaderDetails: React.FC<Props> = (props) => {
+export function CustomAttachmentUploaderDetails(props: Props) {
   const { blockId, editor, fileBeingUploaded, fileUploadError, maxFileSize } = props;
 
   const errorMessage = useMemo(() => {
@@ -90,4 +90,4 @@ export const CustomAttachmentUploaderDetails: React.FC<Props> = (props) => {
       </p>
     </div>
   );
-};
+}

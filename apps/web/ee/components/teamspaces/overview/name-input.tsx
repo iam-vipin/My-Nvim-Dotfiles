@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ export type TeamNameInputProps = {
   containerClassName?: string;
 };
 
-export const TeamNameInput: FC<TeamNameInputProps> = observer((props) => {
+export const TeamNameInput = observer(function TeamNameInput(props: TeamNameInputProps) {
   const { disabled, value, workspaceSlug, teamspaceId, className, containerClassName } = props;
   // states
   const [name, setName] = useState("");

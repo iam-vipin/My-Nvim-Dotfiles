@@ -23,7 +23,7 @@ export type ActiveCycleInfoCardProps = {
   projectId: string;
 };
 
-export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
+export function ActiveCycleInfoCard(props: ActiveCycleInfoCardProps) {
   const { cycle, workspaceSlug, projectId } = props;
 
   const { data: progress } = useSWR(
@@ -57,4 +57,4 @@ export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = (props) => {
       </div>
     </Card>
   );
-};
+}

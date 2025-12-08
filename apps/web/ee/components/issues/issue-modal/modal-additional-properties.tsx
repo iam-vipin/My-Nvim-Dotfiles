@@ -17,40 +17,40 @@ import { TemplateSubWorkitemsList } from "./template-sub-workitems-list";
  * Includes custom properties and sub work item list for template creation.
  * This requires issue modal context to be available in the parent component.
  */
-export const WorkItemModalAdditionalProperties: React.FC<TWorkItemModalAdditionalPropertiesProps> = observer(
-  (props) => {
-    const { isDraft = false, workItemId, projectId, workspaceSlug } = props;
-    // form context
-    const { watch } = useFormContext<TIssue>();
-    // modal context
-    const { getActiveAdditionalPropertiesLength } = useIssueModal();
-    const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
-      projectId: projectId,
-      workspaceSlug: workspaceSlug,
-      watch: watch,
-    });
+export const WorkItemModalAdditionalProperties = observer(function WorkItemModalAdditionalProperties(
+  props: TWorkItemModalAdditionalPropertiesProps
+) {
+  const { isDraft = false, workItemId, projectId, workspaceSlug } = props;
+  // form context
+  const { watch } = useFormContext<TIssue>();
+  // modal context
+  const { getActiveAdditionalPropertiesLength } = useIssueModal();
+  const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
+    projectId: projectId,
+    workspaceSlug: workspaceSlug,
+    watch: watch,
+  });
 
-    return (
-      <div
-        className={cn(
-          "px-5",
-          activeAdditionalPropertiesLength <= 4 &&
-            "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
-        )}
-      >
-        {projectId && (
-          <IssueAdditionalProperties
-            entityType={EWorkItemTypeEntity.WORK_ITEM}
-            isDraft={isDraft}
-            issueId={workItemId}
-            issueServiceType={EIssueServiceType.ISSUES}
-            issueTypeId={watch("type_id")}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
-        )}
-        <TemplateSubWorkitemsList />
-      </div>
-    );
-  }
-);
+  return (
+    <div
+      className={cn(
+        "px-5",
+        activeAdditionalPropertiesLength <= 4 &&
+          "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+      )}
+    >
+      {projectId && (
+        <IssueAdditionalProperties
+          entityType={EWorkItemTypeEntity.WORK_ITEM}
+          isDraft={isDraft}
+          issueId={workItemId}
+          issueServiceType={EIssueServiceType.ISSUES}
+          issueTypeId={watch("type_id")}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+        />
+      )}
+      <TemplateSubWorkitemsList />
+    </div>
+  );
+});

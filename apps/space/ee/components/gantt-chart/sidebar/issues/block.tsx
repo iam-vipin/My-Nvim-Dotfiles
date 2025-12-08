@@ -17,7 +17,7 @@ type Props = {
   block: IGanttBlock;
 };
 
-export const IssuesSidebarBlock = observer((props: Props) => {
+export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Props) {
   const { block } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive } = useGanttChart();

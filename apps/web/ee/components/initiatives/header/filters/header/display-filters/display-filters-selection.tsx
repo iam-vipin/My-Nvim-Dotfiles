@@ -11,7 +11,7 @@ type Props = {
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<TInitiativeDisplayFilters>) => void;
 };
 
-export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
+export const DisplayFiltersSelection = observer(function DisplayFiltersSelection(props: Props) {
   const { displayFilters, handleDisplayFiltersUpdate } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof TInitiativeDisplayFilters) => {

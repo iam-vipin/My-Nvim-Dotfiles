@@ -17,7 +17,7 @@ interface TPageDetailProps {
   updateArtifact: (data: TUpdatedArtifact) => Promise<void>;
 }
 
-export const PageDetail: React.FC<TPageDetailProps> = observer((props) => {
+export const PageDetail = observer(function PageDetail(props: TPageDetailProps) {
   const { data, artifactId, activeChatId, workspaceSlug, updateArtifact } = props;
   const updatedData = usePageData(data.artifact_id);
   const editorRef = useRef<EditorRefApi>(null);

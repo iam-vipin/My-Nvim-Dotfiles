@@ -1,5 +1,3 @@
-"use-client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -11,7 +9,7 @@ import FavoriteChats from "./favorites";
 import RecentChats from "./recents";
 import { Toolbar } from "./toolbar";
 
-export const PiSidebar = observer(() => {
+export const PiSidebar = observer(function PiSidebar() {
   // states
   const [searchQuery, setSearchQuery] = useState("");
   // store
@@ -22,7 +20,7 @@ export const PiSidebar = observer(() => {
 
   useSWR(
     workspaceSlug ? `PI_FAVORITE_CHATS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug as string)?.id || "") : null,
+    workspaceSlug ? () => fetchFavoriteChats(getWorkspaceBySlug(workspaceSlug)?.id || "") : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,

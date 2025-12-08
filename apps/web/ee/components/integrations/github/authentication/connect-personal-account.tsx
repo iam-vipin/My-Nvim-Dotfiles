@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,9 @@ interface IConnectPersonalAccountProps {
   isEnterprise: boolean;
 }
 
-export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer(({ isEnterprise }) => {
+export const ConnectPersonalAccount = observer(function ConnectPersonalAccount({
+  isEnterprise,
+}: IConnectPersonalAccountProps) {
   // hooks
   const {
     workspace,

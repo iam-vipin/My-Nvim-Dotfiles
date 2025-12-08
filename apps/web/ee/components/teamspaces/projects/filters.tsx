@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -26,7 +24,7 @@ type Props = {
   projectId: string;
 };
 
-export const TeamspaceProjectWorkItemFilters = observer((props: Props) => {
+export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjectWorkItemFilters(props: Props) {
   const { teamspaceId, workspaceSlug, projectId } = props;
   const { t } = useTranslation();
   // store hooks

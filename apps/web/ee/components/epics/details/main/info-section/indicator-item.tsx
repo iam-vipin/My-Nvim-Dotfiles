@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type TEpicInfoIndicatorItemProps = {
   epicId: string;
 };
 
-export const EpicInfoIndicatorItem: FC<TEpicInfoIndicatorItemProps> = observer((props) => {
+export const EpicInfoIndicatorItem = observer(function EpicInfoIndicatorItem(props: TEpicInfoIndicatorItemProps) {
   const { epicId } = props;
   // hooks
   const { getEpicAnalyticsById } = useEpicAnalytics();

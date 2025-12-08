@@ -56,9 +56,9 @@ type TDefaultWorkItemBlueprintPropertiesProps<T extends FieldValues> = {
   projectId: string | undefined | null;
 } & (TUseMobxData | TUsePropsData);
 
-export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
+export function DefaultWorkItemBlueprintProperties<T extends FieldValues>(
   props: TDefaultWorkItemBlueprintPropertiesProps<T>
-) => {
+) {
   const {
     allowLabelCreation = true,
     createLabel,
@@ -280,4 +280,4 @@ export const DefaultWorkItemBlueprintProperties = <T extends FieldValues>(
       </div>
     </>
   );
-};
+}

@@ -14,7 +14,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+export const WorkspacePagesVersionEditor = observer(function WorkspacePagesVersionEditor(props: TVersionEditorProps) {
   const { activeVersion, versionDetails } = props;
   // navigation
   const { workspaceSlug, projectId } = useParams();

@@ -15,7 +15,7 @@ interface TWorkItemDetailProps {
   activeChatId: string;
 }
 
-export const WorkItemDetail = observer((props: TWorkItemDetailProps) => {
+export const WorkItemDetail = observer(function WorkItemDetail(props: TWorkItemDetailProps) {
   // props
   const { data, updateArtifact, workspaceSlug, activeChatId } = props;
   // state

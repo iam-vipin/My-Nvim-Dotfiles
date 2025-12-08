@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // plane imports
 import type { EPageSharedUserAccess } from "@plane/types";
@@ -54,7 +52,7 @@ type TSharePageModalProps = {
   originPosition?: { x: number; y: number } | null;
 };
 
-export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose, data, onAction }) => {
+export function SharePageModal({ isOpen, onClose, data, onAction }: TSharePageModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -116,6 +114,6 @@ export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose
       />
     </ModalCore>
   );
-};
+}
 
 SharePageModal.displayName = "SharePageModal";

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { TeamspaceSidebarListItem } from "./list-item";
 
-export const SidebarTeamsList = observer(() => {
+export const SidebarTeamsList = observer(function SidebarTeamsList() {
   // router params
   const { workspaceSlug } = useParams();
   // pathname

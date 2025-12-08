@@ -54,7 +54,7 @@ export class SlackAuthService {
         },
       });
 
-      return { response, state: state as SlackAuthState };
+      return { response, state: state };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
@@ -85,7 +85,7 @@ export class SlackAuthService {
         },
       });
 
-      return { response, state: state as SlackUserAuthState };
+      return { response, state: state };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;

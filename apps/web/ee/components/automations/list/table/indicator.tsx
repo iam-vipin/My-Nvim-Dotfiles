@@ -7,7 +7,7 @@ type TProps = {
   totalCount: number;
 };
 
-export const SuccessFailureIndicator: React.FC<TProps> = observer((props) => {
+export const SuccessFailureIndicator = observer(function SuccessFailureIndicator(props: TProps) {
   const { failedCount, successCount, totalCount } = props;
 
   if (totalCount === 0) return null;

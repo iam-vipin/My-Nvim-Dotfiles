@@ -30,7 +30,7 @@ type PageDisplayState = {
   text: string;
 };
 
-export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
+export const PageEmbedCardRoot = observer(function PageEmbedCardRoot(props: Props) {
   const { workspaceSlug, pageId, projectId, isNestedPagesEnabled } = props;
   // store hooks
   const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -316,7 +316,7 @@ export class JiraIssueTypesStep implements IStep {
     // Store mappings: external_id -> issue_type_id
     const validIssueTypes = issueTypes.filter((type) => type.external_id && type.id);
     const mappings = validIssueTypes.map((type) => ({
-      externalId: type.external_id!,
+      externalId: type.external_id,
       planeId: type.id!,
     }));
 
@@ -325,7 +325,7 @@ export class JiraIssueTypesStep implements IStep {
     // Store raw issue types data for dependent steps
     const issueTypesData: TIssueTypesData = validIssueTypes.map((type) => ({
       id: type.id!,
-      external_id: type.external_id!,
+      external_id: type.external_id,
       name: type.name || "",
       is_default: type.is_default || false,
       is_epic: type.is_epic || false,

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // ui
@@ -12,7 +10,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
+export const AppliedMembersFilters = observer(function AppliedMembersFilters(props: Props) {
   const { handleRemove, values } = props;
 
   const { getMemberById } = useMember();

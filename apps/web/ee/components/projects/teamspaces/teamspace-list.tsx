@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -21,7 +19,7 @@ import { LinkTeamspaceToProjectModal } from "./link-teamspace-modal";
 import { ProjectTeamspaceListLoader } from "./list-loader";
 import { ProjectTeamspaceListItem } from "./teamspace-list-item";
 
-export const ProjectTeamspaceList: React.FC<TProjectTeamspaceList> = observer((props) => {
+export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props: TProjectTeamspaceList) {
   // props
   const { workspaceSlug, projectId } = props;
   // states

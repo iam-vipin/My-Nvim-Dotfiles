@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import { StateGroupIcon } from "@plane/propel/icons";
@@ -13,7 +11,9 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow/workflow-tree/workflow-disabled-message";
 
-export const PowerKProjectStatesMenuItems: React.FC<TPowerKProjectStatesMenuItemsProps> = observer((props) => {
+export const PowerKProjectStatesMenuItems = observer(function PowerKProjectStatesMenuItems(
+  props: TPowerKProjectStatesMenuItemsProps
+) {
   const { handleSelect, projectId, selectedStateId, states, workspaceSlug } = props;
   // store hooks
   const { getIsWorkflowEnabled, getAvailableProjectStateIdMap } = useProjectState();

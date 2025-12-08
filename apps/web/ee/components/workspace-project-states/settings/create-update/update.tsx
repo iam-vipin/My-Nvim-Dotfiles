@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type TProjectStateUpdate = {
   handleClose: () => void;
 };
 
-export const ProjectStateUpdate: FC<TProjectStateUpdate> = observer((props) => {
+export const ProjectStateUpdate = observer(function ProjectStateUpdate(props: TProjectStateUpdate) {
   const { workspaceSlug, state, handleClose } = props;
   // hooks
   const { updateProjectState } = useProjectState(state.id);
@@ -51,7 +49,7 @@ export const ProjectStateUpdate: FC<TProjectStateUpdate> = observer((props) => {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      const errorStatus = error as unknown as { status: number };
+      const errorStatus = error as { status: number };
       captureError({
         eventName: PROJECT_STATE_TRACKER_EVENTS.update,
         payload: {

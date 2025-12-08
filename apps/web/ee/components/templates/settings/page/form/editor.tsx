@@ -20,7 +20,7 @@ type Props = {
   onChange: (json: object, html: string) => void;
 };
 
-export const PageTemplateEditor = observer((props: Props) => {
+export const PageTemplateEditor = observer(function PageTemplateEditor(props: Props) {
   const { workspaceSlug, projectId, templateId, initialValue, onChange } = props;
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();

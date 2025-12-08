@@ -41,7 +41,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectPagesListRoot: React.FC<Props> = observer((props) => {
+export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props: Props) {
   const { pageType, workspaceSlug, projectId } = props;
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);

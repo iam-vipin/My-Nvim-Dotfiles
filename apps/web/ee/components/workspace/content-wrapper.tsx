@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -13,7 +12,11 @@ import { PiChatArtifactsRoot } from "@/plane-web/components/pi-chat/actions/arti
 import { PiChatFloatingBot } from "@/plane-web/components/pi-chat/floating-bot";
 import { TopNavigationRoot } from "../navigations";
 
-export const WorkspaceContentWrapper = observer(({ children }: { children: React.ReactNode }) => {
+export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const shouldRenderAiCanvas = pathname.split("/").includes("pi-chat");
 

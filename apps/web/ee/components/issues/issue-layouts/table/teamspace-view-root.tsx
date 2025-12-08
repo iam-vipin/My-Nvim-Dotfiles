@@ -10,7 +10,7 @@ import { BaseSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadshe
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const TeamspaceViewTableLayout: React.FC = observer(() => {
+export const TeamspaceViewTableLayout = observer(function TeamspaceViewTableLayout() {
   // router
   const { workspaceSlug, viewId } = useParams();
   // hooks

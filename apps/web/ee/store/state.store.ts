@@ -26,7 +26,7 @@ export interface IStateStore extends ICoreStateStore {
   workflowChangeHistoryLoader: Record<string, TLoader>; // projectId => loader
   workflowChangeHistoryMap: Record<string, TWorkflowChangeHistory[]>; // projectId => workflowChangeHistory
   // computed functions
-  getIsWorkflowEnabled: (workspaceSlug: string, projectId?: string | null | undefined) => boolean;
+  getIsWorkflowEnabled: (workspaceSlug: string, projectId?: string | null) => boolean;
   getIsWorkItemCreationAllowedForState: (parentStateId: string) => boolean;
   getTransitionById: (parentStateId: string, transitionId: string) => IStateTransition;
   getAvailableStateTransitionIds: (
@@ -146,7 +146,7 @@ export class StateStore extends CoreStateStore implements IStateStore {
    * @param projectId
    * @returns
    */
-  getIsWorkflowEnabled = computedFn((workspaceSlug: string, projectId?: string | null | undefined) => {
+  getIsWorkflowEnabled = computedFn((workspaceSlug: string, projectId?: string | null) => {
     const isFeatureFlagEnabled = this.rootStore.featureFlags.getFeatureFlag(
       workspaceSlug,
       E_FEATURE_FLAGS.WORKFLOWS,

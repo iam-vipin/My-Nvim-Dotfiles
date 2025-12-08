@@ -12,7 +12,7 @@ type Props = {
   handleUpdate: (val: TInitiativeGroupByOptions) => void;
 };
 
-export const FilterGroupBy: React.FC<Props> = observer((props) => {
+export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

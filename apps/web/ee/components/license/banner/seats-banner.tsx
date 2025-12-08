@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
@@ -20,7 +18,7 @@ type TPlanMessageKeys = EPlanMessageKeys.FREE_PLAN | EPlanMessageKeys.NEAR_LIMIT
 
 const MAX_FREE_SEATS = 12;
 
-export const LicenseSeatsBanner: FC = observer(() => {
+export const LicenseSeatsBanner = observer(function LicenseSeatsBanner() {
   // hooks
   const { currentWorkspace } = useWorkspace();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();

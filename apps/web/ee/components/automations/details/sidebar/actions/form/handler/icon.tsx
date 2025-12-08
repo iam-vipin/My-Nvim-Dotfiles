@@ -8,7 +8,7 @@ type Props = {
 
 const COMMON_ICON_CLASSNAME = "size-3.5 flex-shrink-0";
 
-export const AutomationActionHandlerIcon: React.FC<Props> = (props) => {
+export function AutomationActionHandlerIcon(props: Props) {
   switch (props.iconKey) {
     case "message-circle":
       return <MessageCircle className={COMMON_ICON_CLASSNAME} />;
@@ -17,4 +17,4 @@ export const AutomationActionHandlerIcon: React.FC<Props> = (props) => {
     default:
       return null;
   }
-};
+}

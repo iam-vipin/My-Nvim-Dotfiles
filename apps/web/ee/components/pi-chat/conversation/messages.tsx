@@ -19,7 +19,7 @@ type TProps = {
   setHasMoreMessages: (value: boolean) => void;
 };
 
-export const Messages = observer((props: TProps) => {
+export const Messages = observer(function Messages(props: TProps) {
   const {
     currentUser,
     isLoading,

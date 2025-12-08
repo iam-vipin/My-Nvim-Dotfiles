@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,7 +18,7 @@ export type TStateDropdown = {
   optionsClassName?: string;
   labelIconSize?: string;
 };
-export const StateDropdown: FC<TStateDropdown> = observer((props) => {
+export const StateDropdown = observer(function StateDropdown(props: TStateDropdown) {
   const {
     workspaceId,
     onChange,

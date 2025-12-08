@@ -23,7 +23,7 @@ type TProps = {
   borderPosition?: "top" | "bottom";
 };
 
-export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) => {
+export function AutomationDetailsSidebarActionButtons(props: TProps) {
   const { nextButton, previousButton, borderPosition = "top" } = props;
 
   return (
@@ -66,4 +66,4 @@ export const AutomationDetailsSidebarActionButtons: React.FC<TProps> = (props) =
       </div>
     </div>
   );
-};
+}

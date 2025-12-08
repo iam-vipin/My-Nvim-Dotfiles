@@ -14,7 +14,7 @@ type TLinkList = {
   disabled?: boolean;
 };
 
-export const LinkList: FC<TLinkList> = observer((props) => {
+export const LinkList = observer(function LinkList(props: TLinkList) {
   // props
   const { initiativeId, linkOperations, disabled = false } = props;
   // hooks

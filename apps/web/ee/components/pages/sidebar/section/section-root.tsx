@@ -22,7 +22,7 @@ import { SECTION_DETAILS } from "./constants";
 import { useSectionDragAndDrop, useSectionPages } from "./hooks";
 import type { SectionRootProps } from "./types";
 
-const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((props) => {
+const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSectionRootContent(props: SectionRootProps) {
   const { expandedPageIds, sectionType, setExpandedPageIds, currentPageId } = props;
   // states
   const [isCreatingPage, setIsCreatingPage] = useState<TPageNavigationTabs | null>(null);

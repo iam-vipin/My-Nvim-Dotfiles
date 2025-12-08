@@ -19,7 +19,10 @@ export type WorkItemSuggestionsDropdownProps = SuggestionProps & {
   onClose: () => void;
 };
 
-const WorkItemSuggestionsDropdown = forwardRef((props: WorkItemSuggestionsDropdownProps, ref) => {
+const WorkItemSuggestionsDropdown = forwardRef(function WorkItemSuggestionsDropdown(
+  props: WorkItemSuggestionsDropdownProps,
+  ref
+) {
   const { editor, searchCallback, query, range, onClose } = props;
   // states
   const [items, setItems] = useState<TEmbedItem[] | undefined>(undefined);
@@ -151,9 +154,10 @@ const WorkItemSuggestionsDropdown = forwardRef((props: WorkItemSuggestionsDropdo
   );
 });
 
-export const WorkItemSuggestionsDropdownRenderer =
-  (searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>): SuggestionOptions["render"] =>
-  () => {
+export function WorkItemSuggestionsDropdownRenderer(
+  searchCallback: (searchQuery: string) => Promise<TEmbedItem[]>
+): SuggestionOptions["render"] {
+  return () => {
     let component: ReactRenderer<CommandListInstance, WorkItemSuggestionsDropdownProps> | null = null;
     let cleanup: () => void = () => {};
     let editorRef: Editor | null = null;
@@ -211,3 +215,4 @@ export const WorkItemSuggestionsDropdownRenderer =
       },
     };
   };
+}

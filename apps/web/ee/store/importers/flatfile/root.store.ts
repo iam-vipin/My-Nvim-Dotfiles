@@ -200,7 +200,7 @@ export class FlatfileStore extends ImporterBaseStore implements IFlatfileStore {
       });
     } catch (error) {
       runInAction(() => {
-        set(this.authentication, [userId], error as unknown as TServiceAuthConfiguration);
+        set(this.authentication, [userId], error as TServiceAuthConfiguration);
       });
 
       throw error;

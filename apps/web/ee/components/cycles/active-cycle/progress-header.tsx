@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useRef } from "react";
 import { format, startOfToday } from "date-fns";
@@ -23,7 +21,7 @@ type Props = {
   cycleDetails: ICycle;
 };
 
-export const CycleProgressHeader: FC<Props> = (props: Props) => {
+export function CycleProgressHeader(props: Props) {
   const { workspaceSlug, projectId, cycleId, progress, cycleDetails } = props;
 
   // router
@@ -76,4 +74,4 @@ export const CycleProgressHeader: FC<Props> = (props: Props) => {
       </div>
     </ControlLink>
   );
-};
+}

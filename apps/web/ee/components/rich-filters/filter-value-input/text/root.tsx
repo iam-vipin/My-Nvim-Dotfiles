@@ -24,7 +24,9 @@ type TTextFilterValueInputProps<P extends TFilterProperty> = {
   onChange: (value: string | null) => void;
 };
 
-export const TextFilterValueInput = observer(<P extends TFilterProperty>(props: TTextFilterValueInputProps<P>) => {
+export const TextFilterValueInput = observer(function TextFilterValueInput<P extends TFilterProperty>(
+  props: TTextFilterValueInputProps<P>
+) {
   const { config, condition, onChange, isDisabled } = props;
   // derived values
   const conditionValue = condition.value?.toString();

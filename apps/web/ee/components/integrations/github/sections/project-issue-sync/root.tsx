@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -37,7 +35,9 @@ interface IProjectIssueSyncRootProps {
   isEnterprise: boolean;
 }
 
-export const ProjectIssueSyncRoot: FC<IProjectIssueSyncRootProps> = observer(({ isEnterprise }) => {
+export const ProjectIssueSyncRoot = observer(function ProjectIssueSyncRoot({
+  isEnterprise,
+}: IProjectIssueSyncRootProps) {
   // hooks
   const {
     workspace,

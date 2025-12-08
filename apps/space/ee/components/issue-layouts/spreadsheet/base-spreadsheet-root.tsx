@@ -15,7 +15,7 @@ type Props = {
   anchor: string;
 };
 
-export const BaseSpreadsheetRoot = observer((props: Props) => {
+export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: Props) {
   const { anchor } = props;
   const {
     groupedIssueIds,

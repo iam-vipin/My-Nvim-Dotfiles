@@ -15,7 +15,7 @@ import { InstallationCard, PersonalAccountInstallationCard } from "@/plane-web/c
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
 import { ProjectUpdatesRoot } from "./sections";
 
-export const SlackIntegrationRoot = observer(() => {
+export const SlackIntegrationRoot = observer(function SlackIntegrationRoot() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks

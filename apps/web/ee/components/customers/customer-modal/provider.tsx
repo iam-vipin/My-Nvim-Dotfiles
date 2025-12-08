@@ -17,7 +17,7 @@ type TCustomerModalProviderProps = {
 
 const customerPropertiesValueService = new CustomerPropertyValueService();
 
-export const CustomerModalProvider = observer((props: TCustomerModalProviderProps) => {
+export const CustomerModalProvider = observer(function CustomerModalProvider(props: TCustomerModalProviderProps) {
   const { children } = props;
   // states
   const [customerPropertyValues, setCustomerPropertyValues] = useState<TIssuePropertyValues>({});

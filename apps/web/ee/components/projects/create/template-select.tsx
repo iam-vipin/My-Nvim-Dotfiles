@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creati
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
 
-export const ProjectTemplateSelect = observer((props: TProjectTemplateSelect) => {
+export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(props: TProjectTemplateSelect) {
   const { disabled = false, size = "sm", placeholder, dropDownContainerClassName, handleModalClose } = props;
   // router
   const { workspaceSlug } = useParams();

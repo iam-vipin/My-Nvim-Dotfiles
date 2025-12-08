@@ -8,7 +8,7 @@ type Props = {
   widget: DashboardWidgetInstance;
 };
 
-export const DashboardWidgetLoader: React.FC<Props> = observer((props) => {
+export const DashboardWidgetLoader = observer(function DashboardWidgetLoader(props: Props) {
   const {} = props;
 
   return (

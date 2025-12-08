@@ -18,7 +18,7 @@ type Props = {
   templateId: string | undefined;
 };
 
-export const PageTemplatePageDetails: React.FC<Props> = observer((props) => {
+export const PageTemplatePageDetails = observer(function PageTemplatePageDetails(props: Props) {
   const { workspaceSlug, templateId } = props;
   // plane hooks
   const { t } = useTranslation();

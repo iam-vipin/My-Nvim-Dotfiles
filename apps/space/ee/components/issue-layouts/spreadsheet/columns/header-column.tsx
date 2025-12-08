@@ -1,5 +1,3 @@
-"use client";
-
 //ui
 import type { IIssueDisplayProperties } from "@plane/types";
 import { SPREADSHEET_PROPERTY_DETAILS } from "..";
@@ -11,7 +9,7 @@ interface Props {
   property: keyof IIssueDisplayProperties;
 }
 
-export const HeaderColumn = (props: Props) => {
+export function HeaderColumn(props: Props) {
   const { property } = props;
 
   const propertyDetails = SPREADSHEET_PROPERTY_DETAILS[property];
@@ -26,4 +24,4 @@ export const HeaderColumn = (props: Props) => {
       </div>
     </div>
   );
-};
+}

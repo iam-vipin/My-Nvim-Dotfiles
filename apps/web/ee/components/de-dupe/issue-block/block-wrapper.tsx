@@ -1,5 +1,3 @@
-"use-client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type TDeDupeIssueBlockWrapperProps = {
   isSelected?: boolean;
 };
 
-export const DeDupeIssueBlockWrapper: FC<TDeDupeIssueBlockWrapperProps> = observer((props) => {
+export const DeDupeIssueBlockWrapper = observer(function DeDupeIssueBlockWrapper(props: TDeDupeIssueBlockWrapperProps) {
   const { workspaceSlug, issue, isSelected = false, children } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();

@@ -14,7 +14,7 @@ type Props = {
   };
 };
 
-export const ProjectUpdateDeleteModal: FC<Props> = observer((props) => {
+export const ProjectUpdateDeleteModal = observer(function ProjectUpdateDeleteModal(props: Props) {
   const { isOpen, onClose, updateOperations } = props;
   // states
   const [loader, setLoader] = useState(false);

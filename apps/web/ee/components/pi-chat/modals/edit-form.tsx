@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useState } from "react";
 // types
@@ -20,7 +18,7 @@ type Props = {
   handleModalClose: () => void;
 };
 
-export const EditForm: React.FC<Props> = (props) => {
+export function EditForm(props: Props) {
   const { chatId, title, handleModalClose, workspaceId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -95,4 +93,4 @@ export const EditForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

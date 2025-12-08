@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";
@@ -7,7 +5,7 @@ import { Button } from "@plane/propel/button";
 type Props = {
   toggleProjectGroupingFeature: () => void;
 };
-export const WorkspaceProjectStatesEmptyState: FC<Props> = ({ toggleProjectGroupingFeature }) => {
+export function WorkspaceProjectStatesEmptyState({ toggleProjectGroupingFeature }: Props) {
   const { resolvedTheme } = useTheme();
 
   // derived values
@@ -34,4 +32,4 @@ export const WorkspaceProjectStatesEmptyState: FC<Props> = ({ toggleProjectGroup
       </Button>
     </div>
   );
-};
+}

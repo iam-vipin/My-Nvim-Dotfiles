@@ -8,7 +8,7 @@ type TProps = {
   onClick?: () => void;
 };
 
-export const AutomationDetailsMainContentBlockWrapper: React.FC<TProps> = (props) => {
+export function AutomationDetailsMainContentBlockWrapper(props: TProps) {
   const { children, isSelected, onClick } = props;
 
   return (
@@ -22,4 +22,4 @@ export const AutomationDetailsMainContentBlockWrapper: React.FC<TProps> = (props
       {children}
     </div>
   );
-};
+}

@@ -18,7 +18,7 @@ type Props = {
   widget: DashboardWidgetInstance;
 };
 
-export const DashboardWidgetContent: React.FC<Props> = (props) => {
+export function DashboardWidgetContent(props: Props) {
   const { activeBreakpoint, children, className, dashboardId, isDataAvailable, isDataEmpty, widget } = props;
   // derived values
   const { isWidgetAvailableInCurrentPlan } = widget;
@@ -51,4 +51,4 @@ export const DashboardWidgetContent: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

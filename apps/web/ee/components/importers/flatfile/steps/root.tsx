@@ -9,7 +9,7 @@ import { IMPORTER_STEPS } from "@/plane-web/constants/importers/flatfile";
 // hooks
 import { useFlatfileImporter } from "@/plane-web/hooks/store";
 
-export const StepsRoot: FC = observer(() => {
+export const StepsRoot = observer(function StepsRoot() {
   const { currentStepIndex, resetImporterData } = useFlatfileImporter();
 
   return (

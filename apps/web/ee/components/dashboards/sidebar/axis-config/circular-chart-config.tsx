@@ -13,7 +13,7 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarCircularChartConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarCircularChartConfig(props: Props) {
   const { handleSubmit } = props;
   // translation
   const { t } = useTranslation();
@@ -83,4 +83,4 @@ export const WidgetConfigSidebarCircularChartConfig: React.FC<Props> = (props) =
       />
     </div>
   );
-};
+}

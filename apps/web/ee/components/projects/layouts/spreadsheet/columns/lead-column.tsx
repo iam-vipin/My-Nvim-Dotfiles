@@ -12,7 +12,7 @@ type Props = {
   project: TProject;
 };
 
-export const SpreadsheetLeadColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetLeadColumn = observer(function SpreadsheetLeadColumn(props: Props) {
   const { project } = props;
 
   // hooks

@@ -12,7 +12,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const WidgetColorSchemeSelect: React.FC<Props> = (props) => {
+export function WidgetColorSchemeSelect(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -74,4 +74,4 @@ export const WidgetColorSchemeSelect: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

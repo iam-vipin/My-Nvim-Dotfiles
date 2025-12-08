@@ -10,7 +10,7 @@ type TProps = {
   projectId: string;
 };
 
-export const MilestoneWorkItemsList = observer((props: TProps) => {
+export const MilestoneWorkItemsList = observer(function MilestoneWorkItemsList(props: TProps) {
   const { milestoneId, workspaceSlug, projectId } = props;
   const { fetchMilestoneWorkItems, getMilestoneById } = useMilestones();
 

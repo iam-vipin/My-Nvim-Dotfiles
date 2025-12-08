@@ -11,7 +11,7 @@ import { serverAgentManager } from "@/agents/server-agent";
  * @param param0
  */
 export const onStateless = async ({ payload, document, connection }: onStatelessPayload) => {
-  const payloadStr = payload as string;
+  const payloadStr = payload;
 
   // Function to safely parse JSON without throwing exceptions
   const safeJsonParse = (str: string) => {
@@ -26,7 +26,7 @@ export const onStateless = async ({ payload, document, connection }: onStateless
   const documentEvent = DocumentCollaborativeEvents[payload as TDocumentEventsServer]?.client;
 
   if (documentEvent) {
-    const eventType = documentEvent as keyof EventToPayloadMap;
+    const eventType = documentEvent;
 
     let eventData: Partial<EventToPayloadMap[typeof eventType]> = {
       user_id: connection.context.userId,

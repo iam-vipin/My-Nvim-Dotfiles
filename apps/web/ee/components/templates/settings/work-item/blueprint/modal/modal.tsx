@@ -30,7 +30,9 @@ type TCreateUpdateWorkItemBlueprintModalProps = TCreateUpdateWorkItemBlueprintFo
   customPropertyValuesForPreload?: TIssuePropertyValues | null;
 } & (TCreateUpdateWorkItemBlueprintWithMobxData | TCreateUpdateWorkItemBlueprintWithPropsData);
 
-export const CreateUpdateWorkItemBlueprintModal = observer((props: TCreateUpdateWorkItemBlueprintModalProps) => {
+export const CreateUpdateWorkItemBlueprintModal = observer(function CreateUpdateWorkItemBlueprintModal(
+  props: TCreateUpdateWorkItemBlueprintModalProps
+) {
   if (!props.isOpen) return null;
   return (
     <IssueModalProvider>
@@ -39,7 +41,9 @@ export const CreateUpdateWorkItemBlueprintModal = observer((props: TCreateUpdate
   );
 });
 
-const CreateUpdateWorkItemBlueprintModalBase: React.FC<TCreateUpdateWorkItemBlueprintModalProps> = observer((props) => {
+const CreateUpdateWorkItemBlueprintModalBase = observer(function CreateUpdateWorkItemBlueprintModalBase(
+  props: TCreateUpdateWorkItemBlueprintModalProps
+) {
   const { isOpen, customPropertyValuesForPreload, dataForPreload, projectId, usePropsForAdditionalData } = props;
   // store hooks
   const { getProjectDefaultWorkItemTypeId: getProjectDefaultWorkItemTypeIdFromStore } = useIssueTypes();

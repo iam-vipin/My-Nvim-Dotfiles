@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ type Props = {
   view: TTeamspaceView;
 };
 
-export const TeamspaceViewListItem: FC<Props> = observer((props) => {
+export const TeamspaceViewListItem = observer(function TeamspaceViewListItem(props: Props) {
   const { teamspaceId, view } = props;
   // refs
   const parentRef = useRef(null);

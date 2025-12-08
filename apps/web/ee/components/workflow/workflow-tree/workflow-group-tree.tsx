@@ -16,7 +16,7 @@ type Props = {
   groupId: string | undefined;
 };
 
-export const WorkFlowGroupTree = observer((props: Props) => {
+export const WorkFlowGroupTree = observer(function WorkFlowGroupTree(props: Props) {
   const { groupBy, groupId } = props;
   // router
   const { workspaceSlug } = useParams();

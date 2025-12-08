@@ -9,7 +9,7 @@ interface Props {
   displayProperties: IIssueDisplayProperties;
   property: keyof IIssueDisplayProperties;
 }
-export const SpreadsheetHeaderColumn = observer((props: Props) => {
+export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: Props) {
   const { displayProperties, property } = props;
 
   return (

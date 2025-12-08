@@ -13,7 +13,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageCopyLinkControl = observer(({ page }: Props) => {
+export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page }: Props) {
   const [isCopied, setIsCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

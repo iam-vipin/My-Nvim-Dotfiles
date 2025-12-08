@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -36,7 +34,7 @@ const cycleCountOptions = [
   { value: 3, label: "3 cycles" },
 ];
 
-export const AutoScheduleCycles = observer(() => {
+export const AutoScheduleCycles = observer(function AutoScheduleCycles() {
   const { workspaceSlug, projectId } = useParams();
 
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 import IntakeTooltip from "../intake-tooltip";
 import { IntakeHeaderQuickActions } from "./quick-actions";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router

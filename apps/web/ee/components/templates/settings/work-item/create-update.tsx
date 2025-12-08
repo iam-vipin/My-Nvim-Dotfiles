@@ -45,7 +45,9 @@ type TCreateUpdateWorkItemTemplateProps = {
     }
 );
 
-export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkItemTemplateProps) => {
+export const CreateUpdateWorkItemTemplate = observer(function CreateUpdateWorkItemTemplate(
+  props: TCreateUpdateWorkItemTemplateProps
+) {
   const { workspaceSlug, templateId, currentLevel } = props;
   // router
   const router = useAppRouter();

@@ -10,7 +10,7 @@ type Props = {
   automationId: string;
 };
 
-export const AutomationDetailsSidebarRoot: React.FC<Props> = observer((props) => {
+export const AutomationDetailsSidebarRoot = observer(function AutomationDetailsSidebarRoot(props: Props) {
   const { automationId } = props;
   // store hooks
   const { getAutomationById } = useAutomations();

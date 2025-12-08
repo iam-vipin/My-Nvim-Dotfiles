@@ -1,9 +1,7 @@
-"use client";
-
 import { FlatfileProvider } from "@flatfile/react";
 
-const FlatfileClientProvider: typeof FlatfileProvider = (props) => (
-  <FlatfileProvider {...props}>{props.children}</FlatfileProvider>
-);
+function FlatfileClientProvider(props: React.ComponentPropsWithoutRef<typeof FlatfileProvider>) {
+  return <FlatfileProvider {...props}>{props.children}</FlatfileProvider>;
+}
 
 export default FlatfileClientProvider;

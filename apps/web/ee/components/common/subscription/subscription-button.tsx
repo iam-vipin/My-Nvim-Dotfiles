@@ -13,7 +13,7 @@ type TProps = {
   showTooltip?: boolean;
 };
 
-export const SubscriptionButton = (props: TProps) => {
+export function SubscriptionButton(props: TProps) {
   const { subscriptionType, handleClick, children, className, tooltipContent, showTooltip = false } = props;
   // derived values
   const subscriptionColor =
@@ -36,4 +36,4 @@ export const SubscriptionButton = (props: TProps) => {
       </button>
     </Tooltip>
   );
-};
+}

@@ -11,7 +11,7 @@ type TBlockMathComponentProps = TMathComponentProps & {
   isEditable?: boolean;
 };
 
-export const BlockMathView: FC<TBlockMathComponentProps> = ({ latex, onClick, isEditable }) => {
+export function BlockMathView({ latex, onClick, isEditable }: TBlockMathComponentProps) {
   const { mathRef } = useMathRenderer<HTMLDivElement>(latex, { displayMode: true, throwOnError: false });
 
   return (
@@ -24,4 +24,4 @@ export const BlockMathView: FC<TBlockMathComponentProps> = ({ latex, onClick, is
       />
     </BlockMathContainer>
   );
-};
+}

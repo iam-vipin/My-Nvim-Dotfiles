@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -23,7 +21,7 @@ type Props = {
   totalProjects: number;
 };
 
-export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
+export function ProjectAppliedFiltersList(props: Props) {
   const {
     appliedFilters,
     handleClearAllFilters,
@@ -124,4 +122,4 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
       </Header.RightItem>
     </Header>
   );
-};
+}

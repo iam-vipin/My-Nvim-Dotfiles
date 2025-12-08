@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteTeamspaceViewModal: React.FC<Props> = observer((props) => {
+export const DeleteTeamspaceViewModal = observer(function DeleteTeamspaceViewModal(props: Props) {
   const { data, isOpen, onClose, teamspaceId } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

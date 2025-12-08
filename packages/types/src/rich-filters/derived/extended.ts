@@ -77,13 +77,11 @@ export type TExtendedSupportedMultiSelectFilterOperators<V extends TFilterValue 
  * Union type representing all extended operators that support select filter types.
  */
 export type TExtendedSupportedSelectFilterOperators<V extends TFilterValue = TFilterValue> =
-  | TExtendedSupportedSingleSelectFilterOperators<V>
-  | TExtendedSupportedMultiSelectFilterOperators<V>;
+  TExtendedSupportedSingleSelectFilterOperators<V>;
 
 export type TExtendedAllAvailableSelectFilterOperatorsForDisplay<V extends TFilterValue = TFilterValue> =
   | `-${TCoreSupportedSelectFilterOperators<V>}`
-  | TExtendedSupportedSelectFilterOperators<V>
-  | `-${TExtendedSupportedSelectFilterOperators<V>}`;
+  | TExtendedSupportedSelectFilterOperators<V>;
 
 // -------- BOOLEAN FILTER OPERATORS --------
 

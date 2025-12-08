@@ -10,7 +10,7 @@ type TNumberInputProps = {
   required?: boolean;
 };
 
-export const NumberInput: React.FC<TNumberInputProps> = ({ property, isPreview = false, required = false }) => {
+export function NumberInput({ property, isPreview = false, required = false }: TNumberInputProps) {
   const {
     control,
     formState: { errors },
@@ -59,4 +59,4 @@ export const NumberInput: React.FC<TNumberInputProps> = ({ property, isPreview =
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

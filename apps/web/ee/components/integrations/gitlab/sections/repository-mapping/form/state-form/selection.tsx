@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Ban } from "lucide-react";
@@ -16,7 +14,7 @@ type TStateFormSelection = {
   planeStates: IState[];
 };
 
-export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
+export const StateFormSelection = observer(function StateFormSelection(props: TStateFormSelection) {
   const { title, value, handleValue, planeStates } = props;
   const { t } = useTranslation();
 

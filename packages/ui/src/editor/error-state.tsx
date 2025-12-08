@@ -48,7 +48,7 @@ const getErrorDetails = (errorCode: string = "", theme: string) => {
       };
   }
 };
-export const ErrorState = ({ error, code, theme }: ErrorStateProps) => {
+export function ErrorState({ error, code, theme }: ErrorStateProps) {
   // state
   const [isVisible, setIsVisible] = useState(false);
   // dervied
@@ -76,4 +76,4 @@ export const ErrorState = ({ error, code, theme }: ErrorStateProps) => {
       </div>
     </div>
   );
-};
+}

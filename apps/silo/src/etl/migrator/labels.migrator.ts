@@ -33,5 +33,5 @@ export const createLabelsForIssues = async (
   };
 
   const createdLabels = await processBatchPromises(labels, createOrUpdateLabel, 2);
-  return createdLabels.filter((label) => label !== undefined) as ExIssueLabel[];
+  return createdLabels.filter((label) => label !== undefined);
 };

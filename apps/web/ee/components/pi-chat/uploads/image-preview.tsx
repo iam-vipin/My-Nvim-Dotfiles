@@ -11,7 +11,7 @@ type Props = {
   loadingPercentage?: number;
   onRemove?: () => void;
 };
-export const ImagePreview = (props: Props) => {
+export function ImagePreview(props: Props) {
   const { attachment, onRemove, isLoading = false, loadingPercentage } = props;
   const [scaledWidth, setScaledWidth] = useState<number | null>(null);
   const [meta, setMeta] = useState<{ width: number; height: number | null; aspect_ratio: number | null } | null>(null);
@@ -70,4 +70,4 @@ export const ImagePreview = (props: Props) => {
       </div>
     )
   );
-};
+}

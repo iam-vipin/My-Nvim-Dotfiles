@@ -12,9 +12,11 @@ type TBlockMathEmptyProps = TMathComponentProps & {
   isEditable?: boolean;
 };
 
-export const BlockMathEmptyState: React.FC<TBlockMathEmptyProps> = ({ onClick, selected, editor, isEditable }) => (
-  <BlockMathContainer onClick={onClick} selected={selected} editor={editor} variant="empty" isEditable={isEditable}>
-    <Sigma className="size-4 shrink-0" />
-    <div className="text-base font-medium">Click to add equation</div>
-  </BlockMathContainer>
-);
+export function BlockMathEmptyState({ onClick, selected, editor, isEditable }: TBlockMathEmptyProps) {
+  return (
+    <BlockMathContainer onClick={onClick} selected={selected} editor={editor} variant="empty" isEditable={isEditable}>
+      <Sigma className="size-4 shrink-0" />
+      <div className="text-base font-medium">Click to add equation</div>
+    </BlockMathContainer>
+  );
+}

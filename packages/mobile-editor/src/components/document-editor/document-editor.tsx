@@ -29,7 +29,7 @@ const editorProps = {
   scrollThreshold: 80,
 };
 
-export const MobileDocumentEditor = () => {
+export function MobileDocumentEditor() {
   const [initialParams, setInitialParams] = useState<TDocumentEditorParams | undefined>();
   // hooks
   const {
@@ -179,4 +179,4 @@ export const MobileDocumentEditor = () => {
       />
     </div>
   );
-};
+}

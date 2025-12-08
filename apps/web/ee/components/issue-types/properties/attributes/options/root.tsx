@@ -18,7 +18,7 @@ type TIssuePropertyOptionsRoot = {
   error?: string;
 };
 
-export const IssuePropertyOptionsRoot: FC<TIssuePropertyOptionsRoot> = observer((props) => {
+export const IssuePropertyOptionsRoot = observer(function IssuePropertyOptionsRoot(props: TIssuePropertyOptionsRoot) {
   const { customPropertyId, error } = props;
   // plane imports
   const { t } = useTranslation();

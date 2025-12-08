@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -31,7 +29,7 @@ type ProjectBoardGroupItem = {
   dropErrorMessage?: string;
 };
 
-export const ProjectBoardGroupItem: FC<ProjectBoardGroupItem> = observer((props) => {
+export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(props: ProjectBoardGroupItem) {
   const { groupByKey, projectIds, verticalAlign, setVerticalAlign, dropErrorMessage = "" } = props;
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const columnRef = useRef<HTMLDivElement | null>(null);

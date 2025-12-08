@@ -7,7 +7,7 @@ type EditorMentionsRootProps = TCallbackMentionComponentProps & {
   currentUserId: string;
 };
 
-export const EditorMentionsRoot: React.FC<EditorMentionsRootProps> = (props) => {
+export function EditorMentionsRoot(props: EditorMentionsRootProps) {
   const { entity_identifier, entity_name, currentUserId } = props;
 
   switch (entity_name) {
@@ -16,4 +16,4 @@ export const EditorMentionsRoot: React.FC<EditorMentionsRootProps> = (props) => 
     default:
       return null;
   }
-};
+}

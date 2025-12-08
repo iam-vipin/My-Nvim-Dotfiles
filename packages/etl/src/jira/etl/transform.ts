@@ -200,9 +200,9 @@ export const transformIssueFieldOptions = (
 
 export const transformIssuePropertyValues = (
   issue: IJiraIssue,
-  // eslint-disable-next-line no-undef
+
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>,
-  // eslint-disable-next-line no-undef
+
   jiraCustomFieldMap: Map<string, string>
 ): TPropertyValuesPayload => {
   // Get all custom fields that are present in the issue and are also present in the plane issue properties

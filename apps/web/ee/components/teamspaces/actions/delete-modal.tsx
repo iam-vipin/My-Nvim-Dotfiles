@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
@@ -20,7 +18,7 @@ type DeleteTeamspaceModal = {
   onClose: () => void;
 };
 
-export const DeleteTeamspaceModal: React.FC<DeleteTeamspaceModal> = (props) => {
+export function DeleteTeamspaceModal(props: DeleteTeamspaceModal) {
   const { isModalOpen, teamspaceId, onClose } = props;
   // router
   const router = useAppRouter();
@@ -147,4 +145,4 @@ export const DeleteTeamspaceModal: React.FC<DeleteTeamspaceModal> = (props) => {
       </form>
     </ModalCore>
   );
-};
+}

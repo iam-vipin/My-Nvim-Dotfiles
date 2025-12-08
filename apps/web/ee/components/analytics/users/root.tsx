@@ -19,7 +19,7 @@ import WiResolvedVsPending from "./wi-resolved-vs-pending";
 
 const analyticsService = new AnalyticsService();
 
-const Users: React.FC = observer(() => {
+const Users = observer(function Users() {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
 

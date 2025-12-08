@@ -11,7 +11,7 @@ type TProps = {
   disabled: boolean;
 };
 
-export const CustomerRequestActionButton: FC<TProps> = observer((props) => {
+export const CustomerRequestActionButton = observer(function CustomerRequestActionButton(props: TProps) {
   const { disabled, workItemId } = props;
 
   const { createUpdateRequestModalId, toggleCreateUpdateRequestModal } = useCustomers();

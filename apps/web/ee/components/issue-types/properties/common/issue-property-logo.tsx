@@ -12,7 +12,7 @@ type Props = {
   colorClassName?: string;
 };
 
-export const IssuePropertyLogo: FC<Props> = (props) => {
+export function IssuePropertyLogo(props: Props) {
   const { icon_props, size = 16, colorClassName = "" } = props;
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name)?.element ?? TriangleAlert;
@@ -30,4 +30,4 @@ export const IssuePropertyLogo: FC<Props> = (props) => {
       />
     </>
   );
-};
+}

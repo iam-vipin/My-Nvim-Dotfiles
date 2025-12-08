@@ -124,11 +124,11 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     const state = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "state");
 
     if (assigneeIds?.value && !Array.isArray(assigneeIds.value)) {
-      assigneeIds.value = [assigneeIds.value as string];
+      assigneeIds.value = [assigneeIds.value];
     }
 
     if (labels?.value && !Array.isArray(labels.value)) {
-      labels.value = [labels.value as string];
+      labels.value = [labels.value];
     }
 
     return {

@@ -21,7 +21,7 @@ const renderScopeLabel = (data: TCycleProgress[], props: any) => {
         {prevValue < value ? "+" : "-"}
         {`${Math.abs(value - prevValue)}`}
       </text>
-      <line x1={x} y1={26} x2={x} y2={30} stroke="#003FCC" stroke-width="1" />
+      <line x1={x} y1={26} x2={x} y2={30} stroke="#003FCC" strokeWidth="1" />
     </g>
   ) : (
     <></>

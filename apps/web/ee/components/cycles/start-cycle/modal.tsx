@@ -9,7 +9,7 @@ interface Props {
   loading: boolean;
 }
 
-export const StartCycleModal: React.FC<Props> = (props) => {
+export function StartCycleModal(props: Props) {
   const { isOpen, handleClose, handleStartCycle, loading } = props;
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.MD}>
@@ -27,4 +27,4 @@ export const StartCycleModal: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

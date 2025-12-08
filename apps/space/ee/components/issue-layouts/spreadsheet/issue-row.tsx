@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ interface Props {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
-export const SpreadsheetIssueRow = observer((props: Props) => {
+export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
   const { displayProperties, issueId, isScrolled, spreadsheetColumnsList } = props;
 
   return (
@@ -49,7 +47,7 @@ interface IssueRowDetailsProps {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
-const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
+const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetailsProps) {
   const { anchor } = useParams();
   const { project_details } = usePublish(anchor.toString());
   const { displayProperties, issueId, isScrolled, spreadsheetColumnsList } = props;

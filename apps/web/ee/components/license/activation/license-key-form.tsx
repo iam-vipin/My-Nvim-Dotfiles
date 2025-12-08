@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ export type TLicenseKeyFormProps = {
   handleClose: () => void;
 };
 
-export const LicenseKeyForm: FC<TLicenseKeyFormProps> = observer((props) => {
+export const LicenseKeyForm = observer(function LicenseKeyForm(props: TLicenseKeyFormProps) {
   const { workspaceSlug, hasPermission, onSuccess, onError, handleClose } = props;
   // hooks
   const { activateUsingLicenseKey } = useSelfHostedSubscription();

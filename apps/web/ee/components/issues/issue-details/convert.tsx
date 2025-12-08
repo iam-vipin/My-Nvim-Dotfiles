@@ -12,7 +12,7 @@ type TWorkItemConvertActivity = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const WorkItemConvertActivity: FC<TWorkItemConvertActivity> = observer((props) => {
+export const WorkItemConvertActivity = observer(function WorkItemConvertActivity(props: TWorkItemConvertActivity) {
   const { activityId, ends } = props;
   // hooks
   const {

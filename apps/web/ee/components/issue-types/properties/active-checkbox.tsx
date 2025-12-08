@@ -11,7 +11,7 @@ type TPropertyActiveCheckboxProps = {
   onEnableDisable: (value: boolean) => void;
 };
 
-export const PropertyActiveCheckbox = observer((props: TPropertyActiveCheckboxProps) => {
+export const PropertyActiveCheckbox = observer(function PropertyActiveCheckbox(props: TPropertyActiveCheckboxProps) {
   const { value, onEnableDisable } = props;
   // plane hooks
   const { t } = useTranslation();

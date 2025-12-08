@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -10,7 +8,7 @@ import { cn } from "@plane/utils";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 
-export const ProjectSearch: FC = observer(() => {
+export const ProjectSearch = observer(function ProjectSearch() {
   // hooks
   const { searchQuery, updateSearchQuery } = useProjectFilter();
   // refs

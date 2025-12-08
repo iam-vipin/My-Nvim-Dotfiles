@@ -24,7 +24,7 @@ const statusToVariantMap: Map<EAutomationRunStatus, TAutomationRunStatusBadgeVar
   [EAutomationRunStatus.CANCELLED, "error"],
 ]);
 
-export const AutomationRunStatusBadge: React.FC<TAutomationRunStatusBadgeProps> = (props) => {
+export function AutomationRunStatusBadge(props: TAutomationRunStatusBadgeProps) {
   const { status } = props;
   // derived values
   const styles = status ? variantStylesMap.get(statusToVariantMap.get(status)!) : "text-custom-text-400";
@@ -34,4 +34,4 @@ export const AutomationRunStatusBadge: React.FC<TAutomationRunStatusBadgeProps> 
       {status ? getAutomationRunStatusLabel(status) : "--"}
     </div>
   );
-};
+}

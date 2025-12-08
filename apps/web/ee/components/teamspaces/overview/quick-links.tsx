@@ -12,7 +12,7 @@ type TTeamQuickLink = {
   href: string;
 };
 
-export const TeamsOverviewQuickLinks = observer(() => {
+export const TeamsOverviewQuickLinks = observer(function TeamsOverviewQuickLinks() {
   const { teamspaceId } = useParams();
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

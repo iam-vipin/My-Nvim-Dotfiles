@@ -38,7 +38,7 @@ export const getExtenedEditorRefHelpers = (args: TArgs): TExtendedEditorRefApi =
     scrollToCommentMark: (commentId) => {
       if (!editor || !commentId) return;
       const selector = getCommentSelector(commentId);
-      const element = editor.view.dom.querySelector(selector) as HTMLElement | null;
+      const element = editor.view.dom.querySelector(selector);
 
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });

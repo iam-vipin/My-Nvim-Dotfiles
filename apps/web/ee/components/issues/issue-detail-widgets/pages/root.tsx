@@ -15,7 +15,7 @@ type TProps = {
   issueServiceType: TIssueServiceType;
 };
 
-export const PagesCollapsible: FC<TProps> = observer((props) => {
+export const PagesCollapsible = observer(function PagesCollapsible(props: TProps) {
   const { workspaceSlug, workItemId, disabled, projectId, issueServiceType } = props;
   // store hooks
   const {

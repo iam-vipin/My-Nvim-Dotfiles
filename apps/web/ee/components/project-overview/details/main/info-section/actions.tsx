@@ -6,7 +6,7 @@ type TProps = {
   workspaceSlug: string;
   projectId: string;
 };
-export const Actions = (props: TProps) => {
+export function Actions(props: TProps) {
   const { toggleLinkModalOpen, workspaceSlug, projectId } = props;
   return (
     <div className="text-base font-medium flex gap-4 text-custom-text-200 my-auto">
@@ -26,4 +26,4 @@ export const Actions = (props: TProps) => {
       />
     </div>
   );
-};
+}

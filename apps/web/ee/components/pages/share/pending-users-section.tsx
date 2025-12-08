@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // plane imports
 import type { EPageSharedUserAccess } from "@plane/types";
@@ -15,13 +13,13 @@ type TPendingUsersSectionProps = {
   canCurrentUserChangeAccess?: boolean;
 };
 
-export const PendingUsersSection = ({
+export function PendingUsersSection({
   pendingUsers,
   onUpdateAccess,
   onRemove,
   getMemberDetails,
   canCurrentUserChangeAccess = true,
-}: TPendingUsersSectionProps) => {
+}: TPendingUsersSectionProps) {
   if (pendingUsers.length === 0) return null;
 
   return (
@@ -44,6 +42,6 @@ export const PendingUsersSection = ({
       })}
     </div>
   );
-};
+}
 
 PendingUsersSection.displayName = "PendingUsersSection";

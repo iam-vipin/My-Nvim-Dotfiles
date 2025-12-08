@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -129,7 +127,9 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
   }),
 };
 
-export const WorkflowChangeHistoryItem = observer((props: TWorkflowChangeHistoryItemProps) => {
+export const WorkflowChangeHistoryItem = observer(function WorkflowChangeHistoryItem(
+  props: TWorkflowChangeHistoryItemProps
+) {
   const { changeHistory, ends } = props;
   // return if activity details are not available
   if (!changeHistory) return <></>;
@@ -149,7 +149,7 @@ export const WorkflowChangeHistoryItem = observer((props: TWorkflowChangeHistory
   return <></>;
 });
 
-export const WorkflowChangeHistory: FC<TWorkflowChangeHistoryProps> = observer((props) => {
+export const WorkflowChangeHistory = observer(function WorkflowChangeHistory(props: TWorkflowChangeHistoryProps) {
   const { isOpen, projectId, workspaceSlug, onClose } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -171,9 +171,7 @@ export const WorkflowChangeHistory: FC<TWorkflowChangeHistoryProps> = observer((
   // fetching workflow change history
   useSWR(
     workspaceSlug && projectId && isOpen ? ["workflowChangeHistory", workspaceSlug, projectId, isOpen] : null,
-    workspaceSlug && projectId && isOpen
-      ? () => fetchWorkflowChangeHistory(workspaceSlug!.toString(), projectId)
-      : null,
+    workspaceSlug && projectId && isOpen ? () => fetchWorkflowChangeHistory(workspaceSlug.toString(), projectId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

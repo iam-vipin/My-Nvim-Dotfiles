@@ -12,7 +12,7 @@ type TProps = {
   isEditable?: boolean;
 };
 
-export const RequestAttachmentsCollapsible: FC<TProps> = observer((props) => {
+export const RequestAttachmentsCollapsible = observer(function RequestAttachmentsCollapsible(props: TProps) {
   const { workspaceSlug, requestId, customerId, isEditable } = props;
   // states
   const [isOpen, setOpen] = useState<boolean>(false);

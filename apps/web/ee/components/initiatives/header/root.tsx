@@ -1,4 +1,3 @@
-"use client";
 import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -27,7 +26,9 @@ type TInitiativesDetailsHeaderProps = {
   selectedNavigationKey: EInitiativeNavigationItem;
 };
 
-export const InitiativesDetailsHeader = observer((props: TInitiativesDetailsHeaderProps) => {
+export const InitiativesDetailsHeader = observer(function InitiativesDetailsHeader(
+  props: TInitiativesDetailsHeaderProps
+) {
   // params
   const { selectedNavigationKey } = props;
   // router

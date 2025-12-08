@@ -13,7 +13,7 @@ export type TPowerKCommandsListProps = {
   setSearchTerm: (value: string) => void;
 };
 
-export const PlaneAiAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = (props) => {
+export function PlaneAiAppPowerKCommandsList(props: TPowerKCommandsListProps) {
   const { activePage, context, handleCommandSelect, handlePageDataSelection } = props;
 
   return (
@@ -26,4 +26,4 @@ export const PlaneAiAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = 
       />
     </>
   );
-};
+}

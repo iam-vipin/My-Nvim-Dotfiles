@@ -30,7 +30,7 @@ type Props = {
   view: TTeamspaceView;
 };
 
-export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
+export const TeamspaceViewListItemAction = observer(function TeamspaceViewListItemAction(props: Props) {
   const { parentRef, teamspaceId, view } = props;
   // router
   const { workspaceSlug } = useParams();

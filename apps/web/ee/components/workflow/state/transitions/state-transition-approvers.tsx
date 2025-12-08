@@ -15,7 +15,7 @@ type Props = {
   handleApproversUpdate: (memberIds: string[]) => Promise<void>;
 };
 
-export const StateTransitionApprovers = observer((props: Props) => {
+export const StateTransitionApprovers = observer(function StateTransitionApprovers(props: Props) {
   const { parentStateId, stateTransition, handleApproversUpdate } = props;
   // plane hooks
   const { t } = useTranslation();

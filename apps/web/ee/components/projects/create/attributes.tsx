@@ -25,7 +25,8 @@ type Props = {
   data?: Partial<TProject>;
   handleFormOnChange?: () => void;
 };
-const ProjectAttributes: React.FC<Props> = (props) => {
+
+function ProjectAttributes(props: Props) {
   const { workspaceSlug, currentWorkspace, isProjectGroupingEnabled, data, handleFormOnChange } = props;
   // plane imports
   const { t } = useTranslation();
@@ -198,5 +199,6 @@ const ProjectAttributes: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}
+
 export default ProjectAttributes;

@@ -1,4 +1,3 @@
-"use client";
 import { Layers2, Layers3, ReceiptText } from "lucide-react";
 // components
 import {

@@ -12,7 +12,7 @@ type Props = {
   onClick: (item: number) => void;
 };
 
-export const MentionsDropdownSection: React.FC<Props> = (props) => {
+export function MentionsDropdownSection(props: Props) {
   const { type, items, onClick, selectedItemIndex, isSectionSelected } = props;
 
   return (
@@ -58,4 +58,4 @@ export const MentionsDropdownSection: React.FC<Props> = (props) => {
       </Transition>
     </Disclosure>
   );
-};
+}

@@ -15,7 +15,7 @@ type TProps = {
   isDisabled?: boolean;
 };
 
-export const AutomationActionHandlerDropdown: React.FC<TProps> = (props) => {
+export function AutomationActionHandlerDropdown(props: TProps) {
   const { value, onChange, isDisabled } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -63,4 +63,4 @@ export const AutomationActionHandlerDropdown: React.FC<TProps> = (props) => {
       </CustomSelect>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { AsanaCustomField } from "@plane/etl/asana";
@@ -15,7 +13,9 @@ type TConfigureAsanaSelectPriority = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureAsanaSelectPriority: FC<TConfigureAsanaSelectPriority> = observer((props) => {
+export const ConfigureAsanaSelectPriority = observer(function ConfigureAsanaSelectPriority(
+  props: TConfigureAsanaSelectPriority
+) {
   // props
   const { value, isLoading, asanaPriorities, handleFormData } = props;
   const { t } = useTranslation();

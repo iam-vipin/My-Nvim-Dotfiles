@@ -62,11 +62,18 @@ const pillRadius = {
   [ERadius.CIRCLE]: "rounded-full",
 };
 
-const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
-  (
-    { variant = EPillVariant.DEFAULT, size = EPillSize.MD, radius = ERadius.CIRCLE, className, children, ...props },
-    ref
-  ) => (
+const Pill = React.forwardRef(function Pill(
+  {
+    variant = EPillVariant.DEFAULT,
+    size = EPillSize.MD,
+    radius = ERadius.CIRCLE,
+    className,
+    children,
+    ...props
+  }: PillProps,
+  ref: React.ForwardedRef<HTMLSpanElement>
+) {
+  return (
     <span
       ref={ref}
       className={cn(
@@ -84,8 +91,8 @@ const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
     >
       {children}
     </span>
-  )
-);
+  );
+});
 
 Pill.displayName = "Pill";
 

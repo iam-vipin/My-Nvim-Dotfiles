@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -23,7 +21,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA];
 
 const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 
-export const ImportUsersFromJira: FC = observer(() => {
+export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
   // hooks
   const {
     user,
@@ -128,6 +126,7 @@ export const ImportUsersFromJira: FC = observer(() => {
                 target="_blank"
                 href="https://support.atlassian.com/organization-administration/docs/export-users-from-a-site/"
                 className="text-custom-primary-100 underline font-medium"
+                rel="noreferrer"
               >
                 {t("common.from", { name: "Jira" })}
               </a>

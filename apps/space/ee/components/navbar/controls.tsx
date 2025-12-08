@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ export type NavbarControlsProps = {
   publishSettings: PublishStore;
 };
 
-export const ViewNavbarControls: FC<NavbarControlsProps> = observer((props) => {
+export const ViewNavbarControls = observer(function ViewNavbarControls(props: NavbarControlsProps) {
   // props
   const { publishSettings } = props;
   // hooks

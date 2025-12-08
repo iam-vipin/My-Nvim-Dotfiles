@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -17,7 +16,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CustomerSearch } from "@/plane-web/components/customers/list";
 
-export const CustomersListHeader = observer(() => {
+export const CustomersListHeader = observer(function CustomersListHeader() {
   const { workspaceSlug } = useParams();
   // i18n
   const { t } = useTranslation();

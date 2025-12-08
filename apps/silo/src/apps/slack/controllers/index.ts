@@ -275,9 +275,7 @@ export default class SlackController {
 
     const { slack_code, encoded_slack_state } = slackState;
 
-    const authState = JSON.parse(
-      Buffer.from(encoded_slack_state as string, "base64").toString("utf-8")
-    ) as SlackUserAuthState;
+    const authState = JSON.parse(Buffer.from(encoded_slack_state, "base64").toString("utf-8")) as SlackUserAuthState;
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
     if (authState.profileRedirect) {
       redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/account/connections/?workspaceId=${authState.workspaceId}`;
@@ -285,7 +283,7 @@ export default class SlackController {
 
     try {
       const { state, response } = await slackAuth.getUserAuthToken({
-        code: slack_code as string,
+        code: slack_code,
         state: authState,
       });
 

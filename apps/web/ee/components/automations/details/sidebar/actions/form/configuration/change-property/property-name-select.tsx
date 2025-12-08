@@ -17,7 +17,7 @@ type TProps = {
   onPropertyChange: (property: EAutomationChangePropertyType) => void;
 };
 
-export const PropertyNameSelect: React.FC<TProps> = observer((props) => {
+export const PropertyNameSelect = observer(function PropertyNameSelect(props: TProps) {
   const { isDisabled, onPropertyChange } = props;
   // plane hooks
   const { t } = useTranslation();

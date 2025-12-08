@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 //
@@ -17,7 +15,7 @@ type Props = {
   toggleProjectModal: (value?: boolean) => void;
 };
 
-export const InitiativeProjectsCollapsibleContent: FC<Props> = (props) => {
+export function InitiativeProjectsCollapsibleContent(props: Props) {
   const { workspaceSlug, initiativeId, projectIds, disabled, toggleProjectModal } = props;
   return (
     <div className="mt-3">
@@ -54,4 +52,4 @@ export const InitiativeProjectsCollapsibleContent: FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

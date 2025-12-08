@@ -9,7 +9,7 @@ type Props = {
   currentUserId: string;
 };
 
-export const EditorUserMention: React.FC<Props> = observer((props) => {
+export const EditorUserMention = observer(function EditorUserMention(props: Props) {
   const { id, currentUserId } = props;
 
   // store

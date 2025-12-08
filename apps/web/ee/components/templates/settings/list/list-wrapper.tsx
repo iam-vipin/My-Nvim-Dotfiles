@@ -12,7 +12,7 @@ type TemplateListWrapperProps = {
   children: React.ReactNode;
 };
 
-export const TemplateListWrapper = observer((props: TemplateListWrapperProps) => {
+export const TemplateListWrapper = observer(function TemplateListWrapper(props: TemplateListWrapperProps) {
   const { type, isInitializing, templateIds, children } = props;
   // plane hooks
   const { t } = useTranslation();

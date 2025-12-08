@@ -9,7 +9,7 @@ type Props = {
   issueId: string;
 };
 
-export const CalendarIssueBlockRoot: React.FC<Props> = (props) => {
+export function CalendarIssueBlockRoot(props: Props) {
   const { getIssueById, issueId } = props;
 
   const issueRef = useRef<HTMLAnchorElement | null>(null);
@@ -19,4 +19,4 @@ export const CalendarIssueBlockRoot: React.FC<Props> = (props) => {
   if (!issue) return null;
 
   return <CalendarIssueBlock issue={issue} ref={issueRef} />;
-};
+}

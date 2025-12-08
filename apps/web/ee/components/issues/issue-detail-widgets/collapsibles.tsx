@@ -13,36 +13,36 @@ import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
 import { PagesCollapsible } from "./pages";
 
-export const WorkItemAdditionalWidgetCollapsibles: FC<TWorkItemAdditionalWidgetCollapsiblesProps> = observer(
-  (props) => {
-    const { disabled, workspaceSlug, workItemId, hideWidgets, issueServiceType } = props;
-    // store hooks
-    const {
-      issue: { getIssueById },
-    } = useIssueDetail(issueServiceType);
-    const { isCustomersFeatureEnabled } = useCustomers();
+export const WorkItemAdditionalWidgetCollapsibles = observer(function WorkItemAdditionalWidgetCollapsibles(
+  props: TWorkItemAdditionalWidgetCollapsiblesProps
+) {
+  const { disabled, workspaceSlug, workItemId, hideWidgets, issueServiceType } = props;
+  // store hooks
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail(issueServiceType);
+  const { isCustomersFeatureEnabled } = useCustomers();
 
-    // derived values
-    const issue = getIssueById(workItemId);
-    const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
-    const shouldRenderPages = !hideWidgets?.includes("pages");
-    return (
-      <>
-        {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (
-          <CustomerRequestsCollapsible workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+  // derived values
+  const issue = getIssueById(workItemId);
+  const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
+  const shouldRenderPages = !hideWidgets?.includes("pages");
+  return (
+    <>
+      {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (
+        <CustomerRequestsCollapsible workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+      )}
+      <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
+        {shouldRenderPages && (
+          <PagesCollapsible
+            workItemId={workItemId}
+            workspaceSlug={workspaceSlug}
+            disabled={disabled}
+            projectId={issue?.project_id}
+            issueServiceType={issueServiceType}
+          />
         )}
-        <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
-          {shouldRenderPages && (
-            <PagesCollapsible
-              workItemId={workItemId}
-              workspaceSlug={workspaceSlug}
-              disabled={disabled}
-              projectId={issue?.project_id}
-              issueServiceType={issueServiceType}
-            />
-          )}
-        </WithFeatureFlagHOC>
-      </>
-    );
-  }
-);
+      </WithFeatureFlagHOC>
+    </>
+  );
+});

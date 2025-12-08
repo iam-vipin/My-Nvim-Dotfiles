@@ -8,7 +8,7 @@ type Props = {
   handleDelete: () => void;
 };
 
-export const WidgetConfigSidebarHeader: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarHeader(props: Props) {
   const { handleClose, handleDelete } = props;
   // translation
   const { t } = useTranslation();
@@ -37,4 +37,4 @@ export const WidgetConfigSidebarHeader: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

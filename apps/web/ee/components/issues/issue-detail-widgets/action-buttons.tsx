@@ -7,7 +7,7 @@ import { IssueDetailWidgetButton } from "@/components/issues/issue-detail-widget
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { PagesActionButton } from "./pages";
 
-export const WorkItemAdditionalWidgetActionButtons: FC<TWorkItemAdditionalWidgetActionButtonsProps> = (props) => {
+export function WorkItemAdditionalWidgetActionButtons(props: TWorkItemAdditionalWidgetActionButtonsProps) {
   const { workspaceSlug, workItemId, disabled, issueServiceType, hideWidgets } = props;
   const { t } = useTranslation();
   return (
@@ -30,4 +30,4 @@ export const WorkItemAdditionalWidgetActionButtons: FC<TWorkItemAdditionalWidget
       </WithFeatureFlagHOC>
     </>
   );
-};
+}

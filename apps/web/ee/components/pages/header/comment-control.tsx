@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MessageSquareText } from "lucide-react";
@@ -18,7 +16,7 @@ type TPageCommentControlProps = {
   storeType: EPageStoreType;
 };
 
-export const PageCommentControl: React.FC<TPageCommentControlProps> = observer((props) => {
+export const PageCommentControl = observer(function PageCommentControl(props: TPageCommentControlProps) {
   const { storeType } = props;
   const { workspaceSlug } = useParams();
   const { isCommentsEnabled: canShowComments } = usePageStore(storeType);

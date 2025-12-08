@@ -8,7 +8,7 @@ type Props = {
   title: string;
 };
 
-export const MovePageModalListSection: React.FC<Props> = (props) => {
+export function MovePageModalListSection(props: Props) {
   const { getItemDetails, items, title } = props;
 
   return (
@@ -23,4 +23,4 @@ export const MovePageModalListSection: React.FC<Props> = (props) => {
       </ul>
     </section>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 //ui
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 import { CustomMenu } from "@plane/ui";
@@ -18,7 +16,7 @@ interface Props {
   onClose: () => void;
 }
 
-export const HeaderColumn = (props: Props) => {
+export function HeaderColumn(props: Props) {
   const { handleDisplayFilterUpdate, property, onClose } = props;
 
   const { storedValue: selectedMenuItem } = useLocalStorage("projectSpreadsheetViewSorting", "");
@@ -108,4 +106,4 @@ export const HeaderColumn = (props: Props) => {
       )}
     </CustomMenu>
   );
-};
+}

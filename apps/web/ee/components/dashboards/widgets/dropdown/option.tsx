@@ -26,7 +26,9 @@ type Props = {
   widget: EWidgetChartTypes;
 };
 
-export const DashboardWidgetChartTypesDropdownOption: React.FC<Props> = observer((props) => {
+export const DashboardWidgetChartTypesDropdownOption = observer(function DashboardWidgetChartTypesDropdownOption(
+  props: Props
+) {
   const { isSelected, model, onSelect, widget } = props;
   // navigation
   const { workspaceSlug } = useParams();

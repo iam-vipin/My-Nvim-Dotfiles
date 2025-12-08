@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -39,7 +37,9 @@ type ApplicationTileMenuOptionsProps = {
   app: TUserApplication;
 };
 
-export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = observer((props) => {
+export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuOptions(
+  props: ApplicationTileMenuOptionsProps
+) {
   // hooks
   const { app } = props;
   const { t } = useTranslation();

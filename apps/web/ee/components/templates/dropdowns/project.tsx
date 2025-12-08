@@ -33,7 +33,7 @@ type TProjectTemplateDropdownProps = {
   handleRedirection?: () => void;
 };
 
-export const ProjectTemplateDropdown = observer((props: TProjectTemplateDropdownProps) => {
+export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown(props: TProjectTemplateDropdownProps) {
   const {
     workspaceSlug,
     templateId,

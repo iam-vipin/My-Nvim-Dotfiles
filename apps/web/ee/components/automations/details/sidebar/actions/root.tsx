@@ -25,7 +25,7 @@ type Props = {
   automationId: string;
 };
 
-export const AutomationDetailsSidebarActionRoot: React.FC<Props> = observer((props) => {
+export const AutomationDetailsSidebarActionRoot = observer(function AutomationDetailsSidebarActionRoot(props: Props) {
   const { automationId } = props;
   // refs
   const actionFormRef = useRef<HTMLFormElement>(null);

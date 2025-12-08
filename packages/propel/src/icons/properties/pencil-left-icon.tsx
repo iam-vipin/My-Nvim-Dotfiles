@@ -3,7 +3,7 @@ import * as React from "react";
 import { IconWrapper } from "../icon-wrapper";
 import type { ISvgIcons } from "../type";
 
-export const PencilLeftIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
+export function PencilLeftIcon({ color = "currentColor", ...rest }: ISvgIcons) {
   const clipPathId = React.useId();
   return (
     <IconWrapper color={color} clipPathId={clipPathId} {...rest}>
@@ -13,4 +13,4 @@ export const PencilLeftIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ..
       />
     </IconWrapper>
   );
-};
+}

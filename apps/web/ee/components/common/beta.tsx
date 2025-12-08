@@ -1,7 +1,7 @@
 import { EPillVariant, EPillSize, ERadius, Pill } from "@plane/propel/pill";
 import { generateIconColors } from "@plane/utils";
 
-export const BetaBadge = () => {
+export function BetaBadge() {
   const color = generateIconColors("CC7700");
   const textColor = color ? color.foreground : "transparent";
   const backgroundColor = color ? color.background : "transparent";
@@ -16,4 +16,4 @@ export const BetaBadge = () => {
       Beta
     </Pill>
   );
-};
+}

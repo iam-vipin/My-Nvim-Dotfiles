@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -27,7 +25,7 @@ type TTeamsOverviewSidebarProps = {
   teamspaceId: string;
 };
 
-export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((props) => {
+export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props: TTeamsOverviewSidebarProps) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -50,7 +48,7 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   // fetch teamspace entities
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceEntities", workspaceSlug, teamspaceId] : null,
-    () => fetchTeamspaceEntities(workspaceSlug!.toString(), teamspaceId),
+    () => fetchTeamspaceEntities(workspaceSlug.toString(), teamspaceId),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -59,7 +57,7 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   // fetching teamspace activity
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceActivity", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamActivities(workspaceSlug!.toString(), teamspaceId) : null,
+    workspaceSlug && teamspaceId ? () => fetchTeamActivities(workspaceSlug.toString(), teamspaceId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -68,7 +66,7 @@ export const TeamsOverviewSidebar: FC<TTeamsOverviewSidebarProps> = observer((pr
   // fetching teamspace comments
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceComments", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamspaceComments(workspaceSlug!.toString(), teamspaceId) : null,
+    workspaceSlug && teamspaceId ? () => fetchTeamspaceComments(workspaceSlug.toString(), teamspaceId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

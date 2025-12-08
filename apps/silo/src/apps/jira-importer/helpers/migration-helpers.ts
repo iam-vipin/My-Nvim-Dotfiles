@@ -119,7 +119,7 @@ export const createJiraClient = (
       isPAT: false,
       accessToken: credentials.source_access_token!,
       refreshToken: credentials.source_refresh_token!,
-      cloudId: job.config?.resource.id as string,
+      cloudId: job.config?.resource.id,
       refreshTokenFunc: jiraAuth.getRefreshToken.bind(jiraAuth),
       refreshTokenCallback: refreshTokenCallback,
     });
@@ -129,9 +129,9 @@ export const createJiraClient = (
     }
     return new JiraService({
       isPAT: true,
-      patToken: credentials.source_access_token!,
+      patToken: credentials.source_access_token,
       hostname: credentials.source_hostname,
-      userEmail: credentials.source_auth_email!,
+      userEmail: credentials.source_auth_email,
     });
   }
 };

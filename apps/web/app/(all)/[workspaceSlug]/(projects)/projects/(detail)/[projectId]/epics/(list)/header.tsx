@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +22,7 @@ import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { EpicLayoutQuickActions } from "@/plane-web/components/epics/quick-actions/layout-quick-actions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const EpicsHeader = observer(() => {
+export const EpicsHeader = observer(function EpicsHeader() {
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);

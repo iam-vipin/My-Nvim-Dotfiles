@@ -14,7 +14,7 @@ import type { TZipImporterProps } from "@/plane-web/types/importers/zip-importer
 import { E_IMPORTER_STEPS, EDocImporterDestinationType } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation, Dropdown } from "../../../ui";
 
-export const SelectDestination: FC<TZipImporterProps> = observer(({ driverType }) => {
+export const SelectDestination = observer(function SelectDestination({ driverType }: TZipImporterProps) {
   // hooks
   const { t } = useTranslation();
 

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
@@ -22,7 +20,7 @@ type TCloudFreePlanCardProps = {
   handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
 };
 
-export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: TCloudFreePlanCardProps) => {
+export const CloudFreePlanCard = observer(function CloudFreePlanCard(props: TCloudFreePlanCardProps) {
   const { upgradeProductType, isProductsAPILoading, trialLoader, upgradeLoader, handleTrial, handleUpgrade } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();

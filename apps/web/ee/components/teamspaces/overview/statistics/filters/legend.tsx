@@ -12,7 +12,7 @@ import {
 } from "@/plane-web/constants/workspace-project-states";
 import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
-export const StatisticsLegend: React.FC<TStatisticsFilterProps<"legend">> = observer((props) => {
+export const StatisticsLegend = observer(function StatisticsLegend(props: TStatisticsFilterProps<"legend">) {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
   // derived values
   const options = Object.entries(TEAM_STATISTICS_LEGEND_MAP).map(([data, value]) => ({

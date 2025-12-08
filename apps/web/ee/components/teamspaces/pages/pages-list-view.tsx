@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // types
 import type { TPageNavigationTabs } from "@plane/types";
@@ -17,7 +15,7 @@ type TPageView = {
   workspaceSlug: string;
 };
 
-export const TeamspacePagesListView: React.FC<TPageView> = observer((props) => {
+export const TeamspacePagesListView = observer(function TeamspacePagesListView(props: TPageView) {
   const { pageType, workspaceSlug, teamspaceId } = props;
   // store hooks
   const { isAnyPageAvailable } = usePageStore(storeType);

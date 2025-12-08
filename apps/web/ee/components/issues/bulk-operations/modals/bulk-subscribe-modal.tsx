@@ -20,7 +20,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const BulkSubscribeConfirmationModal: React.FC<Props> = observer((props) => {
+export const BulkSubscribeConfirmationModal = observer(function BulkSubscribeConfirmationModal(props: Props) {
   const { handleClose, isOpen, issueIds, onSubmit, projectId, workspaceSlug } = props;
   // states
   const [isArchiving, setIsDeleting] = useState(false);

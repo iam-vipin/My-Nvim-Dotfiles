@@ -8,7 +8,9 @@ import { cn } from "@plane/utils";
 // plane web imports
 import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
-export const StatisticsDueByFilter: React.FC<TStatisticsFilterProps<"target_date">> = observer((props) => {
+export const StatisticsDueByFilter = observer(function StatisticsDueByFilter(
+  props: TStatisticsFilterProps<"target_date">
+) {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
   // derived values
   const options = DATE_AFTER_FILTER_OPTIONS.map((filterOption) => ({

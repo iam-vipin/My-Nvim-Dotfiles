@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -16,7 +14,9 @@ type TConfigureLinearSelectTeam = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureLinearSelectTeam: FC<TConfigureLinearSelectTeam> = observer((props) => {
+export const ConfigureLinearSelectTeam = observer(function ConfigureLinearSelectTeam(
+  props: TConfigureLinearSelectTeam
+) {
   // props
   const { value, handleFormData } = props;
 
@@ -41,7 +41,7 @@ export const ConfigureLinearSelectTeam: FC<TConfigureLinearSelectTeam> = observe
   const userId = user?.id || undefined;
   const linearTeams = (linearTeamIds || [])
     .map((id) => (id ? getLinearTeamById(id) : undefined))
-    .filter((project) => project != undefined && project != null) as LinearTeam[];
+    .filter((project) => project != undefined && project != null);
   const linearOrganization = linearOrganizationId && getLinearOrganizationById(linearOrganizationId);
 
   const handelData = (value: string | undefined) => {

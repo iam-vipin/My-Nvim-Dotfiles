@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { omit } from "lodash-es";
@@ -29,7 +27,7 @@ interface IProgressIndicatorData {
   percentage: number;
 }
 
-export const ProgressSection: FC<TProgressSectionProps> = (props) => {
+export function ProgressSection(props: TProgressSectionProps) {
   const { data, indicatorElement } = props;
 
   const { t } = useTranslation();
@@ -81,4 +79,4 @@ export const ProgressSection: FC<TProgressSectionProps> = (props) => {
       </div>
     </SectionWrapper>
   );
-};
+}

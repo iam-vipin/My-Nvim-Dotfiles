@@ -11,7 +11,7 @@ type TProjectEntityItem = {
   handleDeleteOpen: () => void;
 };
 
-export const ProjectEntityItem = (props: TProjectEntityItem) => {
+export function ProjectEntityItem(props: TProjectEntityItem) {
   const { project, handleEditOpen, handleDeleteOpen } = props;
   return (
     <div className="group relative bg-custom-background-100 border border-custom-border-200 rounded-lg overflow-hidden hover:shadow-sm transition-all duration-200">
@@ -62,4 +62,4 @@ export const ProjectEntityItem = (props: TProjectEntityItem) => {
       </div>
     </div>
   );
-};
+}

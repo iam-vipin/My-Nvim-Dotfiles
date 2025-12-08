@@ -9,19 +9,20 @@ import { ModalCore } from "@plane/ui";
 // Assets
 import type { StateMappingFormProps, SentryStateMappingFormData } from "./types";
 import { StateMappingFormContent } from ".";
+
 // Types
 
 /**
  * Main Form Component for Sentry State Mapping Configuration
  * Handles the modal, data loading, and form state
  */
-const StateMappingForm: FC<StateMappingFormProps> = ({
+function StateMappingForm({
   modal,
   handleModal,
   stateMapping,
   handleSubmit: handleSubmitProp,
   availableProjects,
-}) => {
+}: StateMappingFormProps) {
   const { t } = useTranslation();
 
   // Initialize form state with the state mapping data if it exists
@@ -151,6 +152,6 @@ const StateMappingForm: FC<StateMappingFormProps> = ({
       </div>
     </ModalCore>
   );
-};
+}
 
 export default StateMappingForm;

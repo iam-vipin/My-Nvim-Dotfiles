@@ -5,7 +5,7 @@ type Props = {
   toggleModal: () => void;
   variant?: "default" | "compact";
 };
-export const AddMilestoneButton = (props: Props) => {
+export function AddMilestoneButton(props: Props) {
   const { toggleModal, variant = "default" } = props;
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGSVGElement, MouseEvent>) => {
@@ -28,4 +28,4 @@ export const AddMilestoneButton = (props: Props) => {
       )}
     </>
   );
-};
+}

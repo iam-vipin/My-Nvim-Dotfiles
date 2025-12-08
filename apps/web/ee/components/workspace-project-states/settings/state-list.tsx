@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -15,7 +13,7 @@ type TStateList = {
   groupStateIds: string[];
 };
 
-export const ProjectStateList: FC<TStateList> = observer((props) => {
+export const ProjectStateList = observer(function ProjectStateList(props: TStateList) {
   const { workspaceSlug, workspaceId, groupProjectStates, groupKey, groupStateIds } = props;
 
   return (

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ type TEpicSidebarCommentsRootProps = {
   disabled?: boolean;
 };
 
-export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observer((props) => {
+export const EpicSidebarCommentsRoot = observer(function EpicSidebarCommentsRoot(props: TEpicSidebarCommentsRootProps) {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // i18n
   const { t } = useTranslation();

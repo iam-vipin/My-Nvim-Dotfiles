@@ -1,4 +1,3 @@
-"use client";
 import { useMemo } from "react";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 // hooks

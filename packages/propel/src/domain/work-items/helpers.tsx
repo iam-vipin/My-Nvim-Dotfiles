@@ -32,7 +32,9 @@ const extensionToIconMap: Record<string, FC<{ className?: string }>> = {
   tsx: CodeFileIcon,
 };
 
-const DefaultIcon: FC<{ className?: string }> = (props) => <DocumentFileIcon {...props} />;
+function DefaultIcon(props: { className?: string }) {
+  return <DocumentFileIcon {...props} />;
+}
 
 export const getAttachmentIcon = (extension: string) => {
   const normalizedExtension = extension.toLowerCase();

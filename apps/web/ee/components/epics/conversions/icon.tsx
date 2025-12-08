@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { ArrowRight } from "lucide-react";
@@ -14,7 +13,7 @@ interface ConvertWorkItemIconProps {
   disabled?: boolean;
 }
 
-export const ConvertWorkItemIcon: FC<ConvertWorkItemIconProps> = (props) => {
+export function ConvertWorkItemIcon(props: ConvertWorkItemIconProps) {
   const { handleOnClick, conversionType, disabled = false } = props;
   // derived values
   const IconComponent = conversionType === EWorkItemConversionType.WORK_ITEM ? LayersIcon : EpicIcon;
@@ -41,4 +40,4 @@ export const ConvertWorkItemIcon: FC<ConvertWorkItemIconProps> = (props) => {
       </button>
     </Tooltip>
   );
-};
+}

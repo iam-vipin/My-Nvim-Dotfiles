@@ -1,4 +1,3 @@
-"use client";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,7 +14,7 @@ import { IssueTypeEmptyState } from "./empty-state";
 import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
 import { IssueTypesList } from "./issue-types-list";
 
-export const IssueTypesRoot = observer(() => {
+export const IssueTypesRoot = observer(function IssueTypesRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // states

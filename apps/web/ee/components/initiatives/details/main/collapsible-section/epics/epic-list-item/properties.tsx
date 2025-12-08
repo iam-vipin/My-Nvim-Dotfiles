@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, SyntheticEvent } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -33,7 +31,7 @@ type Props = {
   displayProperties?: IIssueDisplayProperties;
 };
 
-export const EpicProperties: FC<Props> = observer((props) => {
+export const EpicProperties = observer(function EpicProperties(props: Props) {
   const { workspaceSlug, initiativeId, epicId, disabled = false, displayProperties = {} } = props;
   // store hooks
   const {

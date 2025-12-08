@@ -28,7 +28,7 @@ import type useCycleDetails from "./use-cycle-details";
 
 type ActiveCycleDetailProps = ReturnType<typeof useCycleDetails>;
 
-const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
+const ActiveCycleDetail = observer(function ActiveCycleDetail(props: ActiveCycleDetailProps) {
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // states

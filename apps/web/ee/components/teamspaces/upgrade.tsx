@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -16,7 +14,7 @@ import TeamsUpgradeLight from "@/app/assets/empty-state/teams/light-upgrade.webp
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const TeamspaceUpgrade: FC = observer(() => {
+export const TeamspaceUpgrade = observer(function TeamspaceUpgrade() {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
@@ -31,6 +29,7 @@ export const TeamspaceUpgrade: FC = observer(() => {
           href="https://prime.plane.so/"
           target="_blank"
           className={getButtonStyling("primary", "md")}
+          rel="noreferrer"
         >
           Upgrade to higher subscription
         </a>

@@ -6,7 +6,7 @@ interface IProgressProps {
   totalIssues: number;
 }
 
-const Progress = (props: IProgressProps) => {
+function Progress(props: IProgressProps) {
   const { completedIssues, totalIssues } = props;
   const { t } = useTranslation();
   return (
@@ -24,6 +24,6 @@ const Progress = (props: IProgressProps) => {
       </div>
     </div>
   );
-};
+}
 
 export default Progress;

@@ -11,7 +11,9 @@ import type { TWorkItemLayoutAdditionalProperties } from "@/ce/components/issues
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalProperties> = observer((props) => {
+export const WorkItemLayoutAdditionalProperties = observer(function WorkItemLayoutAdditionalProperties(
+  props: TWorkItemLayoutAdditionalProperties
+) {
   const { displayProperties, issue } = props;
   // i18n
   const { t } = useTranslation();

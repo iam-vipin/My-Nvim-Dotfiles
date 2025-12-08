@@ -13,7 +13,7 @@ export type ActiveCycleInfoCardProps = {
   projectId: string;
 };
 
-export const ActiveCycleInfoCard: FC<ActiveCycleInfoCardProps> = observer((props) => {
+export const ActiveCycleInfoCard = observer(function ActiveCycleInfoCard(props: ActiveCycleInfoCardProps) {
   const { cycle, workspaceSlug, projectId } = props;
   const cycleDetails = useCycleDetails({ workspaceSlug, projectId, cycleId: cycle.id, defaultCycle: cycle });
   return (

@@ -19,7 +19,7 @@ import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-w
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
-export const TeamViewEmptyState: React.FC = observer(() => {
+export const TeamViewEmptyState = observer(function TeamViewEmptyState() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

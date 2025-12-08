@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -16,7 +14,9 @@ type TWorkspaceProjectStatesRoot = {
   toggleProjectGroupingFeature: () => void;
 };
 
-export const WorkspaceProjectStatesRoot: FC<TWorkspaceProjectStatesRoot> = observer((props) => {
+export const WorkspaceProjectStatesRoot = observer(function WorkspaceProjectStatesRoot(
+  props: TWorkspaceProjectStatesRoot
+) {
   const { workspaceSlug, workspaceId, isProjectGroupingEnabled, toggleProjectGroupingFeature } = props;
   // hooks
   const { loader, getProjectStateIdsWithGroupingByWorkspaceId } = useWorkspaceProjectStates();

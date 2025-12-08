@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -29,7 +27,7 @@ type Props = {
   pageType: TPageNavigationTabs;
 };
 
-export const PageTypeHeader: React.FC<Props> = observer((props) => {
+export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
   const { pageType } = props;
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);

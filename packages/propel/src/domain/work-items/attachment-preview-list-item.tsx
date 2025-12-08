@@ -7,7 +7,7 @@ type TAttachmentPreviewListItemProps = {
   item: TAttachmentPreviewItem;
 };
 
-export const AttachmentPreviewListItem: FC<TAttachmentPreviewListItemProps> = ({ item }) => {
+export function AttachmentPreviewListItem({ item }: TAttachmentPreviewListItemProps) {
   const { extension, name, size, status } = item;
   const Icon = getAttachmentIcon(extension);
 
@@ -28,7 +28,7 @@ export const AttachmentPreviewListItem: FC<TAttachmentPreviewListItemProps> = ({
       )}
     </div>
   );
-};
+}
 
 const formatBytes = (bytes: number) => {
   if (!bytes) return "0 B";

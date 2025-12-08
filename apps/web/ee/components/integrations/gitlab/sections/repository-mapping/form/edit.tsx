@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -27,7 +25,7 @@ type TFormEdit = {
   isEnterprise: boolean;
 };
 
-export const FormEdit: FC<TFormEdit> = observer((props) => {
+export const FormEdit = observer(function FormEdit(props: TFormEdit) {
   // props
   const { modal, handleModal, data, isEnterprise } = props;
 

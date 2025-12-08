@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewSidebarUpdatesRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewSidebarUpdatesRoot = observer(function ProjectOverviewSidebarUpdatesRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById } = useProject();

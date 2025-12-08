@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type TWorkspaceProjectsRoot = {
   filtersToInit?: EProjectFilters[];
 };
 
-export const WorkspaceProjectsRoot: FC<TWorkspaceProjectsRoot> = observer((props) => {
+export const WorkspaceProjectsRoot = observer(function WorkspaceProjectsRoot(props: TWorkspaceProjectsRoot) {
   const { workspaceSlug, isArchived = false, filtersToInit: filtersToInitFromProps = [] } = props;
   //pathname
   const pathname = usePathname();

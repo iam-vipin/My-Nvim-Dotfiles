@@ -13,7 +13,7 @@ type TPropertyMultiSelectProps = {
   onChange: (value: boolean) => void;
 };
 
-export const PropertyMultiSelect = observer((props: TPropertyMultiSelectProps) => {
+export const PropertyMultiSelect = observer(function PropertyMultiSelect(props: TPropertyMultiSelectProps) {
   const { value, variant = "RELATION_ISSUE", isDisabled = false, onChange } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { Timer } from "lucide-react";
@@ -26,7 +24,7 @@ type TWorklogFormRoot = {
   buttonTitle: string;
 };
 
-export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
+export function WorklogFormRoot(props: TWorklogFormRoot) {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
   // states
   const [formData, setFromData] = useState<Partial<TWorklogForm> | undefined>(undefined);
@@ -130,4 +128,4 @@ export const WorklogFormRoot: FC<TWorklogFormRoot> = (props) => {
       </div>
     </form>
   );
-};
+}

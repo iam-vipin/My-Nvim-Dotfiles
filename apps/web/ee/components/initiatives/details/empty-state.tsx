@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +12,7 @@ type TInitiativeEmptyStateProps = {
   workspaceSlug: string;
 };
 
-export const InitiativeEmptyState: FC<TInitiativeEmptyStateProps> = (props) => {
+export function InitiativeEmptyState(props: TInitiativeEmptyStateProps) {
   const { workspaceSlug } = props;
   // router
   const router = useAppRouter();
@@ -32,4 +30,4 @@ export const InitiativeEmptyState: FC<TInitiativeEmptyStateProps> = (props) => {
       }}
     />
   );
-};
+}

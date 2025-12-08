@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MouseEvent } from "react";
 import { Loader, RefreshCcw } from "lucide-react";
 import { Button } from "@plane/propel/button";
@@ -12,7 +10,7 @@ type TWorkspaceWorklogDownloadRefresh = {
   workspaceSlug: string;
 };
 
-export const WorkspaceWorklogDownloadRefresh: FC<TWorkspaceWorklogDownloadRefresh> = (props) => {
+export function WorkspaceWorklogDownloadRefresh(props: TWorkspaceWorklogDownloadRefresh) {
   const { workspaceSlug } = props;
   // hooks
   const { loader, paginationInfo, getWorkspaceWorklogDownloads } = useWorkspaceWorklogDownloads();
@@ -49,4 +47,4 @@ export const WorkspaceWorklogDownloadRefresh: FC<TWorkspaceWorklogDownloadRefres
       </div>
     </Button>
   );
-};
+}

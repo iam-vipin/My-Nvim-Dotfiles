@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -36,13 +34,15 @@ import ProjectAttributes from "./attributes";
 import { ProjectCreateLoader } from "./loader";
 import { ProjectCreationProvider } from "./provider";
 
-export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => (
-  <ProjectCreationProvider templateId={props.templateId}>
-    <CreateProjectFormBase {...props} />
-  </ProjectCreationProvider>
-));
+export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
+  return (
+    <ProjectCreationProvider templateId={props.templateId}>
+      <CreateProjectFormBase {...props} />
+    </ProjectCreationProvider>
+  );
+});
 
-export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((props) => {
+export const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCreateProjectFormProps) {
   const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
   // store
   const { addProjectToFavorites, createProject, updateProject } = useProject();

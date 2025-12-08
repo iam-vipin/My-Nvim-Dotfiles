@@ -7,7 +7,9 @@ import { CreateRecurringWorkItemsButton } from "./create-button";
 
 type TRecurringWorkItemsEmptyStateProps = { workspaceSlug: string; projectId: string };
 
-export const RecurringWorkItemsEmptyState = observer((props: TRecurringWorkItemsEmptyStateProps) => {
+export const RecurringWorkItemsEmptyState = observer(function RecurringWorkItemsEmptyState(
+  props: TRecurringWorkItemsEmptyStateProps
+) {
   // derived values
   const { t } = useTranslation();
 

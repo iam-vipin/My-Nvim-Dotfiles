@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -33,7 +31,7 @@ export type TInitiativeLabelDropdownProps = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observer((props) => {
+export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown(props: TInitiativeLabelDropdownProps) {
   const {
     value,
     onChange,
@@ -227,10 +225,13 @@ export const InitiativeLabelDropdown: FC<TInitiativeLabelDropdownProps> = observ
   );
 });
 
-const SelectedLabelsDisplay: FC<{
+function SelectedLabelsDisplay({
+  selectedLabels,
+  allLabels,
+}: {
   selectedLabels: Array<{ value: string; query: string }>;
   allLabels: Map<string, TInitiativeLabel>;
-}> = ({ selectedLabels, allLabels }) => {
+}) {
   const isSingleSelection = selectedLabels.length === 1;
 
   if (isSingleSelection) {
@@ -249,15 +250,17 @@ const SelectedLabelsDisplay: FC<{
       <span className="text-xs">{selectedLabels.length} Labels</span>
     </div>
   );
-};
+}
 
-const PlaceholderDisplay: FC<{ placeholder: string }> = ({ placeholder }) => (
-  <div className="flex items-center gap-2">
-    <LabelPropertyIcon height={14} width={14} />
-    {placeholder}
-  </div>
-);
+function PlaceholderDisplay({ placeholder }: { placeholder: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <LabelPropertyIcon height={14} width={14} />
+      {placeholder}
+    </div>
+  );
+}
 
-const ColorDot: FC<{ color?: string }> = ({ color }) => (
-  <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color || "#000" }} />
-);
+function ColorDot({ color }: { color?: string }) {
+  return <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color || "#000" }} />;
+}

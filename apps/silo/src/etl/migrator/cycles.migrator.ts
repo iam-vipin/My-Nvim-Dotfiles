@@ -73,7 +73,7 @@ export const createCycles = async (
             workspaceSlug,
             projectId,
             cycleId,
-            cycleIssueIds.filter((issue: string | undefined) => issue !== undefined) as string[]
+            cycleIssueIds.filter((issue: string | undefined) => issue !== undefined)
           );
         } catch (error) {
           logger.error(`[${jobId.slice(0, 7)}] Error while adding issues to the cycle: ${cycle.name}`, error);

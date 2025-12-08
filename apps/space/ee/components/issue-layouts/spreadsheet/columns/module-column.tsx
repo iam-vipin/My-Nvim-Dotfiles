@@ -9,7 +9,7 @@ type Props = {
   issue: IIssue;
 };
 
-export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn(props: Props) {
   const { issue } = props;
 
   return (

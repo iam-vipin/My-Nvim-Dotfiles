@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,7 @@ type TEpicDetailActivityRootProps = {
   epicId: string;
 };
 
-export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observer((props) => {
+export const EpicSidebarActivityRoot = observer(function EpicSidebarActivityRoot(props: TEpicDetailActivityRootProps) {
   const { epicId } = props;
   // i18n
   const { t } = useTranslation();
@@ -63,7 +61,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
       <div className="min-h-[200px]">
         {filteredActivityComments.length > 0 &&
           filteredActivityComments.map((activityComment, index) => {
-            const currActivityComment = activityComment as TIssueActivityComment;
+            const currActivityComment = activityComment;
             return currActivityComment.activity_type === "ACTIVITY" ? (
               <EpicActivityItem
                 key={currActivityComment.id}

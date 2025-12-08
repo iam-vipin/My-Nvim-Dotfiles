@@ -18,7 +18,9 @@ type TCreateRecurringWorkItemsButtonProps = {
   buttonSize?: TButtonSizes;
 };
 
-export const CreateRecurringWorkItemsButton = observer((props: TCreateRecurringWorkItemsButtonProps) => {
+export const CreateRecurringWorkItemsButton = observer(function CreateRecurringWorkItemsButton(
+  props: TCreateRecurringWorkItemsButtonProps
+) {
   const { workspaceSlug, projectId, buttonI18nLabel, buttonSize } = props;
   // router
   const router = useAppRouter();

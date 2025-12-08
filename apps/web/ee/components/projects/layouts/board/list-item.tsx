@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -21,7 +19,7 @@ type ProjectBoardListItem = {
   projectId: string;
 };
 
-export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) => {
+export const ProjectBoardListItem = observer(function ProjectBoardListItem(props: ProjectBoardListItem) {
   const { projectId } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +22,7 @@ import { EpicKanBanLayout } from "./kanban-epic-root";
 import { EpicListLayout } from "./list-epic-root";
 import { EpicSpreadsheetLayout } from "./spreadsheet-epic-root";
 
-const ProjectEpicsLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+function ProjectEpicsLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <EpicListLayout />;
@@ -39,9 +37,9 @@ const ProjectEpicsLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
     default:
       return null;
   }
-};
+}
 
-export const ProjectEpicsLayoutRoot: FC = observer(() => {
+export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

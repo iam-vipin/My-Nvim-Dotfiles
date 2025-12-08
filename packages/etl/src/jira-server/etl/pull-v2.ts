@@ -227,7 +227,7 @@ export async function pullCommentsForIssueV2(
 
   const comments: JiraComment[] = (result.comments || []).map(
     (comment): JiraComment => ({
-      ...(comment as JComment),
+      ...comment,
       issue_id: issue.id,
     })
   );

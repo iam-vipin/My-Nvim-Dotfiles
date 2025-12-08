@@ -11,7 +11,7 @@ type TBooleanInputProps = {
   onBooleanValueChange: (value: string[]) => Promise<void>;
 };
 
-export const BooleanInput = observer((props: TBooleanInputProps) => {
+export const BooleanInput = observer(function BooleanInput(props: TBooleanInputProps) {
   const { value, isDisabled = false, onBooleanValueChange } = props;
   // states
   const [data, setData] = useState<string[]>([]);

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,9 @@ type TTeamSidebarCommentsRootProps = {
   isEditingAllowed?: boolean;
 };
 
-export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = observer((props) => {
+export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSidebarComments(
+  props: TTeamSidebarCommentsRootProps
+) {
   const { teamspaceId, isEditingAllowed = true } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

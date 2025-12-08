@@ -14,7 +14,9 @@ type TPropertyMandatoryFieldCheckboxProps = {
   onMandatoryFieldChange: (value: boolean) => void;
 };
 
-export const PropertyMandatoryFieldCheckbox = observer((props: TPropertyMandatoryFieldCheckboxProps) => {
+export const PropertyMandatoryFieldCheckbox = observer(function PropertyMandatoryFieldCheckbox(
+  props: TPropertyMandatoryFieldCheckboxProps
+) {
   const { value, defaultValue, isDisabled = false, onMandatoryFieldChange } = props;
   // plane imports
   const { t } = useTranslation();

@@ -12,7 +12,7 @@ type Props = {
   property: keyof IIssueDisplayProperties;
 };
 
-export const IssueColumn = observer((props: Props) => {
+export const IssueColumn = observer(function IssueColumn(props: Props) {
   const { displayProperties, issueDetail, property } = props;
   // router
 

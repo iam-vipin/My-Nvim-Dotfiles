@@ -24,7 +24,7 @@ type Props = {
   handleModalClose: () => void;
 };
 
-export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
+export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersModal(props: Props) {
   const { teamspaceId, isModalOpen, handleModalClose } = props;
   // router
   const { workspaceSlug } = useParams();

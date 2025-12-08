@@ -77,11 +77,7 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     const planeClient = await getPlaneAPIClient(credentials, ghIntegrationKey);
 
     // Create or update issue in GitHub
-    const githubService = getGithubService(
-      workspaceConnection as TGithubWorkspaceConnection,
-      credentials.source_access_token,
-      payload.isEnterprise
-    );
+    const githubService = getGithubService(workspaceConnection, credentials.source_access_token, payload.isEnterprise);
 
     const issue = await planeClient.issue.getIssue(entityConnection.workspace_slug, payload.project, payload.id);
 
@@ -185,11 +181,7 @@ const createOrUpdateGitHubIssue = async (
 
   // If the user has a credential, create a new github service for the user
   if (userCredential?.source_access_token) {
-    githubUserService = getGithubUserService(
-      workspaceConnection as TGithubWorkspaceConnection,
-      userCredential.source_access_token,
-      isEnterprise
-    );
+    githubUserService = getGithubUserService(workspaceConnection, userCredential.source_access_token, isEnterprise);
   }
 
   // If the issue has already been created with the external source as GITHUB, update the issue

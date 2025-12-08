@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -18,7 +16,9 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns/issue-type";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => {
+export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Partial<TIssueFields>>(
+  props: TIssueTypeSelectProps<T>
+) {
   const {
     control,
     projectId,

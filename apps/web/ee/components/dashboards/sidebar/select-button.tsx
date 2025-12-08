@@ -7,7 +7,7 @@ type Props = {
   value: boolean;
 };
 
-export const WidgetConfigSelectButton: React.FC<Props> = (props) => {
+export function WidgetConfigSelectButton(props: Props) {
   const { placeholder, title, value } = props;
 
   return (
@@ -22,4 +22,4 @@ export const WidgetConfigSelectButton: React.FC<Props> = (props) => {
       {value ? title : placeholder}
     </div>
   );
-};
+}

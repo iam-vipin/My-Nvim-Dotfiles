@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -14,15 +12,15 @@ import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-te
 // local imports
 import { TeamspaceRelationIssueList } from "./list";
 // dynamic imports
-const IssuePeekOverview = lazy(() =>
-  import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }))
-);
+const IssuePeekOverview = lazy(function IssuePeekOverview() {
+  return import("@/components/issues/peek-overview/root").then((module) => ({ default: module.IssuePeekOverview }));
+});
 
 type Props = {
   teamspaceId: string;
 };
 
-export const TeamspaceRelationsRoot: FC<Props> = observer((props) => {
+export const TeamspaceRelationsRoot = observer(function TeamspaceRelationsRoot(props: Props) {
   const { teamspaceId } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -38,7 +36,7 @@ export const TeamspaceRelationsRoot: FC<Props> = observer((props) => {
   // fetching teamspace relations
   useSWR(
     workspaceSlug && teamspaceId ? ["teamspaceRelations", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamspaceRelations(workspaceSlug!.toString(), teamspaceId) : null,
+    workspaceSlug && teamspaceId ? () => fetchTeamspaceRelations(workspaceSlug.toString(), teamspaceId) : null,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,

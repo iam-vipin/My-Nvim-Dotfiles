@@ -23,7 +23,7 @@ type TProps = {
   configuration?: TChangePropertyConfiguration;
 };
 
-export const PropertyValueSelect: React.FC<TProps> = observer((props) => {
+export const PropertyValueSelect = observer(function PropertyValueSelect(props: TProps) {
   const { isDisabled, propertyName, changeType, configuration } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -28,7 +28,7 @@ type Props = {
   featureList: TIntakeFeatureList;
   isTooltip?: boolean;
 };
-const IntakeSubFeatures = observer((props: Props) => {
+const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
   const { projectId, allowEdit = true, showDefault = true, featureList, isTooltip = false } = props;
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
@@ -194,7 +194,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                                   onClick={() => copyToClipboard(publishLink)}
                                 />
                                 {feature.hasHyperlink && (
-                                  <a href={publishLink} target="_blank">
+                                  <a href={publishLink} target="_blank" rel="noreferrer">
                                     <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
                                   </a>
                                 )}

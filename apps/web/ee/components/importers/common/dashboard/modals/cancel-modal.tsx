@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -10,7 +8,7 @@ interface ICancelModalProps {
   isLoading: boolean;
 }
 
-export const CancelModal: FC<ICancelModalProps> = ({ onClose, onSubmit, isLoading }) => {
+export function CancelModal({ onClose, onSubmit, isLoading }: ICancelModalProps) {
   const { t } = useTranslation();
 
   return (
@@ -29,4 +27,4 @@ export const CancelModal: FC<ICancelModalProps> = ({ onClose, onSubmit, isLoadin
       </div>
     </div>
   );
-};
+}

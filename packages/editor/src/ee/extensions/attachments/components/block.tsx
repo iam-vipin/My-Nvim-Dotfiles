@@ -14,7 +14,7 @@ type Props = CustomAttachmentNodeViewProps & {
   resolvedSource: string;
 };
 
-export const CustomAttachmentBlock: React.FC<Props> = (props) => {
+export function CustomAttachmentBlock(props: Props) {
   const { editor, extension, node, resolvedDownloadSource, resolvedSource, isTouchDevice, selected } = props;
 
   // states
@@ -92,4 +92,4 @@ export const CustomAttachmentBlock: React.FC<Props> = (props) => {
       </a>
     </div>
   );
-};
+}

@@ -17,7 +17,7 @@ export type IntegrationListItemProps = {
   isSupported: boolean;
 };
 
-export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
+export function IntegrationListItem(props: IntegrationListItemProps) {
   const { provider, workspaceSlug, isSupported } = props;
   const isEnabled = useFlag(workspaceSlug, provider.flag);
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
@@ -72,4 +72,4 @@ export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
       )}
     </div>
   );
-};
+}

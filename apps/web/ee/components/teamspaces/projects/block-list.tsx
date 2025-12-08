@@ -7,7 +7,7 @@ interface Props {
   teamspaceId: string;
 }
 
-export const TeamspaceProjectBlocksList: FC<Props> = (props) => {
+export function TeamspaceProjectBlocksList(props: Props) {
   const { projectIds = [], teamspaceId } = props;
 
   return (
@@ -19,4 +19,4 @@ export const TeamspaceProjectBlocksList: FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

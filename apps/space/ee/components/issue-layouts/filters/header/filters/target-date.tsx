@@ -13,7 +13,7 @@ type Props = {
   allowedValues: string[] | undefined;
 };
 
-export const FilterTargetDate: React.FC<Props> = observer((props) => {
+export const FilterTargetDate = observer(function FilterTargetDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

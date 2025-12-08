@@ -14,7 +14,7 @@ type Props = {
   value: TDashboardWidget["x_axis_date_grouping"];
 };
 
-export const WidgetDateGroupSelect: React.FC<Props> = (props) => {
+export function WidgetDateGroupSelect(props: Props) {
   const { onChange, placeholder, title, value } = props;
   // translation
   const { t } = useTranslation();
@@ -46,4 +46,4 @@ export const WidgetDateGroupSelect: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

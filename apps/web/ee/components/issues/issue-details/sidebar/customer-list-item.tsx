@@ -20,7 +20,7 @@ type TCustomerListItem = {
   workspaceSlug: string;
 };
 
-export const CustomerSidebarListitem: FC<TCustomerListItem> = observer((props) => {
+export const CustomerSidebarListitem = observer(function CustomerSidebarListitem(props: TCustomerListItem) {
   const { customerId, isPeekView, workspaceSlug } = props;
   // refs
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);

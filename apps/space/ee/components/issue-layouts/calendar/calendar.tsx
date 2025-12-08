@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
@@ -28,12 +26,12 @@ type Props = {
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
   loadMoreIssues: (dateString: string) => void;
-  getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
+  getIssueLoader: (groupId?: string, subGroupId?: string) => TLoader;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
 };
 
-export const CalendarChart: React.FC<Props> = observer((props) => {
+export const CalendarChart = observer(function CalendarChart(props: Props) {
   const {
     getIssueById,
     groupedIssueIds,

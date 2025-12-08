@@ -13,7 +13,7 @@ type TSelectCategoriesProps = {
   buttonContainerClassName?: string;
 };
 
-export const TemplateCategoriesDropdown: React.FC<TSelectCategoriesProps> = observer((props) => {
+export const TemplateCategoriesDropdown = observer(function TemplateCategoriesDropdown(props: TSelectCategoriesProps) {
   const { value, handleChange, buttonContainerClassName } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export const TemplateCategoriesDropdown: React.FC<TSelectCategoriesProps> = obse
 
   return (
     <MultiSelectDropdown
-      value={value as string[]}
+      value={value}
       options={options}
       onChange={(value) => handleChange(value)}
       keyExtractor={(option) => option.data}

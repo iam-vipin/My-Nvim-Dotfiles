@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // local components
@@ -10,7 +8,7 @@ type TOverviewSectionProps = {
   children: React.ReactNode;
 };
 
-export const OverviewSection: FC<TOverviewSectionProps> = (props) => {
+export function OverviewSection(props: TOverviewSectionProps) {
   const { children, title } = props;
   return (
     <SectionWrapper>
@@ -20,4 +18,4 @@ export const OverviewSection: FC<TOverviewSectionProps> = (props) => {
       <>{children}</>
     </SectionWrapper>
   );
-};
+}

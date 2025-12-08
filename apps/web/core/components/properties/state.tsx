@@ -4,7 +4,7 @@ import type { TStateGroups } from "@plane/types";
 import { cn } from "@plane/ui";
 import { addSpaceIfCamelCase } from "@plane/utils";
 
-export const DisplayState = (props: {
+export function DisplayState(props: {
   className?: string;
   state: {
     group?: TStateGroups;
@@ -12,7 +12,7 @@ export const DisplayState = (props: {
     name: string;
   };
   iconSize?: EIconSize;
-}) => {
+}) {
   const { state, className, iconSize } = props;
   return (
     <div className={cn("flex items-center gap-1 text-sm text-custom-text-300", className)}>
@@ -22,4 +22,4 @@ export const DisplayState = (props: {
       <div>{addSpaceIfCamelCase(state?.name ?? "")}</div>
     </div>
   );
-};
+}

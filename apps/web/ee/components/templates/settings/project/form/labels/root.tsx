@@ -20,7 +20,7 @@ type TProjectLabelsProps = {
   projectId: string;
 };
 
-export const ProjectLabels = observer((props: TProjectLabelsProps) => {
+export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabelsProps) {
   const { workspaceSlug, projectId } = props;
   // refs
   const dragHandleRef = useRef<HTMLButtonElement>(null);

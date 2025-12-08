@@ -1,5 +1,4 @@
 // components/WorkspaceAppSwitcher.tsx
-"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,7 @@ type Props = {
   dockItems: (AppSidebarItemData & { shouldRender: boolean })[];
 };
 
-const Component = ({ dockItems }: Props) => {
+function Component({ dockItems }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { toggleAppRail } = useAppRailVisibility();
   const router = useRouter();
@@ -80,6 +79,6 @@ const Component = ({ dockItems }: Props) => {
       </div>
     </CustomMenu>
   );
-};
+}
 
 export const WorkspaceAppSwitcher = withDockItems(Component);

@@ -219,7 +219,7 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
       if (isEmpty(this.filters) || isEmpty(this.filters[teamspaceId])) return;
       // get the filters
       const _filters = {
-        richFilters: this.filters[teamspaceId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[teamspaceId].richFilters,
         displayFilters: this.filters[teamspaceId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[teamspaceId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[teamspaceId].kanbanFilters as TIssueKanbanFilters,

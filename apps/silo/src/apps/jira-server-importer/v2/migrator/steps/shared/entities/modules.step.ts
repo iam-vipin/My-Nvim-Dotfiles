@@ -134,7 +134,7 @@ export class JiraModulesStep implements IStep {
       .filter((module) => module.external_id && module.id)
       .map((module) => ({
         externalId: module.external_id,
-        planeId: module.id!,
+        planeId: module.id,
       }));
 
     await storage.storeMapping(job.id, this.name, mappings);

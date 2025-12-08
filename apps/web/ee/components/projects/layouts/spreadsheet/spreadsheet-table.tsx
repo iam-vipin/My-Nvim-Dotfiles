@@ -23,7 +23,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const SpreadsheetTable = observer((props: Props) => {
+export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props) {
   const {
     displayFilters,
     handleDisplayFilterUpdate,

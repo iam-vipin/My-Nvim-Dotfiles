@@ -269,9 +269,9 @@ export const transformIssueFieldOptions = (
 export const transformIssuePropertyValues = (
   ctx: TTransformationContext,
   issue: IJiraIssue,
-  // eslint-disable-next-line no-undef
+
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: replace Map with Record<string, Partial<ExIssueProperty>> in the future
-  // eslint-disable-next-line no-undef
+
   jiraCustomFieldMap: Map<string, string> // TODO: replace Map with Record<string, string> in the future
 ): TPropertyValuesPayload => {
   const { resourceId, projectId } = ctx;

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // icons
@@ -23,7 +21,7 @@ type Props = {
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
-export const InitiativeSidebarRoot: FC<Props> = observer((props) => {
+export const InitiativeSidebarRoot = observer(function InitiativeSidebarRoot(props: Props) {
   const {
     workspaceSlug,
     initiativeId,

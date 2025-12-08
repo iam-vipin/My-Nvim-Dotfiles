@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -49,7 +47,7 @@ type TAuthRoot = {
   config: TInstanceConfig;
 };
 
-export const AuthRoot: FC<TAuthRoot> = (props) => {
+export function AuthRoot(props: TAuthRoot) {
   const { config } = props;
   // router
   const searchParams = useSearchParams();
@@ -90,7 +88,7 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
   // validating and defining the errors
   useEffect(() => {
     if (!errorCodeParam) return;
-    const errorhandler = mobileAuthErrorHandler(errorCodeParam?.toString() as TMobileAuthErrorCodes);
+    const errorhandler = mobileAuthErrorHandler(errorCodeParam?.toString());
     if (!errorhandler) return;
     // password handler
     if (PASSWORD_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EMobileAuthSteps.PASSWORD);
@@ -165,4 +163,4 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
       </div>
     </MobileAuthInvitationWrapper>
   );
-};
+}

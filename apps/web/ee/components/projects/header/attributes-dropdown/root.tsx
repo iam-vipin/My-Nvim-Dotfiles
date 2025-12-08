@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,9 @@ type TProjectAttributesDropdown = {
   isArchived?: boolean;
 };
 
-export const ProjectAttributesDropdown: FC<TProjectAttributesDropdown> = observer((props) => {
+export const ProjectAttributesDropdown = observer(function ProjectAttributesDropdown(
+  props: TProjectAttributesDropdown
+) {
   const { workspaceSlug, workspaceId, menuButton, isArchived = false } = props;
   // hooks
   const { appliedAttributesCount, filters, updateAttributes } = useProjectFilter();

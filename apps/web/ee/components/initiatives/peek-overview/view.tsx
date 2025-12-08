@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -31,7 +29,7 @@ interface IInitiativeView {
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 }
 
-export const InitiativeView: FC<IInitiativeView> = observer((props) => {
+export const InitiativeView = observer(function InitiativeView(props: IInitiativeView) {
   const {
     workspaceSlug,
     initiativeId,

@@ -26,7 +26,7 @@ type TConfirmPageDeletionProps = {
   editorRef?: React.MutableRefObject<EditorRefApi | null>;
 };
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const DeletePageModal = observer(function DeletePageModal(props: TConfirmPageDeletionProps) {
   const { isOpen, onClose, page, storeType, editorRef } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

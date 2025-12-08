@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 // plane web imports
 import { TeamspaceLevelWorkItemFiltersHOC } from "@/plane-web/components/work-item-filters/filters-hoc/teamspace-level";
 
-const TeamspaceWorkItemLayout: FC<{ activeLayout: EIssueLayoutTypes | undefined }> = ({ activeLayout }) => {
+function TeamspaceWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ListLayout />;
@@ -35,30 +33,34 @@ const TeamspaceWorkItemLayout: FC<{ activeLayout: EIssueLayoutTypes | undefined 
     default:
       return null;
   }
-};
+}
 
-const TeamspaceWorkItemLayoutContent: FC<{ issueLoader: string | undefined; teamspaceId: string }> = observer(
-  ({ issueLoader, teamspaceId }) => {
-    // store hooks
-    const { issuesFilter } = useIssues(EIssuesStoreType.TEAM);
-    // derived values
-    const issueFilters = issuesFilter?.getIssueFilters(teamspaceId);
-    const activeLayout = issueFilters?.displayFilters?.layout;
+const TeamspaceWorkItemLayoutContent = observer(function TeamspaceWorkItemLayoutContent({
+  issueLoader,
+  teamspaceId,
+}: {
+  issueLoader: string | undefined;
+  teamspaceId: string;
+}) {
+  // store hooks
+  const { issuesFilter } = useIssues(EIssuesStoreType.TEAM);
+  // derived values
+  const issueFilters = issuesFilter?.getIssueFilters(teamspaceId);
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
-    return (
-      <div className="relative h-full w-full overflow-auto bg-custom-background-90">
-        {issueLoader === "mutation" && (
-          <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
-            <Spinner className="w-4 h-4" />
-          </div>
-        )}
-        <TeamspaceWorkItemLayout activeLayout={activeLayout} />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="relative h-full w-full overflow-auto bg-custom-background-90">
+      {issueLoader === "mutation" && (
+        <div className="fixed w-[40px] h-[40px] z-50 right-[20px] top-[70px] flex justify-center items-center bg-custom-background-80 shadow-sm rounded">
+          <Spinner className="w-4 h-4" />
+        </div>
+      )}
+      <TeamspaceWorkItemLayout activeLayout={activeLayout} />
+    </div>
+  );
+});
 
-export const TeamspaceLayoutRoot: FC = observer(() => {
+export const TeamspaceLayoutRoot = observer(function TeamspaceLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

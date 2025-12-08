@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -13,7 +11,7 @@ import { AutomationsListRoot } from "@/plane-web/components/automations/list/roo
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags/with-feature-flag-hoc";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
-export const CustomAutomationsRoot: FC<TCustomAutomationsRootProps> = observer((props) => {
+export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(props: TCustomAutomationsRootProps) {
   const { projectId, workspaceSlug } = props;
   // store hooks
   const {

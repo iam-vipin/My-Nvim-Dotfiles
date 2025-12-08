@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -60,7 +58,7 @@ const defaultFormData: Partial<TUserApplication> = {
   supported_plans: [],
 };
 
-export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
+export const CreateUpdateApplication = observer(function CreateUpdateApplication(props: Props) {
   const { formData, handleFormSubmit } = props;
 
   const {

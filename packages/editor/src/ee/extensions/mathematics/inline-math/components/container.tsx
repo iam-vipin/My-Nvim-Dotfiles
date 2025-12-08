@@ -11,14 +11,14 @@ type TInlineMathContainerProps = TMathComponentProps & {
   isEditable?: boolean;
 };
 
-export const InlineMathContainer: React.FC<TInlineMathContainerProps> = ({
+export function InlineMathContainer({
   onClick,
   children,
   variant = "content",
   className,
   title,
   isEditable = true,
-}) => {
+}: TInlineMathContainerProps) {
   const baseClasses =
     "inline-flex items-center justify-center gap-1 px-2 h-6 rounded transition-colors overflow-hidden leading-none";
 
@@ -38,4 +38,4 @@ export const InlineMathContainer: React.FC<TInlineMathContainerProps> = ({
       {children}
     </span>
   );
-};
+}

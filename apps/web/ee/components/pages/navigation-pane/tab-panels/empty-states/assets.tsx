@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import assetsDark from "@/app/assets/empty-state/wiki/navigation-pane/assets-dark.webp?url";
 import assetsLight from "@/app/assets/empty-state/wiki/navigation-pane/assets-light.webp?url";
 
-export const PageNavigationPaneAssetsTabEmptyState = () => {
+export function PageNavigationPaneAssetsTabEmptyState() {
   // theme hook
   const { resolvedTheme } = useTheme();
   // asset resolved path
@@ -32,4 +32,4 @@ export const PageNavigationPaneAssetsTabEmptyState = () => {
       </div>
     </div>
   );
-};
+}

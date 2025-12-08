@@ -20,7 +20,7 @@ type Props = {
   handleAddBlock: (type: EGanttBlockType) => Promise<void>;
 };
 
-export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
+export const GroupedGanttSidebar = observer(function GroupedGanttSidebar(props: Props) {
   const { showAllBlocks = false, handleAddBlock, ganttContainerRef } = props;
 
   const { getBlockById, getGroupedBlockIds, toggleGroup } = useTimeLineChartStore();

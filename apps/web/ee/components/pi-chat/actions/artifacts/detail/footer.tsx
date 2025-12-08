@@ -18,10 +18,10 @@ type TProps = {
   error?: string | null;
   onSubmit?: (artifactData: TUpdatedArtifact) => void;
 };
-export const PiChatArtifactsFooter = observer((props: TProps) => {
+export const PiChatArtifactsFooter = observer(function PiChatArtifactsFooter(props: TProps) {
   const { artifactsData, workspaceSlug, activeChatId, artifactId, isSaving, showSavedToast, error, onSubmit } = props;
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id ?? "";
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const projectId = artifactsData?.parameters?.project?.id;
   return (
     <div className="fixed bottom-0 left-1/2 right-1/2 -translate-x-1/2 w-full z-20">
@@ -40,6 +40,7 @@ export const PiChatArtifactsFooter = observer((props: TProps) => {
                   target="_blank"
                   className={cn("flex items-center gap-2 text-sm font-medium", getButtonStyling("primary", "md"))}
                   href={artifactsData.entity_url}
+                  rel="noreferrer"
                 >
                   <ExternalLink className="size-3 flex-shrink-0" />
                   <div>Open {artifactsData.artifact_type}</div>

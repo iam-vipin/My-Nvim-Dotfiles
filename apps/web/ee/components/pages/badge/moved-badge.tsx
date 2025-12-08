@@ -1,3 +1,5 @@
 import { Badge } from "./badge";
 
-export const MovedBadge: React.FC = () => <Badge text="Moved" />;
+export function MovedBadge() {
+  return <Badge text="Moved" />;
+}

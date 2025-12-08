@@ -13,7 +13,7 @@ type Props = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ChartScrollable: React.FC<Props> = observer((props) => {
+export const ChartScrollable = observer(function ChartScrollable(props: Props) {
   const { block, blockToRender, ganttContainerRef } = props;
   // states
   const [isHidden, setIsHidden] = useState(true);

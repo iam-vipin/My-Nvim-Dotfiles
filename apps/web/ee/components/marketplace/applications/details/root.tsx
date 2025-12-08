@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { observer } from "mobx-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -115,7 +114,7 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
   return internalApps;
 };
 
-export const AppListRoot: React.FC<AppListProps> = observer((props) => {
+export const AppListRoot = observer(function AppListRoot(props: AppListProps) {
   const { supportedIntegrations } = props;
   const internalApps = getInternalApps(supportedIntegrations);
   // filter apps which has same slug as internal apps

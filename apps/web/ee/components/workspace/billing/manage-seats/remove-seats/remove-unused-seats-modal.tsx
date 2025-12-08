@@ -16,7 +16,7 @@ type TRemoveUnusedSeatsProps = {
   handleClose: () => void;
 };
 
-export const RemoveUnusedSeatsModal: FC<TRemoveUnusedSeatsProps> = (props) => {
+export function RemoveUnusedSeatsModal(props: TRemoveUnusedSeatsProps) {
   const { isOpen, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -68,4 +68,4 @@ export const RemoveUnusedSeatsModal: FC<TRemoveUnusedSeatsProps> = (props) => {
       }}
     />
   );
-};
+}

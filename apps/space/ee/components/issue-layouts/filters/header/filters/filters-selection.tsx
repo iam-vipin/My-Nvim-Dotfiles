@@ -23,7 +23,7 @@ type Props = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
 };
 
-export const FilterSelection: React.FC<Props> = observer((props) => {
+export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, possibleFiltersForView, handleFiltersUpdate } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

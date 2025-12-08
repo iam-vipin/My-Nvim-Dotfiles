@@ -132,7 +132,7 @@ export class EpicAnalytics implements IEpicAnalyticStore {
         response.forEach((stats) => {
           if (!stats) return;
 
-          this.epicStatsMap![stats.epic_id] = stats;
+          this.epicStatsMap[stats.epic_id] = stats;
         });
         this.epicStatsLoader[projectId] = "loaded";
       });

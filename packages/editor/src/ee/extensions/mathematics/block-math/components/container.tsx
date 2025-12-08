@@ -14,7 +14,7 @@ type TBlockMathContainerProps = TMathComponentProps & {
   isEditable?: boolean;
 };
 
-export const BlockMathContainer: React.FC<TBlockMathContainerProps> = ({
+export function BlockMathContainer({
   onClick,
   selected,
   editor,
@@ -22,7 +22,7 @@ export const BlockMathContainer: React.FC<TBlockMathContainerProps> = ({
   variant = "content",
   className,
   isEditable = true,
-}) => {
+}: TBlockMathContainerProps) {
   const baseClasses = "rounded-lg  px-4 my-2 min-h-[48px] transition-all duration-300 ease-in-out";
 
   const variantClasses = {
@@ -47,4 +47,4 @@ export const BlockMathContainer: React.FC<TBlockMathContainerProps> = ({
       {children}
     </div>
   );
-};
+}

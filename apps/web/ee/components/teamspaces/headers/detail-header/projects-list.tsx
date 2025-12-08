@@ -13,7 +13,9 @@ type TeamspaceProjectListHeaderActionsProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamspaceProjectListHeaderActions = observer((props: TeamspaceProjectListHeaderActionsProps) => {
+export const TeamspaceProjectListHeaderActions = observer(function TeamspaceProjectListHeaderActions(
+  props: TeamspaceProjectListHeaderActionsProps
+) {
   const { teamspaceId, isEditingAllowed } = props;
   // router
   const { workspaceSlug } = useParams();

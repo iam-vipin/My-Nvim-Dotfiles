@@ -39,7 +39,7 @@ export type VideoPlayerRef = {
   videoElement: HTMLVideoElement | null;
 };
 
-export const VideoPlayer = forwardRef<VideoPlayerRef, Props>((props, ref) => {
+export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: React.ForwardedRef<VideoPlayerRef>) {
   const { src, className, selected, onLoadedMetadata, onBlur, onFocus, onHandleKeyDown, isIOS = false } = props;
 
   // refs

@@ -14,7 +14,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceGanttRoot: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceGanttRoot = observer(function WorkspaceGanttRoot(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   return (

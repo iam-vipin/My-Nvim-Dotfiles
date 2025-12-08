@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import { observer } from "mobx-react";
@@ -17,7 +15,9 @@ type TInitiativeDateRangeDropdownProps = {
   workspaceSlug: string;
 };
 
-export const InitiativeDateRangeDropdown: FC<TInitiativeDateRangeDropdownProps> = observer((props) => {
+export const InitiativeDateRangeDropdown = observer(function InitiativeDateRangeDropdown(
+  props: TInitiativeDateRangeDropdownProps
+) {
   const { initiative, workspaceSlug } = props;
   const {
     initiative: { updateInitiative },

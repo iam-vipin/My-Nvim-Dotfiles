@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";

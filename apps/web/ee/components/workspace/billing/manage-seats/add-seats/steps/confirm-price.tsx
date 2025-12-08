@@ -13,7 +13,7 @@ type TConfirmPriceStepProps = {
   onPreviousStep: () => void;
 };
 
-export const ConfirmPriceStep: React.FC<TConfirmPriceStepProps> = (props) => {
+export function ConfirmPriceStep(props: TConfirmPriceStepProps) {
   const { prorationPreview, handleFormSubmit, isSubmitting, handleClose, onPreviousStep } = props;
 
   return (
@@ -70,4 +70,4 @@ export const ConfirmPriceStep: React.FC<TConfirmPriceStepProps> = (props) => {
       />
     </>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
@@ -14,7 +12,7 @@ type Props = {
   showLabel?: boolean;
 };
 
-export const IssueStats: FC<Props> = observer((props) => {
+export const IssueStats = observer(function IssueStats(props: Props) {
   const { issueId, className, size = 14, showProgressText = true, showLabel = false } = props;
 
   const { getEpicStatsById } = useEpicAnalytics();

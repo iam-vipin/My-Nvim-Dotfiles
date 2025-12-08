@@ -1,5 +1,3 @@
-"use-client";
-
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -10,7 +8,7 @@ type TProps = {
   favoriteChats: TUserThreads[];
   isProjectLevel?: boolean;
 };
-const FavoriteChats = observer((props: TProps) => {
+const FavoriteChats = observer(function FavoriteChats(props: TProps) {
   const { favoriteChats, isProjectLevel = false } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -10,13 +10,13 @@ import { GanttChartBlock } from "./block";
 export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
   blockIds: string[];
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
   blockToRender: (data: any) => React.ReactNode;
   ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
 };
 
-export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
+export function GanttChartBlocksList(props: GanttChartBlocksProps) {
   const { itemsContainerWidth, blockIds, blockToRender, getBlockById, ganttContainerRef, showAllBlocks } = props;
 
   return (
@@ -39,4 +39,4 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
       ))}
     </div>
   );
-};
+}

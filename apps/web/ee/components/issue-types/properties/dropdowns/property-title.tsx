@@ -15,7 +15,9 @@ type TPropertyTitleDescriptionInputProps = {
   ) => void;
 };
 
-export const PropertyTitleDescriptionInput = observer((props: TPropertyTitleDescriptionInputProps) => {
+export const PropertyTitleDescriptionInput = observer(function PropertyTitleDescriptionInput(
+  props: TPropertyTitleDescriptionInputProps
+) {
   const { propertyDetail, error, onPropertyDetailChange } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -25,7 +27,7 @@ export const PropertyTitleDescriptionInput = observer((props: TPropertyTitleDesc
       <Input
         id="display_name"
         type="text"
-        mode={Boolean(error) ? "primary" : "true-transparent"}
+        mode={error ? "primary" : "true-transparent"}
         placeholder={t("work_item_types.settings.properties.create_update.form.display_name.placeholder")}
         value={propertyDetail.display_name}
         onChange={(e) => onPropertyDetailChange("display_name", e.target.value)}

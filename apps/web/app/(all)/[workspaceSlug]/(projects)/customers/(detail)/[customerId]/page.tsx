@@ -1,7 +1,7 @@
-"use client";
-
 import { CustomerDetailRoot } from "@/plane-web/components/customers";
 
-const CustomerDetailPage = () => <CustomerDetailRoot />;
+function CustomerDetailPage() {
+  return <CustomerDetailRoot />;
+}
 
 export default CustomerDetailPage;

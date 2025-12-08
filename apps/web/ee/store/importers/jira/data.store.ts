@@ -229,7 +229,7 @@ export class JiraDataStore implements IJiraDataStore {
       this.isLoading = false;
       return resources;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -261,7 +261,7 @@ export class JiraDataStore implements IJiraDataStore {
       this.isLoading = false;
       return projects;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -303,7 +303,7 @@ export class JiraDataStore implements IJiraDataStore {
         return undefined;
       }
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -335,7 +335,7 @@ export class JiraDataStore implements IJiraDataStore {
       }
       return labelResponse;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -369,7 +369,7 @@ export class JiraDataStore implements IJiraDataStore {
       this.isLoading = false;
       return priorities;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -399,7 +399,7 @@ export class JiraDataStore implements IJiraDataStore {
       this.isLoading = false;
       return issueCount;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -431,7 +431,7 @@ export class JiraDataStore implements IJiraDataStore {
       }
       return additionalUserResponse;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
     }
   };
 }

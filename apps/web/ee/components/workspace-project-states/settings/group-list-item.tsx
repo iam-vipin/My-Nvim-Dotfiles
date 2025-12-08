@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -28,7 +26,7 @@ type TGroupItem = {
   handleExpand: (groupKey: TProjectStateGroupKey) => void;
 };
 
-export const ProjectStateGroupListItem: FC<TGroupItem> = observer((props) => {
+export const ProjectStateGroupListItem = observer(function ProjectStateGroupListItem(props: TGroupItem) {
   const {
     workspaceSlug,
     workspaceId,

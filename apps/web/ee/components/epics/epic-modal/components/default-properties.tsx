@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -36,7 +34,7 @@ type TIssueDefaultPropertiesProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
-export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
+export const EpicDefaultProperties = observer(function EpicDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const { id, control, projectId, startDate, targetDate, handleFormChange } = props;
   const { workspaceSlug } = useParams();
   // store hooks

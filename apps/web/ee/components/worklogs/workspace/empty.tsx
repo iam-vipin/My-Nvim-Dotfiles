@@ -1,9 +1,7 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 
-export const WorklogEmptyScreen: FC = () => {
+export function WorklogEmptyScreen() {
   const { resolvedTheme } = useTheme();
 
   // derived values
@@ -27,4 +25,4 @@ export const WorklogEmptyScreen: FC = () => {
       />
     </div>
   );
-};
+}

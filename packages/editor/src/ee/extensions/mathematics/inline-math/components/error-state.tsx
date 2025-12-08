@@ -9,9 +9,11 @@ type TInlineMathErrorProps = TMathComponentProps & {
   errorMessage: string;
 };
 
-export const InlineMathErrorState: React.FC<TInlineMathErrorProps> = ({ errorMessage, onClick, isEditable }) => (
-  <InlineMathContainer onClick={onClick} variant="error" title={errorMessage} isEditable={isEditable}>
-    <SquareRadical className="size-4 shrink-0" />
-    <span>Invalid equation</span>
-  </InlineMathContainer>
-);
+export function InlineMathErrorState({ errorMessage, onClick, isEditable }: TInlineMathErrorProps) {
+  return (
+    <InlineMathContainer onClick={onClick} variant="error" title={errorMessage} isEditable={isEditable}>
+      <SquareRadical className="size-4 shrink-0" />
+      <span>Invalid equation</span>
+    </InlineMathContainer>
+  );
+}

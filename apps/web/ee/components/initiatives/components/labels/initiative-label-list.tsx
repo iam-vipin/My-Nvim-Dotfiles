@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-la
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
 import { InitiativeLabelItem } from "./initiative-label-item";
 
-export const InitiativeLabelList: React.FC = observer(() => {
+export const InitiativeLabelList = observer(function InitiativeLabelList() {
   const { workspaceSlug } = useParams();
   const scrollToRef = useRef<HTMLDivElement>(null);
 

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -25,7 +23,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => {
+export const InitiativeEpicsCollapsibleContent = observer(function InitiativeEpicsCollapsibleContent(props: Props) {
   const { workspaceSlug, initiativeId, toggleEpicModal, disabled = false } = props;
   // store hooks
   const {

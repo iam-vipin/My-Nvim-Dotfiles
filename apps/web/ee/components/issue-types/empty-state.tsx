@@ -24,7 +24,7 @@ type TIssueTypeEmptyState = {
   projectId: string;
 };
 
-export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
+export const IssueTypeEmptyState = observer(function IssueTypeEmptyState(props: TIssueTypeEmptyState) {
   // props
   const { workspaceSlug, projectId } = props;
   // theme hook
@@ -151,6 +151,7 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
               href="https://docs.plane.so/core-concepts/issues/issue-types"
               target="_blank"
               className="font-medium hover:underline"
+              rel="noreferrer"
             >
               {` ${t("common.read_the_docs")}`}
             </a>

@@ -12,7 +12,7 @@ type TDisplayFilterSortOrder = {
   handleUpdate: (val: TProjectSortOrder) => void;
 };
 
-export const DisplayFilterSortOrder: React.FC<TDisplayFilterSortOrder> = observer((props) => {
+export const DisplayFilterSortOrder = observer(function DisplayFilterSortOrder(props: TDisplayFilterSortOrder) {
   const { filterValue, handleUpdate } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

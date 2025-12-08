@@ -16,7 +16,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
-export const TeamProjectWorkItemEmptyState: React.FC = observer(() => {
+export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkItemEmptyState() {
   // router
   const {
     workspaceSlug: routerWorkspaceSlug,

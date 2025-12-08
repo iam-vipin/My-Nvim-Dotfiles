@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ import { MappingLoader } from "../../../ui";
 import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 import ProjectUpdatesForm from "./form/form";
 
-export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ connectionId }) => {
+export const ProjectUpdatesRoot = observer(function ProjectUpdatesRoot({ connectionId }: { connectionId: string }) {
   // hooks
   const {
     workspace,

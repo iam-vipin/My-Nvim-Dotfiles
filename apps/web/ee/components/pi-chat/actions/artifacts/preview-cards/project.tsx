@@ -10,7 +10,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const ProjectPreviewCard = observer((props: TProps) => {
+export const ProjectPreviewCard = observer(function ProjectPreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useTemplateData(artifactId);
   const properties = { ...data?.parameters?.properties };
@@ -37,7 +37,7 @@ export const ProjectPreviewCard = observer((props: TProps) => {
               {data.parameters?.name || data.parameters?.project?.name || "Unknown"}
             </span>
             <span className="text-xs text-custom-text-300 truncate">
-              {(data as TArtifact).project_identifier || data.parameters?.project?.identifier}
+              {data.project_identifier || data.parameters?.project?.identifier}
             </span>
           </div>
         </div>

@@ -55,7 +55,7 @@ export const useCustomPropertyFiltersConfig = ({
       if (!property.id) return;
 
       // Custom property key
-      const customPropertyKey = `customproperty_${property.id}` as TCustomPropertyFilterKey;
+      const customPropertyKey = `customproperty_${property.id}` as const;
       const isEnabled = isFilterEnabled(customPropertyKey) && !!property.is_active;
 
       // Property type details

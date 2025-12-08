@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Crown } from "lucide-react";
 // plane imports
@@ -13,7 +11,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const SharedPagesFallback = observer(() => {
+export const SharedPagesFallback = observer(function SharedPagesFallback() {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
@@ -58,6 +56,7 @@ export const SharedPagesFallback = observer(() => {
                 href="https://plane.so/pricing"
                 target="_blank"
                 className={cn(getButtonStyling("link-primary", "sm"), "hover:underline")}
+                rel="noreferrer"
               >
                 Talk custom pricing
               </a>

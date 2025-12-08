@@ -181,7 +181,7 @@ export class LinearDataStore implements ILinearDataStore {
       this.isLoading = false;
       return organization;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -208,7 +208,7 @@ export class LinearDataStore implements ILinearDataStore {
       this.isLoading = false;
       return teams;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -240,7 +240,7 @@ export class LinearDataStore implements ILinearDataStore {
       this.isLoading = false;
       return states;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -268,7 +268,7 @@ export class LinearDataStore implements ILinearDataStore {
       this.isLoading = false;
       return issueCount;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -296,7 +296,7 @@ export class LinearDataStore implements ILinearDataStore {
       this.isLoading = false;
       return dataSummary;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
       this.isLoading = false;
     }
   };
@@ -329,7 +329,7 @@ export class LinearDataStore implements ILinearDataStore {
       }
       return additionalUserResponse;
     } catch (error) {
-      this.error = error as unknown as object;
+      this.error = error as object;
     }
   };
 }

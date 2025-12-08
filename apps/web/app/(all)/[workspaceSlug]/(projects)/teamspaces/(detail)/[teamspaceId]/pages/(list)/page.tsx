@@ -1,5 +1,3 @@
-"use client";
-
 import { useSearchParams } from "next/navigation";
 // plane imports
 import type { TPageNavigationTabs } from "@plane/types";

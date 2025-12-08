@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -35,7 +33,9 @@ type TWorkspaceWorklogDownloadButton = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton> = observer((props) => {
+export const WorkspaceWorklogDownloadButton = observer(function WorkspaceWorklogDownloadButton(
+  props: TWorkspaceWorklogDownloadButton
+) {
   const { workspaceSlug } = props;
   // hooks
   const { filters } = useWorkspaceWorklogs();

@@ -23,7 +23,7 @@ export type InlineMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TMathAttributes>) => void;
 };
 
-export const InlineMathNodeView: React.FC<InlineMathNodeViewProps> = (props) => {
+export function InlineMathNodeView(props: InlineMathNodeViewProps) {
   const { getPos, editor } = props;
 
   // Use shared hook for common math node logic
@@ -85,4 +85,4 @@ export const InlineMathNodeView: React.FC<InlineMathNodeViewProps> = (props) => 
       />
     </>
   );
-};
+}

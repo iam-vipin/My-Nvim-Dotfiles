@@ -11,7 +11,7 @@ import { PageTemplatePicker as PageTemplatePickerCE } from "@/ce/components/page
 import { TemplateSelectModal } from "@/plane-web/components/pages/modals";
 import { useFlag } from "@/plane-web/hooks/store";
 
-export const PageTemplatePicker: React.FC<TPageTemplatePickerProps> = observer((props) => {
+export const PageTemplatePicker = observer(function PageTemplatePicker(props: TPageTemplatePickerProps) {
   const { isPageLoading, page, projectId, titleEditorRef, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

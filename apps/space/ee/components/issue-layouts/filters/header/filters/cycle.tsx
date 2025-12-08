@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ type Props = {
   allowedValues: string[] | undefined;
 };
 
-export const FilterCycle: React.FC<Props> = observer((props) => {
+export const FilterCycle = observer(function FilterCycle(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
 
   // hooks

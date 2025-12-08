@@ -21,7 +21,7 @@ type TDuplicateWorkItemModalProps = {
   serviceType?: TIssueServiceType;
 };
 
-export const DuplicateWorkItemModal: FC<TDuplicateWorkItemModalProps> = observer((props) => {
+export const DuplicateWorkItemModal = observer(function DuplicateWorkItemModal(props: TDuplicateWorkItemModalProps) {
   const { workItemId, onClose, isOpen, workspaceSlug, projectId, serviceType = EIssueServiceType.ISSUES } = props;
 
   const [selectedProject, setSelectedProject] = useState<string | null>(null);

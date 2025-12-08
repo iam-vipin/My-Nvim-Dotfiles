@@ -24,7 +24,7 @@ const APPS_LIST = [
   },
 ];
 
-export const SidebarAppSwitcher = observer(() => {
+export const SidebarAppSwitcher = observer(function SidebarAppSwitcher() {
   // params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();

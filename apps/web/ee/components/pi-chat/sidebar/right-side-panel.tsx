@@ -1,5 +1,3 @@
-"use-client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -17,7 +15,7 @@ type TProps = {
   isFullScreen?: boolean;
   toggleSidePanel: (value: boolean) => void;
 };
-export const RightSidePanel = observer((props: TProps) => {
+export const RightSidePanel = observer(function RightSidePanel(props: TProps) {
   const { isSidePanelOpen, toggleSidePanel, isMobile = false, isFullScreen = false } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");

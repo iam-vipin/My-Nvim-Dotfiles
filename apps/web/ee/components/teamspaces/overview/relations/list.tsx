@@ -17,7 +17,9 @@ type TTeamspaceRelationIssueListProps = {
   type: ERelationType;
 };
 
-export const TeamspaceRelationIssueList = observer((props: TTeamspaceRelationIssueListProps) => {
+export const TeamspaceRelationIssueList = observer(function TeamspaceRelationIssueList(
+  props: TTeamspaceRelationIssueListProps
+) {
   const { teamspaceId, type } = props;
   // plane hooks
   const { t } = useTranslation();

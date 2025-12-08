@@ -403,7 +403,7 @@ export default class GithubController {
 
     const { github_code, encoded_github_state } = githubState;
 
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state as string, "base64").toString());
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state, "base64").toString());
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
 
     if (authState.profile_redirect) {
@@ -412,7 +412,7 @@ export default class GithubController {
 
     try {
       const { response, state } = await githubAuthService.getUserAccessToken({
-        code: github_code as string,
+        code: github_code,
         state: authState,
       });
 

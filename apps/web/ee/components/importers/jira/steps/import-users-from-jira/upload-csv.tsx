@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useState } from "react";
 import Papa from "papaparse";
@@ -17,7 +15,7 @@ type TImportUsersFromJiraUploader = {
 
 const acceptFileTypes: Accept = { "text/csv": [".csv"] };
 
-export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (props) => {
+export function ImportUsersFromJiraUploader(props: TImportUsersFromJiraUploader) {
   // props
   const { handleValue } = props;
   // states
@@ -161,4 +159,4 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
       )}
     </Fragment>
   );
-};
+}

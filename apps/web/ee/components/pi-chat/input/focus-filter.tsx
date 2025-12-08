@@ -28,7 +28,7 @@ type TProps = {
   isLoading: boolean;
   setFocus: Dispatch<SetStateAction<TFocus>>;
 };
-export const FocusFilter = observer((props: TProps) => {
+export const FocusFilter = observer(function FocusFilter(props: TProps) {
   const { focus, setFocus, isLoading, workspaceId, projectId } = props;
   // router params
   const { workspaceSlug } = useParams();
@@ -37,7 +37,7 @@ export const FocusFilter = observer((props: TProps) => {
   const { workspaceProjectIds, getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const workspace = getWorkspaceBySlug(workspaceSlug as string);
+  const workspace = getWorkspaceBySlug(workspaceSlug);
   const selectedFocus = focus.entityType === "workspace_id" ? workspace : getProjectById(focus.entityIdentifier);
   // helper
   const updateFocus = <K extends keyof TFocus>(key: K, value: TFocus[K]) => {

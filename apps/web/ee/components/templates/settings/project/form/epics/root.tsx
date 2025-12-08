@@ -9,7 +9,7 @@ import { cn } from "@plane/utils";
 import { EpicPropertiesRoot } from "@/plane-web/components/epics/settings/epics-properties";
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
 
-export const ProjectEpicWorkItemType = observer(() => {
+export const ProjectEpicWorkItemType = observer(function ProjectEpicWorkItemType() {
   // plane hooks
   const { t } = useTranslation();
   // form context

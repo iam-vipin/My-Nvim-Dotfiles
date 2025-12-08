@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -16,7 +14,7 @@ type Props = {
   isOpen: boolean;
 };
 
-export const DashboardDeleteModal: React.FC<Props> = observer((props) => {
+export const DashboardDeleteModal = observer(function DashboardDeleteModal(props: Props) {
   const { dashboardId, handleClose, handleDelete, isOpen } = props;
   // states
   const [loader, setLoader] = useState(false);

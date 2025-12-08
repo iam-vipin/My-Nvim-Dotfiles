@@ -15,7 +15,7 @@ const MODE_OPTIONS = [
     icon: <AiWriteIcon className="size-4" />,
   },
 ];
-export const AiMode = (props: { aiMode: string; setAiMode: (mode: string) => void }) => {
+export function AiMode(props: { aiMode: string; setAiMode: (mode: string) => void }) {
   const { aiMode, setAiMode } = props;
   const selectedMode = MODE_OPTIONS.find((option) => option.value === aiMode);
   return (
@@ -58,4 +58,4 @@ export const AiMode = (props: { aiMode: string; setAiMode: (mode: string) => voi
       </div>
     </CustomSelect>
   );
-};
+}

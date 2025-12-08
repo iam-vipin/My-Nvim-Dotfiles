@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -13,7 +11,7 @@ type TStateList = {
   states: IState[];
 };
 
-export const WorkflowStateList: FC<TStateList> = observer((props) => {
+export const WorkflowStateList = observer(function WorkflowStateList(props: TStateList) {
   const { workspaceSlug, projectId, states } = props;
 
   return (

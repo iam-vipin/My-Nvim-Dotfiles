@@ -12,7 +12,11 @@ type PageCommentUserDetailsProps = {
   className?: string;
 };
 
-export const PageCommentUserDetails = observer(({ userId, timestamp, className = "" }: PageCommentUserDetailsProps) => {
+export const PageCommentUserDetails = observer(function PageCommentUserDetails({
+  userId,
+  timestamp,
+  className = "",
+}: PageCommentUserDetailsProps) {
   const {
     workspace: { getWorkspaceMemberDetails },
   } = useMember();

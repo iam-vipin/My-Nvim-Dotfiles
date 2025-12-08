@@ -19,9 +19,9 @@ type CheckboxSelectProps<T> = {
 };
 
 // TODO: refactor this to allow multiple selection
-export const CheckboxSelect = <T extends string | number | readonly string[] | undefined>(
+export function CheckboxSelect<T extends string | number | readonly string[] | undefined>(
   props: CheckboxSelectProps<T>
-) => {
+) {
   const {
     name = "checkbox-select",
     label: inputLabel,
@@ -80,4 +80,4 @@ export const CheckboxSelect = <T extends string | number | readonly string[] | u
       </div>
     </div>
   );
-};
+}

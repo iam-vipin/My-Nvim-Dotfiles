@@ -12,7 +12,7 @@ import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 
-export const ProjectDetails = observer(() => {
+export const ProjectDetails = observer(function ProjectDetails() {
   // states
   const [isOpen, setIsOpen] = useState(false);
   // plane hooks

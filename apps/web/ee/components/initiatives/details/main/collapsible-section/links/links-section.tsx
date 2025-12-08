@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +17,7 @@ type Props = {
   count: number;
 };
 
-export const LinksSection: React.FC<Props> = observer((props) => {
+export const LinksSection = observer(function LinksSection(props: Props) {
   const { workspaceSlug, initiativeId, disabled, isOpen, onToggle, count } = props;
   const { t } = useTranslation();
 

@@ -13,7 +13,7 @@ type TTeamspaceProgressBannerProps = {
   teamspaceId: string;
 };
 
-export const TeamspaceProgressBanner: React.FC<TTeamspaceProgressBannerProps> = observer((props) => {
+export const TeamspaceProgressBanner = observer(function TeamspaceProgressBanner(props: TTeamspaceProgressBannerProps) {
   const { teamspaceId } = props;
   // store hooks
   const { getTeamspaceEntitiesLoaderById } = useTeamspaces();

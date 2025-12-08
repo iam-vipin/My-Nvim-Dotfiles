@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { EUpdateStatus } from "@plane/types";
@@ -13,11 +11,11 @@ export type TStatusDropdown = {
   setStatus: (status: EUpdateStatus) => void;
 };
 
-export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
+export const StatusDropdown = observer(function StatusDropdown(props: TStatusDropdown) {
   const { className, setStatus, selectedStatus } = props;
 
-  const DropdownOptions = () =>
-    Object.keys(StatusOptions).map((key) => (
+  function DropdownOptions() {
+    return Object.keys(StatusOptions).map((key) => (
       <CustomMenu.MenuItem
         key={key}
         className="flex items-center gap-2 truncate"
@@ -29,6 +27,7 @@ export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
         <div className="truncate font-medium text-sm capitalize">{key.replaceAll("-", " ").toLowerCase()}</div>
       </CustomMenu.MenuItem>
     ));
+  }
 
   const color = StatusOptions[selectedStatus]?.color ? generateIconColors(StatusOptions[selectedStatus]?.color) : null;
   const textColor = color ? color.foreground : "transparent";

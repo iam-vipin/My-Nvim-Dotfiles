@@ -32,7 +32,7 @@ type GanttChartRootProps = {
   isEpic?: boolean;
 };
 
-export const GroupedGanttChart: FC<GanttChartRootProps> = observer((props) => {
+export const GroupedGanttChart = observer(function GroupedGanttChart(props: GanttChartRootProps) {
   const {
     border = true,
     title,

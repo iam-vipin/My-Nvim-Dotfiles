@@ -1,5 +1,3 @@
-"use client";
-
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -34,7 +32,7 @@ type Props = {
   setLocalIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const WikiPageSidebarListItemComponent = observer((props: Props) => {
+const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListItemComponent(props: Props) {
   const {
     handleToggleExpanded,
     isExpanded,

@@ -1,5 +1,3 @@
-"use-client";
-
 import type { FC } from "react";
 // plane imports
 import { CloseIcon, PlaneAIIcon } from "@plane/propel/icons";
@@ -14,7 +12,7 @@ type TDuplicateModalRootProps = {
   handleDuplicateIssueModal: (value: boolean) => void;
 };
 
-export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
+export function DuplicateModalRoot(props: TDuplicateModalRootProps) {
   const { workspaceSlug, issues, handleDuplicateIssueModal } = props;
   return (
     <>
@@ -44,4 +42,4 @@ export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
       </div>
     </>
   );
-};
+}

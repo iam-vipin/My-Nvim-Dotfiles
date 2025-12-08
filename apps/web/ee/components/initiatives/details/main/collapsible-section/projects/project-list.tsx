@@ -9,7 +9,7 @@ type ProjectListProps = {
   disabled: boolean;
 };
 
-export const ProjectList = observer((props: ProjectListProps) => {
+export const ProjectList = observer(function ProjectList(props: ProjectListProps) {
   const { workspaceSlug, projectIds, initiativeId } = props;
 
   return (

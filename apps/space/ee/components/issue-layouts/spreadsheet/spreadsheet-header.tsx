@@ -9,7 +9,7 @@ interface Props {
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
 }
 
-export const SpreadsheetHeader = observer((props: Props) => {
+export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Props) {
   const { displayProperties, spreadsheetColumnsList } = props;
   // router
 

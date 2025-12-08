@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewInfoSectionRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewInfoSectionRoot = observer(function ProjectOverviewInfoSectionRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById, updateProject } = useProject();

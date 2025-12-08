@@ -11,7 +11,7 @@ type TInvitationDescriptionProps = {
   isLoading: boolean;
 };
 
-export const InvitationDescription = observer((props: TInvitationDescriptionProps) => {
+export const InvitationDescription = observer(function InvitationDescription(props: TInvitationDescriptionProps) {
   const { data, isLoading } = props;
   // plane hooks
   const { t } = useTranslation();

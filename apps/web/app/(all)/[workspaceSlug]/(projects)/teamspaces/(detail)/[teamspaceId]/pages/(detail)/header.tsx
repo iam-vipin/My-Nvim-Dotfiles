@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -26,7 +24,7 @@ import { useTeamspaces, usePage, EPageStoreType, usePageStore } from "@/plane-we
 
 const storeType = EPageStoreType.TEAMSPACE;
 
-export const TeamspacePageDetailHeader: React.FC = observer(() => {
+export const TeamspacePageDetailHeader = observer(function TeamspacePageDetailHeader() {
   // router
   const { workspaceSlug, teamspaceId, pageId } = useParams();
   const router = useAppRouter();
@@ -56,11 +54,13 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   const rootParentDetails = orderedParentPages?.[0]; // First item is the root
   const middleParents = orderedParentPages?.slice(1, -1) ?? []; // Middle items (excluding root and current)
 
-  const BreadcrumbSeparator = () => (
-    <div className="flex items-center px-2 text-custom-text-300">
-      <ChevronRightIcon className="size-3" />
-    </div>
-  );
+  function BreadcrumbSeparator() {
+    return (
+      <div className="flex items-center px-2 text-custom-text-300">
+        <ChevronRightIcon className="size-3" />
+      </div>
+    );
+  }
 
   const switcherOptions = teamspacePageIds
     ?.map((id) => {

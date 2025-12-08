@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -25,7 +23,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const EpicOverviewRoot: FC<Props> = observer((props) => {
+export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props) {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { storedValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");

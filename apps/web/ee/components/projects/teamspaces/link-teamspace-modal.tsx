@@ -31,7 +31,7 @@ type EmptyStateProps = {
 };
 
 // TODO: Need to remove this once the new empty state component is merged
-const EmptyState = (props: EmptyStateProps) => {
+function EmptyState(props: EmptyStateProps) {
   const { assetPath, title, description } = props;
   return (
     <div className="text-center flex flex-col items-center text-custom-text-300">
@@ -40,9 +40,9 @@ const EmptyState = (props: EmptyStateProps) => {
       <p className="text-sm whitespace-pre-line">{description}</p>
     </div>
   );
-};
+}
 
-export const LinkTeamspaceToProjectModal: React.FC<Props> = observer((props) => {
+export const LinkTeamspaceToProjectModal = observer(function LinkTeamspaceToProjectModal(props: Props) {
   const { isOpen, projectId, onClose, onSubmit } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

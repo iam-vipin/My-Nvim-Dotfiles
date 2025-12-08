@@ -146,9 +146,7 @@ export default class GitlabController {
 
     const { gitlab_code, encoded_gitlab_state } = gitlabState;
 
-    const gitlabAuthState: GitLabAuthorizeState = JSON.parse(
-      Buffer.from(encoded_gitlab_state as string, "base64").toString()
-    );
+    const gitlabAuthState: GitLabAuthorizeState = JSON.parse(Buffer.from(encoded_gitlab_state, "base64").toString());
     const redirectUri = `${env.APP_BASE_URL}/${gitlabAuthState.workspace_slug}/settings/integrations/gitlab/`;
 
     try {
@@ -159,7 +157,7 @@ export default class GitlabController {
       });
 
       const { response: token, state: authState } = await gitlabAuthService.getAccessToken({
-        code: gitlab_code as string,
+        code: gitlab_code,
         state: encoded_gitlab_state,
       });
 

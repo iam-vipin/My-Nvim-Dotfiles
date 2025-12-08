@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { createContext } from "react";
 
@@ -27,7 +25,7 @@ type TImporterBaseContextProvider = {
   children: ReactNode;
 };
 
-export const ImporterBaseContextProvider = (props: TImporterBaseContextProvider) => {
+export function ImporterBaseContextProvider(props: TImporterBaseContextProvider) {
   const { workspaceSlug, workspaceId, userId, userEmail, serviceToken, apiBaseUrl, siloBaseUrl, children } = props;
 
   return (
@@ -45,6 +43,6 @@ export const ImporterBaseContextProvider = (props: TImporterBaseContextProvider)
       {children}
     </ImporterBaseContext.Provider>
   );
-};
+}
 
 export default ImporterBaseContextProvider;

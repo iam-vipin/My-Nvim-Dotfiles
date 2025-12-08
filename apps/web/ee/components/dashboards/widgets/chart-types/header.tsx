@@ -20,7 +20,7 @@ type Props = {
   widgetRef: React.RefObject<HTMLDivElement>;
 };
 
-export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
+export const DashboardWidgetHeader = observer(function DashboardWidgetHeader(props: Props) {
   const { className, dashboardId, widget, widgetRef } = props;
   // store hooks
   const { getDashboardById } = useDashboards();

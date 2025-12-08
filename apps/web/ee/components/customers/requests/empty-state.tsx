@@ -11,7 +11,7 @@ type TProps = {
   addRequest: () => void;
 };
 
-export const CustomerRequestEmptyState: FC<TProps> = (props) => {
+export function CustomerRequestEmptyState(props: TProps) {
   const { addRequest } = props;
   // i18n
   const { t } = useTranslation();
@@ -30,4 +30,4 @@ export const CustomerRequestEmptyState: FC<TProps> = (props) => {
       }
     />
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
@@ -28,7 +26,7 @@ type Props = {
   entityType: EFileAssetType;
 };
 
-export const AppImageUploadModal: React.FC<Props> = observer((props) => {
+export const AppImageUploadModal = observer(function AppImageUploadModal(props: Props) {
   const { isOpen, onClose, onSuccess, initialValue, handleRemove, entityType } = props;
   // states
   const [image, setImage] = useState<File | null>(null);

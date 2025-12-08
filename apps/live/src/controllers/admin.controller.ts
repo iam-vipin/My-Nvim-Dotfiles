@@ -88,7 +88,7 @@ export class AdminController {
       // Validate and map error code to ForceCloseReason
       let reason: ForceCloseReason;
       if (isValidForceCloseReason(errorCode)) {
-        reason = errorCode as ForceCloseReason;
+        reason = errorCode;
       } else {
         logger.warn(`[ADMIN] Invalid error code "${errorCode}", defaulting to ADMIN_REQUEST`);
         reason = ForceCloseReason.ADMIN_REQUEST;

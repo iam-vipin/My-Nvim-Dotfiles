@@ -8,7 +8,7 @@ type Props = {
   titleClassName?: string;
 };
 
-export const WidgetPropertyWrapper: React.FC<Props> = (props) => {
+export function WidgetPropertyWrapper(props: Props) {
   const { className, input, inputClassName, title, titleClassName } = props;
 
   return (
@@ -17,4 +17,4 @@ export const WidgetPropertyWrapper: React.FC<Props> = (props) => {
       <div className={cn("col-span-5 text-custom-text-200", inputClassName)}>{input}</div>
     </div>
   );
-};
+}

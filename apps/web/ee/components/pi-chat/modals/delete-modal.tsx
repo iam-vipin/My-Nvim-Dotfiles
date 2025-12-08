@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
@@ -15,7 +13,7 @@ interface IChatDelete {
   handleClose: () => void;
 }
 
-export const ChatDeleteModal: React.FC<IChatDelete> = observer((props) => {
+export const ChatDeleteModal = observer(function ChatDeleteModal(props: IChatDelete) {
   const { chatId, workspaceSlug, isOpen, chatTitle, handleClose } = props;
 
   // states

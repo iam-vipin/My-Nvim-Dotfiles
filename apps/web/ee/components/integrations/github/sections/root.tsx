@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -10,9 +8,11 @@ interface IIntegrationRootProps {
   isEnterprise: boolean;
 }
 
-export const IntegrationRoot: FC<IIntegrationRootProps> = observer(({ isEnterprise }) => (
-  <div className="relative space-y-4">
-    <ProjectPRStateMappingRoot isEnterprise={isEnterprise} />
-    <ProjectIssueSyncRoot isEnterprise={isEnterprise} />
-  </div>
-));
+export const IntegrationRoot = observer(function IntegrationRoot({ isEnterprise }: IIntegrationRootProps) {
+  return (
+    <div className="relative space-y-4">
+      <ProjectPRStateMappingRoot isEnterprise={isEnterprise} />
+      <ProjectIssueSyncRoot isEnterprise={isEnterprise} />
+    </div>
+  );
+});

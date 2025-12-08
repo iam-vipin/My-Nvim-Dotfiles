@@ -5,6 +5,6 @@ import { BaseSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadshe
 // plane web imports
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 
-export const EpicSpreadsheetLayout: React.FC = observer(() => (
-  <BaseSpreadsheetRoot QuickActions={ProjectEpicQuickActions} isEpic />
-));
+export const EpicSpreadsheetLayout = observer(function EpicSpreadsheetLayout() {
+  return <BaseSpreadsheetRoot QuickActions={ProjectEpicQuickActions} isEpic />;
+});

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ interface IInitiativeDelete {
   workspaceSlug: string;
 }
 
-export const InitiativeDeleteModal: React.FC<IInitiativeDelete> = observer((props) => {
+export const InitiativeDeleteModal = observer(function InitiativeDeleteModal(props: IInitiativeDelete) {
   const { isOpen, handleClose, initiative, workspaceSlug } = props;
   // states
   const [loader, setLoader] = useState(false);

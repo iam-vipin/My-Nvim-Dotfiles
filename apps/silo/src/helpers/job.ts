@@ -74,5 +74,5 @@ export const getJobCredentials = async (job: TImportJob): Promise<TWorkspaceCred
   if (!credentials || credentials.length === 0) {
     throw new Error(`Credentials not available for job ${job.workspace_id}`);
   }
-  return credentials[0] as TWorkspaceCredential;
+  return credentials[0];
 };

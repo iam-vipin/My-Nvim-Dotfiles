@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +18,7 @@ type Props = {
   initiativeId: string;
 };
 
-export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
+export const InitiativeSidebarActivityRoot = observer(function InitiativeSidebarActivityRoot(props: Props) {
   const { initiativeId } = props;
   // states
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
@@ -74,7 +73,7 @@ export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
             return currActivityComment.activity_type === "ACTIVITY" ? (
               <InitiativeActivityItem
                 key={currActivityComment.id}
-                activity={currActivityComment.detail as TInitiativeActivity}
+                activity={currActivityComment.detail}
                 ends={index === 0 ? "top" : index === sortedActivity.length - 1 ? "bottom" : undefined}
               />
             ) : (

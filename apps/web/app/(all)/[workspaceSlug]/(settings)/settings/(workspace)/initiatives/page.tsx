@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { INITIATIVE_TRACKER_EVENTS, INITIATIVES_TRACKER_ELEMENTS } from "@plane/constants";

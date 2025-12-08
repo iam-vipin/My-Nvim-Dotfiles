@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
@@ -24,7 +22,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
 const currentStepKey = E_IMPORTER_STEPS.MAP_PRIORITY;
 
-export const MapPriorityRoot: FC = observer(() => {
+export const MapPriorityRoot = observer(function MapPriorityRoot() {
   // hooks
   const {
     workspace,
@@ -46,7 +44,7 @@ export const MapPriorityRoot: FC = observer(() => {
   const jiraProjectId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.projectId;
   const jiraProjectPriorities = ((jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [])
     .map((id) => (jiraProjectId && getJiraPriorityById(jiraProjectId, id)) || undefined)
-    .filter((jiraState) => jiraState != undefined && jiraState != null) as JiraPriority[];
+    .filter((jiraState) => jiraState != undefined && jiraState != null);
 
   // states
   const [formData, setFormData] = useState<TFormData>({});
@@ -118,7 +116,7 @@ export const MapPriorityRoot: FC = observer(() => {
         const result = fuse.search(jiraState.name);
 
         if (result.length > 0) {
-          const planeState = result[0].item as TPlanePriorityData;
+          const planeState = result[0].item;
           if (jiraState.id && planeState.key) {
             handleFormData(jiraState.id, planeState.key);
           }

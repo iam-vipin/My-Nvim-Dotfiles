@@ -1,4 +1,3 @@
-"use client";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -27,7 +26,7 @@ import { ConvertWorkItemAction } from "@/plane-web/components/epics/conversions"
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
-export const EpicItemDetailsHeader = observer(() => {
+export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();

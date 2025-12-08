@@ -13,7 +13,7 @@ type TProjectFeatureChildrenProps = {
   feature: TProjectFeatureForTemplateKeys;
 };
 
-const IntakeFeatureChildren = observer(() => {
+const IntakeFeatureChildren = observer(function IntakeFeatureChildren() {
   // form context
   const { watch, setValue } = useFormContext<TProjectTemplateForm>();
   // derived state
@@ -85,7 +85,7 @@ const IntakeFeatureChildren = observer(() => {
   );
 });
 
-export const ProjectFeatureChildren = observer((props: TProjectFeatureChildrenProps) => {
+export const ProjectFeatureChildren = observer(function ProjectFeatureChildren(props: TProjectFeatureChildrenProps) {
   const { feature } = props;
 
   const getFeatureChildren = useCallback(() => {

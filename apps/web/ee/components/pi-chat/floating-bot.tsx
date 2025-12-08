@@ -45,7 +45,7 @@ const getEntityData = (
   return null;
 };
 
-export const PiChatFloatingBot = observer(() => {
+export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   // query params
   const pathName = usePathname();
   const params = useParams();

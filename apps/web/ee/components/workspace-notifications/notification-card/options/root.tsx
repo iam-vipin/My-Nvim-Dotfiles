@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // components
@@ -21,7 +19,7 @@ type TNotificationOption = {
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export const NotificationOption: FC<TNotificationOption> = observer((props) => {
+export const NotificationOption = observer(function NotificationOption(props: TNotificationOption) {
   const {
     workspaceSlug,
     notificationList,

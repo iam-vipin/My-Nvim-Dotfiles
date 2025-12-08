@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -24,7 +22,7 @@ type TFormData = TImporterClickUpDataPayload[E_CLICKUP_IMPORTER_STEPS.CONFIGURE_
 
 const currentStepKey = E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP;
 
-export const ConfigureClickUpRoot: FC = observer(() => {
+export const ConfigureClickUpRoot = observer(function ConfigureClickUpRoot() {
   // hooks
   const { currentStep, handleStepper, importerData, handleImporterData } = useClickUpImporter();
   const { t } = useTranslation();

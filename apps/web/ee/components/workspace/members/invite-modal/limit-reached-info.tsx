@@ -11,7 +11,9 @@ type TInvitationLimitReactInfoProps = {
   handleAddMoreSeats: () => void;
 };
 
-export const InvitationLimitReactInfo = observer((props: TInvitationLimitReactInfoProps) => {
+export const InvitationLimitReactInfo = observer(function InvitationLimitReactInfo(
+  props: TInvitationLimitReactInfoProps
+) {
   const { handleAddMoreSeats } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();

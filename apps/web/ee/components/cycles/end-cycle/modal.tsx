@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { Button } from "@plane/propel/button";
@@ -25,7 +24,7 @@ type EndCycleModalProps = {
 
 type LoadingState = "Transferring..." | "Ending Cycle..." | "Completing Cycle ...";
 
-export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
+export function EndCycleModal(props: EndCycleModalProps) {
   const { isOpen, handleClose, transferrableIssuesCount, projectId, workspaceSlug, cycleId } = props;
   const [transferIssues, setTransferIssues] = useState<boolean>(false);
   const [targetCycle, setTargetCycle] = useState<string | null>(null);
@@ -185,4 +184,4 @@ export const EndCycleModal: FC<EndCycleModalProps> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

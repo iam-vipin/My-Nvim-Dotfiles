@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EMPTY_PLANE_STATE } from "@plane/etl/core";
@@ -30,7 +28,7 @@ const GIT_ISSUE_DATA: { key: TIssueStateMapKeys; title: string }[] = [
   },
 ];
 
-export const MapProjectIssueState: FC<TMapProjectIssueState> = observer((props) => {
+export const MapProjectIssueState = observer(function MapProjectIssueState(props: TMapProjectIssueState) {
   // props
   const { projectId, value, handleChange, isEnterprise } = props;
 
@@ -42,7 +40,7 @@ export const MapProjectIssueState: FC<TMapProjectIssueState> = observer((props) 
   // derived values
   const planeProjectStates = ((projectId && stateIdsByProjectId(projectId)) || [])
     .map((id) => (projectId && getStateById(projectId, id)) || undefined)
-    .filter((state) => state != undefined && state != null) as IState[];
+    .filter((state) => state != undefined && state != null);
 
   return (
     <div className="w-full max-h-full overflow-y-auto">

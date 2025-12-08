@@ -8,7 +8,7 @@ type TMilestoneActivityProps = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const MilestoneActivity: FC<TMilestoneActivityProps> = (props) => {
+export function MilestoneActivity(props: TMilestoneActivityProps) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -76,4 +76,4 @@ export const MilestoneActivity: FC<TMilestoneActivityProps> = (props) => {
       </>
     </IssueActivityBlockComponent>
   );
-};
+}

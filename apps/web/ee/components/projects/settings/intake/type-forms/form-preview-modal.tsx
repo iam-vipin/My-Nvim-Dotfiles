@@ -16,7 +16,7 @@ type Props = {
   selectedFields: string[];
 };
 
-export const IntakeFormPreviewModal = observer((props: Props) => {
+export const IntakeFormPreviewModal = observer(function IntakeFormPreviewModal(props: Props) {
   const { isOpen, onClose, projectId, typeId, formTitle, selectedFields } = props;
 
   // hooks

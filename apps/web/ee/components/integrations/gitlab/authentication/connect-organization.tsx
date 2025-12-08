@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ interface IConnectOrganizationProps {
   isEnterprise: boolean;
 }
 
-export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ isEnterprise }) => {
+export const ConnectOrganization = observer(function ConnectOrganization({ isEnterprise }: IConnectOrganizationProps) {
   // hooks
   const {
     workspace,

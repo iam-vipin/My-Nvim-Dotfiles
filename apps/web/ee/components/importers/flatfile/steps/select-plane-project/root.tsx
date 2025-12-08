@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
@@ -24,7 +22,7 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.SELECT_PLANE_PROJECT];
 
 const currentStepKey = E_IMPORTER_STEPS.SELECT_PLANE_PROJECT;
 
-export const SelectPlaneProject: FC = observer(() => {
+export const SelectPlaneProject = observer(function SelectPlaneProject() {
   // hooks
   const {
     workspace,
@@ -43,9 +41,9 @@ export const SelectPlaneProject: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const projects =
     workspaceSlug &&
-    ((projectIdsByWorkspaceSlug(workspaceSlug) || [])
+    (projectIdsByWorkspaceSlug(workspaceSlug) || [])
       .map((id) => getProjectById(id))
-      .filter((project) => project != undefined) as IProject[]);
+      .filter((project) => project != undefined);
   const isNextButtonDisabled = !formData.projectId;
   // handlers
   const handleFormData = (value: string | undefined) => {

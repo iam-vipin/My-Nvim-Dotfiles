@@ -9,7 +9,7 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TProps = { setActiveSubscriptionModal: (value: boolean) => void };
 
-export const CancelTrial = (props: TProps) => {
+export function CancelTrial(props: TProps) {
   const { setActiveSubscriptionModal } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -66,4 +66,4 @@ export const CancelTrial = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

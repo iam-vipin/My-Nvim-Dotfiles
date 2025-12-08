@@ -12,7 +12,9 @@ type Props = {
   activityId: string;
 };
 
-export const AutomationDetailsSidebarActivityListItem: React.FC<Props> = observer((props) => {
+export const AutomationDetailsSidebarActivityListItem = observer(function AutomationDetailsSidebarActivityListItem(
+  props: Props
+) {
   const { automationId, activityId } = props;
   // store hooks
   const { getAutomationById } = useAutomations();

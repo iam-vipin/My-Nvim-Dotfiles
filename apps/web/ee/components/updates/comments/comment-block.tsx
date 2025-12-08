@@ -19,7 +19,7 @@ type TProps = {
   operations: TUpdateOperations;
   entityType: EUpdateEntityType;
 };
-export const CommentBlock = observer((props: TProps) => {
+export const CommentBlock = observer(function CommentBlock(props: TProps) {
   const { updateId, commentData, workspaceSlug, entityId, operations, entityType } = props;
   const [isEditing, setIsEditing] = useState(false);
   // hooks

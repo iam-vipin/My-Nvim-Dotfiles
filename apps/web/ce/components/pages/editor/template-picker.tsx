@@ -11,4 +11,6 @@ export type TPageTemplatePickerProps = {
   workspaceSlug: string;
 };
 
-export const PageTemplatePicker: React.FC<TPageTemplatePickerProps> = () => null;
+export function PageTemplatePicker(_props: TPageTemplatePickerProps) {
+  return null;
+}

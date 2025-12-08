@@ -47,7 +47,7 @@ const DEFAULT_PROPERTIES_LIST = [
   },
 ];
 
-export const CustomerDefaultProperties = () => {
+export function CustomerDefaultProperties() {
   // states
   const [isOpen, setIsOpen] = useState(true);
   // hooks
@@ -87,4 +87,4 @@ export const CustomerDefaultProperties = () => {
       </Collapsible>
     </div>
   );
-};
+}

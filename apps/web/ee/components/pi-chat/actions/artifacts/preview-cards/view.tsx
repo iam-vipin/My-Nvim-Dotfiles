@@ -8,7 +8,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const ViewPreviewCard = observer((props: TProps) => {
+export const ViewPreviewCard = observer(function ViewPreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useTemplateData(artifactId);
   const properties = { ...data?.parameters?.properties, project: data?.parameters?.project };

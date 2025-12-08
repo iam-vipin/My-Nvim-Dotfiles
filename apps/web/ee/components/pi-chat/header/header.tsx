@@ -1,5 +1,3 @@
-"use-client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -26,7 +24,7 @@ type THeaderProps = {
 
 const buttonClass =
   "w-auto p-2 rounded-lg text-custom-text-200 grid place-items-center border-[0.5px] border-custom-sidebar-border-300 bg-custom-background-200 hover:shadow-sm hover:text-custom-text-300";
-export const Header = observer((props: THeaderProps) => {
+export const Header = observer(function Header(props: THeaderProps) {
   const router = useRouter();
   const { workspaceSlug } = useParams();
   const { isProjectLevel = false, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;

@@ -8,7 +8,7 @@ interface CustomCheckboxProps {
   onChange: (value: boolean) => void;
 }
 
-export const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ label, checked, className = "", onChange }) => {
+export function CustomCheckbox({ label, checked, className = "", onChange }: CustomCheckboxProps) {
   const handleClick = (value: boolean) => {
     onChange(value);
   };
@@ -32,4 +32,4 @@ export const CustomCheckbox: React.FC<CustomCheckboxProps> = ({ label, checked, 
       </div>
     </div>
   );
-};
+}

@@ -30,7 +30,7 @@ export type PiChatEditorMentionNodeViewProps = NodeViewProps & {
   };
 };
 
-export const PiChatEditorMentionNodeView: React.FC<PiChatEditorMentionNodeViewProps> = (props) => {
+export function PiChatEditorMentionNodeView(props: PiChatEditorMentionNodeViewProps) {
   // derived values
   const { redirect_uri, label, target } = props.node.attrs;
   const Icon = getIcon(target ?? "");
@@ -45,4 +45,4 @@ export const PiChatEditorMentionNodeView: React.FC<PiChatEditorMentionNodeViewPr
       {label}
     </NodeViewWrapper>
   );
-};
+}

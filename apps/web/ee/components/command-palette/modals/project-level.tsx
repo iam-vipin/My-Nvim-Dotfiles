@@ -5,7 +5,7 @@ import { ProjectLevelModals as BaseProjectLevelModals } from "@/ce/components/co
 import { CreateUpdateAutomationModal } from "@/plane-web/components/automations/modals/create-update-modal";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
-export const ProjectLevelModals = observer((props: TProjectLevelModalsProps) => {
+export const ProjectLevelModals = observer(function ProjectLevelModals(props: TProjectLevelModalsProps) {
   // store hooks
   const {
     projectAutomations: { createUpdateModalConfig, setCreateUpdateModalConfig },

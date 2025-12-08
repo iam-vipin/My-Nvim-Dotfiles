@@ -8,7 +8,7 @@ type TIssueUser = {
   customUserName?: string;
 };
 
-export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
+export function IssueCreatorDisplay(props: TIssueUser) {
   const { activityId, customUserName } = props;
   // hooks
   const {
@@ -42,4 +42,4 @@ export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
       )}
     </>
   );
-};
+}

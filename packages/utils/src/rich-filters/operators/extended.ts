@@ -18,7 +18,7 @@ export const isNegativeOperator = (operator: TAllAvailableOperatorsForDisplay): 
 /**
  * Converts a positive operator to its negative counterpart
  */
-export const toNegativeOperator = <T extends TSupportedOperators>(operator: T): `-${T}` => `-${operator}` as `-${T}`;
+export const toNegativeOperator = <T extends TSupportedOperators>(operator: T): `-${T}` => `-${operator}`;
 
 /**
  * Converts a negative operator to its positive counterpart

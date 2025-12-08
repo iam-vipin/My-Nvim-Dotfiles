@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +14,11 @@ import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-s
 import { StateMappingForm } from "./form/index";
 import { StateMappingItem } from "./state-mapping-item";
 
-export const SentryStateMappingRoot: FC<{ connectionId: string }> = observer(({ connectionId }) => {
+export const SentryStateMappingRoot = observer(function SentryStateMappingRoot({
+  connectionId,
+}: {
+  connectionId: string;
+}) {
   // hooks
   const { workspace, getAppByConnectionId, fetchAppConnections, updateAppConnection } = useSentryIntegration();
   const { joinedProjectIds } = useProject();
@@ -132,7 +134,7 @@ export const SentryStateMappingRoot: FC<{ connectionId: string }> = observer(({ 
       if (!appConnection) return;
 
       try {
-        const config = appConnection.config as TSentryConfig;
+        const config = appConnection.config;
         const currentMappings = config.stateMappings || [];
         const updatedMappings = currentMappings.filter((m: TSentryStateMapping) => m.projectId !== mapping.projectId);
 

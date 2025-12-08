@@ -1,4 +1,3 @@
-"use client";
 // components
 import { PageHead } from "@/components/core/page-title";
 // hooks
@@ -6,7 +5,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { CustomersListRoot } from "@/plane-web/components/customers/list";
 
-const CustomersListPage = () => {
+function CustomersListPage() {
   // store
   const { currentWorkspace } = useWorkspace();
   // derived values
@@ -18,6 +17,6 @@ const CustomersListPage = () => {
       <CustomersListRoot />
     </>
   );
-};
+}
 
 export default CustomersListPage;

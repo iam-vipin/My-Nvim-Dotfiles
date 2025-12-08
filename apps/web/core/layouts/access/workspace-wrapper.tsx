@@ -9,7 +9,7 @@ interface IWorkspaceAuthWrapper {
   allowedPermissions?: EUserPermissions[];
 }
 
-const WorkspaceAccessWrapper = ({ children, ...props }: IWorkspaceAuthWrapper) => {
+function WorkspaceAccessWrapper({ children, ...props }: IWorkspaceAuthWrapper) {
   const { pageKey, allowedPermissions } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -22,6 +22,6 @@ const WorkspaceAccessWrapper = ({ children, ...props }: IWorkspaceAuthWrapper) =
   // render
   if (!isAuthorized) return <NotAuthorizedView />;
   return <>{children}</>;
-};
+}
 
 export default WorkspaceAccessWrapper;

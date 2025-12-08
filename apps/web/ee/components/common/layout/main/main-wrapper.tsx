@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // utils
@@ -11,7 +9,7 @@ type TMainWrapperProps = {
   className?: string;
 };
 
-export const MainWrapper: FC<TMainWrapperProps> = (props) => {
+export function MainWrapper(props: TMainWrapperProps) {
   const { children, isSidebarOpen, className = "" } = props;
   return (
     <div
@@ -26,4 +24,4 @@ export const MainWrapper: FC<TMainWrapperProps> = (props) => {
       {children}
     </div>
   );
-};
+}

@@ -15,7 +15,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
 import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
 
-export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateListProps) => {
+export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList(props: TChangeWorkItemStateListProps) {
   const { projectId, currentStateId, handleStateChange } = props;
   // router
   const { workspaceSlug } = useParams();

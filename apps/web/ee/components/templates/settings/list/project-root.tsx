@@ -14,7 +14,9 @@ type TProjectSettingsTemplatesListRootProps = {
   projectId: string;
 };
 
-export const ProjectSettingsTemplatesListRoot = observer((props: TProjectSettingsTemplatesListRootProps) => {
+export const ProjectSettingsTemplatesListRoot = observer(function ProjectSettingsTemplatesListRoot(
+  props: TProjectSettingsTemplatesListRootProps
+) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const {

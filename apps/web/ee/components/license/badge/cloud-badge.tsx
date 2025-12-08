@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -15,7 +13,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { SubscriptionButton } from "@/plane-web/components/common/subscription/subscription-button";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const CloudEditionBadge = observer(() => {
+export const CloudEditionBadge = observer(function CloudEditionBadge() {
   // router
   const router = useAppRouter();
   const pathname = usePathname();

@@ -35,33 +35,33 @@ const OPTIONS: IFilterOption<boolean>[] = [
   },
 ];
 
-export const BooleanFilterValueInput = observer(
-  <P extends TFilterProperty>(props: TBooleanFilterValueInputProps<P>) => {
-    const { condition, onChange, isDisabled } = props;
-    // derived values
-    const formattedOptions = useMemo(() => getFormattedOptions<boolean>(OPTIONS), []);
+export const BooleanFilterValueInput = observer(function BooleanFilterValueInput<P extends TFilterProperty>(
+  props: TBooleanFilterValueInputProps<P>
+) {
+  const { condition, onChange, isDisabled } = props;
+  // derived values
+  const formattedOptions = useMemo(() => getFormattedOptions<boolean>(OPTIONS), []);
 
-    const handleSelectChange = (value: boolean) => {
-      if (value === condition.value) {
-        onChange(null);
-      } else {
-        onChange(value);
+  const handleSelectChange = (value: boolean) => {
+    if (value === condition.value) {
+      onChange(null);
+    } else {
+      onChange(value);
+    }
+  };
+
+  return (
+    <CustomSearchSelect
+      {...getCommonCustomSearchSelectProps(isDisabled)}
+      value={condition.value}
+      onChange={handleSelectChange}
+      options={formattedOptions}
+      multiple={false}
+      disabled={isDisabled}
+      customButton={
+        <SelectedOptionsDisplay<boolean> selectedValue={condition.value} options={OPTIONS} displayCount={1} />
       }
-    };
-
-    return (
-      <CustomSearchSelect
-        {...getCommonCustomSearchSelectProps(isDisabled)}
-        value={condition.value}
-        onChange={handleSelectChange}
-        options={formattedOptions}
-        multiple={false}
-        disabled={isDisabled}
-        customButton={
-          <SelectedOptionsDisplay<boolean> selectedValue={condition.value} options={OPTIONS} displayCount={1} />
-        }
-        defaultOpen={condition.value === null || condition.value === undefined}
-      />
-    );
-  }
-);
+      defaultOpen={condition.value === null || condition.value === undefined}
+    />
+  );
+});

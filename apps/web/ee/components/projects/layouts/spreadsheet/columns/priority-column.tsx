@@ -11,7 +11,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityColumn(props: Props) {
   const { project, onChange, disabled, onClose } = props;
 
   return (

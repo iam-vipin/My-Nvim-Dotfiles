@@ -20,7 +20,7 @@ type TIssuePropertyOptionItem = {
   error?: string;
 };
 
-export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((props) => {
+export const IssuePropertyOptionItem = observer(function IssuePropertyOptionItem(props: TIssuePropertyOptionItem) {
   const { optionId, propertyOptionData, updateOptionData, scrollIntoNewOptionView, error: optionsError } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -85,7 +85,7 @@ export const IssuePropertyOptionItem: FC<TIssuePropertyOptionItem> = observer((p
         onBlur={() => handleCreateUpdate()}
         placeholder={t("work_item_types.settings.properties.attributes.option.create_update.form.placeholder")}
         className={cn("w-full text-sm bg-custom-background-100 border-[0.5px] rounded", {
-          "border-custom-border-300": !Boolean(error),
+          "border-custom-border-300": !error,
         })}
         inputSize="xs"
         hasError={Boolean(error)}

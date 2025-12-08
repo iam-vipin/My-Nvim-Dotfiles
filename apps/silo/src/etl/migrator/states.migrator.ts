@@ -59,5 +59,5 @@ export const createStates = async (
   // batch the state creation
   const createdStates = await processBatchPromises(states, createState, 2);
 
-  return createdStates.filter((state) => state !== undefined) as TCreateState[];
+  return createdStates.filter((state) => state !== undefined);
 };

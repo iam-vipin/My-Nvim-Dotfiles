@@ -16,7 +16,7 @@ type Props = {
   loadMoreIssues: () => void;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const { displayProperties, issueIds, canLoadMoreIssues, loadMoreIssues } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);

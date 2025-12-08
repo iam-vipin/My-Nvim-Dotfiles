@@ -18,66 +18,68 @@ type TProps = {
   projectId: string;
 };
 
-export const AutomationActionChangePropertyConfiguration: React.FC<TProps> = observer((props) => {
-  const { isDisabled, projectId } = props;
-  // form hooks
-  const { watch, setValue } = useFormContext<TAutomationActionFormData>();
-  // derived values
-  const selectedPropertyName = watch("config.property_name");
-  const selectedPropertyChangeType = watch("config.change_type");
-  // config
-  const { configurationMap } = useAutomationActionConfig({
-    projectId,
-  });
+export const AutomationActionChangePropertyConfiguration = observer(
+  function AutomationActionChangePropertyConfiguration(props: TProps) {
+    const { isDisabled, projectId } = props;
+    // form hooks
+    const { watch, setValue } = useFormContext<TAutomationActionFormData>();
+    // derived values
+    const selectedPropertyName = watch("config.property_name");
+    const selectedPropertyChangeType = watch("config.change_type");
+    // config
+    const { configurationMap } = useAutomationActionConfig({
+      projectId,
+    });
 
-  const selectedPropertyConfig = useMemo(
-    () => selectedPropertyName && configurationMap[selectedPropertyName],
-    [selectedPropertyName, configurationMap]
-  );
+    const selectedPropertyConfig = useMemo(
+      () => selectedPropertyName && configurationMap[selectedPropertyName],
+      [selectedPropertyName, configurationMap]
+    );
 
-  const handlePropertyNameChange = (property: EAutomationChangePropertyType) => {
-    const config = configurationMap[property];
-    // Set the first supported change type as default
-    setValue("config.change_type", config.supported_change_types[0]);
-    // Reset property value
-    setValue("config.property_value", []);
-  };
+    const handlePropertyNameChange = (property: EAutomationChangePropertyType) => {
+      const config = configurationMap[property];
+      // Set the first supported change type as default
+      setValue("config.change_type", config.supported_change_types[0]);
+      // Reset property value
+      setValue("config.property_value", []);
+    };
 
-  const handleChangeTypeChange = (_changeType: EAutomationChangeType) => {
-    // Reset property value when change type changes
-    setValue("config.property_value", []);
-  };
+    const handleChangeTypeChange = (_changeType: EAutomationChangeType) => {
+      // Reset property value when change type changes
+      setValue("config.property_value", []);
+    };
 
-  return (
-    <div className="space-y-2.5">
-      <div className="grid grid-cols-6 gap-2">
-        <div
-          className={cn("col-span-4 transition-all duration-200 ease-in-out", {
-            "col-span-6": !selectedPropertyName,
-          })}
-        >
-          <PropertyNameSelect isDisabled={isDisabled} onPropertyChange={handlePropertyNameChange} />
+    return (
+      <div className="space-y-2.5">
+        <div className="grid grid-cols-6 gap-2">
+          <div
+            className={cn("col-span-4 transition-all duration-200 ease-in-out", {
+              "col-span-6": !selectedPropertyName,
+            })}
+          >
+            <PropertyNameSelect isDisabled={isDisabled} onPropertyChange={handlePropertyNameChange} />
+          </div>
+          {selectedPropertyName && (
+            <>
+              <div className="col-span-2">
+                <ChangeTypeSelect
+                  isDisabled={isDisabled}
+                  supportedChangeTypes={selectedPropertyConfig?.supported_change_types || []}
+                  onChangeTypeChange={handleChangeTypeChange}
+                />
+              </div>
+              <div className="col-span-6">
+                <PropertyValueSelect
+                  isDisabled={isDisabled}
+                  propertyName={selectedPropertyName}
+                  changeType={selectedPropertyChangeType}
+                  configuration={selectedPropertyConfig}
+                />
+              </div>
+            </>
+          )}
         </div>
-        {selectedPropertyName && (
-          <>
-            <div className="col-span-2">
-              <ChangeTypeSelect
-                isDisabled={isDisabled}
-                supportedChangeTypes={selectedPropertyConfig?.supported_change_types || []}
-                onChangeTypeChange={handleChangeTypeChange}
-              />
-            </div>
-            <div className="col-span-6">
-              <PropertyValueSelect
-                isDisabled={isDisabled}
-                propertyName={selectedPropertyName}
-                changeType={selectedPropertyChangeType}
-                configuration={selectedPropertyConfig}
-              />
-            </div>
-          </>
-        )}
       </div>
-    </div>
-  );
-});
+    );
+  }
+);

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Button } from "@plane/propel/button";
 // plane web types
@@ -12,7 +10,7 @@ type TPaginationBar = {
   onNextClick: () => void;
 };
 
-export const PaginationBar: FC<TPaginationBar> = (props) => {
+export function PaginationBar(props: TPaginationBar) {
   const { perPage, paginationInfo, onPrevClick, onNextClick } = props;
 
   // derived values
@@ -37,4 +35,4 @@ export const PaginationBar: FC<TPaginationBar> = (props) => {
       </div>
     </div>
   );
-};
+}

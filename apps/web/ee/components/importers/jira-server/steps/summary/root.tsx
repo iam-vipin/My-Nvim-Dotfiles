@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hoo
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/jira-server";
 import ImporterTable from "../../../ui/table";
 
-export const SummaryRoot: FC = observer(() => {
+export const SummaryRoot = observer(function SummaryRoot() {
   // hooks
   const {
     workspace,
@@ -128,7 +126,7 @@ export const SummaryRoot: FC = observer(() => {
     if (jiraProjectLabels && jiraProjectLabels.length > 0) {
       handleSyncJobConfig(
         "label",
-        jiraLabels.filter((label) => label != undefined && label != null) as JiraConfig["label"]
+        jiraLabels.filter((label) => label != undefined && label != null)
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

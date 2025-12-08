@@ -32,7 +32,7 @@ const TABS_LIST = [
   },
 ];
 
-export const WikiSettingsUpgradeScreen: React.FC<Props> = (props) => {
+export function WikiSettingsUpgradeScreen(props: Props) {
   const { workspaceSlug } = props;
   // hooks
   const { isPaidPlanModalOpen, togglePaidPlanModal } = useWorkspaceSubscription();
@@ -85,4 +85,4 @@ export const WikiSettingsUpgradeScreen: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

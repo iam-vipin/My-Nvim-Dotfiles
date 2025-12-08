@@ -7,7 +7,7 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 
-export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
+export const ExtendedAppHeader = observer(function ExtendedAppHeader(props: { header: ReactNode }) {
   const { header } = props;
   // router
   const { projectId, workItem } = useParams();

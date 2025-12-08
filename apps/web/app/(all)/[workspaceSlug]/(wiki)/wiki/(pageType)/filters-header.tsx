@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
@@ -12,7 +10,7 @@ import { PageAppliedFiltersList } from "@/components/pages/list/applied-filters/
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export const PageTypeFiltersHeader = observer(() => {
+export const PageTypeFiltersHeader = observer(function PageTypeFiltersHeader() {
   // params
   const pathname = usePathname();
   // store hooks

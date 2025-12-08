@@ -51,7 +51,7 @@ export type ActiveCycleStatsProps = {
   cycle: IActiveCycle;
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 
 type TIconFieldRender = {
@@ -7,7 +5,7 @@ type TIconFieldRender = {
   title?: string;
 };
 
-export const IconFieldRender: FC<TIconFieldRender> = (props) => {
+export function IconFieldRender(props: TIconFieldRender) {
   const { icon, title } = props;
 
   if (!icon && !title) return "-";
@@ -20,4 +18,4 @@ export const IconFieldRender: FC<TIconFieldRender> = (props) => {
       <div className="relative whitespace-nowrap line-clamp-1">{title}</div>
     </div>
   );
-};
+}

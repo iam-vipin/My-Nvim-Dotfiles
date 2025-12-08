@@ -13,7 +13,7 @@ type Props = {
   workItemId: string;
 };
 
-export const WorkItemEmbedCard: React.FC<Props> = observer((props) => {
+export const WorkItemEmbedCard = observer(function WorkItemEmbedCard(props: Props) {
   const { anchor, workItemId } = props;
   // store hooks
   const pageDetails = usePage(anchor);

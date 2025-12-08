@@ -12,7 +12,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const PieChartGroupingConfig: React.FC<Props> = (props) => {
+export function PieChartGroupingConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -115,4 +115,4 @@ export const PieChartGroupingConfig: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

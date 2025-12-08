@@ -10,7 +10,9 @@ type TProps = {
   automationId: string;
 };
 
-export const AutomationDetailsMainContentScopeRoot: React.FC<TProps> = observer(() => {
+export const AutomationDetailsMainContentScopeRoot = observer(function AutomationDetailsMainContentScopeRoot(
+  _props: TProps
+) {
   // translation
   const { t } = useTranslation();
 

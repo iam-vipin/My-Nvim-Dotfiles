@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -13,7 +11,7 @@ type TEstimateUpdateStageOne = {
   handleEstimateEditType?: (stage: TEstimateUpdateStageKeys) => void;
 };
 
-export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
+export function EstimateUpdateStageOne(props: TEstimateUpdateStageOne) {
   const { estimateEditType, handleClose, handleEstimateEditType } = props;
   const { t } = useTranslation();
 
@@ -53,4 +51,4 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
       </div>
     </>
   );
-};
+}

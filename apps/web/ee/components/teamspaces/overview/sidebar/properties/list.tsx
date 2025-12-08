@@ -3,11 +3,11 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import type { TPropertyListItem } from "./root";
 
-export const TeamsPropertiesList = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex flex-col pt-3 pb-1 px-0.5 gap-x-2 gap-y-2">{children}</div>
-);
+export function TeamsPropertiesList({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col pt-3 pb-1 px-0.5 gap-x-2 gap-y-2">{children}</div>;
+}
 
-export const TeamsPropertiesListItem = (props: Omit<TPropertyListItem, "key">) => {
+export function TeamsPropertiesListItem(props: Omit<TPropertyListItem, "key">) {
   const { label, icon: Icon, value, href } = props;
   return (
     <div className="grid grid-cols-2 items-center py-1">
@@ -28,6 +28,6 @@ export const TeamsPropertiesListItem = (props: Omit<TPropertyListItem, "key">) =
       )}
     </div>
   );
-};
+}
 
 TeamsPropertiesList.Item = TeamsPropertiesListItem;

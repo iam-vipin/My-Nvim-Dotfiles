@@ -29,7 +29,7 @@ type Props = {
   onSubmit: (projectIds: string[]) => Promise<void>;
 };
 
-export const LinkProjectModal: React.FC<Props> = observer((props) => {
+export const LinkProjectModal = observer(function LinkProjectModal(props: Props) {
   const { isOpen, onClose, teamspaceId, selectedProjectIds: selectedProjectIdsProp, projectIds, onSubmit } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

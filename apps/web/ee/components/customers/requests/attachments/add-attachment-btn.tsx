@@ -17,7 +17,7 @@ type TProps = {
   children: ReactNode;
 };
 
-export const AddAttachmentButton: FC<TProps> = (props) => {
+export function AddAttachmentButton(props: TProps) {
   const { requestId, workspaceSlug, customerId, disabled, children } = props;
   // i18n
   const { t } = useTranslation();
@@ -70,4 +70,4 @@ export const AddAttachmentButton: FC<TProps> = (props) => {
       </button>
     </div>
   );
-};
+}

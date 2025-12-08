@@ -15,7 +15,7 @@ import { UpdatesLoader } from "./loader";
 import { NewUpdate } from "./new-update";
 import { useUpdates } from "./use-updates";
 
-export const ProjectUpdates = observer(() => {
+export const ProjectUpdates = observer(function ProjectUpdates() {
   const { workspaceSlug, projectId } = useParams();
   // state
   const [showInput, setShowInput] = useState(false);

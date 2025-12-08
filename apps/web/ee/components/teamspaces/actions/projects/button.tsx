@@ -33,7 +33,9 @@ type UpdateTeamspaceProjectsButtonProps = {
 
 const TOOLTIP_CONTENT = "Contact teamspace admin";
 
-export const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsButtonProps) => {
+export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspaceProjectsButton(
+  props: UpdateTeamspaceProjectsButtonProps
+) {
   const { variant = "default", teamspaceId, isEditingAllowed, trackerElement, renderButton } = props;
   // router
   const { workspaceSlug } = useParams();

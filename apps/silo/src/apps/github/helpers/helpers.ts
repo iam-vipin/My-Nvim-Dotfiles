@@ -21,7 +21,7 @@ export const getConnDetailsForGithubToPlaneSync = async (props: {
   const { wsAdminCredentials: credentials, isEnterprise, type, repositoryId, planeProjectId } = props;
   // Get the workspace connection for the installation
   const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
-    workspace_id: credentials.workspace_id!,
+    workspace_id: credentials.workspace_id,
     credential_id: credentials.id,
   });
 
@@ -30,7 +30,7 @@ export const getConnDetailsForGithubToPlaneSync = async (props: {
   }
 
   const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-    workspace_id: credentials.workspace_id!,
+    workspace_id: credentials.workspace_id,
     entity_type: isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
     type: type,
   });
@@ -87,9 +87,9 @@ export const getConnDetailsForPlaneToGithubSync = async (
   const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
 
   return {
-    credentials: credentials as TWorkspaceCredential,
-    entityConnection: entityConnection as TGithubEntityConnection,
-    workspaceConnection: workspaceConnection as TGithubWorkspaceConnection,
+    credentials: credentials,
+    entityConnection: entityConnection,
+    workspaceConnection: workspaceConnection,
   };
 };
 

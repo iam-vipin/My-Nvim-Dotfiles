@@ -43,7 +43,7 @@ interface IInitiativeUpdate extends TUpdate {
   project_id: string;
 }
 
-export const UpdateStatusPills = (props: TStatusPills) => {
+export function UpdateStatusPills(props: TStatusPills) {
   const { handleUpdateOperations, workspaceSlug, initiativeId, analytics, defaultTab = "project", showTabs } = props;
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -141,4 +141,4 @@ export const UpdateStatusPills = (props: TStatusPills) => {
         ))}
     </div>
   );
-};
+}

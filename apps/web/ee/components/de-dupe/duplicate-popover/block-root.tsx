@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import type { TDeDupeIssue } from "@plane/types";
@@ -22,7 +20,7 @@ type TDeDupeIssueBlockRootProps = {
   isIntakeIssue?: boolean;
 };
 
-export const DeDupeIssueBlockRoot: FC<TDeDupeIssueBlockRootProps> = (props) => {
+export function DeDupeIssueBlockRoot(props: TDeDupeIssueBlockRootProps) {
   const {
     workspaceSlug,
     issue,
@@ -48,4 +46,4 @@ export const DeDupeIssueBlockRoot: FC<TDeDupeIssueBlockRootProps> = (props) => {
       <DeDupeIssueBlockContent issue={issue} />
     </DeDupeIssueBlockWrapper>
   );
-};
+}

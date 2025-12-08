@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -13,15 +11,17 @@ type Props = {
   onSelect: (customer: TCustomer) => void;
 };
 
-export const PowerKCustomersMenu: React.FC<Props> = observer(({ customers, onSelect }) => (
-  <PowerKMenuBuilder
-    heading="Customers"
-    items={customers}
-    getIconNode={(customer) => <SwitcherIcon logo_url={customer.logo_url} LabelIcon={CustomersIcon} size={14} />}
-    getKey={(customer) => customer.id || customer.name}
-    getLabel={(customer) => customer.name}
-    getValue={(customer) => customer.name}
-    onSelect={onSelect}
-    emptyText="No customers found"
-  />
-));
+export const PowerKCustomersMenu = observer(function PowerKCustomersMenu({ customers, onSelect }: Props) {
+  return (
+    <PowerKMenuBuilder
+      heading="Customers"
+      items={customers}
+      getIconNode={(customer) => <SwitcherIcon logo_url={customer.logo_url} LabelIcon={CustomersIcon} size={14} />}
+      getKey={(customer) => customer.id || customer.name}
+      getLabel={(customer) => customer.name}
+      getValue={(customer) => customer.name}
+      onSelect={onSelect}
+      emptyText="No customers found"
+    />
+  );
+});

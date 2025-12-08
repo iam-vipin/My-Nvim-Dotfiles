@@ -16,7 +16,7 @@ type TAttachmentPreviewListProps = {
   items: TAttachmentPreviewItem[];
 };
 
-export const AttachmentPreviewList: FC<TAttachmentPreviewListProps> = ({ items }) => {
+export function AttachmentPreviewList({ items }: TAttachmentPreviewListProps) {
   if (!items.length) return null;
 
   return (
@@ -26,4 +26,4 @@ export const AttachmentPreviewList: FC<TAttachmentPreviewListProps> = ({ items }
       ))}
     </div>
   );
-};
+}

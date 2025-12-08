@@ -14,7 +14,8 @@ interface IPreviewHOC {
   shouldToggleSidebar?: boolean;
   showEdited?: boolean;
 }
-const BaseWithPreviewHOC = observer((props: IPreviewHOC) => {
+
+const BaseWithPreviewHOC = observer(function BaseWithPreviewHOC(props: IPreviewHOC) {
   const { children, artifactId, shouldToggleSidebar = true, showEdited = true } = props;
   // router
   const pathname = usePathname();
@@ -61,7 +62,7 @@ const BaseWithPreviewHOC = observer((props: IPreviewHOC) => {
   );
 });
 
-const PreviewProperties = (props: { children: React.ReactNode }) => {
+function PreviewProperties(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
     <div
@@ -80,7 +81,7 @@ const PreviewProperties = (props: { children: React.ReactNode }) => {
       {children}
     </div>
   );
-};
+}
 
 // 👇 Extend type manually here
 interface WithPreviewHOCType extends React.FC<IPreviewHOC> {

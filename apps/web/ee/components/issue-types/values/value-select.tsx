@@ -39,7 +39,7 @@ type TPropertyValueSelectProps = {
   getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
-export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) => {
+export const PropertyValueSelect = observer(function PropertyValueSelect(props: TPropertyValueSelectProps) {
   const {
     propertyDetail,
     propertyValue,
@@ -56,30 +56,32 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
   // derived values
   const isPeekOverview = peekIssue ? true : false;
 
-  const IssuePropertyDetail = () => (
-    <>
-      <div className="flex-shrink-0 grid place-items-center">
-        {propertyDetail?.logo_props?.in_use && (
-          <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
-        )}
-      </div>
-      <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
-        <span className="flex gap-0.5 items-center">
-          <span className="truncate">{propertyDetail?.display_name}</span>
-          {propertyDetail?.is_required && <span className="text-red-500">*</span>}
-          {propertyDetail.description && (
-            <Tooltip
-              tooltipContent={propertyDetail?.description}
-              position="right"
-              disabled={!propertyDetail?.description}
-            >
-              <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
-            </Tooltip>
+  function IssuePropertyDetail() {
+    return (
+      <>
+        <div className="flex-shrink-0 grid place-items-center">
+          {propertyDetail?.logo_props?.in_use && (
+            <IssuePropertyLogo icon_props={propertyDetail.logo_props.icon} colorClassName="text-custom-text-300" />
           )}
+        </div>
+        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+          <span className="flex gap-0.5 items-center">
+            <span className="truncate">{propertyDetail?.display_name}</span>
+            {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+            {propertyDetail.description && (
+              <Tooltip
+                tooltipContent={propertyDetail?.description}
+                position="right"
+                disabled={!propertyDetail?.description}
+              >
+                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+              </Tooltip>
+            )}
+          </span>
         </span>
-      </span>
-    </>
-  );
+      </>
+    );
+  }
 
   const ISSUE_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (

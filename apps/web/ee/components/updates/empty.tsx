@@ -6,7 +6,7 @@ type TProps = {
   allowNew: boolean;
 };
 
-export const EmptyUpdates = (props: TProps) => {
+export function EmptyUpdates(props: TProps) {
   const { handleNewUpdate, allowNew } = props;
   const { t } = useTranslation();
 
@@ -26,4 +26,4 @@ export const EmptyUpdates = (props: TProps) => {
       rootClassName="p-10"
     />
   );
-};
+}

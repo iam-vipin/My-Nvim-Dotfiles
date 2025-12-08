@@ -8,7 +8,7 @@ export type TEditorMentionComponentProps = TCallbackMentionComponentProps & {
   getMentionDetails?: (mentionType: TEditorMentionType, entityId: string) => TEditorMentionItem | undefined;
 };
 
-export const EditorAdditionalMentionsRoot: React.FC<TEditorMentionComponentProps> = (props) => {
+export function EditorAdditionalMentionsRoot(props: TEditorMentionComponentProps) {
   const { entity_name } = props;
 
   switch (entity_name) {
@@ -17,4 +17,4 @@ export const EditorAdditionalMentionsRoot: React.FC<TEditorMentionComponentProps
     default:
       return null;
   }
-};
+}

@@ -11,7 +11,7 @@ type Props = {
   customClassName?: string;
   icon?: React.ReactNode;
 };
-export const ListHeader = (props: Props) => {
+export function ListHeader(props: Props) {
   const { count, label, handleAdd, style, onClick, customClassName, icon } = props;
 
   return (
@@ -44,4 +44,4 @@ export const ListHeader = (props: Props) => {
       </div>
     </Row>
   );
-};
+}

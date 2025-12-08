@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { TClickUpStatus } from "@plane/etl/clickup";
@@ -17,7 +15,7 @@ type TMapStatesSelection = {
   planeStates: IState[];
 };
 
-export const MapStatesSelection: FC<TMapStatesSelection> = observer((props) => {
+export const MapStatesSelection = observer(function MapStatesSelection(props: TMapStatesSelection) {
   const { value, handleValue, clickUpStatus, planeStates } = props;
   const { t } = useTranslation();
 

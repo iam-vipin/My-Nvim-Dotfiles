@@ -17,7 +17,7 @@ interface TEpicsGroupProps {
   initiativeId: string;
 }
 
-export const EpicsGroup: FC<TEpicsGroupProps> = observer((props) => {
+export const EpicsGroup = observer(function EpicsGroup(props: TEpicsGroupProps) {
   const { group, disabled, initiativeId, workspaceSlug, epicIds } = props;
 
   const isAllIssues = group.id === ALL_ISSUES;

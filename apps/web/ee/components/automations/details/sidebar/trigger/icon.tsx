@@ -8,7 +8,7 @@ type Props = {
 
 const COMMON_ICON_CLASSNAME = "size-3.5 flex-shrink-0";
 
-export const AutomationTriggerIcon: React.FC<Props> = (props) => {
+export function AutomationTriggerIcon(props: Props) {
   switch (props.iconKey) {
     case "LayersIcon":
       return <LayersIcon className={COMMON_ICON_CLASSNAME} />;
@@ -21,4 +21,4 @@ export const AutomationTriggerIcon: React.FC<Props> = (props) => {
     default:
       return null;
   }
-};
+}

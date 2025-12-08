@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -8,7 +6,7 @@ import { OAuth, PersonalAccessTokenAuth } from "@/plane-web/components/importers
 // plane web hooks
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
-export const AuthenticationRoot: FC = observer(() => {
+export const AuthenticationRoot = observer(function AuthenticationRoot() {
   // hooks
   const {
     auth: { currentAuth },

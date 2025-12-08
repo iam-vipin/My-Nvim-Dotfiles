@@ -15,7 +15,7 @@ type TSelectCategoriesProps = {
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
   "bg-custom-background-100 border border-custom-border-200 rounded-md px-2 py-1";
 
-export const SelectCategories: React.FC<TSelectCategoriesProps> = observer((props) => {
+export const SelectCategories = observer(function SelectCategories(props: TSelectCategoriesProps) {
   const { value, handleChange } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export const SelectCategories: React.FC<TSelectCategoriesProps> = observer((prop
     <MultiSelectDropdown
       value={value}
       options={options}
-      onChange={(value) => handleChange(value as string[])}
+      onChange={(value) => handleChange(value)}
       keyExtractor={(option) => option.data}
       buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
       buttonContent={(isOpen, val) => (

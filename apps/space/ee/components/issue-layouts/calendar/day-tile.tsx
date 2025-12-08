@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
@@ -25,7 +23,7 @@ type Props = {
   setSelectedDate: (date: Date) => void;
 };
 
-export const CalendarDayTile: React.FC<Props> = observer((props) => {
+export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const {
     date,
     getIssueById,

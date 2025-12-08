@@ -22,7 +22,9 @@ type TEstimatePointItemSwitchPreview = {
   estimateType?: TEstimateSystemKeys;
 };
 
-export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview> = observer((props) => {
+export const EstimatePointItemSwitchPreview = observer(function EstimatePointItemSwitchPreview(
+  props: TEstimatePointItemSwitchPreview
+) {
   const {
     estimateId,
     estimateSystemSwitchType,

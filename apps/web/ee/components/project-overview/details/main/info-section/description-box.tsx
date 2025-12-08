@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +18,7 @@ type TProps = {
   toggleLinkModalOpen: (value: boolean) => void;
   disabled?: boolean;
 };
-export const DescriptionBox = observer((props: TProps) => {
+export const DescriptionBox = observer(function DescriptionBox(props: TProps) {
   const { workspaceSlug, project, handleProjectUpdate, toggleLinkModalOpen, disabled = false } = props;
   // states
   const [_isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");

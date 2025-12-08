@@ -123,7 +123,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       return jobs;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });
@@ -150,7 +150,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       return job;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });
@@ -183,7 +183,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       return job;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });
@@ -204,7 +204,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       this.loader = undefined;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });
@@ -229,7 +229,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       this.loader = undefined;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });
@@ -251,7 +251,7 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
       return config;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
         throw error;
       });

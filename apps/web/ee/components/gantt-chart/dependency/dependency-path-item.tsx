@@ -9,7 +9,9 @@ type TimelineDependencyPathItemProps = {
   onPathClick: (relation: Relation) => void;
 };
 
-export const TimelineDependencyPathItem = observer((props: TimelineDependencyPathItemProps) => {
+export const TimelineDependencyPathItem = observer(function TimelineDependencyPathItem(
+  props: TimelineDependencyPathItemProps
+) {
   const { relation, onPathClick } = props;
 
   const { id, originDependencyPosition, destinationDependencyPosition, isAdhering, startPosition, endPosition } =
@@ -42,10 +44,10 @@ export const TimelineDependencyPathItem = observer((props: TimelineDependencyPat
             className="opacity-0 hover:opacity-5"
             d={path}
             stroke={"#3F76FF"}
-            stroke-width={`${strokeWidth}`}
+            strokeWidth={`${strokeWidth}`}
             fill="none"
           />
-          <path d={path} stroke={strokeColor} stroke-width={`1.5`} fill="none" marker-end={`url(#arrowhead-${id})`} />
+          <path d={path} stroke={strokeColor} strokeWidth={`1.5`} fill="none" markerEnd={`url(#arrowhead-${id})`} />
         </g>
         <defs>
           <marker

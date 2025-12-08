@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -16,7 +14,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectOverviewHeader = observer(() => {
+export const ProjectOverviewHeader = observer(function ProjectOverviewHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();

@@ -16,7 +16,7 @@ type TTeamsOverviewContentProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamsOverviewContent = observer((props: TTeamsOverviewContentProps) => {
+export const TeamsOverviewContent = observer(function TeamsOverviewContent(props: TTeamsOverviewContentProps) {
   const { teamspaceId, isEditingAllowed } = props;
   // hooks
   const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();

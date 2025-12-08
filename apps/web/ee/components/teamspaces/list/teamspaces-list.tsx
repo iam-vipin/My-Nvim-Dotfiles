@@ -26,7 +26,7 @@ type TTeamspacesListProps = {
   isEditingAllowed: boolean;
 };
 
-export const TeamspacesList = observer((props: TTeamspacesListProps) => {
+export const TeamspacesList = observer(function TeamspacesList(props: TTeamspacesListProps) {
   const { isEditingAllowed } = props;
   // plane hooks
   const { t } = useTranslation();

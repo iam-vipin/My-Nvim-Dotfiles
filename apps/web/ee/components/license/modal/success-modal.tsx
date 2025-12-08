@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -65,7 +63,7 @@ export const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
   return [];
 };
 
-export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((props) => {
+export const PaidPlanSuccessModal = observer(function PaidPlanSuccessModal(props: PaidPlanSuccessModalProps) {
   const { variant = EProductSubscriptionEnum.PRO, isOpen, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -100,6 +98,7 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
             href={getRecapLink(variant)}
             target="_blank"
             className="text-custom-primary-200 text-center text-sm font-medium underline outline-none focus:outline-none"
+            rel="noreferrer"
           >
             Recap what {getSubscriptionName(variant)} packs anytime
           </a>

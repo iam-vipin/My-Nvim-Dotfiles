@@ -43,7 +43,7 @@ type Props = {
     }
 );
 
-export const CreateUpdatePageTemplate: React.FC<Props> = observer((props) => {
+export const CreateUpdatePageTemplate = observer(function CreateUpdatePageTemplate(props: Props) {
   const { workspaceSlug, templateId, currentLevel } = props;
   // router
   const router = useAppRouter();

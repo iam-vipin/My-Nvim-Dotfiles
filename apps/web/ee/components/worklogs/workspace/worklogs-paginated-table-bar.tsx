@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -11,7 +9,9 @@ type TWorkspaceTablePaginationBar = {
   workspaceSlug: string;
 };
 
-export const WorkspaceTablePaginationBar: FC<TWorkspaceTablePaginationBar> = observer((props) => {
+export const WorkspaceTablePaginationBar = observer(function WorkspaceTablePaginationBar(
+  props: TWorkspaceTablePaginationBar
+) {
   const { workspaceSlug } = props;
   // hooks
   const { perPage, paginationInfo, getPreviousWorklogs, getNextWorklogs } = useWorkspaceWorklogs();

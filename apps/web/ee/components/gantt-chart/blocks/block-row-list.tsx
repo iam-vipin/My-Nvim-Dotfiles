@@ -8,7 +8,7 @@ import { BlockRow } from "@/components/gantt-chart/blocks/block-row";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 
-export const GanttChartRowList: FC<GanttChartBlocksProps> = observer((props) => {
+export const GanttChartRowList = observer(function GanttChartRowList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockUpdateHandler,

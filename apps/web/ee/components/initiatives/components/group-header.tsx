@@ -9,7 +9,7 @@ interface IGroupHeader {
   toggleListGroup: (id: string) => void;
 }
 
-export const GroupHeader = observer((props: IGroupHeader) => {
+export const GroupHeader = observer(function GroupHeader(props: IGroupHeader) {
   const { groupID, icon, title, count, toggleListGroup } = props;
 
   return (

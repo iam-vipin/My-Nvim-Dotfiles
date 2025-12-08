@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
@@ -49,7 +47,7 @@ const DEFAULT_PAGE_TEMPLATE_FORM_VALUES: TPageTemplateForm = {
   },
 };
 
-export const PageTemplateFormRoot: React.FC<Props> = observer((props) => {
+export const PageTemplateFormRoot = observer(function PageTemplateFormRoot(props: Props) {
   const { workspaceSlug, operation, preloadedData, handleFormCancel, handleFormSubmit } = props;
   // plane hooks
   const { t } = useTranslation();

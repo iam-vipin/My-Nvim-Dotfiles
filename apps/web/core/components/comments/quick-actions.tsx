@@ -18,7 +18,7 @@ type TCommentCard = {
   showCopyLinkOption: boolean;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
+export const CommentQuickActions = observer(function CommentQuickActions(props: TCommentCard) {
   const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();

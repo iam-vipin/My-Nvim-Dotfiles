@@ -12,7 +12,7 @@ type Props = {
   workspaceSlug?: string;
 };
 
-export const IssueIdentifier: React.FC<Props> = (props) => {
+export function IssueIdentifier(props: Props) {
   const { projectId, workspaceSlug, issueIdentifier } = props;
   const [projectIdentifier, setProjectIdentifier] = useState<string | undefined>(undefined);
 
@@ -39,4 +39,4 @@ export const IssueIdentifier: React.FC<Props> = (props) => {
   return (
     <span className={"text-sm font-medium text-custom-text-300"}>{`${projectIdentifier}-${issueIdentifier}`}</span>
   );
-};
+}

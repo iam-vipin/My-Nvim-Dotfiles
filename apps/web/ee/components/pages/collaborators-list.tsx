@@ -16,7 +16,7 @@ interface CollaboratorsListProps {
   className?: string;
 }
 
-export const CollaboratorsList = observer((props: CollaboratorsListProps) => {
+export const CollaboratorsList = observer(function CollaboratorsList(props: CollaboratorsListProps) {
   const { page, initialVisibleCount = 3, expandedVisibleCount = 7, className = "mr-3" } = props;
 
   const [isGroupHovered, setIsGroupHovered] = useState(false);

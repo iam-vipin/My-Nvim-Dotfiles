@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -9,9 +7,9 @@ import { FilterHeader } from "@/components/issues/filters/helpers/filter-header"
 import { FilterOption } from "@/components/issues/filters/helpers/filter-option";
 import { useLabel } from "@/hooks/store/use-label";
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,7 +18,7 @@ type Props = {
   allowedValues: string[] | undefined;
 };
 
-export const FilterLabels: React.FC<Props> = observer((props) => {
+export const FilterLabels = observer(function FilterLabels(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
   // store
   const { getLabelsByIds, labels: storeLabels } = useLabel();

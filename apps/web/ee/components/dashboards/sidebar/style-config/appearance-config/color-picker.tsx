@@ -11,7 +11,7 @@ type Props = {
   value: string | undefined;
 };
 
-export const WidgetColorPicker: React.FC<Props> = (props) => {
+export function WidgetColorPicker(props: Props) {
   const { onChange, title, value } = props;
   // unique id
   const id = useId();
@@ -51,4 +51,4 @@ export const WidgetColorPicker: React.FC<Props> = (props) => {
       }
     />
   );
-};
+}

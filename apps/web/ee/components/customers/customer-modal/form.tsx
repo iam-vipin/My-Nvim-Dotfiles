@@ -37,7 +37,7 @@ type TCustomerForms = {
   handleModalClose: () => void;
 };
 
-export const CustomerForm: FC<TCustomerForms> = (props) => {
+export function CustomerForm(props: TCustomerForms) {
   const { data, handleModalClose } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -241,4 +241,4 @@ export const CustomerForm: FC<TCustomerForms> = (props) => {
       </form>
     </FormProvider>
   );
-};
+}

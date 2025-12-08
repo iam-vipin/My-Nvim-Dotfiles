@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -15,7 +13,7 @@ type TGroupList = {
   groupProjectStates: TProjectStateIdsByGroup;
 };
 
-export const ProjectStateGroupList: FC<TGroupList> = observer((props) => {
+export const ProjectStateGroupList = observer(function ProjectStateGroupList(props: TGroupList) {
   const { workspaceSlug, workspaceId, groupProjectStates } = props;
   // states
   const [groupsExpanded, setGroupsExpanded] = useState<Partial<TProjectStateGroupKey>[]>([

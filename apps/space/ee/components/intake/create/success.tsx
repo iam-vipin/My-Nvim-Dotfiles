@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import SuccessDark from "@/app/assets/instance/intake-sent-dark.png?url";
 import SuccessLight from "@/app/assets/instance/intake-sent-light.png?url";
 
-const FormSuccess = ({ onReset }: { onReset: () => void }) => {
+function FormSuccess({ onReset }: { onReset: () => void }) {
   const { resolvedTheme } = useTheme();
   const { t } = useTranslation();
   return (
@@ -35,5 +35,6 @@ const FormSuccess = ({ onReset }: { onReset: () => void }) => {
       </div>
     </div>
   );
-};
+}
+
 export default FormSuccess;

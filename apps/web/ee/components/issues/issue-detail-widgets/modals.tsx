@@ -8,7 +8,9 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { PagesMultiSelectModal } from "./pages/multi-select-modal";
 
-export const WorkItemAdditionalWidgetModals: FC<TWorkItemAdditionalWidgetModalsProps> = observer((props) => {
+export const WorkItemAdditionalWidgetModals = observer(function WorkItemAdditionalWidgetModals(
+  props: TWorkItemAdditionalWidgetModalsProps
+) {
   const { issueServiceType, workItemId, workspaceSlug } = props;
   const {
     issue: { getIssueById },

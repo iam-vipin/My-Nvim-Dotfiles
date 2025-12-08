@@ -23,7 +23,7 @@ type Props = {
   featureList: TIntakeResponsibilityList;
 };
 
-const IntakeResponsibility = observer((props: Props) => {
+const IntakeResponsibility = observer(function IntakeResponsibility(props: Props) {
   const { projectId, featureList } = props;
   const { workspaceSlug } = useParams();
   //   hooks

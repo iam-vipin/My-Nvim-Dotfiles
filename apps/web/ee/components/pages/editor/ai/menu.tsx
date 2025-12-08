@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { CornerDownRight, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
@@ -95,7 +93,7 @@ const TONES_LIST = [
   },
 ];
 
-export const EditorAIMenu: React.FC<Props> = (props) => {
+export function EditorAIMenu(props: Props) {
   const { editorRef, isOpen, onClose, projectId, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
@@ -308,4 +306,4 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

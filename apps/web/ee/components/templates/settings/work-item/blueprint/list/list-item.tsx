@@ -35,7 +35,9 @@ type TWorkItemBlueprintListItemProps = {
   workItem: TWorkItemBlueprintFormData;
 } & (TWorkItemBlueprintListItemWithAdditionalPropsData | TWorkItemBlueprintListItemWithMobxData);
 
-export const WorkItemBlueprintListItem: React.FC<TWorkItemBlueprintListItemProps> = observer((props) => {
+export const WorkItemBlueprintListItem = observer(function WorkItemBlueprintListItem(
+  props: TWorkItemBlueprintListItemProps
+) {
   const { allowEdit = false, handleEdit, handleDelete, index, workItem, usePropsForAdditionalData } = props;
   // store hooks
   const { getProjectById: getProjectByIdFromStore } = useProject();

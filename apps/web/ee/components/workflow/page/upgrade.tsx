@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -15,7 +13,7 @@ import WorkflowsUpgradeLight from "@/app/assets/empty-state/workflows/upgrade-li
 // plane web components
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 
-export const WorkflowUpgrade: FC = observer(() => {
+export const WorkflowUpgrade = observer(function WorkflowUpgrade() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks

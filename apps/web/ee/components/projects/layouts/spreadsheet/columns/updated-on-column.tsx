@@ -12,7 +12,7 @@ type Props = {
   onChange: (project: TProject, data: Partial<TProject>) => void;
 };
 
-export const SpreadsheetUpdatedOnColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetUpdatedOnColumn = observer(function SpreadsheetUpdatedOnColumn(props: Props) {
   const { project, onChange, disabled } = props;
 
   return (

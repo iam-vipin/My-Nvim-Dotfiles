@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -33,7 +31,7 @@ interface TeamspaceProjectBlockProps {
   teamspaceId: string;
 }
 
-export const TeamspaceProjectBlock = observer((props: TeamspaceProjectBlockProps) => {
+export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(props: TeamspaceProjectBlockProps) {
   const { projectId, isCurrentBlockDragging, canDrag, teamspaceId } = props;
   // ref
   const projectRef = useRef<HTMLDivElement | null>(null);
@@ -80,7 +78,7 @@ export const TeamspaceProjectBlock = observer((props: TeamspaceProjectBlockProps
             </div>
           </div>
 
-          {!!projectDetails.member_role ? (
+          {projectDetails.member_role ? (
             <Link
               id={`project-${projectDetails.id}`}
               href={`/${workspaceSlug}/teamspaces/${teamspaceId}/projects/${projectId}`}

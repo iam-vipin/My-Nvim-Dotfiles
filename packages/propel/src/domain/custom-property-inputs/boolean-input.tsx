@@ -9,7 +9,7 @@ type TBooleanInputProps = {
   required?: boolean;
 };
 
-export const BooleanInput: React.FC<TBooleanInputProps> = ({ property, isPreview = false, required = false }) => {
+export function BooleanInput({ property, isPreview = false, required = false }: TBooleanInputProps) {
   const {
     control,
     formState: { errors },
@@ -47,4 +47,4 @@ export const BooleanInput: React.FC<TBooleanInputProps> = ({ property, isPreview
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

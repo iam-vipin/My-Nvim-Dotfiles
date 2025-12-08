@@ -9,11 +9,11 @@ interface SkipAdditionalDataToggleProps {
   className?: string;
 }
 
-export const SkipAdditionalDataToggle: React.FC<SkipAdditionalDataToggleProps> = ({
+export function SkipAdditionalDataToggle({
   skipAdditionalData,
   handleSkipAdditionalDataToggle,
   className = "",
-}) => {
+}: SkipAdditionalDataToggleProps) {
   const { handleSyncJobConfig } = useClickUpImporter();
   const handleClick = (value: boolean) => {
     handleSkipAdditionalDataToggle(value);
@@ -44,4 +44,4 @@ export const SkipAdditionalDataToggle: React.FC<SkipAdditionalDataToggleProps> =
       </div>
     </div>
   );
-};
+}

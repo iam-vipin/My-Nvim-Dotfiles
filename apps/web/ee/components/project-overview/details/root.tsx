@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();

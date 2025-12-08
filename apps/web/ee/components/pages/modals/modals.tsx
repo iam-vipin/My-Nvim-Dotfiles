@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // components
@@ -13,7 +11,7 @@ export type TPageModalsProps = {
   storeType: EPageStoreType;
 };
 
-export const PageModals: React.FC<TPageModalsProps> = observer((props) => {
+export const PageModals = observer(function PageModals(props: TPageModalsProps) {
   const { page, storeType } = props;
 
   return (

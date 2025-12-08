@@ -19,7 +19,7 @@ export type TProps = {
   handleConvertToPage?: () => void;
 };
 
-export const Feedback = observer((props: TProps) => {
+export const Feedback = observer(function Feedback(props: TProps) {
   // props
   const { answer, activeChatId, id, workspaceId, feedback, queryId, isLatest, handleConvertToPage } = props;
   // states

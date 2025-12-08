@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // hooks
 import { useGanttChart } from "../..";
 
-export const DayChartView: FC<any> = observer(() => {
+export const DayChartView = observer(function DayChartView(_props: any) {
   const { currentViewData, renderView } = useGanttChart();
 
   return (

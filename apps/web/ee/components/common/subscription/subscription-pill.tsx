@@ -10,7 +10,7 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // In case workspace is not passed, we will use the current workspace's subscription detail from the store
 type TProps = { workspace?: IWorkspace };
 
-export const SubscriptionPill = observer((props: TProps) => {
+export const SubscriptionPill = observer(function SubscriptionPill(props: TProps) {
   const { workspace } = props;
   //hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();

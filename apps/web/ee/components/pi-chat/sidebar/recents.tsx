@@ -1,5 +1,3 @@
-"use-client";
-
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
@@ -17,7 +15,7 @@ type TProps = {
   isFullScreen: boolean;
   activeChatId: string;
 };
-const RecentChats = observer((props: TProps) => {
+const RecentChats = observer(function RecentChats(props: TProps) {
   const { userThreads, isProjectLevel = false, isLoading = false, isFullScreen = false, activeChatId } = props;
   const { workspaceSlug, chatId } = useParams();
 

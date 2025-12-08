@@ -26,7 +26,7 @@ type Props = {
     }
 );
 
-export const ImageToolbarRoot: React.FC<Props> = (props) => {
+export function ImageToolbarRoot(props: Props) {
   const { downloadSrc, onRemove, isFullScreenable } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
@@ -57,4 +57,4 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

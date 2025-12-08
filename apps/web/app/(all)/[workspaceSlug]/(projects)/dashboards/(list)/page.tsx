@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { DashboardsListLayoutRoot } from "@/plane-web/components/dashboards/list";
 

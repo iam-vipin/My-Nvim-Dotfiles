@@ -24,7 +24,7 @@ const sourcePillMap = {
   },
 };
 
-export const InboxSourcePill = observer((props: TInboxSourcePill) => {
+export const InboxSourcePill = observer(function InboxSourcePill(props: TInboxSourcePill) {
   const { source } = props;
   const { workspaceSlug } = useParams();
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);

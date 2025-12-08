@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 // helpers
@@ -12,7 +10,7 @@ export type TGoogleAuthButton = {
   invitationId?: string;
 };
 
-export const GoogleAuthButton: FC<TGoogleAuthButton> = (props) => {
+export function GoogleAuthButton(props: TGoogleAuthButton) {
   // props
   const { title, invitationId } = props;
   // hooks
@@ -35,4 +33,4 @@ export const GoogleAuthButton: FC<TGoogleAuthButton> = (props) => {
       {title}
     </button>
   );
-};
+}

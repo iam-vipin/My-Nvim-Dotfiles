@@ -24,7 +24,7 @@ type Props = {
   searchCallback?: (query: string) => Promise<PiChatMentionSearchCallbackResponse>;
 };
 
-export const PiChatEditorMentionExtension = (props: Props) => {
+export function PiChatEditorMentionExtension(props: Props) {
   const { searchCallback } = props;
 
   return Mention.extend<PiChatEditorMentionOptions>({
@@ -133,4 +133,4 @@ export const PiChatEditorMentionExtension = (props: Props) => {
       }),
     },
   });
-};
+}

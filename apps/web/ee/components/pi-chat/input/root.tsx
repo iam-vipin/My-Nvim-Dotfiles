@@ -41,7 +41,7 @@ type TProps = {
   contextData?: TChatContextData;
 };
 
-export const InputBox = observer((props: TProps) => {
+export const InputBox = observer(function InputBox(props: TProps) {
   const {
     className,
     activeChatId,
@@ -73,7 +73,7 @@ export const InputBox = observer((props: TProps) => {
   const routerWithProgress = useAppRouter();
   const pathname = usePathname();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const [projectIdentifier] = workItem?.split("-") ?? [];
   const projectDetails = getProjectByIdentifier(projectIdentifier);
   const projectIdToUse = projectDetails?.id || projectId || "";

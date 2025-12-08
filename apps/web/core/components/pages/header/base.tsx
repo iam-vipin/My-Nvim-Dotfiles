@@ -25,7 +25,7 @@ type BasePagesListHeaderRootProps = {
   tabNavigationComponent: ReactNode;
 };
 
-export const BasePagesListHeaderRoot: React.FC<BasePagesListHeaderRootProps> = observer((props) => {
+export const BasePagesListHeaderRoot = observer(function BasePagesListHeaderRoot(props: BasePagesListHeaderRootProps) {
   const { storeType, tabNavigationComponent } = props;
   const { t } = useTranslation();
   // store hooks

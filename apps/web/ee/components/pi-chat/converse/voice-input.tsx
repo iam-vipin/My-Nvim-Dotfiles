@@ -25,7 +25,7 @@ type TProps = {
 };
 const piChatService = new PiChatService();
 
-const AudioRecorder = (props: TProps) => {
+function AudioRecorder(props: TProps) {
   const {
     workspaceId,
     chatId,
@@ -193,6 +193,6 @@ const AudioRecorder = (props: TProps) => {
       )}
     </div>
   );
-};
+}
 
 export default AudioRecorder;

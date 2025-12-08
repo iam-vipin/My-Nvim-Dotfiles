@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
@@ -21,7 +19,7 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
-export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => {
+export const CreateOrUpdateIssueTypeForm = observer(function CreateOrUpdateIssueTypeForm(props: Props) {
   const { formData, isSubmitting, handleFormDataChange, handleModalClose, handleFormSubmit } = props;
   // state
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);

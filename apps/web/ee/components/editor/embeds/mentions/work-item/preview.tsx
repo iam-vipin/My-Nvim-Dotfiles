@@ -8,7 +8,7 @@ type Props = {
   workItemDetails: TEditorWorkItemMention;
 };
 
-export const EditorWorkItemMentionPreview: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionPreview = observer(function EditorWorkItemMentionPreview(props: Props) {
   const { workItemDetails } = props;
 
   return (

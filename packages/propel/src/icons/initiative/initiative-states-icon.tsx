@@ -35,12 +35,7 @@ export const INITIATIVE_STATES_SIZES: {
   [EIconSize.XL]: "18px",
 };
 
-export const InitiativeStateIcon: React.FC<IInitiativeStateIcon> = ({
-  color,
-  state,
-  size = EIconSize.SM,
-  percentage,
-}) => {
+export function InitiativeStateIcon({ color, state, size = EIconSize.SM, percentage }: IInitiativeStateIcon) {
   const InitiativeIconComponent = iconComponents[state] || DraftsIcon;
 
   return (
@@ -52,4 +47,4 @@ export const InitiativeStateIcon: React.FC<IInitiativeStateIcon> = ({
       percentage={percentage}
     />
   );
-};
+}

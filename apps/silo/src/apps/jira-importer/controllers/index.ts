@@ -358,7 +358,7 @@ async function fetchJiraResources(axiosInstance: AxiosInstance, credentials: TWo
       if (isRetry) {
         throw new JiraApiError("Invalid access token", 401);
       } else {
-        return await refreshAndRetry(credentials.workspace_id!, credentials.user_id!, credentials, axiosInstance);
+        return await refreshAndRetry(credentials.workspace_id, credentials.user_id, credentials, axiosInstance);
       }
     }
     throw error;

@@ -35,7 +35,7 @@ type TProps = {
   isEditable: boolean;
 };
 
-export const CustomerMainRoot: FC<TProps> = observer((props) => {
+export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps) {
   const { customerId, workspaceSlug, isEditable = false } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");

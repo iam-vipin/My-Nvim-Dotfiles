@@ -13,7 +13,7 @@ export const CONTEXT_ENTITY_MAP_EXTENDED: Record<TPowerKContextTypeExtended, TCo
   },
 };
 
-export const PowerKContextBasedActionsExtended: React.FC<ContextBasedActionsProps> = (props) => {
+export function PowerKContextBasedActionsExtended(props: ContextBasedActionsProps) {
   const { activeContext, activePage, handleSelection } = props;
 
   return (
@@ -23,7 +23,7 @@ export const PowerKContextBasedActionsExtended: React.FC<ContextBasedActionsProp
       )}
     </>
   );
-};
+}
 
 export const usePowerKContextBasedExtendedActions = (): TPowerKCommandConfig[] => {
   const initiativeCommands = usePowerKInitiativeContextBasedActions();

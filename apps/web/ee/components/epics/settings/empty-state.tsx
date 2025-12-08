@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type TIssueTypeEmptyState = {
   redirect?: boolean;
 };
 
-export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
+export const EpicsEmptyState = observer(function EpicsEmptyState(props: TIssueTypeEmptyState) {
   // props
   const { workspaceSlug, projectId, redirect = false } = props;
   // store hooks
@@ -79,7 +77,12 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
           </Button>
         )
       ) : isSelfManagedUpgradeDisabled ? (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+        <a
+          href="https://prime.plane.so/"
+          target="_blank"
+          className={getButtonStyling("primary", "md")}
+          rel="noreferrer"
+        >
           Get Pro
         </a>
       ) : (

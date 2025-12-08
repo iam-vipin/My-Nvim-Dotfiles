@@ -7,7 +7,7 @@ type Props = {
   value: string | undefined;
 };
 
-export const WidgetConfigSidebarTitle: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarTitle(props: Props) {
   const { onChange, value } = props;
   // translation
   const { t } = useTranslation();
@@ -29,4 +29,4 @@ export const WidgetConfigSidebarTitle: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

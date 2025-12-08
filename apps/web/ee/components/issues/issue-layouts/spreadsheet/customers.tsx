@@ -9,7 +9,7 @@ type TProps = {
   issue: TIssue;
 };
 
-export const SpreadsheetCustomerColumn: React.FC<TProps> = observer((props) => {
+export const SpreadsheetCustomerColumn = observer(function SpreadsheetCustomerColumn(props: TProps) {
   const { issue } = props;
   const { t } = useTranslation();
   // hooks

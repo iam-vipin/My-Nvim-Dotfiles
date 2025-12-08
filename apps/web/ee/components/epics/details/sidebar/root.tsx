@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ type TEpicDetailsSidebarProps = {
   disabled?: boolean;
 };
 
-export const EpicDetailsSidebar: FC<TEpicDetailsSidebarProps> = observer((props) => {
+export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TEpicDetailsSidebarProps) {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();

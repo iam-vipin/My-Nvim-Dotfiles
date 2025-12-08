@@ -1,5 +1,3 @@
-"use client";
-
 /* eslint-disable react/display-name */
 import { useRef, forwardRef } from "react";
 import { observer } from "mobx-react";

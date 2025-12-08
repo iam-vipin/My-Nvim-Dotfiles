@@ -12,7 +12,7 @@ const info = [
   "To check for the status of that work item, get in touch with the project’s manager, admin, or whoever sent you the link to this page.",
 ];
 
-const IntakeInfo = () => {
+function IntakeInfo() {
   const popoverButtonRef = useRef<HTMLButtonElement | null>(null);
   const { t } = useTranslation();
   return (
@@ -56,5 +56,6 @@ const IntakeInfo = () => {
       </div>
     </Popover>
   );
-};
+}
+
 export default IntakeInfo;

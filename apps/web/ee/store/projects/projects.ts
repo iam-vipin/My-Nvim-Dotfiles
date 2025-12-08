@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import { set, update } from "lodash-es";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store

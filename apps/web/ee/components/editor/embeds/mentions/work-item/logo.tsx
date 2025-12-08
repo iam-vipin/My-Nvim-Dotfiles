@@ -16,7 +16,7 @@ type Props = {
   workItemTypeId?: TIssue["type_id"];
 };
 
-export const EditorWorkItemMentionLogo: React.FC<Props> = observer((props) => {
+export const EditorWorkItemMentionLogo = observer(function EditorWorkItemMentionLogo(props: Props) {
   const { className, projectId, showOnlyWorkItemType = false, stateColor, stateGroup, workItemTypeId } = props;
   // params
   const { workspaceSlug } = useParams();

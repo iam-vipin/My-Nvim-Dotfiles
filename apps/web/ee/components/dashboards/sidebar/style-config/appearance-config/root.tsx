@@ -17,7 +17,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarAppearanceConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarAppearanceConfig(props: Props) {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -59,4 +59,4 @@ export const WidgetConfigSidebarAppearanceConfig: React.FC<Props> = (props) => {
       {isComparisonAreaChart && <AreaChartComparisonLineAppearanceConfig handleConfigUpdate={handleConfigUpdate} />}
     </>
   );
-};
+}

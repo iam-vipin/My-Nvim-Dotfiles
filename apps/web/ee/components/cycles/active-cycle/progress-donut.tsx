@@ -7,7 +7,7 @@ type Props = {
   days_left: number;
 };
 
-const ProgressDonut = (props: Props) => {
+function ProgressDonut(props: Props) {
   const { progress, days_left } = props;
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const percentage = progress ? ((progress?.completed ?? 0) * 100) / (progress?.scope ?? 1) : 0;
@@ -31,5 +31,6 @@ const ProgressDonut = (props: Props) => {
       </CircularProgressIndicator>
     </div>
   );
-};
+}
+
 export default ProgressDonut;

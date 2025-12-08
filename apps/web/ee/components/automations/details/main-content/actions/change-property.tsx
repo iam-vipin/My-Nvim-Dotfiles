@@ -12,7 +12,7 @@ type Props = {
   projectId: string;
 };
 
-export const AutomationDetailsMainContentChangePropertyBlock: React.FC<Props> = (props) => {
+export function AutomationDetailsMainContentChangePropertyBlock(props: Props) {
   const { config, projectId } = props;
   const { configurationMap } = useAutomationActionConfig({
     projectId,
@@ -60,4 +60,4 @@ export const AutomationDetailsMainContentChangePropertyBlock: React.FC<Props> = 
       </div>
     </div>
   );
-};
+}

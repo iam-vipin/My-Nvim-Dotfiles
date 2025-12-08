@@ -18,7 +18,7 @@ type TCustomerListItemProps = {
   workspaceSlug: string;
 };
 
-export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => {
+export const CustomerListItem = observer(function CustomerListItem(props: TCustomerListItemProps) {
   const { customerId, workspaceSlug } = props;
   // refs
   const parentRef = useRef(null);

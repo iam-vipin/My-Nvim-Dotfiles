@@ -17,7 +17,7 @@ export type IntegrationsEmptyStateProps = {
   theme: string;
 };
 
-export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = observer((props) => {
+export const IntegrationsEmptyState = observer(function IntegrationsEmptyState(props: IntegrationsEmptyStateProps) {
   const { theme } = props;
   // router
   const { workspaceSlug } = useParams();

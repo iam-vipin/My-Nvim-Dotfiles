@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 // icons
 import { Eye, EyeOff } from "lucide-react";
@@ -30,7 +28,7 @@ export type TAuthFormInputFormField = {
   error: boolean;
 };
 
-export const AuthFormInput: React.FC<Props> = (props) => {
+export function AuthFormInput(props: Props) {
   const { name, type, label, description, placeholder, error, value, onChange } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
@@ -74,4 +72,4 @@ export const AuthFormInput: React.FC<Props> = (props) => {
       {description && <p className="pt-0.5 text-xs text-custom-text-300">{description}</p>}
     </div>
   );
-};
+}

@@ -20,7 +20,7 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarBasicConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarBasicConfig(props: Props) {
   const { handleSubmit } = props;
   // translation
   const { t } = useTranslation();
@@ -158,4 +158,4 @@ export const WidgetConfigSidebarBasicConfig: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

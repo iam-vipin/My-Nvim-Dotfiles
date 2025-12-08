@@ -20,7 +20,7 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
 };
 
-export const PagePreviewEditor = observer((props: Props) => {
+export const PagePreviewEditor = observer(function PagePreviewEditor(props: Props) {
   const { workspaceSlug, projectId, artifactId, initialValue, onChange, editorRef } = props;
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values

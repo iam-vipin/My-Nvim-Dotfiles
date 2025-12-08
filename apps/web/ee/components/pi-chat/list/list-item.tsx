@@ -18,7 +18,7 @@ type TProps = {
   thread: TUserThreads;
 };
 
-export const PiChatListItem = observer((props: TProps) => {
+export const PiChatListItem = observer(function PiChatListItem(props: TProps) {
   const { thread } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export const PiChatListItem = observer((props: TProps) => {
   const { favoriteChat, unfavoriteChat } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   const handleFavorite = async () => {
     if (thread.is_favorite) {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // assets
@@ -11,7 +9,7 @@ import { IMPORTER_STEPS } from "@/plane-web/constants/importers";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 
-export const StepsRoot: FC = observer(() => {
+export const StepsRoot = observer(function StepsRoot() {
   // hooks
   const { currentStepIndex, resetImporterData } = useJiraImporter();
 

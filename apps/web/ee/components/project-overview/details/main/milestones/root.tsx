@@ -14,7 +14,7 @@ type Props = {
   toggleCreateUpdateModal: () => void;
 };
 
-export const ProjectMilestoneRoot: FC<Props> = observer((props) => {
+export const ProjectMilestoneRoot = observer(function ProjectMilestoneRoot(props: Props) {
   const { workspaceSlug, projectId, toggleCreateUpdateModal } = props;
   // store hooks
   const { getProjectMilestoneIds, milestoneLoader } = useMilestones();

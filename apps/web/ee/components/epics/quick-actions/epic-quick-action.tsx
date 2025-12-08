@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { pick } from "lodash-es";
 import { observer } from "mobx-react";
@@ -33,7 +31,7 @@ type TProjectEpicQuickActionProps = IQuickActionProps & {
   isPeekMode?: boolean;
 };
 
-export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = observer((props) => {
+export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions(props: TProjectEpicQuickActionProps) {
   const {
     issue,
     handleDelete,

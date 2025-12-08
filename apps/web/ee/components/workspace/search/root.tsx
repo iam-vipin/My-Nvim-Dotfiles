@@ -11,7 +11,7 @@ import { cn } from "@plane/utils";
 // plane web imports
 import { SearchResults } from "@/plane-web/components/workspace/search";
 
-export const AppSearchRoot = observer(() => {
+export const AppSearchRoot = observer(function AppSearchRoot() {
   // navigation
   const searchParams = useSearchParams();
   // states

@@ -20,7 +20,7 @@ interface PagePublishActionsProps {
   storeType: EPageStoreType;
 }
 
-export const PagePublishActions: React.FC<PagePublishActionsProps> = observer((props) => {
+export const PagePublishActions = observer(function PagePublishActions(props: PagePublishActionsProps) {
   const { page, storeType } = props;
   // states
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);

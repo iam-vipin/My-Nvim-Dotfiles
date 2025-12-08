@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // utils
@@ -10,7 +8,7 @@ type TSectionWrapperProps = {
   className?: string;
 };
 
-export const SectionWrapper: FC<TSectionWrapperProps> = (props) => {
+export function SectionWrapper(props: TSectionWrapperProps) {
   const { children, className = "" } = props;
   return (
     <div
@@ -22,4 +20,4 @@ export const SectionWrapper: FC<TSectionWrapperProps> = (props) => {
       {children}
     </div>
   );
-};
+}

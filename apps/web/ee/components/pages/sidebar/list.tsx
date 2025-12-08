@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,7 +11,7 @@ type Props = {
   setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
+export const PagesAppSidebarList = observer(function PagesAppSidebarList(props: Props) {
   const { expandedPageIds = [], setExpandedPageIds } = props;
   // params
   const { pageId } = useParams();

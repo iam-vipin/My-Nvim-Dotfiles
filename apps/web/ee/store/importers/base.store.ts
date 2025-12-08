@@ -160,7 +160,7 @@ export class ImporterBaseStore implements IImporterBaseStore {
       return projects;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
       });
       throw error;
@@ -189,7 +189,7 @@ export class ImporterBaseStore implements IImporterBaseStore {
       return projectStates;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
         this.loader = undefined;
       });
       throw error;
@@ -214,7 +214,7 @@ export class ImporterBaseStore implements IImporterBaseStore {
       return externalApiToken;
     } catch (error) {
       runInAction(() => {
-        this.error = error as unknown as object;
+        this.error = error as object;
       });
     }
   };

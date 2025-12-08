@@ -19,7 +19,7 @@ type Props = {
   widget: DashboardWidgetInstance;
 };
 
-export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
+export const DashboardWidgetEmptyState = observer(function DashboardWidgetEmptyState(props: Props) {
   const { activeBreakpoint, dashboardId, widget } = props;
   // store hooks
   const { getDashboardById } = useDashboards();

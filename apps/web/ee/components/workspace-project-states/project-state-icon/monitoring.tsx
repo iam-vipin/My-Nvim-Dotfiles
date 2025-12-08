@@ -1,10 +1,8 @@
-"use client";
-
 import type { FC } from "react";
 // types
 import type { TSvgIcons } from "./types";
 
-export const MonitoringIcon: FC<TSvgIcons> = (props) => {
+export function MonitoringIcon(props: TSvgIcons) {
   const { width, height, className, color, ...rest } = props;
 
   return (
@@ -27,4 +25,4 @@ export const MonitoringIcon: FC<TSvgIcons> = (props) => {
       </svg>
     </>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ type Props = {
   workItemId?: string;
 };
 
-export const DeleteCustomerRequestsModal: React.FC<Props> = observer((props) => {
+export const DeleteCustomerRequestsModal = observer(function DeleteCustomerRequestsModal(props: Props) {
   const { isModalOpen, customerId, requestId, handleClose, workItemId } = props;
   // router
   const { workspaceSlug } = useParams();

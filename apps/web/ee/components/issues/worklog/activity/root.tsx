@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -32,7 +30,7 @@ type TIssueActivityWorklog = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityWorklog: FC<TIssueActivityWorklog> = observer((props) => {
+export const IssueActivityWorklog = observer(function IssueActivityWorklog(props: TIssueActivityWorklog) {
   const { workspaceSlug, projectId, issueId, activityComment, ends } = props;
   // hooks
   const { deleteWorklogById } = useWorkspaceWorklogs();

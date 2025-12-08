@@ -15,7 +15,7 @@ type TProps = {
   logo: File | null;
 };
 
-export const CustomerLogoInput: FC<TProps> = observer((props) => {
+export const CustomerLogoInput = observer(function CustomerLogoInput(props: TProps) {
   const { handleOpenLogoInput, onLogoUpload, logo_url, logo, logoInputRef } = props;
   return (
     <div

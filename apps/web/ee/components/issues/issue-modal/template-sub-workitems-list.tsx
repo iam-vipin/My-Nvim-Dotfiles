@@ -10,7 +10,7 @@ import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/set
 import { WorkItemBlueprintListItem } from "@/plane-web/components/templates/settings/work-item/blueprint/list/list-item";
 import { useWorkItemTemplates } from "@/plane-web/hooks/store";
 
-export const TemplateSubWorkitemsList: React.FC = observer(() => {
+export const TemplateSubWorkitemsList = observer(function TemplateSubWorkitemsList() {
   // plane hooks
   const { t } = useTranslation();
   // store hooks

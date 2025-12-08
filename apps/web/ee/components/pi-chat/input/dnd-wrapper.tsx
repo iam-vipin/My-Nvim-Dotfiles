@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import React, { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +28,7 @@ type Props = {
   children: (isUploading: boolean, open: () => void) => React.ReactNode;
 };
 
-export const DndWrapper: FC<Props> = observer((props) => {
+export const DndWrapper = observer(function DndWrapper(props: Props) {
   const {
     workspaceSlug,
     workspaceId,

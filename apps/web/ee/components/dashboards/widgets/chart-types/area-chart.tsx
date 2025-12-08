@@ -9,13 +9,13 @@ import { EWidgetChartModels } from "@plane/types";
 import type { TWidgetComponentProps } from ".";
 import { generateExtendedColors } from ".";
 
-const AreaChart = lazy(() =>
-  import("@plane/propel/charts/area-chart").then((mod) => ({
+const AreaChart = lazy(function AreaChart() {
+  return import("@plane/propel/charts/area-chart").then((mod) => ({
     default: mod.AreaChart,
-  }))
-);
+  }));
+});
 
-export const DashboardAreaChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidget(props: TWidgetComponentProps) {
   const { parsedData, widget } = props;
   // derived values
   const { chart_model } = widget ?? {};

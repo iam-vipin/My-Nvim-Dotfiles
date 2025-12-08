@@ -8,7 +8,7 @@ type Props = {
   title: string;
 } & PropsWithChildren;
 
-export const FormSection = ({ collapsible, title, children }: Props) => {
+export function FormSection({ collapsible, title, children }: Props) {
   const [collapsibleOpen, setCollapsibleOpen] = useState(true);
 
   const handleToggle = () => {
@@ -37,4 +37,4 @@ export const FormSection = ({ collapsible, title, children }: Props) => {
       {(!collapsible || collapsibleOpen) && <div className="flex flex-col gap-4">{children}</div>}
     </div>
   );
-};
+}

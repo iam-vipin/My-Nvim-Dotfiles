@@ -28,7 +28,7 @@ type Props = {
 
 const ACCEPTED_FILE_TYPES: Accept = { "image/*": [".png", ".jpg", ".jpeg", ".webp"] };
 
-export const TemplateCoverImageUpload: React.FC<Props> = observer((props) => {
+export const TemplateCoverImageUpload = observer(function TemplateCoverImageUpload(props: Props) {
   const { onImageUpload, initialValue, hasError } = props;
   // states
   const [coverImage, setCoverImage] = useState<string | null>(initialValue);

@@ -46,7 +46,9 @@ type TWorkItemTemplateDropdownProps = {
     }
 );
 
-export const WorkItemTemplateDropdown = observer((props: TWorkItemTemplateDropdownProps) => {
+export const WorkItemTemplateDropdown = observer(function WorkItemTemplateDropdown(
+  props: TWorkItemTemplateDropdownProps
+) {
   const {
     workspaceSlug,
     templateId,

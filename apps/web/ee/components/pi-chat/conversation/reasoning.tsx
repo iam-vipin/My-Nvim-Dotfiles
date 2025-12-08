@@ -11,7 +11,7 @@ type TProps = {
   isThinking: boolean | undefined;
 };
 
-export const ReasoningBlock = (props: TProps) => {
+export function ReasoningBlock(props: TProps) {
   const { currentTick, reasoning, isThinking } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -68,4 +68,4 @@ export const ReasoningBlock = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

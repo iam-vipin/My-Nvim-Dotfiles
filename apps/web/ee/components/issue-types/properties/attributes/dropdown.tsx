@@ -24,7 +24,7 @@ type TDropdownAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const DropdownAttributes = observer((props: TDropdownAttributesProps) => {
+export const DropdownAttributes = observer(function DropdownAttributes(props: TDropdownAttributesProps) {
   const { dropdownPropertyDetail, currentOperationMode, onDropdownDetailChange, error, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();

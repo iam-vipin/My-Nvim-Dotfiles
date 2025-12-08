@@ -150,9 +150,9 @@ export const transformCustomFieldOptions = (
 
 export const transformCustomFieldValues = (
   task: AsanaTask,
-  // eslint-disable-next-line no-undef
+
   planeIssueProperties: Map<string, Partial<ExIssueProperty>>, // TODO: Replace Map with Record<string, Partial<ExIssueProperty>> in the future
-  // eslint-disable-next-line no-undef
+
   asanaUsersMap: Map<string, AsanaUser> // TODO: Replace Map with Record<string, AsanaUser> in the future
 ): TPropertyValuesPayload => {
   // Get transformed values for property_id -> property_values

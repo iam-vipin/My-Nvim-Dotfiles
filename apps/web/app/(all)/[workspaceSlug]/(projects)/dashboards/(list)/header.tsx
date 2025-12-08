@@ -10,7 +10,7 @@ import { DashboardsListSearch } from "@/plane-web/components/dashboards/list/sea
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
-export const WorkspaceDashboardsListHeader = observer(() => {
+export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboardsListHeader() {
   // store hooks
   const {
     workspaceDashboards: { canCurrentUserCreateDashboard, toggleCreateUpdateModal, searchQuery, updateSearchQuery },

@@ -15,7 +15,7 @@ import { useSentryIntegration } from "@/plane-web/hooks/store/integrations/use-s
 import { SentryStateMappingRoot } from "./sections/state-mapping/root";
 // assets
 
-export const SentryIntegrationRoot = observer(() => {
+export const SentryIntegrationRoot = observer(function SentryIntegrationRoot() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks

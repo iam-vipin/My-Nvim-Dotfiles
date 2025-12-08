@@ -13,7 +13,7 @@ type TModalFooterProps = {
   nextButtonText: string;
 };
 
-export const ModalFooter: React.FC<TModalFooterProps> = (props) => {
+export function ModalFooter(props: TModalFooterProps) {
   const { onPreviousStep, onClose, onNext, loading, loadingText, nextButtonText } = props;
 
   return (
@@ -38,4 +38,4 @@ export const ModalFooter: React.FC<TModalFooterProps> = (props) => {
       </div>
     </div>
   );
-};
+}

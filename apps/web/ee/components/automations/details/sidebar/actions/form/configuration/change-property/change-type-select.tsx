@@ -18,7 +18,7 @@ type TProps = {
   onChangeTypeChange: (changeType: EAutomationChangeType) => void;
 };
 
-export const ChangeTypeSelect: React.FC<TProps> = observer((props) => {
+export const ChangeTypeSelect = observer(function ChangeTypeSelect(props: TProps) {
   const { isDisabled, supportedChangeTypes, onChangeTypeChange } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -16,7 +16,7 @@ export const convertProviderToIntegrationKey = (provider: string): E_INTEGRATION
 
 export const convertIntegrationKeyToProvider = (integrationKey: E_INTEGRATION_KEYS): string => {
   // Validate if the integration key is a valid E_INTEGRATION_KEYS
-  if (!Object.values(E_INTEGRATION_KEYS).includes(integrationKey as E_INTEGRATION_KEYS)) {
+  if (!Object.values(E_INTEGRATION_KEYS).includes(integrationKey)) {
     throw new Error(`Invalid integration key: ${integrationKey}`);
   }
   // Convert "GITHUB" to "github"

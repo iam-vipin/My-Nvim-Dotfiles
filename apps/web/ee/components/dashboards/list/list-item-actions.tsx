@@ -18,7 +18,7 @@ type Props = {
   parentRef: React.RefObject<HTMLElement>;
 };
 
-export const DashboardListItemActions: React.FC<Props> = observer((props) => {
+export const DashboardListItemActions = observer(function DashboardListItemActions(props: Props) {
   const { dashboard, parentRef } = props;
   // derived values
   const { getUserDetails } = useMember();

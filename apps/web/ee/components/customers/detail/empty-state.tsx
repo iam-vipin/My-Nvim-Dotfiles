@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useTheme } from "next-themes";
 // plane imports
@@ -17,7 +16,7 @@ type TProps = {
   workspaceSlug: string;
 };
 
-export const CustomerEmptyState: FC<TProps> = (props) => {
+export function CustomerEmptyState(props: TProps) {
   const { workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();
@@ -42,4 +41,4 @@ export const CustomerEmptyState: FC<TProps> = (props) => {
       }
     />
   );
-};
+}

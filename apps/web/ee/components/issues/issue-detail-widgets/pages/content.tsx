@@ -14,7 +14,7 @@ type TProps = {
   issueServiceType: TIssueServiceType;
 };
 
-export const PagesCollapsibleContent: FC<TProps> = observer((props) => {
+export const PagesCollapsibleContent = observer(function PagesCollapsibleContent(props: TProps) {
   const { workspaceSlug, workItemId, projectId, isTabs = false, data, issueServiceType } = props;
 
   return (

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { ProjectAppSidebar } from "app/(all)/[workspaceSlug]/(projects)/_sidebar";
 import { observer } from "mobx-react";
@@ -16,7 +14,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 
-export const WorkspaceDisabledPage: React.FC = observer(() => {
+export const WorkspaceDisabledPage = observer(function WorkspaceDisabledPage() {
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

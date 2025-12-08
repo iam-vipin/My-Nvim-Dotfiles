@@ -21,13 +21,13 @@ type ExternalEmbedInputModalProps = {
   isFlagged: boolean;
 };
 
-export const ExternalEmbedInputModal: React.FC<ExternalEmbedInputModalProps> = ({
+export function ExternalEmbedInputModal({
   isOpen,
   setIsOpen,
   referenceElement,
   externalEmbedProps,
   isFlagged,
-}) => {
+}: ExternalEmbedInputModalProps) {
   // hooks
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -78,4 +78,4 @@ export const ExternalEmbedInputModal: React.FC<ExternalEmbedInputModalProps> = (
       </div>
     </FloatingPortal>
   );
-};
+}

@@ -26,7 +26,7 @@ type Props = {
 
 type SAMLConfigFormValues = Record<TInstanceSAMLAuthenticationConfigurationKeys, string>;
 
-export const InstanceSAMLConfigForm: FC<Props> = (props) => {
+export function InstanceSAMLConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -301,4 +301,4 @@ export const InstanceSAMLConfigForm: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

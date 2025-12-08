@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // hooks
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ export type TProjectLinkDetail = {
   isNotAllowed: boolean;
 };
 
-export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
+export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TProjectLinkDetail) {
   // props
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks

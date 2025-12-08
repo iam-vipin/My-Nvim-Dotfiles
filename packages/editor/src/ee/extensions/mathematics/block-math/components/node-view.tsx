@@ -24,7 +24,7 @@ export type BlockMathNodeViewProps = Omit<NodeViewProps, "extension"> & {
   updateAttributes: (attrs: Partial<TMathAttributes>) => void;
 };
 
-export const BlockMathNodeView: React.FC<BlockMathNodeViewProps> = (props) => {
+export function BlockMathNodeView(props: BlockMathNodeViewProps) {
   const { getPos, editor } = props;
 
   // Use shared hook for common math node logic
@@ -90,4 +90,4 @@ export const BlockMathNodeView: React.FC<BlockMathNodeViewProps> = (props) => {
       />
     </>
   );
-};
+}

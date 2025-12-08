@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -28,7 +26,7 @@ type TEditPRStateMappingForm = {
   isEnterprise: boolean;
 };
 
-export const EditPRStateMappingForm: FC<TEditPRStateMappingForm> = observer((props) => {
+export const EditPRStateMappingForm = observer(function EditPRStateMappingForm(props: TEditPRStateMappingForm) {
   // props
   const { modal, handleModal, data, isEnterprise } = props;
 

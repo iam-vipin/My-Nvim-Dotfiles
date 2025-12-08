@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { Spinner } from "@plane/ui";
@@ -12,7 +10,7 @@ type Props = {
   handleSelect: (initiative: TInitiative) => void;
 };
 
-export const PowerKOpenInitiativesMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenInitiativesMenu = observer(function PowerKOpenInitiativesMenu(props: Props) {
   const { handleSelect } = props;
   // store hooks
   const {

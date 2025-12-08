@@ -18,7 +18,7 @@ type TCustomerPropertiesEmptyStateProps = {
   handleCustomerPropertiesCreate: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
 };
 
-export const CustomerPropertiesEmptyState: FC<TCustomerPropertiesEmptyStateProps> = (props) => {
+export function CustomerPropertiesEmptyState(props: TCustomerPropertiesEmptyStateProps) {
   const { handleCustomerPropertiesCreate } = props;
   const { t } = useTranslation();
   return (
@@ -45,4 +45,4 @@ export const CustomerPropertiesEmptyState: FC<TCustomerPropertiesEmptyStateProps
       </div>
     </div>
   );
-};
+}

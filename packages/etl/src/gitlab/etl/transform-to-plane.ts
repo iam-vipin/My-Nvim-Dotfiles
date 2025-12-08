@@ -49,7 +49,7 @@ export const transformGitlabIssue = (
   if (issue.assignees) {
     planeAssignees = issue.assignees
       .map((assignee) => userMap[assignee.username])
-      .filter((assignee) => assignee != undefined) as string[];
+      .filter((assignee) => assignee != undefined);
   }
 
   let labels = issue.labels || [];
@@ -122,7 +122,7 @@ export const transformGitlabComment = (
   }
 
   comment_html = replaceMentionedGlUsers(comment_html, workspaceSlug, userMap, planeUsers);
-  comment_html = replaceIssueNumber(comment_html!, projectId.toString());
+  comment_html = replaceIssueNumber(comment_html, projectId.toString());
 
   return {
     external_id: comment.id.toString(),

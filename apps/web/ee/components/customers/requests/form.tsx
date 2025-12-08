@@ -45,7 +45,7 @@ const workspaceService = new WorkspaceService();
 
 const customerService = new CustomerService();
 
-export const CustomerRequestForm: FC<TProps> = observer((props) => {
+export const CustomerRequestForm = observer(function CustomerRequestForm(props: TProps) {
   const { isOpen, handleClose, workspaceSlug, customerId, data } = props;
   // states
   const [isSubmitting, setSubmitting] = useState<boolean>(false);

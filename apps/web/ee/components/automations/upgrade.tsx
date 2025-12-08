@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -19,7 +17,7 @@ type TAutomationsUpgradeProps = {
   flag: TSupportedFlagsForUpgrade;
 };
 
-export const AutomationsUpgrade: FC<TAutomationsUpgradeProps> = observer((props: TAutomationsUpgradeProps) => {
+export const AutomationsUpgrade = observer(function AutomationsUpgrade(props: TAutomationsUpgradeProps) {
   const { flag } = props;
   // router
   const { workspaceSlug } = useParams();

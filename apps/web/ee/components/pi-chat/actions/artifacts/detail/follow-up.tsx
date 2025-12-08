@@ -27,7 +27,7 @@ type TEditCommands = {
   clear: () => void;
 };
 
-export const FollowUpDetail = observer((props: TProps) => {
+export const FollowUpDetail = observer(function FollowUpDetail(props: TProps) {
   const { projectId, workspaceId, artifactId, messageId, artifactType, onSubmit } = props;
   // states
   const [isThinking, setIsThinking] = useState(false);

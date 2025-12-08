@@ -10,7 +10,7 @@ import { DeleteArchivePreviewCard } from "./delete-archieve";
 import { TemplatePreviewCard } from "./template";
 
 // --- Main PreviewCard Component ---
-export const PreviewCard = observer((props: { artifactId: string; type: string; action: string }) => {
+export const PreviewCard = observer(function PreviewCard(props: { artifactId: string; type: string; action: string }) {
   const { artifactId, type, action } = props;
 
   // Special cases

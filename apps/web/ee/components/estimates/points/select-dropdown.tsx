@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
@@ -21,7 +19,7 @@ type TEstimatePointDropdown = {
   estimateSystem: TEstimateSystemKeys;
 };
 
-export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
+export function EstimatePointDropdown(props: TEstimatePointDropdown) {
   const { options, error, callback, estimateSystem } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -147,4 +145,4 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
       </Listbox>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
@@ -42,7 +40,7 @@ export interface IInitiativeLabelPropertyDropdownProps {
   label: React.ReactNode;
 }
 
-export const InitiativeLabelPropertyDropdown = (props: IInitiativeLabelPropertyDropdownProps) => {
+export function InitiativeLabelPropertyDropdown(props: IInitiativeLabelPropertyDropdownProps) {
   const {
     workspaceSlug,
     value,
@@ -312,4 +310,4 @@ export const InitiativeLabelPropertyDropdown = (props: IInitiativeLabelPropertyD
       </ComboDropDown>
     </div>
   );
-};
+}

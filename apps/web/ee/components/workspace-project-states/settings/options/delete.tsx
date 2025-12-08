@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ type TProjectStateDelete = {
   state: TProjectState;
 };
 
-export const ProjectStateDelete: FC<TProjectStateDelete> = observer((props) => {
+export const ProjectStateDelete = observer(function ProjectStateDelete(props: TProjectStateDelete) {
   const { workspaceSlug, totalStates, state } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -52,7 +50,7 @@ export const ProjectStateDelete: FC<TProjectStateDelete> = observer((props) => {
       });
       setIsDelete(false);
     } catch (error) {
-      const errorStatus = error as unknown as { status: number; data: { error: string } };
+      const errorStatus = error as { status: number; data: { error: string } };
       if (errorStatus.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

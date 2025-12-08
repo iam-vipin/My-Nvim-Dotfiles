@@ -26,7 +26,7 @@ type TProps = {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };
 
-const IssueForm = observer((props: TProps) => {
+const IssueForm = observer(function IssueForm(props: TProps) {
   const { project, isSubmitting, descriptionEditorRef, anchor } = props;
   // store hooks
   const { workspace: workspaceID, project_details } = usePublish(anchor);

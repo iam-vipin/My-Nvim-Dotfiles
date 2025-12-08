@@ -5,7 +5,7 @@ type TProps = {
   link: string;
 };
 
-export const SourceItem: FC<TProps> = (props) => {
+export function SourceItem(props: TProps) {
   const { link } = props;
   // TODO: Add favicon from backend
   // const faviconUrl = useMemo(() => `https://www.google.com/s2/favicons?domain=${link}&sz=${40}`, [link]);
@@ -16,4 +16,4 @@ export const SourceItem: FC<TProps> = (props) => {
       <p className="text-sm truncate">{link}</p>
     </div>
   );
-};
+}

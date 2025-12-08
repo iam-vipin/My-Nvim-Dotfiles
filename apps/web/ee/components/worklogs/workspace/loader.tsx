@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Loader } from "@plane/ui";
 // plane web constants
@@ -7,7 +5,7 @@ import { EWorklogLoader } from "@/plane-web/constants/workspace-worklog";
 
 type TWorklogLoader = { loader: EWorklogLoader };
 
-export const WorklogLoader: FC<TWorklogLoader> = (props) => {
+export function WorklogLoader(props: TWorklogLoader) {
   const { loader } = props;
 
   return (
@@ -76,4 +74,4 @@ export const WorklogLoader: FC<TWorklogLoader> = (props) => {
       )}
     </Loader>
   );
-};
+}

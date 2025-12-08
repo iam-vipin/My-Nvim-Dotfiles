@@ -11,7 +11,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { ConfirmationModal } from "./confirmation-modal";
 
-export const LockPageModal = ({
+export function LockPageModal({
   page,
   lockPageModal,
   setLockPageModal,
@@ -19,7 +19,7 @@ export const LockPageModal = ({
   page: TPageInstance;
   lockPageModal: boolean;
   setLockPageModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+}) {
   const [actionType, setActionType] = useState<boolean>(false);
   const { pageOperations } = usePageOperations({
     page,
@@ -55,4 +55,4 @@ export const LockPageModal = ({
       eventName={page.is_locked ? PROJECT_PAGE_TRACKER_EVENTS.unlock : PROJECT_PAGE_TRACKER_EVENTS.lock}
     />
   );
-};
+}

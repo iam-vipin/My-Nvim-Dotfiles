@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
@@ -20,7 +18,7 @@ type TEntityForm = {
   isEnterprise: boolean;
 };
 
-export const EntityForm: FC<TEntityForm> = observer((props) => {
+export const EntityForm = observer(function EntityForm(props: TEntityForm) {
   // props
   const { value, handleChange, isEnterprise } = props;
   // hooks

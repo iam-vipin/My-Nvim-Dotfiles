@@ -5,7 +5,7 @@ type EmbedLoadingProps = {
   showLoading?: boolean;
 };
 
-export const EmbedLoading: React.FC<EmbedLoadingProps> = ({ showLoading = true }) => {
+export function EmbedLoading({ showLoading = true }: EmbedLoadingProps) {
   if (!showLoading) return null;
 
   return (
@@ -15,4 +15,4 @@ export const EmbedLoading: React.FC<EmbedLoadingProps> = ({ showLoading = true }
       </Loader>
     </div>
   );
-};
+}

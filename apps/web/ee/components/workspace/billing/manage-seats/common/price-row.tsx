@@ -11,7 +11,7 @@ type PriceRowProps = {
   interval: "MONTHLY" | "YEARLY";
 };
 
-export const PriceRow: React.FC<PriceRowProps> = (props) => {
+export function PriceRow(props: PriceRowProps) {
   const { label, amount, quantity, pricePerUnit, className, rightElement, interval } = props;
 
   return (
@@ -31,4 +31,4 @@ export const PriceRow: React.FC<PriceRowProps> = (props) => {
       </div>
     </div>
   );
-};
+}

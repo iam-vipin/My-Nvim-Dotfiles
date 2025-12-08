@@ -8,7 +8,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const PagePreviewCard = observer((props: TProps) => {
+export const PagePreviewCard = observer(function PagePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = usePageData(artifactId);
   if (!data) return <></>;

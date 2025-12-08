@@ -10,7 +10,7 @@ import { ProjectIssueQuickActions } from "@/components/issues/issue-layouts/quic
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const TeamspaceViewListLayout: React.FC = observer(() => {
+export const TeamspaceViewListLayout = observer(function TeamspaceViewListLayout() {
   // router
   const { workspaceSlug, viewId } = useParams();
   // hooks

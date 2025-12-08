@@ -13,7 +13,7 @@ export interface IList {
   showEmptyGroup?: boolean;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const { groupedProjectIds, groupBy, displayProperties, showEmptyGroup } = props;
 
   const containerRef = useRef<HTMLDivElement | null>(null);

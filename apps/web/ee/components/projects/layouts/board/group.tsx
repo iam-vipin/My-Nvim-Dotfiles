@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -14,7 +12,7 @@ type ProjectBoardGroup = {
   groupByProjectIds: TProjectsBoardLayoutStructure;
 };
 
-export const ProjectBoardGroup: FC<ProjectBoardGroup> = observer((props) => {
+export const ProjectBoardGroup = observer(function ProjectBoardGroup(props: ProjectBoardGroup) {
   const { groupByProjectIds } = props;
   const [verticalAlign, setVerticalAlign] = useState<{ [key: string]: boolean }>({});
 

@@ -17,7 +17,7 @@ import { EditorWorkItemMentionPreview } from "./preview";
 // services init
 const workspaceService = new WorkspaceService();
 
-export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = observer((props) => {
+export const EditorWorkItemMention = observer(function EditorWorkItemMention(props: TEditorMentionComponentProps) {
   const { entity_identifier: workItemId, getMentionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -46,7 +46,11 @@ export const EditorWorkItemMention: React.FC<TEditorMentionComponentProps> = obs
   // derived values
   const savedWorkItemDetails = formattedWorkItemDetails || getMentionDetails?.("issue_mention", workItemId);
   // fetch work item details
-  const { data: fetchedWorkItemDetails, isLoading: isFetchingWorkItemDetails, error: errorFetchingWorkItemDetails } = useSWRImmutable(
+  const {
+    data: fetchedWorkItemDetails,
+    isLoading: isFetchingWorkItemDetails,
+    error: errorFetchingWorkItemDetails,
+  } = useSWRImmutable(
     workspaceSlug && !savedWorkItemDetails ? `WORK_ITEM_MENTION_DETAILS_${workItemId}` : null,
     workspaceSlug && !savedWorkItemDetails
       ? () => workspaceService.retrieveWorkspaceWorkItem(workspaceSlug, workItemId)

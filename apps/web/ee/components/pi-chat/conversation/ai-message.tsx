@@ -22,7 +22,7 @@ type TProps = {
   isLoading?: boolean;
   handleConvertToPage?: () => void;
 };
-export const AiMessage = observer((props: TProps) => {
+export const AiMessage = observer(function AiMessage(props: TProps) {
   // props
   const { dialogue, id = "", isLatest, isLoading, handleConvertToPage } = props;
   // store
@@ -30,7 +30,7 @@ export const AiMessage = observer((props: TProps) => {
   const { activeChatId, isPiTyping } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { query_id, answer, reasoning, current_tick, isPiThinking, feedback } = dialogue || {};
 
   return (

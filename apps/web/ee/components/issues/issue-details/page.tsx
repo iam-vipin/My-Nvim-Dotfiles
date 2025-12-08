@@ -7,7 +7,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 export type TIssuePageActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssuePageActivity: FC<TIssuePageActivity> = observer((props) => {
+export const IssuePageActivity = observer(function IssuePageActivity(props: TIssuePageActivity) {
   const { activityId, ends } = props;
   // hooks
   const {

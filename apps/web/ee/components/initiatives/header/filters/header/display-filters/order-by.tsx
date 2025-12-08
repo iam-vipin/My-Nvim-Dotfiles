@@ -12,7 +12,7 @@ type Props = {
   orderByOptions: TInitiativeOrderByOptions[];
 };
 
-export const FilterOrderBy: React.FC<Props> = observer((props) => {
+export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

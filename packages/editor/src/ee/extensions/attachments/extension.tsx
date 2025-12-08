@@ -19,7 +19,7 @@ type Props = {
   isVideoAttachmentsFlagged?: boolean;
 };
 
-export const CustomAttachmentExtension = (props: Props) => {
+export function CustomAttachmentExtension(props: Props) {
   const { fileHandler, isEditable, isFlagged, isVideoAttachmentsFlagged } = props;
   // derived values
   const { checkIfAssetExists, getAssetDownloadSrc, getAssetSrc, restore } = fileHandler;
@@ -115,4 +115,4 @@ export const CustomAttachmentExtension = (props: Props) => {
       ));
     },
   });
-};
+}

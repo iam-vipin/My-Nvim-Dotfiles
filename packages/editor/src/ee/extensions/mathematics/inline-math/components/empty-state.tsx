@@ -7,9 +7,11 @@ import { InlineMathContainer } from "./container";
 
 type TInlineMathEmptyProps = TMathComponentProps;
 
-export const InlineMathEmptyState: React.FC<TInlineMathEmptyProps> = ({ onClick, isEditable }) => (
-  <InlineMathContainer onClick={onClick} variant="empty" title="Click to add equation" isEditable={isEditable}>
-    <SquareRadical className="size-4 shrink-0" />
-    <span>New equation</span>
-  </InlineMathContainer>
-);
+export function InlineMathEmptyState({ onClick, isEditable }: TInlineMathEmptyProps) {
+  return (
+    <InlineMathContainer onClick={onClick} variant="empty" title="Click to add equation" isEditable={isEditable}>
+      <SquareRadical className="size-4 shrink-0" />
+      <span>New equation</span>
+    </InlineMathContainer>
+  );
+}

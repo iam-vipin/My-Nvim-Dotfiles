@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,9 @@ type TSelfManagedLicenseActionsProps = {
 
 type TLicenseSyncStatus = "synced" | "syncing" | "success" | "error";
 
-export const SelfManagedLicenseActions = observer((props: TSelfManagedLicenseActionsProps) => {
+export const SelfManagedLicenseActions = observer(function SelfManagedLicenseActions(
+  props: TSelfManagedLicenseActionsProps
+) {
   const { showSyncButton = true, showDeactivateButton = true } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -18,7 +18,7 @@ type TBooleanAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const BooleanAttributes = observer((props: TBooleanAttributesProps) => {
+export const BooleanAttributes = observer(function BooleanAttributes(props: TBooleanAttributesProps) {
   const { booleanPropertyDetail, currentOperationMode, onBooleanDetailChange, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();

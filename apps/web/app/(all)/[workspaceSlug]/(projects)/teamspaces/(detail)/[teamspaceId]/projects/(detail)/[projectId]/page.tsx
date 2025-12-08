@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { PageHead } from "@/components/core/page-title";
 // plane web components

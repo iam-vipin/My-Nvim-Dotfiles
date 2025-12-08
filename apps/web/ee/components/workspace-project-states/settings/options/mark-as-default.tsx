@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -12,7 +10,9 @@ import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 
 type TProjectStateMarksAsDefault = { workspaceSlug: string; stateId: string; isDefault: boolean };
 
-export const ProjectStateMarksAsDefault: FC<TProjectStateMarksAsDefault> = observer((props) => {
+export const ProjectStateMarksAsDefault = observer(function ProjectStateMarksAsDefault(
+  props: TProjectStateMarksAsDefault
+) {
   const { workspaceSlug, stateId, isDefault } = props;
   // hooks
   const { markAsDefault } = useWorkspaceProjectStates();

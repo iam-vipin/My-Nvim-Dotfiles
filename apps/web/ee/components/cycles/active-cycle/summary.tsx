@@ -37,7 +37,7 @@ type Props = {
   handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
 };
 
-const Summary = observer((props: Props) => {
+const Summary = observer(function Summary(props: Props) {
   const { setAreaToHighlight, data, plotType, estimateType = "issues", handleFiltersUpdate, parentWidth } = props;
   // store hooks
   const { resolvedTheme } = useTheme();

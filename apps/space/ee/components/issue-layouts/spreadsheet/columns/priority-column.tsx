@@ -9,7 +9,7 @@ type Props = {
   issue: IIssue;
 };
 
-export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityColumn(props: Props) {
   const { issue } = props;
 
   return (

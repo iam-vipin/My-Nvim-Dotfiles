@@ -20,7 +20,7 @@ type Props = {
   attachmentOperations: TAttachmentOperationsRemoveModal;
 };
 
-export const ProjectAttachmentDeleteModal: FC<Props> = observer((props) => {
+export const ProjectAttachmentDeleteModal = observer(function ProjectAttachmentDeleteModal(props: Props) {
   const { isOpen, onClose, attachmentId, attachmentOperations } = props;
   // states
   const [loader, setLoader] = useState(false);

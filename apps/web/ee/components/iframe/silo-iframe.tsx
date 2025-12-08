@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -19,7 +17,7 @@ interface CustomIframeProps {
 
 const serviceApiTokenService = new ServiceAPITokenService();
 
-const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
+function SiloIframe({ srcBase }: CustomIframeProps) {
   const { workspaceSlug } = useParams();
   const ref = useRef<HTMLIFrameElement>(null);
   const { resolvedTheme } = useTheme();
@@ -82,6 +80,6 @@ const SiloIframe: React.FC<CustomIframeProps> = ({ srcBase }) => {
       </div>
     </div>
   );
-};
+}
 
 export default SiloIframe;

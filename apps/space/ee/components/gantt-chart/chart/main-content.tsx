@@ -21,7 +21,7 @@ import { useGanttChart } from "../hooks/use-gantt-chart";
 
 type Props = {
   blockIds: string[];
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock | undefined;
+  getBlockById: (id: string, currentViewData?: ChartDataType) => IGanttBlock | undefined;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   blockToRender: (data: any) => React.ReactNode;
@@ -33,7 +33,7 @@ type Props = {
   updateCurrentViewRenderPayload: (direction: "left" | "right", currentView: TGanttViews) => void;
 };
 
-export const GanttChartMainContent: React.FC<Props> = observer((props) => {
+export const GanttChartMainContent = observer(function GanttChartMainContent(props: Props) {
   const {
     blockIds,
     getBlockById,

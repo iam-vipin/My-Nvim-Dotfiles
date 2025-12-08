@@ -296,7 +296,7 @@ export class PiChatStore implements IPiChatStore {
   });
 
   // actions
-  initPiChat = async (chatId?: string | undefined) => {
+  initPiChat = async (chatId?: string) => {
     // Existing chat
 
     if (chatId) {

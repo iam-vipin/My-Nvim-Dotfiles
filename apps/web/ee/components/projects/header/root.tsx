@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ProjectIcon } from "@plane/propel/icons";
@@ -20,7 +18,7 @@ import { ProjectDisplayFiltersDropdown } from "./display-filters-dropdown";
 import { ProjectLayoutSelection } from "./layout-selection";
 import { ProjectSearch } from "./search-projects";
 
-export const ProjectsListHeader = observer(() => {
+export const ProjectsListHeader = observer(function ProjectsListHeader() {
   const { workspaceSlug } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();

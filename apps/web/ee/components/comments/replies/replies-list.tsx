@@ -19,7 +19,7 @@ type TRepliesList = {
   setIsExpanded: (isExpanded: boolean) => void;
 };
 
-export const RepliesList: FC<TRepliesList> = observer((props) => {
+export const RepliesList = observer(function RepliesList(props: TRepliesList) {
   const { workspaceSlug, projectId, entityId, commentId, activityOperations, showAccessSpecifier, setIsExpanded } =
     props;
   // store hooks

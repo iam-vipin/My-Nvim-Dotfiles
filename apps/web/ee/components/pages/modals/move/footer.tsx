@@ -9,7 +9,7 @@ type Props = {
   onMove: () => void;
 };
 
-export const MovePageModalFooter: React.FC<Props> = (props) => {
+export function MovePageModalFooter(props: Props) {
   const { onClose, onMove, isMoving, disabled } = props;
   // translation
   const { t } = useTranslation();
@@ -26,4 +26,4 @@ export const MovePageModalFooter: React.FC<Props> = (props) => {
       </Button>
     </div>
   );
-};
+}

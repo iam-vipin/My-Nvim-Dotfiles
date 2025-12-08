@@ -1,13 +1,13 @@
 import { cn } from "@plane/ui";
 import { addSpaceIfCamelCase } from "@plane/utils";
 
-export const DisplayLabels = (props: {
+export function DisplayLabels(props: {
   className?: string;
   labels: {
     color?: string;
     name: string;
   }[];
-}) => {
+}) {
   const { labels, className } = props;
   return (
     <div className={cn("flex items-center gap-1 text-sm text-custom-text-300", className)}>
@@ -22,4 +22,4 @@ export const DisplayLabels = (props: {
       ))}
     </div>
   );
-};
+}

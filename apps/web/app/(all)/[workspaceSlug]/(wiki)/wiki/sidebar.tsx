@@ -10,7 +10,7 @@ import { PagesAppSidebarList, PagesAppSidebarMenu, PagesAppSidebarQuickActions }
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export const WikiAppSidebar = observer(() => {
+export const WikiAppSidebar = observer(function WikiAppSidebar() {
   // params
   const { workspaceSlug, pageId } = useParams();
   const pathname = usePathname();

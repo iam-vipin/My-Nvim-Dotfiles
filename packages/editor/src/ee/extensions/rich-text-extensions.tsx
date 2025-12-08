@@ -39,7 +39,7 @@ const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   },
 ];
 
-export const RichTextEditorAdditionalExtensions = (props: TRichTextEditorAdditionalExtensionsProps) => {
+export function RichTextEditorAdditionalExtensions(props: TRichTextEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   const extensions: Extensions = extensionRegistry
@@ -48,4 +48,4 @@ export const RichTextEditorAdditionalExtensions = (props: TRichTextEditorAdditio
     .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return extensions;
-};
+}

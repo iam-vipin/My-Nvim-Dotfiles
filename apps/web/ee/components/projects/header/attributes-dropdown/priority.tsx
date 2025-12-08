@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { PriorityIcon } from "@plane/propel/icons";
@@ -16,7 +14,7 @@ type TFilterPriority = {
   handleUpdate: (val: TProjectPriority[]) => void;
 };
 
-export const FilterPriority: React.FC<TFilterPriority> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: TFilterPriority) {
   const { searchQuery, appliedFilters, handleUpdate } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -25,7 +23,7 @@ export const FilterPriority: React.FC<TFilterPriority> = observer((props) => {
   const sortedOptions = useMemo(
     () =>
       PROJECT_PRIORITIES.filter((priority) => priority.key.includes(searchQuery.toLowerCase()) || searchQuery === ""),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [searchQuery]
   );
 

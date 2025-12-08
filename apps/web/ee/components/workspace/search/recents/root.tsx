@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 
-export const RecentSearch = observer(() => {
+export const RecentSearch = observer(function RecentSearch() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [visibleItems, setVisibleItems] = useState<number>(0);
 

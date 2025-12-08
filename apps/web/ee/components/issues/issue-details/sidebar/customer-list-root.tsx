@@ -13,7 +13,9 @@ type TWorkItemSidebarCustomerList = {
   isPeekView?: boolean;
 };
 
-export const WorkItemSidebarCustomers: FC<TWorkItemSidebarCustomerList> = observer((props) => {
+export const WorkItemSidebarCustomers = observer(function WorkItemSidebarCustomers(
+  props: TWorkItemSidebarCustomerList
+) {
   const { workItemId, workspaceSlug, isPeekView = false } = props;
 
   // hooks

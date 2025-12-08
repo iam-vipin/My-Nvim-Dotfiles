@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -70,7 +68,7 @@ export interface IBaseDashboardProps<T> {
   useImporterHook: () => TImporterHook<T>;
 }
 
-export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
+export const BaseDashboard = observer(function BaseDashboard<T>(props: IBaseDashboardProps<T>) {
   const { config, useImporterHook } = props;
   const { serviceName, logo, swrKey, modals, getWorkspaceName, getProjectName, getPlaneProject } = config;
   const { t } = useTranslation();

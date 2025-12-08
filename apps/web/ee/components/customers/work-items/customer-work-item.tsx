@@ -28,7 +28,7 @@ type TProps = {
   isEditable?: boolean;
 };
 
-export const CustomerWorkItem: FC<TProps> = observer((props) => {
+export const CustomerWorkItem = observer(function CustomerWorkItem(props: TProps) {
   const { workItemId, workspaceSlug, requestId, customerId, isEditable } = props;
   // hooks
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export const CustomerWorkItem: FC<TProps> = observer((props) => {
     (workItem?.project_id && getProjectStates(workItem?.project_id)?.find((state) => workItem?.state_id == state.id)) ||
     undefined;
   const workItemOperations = useCustomerWorkItemOperations(
-    !!workItem?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+    workItem?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
   );
   const { isMobile } = usePlatformOS();
 
@@ -134,7 +134,7 @@ export const CustomerWorkItem: FC<TProps> = observer((props) => {
                   <div className="flex items-center gap-2 text-red-500">
                     <CircleMinus className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>
-                      {!!workItem.is_epic
+                      {workItem.is_epic
                         ? t("customers.linked_work_items.action.remove_epic")
                         : t("customers.linked_work_items.action.remove")}
                     </span>

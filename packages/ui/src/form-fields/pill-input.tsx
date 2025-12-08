@@ -18,7 +18,10 @@ export interface PillInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
   helperTextClassName?: string;
 }
 
-export const PillInput = React.forwardRef<HTMLInputElement, PillInputProps>((props, ref) => {
+export const PillInput = React.forwardRef(function PillInput(
+  props: PillInputProps,
+  ref: React.ForwardedRef<HTMLInputElement>
+) {
   const {
     id,
     type = "text",

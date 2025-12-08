@@ -71,7 +71,7 @@ export const syncCommentWithPlane = async (
 
   const { workspaceConnection, entityConnectionForRepository: entityConnection } =
     await getConnDetailsForGithubToPlaneSync({
-      wsAdminCredentials: wsAdminCredentials as TWorkspaceCredential,
+      wsAdminCredentials: wsAdminCredentials,
       type: EGithubEntityConnectionType.PROJECT_ISSUE_SYNC,
       repositoryId: data.repository.id.toString(),
       isEnterprise: data.isEnterprise,
@@ -91,11 +91,7 @@ export const syncCommentWithPlane = async (
 
   let planeClient: PlaneClient = await getPlaneAPIClient(wsAdminCredentials, ghIntegrationKey);
 
-  const ghService = getGithubService(
-    workspaceConnection as TGithubWorkspaceConnection,
-    data.installation?.id.toString(),
-    data.isEnterprise
-  );
+  const ghService = getGithubService(workspaceConnection, data.installation?.id.toString(), data.isEnterprise);
   const commentHtml = await ghService.getCommentHtml(
     data.repository.owner.login,
     data.repository.name,

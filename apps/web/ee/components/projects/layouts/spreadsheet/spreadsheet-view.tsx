@@ -21,7 +21,7 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, projectIds, updateProject, canEditProperties } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);

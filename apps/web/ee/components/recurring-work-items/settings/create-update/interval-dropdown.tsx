@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import { Check } from "lucide-react";
@@ -28,7 +26,7 @@ type TIntervalDropdownProps = {
   hasError?: boolean;
 };
 
-export const IntervalDropdown: React.FC<TIntervalDropdownProps> = (props) => {
+export function IntervalDropdown(props: TIntervalDropdownProps) {
   const { value, onChange, className = "", disabled = false, hasError = false } = props;
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -134,4 +132,4 @@ export const IntervalDropdown: React.FC<TIntervalDropdownProps> = (props) => {
       </Combobox>
     </div>
   );
-};
+}

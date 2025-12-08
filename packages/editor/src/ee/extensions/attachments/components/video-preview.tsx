@@ -21,7 +21,7 @@ const isIOSDevice = () => {
   return /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
 };
 
-export const CustomAttachmentVideoPreview: React.FC<Props> = (props) => {
+export function CustomAttachmentVideoPreview(props: Props) {
   const { editor, node, resolvedDownloadSource, resolvedSource, selected, isTouchDevice, onDownloadClick } = props;
   const isIOS = isIOSDevice();
   // states
@@ -118,4 +118,4 @@ export const CustomAttachmentVideoPreview: React.FC<Props> = (props) => {
       </div>
     </InViewportRenderer>
   );
-};
+}

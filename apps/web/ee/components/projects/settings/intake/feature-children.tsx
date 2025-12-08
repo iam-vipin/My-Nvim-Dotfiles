@@ -14,7 +14,10 @@ type Props = {
   currentProjectDetails: IProject;
   workspaceSlug: string;
 };
-export const IntakeFeatureChildren = observer(({ currentProjectDetails, workspaceSlug }: Props) => {
+export const IntakeFeatureChildren = observer(function IntakeFeatureChildren({
+  currentProjectDetails,
+  workspaceSlug,
+}: Props) {
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
 

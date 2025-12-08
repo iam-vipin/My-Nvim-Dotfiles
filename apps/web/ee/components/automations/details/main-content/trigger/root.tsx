@@ -19,7 +19,9 @@ type TProps = {
   automationId: string;
 };
 
-export const AutomationDetailsMainContentTriggerRoot: React.FC<TProps> = observer((props) => {
+export const AutomationDetailsMainContentTriggerRoot = observer(function AutomationDetailsMainContentTriggerRoot(
+  props: TProps
+) {
   const { automationId } = props;
   // plane hooks
   const { t } = useTranslation();

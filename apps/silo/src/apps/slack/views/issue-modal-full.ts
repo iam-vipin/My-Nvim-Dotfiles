@@ -22,7 +22,6 @@ export type IssueModalViewFull = {
 
 export type IssueModalViewBlocks = (
   | StaticSelectInputBlock
-  | StaticSelectInputBlock
   | PlainTextInputBlock
   | RichTextInputBlock
   | MultiExternalSelectInputBlock

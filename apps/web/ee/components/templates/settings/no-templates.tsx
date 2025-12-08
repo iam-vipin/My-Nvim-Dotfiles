@@ -17,7 +17,7 @@ type TNoTemplatesEmptyStateProps = { workspaceSlug: string } & (
     }
 );
 
-export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProps) => {
+export const NoTemplatesEmptyState = observer(function NoTemplatesEmptyState(props: TNoTemplatesEmptyStateProps) {
   // derived values
   const { t } = useTranslation();
 

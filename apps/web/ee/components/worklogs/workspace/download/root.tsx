@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
@@ -23,7 +21,9 @@ type TWorkspaceWorklogDownloadRoot = {
   workspaceId: string;
 };
 
-export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = observer((props) => {
+export const WorkspaceWorklogDownloadRoot = observer(function WorkspaceWorklogDownloadRoot(
+  props: TWorkspaceWorklogDownloadRoot
+) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, worklogDownloadIdsByWorkspaceId, getWorkspaceWorklogDownloads } =

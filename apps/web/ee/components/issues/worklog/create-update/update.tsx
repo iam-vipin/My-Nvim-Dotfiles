@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -19,7 +17,7 @@ type TWorklogUpdate = {
   handleClose?: () => void;
 };
 
-export const WorklogUpdate: FC<TWorklogUpdate> = (props) => {
+export function WorklogUpdate(props: TWorklogUpdate) {
   const { workspaceSlug, projectId, issueId, worklogId, handleClose } = props;
   // hooks
   const { asJson: worklog, updateWorklog } = useWorklog(worklogId);
@@ -73,4 +71,4 @@ export const WorklogUpdate: FC<TWorklogUpdate> = (props) => {
       />
     </div>
   );
-};
+}

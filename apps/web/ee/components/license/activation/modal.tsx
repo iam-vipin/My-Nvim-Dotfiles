@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
@@ -27,7 +25,9 @@ type TSubscriptionActivationModal = {
   handleClose: () => void;
 };
 
-export const SubscriptionActivationModal: FC<TSubscriptionActivationModal> = observer((props) => {
+export const SubscriptionActivationModal = observer(function SubscriptionActivationModal(
+  props: TSubscriptionActivationModal
+) {
   const { isOpen, handleClose } = props;
   // params
   const { workspaceSlug } = useParams();

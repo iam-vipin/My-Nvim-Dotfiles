@@ -18,7 +18,7 @@ export const EmbedHandler: React.FC<ExternalEmbedNodeViewProps> = memo(
   ))
 );
 
-const EmbedHandlerRender: React.FC<ExternalEmbedNodeViewProps> = observer((props) => {
+const EmbedHandlerRender = observer(function EmbedHandlerRender(props: ExternalEmbedNodeViewProps) {
   const { node } = props;
   const {
     src,

@@ -23,7 +23,7 @@ type TProps = {
 
 const customerService = new CustomerService();
 
-export const WorkItemsList: FC<TProps> = observer((props) => {
+export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
   const { workspaceSlug, customerId } = props;
   // states
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);

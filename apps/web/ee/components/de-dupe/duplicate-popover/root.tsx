@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -37,7 +35,7 @@ type TDeDupeIssuePopoverRootProps = {
   isIntakeIssue?: boolean;
 };
 
-export const DeDupeIssuePopoverRoot: FC<TDeDupeIssuePopoverRootProps> = observer((props) => {
+export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(props: TDeDupeIssuePopoverRootProps) {
   const {
     workspaceSlug,
     projectId,

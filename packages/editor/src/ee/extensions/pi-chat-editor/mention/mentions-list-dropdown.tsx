@@ -20,7 +20,10 @@ export type PiChatEditorMentionsDropdownProps = SuggestionProps<
   onClose: () => void;
 };
 
-export const PiChatEditorMentionsDropdown = forwardRef((props: PiChatEditorMentionsDropdownProps, ref) => {
+export const PiChatEditorMentionsDropdown = forwardRef(function PiChatEditorMentionsDropdown(
+  props: PiChatEditorMentionsDropdownProps,
+  ref
+) {
   const { command, query, searchCallback, onClose } = props;
   // states
   const [sections, setSections] = useState<PiChatMentionSearchCallbackResponse>({});

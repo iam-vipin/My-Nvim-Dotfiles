@@ -1,5 +1,3 @@
-"use-client";
-
 import { uniqBy } from "lodash-es";
 import { observer } from "mobx-react";
 import type { TUserThreads } from "@/plane-web/types";
@@ -10,7 +8,7 @@ type TProps = {
   userThreads: TUserThreads[] | undefined;
   isLoading: boolean;
 };
-const PiChatList = observer((props: TProps) => {
+const PiChatList = observer(function PiChatList(props: TProps) {
   const { userThreads, isLoading } = props;
 
   return (

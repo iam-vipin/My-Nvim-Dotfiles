@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -10,7 +8,7 @@ interface IRerunModalProps {
   isLoading: boolean;
 }
 
-export const RerunModal: FC<IRerunModalProps> = ({ onClose, onSubmit, isLoading }) => {
+export function RerunModal({ onClose, onSubmit, isLoading }: IRerunModalProps) {
   const { t } = useTranslation();
   return (
     <div className="space-y-5 p-5">
@@ -28,4 +26,4 @@ export const RerunModal: FC<IRerunModalProps> = ({ onClose, onSubmit, isLoading 
       </div>
     </div>
   );
-};
+}

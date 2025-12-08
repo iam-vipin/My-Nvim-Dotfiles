@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 // plane imports
@@ -32,7 +30,7 @@ type TInfoSectionProps = {
   issueSequenceId?: number;
 };
 
-export const InfoSection: FC<TInfoSectionProps> = (props) => {
+export function InfoSection(props: TInfoSectionProps) {
   const {
     editorRef,
     workspaceSlug,
@@ -102,4 +100,4 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
       {actionElement && <div className="flex items-center justify-between w-full gap-2">{actionElement}</div>}
     </SectionWrapper>
   );
-};
+}

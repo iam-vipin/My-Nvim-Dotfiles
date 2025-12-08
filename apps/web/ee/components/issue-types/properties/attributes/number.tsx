@@ -18,7 +18,7 @@ type TNumberAttributesProps = {
   isUpdateAllowed: boolean;
 };
 
-export const NumberAttributes = observer((props: TNumberAttributesProps) => {
+export const NumberAttributes = observer(function NumberAttributes(props: TNumberAttributesProps) {
   const { numberPropertyDetail, currentOperationMode, onNumberDetailChange, isUpdateAllowed } = props;
   // plane hooks
   const { t } = useTranslation();

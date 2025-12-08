@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -29,7 +27,7 @@ interface ProjectBlockProps {
   canDrag?: boolean;
 }
 
-export const ProjectBlock = observer((props: ProjectBlockProps) => {
+export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockProps) {
   const { projectId, isCurrentBlockDragging, canDrag } = props;
   // ref
   const projectRef = useRef<HTMLDivElement | null>(null);

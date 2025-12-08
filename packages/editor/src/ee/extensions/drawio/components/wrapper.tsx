@@ -7,7 +7,7 @@ type DrawioDialogWrapperProps = {
   children: React.ReactNode;
 };
 
-export const DrawioDialogWrapper: React.FC<DrawioDialogWrapperProps> = ({ isOpen, onClose, children }) => {
+export function DrawioDialogWrapper({ isOpen, onClose, children }: DrawioDialogWrapperProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -41,4 +41,4 @@ export const DrawioDialogWrapper: React.FC<DrawioDialogWrapperProps> = ({ isOpen
       </FloatingOverlay>
     </FloatingPortal>
   );
-};
+}

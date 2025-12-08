@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web components
@@ -10,7 +8,7 @@ import { useProjectFilter } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 
-export const ProjectBoardLayout: FC = observer(() => {
+export const ProjectBoardLayout = observer(function ProjectBoardLayout() {
   // hooks
   const { getFilteredProjectsByLayout } = useProjectFilter();
 

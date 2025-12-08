@@ -9,7 +9,7 @@ type TAddProjectsToTeamProps = {
   isEditingAllowed: boolean;
 };
 
-export const AddProjectsToTeam = observer((props: TAddProjectsToTeamProps) => {
+export const AddProjectsToTeam = observer(function AddProjectsToTeam(props: TAddProjectsToTeamProps) {
   const { isEditingAllowed } = props;
   // router
   const { teamspaceId } = useParams();

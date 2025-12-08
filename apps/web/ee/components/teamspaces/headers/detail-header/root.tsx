@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -44,7 +42,7 @@ type TTeamspaceDetailHeaderProps = {
   selectedNavigationKey: ETeamspaceNavigationItem;
 };
 
-export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProps) => {
+export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(props: TTeamspaceDetailHeaderProps) {
   const { selectedNavigationKey } = props;
   // router
   const router = useAppRouter();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ import { epicsTrackers } from "../trackers";
 import { EpicsEmptyState } from "./empty-state";
 import { EpicPropertiesRoot } from "./epics-properties";
 
-export const EpicsRoot = observer(() => {
+export const EpicsRoot = observer(function EpicsRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // states
@@ -89,7 +87,7 @@ export const EpicsRoot = observer(() => {
           <div className="flex-shrink-0 flex items-center justify-center px-4">
             <Tooltip
               className="shadow"
-              tooltipContent={!!isEpicsEnabled ? "Click to disable" : "Click to enable"}
+              tooltipContent={isEpicsEnabled ? "Click to disable" : "Click to enable"}
               position="top"
             >
               <div>

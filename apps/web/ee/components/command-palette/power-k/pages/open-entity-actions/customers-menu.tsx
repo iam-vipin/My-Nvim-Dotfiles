@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import type { TCustomer } from "@plane/types";
@@ -13,7 +11,7 @@ type Props = {
   handleSelect: (customer: TCustomer) => void;
 };
 
-export const PowerKOpenCustomersMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenCustomersMenu = observer(function PowerKOpenCustomersMenu(props: Props) {
   const { handleSelect } = props;
   // store hooks
   const { loader, customerIds, getCustomerById } = useCustomers();

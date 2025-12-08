@@ -20,7 +20,7 @@ import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectGanttBlock } from "./blocks";
 import { ProjectGanttSidebar } from "./sidebar";
 
-export const BaseGanttRoot: React.FC = observer(() => {
+export const BaseGanttRoot = observer(function BaseGanttRoot() {
   // store hooks
   const { getFilteredProjectsByLayout } = useProjectFilter();
   const { workspaceSlug } = useParams();

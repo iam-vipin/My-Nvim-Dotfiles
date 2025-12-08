@@ -12,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
+export const AppliedAccessFilters = observer(function AppliedAccessFilters(props: Props) {
   const { handleRemove, appliedFilters, editable } = props;
   // plane imports
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
 

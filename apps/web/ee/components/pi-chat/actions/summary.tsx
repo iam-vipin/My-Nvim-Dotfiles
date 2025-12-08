@@ -22,7 +22,7 @@ type TProps = {
   chatId: string;
 };
 
-export const SummaryBlock = observer((props: TProps) => {
+export const SummaryBlock = observer(function SummaryBlock(props: TProps) {
   // props
   const { summary, query_id, chatId, status } = props;
   // states

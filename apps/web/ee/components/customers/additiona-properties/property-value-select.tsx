@@ -35,7 +35,7 @@ type TPropertyValueSelectProps = {
   getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
-export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) => {
+export const PropertyValueSelect = observer(function PropertyValueSelect(props: TPropertyValueSelectProps) {
   const {
     propertyDetail,
     propertyValue,
@@ -47,25 +47,27 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     isDisabled,
   } = props;
 
-  const CustomerPropertyDetail = () => (
-    <>
-      <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
-        <span className="flex gap-0.5 items-center">
-          <span className="truncate">{propertyDetail?.display_name}</span>
-          {propertyDetail?.is_required && <span className="text-red-500">*</span>}
-          {propertyDetail.description && (
-            <Tooltip
-              tooltipContent={propertyDetail?.description}
-              position="right"
-              disabled={!propertyDetail?.description}
-            >
-              <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
-            </Tooltip>
-          )}
+  function CustomerPropertyDetail() {
+    return (
+      <>
+        <span className={cn("w-full cursor-default truncate", variant === "create" && "text-sm text-custom-text-200")}>
+          <span className="flex gap-0.5 items-center">
+            <span className="truncate">{propertyDetail?.display_name}</span>
+            {propertyDetail?.is_required && <span className="text-red-500">*</span>}
+            {propertyDetail.description && (
+              <Tooltip
+                tooltipContent={propertyDetail?.description}
+                position="right"
+                disabled={!propertyDetail?.description}
+              >
+                <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 text-custom-text-300 cursor-pointer" />
+              </Tooltip>
+            )}
+          </span>
         </span>
-      </span>
-    </>
-  );
+      </>
+    );
+  }
 
   const CUSTOMER_PROPERTY_ATTRIBUTE_DETAILS: Partial<Record<TIssuePropertyTypeKeys, React.ReactNode>> = {
     TEXT: (

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
@@ -20,7 +18,7 @@ type TExistingUsersSectionProps = {
   canCurrentUserChangeAccess?: boolean;
 };
 
-export const ExistingUsersSection = ({
+export function ExistingUsersSection({
   existingUsers,
   onUpdateAccess,
   onRemove,
@@ -29,7 +27,7 @@ export const ExistingUsersSection = ({
   isAccordionOpen,
   onToggleAccordion,
   canCurrentUserChangeAccess = true,
-}: TExistingUsersSectionProps) => {
+}: TExistingUsersSectionProps) {
   if (existingUsers.length === 0) return null;
 
   return (
@@ -110,6 +108,6 @@ export const ExistingUsersSection = ({
       </Collapsible>
     </div>
   );
-};
+}
 
 ExistingUsersSection.displayName = "ExistingUsersSection";

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -15,7 +13,7 @@ type Props = {
   widgetId: string | null;
 };
 
-export const DashboardWidgetDeleteModal: React.FC<Props> = observer((props) => {
+export const DashboardWidgetDeleteModal = observer(function DashboardWidgetDeleteModal(props: Props) {
   const { dashboardId, handleClose, isOpen, widgetId } = props;
   // states
   const [loader, setLoader] = useState(false);

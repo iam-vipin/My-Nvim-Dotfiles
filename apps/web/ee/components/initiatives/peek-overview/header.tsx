@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -47,7 +45,9 @@ export type InitiativePeekOverviewHeaderProps = {
   disabled: boolean;
 };
 
-export const InitiativePeekOverviewHeader: FC<InitiativePeekOverviewHeaderProps> = observer((props) => {
+export const InitiativePeekOverviewHeader = observer(function InitiativePeekOverviewHeader(
+  props: InitiativePeekOverviewHeaderProps
+) {
   const { peekMode, setPeekMode, workspaceSlug, initiativeId, removeRoutePeekId } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);

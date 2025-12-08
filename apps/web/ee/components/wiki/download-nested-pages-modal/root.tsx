@@ -15,7 +15,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const DownloadNestedPagesModal: React.FC<Props> = observer((props) => {
+export const DownloadNestedPagesModal = observer(function DownloadNestedPagesModal(props: Props) {
   const { isOpen, onClose, pageId, storeType } = props;
   // states
   const [isDownloading, setIsDownloading] = useState(false);

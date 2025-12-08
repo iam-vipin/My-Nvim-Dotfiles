@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import { ChevronRightIcon, PlaneAIIcon } from "@plane/propel/icons";
@@ -10,7 +8,7 @@ type TDeDupeIssueButtonLabelProps = {
   buttonLabel: string;
 };
 
-export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) => {
+export function DeDupeIssueButtonLabel(props: TDeDupeIssueButtonLabelProps) {
   const { isOpen, buttonLabel } = props;
   return (
     <div
@@ -30,4 +28,4 @@ export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) 
       <ChevronRightIcon className="size-4 text-custom-text-400" />
     </div>
   );
-};
+}

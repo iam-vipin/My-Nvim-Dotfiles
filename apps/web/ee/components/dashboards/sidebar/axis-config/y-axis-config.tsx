@@ -10,7 +10,7 @@ type Props = {
   handleSubmit: (data: Partial<TDashboardWidget>) => Promise<void>;
 };
 
-export const WidgetConfigSidebarYAxisConfig: React.FC<Props> = (props) => {
+export function WidgetConfigSidebarYAxisConfig(props: Props) {
   const { handleSubmit } = props;
   // translation
   const { t } = useTranslation();
@@ -37,4 +37,4 @@ export const WidgetConfigSidebarYAxisConfig: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

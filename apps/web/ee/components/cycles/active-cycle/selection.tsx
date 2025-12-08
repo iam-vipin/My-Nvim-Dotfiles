@@ -29,24 +29,28 @@ export type TDropdownProps = {
   onChange: (value: TCyclePlotType | TCycleEstimateType) => Promise<void>;
   options: any[];
 };
-const Dropdown = ({ value, onChange, options }: TDropdownProps) => (
-  <div className="relative flex items-center gap-2">
-    <CustomSelect
-      value={value}
-      label={<span>{options.find((v) => v.value === value)?.label ?? "None"}</span>}
-      onChange={onChange}
-      maxHeight="lg"
-      buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
-    >
-      {options.map((item) => (
-        <CustomSelect.Option key={item.value} value={item.value}>
-          {item.label}
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
-  </div>
-);
-const Selection = observer((props: TSelectionProps) => {
+
+function Dropdown({ value, onChange, options }: TDropdownProps) {
+  return (
+    <div className="relative flex items-center gap-2">
+      <CustomSelect
+        value={value}
+        label={<span>{options.find((v) => v.value === value)?.label ?? "None"}</span>}
+        onChange={onChange}
+        maxHeight="lg"
+        buttonClassName="bg-custom-background-90 border-none rounded text-sm font-medium "
+      >
+        {options.map((item) => (
+          <CustomSelect.Option key={item.value} value={item.value}>
+            {item.label}
+          </CustomSelect.Option>
+        ))}
+      </CustomSelect>
+    </div>
+  );
+}
+
+const Selection = observer(function Selection(props: TSelectionProps) {
   const { plotType, estimateType, projectId, handlePlotChange, handleEstimateChange, className, cycleId } = props;
   return (
     <Row className={cn("h-[40px] mt-2 py-4 flex text-sm items-center gap-2 font-medium", className)}>

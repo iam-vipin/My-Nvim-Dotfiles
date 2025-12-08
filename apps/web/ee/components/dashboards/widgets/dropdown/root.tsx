@@ -21,7 +21,7 @@ type Props = {
   selectedChartType?: EWidgetChartTypes | undefined;
 };
 
-export const DashboardWidgetChartTypesDropdown: React.FC<Props> = observer((props) => {
+export const DashboardWidgetChartTypesDropdown = observer(function DashboardWidgetChartTypesDropdown(props: Props) {
   const {
     buttonClassName,
     buttonContent,

@@ -8,7 +8,7 @@ type TProps = {
   handleExecuteAction: (workspaceId: string, query_id: string) => void;
 };
 
-export const ConfirmBlock = (props: TProps) => {
+export function ConfirmBlock(props: TProps) {
   const { summary, isExecutingAction, handleExecuteAction, workspaceId, query_id } = props;
   return (
     <div className="flex flex-col gap-2 rounded-xl bg-custom-background-90 p-3">
@@ -23,4 +23,4 @@ export const ConfirmBlock = (props: TProps) => {
       </Button>
     </div>
   );
-};
+}

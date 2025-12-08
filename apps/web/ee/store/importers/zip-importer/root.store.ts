@@ -415,7 +415,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
       });
     } catch (error) {
       runInAction(() => {
-        set(this.authentication, [userId], error as unknown as TServiceAuthConfiguration);
+        set(this.authentication, [userId], error as TServiceAuthConfiguration);
       });
 
       throw error;

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -18,7 +16,7 @@ interface ICycleDelete {
   handleClose: () => void;
 }
 
-export const RevokeAccessModal: React.FC<ICycleDelete> = observer((props) => {
+export const RevokeAccessModal = observer(function RevokeAccessModal(props: ICycleDelete) {
   const { app, isOpen, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
@@ -20,7 +18,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header/search-teamspaces";
 
-export const TeamspaceListItemHeader = observer(() => {
+export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader() {
   const { workspaceSlug } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();

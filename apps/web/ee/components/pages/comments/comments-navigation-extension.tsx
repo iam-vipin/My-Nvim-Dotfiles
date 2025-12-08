@@ -1,13 +1,15 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import type { INavigationPaneExtensionComponent } from "@/components/pages/navigation-pane/types";
+import type { INavigationPaneExtensionProps } from "@/components/pages/navigation-pane/types";
 // local components
 import { usePageStore } from "@/plane-web/hooks/store";
 import { PageCommentsSidebarPanel } from "./comments-sidebar-panel";
 
-export const PageCommentsNavigationExtension: INavigationPaneExtensionComponent = observer((props) => {
+export const PageCommentsNavigationExtension = observer(function PageCommentsNavigationExtension(
+  props: INavigationPaneExtensionProps
+) {
   const { page, extensionData, storeType } = props;
   const { isCommentsEnabled } = usePageStore(storeType);
   const { workspaceSlug } = useParams();

@@ -24,7 +24,7 @@ type TIssueTypeListItem = {
   getClassName?: (isOpen: boolean) => string;
 };
 
-export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
+export const IssueTypeListItem = observer(function IssueTypeListItem(props: TIssueTypeListItem) {
   const {
     issueTypeId,
     isOpen,

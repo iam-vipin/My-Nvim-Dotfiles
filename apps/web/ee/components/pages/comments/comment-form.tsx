@@ -56,7 +56,7 @@ export const EMPTY_COMMENT_JSON: JSONContent = {
   ],
 };
 
-export const PageCommentForm = observer((props: CommentBoxProps) => {
+export const PageCommentForm = observer(function PageCommentForm(props: CommentBoxProps) {
   const {
     workspaceSlug,
     page,

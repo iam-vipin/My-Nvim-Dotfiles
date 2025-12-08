@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -16,7 +14,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const AutomationsDetailsWrapper: React.FC<Props> = observer((props) => {
+export const AutomationsDetailsWrapper = observer(function AutomationsDetailsWrapper(props: Props) {
   const { automationId, projectId, workspaceSlug, children } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();

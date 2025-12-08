@@ -20,7 +20,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 
 const analyticsService = new AnalyticsService();
 
-const ProjectsInsightTable = observer(() => {
+const ProjectsInsightTable = observer(function ProjectsInsightTable() {
   // router
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();

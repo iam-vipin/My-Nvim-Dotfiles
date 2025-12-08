@@ -9,7 +9,7 @@ type Props = {
   project: TProject;
 };
 
-export const SpreadsheetMembersColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetMembersColumn = observer(function SpreadsheetMembersColumn(props: Props) {
   const { project } = props;
 
   // derived values

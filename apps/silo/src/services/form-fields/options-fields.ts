@@ -51,7 +51,7 @@ export class OptionFormFieldsService {
     const baseField = {
       id: `${issueTypeId}:${property.id}`,
       name: property.displayName ?? "",
-      type: property.propertyType as PropertyTypeEnum,
+      type: property.propertyType,
       required: property.isRequired ?? false,
       visible: property.isActive ?? true,
       order: property.sortOrder ?? 0,

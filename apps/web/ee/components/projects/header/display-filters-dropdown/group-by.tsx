@@ -12,7 +12,7 @@ type TDisplayFilterGroupBy = {
   handleUpdate: (val: TProjectGroupBy) => void;
 };
 
-export const DisplayFilterGroupBy: React.FC<TDisplayFilterGroupBy> = observer((props) => {
+export const DisplayFilterGroupBy = observer(function DisplayFilterGroupBy(props: TDisplayFilterGroupBy) {
   const { filterValue, handleUpdate } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

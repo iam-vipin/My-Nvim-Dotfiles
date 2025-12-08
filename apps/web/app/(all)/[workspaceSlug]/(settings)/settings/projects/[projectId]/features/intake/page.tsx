@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
@@ -20,7 +18,7 @@ import { IntakeFeatureChildren } from "@/plane-web/components/projects/settings/
 import { PROJECT_BASE_FEATURES_LIST } from "@/plane-web/constants/project/settings";
 import type { Route } from "./+types/page";
 
-const IntakeFeatureSettingsPage = observer((props: Route.ComponentProps) => {
+const IntakeFeatureSettingsPage = observer(function IntakeFeatureSettingsPage(props: Route.ComponentProps) {
   const { workspaceSlug, projectId } = props.params;
   // permissions
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -39,7 +37,7 @@ const IntakeFeatureSettingsPage = observer((props: Route.ComponentProps) => {
 
   const handleToggle = async () => {
     if (!currentProjectDetails) return;
-    const payload = { inbox_view: !Boolean(currentProjectDetails.inbox_view) };
+    const payload = { inbox_view: !currentProjectDetails.inbox_view };
     const promise = updateProject(workspaceSlug, projectId, payload);
     setPromiseToast(promise, {
       loading: "Updating project feature...",

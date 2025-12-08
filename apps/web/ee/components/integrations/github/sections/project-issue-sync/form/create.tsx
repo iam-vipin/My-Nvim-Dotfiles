@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,9 @@ type TCreateProjectIssueSyncForm = {
   isEnterprise: boolean;
 };
 
-export const CreateProjectIssueSyncForm: FC<TCreateProjectIssueSyncForm> = observer((props) => {
+export const CreateProjectIssueSyncForm = observer(function CreateProjectIssueSyncForm(
+  props: TCreateProjectIssueSyncForm
+) {
   // props
   const { modal, handleModal, isEnterprise } = props;
 

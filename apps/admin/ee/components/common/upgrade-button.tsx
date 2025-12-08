@@ -1,12 +1,10 @@
-"use client";
-
 import React from "react";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AlertModalCore } from "@plane/ui";
 
-export const UpgradeButton: React.FC = () => {
+export function UpgradeButton() {
   // states
   const [isActivationModalOpen, setIsActivationModalOpen] = React.useState(false);
   // derived values
@@ -36,4 +34,4 @@ export const UpgradeButton: React.FC = () => {
       </Button>
     </>
   );
-};
+}

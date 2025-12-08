@@ -44,7 +44,7 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
-export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
+export function CreateUpdateInitiativeForm(props: Props) {
   const { initiativeDetail, formData, isSubmitting, handleFormDataChange, handleClose, handleFormSubmit } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -286,4 +286,4 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

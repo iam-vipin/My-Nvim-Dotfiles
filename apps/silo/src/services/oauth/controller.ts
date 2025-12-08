@@ -368,7 +368,7 @@ export class OAuthController {
         client_id: planeAppClientId,
         client_secret: planeAppClientSecret,
         grant_type: EOAuthGrantType.AUTHORIZATION_CODE,
-        code: planeOAuthCode as string,
+        code: planeOAuthCode,
         redirect_uri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/oauth/${providerUrlSlug}/plane-oauth/callback`,
         app_installation_id: credential.target_identifier as string,
         user_id: authState.user_id,

@@ -24,7 +24,7 @@ type TProps = {
   isFullScreen?: boolean;
 };
 
-export const SidebarItem = observer((props: TProps) => {
+export const SidebarItem = observer(function SidebarItem(props: TProps) {
   const {
     isActive,
     chatId,
@@ -44,7 +44,7 @@ export const SidebarItem = observer((props: TProps) => {
   // hooks
   const { favoriteChat, unfavoriteChat, initPiChat } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
 
   const handleFavorite = async () => {
     if (isFavorite) {

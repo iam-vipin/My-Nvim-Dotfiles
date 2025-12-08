@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ type Props = {
   allowedValues: string[] | undefined;
 };
 
-export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
+export const FilterAssignees = observer(function FilterAssignees(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, allowedValues } = props;
   // store
   const { getMembersByIds, members: storeMembers } = useMember();

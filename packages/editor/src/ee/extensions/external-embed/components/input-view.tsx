@@ -16,11 +16,7 @@ type ExternalEmbedInputViewProps = {
   externalEmbedProps: ExternalEmbedNodeViewProps;
 };
 
-export const ExternalEmbedInputView: React.FC<ExternalEmbedInputViewProps> = ({
-  style: _style,
-  setIsOpen,
-  externalEmbedProps,
-}) => {
+export function ExternalEmbedInputView({ style: _style, setIsOpen, externalEmbedProps }: ExternalEmbedInputViewProps) {
   // states
   const [url, setUrl] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -148,4 +144,4 @@ export const ExternalEmbedInputView: React.FC<ExternalEmbedInputViewProps> = ({
       </div>
     </div>
   );
-};
+}

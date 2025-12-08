@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -17,7 +15,9 @@ type TConfigureAsanaSelectProject = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = observer((props) => {
+export const ConfigureAsanaSelectProject = observer(function ConfigureAsanaSelectProject(
+  props: TConfigureAsanaSelectProject
+) {
   // props
   const { workspaceGid, value, handleFormData } = props;
   // hooks
@@ -33,7 +33,7 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
   const userId = user?.id || undefined;
   const asanaProjects = ((workspaceGid && getAsanaProjectsByWorkspaceGid(workspaceGid)) || []).filter(
     (project: AsanaProject) => project && project.gid
-  ) as AsanaProject[];
+  );
   // handlers
   const handelData = (value: string | undefined) => {
     handleFormData(value);

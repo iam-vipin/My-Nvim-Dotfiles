@@ -12,7 +12,9 @@ type TProjectTemplatesSettingsRootProps = {
   projectId: string;
 };
 
-export const ProjectTemplatesSettingsRoot: FC<TProjectTemplatesSettingsRootProps> = observer((props) => {
+export const ProjectTemplatesSettingsRoot = observer(function ProjectTemplatesSettingsRoot(
+  props: TProjectTemplatesSettingsRootProps
+) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { isInitializingTemplates: isInitializingWorkItemTemplates, isAnyWorkItemTemplatesAvailableForProject } =

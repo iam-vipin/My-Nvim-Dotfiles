@@ -19,7 +19,7 @@ export type ActiveCycleHeaderProps = {
   projectId: string;
 };
 
-export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
+export function ActiveCycleHeader(props: ActiveCycleHeaderProps) {
   const { cycle, workspaceSlug, projectId } = props;
   // store
   const { getUserDetails } = useMember();
@@ -77,4 +77,4 @@ export const ActiveCycleHeader: FC<ActiveCycleHeaderProps> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -16,7 +16,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((props) => {
+export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
   const { issueId, disabled } = props;
   // router
   const { workspaceSlug } = useParams();

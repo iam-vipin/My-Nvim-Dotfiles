@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ type Props = {
   data: TInitiativeLabel | null;
 };
 
-export const DeleteInitiativeLabelModal: React.FC<Props> = observer((props) => {
+export const DeleteInitiativeLabelModal = observer(function DeleteInitiativeLabelModal(props: Props) {
   const { isOpen, onClose, data } = props;
   const { workspaceSlug } = useParams();
 

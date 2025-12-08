@@ -18,7 +18,9 @@ export type TIssueAdditionalPropertiesActivityItem = {
   customPropertyId: string;
 };
 
-export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesActivity> = observer((props) => {
+export const IssueAdditionalPropertiesActivity = observer(function IssueAdditionalPropertiesActivity(
+  props: TIssueAdditionalPropertiesActivity
+) {
   const { activityId, ends } = props;
   // hooks and derived values
   const {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -16,7 +14,9 @@ type TConfigureJiraSelectResource = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = observer((props) => {
+export const ConfigureJiraSelectResource = observer(function ConfigureJiraSelectResource(
+  props: TConfigureJiraSelectResource
+) {
   // props
   const { value, handleFormData } = props;
 
@@ -34,7 +34,7 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
   const userId = user?.id || undefined;
   const jiraResources = (jiraResourceIds || [])
     .map((id) => getJiraResourceById(id))
-    .filter((resource) => resource != undefined && resource != null) as JiraResource[];
+    .filter((resource) => resource != undefined && resource != null);
 
   // handlers
   const handelData = (value: string | undefined) => {

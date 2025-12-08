@@ -30,7 +30,7 @@ type TSlackProjectChannelForm = {
  * Project-to-Channel Mapping Form Component
  * Handles the selection of project and channel with visual mapping interface
  */
-export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((props) => {
+export const SlackProjectChannelForm = observer(function SlackProjectChannelForm(props: TSlackProjectChannelForm) {
   // Props
   const { value, channels, handleChange } = props;
 

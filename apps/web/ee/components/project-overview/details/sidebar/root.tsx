@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewSidebarRoot: FC<Props> = observer((props) => {
+export const ProjectOverviewSidebarRoot = observer(function ProjectOverviewSidebarRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { projectOverviewSidebarCollapsed } = useAppTheme();

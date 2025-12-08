@@ -15,7 +15,7 @@ import { InstanceService } from "@/services/instance.service";
 
 const instanceService = new InstanceService();
 
-export const ProductUpdatesHeader = observer(() => {
+export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   // states
   const [isCheckingForUpdates, setIsCheckingForUpdates] = useState(false);
   // store hooks

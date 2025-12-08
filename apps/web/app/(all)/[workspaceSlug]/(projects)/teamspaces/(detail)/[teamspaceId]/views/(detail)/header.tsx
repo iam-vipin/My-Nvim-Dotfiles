@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -30,7 +28,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
-export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
+export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkItemsHeader() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

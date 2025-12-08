@@ -14,7 +14,8 @@ type TSystemPrompt = {
   isInitializing?: boolean;
   setIsInitializing: (value: string) => void;
 };
-const SystemPrompts = (props: TSystemPrompt) => {
+
+function SystemPrompts(props: TSystemPrompt) {
   const { prompt, isProjectLevel = false, shouldRedirect = true, isInitializing, setIsInitializing } = props;
   // store hooks
   const { getAnswer, isPiTyping, createNewChat } = usePiChat();
@@ -96,5 +97,6 @@ const SystemPrompts = (props: TSystemPrompt) => {
       <span className="text-left text-sm break-words line-clamp-2">{prompt.text}</span>
     </button>
   );
-};
+}
+
 export default SystemPrompts;

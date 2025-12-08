@@ -1,11 +1,9 @@
-"use client";
-
 import { observer } from "mobx-react";
 import CreateTypeFormModal from "@/plane-web/components/intake/create/create-type-form-modal";
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
 import type { Route } from "./+types/page";
 
-const TypeFormPage = observer((props: Route.ComponentProps) => {
+const TypeFormPage = observer(function TypeFormPage(props: Route.ComponentProps) {
   const { params } = props;
   const { anchor } = params;
 

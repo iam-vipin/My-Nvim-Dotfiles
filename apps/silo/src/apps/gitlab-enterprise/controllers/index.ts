@@ -217,7 +217,7 @@ export default class GitlabEnterpriseController {
         });
       }
 
-      const appConfig = wsConnection.connection_data.appConfig as TGitlabAppConfig;
+      const appConfig = wsConnection.connection_data.appConfig;
 
       const gitlabClientService = await getGitlabClientService(
         entityConnection.workspace_id,

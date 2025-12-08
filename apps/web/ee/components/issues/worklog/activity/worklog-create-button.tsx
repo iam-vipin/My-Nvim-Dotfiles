@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,9 @@ type TIssueActivityWorklogCreateButton = {
   disabled: boolean;
 };
 
-export const IssueActivityWorklogCreateButton: FC<TIssueActivityWorklogCreateButton> = observer((props) => {
+export const IssueActivityWorklogCreateButton = observer(function IssueActivityWorklogCreateButton(
+  props: TIssueActivityWorklogCreateButton
+) {
   const { workspaceSlug, projectId, issueId, disabled } = props;
   // hooks
   const { isWorklogsEnabledByProjectId } = useWorkspaceWorklogs();

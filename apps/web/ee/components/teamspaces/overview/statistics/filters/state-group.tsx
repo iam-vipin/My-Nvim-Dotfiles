@@ -8,7 +8,9 @@ import { cn } from "@plane/utils";
 // plane web imports
 import type { TStatisticsFilterProps } from "@/plane-web/types/teamspace";
 
-export const StatisticsStateGroupFilter: React.FC<TStatisticsFilterProps<"state_group">> = observer((props) => {
+export const StatisticsStateGroupFilter = observer(function StatisticsStateGroupFilter(
+  props: TStatisticsFilterProps<"state_group">
+) {
   const { value, isLoading, buttonContainerClassName, chevronClassName, handleFilterChange } = props;
   // derived values
   const options = Object.values(STATE_GROUPS).map((stateGroup) => ({

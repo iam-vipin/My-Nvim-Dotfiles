@@ -20,7 +20,7 @@ import type { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
 import ModulesCyclesTooltip from "../modules-cycles-tooltip";
 
 const analyticsService = new AnalyticsService();
-const ModuleProgress = observer(() => {
+const ModuleProgress = observer(function ModuleProgress() {
   const params = useParams();
   const { t } = useTranslation();
   const workspaceSlug = params.workspaceSlug.toString();

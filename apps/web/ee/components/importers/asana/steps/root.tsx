@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane web components
 import { observer } from "mobx-react";
@@ -10,7 +8,7 @@ import { Stepper } from "@/plane-web/components/importers/ui";
 import { IMPORTER_STEPS } from "@/plane-web/constants/importers/asana";
 import { useAsanaImporter } from "@/plane-web/hooks/store";
 
-export const StepsRoot: FC = observer(() => {
+export const StepsRoot = observer(function StepsRoot() {
   // hooks
   const { currentStepIndex, resetImporterData } = useAsanaImporter();
 

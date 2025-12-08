@@ -13,7 +13,7 @@ type Props = {
   selectedWorkItemIds?: string[];
   milestoneId?: string;
 };
-export const MilestoneWorkItemActionButton: FC<Props> = (props) => {
+export function MilestoneWorkItemActionButton(props: Props) {
   const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds, milestoneId } = props;
 
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
@@ -45,4 +45,4 @@ export const MilestoneWorkItemActionButton: FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

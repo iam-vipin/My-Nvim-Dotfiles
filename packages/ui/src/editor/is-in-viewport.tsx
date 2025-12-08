@@ -39,7 +39,7 @@ const getScrollParent = (node: HTMLElement | SVGElement) => {
   return result;
 };
 
-export const InViewportRenderer: React.FC<InViewportRendererProps> = ({ children, placeholder, threshold = 0 }) => {
+export function InViewportRenderer({ children, placeholder, threshold = 0 }: InViewportRendererProps) {
   // states
   const [shouldRender, setShouldRender] = useState(false);
   // refs
@@ -110,4 +110,4 @@ export const InViewportRenderer: React.FC<InViewportRendererProps> = ({ children
   });
 
   return <div ref={containerRef}>{shouldRender ? children : placeholder}</div>;
-};
+}

@@ -12,7 +12,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const ProjectEpicsEmptyState: React.FC = observer(() => {
+export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState() {
   // router
   const { projectId } = useParams();
   // states

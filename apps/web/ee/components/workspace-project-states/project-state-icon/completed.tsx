@@ -1,10 +1,8 @@
-"use client";
-
 import type { FC } from "react";
 // types
 import type { TSvgIcons } from "./types";
 
-export const CompletedIcon: FC<TSvgIcons> = (props) => {
+export function CompletedIcon(props: TSvgIcons) {
   const { width, height, className, color, ...rest } = props;
 
   return (
@@ -27,4 +25,4 @@ export const CompletedIcon: FC<TSvgIcons> = (props) => {
       </svg>
     </>
   );
-};
+}

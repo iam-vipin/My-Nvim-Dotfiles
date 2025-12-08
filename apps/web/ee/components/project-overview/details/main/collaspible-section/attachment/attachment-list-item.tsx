@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
@@ -24,7 +22,7 @@ type Props = {
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
 };
 
-export const ProjectAttachmentsListItem: FC<Props> = observer((props) => {
+export const ProjectAttachmentsListItem = observer(function ProjectAttachmentsListItem(props: Props) {
   // props
   const { attachmentId, disabled, toggleDeleteAttachmentModal } = props;
   // store hooks

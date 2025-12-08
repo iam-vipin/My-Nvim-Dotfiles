@@ -12,7 +12,7 @@ interface StateMappingItemProps {
   onDelete: () => void;
 }
 
-const StateMappingItemComponent: React.FC<StateMappingItemProps> = ({ mapping, onEdit, onDelete }) => {
+function StateMappingItemComponent({ mapping, onEdit, onDelete }: StateMappingItemProps) {
   const { getProjectById } = useProject();
 
   const project = getProjectById(mapping.projectId);
@@ -119,7 +119,7 @@ const StateMappingItemComponent: React.FC<StateMappingItemProps> = ({ mapping, o
       </div>
     </div>
   );
-};
+}
 
 // Memoize the component to prevent unnecessary re-renders
 export const StateMappingItem = memo(StateMappingItemComponent);

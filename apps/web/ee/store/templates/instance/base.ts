@@ -27,12 +27,7 @@ export interface IBaseTemplateInstance<T extends TBaseTemplateWithData> extends 
   asJSON: T;
   asPublishableJSON: TPublishTemplateForm<T["template_type"], T["template_data"]>;
   getWorkspaceSlugForTemplateInstance: string | undefined;
-  getUserRoleForTemplateInstance:
-    | TUserPermissions
-    | EUserPermissions
-    | EUserWorkspaceRoles
-    | EUserProjectRoles
-    | undefined;
+  getUserRoleForTemplateInstance: TUserPermissions | EUserWorkspaceRoles | EUserProjectRoles | undefined;
   canCurrentUserEditTemplate: boolean;
   canCurrentUserDeleteTemplate: boolean;
   canCurrentUserPublishTemplate: boolean;

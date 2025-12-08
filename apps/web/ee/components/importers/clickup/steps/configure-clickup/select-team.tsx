@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -16,7 +14,9 @@ type TConfigureClickUpSelectTeam = {
   handleFormData: (value: string | undefined) => void;
 };
 
-export const ConfigureClickUpSelectTeam: FC<TConfigureClickUpSelectTeam> = observer((props) => {
+export const ConfigureClickUpSelectTeam = observer(function ConfigureClickUpSelectTeam(
+  props: TConfigureClickUpSelectTeam
+) {
   // props
   const { value, handleFormData } = props;
 
@@ -34,7 +34,7 @@ export const ConfigureClickUpSelectTeam: FC<TConfigureClickUpSelectTeam> = obser
   const userId = user?.id || undefined;
   const clickUpTeams = (clickUpTeamIds || [])
     .map((id) => (id ? getClickUpTeamById(id) : undefined))
-    .filter((project) => project != undefined && project != null) as TClickUpTeam[];
+    .filter((project) => project != undefined && project != null);
 
   const handleData = (value: string | undefined) => {
     handleFormData(value);

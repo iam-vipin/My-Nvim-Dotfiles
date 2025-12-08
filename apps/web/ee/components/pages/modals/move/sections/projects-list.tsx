@@ -14,7 +14,7 @@ type Props = {
   searchTerm: string;
 };
 
-export const MovePageModalProjectsListSection: React.FC<Props> = observer((props) => {
+export const MovePageModalProjectsListSection = observer(function MovePageModalProjectsListSection(props: Props) {
   const { searchTerm } = props;
   // store hooks
   const { currentProjectDetails, getProjectById, joinedProjectIds } = useProject();

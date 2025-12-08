@@ -75,6 +75,6 @@ export async function getConnectionDetails<T extends TWorkspaceConnection, Z ext
   return {
     workspaceConnection: workspaceConnection as T,
     entityConnection: entityConnection as Z,
-    credential: credential as TWorkspaceCredential,
+    credential: credential,
   };
 }

@@ -16,7 +16,9 @@ type TIssueAdditionalPropertyValuesProps = {
   handlePropertyValueChange: (propertyId: string, value: string[]) => void;
 };
 
-export const CustomerAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyValuesProps> = observer((props) => {
+export const CustomerAdditionalPropertyValues = observer(function CustomerAdditionalPropertyValues(
+  props: TIssueAdditionalPropertyValuesProps
+) {
   const {
     customerPropertyValues,
     customerPropertyValueErrors,

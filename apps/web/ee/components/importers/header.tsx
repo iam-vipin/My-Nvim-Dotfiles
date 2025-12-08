@@ -5,7 +5,8 @@ export interface IImporterHeaderProps<T> {
   actions?: React.ReactNode;
   description?: string;
 }
-const ImporterHeader = <T,>(props: IImporterHeaderProps<T>) => {
+
+function ImporterHeader<T>(props: IImporterHeaderProps<T>) {
   const { config, actions, description } = props;
   const { serviceName, logo } = config;
   const { t } = useTranslation();
@@ -23,6 +24,6 @@ const ImporterHeader = <T,>(props: IImporterHeaderProps<T>) => {
       </div>
     </div>
   );
-};
+}
 
 export default ImporterHeader;

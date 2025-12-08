@@ -275,13 +275,13 @@ export class JiraUsersStep implements IStep {
             ? [
                 {
                   externalId: email,
-                  planeId: user.id!,
+                  planeId: user.id,
                 },
               ]
             : []),
           {
             externalId: displayName,
-            planeId: user.id!,
+            planeId: user.id,
           },
         ];
       });

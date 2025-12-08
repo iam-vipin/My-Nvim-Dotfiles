@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -14,11 +12,11 @@ export type TModelsDropdown = {
   setActiveModel: (model: TAiModels) => void;
 };
 
-export const ModelsDropdown: FC<TModelsDropdown> = observer((props) => {
+export const ModelsDropdown = observer(function ModelsDropdown(props: TModelsDropdown) {
   const { className, activeModel, models, setActiveModel } = props;
 
-  const DropdownOptions = () =>
-    models?.map((model) => (
+  function DropdownOptions() {
+    return models?.map((model) => (
       <CustomMenu.MenuItem
         key={model.id}
         className="flex items-center gap-2 truncate"
@@ -29,6 +27,7 @@ export const ModelsDropdown: FC<TModelsDropdown> = observer((props) => {
         <div className="truncate font-medium text-xs">{model.name}</div>
       </CustomMenu.MenuItem>
     ));
+  }
 
   return (
     <CustomMenu

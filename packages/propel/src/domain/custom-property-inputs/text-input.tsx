@@ -10,7 +10,7 @@ type TTextInputProps = {
   required?: boolean;
 };
 
-export const TextInput: React.FC<TTextInputProps> = ({ property, isPreview = false, required = false }) => {
+export function TextInput({ property, isPreview = false, required = false }: TTextInputProps) {
   const {
     control,
     formState: { errors },
@@ -69,4 +69,4 @@ export const TextInput: React.FC<TTextInputProps> = ({ property, isPreview = fal
       {error && <span className="text-xs text-red-500">{error.message as string}</span>}
     </div>
   );
-};
+}

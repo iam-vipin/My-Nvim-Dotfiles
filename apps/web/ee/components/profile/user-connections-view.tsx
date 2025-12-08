@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,14 +19,14 @@ import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-sl
 import { ConnectionLoader } from "./loader";
 import { PersonalAccountConnectView } from "./personal-account-view";
 
-export const UserConnectionsView = observer(() => {
+export const UserConnectionsView = observer(function UserConnectionsView() {
   // route params
   const { workspaceSlug } = useParams();
   // store
   const { getWorkspaceBySlug } = useWorkspace();
   const { fetchUserConnections, getConnectionsByWorkspaceSlug } = useConnections();
   // derived
-  const selectedWorkspace = getWorkspaceBySlug(workspaceSlug as string);
+  const selectedWorkspace = getWorkspaceBySlug(workspaceSlug);
   const connections = selectedWorkspace && getConnectionsByWorkspaceSlug(selectedWorkspace?.slug);
 
   const { isLoading } = useSWR(
@@ -78,115 +76,116 @@ export const UserConnectionsView = observer(() => {
   );
 });
 
-export const ConnectionMapper = observer(
-  (props: { selectedWorkspace: IWorkspace; connections: TWorkspaceUserConnection[] }) => {
-    const { selectedWorkspace } = props;
+export const ConnectionMapper = observer(function ConnectionMapper(props: {
+  selectedWorkspace: IWorkspace;
+  connections: TWorkspaceUserConnection[];
+}) {
+  const { selectedWorkspace } = props;
 
-    const { connectUser, disconnectUser, fetchExternalApiToken: fetchSlackExternalApiToken } = useSlackIntegration();
-    const {
-      auth: { connectGithubUserCredential, disconnectGithubUserCredential },
-      fetchExternalApiToken: fetchGithubExternalApiToken,
-    } = useGithubIntegration();
-    const {
-      auth: {
-        connectGithubUserCredential: connectGithubEnterpriseUserCredential,
-        disconnectGithubUserCredential: disconnectGithubEnterpriseUserCredential,
-      },
-    } = useGithubIntegration(true);
-    const user = useUser();
-    const { isLoading: isLoadingExternalApiTokens } = useSWR(
-      selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug}` : null,
-      selectedWorkspace
-        ? async () =>
-            Promise.all([
-              fetchSlackExternalApiToken(selectedWorkspace.slug),
-              fetchGithubExternalApiToken(selectedWorkspace.slug),
-            ])
-        : null
-    );
+  const { connectUser, disconnectUser, fetchExternalApiToken: fetchSlackExternalApiToken } = useSlackIntegration();
+  const {
+    auth: { connectGithubUserCredential, disconnectGithubUserCredential },
+    fetchExternalApiToken: fetchGithubExternalApiToken,
+  } = useGithubIntegration();
+  const {
+    auth: {
+      connectGithubUserCredential: connectGithubEnterpriseUserCredential,
+      disconnectGithubUserCredential: disconnectGithubEnterpriseUserCredential,
+    },
+  } = useGithubIntegration(true);
+  const user = useUser();
+  const { isLoading: isLoadingExternalApiTokens } = useSWR(
+    selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug}` : null,
+    selectedWorkspace
+      ? async () =>
+          Promise.all([
+            fetchSlackExternalApiToken(selectedWorkspace.slug),
+            fetchGithubExternalApiToken(selectedWorkspace.slug),
+          ])
+      : null
+  );
 
-    const [connections, setConnections] = useState<TWorkspaceUserConnection[]>(props.connections);
+  const [connections, setConnections] = useState<TWorkspaceUserConnection[]>(props.connections);
 
-    const handleConnection = async (source: TUserConnection) => {
-      if (source === E_INTEGRATION_KEYS.GITHUB) {
-        const response = await connectGithubUserCredential(
-          selectedWorkspace.id,
-          selectedWorkspace.slug,
-          user.data?.id,
-          true
-        );
-        captureSuccess({
-          eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-          payload: {
-            type: "GITHUB_USER",
-            workspaceId: selectedWorkspace.id,
-          },
-        });
-        if (response) window.open(response, "_self");
-      } else if (source === E_INTEGRATION_KEYS.SLACK) {
-        const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
-        captureSuccess({
-          eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
-          payload: {
-            type: "SLACK_USER",
-            workspaceId: selectedWorkspace.id,
-          },
-        });
-        if (response) window.open(response, "_self");
-      } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
-        const response = await connectGithubEnterpriseUserCredential(
-          selectedWorkspace.id,
-          selectedWorkspace.slug,
-          user.data?.id,
-          true
-        );
-        if (response) window.open(response, "_self");
-      }
-    };
-
-    const handleDisconnection = async (source: TUserConnection) => {
-      if (source === E_INTEGRATION_KEYS.GITHUB) {
-        await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
-        captureSuccess({
-          eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-          payload: {
-            type: "GITHUB_USER",
-            workspaceId: selectedWorkspace.id,
-          },
-        });
-      } else if (source === E_INTEGRATION_KEYS.SLACK) {
-        await disconnectUser(selectedWorkspace.id);
-        captureSuccess({
-          eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
-          payload: {
-            type: "SLACK_USER",
-            workspaceId: selectedWorkspace.id,
-          },
-        });
-      } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
-        await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
-      }
-
-      setConnections(
-        connections.map((connection) => {
-          if (connection.connection_type === source) {
-            connection.isUserConnected = false;
-          }
-          return connection;
-        })
+  const handleConnection = async (source: TUserConnection) => {
+    if (source === E_INTEGRATION_KEYS.GITHUB) {
+      const response = await connectGithubUserCredential(
+        selectedWorkspace.id,
+        selectedWorkspace.slug,
+        user.data?.id,
+        true
       );
-    };
+      captureSuccess({
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
+        payload: {
+          type: "GITHUB_USER",
+          workspaceId: selectedWorkspace.id,
+        },
+      });
+      if (response) window.open(response, "_self");
+    } else if (source === E_INTEGRATION_KEYS.SLACK) {
+      const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
+      captureSuccess({
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_started,
+        payload: {
+          type: "SLACK_USER",
+          workspaceId: selectedWorkspace.id,
+        },
+      });
+      if (response) window.open(response, "_self");
+    } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
+      const response = await connectGithubEnterpriseUserCredential(
+        selectedWorkspace.id,
+        selectedWorkspace.slug,
+        user.data?.id,
+        true
+      );
+      if (response) window.open(response, "_self");
+    }
+  };
 
-    return connections.map((connection) => (
-      <PersonalAccountConnectView
-        key={connection.id}
-        provider={USER_CONNECTION_PROVIDERS[connection.connection_type as TUserConnection]}
-        isConnectionLoading={isLoadingExternalApiTokens}
-        isUserConnected={connection.isUserConnected}
-        connectionSlug={connection.connection_slug || ""}
-        handleConnection={handleConnection}
-        handleDisconnection={handleDisconnection}
-      />
-    ));
-  }
-);
+  const handleDisconnection = async (source: TUserConnection) => {
+    if (source === E_INTEGRATION_KEYS.GITHUB) {
+      await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
+      captureSuccess({
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
+        payload: {
+          type: "GITHUB_USER",
+          workspaceId: selectedWorkspace.id,
+        },
+      });
+    } else if (source === E_INTEGRATION_KEYS.SLACK) {
+      await disconnectUser(selectedWorkspace.id);
+      captureSuccess({
+        eventName: INTEGRATION_TRACKER_EVENTS.integration_disconnected,
+        payload: {
+          type: "SLACK_USER",
+          workspaceId: selectedWorkspace.id,
+        },
+      });
+    } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
+      await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
+    }
+
+    setConnections(
+      connections.map((connection) => {
+        if (connection.connection_type === source) {
+          connection.isUserConnected = false;
+        }
+        return connection;
+      })
+    );
+  };
+
+  return connections.map((connection) => (
+    <PersonalAccountConnectView
+      key={connection.id}
+      provider={USER_CONNECTION_PROVIDERS[connection.connection_type as TUserConnection]}
+      isConnectionLoading={isLoadingExternalApiTokens}
+      isUserConnected={connection.isUserConnected}
+      connectionSlug={connection.connection_slug || ""}
+      handleConnection={handleConnection}
+      handleDisconnection={handleDisconnection}
+    />
+  ));
+});

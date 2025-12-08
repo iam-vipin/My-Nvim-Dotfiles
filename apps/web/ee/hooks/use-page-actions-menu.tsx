@@ -67,57 +67,59 @@ export const usePageActionsMenu = (props: {
   ];
 
   // Modal components
-  const ModalsComponent = observer(() => (
-    <>
-      <LockPageModal page={page} setLockPageModal={setLockPageModal} lockPageModal={lockPageModal} />
-      <AlertModalCore
-        variant="primary"
-        isOpen={restorePageModal}
-        handleClose={() => setRestorePageModal(false)}
-        handleSubmit={async () => {
-          setRestorePageModal(false);
-          async function findLastArchivedParent(page: TPageInstance): Promise<TPageInstance | undefined> {
-            let currentPage: TPageInstance | undefined = page;
-            let lastArchivedParent: TPageInstance | undefined = undefined;
-            // Traverse up the parent chain until we reach the root
-            while (currentPage?.parent_id) {
-              // Get the parent page
-              currentPage = (await getOrFetchPageInstance({
-                pageId: currentPage.parent_id,
-                trackVisit: false,
-              })) as TPageInstance;
-              // If we found an archived parent, remember it
-              if (currentPage?.archived_at) {
-                lastArchivedParent = currentPage;
+  const ModalsComponent = observer(function ModalsComponent() {
+    return (
+      <>
+        <LockPageModal page={page} setLockPageModal={setLockPageModal} lockPageModal={lockPageModal} />
+        <AlertModalCore
+          variant="primary"
+          isOpen={restorePageModal}
+          handleClose={() => setRestorePageModal(false)}
+          handleSubmit={async () => {
+            setRestorePageModal(false);
+            async function findLastArchivedParent(page: TPageInstance): Promise<TPageInstance | undefined> {
+              let currentPage: TPageInstance | undefined = page;
+              let lastArchivedParent: TPageInstance | undefined = undefined;
+              // Traverse up the parent chain until we reach the root
+              while (currentPage?.parent_id) {
+                // Get the parent page
+                currentPage = (await getOrFetchPageInstance({
+                  pageId: currentPage.parent_id,
+                  trackVisit: false,
+                })) as TPageInstance;
+                // If we found an archived parent, remember it
+                if (currentPage?.archived_at) {
+                  lastArchivedParent = currentPage;
+                }
+                // If we've reached the root, stop traversing
+                if (currentPage?.parent_id == null) {
+                  break;
+                }
               }
-              // If we've reached the root, stop traversing
-              if (currentPage?.parent_id == null) {
-                break;
+              return lastArchivedParent;
+            }
+            const lastArchivedParent = await findLastArchivedParent(page);
+            if (lastArchivedParent?.getRedirectionLink) {
+              router.push(lastArchivedParent.getRedirectionLink());
+            } else if (page?.parent_id) {
+              const parentPageInstance = getPageById(page.parent_id);
+              if (parentPageInstance?.getRedirectionLink) {
+                router.push(parentPageInstance.getRedirectionLink());
               }
             }
-            return lastArchivedParent;
-          }
-          const lastArchivedParent = await findLastArchivedParent(page);
-          if (lastArchivedParent?.getRedirectionLink) {
-            router.push(lastArchivedParent.getRedirectionLink());
-          } else if (page?.parent_id) {
-            const parentPageInstance = getPageById(page.parent_id);
-            if (parentPageInstance?.getRedirectionLink) {
-              router.push(parentPageInstance.getRedirectionLink());
-            }
-          }
-        }}
-        isSubmitting={false}
-        title={`You can't restore this page.`}
-        content={`Restore the parent this page is nested in or make this page a parent.`}
-        primaryButtonText={{
-          loading: "Redirecting...",
-          default: "Go to parent page",
-        }}
-        secondaryButtonText="Cancel"
-      />
-    </>
-  ));
+          }}
+          isSubmitting={false}
+          title={`You can't restore this page.`}
+          content={`Restore the parent this page is nested in or make this page a parent.`}
+          primaryButtonText={{
+            loading: "Redirecting...",
+            default: "Go to parent page",
+          }}
+          secondaryButtonText="Cancel"
+        />
+      </>
+    );
+  });
 
   return {
     customMenuItems,

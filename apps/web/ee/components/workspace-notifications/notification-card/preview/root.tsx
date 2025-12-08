@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { orderBy } from "lodash-es";
 import type { TNotification, TNotificationIssueLite } from "@plane/types";
@@ -15,7 +13,7 @@ export type TNotificationCardPreview = {
   issueData: TNotificationIssueLite;
 };
 
-export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => {
+export function NotificationCardPreview(props: TNotificationCardPreview) {
   const { notificationList, workspaceId, workspaceSlug, projectId, issueData } = props;
   const unreadCount = notificationList.filter((e) => !e.read_at).length;
 
@@ -59,4 +57,4 @@ export const NotificationCardPreview: FC<TNotificationCardPreview> = (props) => 
       </div>
     </div>
   );
-};
+}

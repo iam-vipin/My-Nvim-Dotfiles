@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Link2, Pencil, Trash2 } from "lucide-react";
 // plane imports
@@ -24,7 +22,7 @@ type Props = {
   workItemId?: string;
 };
 
-export const CustomerRequestQuickActions: React.FC<Props> = observer((props) => {
+export const CustomerRequestQuickActions = observer(function CustomerRequestQuickActions(props: Props) {
   const { customerId, handleEdit, parentRef, requestId, workspaceSlug, workItemId } = props;
   // i18n
   const { t } = useTranslation();

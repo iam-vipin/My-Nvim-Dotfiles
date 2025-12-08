@@ -19,7 +19,7 @@ type Props = {
   widget: DashboardWidgetInstance;
 };
 
-export const DashboardWidgetUpgradeRequiredState: React.FC<Props> = observer((props) => {
+export const DashboardWidgetUpgradeRequiredState = observer(function DashboardWidgetUpgradeRequiredState(props: Props) {
   const { activeBreakpoint, widget } = props;
   // store hooks
   const { togglePaidPlanModal } = useWorkspaceSubscription();

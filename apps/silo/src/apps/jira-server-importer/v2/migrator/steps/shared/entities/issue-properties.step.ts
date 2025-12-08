@@ -273,7 +273,7 @@ export class JiraIssuePropertiesStep implements IStep {
     const mappings = properties
       .filter((prop) => prop.external_id && prop.id)
       .map((prop) => ({
-        externalId: prop.external_id!,
+        externalId: prop.external_id,
         planeId: prop.id!,
       }));
 
@@ -282,9 +282,9 @@ export class JiraIssuePropertiesStep implements IStep {
     // Store raw data including original Jira fields for options step
     const propertiesData: TIssuePropertiesData = properties.map((prop) => ({
       id: prop.id!,
-      external_id: prop.external_id!,
-      display_name: prop.display_name!,
-      property_type: prop.property_type!,
+      external_id: prop.external_id,
+      display_name: prop.display_name,
+      property_type: prop.property_type,
       relation_type: prop.relation_type,
     }));
 

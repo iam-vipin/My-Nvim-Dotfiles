@@ -23,7 +23,7 @@ type TProjectWorkItemTypesProps = {
   getCustomPropertyById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
 };
 
-export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps) => {
+export const ProjectWorkItemTypes = observer(function ProjectWorkItemTypes(props: TProjectWorkItemTypesProps) {
   const { workspaceSlug, projectTemplateId, getWorkItemTypeById, getCustomPropertyById } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

@@ -21,7 +21,7 @@ type EmbedLinkModalProps = {
   editor: Editor;
 };
 
-export const EmbedLinkModal: FC<EmbedLinkModalProps> = ({ isOpen, setIsOpen, virtualElement, editor }) => {
+export function EmbedLinkModal({ isOpen, setIsOpen, virtualElement, editor }: EmbedLinkModalProps) {
   // hooks
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -90,4 +90,4 @@ export const EmbedLinkModal: FC<EmbedLinkModalProps> = ({ isOpen, setIsOpen, vir
       </div>
     </FloatingPortal>
   );
-};
+}

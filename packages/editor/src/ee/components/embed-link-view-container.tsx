@@ -10,7 +10,7 @@ type LinkViewContainerProps = {
   containerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const EmbedLinkViewContainer: FC<LinkViewContainerProps> = ({ editor }) => {
+export function EmbedLinkViewContainer({ editor }: LinkViewContainerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<Element | null>(null);
   const lastPosRef = useRef<{ from: number; to: number } | null>(null);
@@ -78,4 +78,4 @@ export const EmbedLinkViewContainer: FC<LinkViewContainerProps> = ({ editor }) =
   if (!isOpen || !virtualElement) return null;
 
   return <EmbedLinkModal isOpen={isOpen} setIsOpen={setIsOpen} virtualElement={virtualElement} editor={editor} />;
-};
+}

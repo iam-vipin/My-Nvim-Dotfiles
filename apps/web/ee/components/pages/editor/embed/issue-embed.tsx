@@ -22,7 +22,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const IssueEmbedCard: React.FC<Props> = observer((props) => {
+export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
   const { issueId, projectId, workspaceSlug } = props;
   // states
   const [error, setError] = useState<any | null>(null);

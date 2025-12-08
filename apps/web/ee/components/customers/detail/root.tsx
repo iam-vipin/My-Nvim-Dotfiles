@@ -14,7 +14,7 @@ import { LayoutRoot } from "@/plane-web/components/common/layout";
 import { CustomerDetailSidebar, CustomerEmptyState, CustomerMainRoot } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomerDetailRoot: FC = observer(() => {
+export const CustomerDetailRoot = observer(function CustomerDetailRoot() {
   const { workspaceSlug, customerId } = useParams();
 
   // hooks

@@ -10,7 +10,7 @@ type TProps = {
   artifactId: string;
 };
 
-export const ModulePreviewCard = observer((props: TProps) => {
+export const ModulePreviewCard = observer(function ModulePreviewCard(props: TProps) {
   const { artifactId } = props;
   const data = useModuleData(artifactId);
   if (!data) return <></>;

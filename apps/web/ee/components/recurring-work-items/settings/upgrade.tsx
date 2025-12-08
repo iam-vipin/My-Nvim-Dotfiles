@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -15,7 +13,7 @@ import RecurringWorkItemsUpgradeLight from "@/app/assets/empty-state/recurring-w
 // plane web imports
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 
-export const RecurringWorkItemsUpgrade: FC = observer(() => {
+export const RecurringWorkItemsUpgrade = observer(function RecurringWorkItemsUpgrade() {
   // router
   const { workspaceSlug } = useParams();
   // store hooks

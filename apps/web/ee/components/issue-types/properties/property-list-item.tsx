@@ -66,7 +66,7 @@ const defaultIssuePropertyError: TIssuePropertyFormError = {
   property_type: "",
 };
 
-export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) => {
+export const IssuePropertyListItem = observer(function IssuePropertyListItem(props: TIssuePropertyListItem) {
   const {
     customPropertyId,
     issuePropertyCreateListData,
@@ -176,7 +176,6 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     if (issuePropertyData.property_type === EIssuePropertyType.OPTION) {
       optionsPayload = sanitizeOptionsData(propertyOptions)
         .map((item) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { key, ...rest } = item;
           return rest;
         })

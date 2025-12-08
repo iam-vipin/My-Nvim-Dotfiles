@@ -1,5 +1,3 @@
-"use client";
-
 import { FileText, LayoutGrid } from "lucide-react";
 // plane imports
 import type { IWorkspaceDefaultSearchResult, IWorkspaceSearchResult } from "@plane/types";

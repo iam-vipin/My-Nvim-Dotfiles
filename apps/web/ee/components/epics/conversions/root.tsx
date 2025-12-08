@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +22,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ConvertWorkItemAction: FC<Props> = observer((props) => {
+export const ConvertWorkItemAction = observer(function ConvertWorkItemAction(props: Props) {
   const { workItemId, conversionType, disabled = false } = props;
   // navigation
   const { workspaceSlug } = useParams();

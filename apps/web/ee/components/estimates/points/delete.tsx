@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,7 @@ import { EstimatePointDropdown } from "@/plane-web/components/estimates";
 // plane web constants
 import { estimateCount } from "@/plane-web/constants/estimates";
 
-export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) => {
+export const EstimatePointDelete = observer(function EstimatePointDelete(props: TEstimatePointDelete) {
   const {
     workspaceSlug,
     projectId,

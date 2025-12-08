@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -40,7 +38,9 @@ interface IRepositoryMappingRootProps {
   isEnterprise: boolean;
 }
 
-export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer(({ isEnterprise }) => {
+export const RepositoryMappingRoot = observer(function RepositoryMappingRoot({
+  isEnterprise,
+}: IRepositoryMappingRootProps) {
   // hooks
   const {
     workspace,

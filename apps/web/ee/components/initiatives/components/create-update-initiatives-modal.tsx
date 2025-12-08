@@ -32,7 +32,7 @@ const defaultValues: Partial<TInitiative> = {
   state: DEFAULT_INITIATIVE_STATE,
 };
 
-export const CreateUpdateInitiativeModal = observer((props: Props) => {
+export const CreateUpdateInitiativeModal = observer(function CreateUpdateInitiativeModal(props: Props) {
   const { initiativeId, isOpen, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();

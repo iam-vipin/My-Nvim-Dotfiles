@@ -64,5 +64,5 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
 
   const createdUpdatedIssueTypes = await processBatchPromises(issueTypes, createOrUpdateIssueType, 2);
 
-  return createdUpdatedIssueTypes.filter((issueType) => issueType !== undefined) as ExIssueType[];
+  return createdUpdatedIssueTypes.filter((issueType) => issueType !== undefined);
 };

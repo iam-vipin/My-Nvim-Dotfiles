@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useEffect, useState, useMemo, useCallback } from "react";
 // todesktop
 import { nativeWindow } from "@todesktop/client-core";
@@ -17,7 +15,7 @@ export type TDesktopAppProviderProps = {
   children: React.ReactNode;
 };
 
-export const DesktopAppProvider = observer((props: TDesktopAppProviderProps) => {
+export const DesktopAppProvider = observer(function DesktopAppProvider(props: TDesktopAppProviderProps) {
   const { children } = props;
   // states
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);

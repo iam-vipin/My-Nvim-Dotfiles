@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // assets
 import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
@@ -13,7 +11,7 @@ type TEpicEmptyStateProps = {
   projectId: string;
 };
 
-export const EpicEmptyState: FC<TEpicEmptyStateProps> = (props) => {
+export function EpicEmptyState(props: TEpicEmptyStateProps) {
   const { workspaceSlug, projectId } = props;
   const router = useAppRouter();
   return (
@@ -27,4 +25,4 @@ export const EpicEmptyState: FC<TEpicEmptyStateProps> = (props) => {
       }}
     />
   );
-};
+}

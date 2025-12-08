@@ -16,7 +16,7 @@ interface TCycleDetailProps {
   activeChatId: string;
 }
 
-export const CycleDetail = observer((props: TCycleDetailProps) => {
+export const CycleDetail = observer(function CycleDetail(props: TCycleDetailProps) {
   const { data, updateArtifact, workspaceSlug, activeChatId } = props;
   // hooks
   const { isMobile } = usePlatformOS();

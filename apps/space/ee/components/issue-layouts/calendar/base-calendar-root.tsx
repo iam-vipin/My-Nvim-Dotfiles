@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane
@@ -17,7 +15,7 @@ interface IBaseCalendarRoot {
   anchor: string;
 }
 
-export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
+export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseCalendarRoot) {
   const { anchor } = props;
 
   const { viewData } = useView();

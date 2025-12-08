@@ -23,7 +23,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CustomerListItem, CustomerLoader } from "@/plane-web/components/customers/list";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomersListRoot: FC = observer(() => {
+export const CustomersListRoot = observer(function CustomersListRoot() {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
   // i18n

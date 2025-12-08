@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -29,7 +27,7 @@ type Props = {
   teamspaceId: string;
 };
 
-export const CreateUpdateTeamspaceViewModal: FC<Props> = observer((props) => {
+export const CreateUpdateTeamspaceViewModal = observer(function CreateUpdateTeamspaceViewModal(props: Props) {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, teamspaceId } = props;
   // router
   const router = useAppRouter();

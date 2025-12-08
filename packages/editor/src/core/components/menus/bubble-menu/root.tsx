@@ -72,7 +72,7 @@ type Props = {
   flaggedExtensions: TExtensions[];
 };
 
-export const EditorBubbleMenu: FC<Props> = (props) => {
+export function EditorBubbleMenu(props: Props) {
   const { editor, extendedEditorProps, flaggedExtensions, disabledExtensions } = props;
   // states
   const [isCommentSelectorOpen, setIsCommentSelectorOpen] = useState(false);
@@ -250,4 +250,4 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       )}
     </BubbleMenu>
   );
-};
+}

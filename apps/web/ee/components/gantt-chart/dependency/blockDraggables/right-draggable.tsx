@@ -17,7 +17,9 @@ type RightDependencyDraggableProps = {
   block: IGanttBlock;
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
-export const RightDependencyDraggable = observer((props: RightDependencyDraggableProps) => {
+export const RightDependencyDraggable = observer(function RightDependencyDraggable(
+  props: RightDependencyDraggableProps
+) {
   const { block, ganttContainerRef } = props;
   // life cycle hooks
   const [isCurrentDependencyDragging, setIsCurrentDependencyDragging] = useState(false);

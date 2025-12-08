@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // ce imports
 import type { TAdditionalPageNavigationPaneAssetItemProps } from "@/ce/components/pages/navigation-pane/tab-panels/assets";
 
-export const AdditionalPageNavigationPaneAssetItem: React.FC<TAdditionalPageNavigationPaneAssetItemProps> = (props) => {
+export function AdditionalPageNavigationPaneAssetItem(props: TAdditionalPageNavigationPaneAssetItemProps) {
   const { asset, assetSrc, assetDownloadSrc } = props;
   // translation
   const { t } = useTranslation();
@@ -39,4 +39,4 @@ export const AdditionalPageNavigationPaneAssetItem: React.FC<TAdditionalPageNavi
   }
 
   return null;
-};
+}

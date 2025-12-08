@@ -15,7 +15,7 @@ type TIntegrationsMappingProps = {
   bidirectionalSync?: boolean;
 };
 
-export const IntegrationsMapping = (props: TIntegrationsMappingProps) => {
+export function IntegrationsMapping(props: TIntegrationsMappingProps) {
   const { entityName, project, connectorLogo, handleEditOpen, handleDeleteOpen, bidirectionalSync } = props;
   return (
     <div className="group relative bg-custom-background-100 border border-custom-border-200 rounded-lg overflow-hidden hover:shadow-sm transition-all duration-200">
@@ -81,4 +81,4 @@ export const IntegrationsMapping = (props: TIntegrationsMappingProps) => {
       </div>
     </div>
   );
-};
+}

@@ -50,9 +50,10 @@ export const EpicInfoSection: FC<Props> = observer((props) => {
           name: value,
         })
       }
-      onDescriptionSubmit={async (value) =>
+      onDescriptionSubmit={async (value, isMigrationUpdate) =>
         epicOperations.update(workspaceSlug, projectId, issue.id, {
           description_html: value,
+          ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
         })
       }
       indicatorElement={<EpicInfoIndicatorItem epicId={epicId} />}

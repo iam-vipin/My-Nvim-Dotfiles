@@ -21,7 +21,7 @@ type TInfoSectionProps = {
   titleValue: string;
   descriptionValue?: string;
   onTitleSubmit: (value: string) => Promise<void>;
-  onDescriptionSubmit: (value: string) => Promise<void>;
+  onDescriptionSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
   indicatorElement?: React.ReactNode;
   disabled?: boolean;
   fileAssetType: EFileAssetType;
@@ -94,7 +94,7 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
         entityId={itemId}
         fileAssetType={fileAssetType}
         initialValue={descriptionValue}
-        onSubmit={onDescriptionSubmit}
+        onSubmit={(value, isMigrationUpdate) => onDescriptionSubmit(value, isMigrationUpdate)}
         projectId={projectId}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         workspaceSlug={workspaceSlug}

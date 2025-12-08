@@ -123,10 +123,7 @@ class EpicViewSet(BaseViewSet):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -195,9 +192,9 @@ class EpicViewSet(BaseViewSet):
             )
             .annotate(
                 milestone_id=Subquery(
-                    MilestoneIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("milestone_id")[:1]
+                    MilestoneIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("milestone_id")[
+                        :1
+                    ]
                 )
             )
             .prefetch_related(
@@ -232,9 +229,7 @@ class EpicViewSet(BaseViewSet):
 
         # EE start
         if request.data.get("state_id"):
-            workflow_state_manager = WorkflowStateManager(
-                project_id=project_id, slug=slug
-            )
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
             if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"), user_id=request.user.id
             ):
@@ -311,9 +306,7 @@ class EpicViewSet(BaseViewSet):
         epics = self.apply_annotations(epics)
 
         # epics queryset
-        issue_queryset, order_by_param = order_issue_queryset(
-            issue_queryset=epics, order_by_param=order_by_param
-        )
+        issue_queryset, order_by_param = order_issue_queryset(issue_queryset=epics, order_by_param=order_by_param)
 
         # Group by
         group_by = request.GET.get("group_by", False)
@@ -323,9 +316,7 @@ class EpicViewSet(BaseViewSet):
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -417,9 +408,7 @@ class EpicViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
     @check_feature_flag(FeatureFlag.EPICS)
     def retrieve(self, request, slug, project_id, pk=None):
         epic = (
@@ -449,22 +438,20 @@ class EpicViewSet(BaseViewSet):
         serializer = EpicDetailSerializer(epic, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     @check_feature_flag(FeatureFlag.EPICS)
     def partial_update(self, request, slug, project_id, pk=None):
         epic = self.get_queryset().filter(pk=pk).first()
+
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
+
         if not epic:
-            return Response(
-                {"error": "Epic not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Epic not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # EE: Check if state is updated then is the transition allowed
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if request.data.get(
-            "state_id"
-        ) and not workflow_state_manager.validate_state_transition(
+        if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
             issue=epic,
             new_state_id=request.data.get("state_id"),
             user_id=request.user.id,
@@ -475,31 +462,34 @@ class EpicViewSet(BaseViewSet):
             )
         # EE end
 
-        current_instance = json.dumps(
-            EpicDetailSerializer(epic).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(EpicDetailSerializer(epic).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         serializer = EpicCreateSerializer(epic, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(pk),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
-            )
-            # updated issue description version
-            issue_description_version_task.delay(
-                updated_issue=current_instance,
-                issue_id=str(serializer.data.get("id", None)),
-                user_id=request.user.id,
-            )
+
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=requested_data,
+                    actor_id=str(request.user.id),
+                    issue_id=str(pk),
+                    project_id=str(project_id),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+                # updated issue description version
+                issue_description_version_task.delay(
+                    updated_issue=current_instance,
+                    issue_id=str(serializer.data.get("id", None)),
+                    user_id=request.user.id,
+                )
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -507,9 +497,7 @@ class EpicViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True)
 
         Issue.objects.filter(parent_id=pk).update(parent_id=None)
         issue.delete()
@@ -533,9 +521,7 @@ class EpicViewSet(BaseViewSet):
         is_epic_enabled = request.data.get("is_epic_enabled", False)
         if is_epic_enabled:
             # get or create the project feature
-            project_feature = ProjectFeature.objects.filter(
-                project_id=project_id
-            ).first()
+            project_feature = ProjectFeature.objects.filter(project_id=project_id).first()
             if not project_feature:
                 project_feature = ProjectFeature.objects.create(project_id=project_id)
 
@@ -546,14 +532,10 @@ class EpicViewSet(BaseViewSet):
 
             if not project_issue_type:
                 # create the epic issue type
-                epic = IssueType.objects.create(
-                    workspace_id=workspace.id, is_epic=True, level=1
-                )
+                epic = IssueType.objects.create(workspace_id=workspace.id, is_epic=True, level=1)
 
                 # add it to the project epic issue type
-                _ = ProjectIssueType.objects.create(
-                    project_id=project_id, issue_type_id=epic.id
-                )
+                _ = ProjectIssueType.objects.create(project_id=project_id, issue_type_id=epic.id)
 
             # enable epic issue type
             project_feature.is_epic_enabled = True
@@ -568,9 +550,7 @@ class EpicViewSet(BaseViewSet):
                 ).annotate(
                     project_ids=Coalesce(
                         Subquery(
-                            ProjectIssueType.objects.filter(
-                                issue_type=OuterRef("pk"), workspace__slug=slug
-                            )
+                            ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                             .values("issue_type")
                             .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                             .values("project_ids")
@@ -583,9 +563,7 @@ class EpicViewSet(BaseViewSet):
             return Response(IssueTypeSerializer(epic).data, status=status.HTTP_200_OK)
         else:
             # get or create the project feature
-            project_feature = ProjectFeature.objects.filter(
-                project_id=project_id
-            ).first()
+            project_feature = ProjectFeature.objects.filter(project_id=project_id).first()
             if not project_feature:
                 project_feature = ProjectFeature.objects.create(project_id=project_id)
 
@@ -600,20 +578,12 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id):
-        epic_property = EpicUserProperties.objects.get(
-            user=request.user, project_id=project_id
-        )
+        epic_property = EpicUserProperties.objects.get(user=request.user, project_id=project_id)
 
         epic_property.filters = request.data.get("filters", epic_property.filters)
-        epic_property.rich_filters = request.data.get(
-            "rich_filters", epic_property.rich_filters
-        )
-        epic_property.display_filters = request.data.get(
-            "display_filters", epic_property.display_filters
-        )
-        epic_property.display_properties = request.data.get(
-            "display_properties", epic_property.display_properties
-        )
+        epic_property.rich_filters = request.data.get("rich_filters", epic_property.rich_filters)
+        epic_property.display_filters = request.data.get("display_filters", epic_property.display_filters)
+        epic_property.display_properties = request.data.get("display_properties", epic_property.display_properties)
         epic_property.save()
         serializer = EpicUserPropertySerializer(epic_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -621,9 +591,7 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id):
-        issue_property, _ = EpicUserProperties.objects.get_or_create(
-            user=request.user, project_id=project_id
-        )
+        issue_property, _ = EpicUserProperties.objects.get_or_create(user=request.user, project_id=project_id)
         serializer = EpicUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -646,9 +614,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         # Annotate the counts for different states in one query
-        issues = Issue.issue_objects.filter(
-            id__in=issue_ids, project_id=project_id, workspace__slug=slug
-        ).aggregate(
+        issues = Issue.issue_objects.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
             unstarted_issues=Count("id", filter=Q(state__group="unstarted")),
             started_issues=Count("id", filter=Q(state__group="started")),
@@ -667,9 +633,7 @@ class EpicDetailEndpoint(BaseAPIView):
         return (
             epics.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -677,10 +641,7 @@ class EpicDetailEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -737,9 +698,9 @@ class EpicDetailEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
-        epics = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
+        epics = Issue.objects.filter(workspace__slug=slug, project_id=project_id).filter(
+            Q(type__isnull=False) & Q(type__is_epic=True)
+        )
 
         # Apply filtering from filterset
         epics = self.filter_queryset(epics)
@@ -755,17 +716,13 @@ class EpicDetailEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
-        epics, order_by_param = order_issue_queryset(
-            issue_queryset=epics, order_by_param=order_by_param
-        )
+        epics, order_by_param = order_issue_queryset(issue_queryset=epics, order_by_param=order_by_param)
         return self.paginate(
             request=request,
             order_by=order_by_param,
             queryset=epics,
             total_count_queryset=filtered_epics,
-            on_results=lambda epics: EpicSerializer(
-                epics, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda epics: EpicSerializer(epics, many=True, fields=self.fields, expand=self.expand).data,
         )
 
 
@@ -780,11 +737,7 @@ class WorkspaceEpicEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project__project_projectfeature__is_epic_enabled=True,
             )
-            .filter(
-                Q(type__isnull=False)
-                & Q(type__is_epic=True)
-                & Q(project__deleted_at__isnull=True)
-            )
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True) & Q(project__deleted_at__isnull=True))
             .accessible_to(request.user.id, slug)
             .distinct()
         )
@@ -828,9 +781,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
         )
 
         # fetch all the issues in which user is part of
-        issues = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id, archived_at__isnull=True
-        )
+        issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, archived_at__isnull=True)
 
         result = []
         for epic_id in epics:
@@ -838,33 +789,25 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
             issue_ids = get_all_related_issues(epic_id)
 
             completed_issues = (
-                issues.filter(
-                    id__in=issue_ids, project_id=project_id, workspace__slug=slug
-                )
+                issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug)
                 .filter(state__group="completed")
                 .count()
             )
 
             cancelled_issues = (
-                issues.filter(
-                    id__in=issue_ids, project_id=project_id, workspace__slug=slug
-                )
+                issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug)
                 .filter(state__group="cancelled")
                 .count()
             )
 
-            total_issues = issues.filter(
-                id__in=issue_ids, project_id=project_id, workspace__slug=slug
-            ).count()
+            total_issues = issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).count()
 
-            result.append(
-                {
-                    "epic_id": epic_id,
-                    "total_issues": total_issues,
-                    "completed_issues": completed_issues,
-                    "cancelled_issues": cancelled_issues,
-                }
-            )
+            result.append({
+                "epic_id": epic_id,
+                "total_issues": total_issues,
+                "completed_issues": completed_issues,
+                "cancelled_issues": cancelled_issues,
+            })
 
         return Response(result, status=status.HTTP_200_OK)
 
@@ -931,10 +874,7 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -976,18 +916,12 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
             )
 
         # Fetch the project
-        project = Project.objects.get(
-            identifier__iexact=project_identifier, workspace__slug=slug
-        )
+        project = Project.objects.get(identifier__iexact=project_identifier, workspace__slug=slug)
 
         print()
 
         # Fetch the issue
-        issue = (
-            self.get_queryset()
-            .filter(sequence_id=epic_identifier, project_id=project.id)
-            .first()
-        )
+        issue = self.get_queryset().filter(sequence_id=epic_identifier, project_id=project.id).first()
 
         # Check if the issue exists
         if not issue:
@@ -1021,9 +955,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
         paginated_data = results.values(*fields)
 
         datetime_fields = ["created_at", "updated_at"]
-        paginated_data = user_timezone_converter(
-            paginated_data, datetime_fields, timezone
-        )
+        paginated_data = user_timezone_converter(paginated_data, datetime_fields, timezone)
 
         return paginated_data
 
@@ -1031,9 +963,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id, pk=None):
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=epic_id
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=epic_id)
 
         if (
             ProjectMember.objects.filter(
@@ -1045,9 +975,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -1059,9 +987,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
                 workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
             )
 
-            serializer = IssueDescriptionVersionDetailSerializer(
-                issue_description_version
-            )
+            serializer = IssueDescriptionVersionDetailSerializer(issue_description_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         cursor = request.GET.get("cursor", None)

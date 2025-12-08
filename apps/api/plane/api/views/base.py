@@ -13,6 +13,12 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+# Third party imports
+from oauth2_provider.contrib.rest_framework import (
+    OAuth2Authentication,
+    IsAuthenticatedOrTokenHasScope,
+)
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import APIException
 from rest_framework.generics import GenericAPIView
@@ -21,6 +27,8 @@ from rest_framework.generics import GenericAPIView
 from plane.db.models.api import APIToken
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.authentication.rate_limit import OAuthTokenRateThrottle
+from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -44,9 +52,13 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePaginator):
-    authentication_classes = [APIKeyAuthentication]
-
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
+    permission_classes = [
+        IsAuthenticated,
+        IsAuthenticatedOrTokenHasScope,
+        OauthApplicationWorkspacePermission,
+    ]
+    required_scopes = ["read", "write"]
 
     use_read_replica = False
 
@@ -56,7 +68,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         return queryset
 
     def get_throttles(self):
-        throttle_classes = []
+        throttle_classes = super().get_throttles()
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
@@ -67,6 +79,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
                 return throttle_classes
 
         throttle_classes.append(ApiKeyRateThrottle())
+        throttle_classes.append(OAuthTokenRateThrottle())
 
         return throttle_classes
 

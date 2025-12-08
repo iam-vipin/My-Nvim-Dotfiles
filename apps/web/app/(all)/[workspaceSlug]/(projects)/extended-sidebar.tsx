@@ -10,6 +10,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane-web imports
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
@@ -31,8 +32,10 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
     return WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
       const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
+      // Feature flag check
+      const isFeatureEnabled = isSidebarFeatureEnabled(item.key, slug);
 
-      return hasPermission;
+      return hasPermission && isFeatureEnabled;
     })
       .map((item) => {
         const preference = currentWorkspaceNavigationPreferences?.[item.key];

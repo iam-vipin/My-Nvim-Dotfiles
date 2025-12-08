@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk update && \
 	apk upgrade && \
 	apk add git && \
-	go install github.com/goreleaser/goreleaser/v2@latest
+	go install github.com/goreleaser/goreleaser/v2@v2.13.0
 
 COPY . .
 

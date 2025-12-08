@@ -18,9 +18,6 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
   const { workspaceSlug } = useParams();
   // store hooks
   const { setPeekIssue } = useIssueDetail();
-  // derived values
-  const trimmedName =
-    workItemDetails.name.length > 64 ? workItemDetails.name.slice(0, 64) + "..." : workItemDetails.name;
   // handle click to open the peek overview
   const handleClick = useCallback(() => {
     if (!workItemDetails || !workItemDetails.project_id || !workspaceSlug) return;
@@ -49,7 +46,7 @@ export const EditorWorkItemMentionContent: React.FC<Props> = observer((props) =>
         {workItemDetails.project__identifier}-{workItemDetails.sequence_id}
       </span>
       <span className="text-custom-text-200 group-hover/work-item-mention:text-custom-text-100 transition-colors">
-        {trimmedName}
+        {workItemDetails.name}
       </span>
     </button>
   );

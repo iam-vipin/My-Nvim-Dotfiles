@@ -46,6 +46,7 @@ export function CustomMentionExtension(props: TMentionHandler) {
       render: renderMentionsDropdown({
         searchCallback,
       }),
+      allowSpaces: true,
     },
   });
 }

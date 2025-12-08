@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { InboxIcon, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
+import { IntakeIcon } from "@plane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -95,7 +96,7 @@ export const ProjectInboxHeader: FC = observer(() => {
                 <BreadcrumbLink
                   label="Intake"
                   href={`/${workspaceSlug}/projects/${projectId}/intake/`}
-                  icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<IntakeIcon className="h-4 w-4 text-custom-text-300" />}
                   isLast
                 />
               }

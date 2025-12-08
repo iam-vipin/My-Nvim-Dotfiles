@@ -4,6 +4,7 @@ import type { TUserPermissions } from "./enums";
 import type { EProductSubscriptionEnum } from "./payment";
 import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
+import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
 // extended imports
 import type { TWorkspaceExtendedResultEntities } from "./workspace-extended";
@@ -87,7 +88,7 @@ export interface IWorkspaceMember {
   last_name?: string;
   joining_date?: string;
   display_name?: string;
-  last_login_medium?: string;
+  last_login_medium?: TLoginMediums;
   is_active?: boolean;
 }
 

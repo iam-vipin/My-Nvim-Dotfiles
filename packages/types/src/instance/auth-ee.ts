@@ -23,3 +23,5 @@ export type TInstanceEnterpriseAuthenticationConfigurationKeys =
 export type TInstanceEnterpriseAuthenticationKeys =
   | TInstanceEnterpriseAuthenticationMethodKeys
   | TInstanceEnterpriseAuthenticationConfigurationKeys;
+
+export type TExtendedLoginMediums = "oidc" | "saml";

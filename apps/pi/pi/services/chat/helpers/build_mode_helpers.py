@@ -483,7 +483,7 @@ async def execute_and_persist_clarification(
 
     # Build stream chunk
     try:
-        stream_chunk = f"πspecial clarification blockπ: {json.dumps(clarification_payload)}\n"
+        stream_chunk = f"πspecial clarification blockπ: {json.dumps(serialize_for_json(clarification_payload))}\n"
     except Exception:
         stream_chunk = f"πspecial clarification blockπ: {str(result)}\n"
     return flow_step, tool_message, current_step + 1, stream_chunk
@@ -862,7 +862,9 @@ async def execute_retrieval_tool_and_build_step(
             message = result.get("message", "")
             # If there's a 'data' field, use it; otherwise omit the Result section (simpler format)
             if "data" in result and result["data"]:
-                content = f"{message}\n\nResult: {json.dumps(result["data"], ensure_ascii=False)}"
+                # Serialize UUID objects to strings before JSON encoding
+                serialized_data = serialize_for_json(result["data"])
+                content = f"{message}\n\nResult: {json.dumps(serialized_data, ensure_ascii=False)}"
             else:
                 # No data field, just use the message
                 content = message

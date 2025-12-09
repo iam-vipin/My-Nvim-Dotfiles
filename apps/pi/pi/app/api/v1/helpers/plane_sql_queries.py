@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Any
 from typing import Dict
@@ -1068,76 +1069,153 @@ async def get_workspace_plans_batch(workspace_ids: List[str]) -> Dict[str, str]:
 
 async def search_workitem_by_identifier(identifier: str, workspace_slug: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
-    Search for a work item by its unique identifier (e.g., 'WEB-821').
+    Search for a work item by its unique identifier or UUID.
 
     Args:
-        identifier: The unique identifier in format 'PROJECT-SEQUENCE' (e.g., 'WEB-821')
+        identifier: Either a UUID string or unique identifier in format 'PROJECT-SEQUENCE' (e.g., 'WEB-821')
         workspace_slug: Optional workspace slug for filtering
 
     Returns:
         Dictionary with work item details or None if not found
     """
     try:
-        # Parse the identifier (e.g., 'WEB-821' -> project_identifier='WEB', sequence_id=821)
-        if "-" not in identifier:
-            log.error(f"Invalid identifier format '{identifier}'. Expected format: 'PROJECT-SEQUENCE'")
-            return None
-
-        project_identifier, sequence_str = identifier.split("-", 1)
-
+        # Check if identifier is a UUID
         try:
-            sequence_id = int(sequence_str)
-        except ValueError:
-            log.error(f"Invalid sequence number '{sequence_str}' in identifier '{identifier}'")
-            return None
+            uuid.UUID(identifier)
+            is_uuid = True
+        except (ValueError, AttributeError):
+            is_uuid = False
 
-        # Build the query with workspace filtering if provided
-        workspace_filter = ""
-        params = [project_identifier, sequence_id]
+        if is_uuid:
+            # Handle UUID-based lookup
+            log.info(f"Searching for work item by UUID: {identifier}")
 
-        if workspace_slug:
-            workspace_filter = "AND w.slug = $3"
-            params.append(workspace_slug)
+            workspace_filter = ""
+            params: List[Any] = [identifier]
 
-        query = f"""
-        SELECT
-            i.id,
-            i.name,
-            i.project_id,
-            p.identifier as project_identifier,
-            i.sequence_id,
-            i.state_id,
-            i.priority,
-            i.workspace_id,
-            i.created_at,
-            i.updated_at,
-            i.description_stripped,
-            i.start_date,
-            i.target_date,
-            i.completed_at,
-            i.point,
-            i.is_draft,
-            i.archived_at,
-            i.type_id,
-            it.name as type_name,
-            it.is_epic as is_epic
-        FROM issues i
-        JOIN projects p ON i.project_id = p.id
-        JOIN workspaces w ON i.workspace_id = w.id
-        LEFT JOIN issue_types it ON i.type_id = it.id
-        WHERE p.identifier = $1
-        AND i.sequence_id = $2
-        AND i.deleted_at IS NULL
-        AND p.deleted_at IS NULL
-        {workspace_filter}
-        LIMIT 1
-        """
+            if workspace_slug:
+                workspace_filter = "AND w.slug = $2"
+                params.append(workspace_slug)
 
-        result = await PlaneDBPool.fetchrow(query, tuple(params))
+            query = f"""
+            SELECT
+                i.id,
+                i.name,
+                i.project_id,
+                p.identifier as project_identifier,
+                i.sequence_id,
+                i.state_id,
+                i.priority,
+                i.workspace_id,
+                i.created_at,
+                i.updated_at,
+                i.description_stripped,
+                i.start_date,
+                i.target_date,
+                i.completed_at,
+                i.point,
+                i.is_draft,
+                i.archived_at,
+                i.type_id,
+                it.name as type_name,
+                it.is_epic as is_epic
+            FROM issues i
+            JOIN projects p ON i.project_id = p.id
+            JOIN workspaces w ON i.workspace_id = w.id
+            LEFT JOIN issue_types it ON i.type_id = it.id
+            WHERE i.id = $1
+            AND i.deleted_at IS NULL
+            AND p.deleted_at IS NULL
+            {workspace_filter}
+            LIMIT 1
+            """
+
+            result = await PlaneDBPool.fetchrow(query, tuple(params))
+
+        else:
+            # Handle PROJECT-SEQUENCE identifier format
+            # Parse the identifier (e.g., 'WEB-821' -> project_identifier='WEB', sequence_id=821)
+            if "-" not in identifier:
+                log.error(f"Invalid identifier format '{identifier}'. Expected format: 'PROJECT-SEQUENCE' or UUID")
+                return None
+
+            project_identifier, sequence_str = identifier.split("-", 1)
+
+            try:
+                sequence_id = int(sequence_str)
+            except ValueError:
+                log.error(f"Invalid sequence number '{sequence_str}' in identifier '{identifier}'")
+                return None
+
+            # Build the query with workspace filtering if provided
+            workspace_filter = ""
+            params = [project_identifier, sequence_id]
+
+            if workspace_slug:
+                workspace_filter = "AND w.slug = $3"
+                params.append(workspace_slug)
+
+            query = f"""
+            SELECT
+                i.id,
+                i.name,
+                i.project_id,
+                p.identifier as project_identifier,
+                i.sequence_id,
+                i.state_id,
+                i.priority,
+                i.workspace_id,
+                i.created_at,
+                i.updated_at,
+                i.description_stripped,
+                i.start_date,
+                i.target_date,
+                i.completed_at,
+                i.point,
+                i.is_draft,
+                i.archived_at,
+                i.type_id,
+                it.name as type_name,
+                it.is_epic as is_epic
+            FROM issues i
+            JOIN projects p ON i.project_id = p.id
+            JOIN workspaces w ON i.workspace_id = w.id
+            LEFT JOIN issue_types it ON i.type_id = it.id
+            WHERE p.identifier = $1
+            AND i.sequence_id = $2
+            AND i.deleted_at IS NULL
+            AND p.deleted_at IS NULL
+            {workspace_filter}
+            LIMIT 1
+            """
+
+            result = await PlaneDBPool.fetchrow(query, tuple(params))
 
         if result:
             log.info(f"Found work item with identifier '{identifier}': {result["name"]}")
-            return dict(result)
+            # Convert UUID fields to strings and datetime/date fields to ISO format for JSON serialization
+            return {
+                "id": str(result["id"]),
+                "name": result["name"],
+                "project_id": str(result["project_id"]),
+                "project_identifier": result["project_identifier"],
+                "sequence_id": result["sequence_id"],
+                "state_id": str(result["state_id"]) if result["state_id"] else None,
+                "priority": result["priority"],
+                "workspace_id": str(result["workspace_id"]),
+                "created_at": result["created_at"].isoformat() if result["created_at"] else None,
+                "updated_at": result["updated_at"].isoformat() if result["updated_at"] else None,
+                "description_stripped": result["description_stripped"],
+                "start_date": result["start_date"].isoformat() if result["start_date"] else None,
+                "target_date": result["target_date"].isoformat() if result["target_date"] else None,
+                "completed_at": result["completed_at"].isoformat() if result["completed_at"] else None,
+                "point": result["point"],
+                "is_draft": result["is_draft"],
+                "archived_at": result["archived_at"].isoformat() if result["archived_at"] else None,
+                "type_id": str(result["type_id"]) if result["type_id"] else None,
+                "type_name": result["type_name"],
+                "is_epic": result["is_epic"],
+            }
         else:
             log.info(f"No work item found with identifier '{identifier}'")
             return None

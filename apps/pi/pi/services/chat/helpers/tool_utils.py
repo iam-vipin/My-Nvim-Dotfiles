@@ -216,11 +216,9 @@ def tool_name_shown_to_user(tool_name: str) -> str:
         "workitems_list": "List Work-items",
         "list_member_projects": "List Member Projects",
     }
-    print("received tool name: ", tool_name)
     name_to_return = tool_to_user_map.get(tool_name, "")
     if not name_to_return:
         name_to_return = TOOL_NAME_TO_CATEGORY_MAP.get(tool_name, {}).get("front_facing_name", tool_name)
-    print("name to return: ", name_to_return)
     return name_to_return
 
 
@@ -659,6 +657,15 @@ When the user mentions an EXISTING entity (one that already exists in Plane):
 - **YOU MUST**: Use that extracted UUID directly in ALL subsequent tool calls
 - **FORBIDDEN**: Using placeholders like `<id of workitem: ask>` for existing entities
 - **FORBIDDEN**: Using names/identifiers directly as *_id parameters (e.g., `project_id: "Mobile"`)
+
+**CRITICAL - PROPERTY VALUES RESOLUTION:**
+When setting properties (state, labels, assignees, types) on work items, you MUST resolve names to IDs:
+- **state property**: "change state to done" → call `search_state_by_name("done", project_id=...)` → extract `state_id` → use in action
+- **labels property**: "add label 'bug'" → call `search_label_by_name("bug", project_id=...)` → extract `label_id` → use in action
+- **assignees property**: "assign to John" → call `search_user_by_name("John")` → extract `user_id` → use in action
+- **type property**: "change type to task" → call `search_type_by_name("task", project_id=...)` → extract `type_id` → use in action
+- **NEVER** use property names directly (e.g., `state: {{name: "backlog"}}` ❌) - always resolve to ID first (e.g., `state_id: "uuid-123-eabc3cf2e"` ✅)
+
 
 **RULE 2: NEWLY CREATED ENTITIES - USE PLACEHOLDERS**
 When planning actions that depend on entities you CREATE in the CURRENT PLAN:

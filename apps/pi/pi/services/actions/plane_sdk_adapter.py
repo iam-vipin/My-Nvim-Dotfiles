@@ -204,8 +204,8 @@ class PlaneSDKAdapter:
         try:
             # Map legacy fields
             payload = dict(update_data)
-            if "state" in payload and "state_id" not in payload:
-                payload["state_id"] = payload.pop("state")
+            # if "state" in payload and "state_id" not in payload:
+            #     payload["state_id"] = payload.pop("state")
 
             patched = UpdateWorkItem(**payload)
 

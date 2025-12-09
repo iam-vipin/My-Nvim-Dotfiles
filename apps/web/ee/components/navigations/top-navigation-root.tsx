@@ -115,6 +115,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
                   }
                 )}
                 onClick={() => togglePiChatDrawer()}
+                data-prevent-outside-click
               >
                 <span className="shrink-0 size-5 grid place-items-center">
                   {isPiChatDrawerOpen ? <CloseIcon className="size-5" /> : <PiIcon className="size-5" />}

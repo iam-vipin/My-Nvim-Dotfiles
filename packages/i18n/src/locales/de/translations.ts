@@ -1600,6 +1600,7 @@ export default {
         name: "Name des Arbeitsbereichs",
         company_size: "Unternehmensgröße",
         url: "URL des Arbeitsbereichs",
+        workspace_timezone: "Zeitzone des Arbeitsbereichs",
         update_workspace: "Arbeitsbereich aktualisieren",
         delete_workspace: "Diesen Arbeitsbereich löschen",
         delete_workspace_description:

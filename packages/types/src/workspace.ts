@@ -32,6 +32,7 @@ export interface IWorkspace {
   current_plan?: EProductSubscriptionEnum;
   is_on_trial?: boolean;
   role: number;
+  timezone: string;
 }
 
 export interface IWorkspaceLite {
@@ -234,7 +235,7 @@ export interface IWorkspaceProgressResponse {
   unstarted_issues: number;
 }
 export interface IWorkspaceAnalyticsResponse {
-  completion_chart: any;
+  completion_chart: Record<string, unknown>;
 }
 
 export type TWorkspacePaginationInfo = TPaginationInfo & {

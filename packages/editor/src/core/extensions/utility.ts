@@ -8,8 +8,6 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { NodeHighlightPlugin } from "@/plugins/highlight";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
-import { PasteAssetPlugin } from "@/plugins/paste-asset";
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 import { codemark } from "./code-mark";
 
@@ -83,7 +81,6 @@ export const UtilityExtension = (props: Props) => {
           flaggedExtensions,
           editor: this.editor,
         }),
-        PasteAssetPlugin(),
         NodeHighlightPlugin(),
       ];
     },

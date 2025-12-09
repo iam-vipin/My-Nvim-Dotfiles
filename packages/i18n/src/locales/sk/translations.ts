@@ -1583,6 +1583,7 @@ export default {
         name: "Názov pracovného priestoru",
         company_size: "Veľkosť spoločnosti",
         url: "URL pracovného priestoru",
+        workspace_timezone: "Časové pásmo pracovného priestoru",
         update_workspace: "Aktualizovať priestor",
         delete_workspace: "Zmazať tento priestor",
         delete_workspace_description: "Zmazaním priestoru odstránite všetky dáta a zdroje. Akcia je nevratná.",

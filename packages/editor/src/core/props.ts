@@ -1,6 +1,8 @@
 import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
 import { cn } from "@plane/utils";
+// helpers
+import { processAssetDuplication } from "@/helpers/paste-asset";
 
 type TArgs = {
   editorClassName: string;
@@ -45,6 +47,16 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
           if (slashCommand) return true;
         }
       },
+    },
+    handlePaste: (view, event) => {
+      if (!event.clipboardData) return false;
+
+      const htmlContent = event.clipboardData.getData("text/plane-editor-html");
+      if (!htmlContent) return false;
+
+      const { processedHtml } = processAssetDuplication(htmlContent);
+      view.pasteHTML(processedHtml);
+      return true;
     },
     transformPastedHTML(html) {
       return stripCommentMarksFromHTML(html);

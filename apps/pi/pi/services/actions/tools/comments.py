@@ -1,7 +1,8 @@
 """
-Comments API tools for Plane issue comment management.
+Comments API tools for Plane issue comments operations.
 """
 
+import uuid
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -31,7 +32,7 @@ def get_comment_tools(method_executor, context):
         Args:
             issue_id: Issue ID (required)
             comment_html: Comment content in HTML format (required)
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
             external_source: External source identifier (e.g., "jira")
             external_id: External system ID
@@ -42,6 +43,9 @@ def get_comment_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Note: issue_id and project_id validation/resolution is handled centrally
+        # in action_execution_helpers.validate_and_resolve_ids() before tool execution
 
         result = await method_executor.execute(
             "comments",
@@ -85,7 +89,7 @@ def get_comment_tools(method_executor, context):
         Args:
             comment_id: Comment ID (required)
             issue_id: Issue ID (required)
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
@@ -93,6 +97,26 @@ def get_comment_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "comments",
@@ -123,7 +147,7 @@ def get_comment_tools(method_executor, context):
             comment_id: Comment ID (required)
             issue_id: Issue ID (required)
             comment_html: Comment content in HTML format
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
             external_source: External source identifier (e.g., "jira")
             external_id: External system ID
@@ -133,6 +157,26 @@ def get_comment_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "comments",
@@ -162,7 +206,7 @@ def get_comment_tools(method_executor, context):
         Args:
             comment_id: Comment ID (required)
             issue_id: Issue ID (required)
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
@@ -170,6 +214,26 @@ def get_comment_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "comments",

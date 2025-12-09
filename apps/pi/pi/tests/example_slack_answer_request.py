@@ -13,7 +13,7 @@ import requests
 # Configuration
 BASE_URL = "http://localhost:8001"  # Update with your actual base URL
 BASE_PATH = ""  # Update if your API has a base path (e.g., "/pi")
-AUTHORIZATION_TOKEN = "plane_api_c9a0aae9011c483bae231b655afac38d"  # Your Plane access token or API key
+AUTHORIZATION_TOKEN = "plane_api_28a5ceb716424a47b358881d9d185e1f"  # Your Plane access token or API key
 # AUTHORIZATION_TOKEN = "plane_api_c9a0aae9011c483bae231b655afac38d" # Your Plane access token or API key
 
 # Endpoint URL
@@ -46,45 +46,9 @@ project_id = "47ed2e28-3e91-4ba8-a463-4a117941e2d4"
 context = {"first_name": "sunder", "last_name": "Chintada"}
 
 query = """
-This was the previous conversation history: \n\n
-===================\n\n
-User:  give me one issue assigned to me in PALL project
-Assistant: There are currently no work-items assigned to you in the PALL project. If you need help finding work-items in another project or have a different request, just let me know!
-Assistant: There are currently no work-items assigned to you in the PALL project. If you need help finding work-items in another project or want to adjust your search, just let me know!
-User:  create a task in PALL project title - "Hello task" and assign it to me
-Assistant: Successfully created work item 'Hello task' - <http://127.0.0.1:3000/integrations03/browse/PALL-4/>
-
-User:  do I have any task assigned to me in PALL project. If yes, show it
-Assistant: Yes, you currently have one task assigned to you in the PALL project:
-
-• *Task Name:* Hello task
-• *Unique Key:* Not provided in the data
-• *Priority:* None
-• *State:* Backlog
-
-If you need more details or want to take action on this task, just let me know!
-User:  what project are we discussing in this thread
-Assistant: It seems like you're referring to a previous conversation about the PALL project. If you have any specific questions or need further information about the PALL project, feel free to ask!
-User:  create a task with title Test World
-Assistant: Successfully created work item 'Test World' - <http://127.0.0.1:3000/integrations03/browse/PALL-5/>
-
-User:  what are we discussing?
-Assistant: I'm sorry, but I don't have access to past conversation history. However, I can help with any questions or information you need right now. Feel free to ask!
-User:  try again
-Assistant: I'm here to help with any questions or tasks you have. However, I don't have access to past conversation history. If you have any specific questions or need assistance, feel free to let me know!
-User:  past conversation is available under `This was the previous conversation history` what are we discussing
-Assistant: I'm sorry, but I don't have access to the previous conversation history. However, if you provide me with some details or context about the project and work items, I'd be happy to help you summarize or discuss them further!
-User:  summarize this thread
-Assistant: I'm sorry, but I can't provide a summary of the conversation history as there is no prior conversation content available. If you have specific questions or need assistance with a project, feel free to let me know!
-
-===================\n\n
-πCurrent user messageπ:\
-What are we discussing in this thread?
+Here is the conversation history for context: =================== User: can you talk to SSI folks once. also anything from EOP? User: any update on this for SSI? User: CDN one resolved, we are fixing all external call related issues in Air-gapped 2.0.0 commercial release. User: do let us know if you hear anything from SSI, . User: Can we check with them on which version they are on? User: I guess they are still running Plane v1.11.1 User: If they are on the old version. Please request them to move to latest version. User: New Airgapped License can be downloaded from the prime.plane.so User: Here was Jake @ SSIs response to me: "Thanks Jason. There are no active issues I am aware of besides the broken image links on the air-gapped version. Any word on if your team is close to a fix there?" User: create an issue on we application project and assign it to Manish here’s context Here was Jake @ SSIs response to me: "Thanks Jason. There are no active issues I am aware of besides the broken image links on the air-gapped version. Any word on if your team is close to a fix there?" Assistant: Successfully created work item 'Chassis Design' - <http://127.0.0.1:3000/switchertest/browse/CARB-1/> User: created the issue you’ll be notified after it’s fixed User: Any idea which version they are on? User: I have updated the description with details. in the above ticket. User: Hmm, may know User: About? User: &gt; Any idea which version they are on? Curious if he knows the version User: Ohh okay. User: Just to set the expectation. The image thing that was mentioned by SSI will not be fixed as part of v2.0.0. Which is scheduled to release on 5th december. User: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2, Sriram mentioned their issue will be fixed by tomorrow after a patch" =================== πCurrent user messageπ: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2, Sriram mentioned their issue will be fixed by tomorrow after a patch"
 """  # noqa E501
-query = """
-πCurrent user messageπ:
-create a task with title Test World in Starlette project
-"""
+
 # Request payload - ChatRequest schema
 payload = {
     "query": query,

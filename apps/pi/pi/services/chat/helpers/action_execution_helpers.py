@@ -222,12 +222,204 @@ def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity
     return tool_params
 
 
+# Implicit dependency rules for action execution
+# Format: (prerequisite_tool, dependent_tool)
+# When both tools are present in planned actions, dependent must wait for prerequisite
+IMPLICIT_DEPENDENCY_RULES = [
+    # Project updates must complete before creating project-scoped features
+    # (modules, cycles, pages, worklogs, views, intake all require project feature flags)
+    ("projects_update", "modules_create"),
+    ("projects_update", "cycles_create"),
+    ("projects_update", "worklogs_create"),
+    ("projects_update", "pages_create"),
+    ("projects_update", "views_create"),
+    ("projects_update", "intake_create"),
+    # Entity creation must complete before adding items to it
+    ("modules_create", "modules_add_work_items"),
+    ("cycles_create", "cycles_add_work_items"),
+]
+
+# Entity type to ID field mapping for update operations
+# Maps entity types to the parameter name used for their ID in update tools
+ENTITY_ID_FIELD_MAP = {
+    "workitem": "issue_id",
+    "epic": "issue_id",
+    "cycle": "cycle_id",
+    "module": "module_id",
+    "project": "project_id",
+    "label": "label_id",
+    "state": "state_id",
+    "comment": "comment_id",
+    "attachment": "attachment_id",
+    "type": "type_id",
+    "property": "property_id",
+    "intake": "intake_id",
+    "worklog": "worklog_id",
+    "link": "link_id",
+}
+
+
+async def validate_and_resolve_ids(tool_args: Dict[str, Any], workspace_slug: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Validate and resolve issue_id and project_id parameters before tool execution.
+
+    Handles two cases:
+    1. issue_id as work item identifier (e.g., 'CARB-1') instead of UUID
+    2. project_id as non-UUID value (e.g., project identifier, URL, etc.)
+
+    Args:
+        tool_args: Tool arguments from planned action
+        workspace_slug: Workspace context for lookups
+
+    Returns:
+        Updated tool_args with resolved UUIDs
+    """
+    import uuid as uuid_module
+
+    resolved_args = tool_args.copy()
+    issue_id = resolved_args.get("issue_id")
+    project_id = resolved_args.get("project_id")
+
+    # Step 1: Validate and resolve issue_id if it's a work item identifier (e.g., CARB-1)
+    if issue_id:
+        try:
+            uuid_module.UUID(str(issue_id))
+            # issue_id is already a valid UUID, no need to resolve
+        except (ValueError, AttributeError):
+            # issue_id is not a UUID, might be an identifier like CARB-1
+            # Try to resolve it using search_workitem_by_identifier
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import search_workitem_by_identifier
+
+                workitem_info = await search_workitem_by_identifier(str(issue_id), workspace_slug)
+                if workitem_info and workitem_info.get("id"):
+                    log.info(f"Resolved issue_id identifier '{issue_id}' to UUID: {workitem_info["id"]}")
+                    resolved_args["issue_id"] = str(workitem_info["id"])  # Convert to string
+
+                    # Also resolve project_id from workitem if not already set
+                    if not project_id and workitem_info.get("project_id"):
+                        resolved_args["project_id"] = str(workitem_info["project_id"])  # Convert to string
+                        log.info(f"Auto-resolved project_id from workitem: {workitem_info["project_id"]}")
+
+            except Exception as e:
+                log.warning(f"Failed to resolve issue_id '{issue_id}' from identifier: {e}")
+
+    # Step 2: Validate and resolve project_id if it's not a valid UUID
+    # Only resolve if we have an issue_id to resolve from
+    if issue_id and project_id:
+        try:
+            uuid_module.UUID(str(project_id))
+            # project_id is a valid UUID, no need to resolve
+        except (ValueError, AttributeError):
+            # project_id is not a UUID (might be URL, identifier, etc.)
+            # Resolve from issue_id
+            if resolved_args.get("issue_id"):  # Use potentially resolved issue_id
+                try:
+                    from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                    issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
+                    if issue_info and issue_info.get("project_id"):
+                        log.info(f"Resolved invalid project_id '{project_id}' to UUID: {issue_info["project_id"]}")
+                        resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
+                except Exception as e:
+                    log.warning(f"Failed to resolve project_id from issue_id: {e}")
+    elif issue_id and not project_id:
+        # project_id missing entirely, try to resolve from issue_id
+        if resolved_args.get("issue_id"):
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(resolved_args["issue_id"]))
+                if issue_info and issue_info.get("project_id"):
+                    log.info(f"Resolved missing project_id from issue_id: {issue_info["project_id"]}")
+                    resolved_args["project_id"] = str(issue_info["project_id"])  # Convert to string
+            except Exception as e:
+                log.warning(f"Failed to resolve missing project_id from issue_id: {e}")
+
+    return resolved_args
+
+
+def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity_type: str, action: str) -> Dict[str, Any]:
+    """
+    Extract tool-compatible parameters from artifact data for execution.
+
+    This is the REVERSE of prepare_edited_workitem_artifact_data:
+    - prepare_edited: enriches simple IDs → full objects (for display)
+    - extract_tool_params: extracts/renames fields (for execution)
+
+    Args:
+        artifact_data: Raw data from frontend (uses artifact schema field names)
+        entity_type: Type of entity (workitem, epic, project, etc.)
+        action: Action type (create, update, delete)
+
+    Returns:
+        Tool-compatible parameters dictionary with renamed fields and unsupported fields removed
+    """
+    # Field mapping: artifact schema → tool parameter names
+    ARTIFACT_TO_TOOL_MAPPING = {
+        "assignee_ids": "assignees",
+        "label_ids": "labels",
+        "parent_id": "parent",
+        "state_id": "state",  # SDK adapter handles state_id internally
+        "lead_id": "lead",  # Module lead
+        "member_ids": "members",  # Module members
+    }
+
+    # Fields that cannot be set during creation (require separate API calls after creation)
+    CREATE_UNSUPPORTED_FIELDS = {
+        "workitem": {"cycle_id", "module_ids"},
+        "epic": {"cycle_id", "module_ids"},
+    }
+
+    tool_params = {}
+    unsupported = CREATE_UNSUPPORTED_FIELDS.get(entity_type, set()) if action == "create" else set()
+
+    # Handle nested properties structure if present
+    data_to_process = artifact_data.copy()
+    if "properties" in data_to_process and isinstance(data_to_process["properties"], dict):
+        # Merge properties into top level for processing
+        properties = data_to_process.pop("properties")
+        data_to_process.update(properties)
+
+    for key, value in data_to_process.items():
+        # Skip None values
+        if value is None:
+            continue
+
+        # Skip empty lists (but allow empty strings for explicit clearing)
+        if isinstance(value, list) and not value:
+            continue
+
+        # Skip empty description_html - API rejects empty string, use None instead
+        if key == "description_html" and value == "":
+            continue
+
+        # Skip metadata fields that shouldn't be sent to tools
+        if key in {"entity_info", "artifact_sub_type"}:
+            continue
+
+        # Filter unsupported fields for this entity type and action
+        if key in unsupported:
+            log.warning(f"Field '{key}' cannot be set during {entity_type} {action}, skipping")
+            continue
+
+        # Map artifact field names to tool parameter names
+        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
+        tool_params[mapped_key] = value
+
+    log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
+    return tool_params
+
+
 async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> Tuple[List[Dict], str, str]:
     """Load and validate artifacts for execution."""
     artifacts = await get_action_artifacts_by_ids(db, [a.artifact_id for a in request_data])
 
     original_query = artifacts[0].data.get("planning_context", {}).get("original_query", "")
     conversation_context = artifacts[0].data.get("planning_context", {}).get("conversation_context", {})
+
+    # Extract workspace_slug from conversation_context for ID resolution
+    workspace_slug = conversation_context.get("workspace_slug")
 
     planned_actions = []
     for artifact, req_item in zip(artifacts, request_data):
@@ -257,6 +449,10 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
         else:
             # Use original planned tool arguments
             tool_args = artifact.data.get("tool_args_raw", {})
+
+        # CENTRALIZED ID VALIDATION AND RESOLUTION
+        # Resolve issue_id (if identifier like CARB-1) and project_id (if invalid UUID) before execution
+        tool_args = await validate_and_resolve_ids(tool_args, workspace_slug)
 
         planned_actions.append({
             "artifact_id": str(artifact.id),

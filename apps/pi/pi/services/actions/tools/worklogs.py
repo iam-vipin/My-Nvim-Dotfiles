@@ -2,6 +2,7 @@
 Worklogs API tools for Plane time tracking operations.
 """
 
+import uuid
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -31,7 +32,7 @@ def get_worklog_tools(method_executor, context):
             issue_id: Issue ID (required)
             description: Worklog description (required)
             duration: Duration in minutes (required)
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
@@ -39,6 +40,26 @@ def get_worklog_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "worklogs",
@@ -66,6 +87,26 @@ def get_worklog_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         result = await method_executor.execute(
             "worklogs",
@@ -122,7 +163,7 @@ def get_worklog_tools(method_executor, context):
             duration: Duration in minutes
             created_by: User ID who created the worklog
             updated_by: User ID who updated the worklog
-            project_id: Project ID (optional, auto-filled from context)
+            project_id: Project ID (optional, auto-filled from context or resolved from issue_id)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
         # Auto-fill from context if not provided
@@ -130,6 +171,26 @@ def get_worklog_tools(method_executor, context):
             workspace_slug = context["workspace_slug"]
         if project_id is None and "project_id" in context:
             project_id = context["project_id"]
+
+        # Programmatically resolve project_id from issue_id if missing or invalid (non-UUID)
+        should_resolve = False
+        if issue_id and not project_id:
+            should_resolve = True
+        elif issue_id and project_id:
+            try:
+                uuid.UUID(str(project_id))
+            except (ValueError, AttributeError):
+                should_resolve = True
+
+        if should_resolve:
+            try:
+                from pi.app.api.v1.helpers.plane_sql_queries import get_issue_identifier_for_artifact
+
+                issue_info = await get_issue_identifier_for_artifact(str(issue_id))
+                if issue_info and issue_info.get("project_id"):
+                    project_id = issue_info["project_id"]
+            except Exception:
+                pass
 
         # Build update data
         update_data: Dict[str, Any] = {}

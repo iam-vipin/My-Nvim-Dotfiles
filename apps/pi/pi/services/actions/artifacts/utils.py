@@ -959,20 +959,11 @@ async def prepare_epic_artifact_data(epic_data: dict):
 
             # Note: Epics don't have parent_id field, so no parent resolution needed
 
-        # For update operations, fetch existing epic details and merge with any updates
+        # For other operations, fetch existing epic details if entity_id present
         elif "entity_id" in epic_data and epic_data["entity_id"]:
-            # Check if this is an update operation with LLM updates
-            if "action" in epic_data and epic_data["action"] == "update" and "parameters" in epic_data:
-                # This is an update with LLM changes - merge with existing data
-                entity_id = str(epic_data["entity_id"])
-                llm_updates = epic_data.get("parameters", {})
-
-                log.info(f"Merging LLM updates with existing epic data for {entity_id}")
-                result = await merge_llm_updates_with_existing_data("epic", entity_id, llm_updates)
-            else:
-                # Regular fetch - use the existing workitem details function since epics are workitems
-                fetched_result = await get_workitem_details_for_artifact(epic_data["entity_id"])
-                result = fetched_result if fetched_result is not None else epic_data
+            # Use the existing workitem details function since epics are workitems
+            fetched_result = await get_workitem_details_for_artifact(epic_data["entity_id"])
+            result = fetched_result if fetched_result is not None else epic_data
 
         else:
             result = epic_data
@@ -1015,20 +1006,10 @@ async def prepare_workitem_artifact_data(workitem_data: dict):
                     # Store only parent_id as plain UUID string
                     result["properties"]["parent_id"] = str(parent_id)
 
-        # For update operations, fetch existing workitem details and merge with any updates
+        # For other operations, fetch existing workitem details if entity_id present
         elif "entity_id" in workitem_data and workitem_data["entity_id"]:
-            # Check if this is an update operation with LLM updates
-            if "action" in workitem_data and workitem_data["action"] == "update" and "parameters" in workitem_data:
-                # This is an update with LLM changes - merge with existing data
-                entity_id = str(workitem_data["entity_id"])
-                llm_updates = workitem_data.get("parameters", {})
-
-                log.info(f"Merging LLM updates with existing workitem data for {entity_id}")
-                result = await merge_llm_updates_with_existing_data("workitem", entity_id, llm_updates)
-            else:
-                # Regular fetch of existing workitem details (no updates)
-                fetched_result = await get_workitem_details_for_artifact(workitem_data["entity_id"])
-                result = fetched_result if fetched_result is not None else workitem_data
+            fetched_result = await get_workitem_details_for_artifact(workitem_data["entity_id"])
+            result = fetched_result if fetched_result is not None else workitem_data
 
         else:
             result = workitem_data

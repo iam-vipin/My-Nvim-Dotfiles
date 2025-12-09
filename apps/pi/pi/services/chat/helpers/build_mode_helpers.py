@@ -614,6 +614,29 @@ async def plan_action_and_prepare_outputs(
     if placeholder_ref:
         artifact_data["placeholder_ref"] = placeholder_ref
 
+    # For UPDATE actions on workitems/epics, merge LLM updates with existing data
+    if action_type == "update" and artifact_type in ["workitem", "epic"]:
+        # Extract entity_id from tool_args
+        entity_id = tool_args.get("issue_id")
+        if entity_id:
+            try:
+                from pi.services.actions.artifacts.utils import merge_llm_updates_with_existing_data
+
+                log.info(f"[Planning] UPDATE action detected for {artifact_type} {entity_id} - merging with existing data")
+                # Merge LLM's partial updates with complete existing workitem data
+                merged_parameters = await merge_llm_updates_with_existing_data(
+                    artifact_type,
+                    str(entity_id),
+                    parameters,  # The LLM's partial updates
+                )
+                # Update action_summary with complete merged data
+                action_summary["parameters"] = merged_parameters
+                # Also update the artifact_data with the new action_summary
+                artifact_data["planning_data"] = action_summary
+                log.debug(f"[Planning] Merge completed - parameters now have {len(merged_parameters.get("properties", {}))} properties")
+            except Exception as e:
+                log.warning(f"[Planning] Failed to merge with existing {artifact_type} data: {e} - using LLM updates only")
+
     # Create artifact and get the database-assigned ID
     artifact_result = None
     artifact_id = None

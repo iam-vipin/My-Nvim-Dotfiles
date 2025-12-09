@@ -74,6 +74,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     placeholder = t("issue.comments.placeholder"),
     disabledExtensions: additionalDisabledExtensions = [],
     editorClassName = "",
+    showPlaceholderOnEmpty = true,
     submitButtonText = "common.comment",
     ...rest
   } = props;
@@ -160,6 +161,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               }),
             }}
             placeholder={placeholder}
+            showPlaceholderOnEmpty={showPlaceholderOnEmpty}
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}

@@ -96,7 +96,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         });
       });
 
-  // Use unified menu hook from plane-web (resolves to CE or EE)
   const menuResult = useCycleMenuItems({
     cycleDetails: cycleDetails ?? undefined,
     workspaceSlug,
@@ -111,7 +110,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     handleOpenInNewTab,
   });
 
-  // Handle both CE (array) and EE (object) return types
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
   const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 

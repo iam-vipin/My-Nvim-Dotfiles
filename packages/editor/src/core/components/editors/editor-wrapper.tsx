@@ -41,6 +41,7 @@ export function EditorWrapper(props: Props) {
     onTransaction,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   } = props;
@@ -67,6 +68,7 @@ export function EditorWrapper(props: Props) {
     onTransaction,
     autofocus,
     placeholder,
+    showPlaceholderOnEmpty,
     tabIndex,
     value,
   });

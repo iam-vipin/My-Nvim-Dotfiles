@@ -58,7 +58,7 @@ export class SentryAlertHandler implements ISentryTaskHandler {
       // Create Plane issue from Sentry alert
       const createdIssue = await this.createPlaneIssue(services, connection, alertSettings, sentryEventAlert);
       if (!createdIssue) {
-        logger.error("Failed to create Plane issue from Sentry alert");
+        logger.error("Failed to create Plane issue from Sentry alert", createdIssue);
         return;
       }
 
@@ -113,6 +113,39 @@ export class SentryAlertHandler implements ISentryTaskHandler {
   }
 
   /**
+   * Normalizes a multi-value field that can come in three formats:
+   * - Array: ["id1", "id2"] - returned as-is
+   * - String: "id1" - wrapped into an array
+   * - String Array: "[\"id1\", \"id2\"]" - parsed from JSON
+   */
+  private normalizeMultiValueField(value: unknown): string[] | undefined {
+    if (!value) return undefined;
+
+    // Already an array
+    if (Array.isArray(value)) return value as string[];
+
+    // String value - could be a single value or a JSON stringified array
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+
+      // Check if it's a JSON stringified array
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed: unknown = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) return parsed as string[];
+        } catch {
+          logger.error("Failed to parse JSON stringified array", { value: trimmed });
+        }
+      }
+
+      // Single string value - wrap in array
+      return [value];
+    }
+
+    return undefined;
+  }
+
+  /**
    * Extracts alert settings from the Sentry webhook data.
    * Returns structured settings including project ID, assignees, labels, and state.
    */
@@ -123,19 +156,11 @@ export class SentryAlertHandler implements ISentryTaskHandler {
     const labels = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "labels");
     const state = sentryEventAlert.data.issue_alert.settings.find((setting) => setting.name === "state");
 
-    if (assigneeIds?.value && !Array.isArray(assigneeIds.value)) {
-      assigneeIds.value = [assigneeIds.value];
-    }
-
-    if (labels?.value && !Array.isArray(labels.value)) {
-      labels.value = [labels.value];
-    }
-
     return {
       type: type?.value as string,
       projectId: projectId?.value as string,
-      assigneeIds: assigneeIds?.value as string[],
-      labels: labels?.value as string[],
+      assigneeIds: this.normalizeMultiValueField(assigneeIds?.value),
+      labels: this.normalizeMultiValueField(labels?.value),
       state: state?.value as string,
     };
   }

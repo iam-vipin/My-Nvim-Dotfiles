@@ -21,6 +21,7 @@ module.exports = {
       "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/propel/src/**/*.{js,ts,jsx,tsx}",
       "../../packages/editor/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/mobile-editor/src/**/*.{js,ts,jsx,tsx}",
       "!../../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
@@ -50,6 +51,19 @@ module.exports = {
         "custom-sidebar-shadow-4xl": "var(--color-sidebar-shadow-4xl)",
       },
       colors: {
+        pi: {
+          50: convertToRGB("--color-pi-50"),
+          100: convertToRGB("--color-pi-100"),
+          200: convertToRGB("--color-pi-200"),
+          300: convertToRGB("--color-pi-300"),
+          400: convertToRGB("--color-pi-400"),
+          500: convertToRGB("--color-pi-500"),
+          600: convertToRGB("--color-pi-600"),
+          700: convertToRGB("--color-pi-700"),
+          800: convertToRGB("--color-pi-800"),
+          900: convertToRGB("--color-pi-900"),
+          950: convertToRGB("--color-pi-950"),
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -294,6 +308,7 @@ module.exports = {
         },
       }),
       screens: {
+        xs: "480px",
         "3xl": "1792px",
       },
       // scale down font sizes to 90% of default

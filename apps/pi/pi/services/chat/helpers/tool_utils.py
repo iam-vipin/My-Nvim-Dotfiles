@@ -576,6 +576,7 @@ Use retrieval tools to gather information, then plan the modifying actions based
 - Once you have planned all necessary actions, STOP and do not plan any more
 - Do not repeat the same action multiple times
 - Do not try to execute actions - only plan them
+- For multi-property updates, resolve all required IDs first, then set all properties in a single tool call
 
 **WORKSPACE-LEVEL QUERIES (EFFICIENCY):**
 |- When query is related to workitems and spans ALL projects without specifying a particular project or projects

@@ -131,7 +131,6 @@ class BuildModeToolExecutor:
 
         # Execute the tool - EXPECT structured payload dict
         result = await tool.ainvoke(args)
-        log.info(f"Tool '{tool_name}' executed with payload: {result}")
         if not isinstance(result, dict):
             raise ValueError(f"Tool '{tool_name}' must return a structured payload dict, got {type(result)}")
 

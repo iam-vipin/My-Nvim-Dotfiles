@@ -23,6 +23,95 @@ from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts
 
 log = logger.getChild(__name__)
 
+# Entity type to ID field mapping for update operations
+# Maps entity types to the parameter name used for their ID in update tools
+ENTITY_ID_FIELD_MAP = {
+    "workitem": "issue_id",
+    "epic": "issue_id",
+    "cycle": "cycle_id",
+    "module": "module_id",
+    "project": "project_id",
+    "label": "label_id",
+    "state": "state_id",
+    "comment": "comment_id",
+    "attachment": "attachment_id",
+    "type": "type_id",
+    "property": "property_id",
+    "intake": "intake_id",
+    "worklog": "worklog_id",
+    "link": "link_id",
+}
+
+
+def extract_tool_params_from_artifact_data(artifact_data: Dict[str, Any], entity_type: str, action: str) -> Dict[str, Any]:
+    """
+    Extract tool-compatible parameters from artifact data for execution.
+
+    This is the REVERSE of prepare_edited_workitem_artifact_data:
+    - prepare_edited: enriches simple IDs → full objects (for display)
+    - extract_tool_params: extracts/renames fields (for execution)
+
+    Args:
+        artifact_data: Raw data from frontend (uses artifact schema field names)
+        entity_type: Type of entity (workitem, epic, project, etc.)
+        action: Action type (create, update, delete)
+
+    Returns:
+        Tool-compatible parameters dictionary with renamed fields and unsupported fields removed
+    """
+    # Field mapping: artifact schema → tool parameter names
+    ARTIFACT_TO_TOOL_MAPPING = {
+        "assignee_ids": "assignees",
+        "label_ids": "labels",
+        "parent_id": "parent",
+        "state_id": "state",  # SDK adapter handles state_id internally
+    }
+
+    # Fields that cannot be set during creation (require separate API calls after creation)
+    CREATE_UNSUPPORTED_FIELDS = {
+        "workitem": {"cycle_id", "module_ids"},
+        "epic": {"cycle_id", "module_ids"},
+    }
+
+    tool_params = {}
+    unsupported = CREATE_UNSUPPORTED_FIELDS.get(entity_type, set()) if action == "create" else set()
+
+    # Handle nested properties structure if present
+    data_to_process = artifact_data.copy()
+    if "properties" in data_to_process and isinstance(data_to_process["properties"], dict):
+        # Merge properties into top level for processing
+        properties = data_to_process.pop("properties")
+        data_to_process.update(properties)
+
+    for key, value in data_to_process.items():
+        # Skip None values
+        if value is None:
+            continue
+
+        # Skip empty lists (but allow empty strings for explicit clearing)
+        if isinstance(value, list) and not value:
+            continue
+
+        # Skip empty description_html - API rejects empty string, use None instead
+        if key == "description_html" and value == "":
+            continue
+
+        # Skip metadata fields that shouldn't be sent to tools
+        if key in {"entity_info", "artifact_sub_type"}:
+            continue
+
+        # Filter unsupported fields for this entity type and action
+        if key in unsupported:
+            log.warning(f"Field '{key}' cannot be set during {entity_type} {action}, skipping")
+            continue
+
+        # Map artifact field names to tool parameter names
+        mapped_key = ARTIFACT_TO_TOOL_MAPPING.get(key, key)
+        tool_params[mapped_key] = value
+
+    log.debug(f"Extracted tool params for {entity_type} {action}: {list(tool_params.keys())}")
+    return tool_params
+
 
 async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> Tuple[List[Dict], str, str]:
     """Load and validate artifacts for execution."""
@@ -33,17 +122,39 @@ async def load_artifacts(request_data: List[ArtifactData], db: AsyncSession) -> 
 
     planned_actions = []
     for artifact, req_item in zip(artifacts, request_data):
+        entity_type = artifact.data.get("planning_data", {}).get("artifact_type", "")
+        action = artifact.data.get("planning_data", {}).get("action", "")
+
         if req_item.is_edited:
-            tool_args = req_item.action_data
-            # TODO: validate tool args
+            # Transform edited artifact data from frontend schema to tool parameters
+            tool_args = extract_tool_params_from_artifact_data(req_item.action_data or {}, entity_type, action)
+
+            # For UPDATE actions, preserve the entity ID from the original artifact
+            # The frontend edits fields but doesn't include the entity ID being updated
+            if action == "update":
+                original_tool_args = artifact.data.get("tool_args_raw", {})
+
+                # Preserve the entity's ID field (e.g., issue_id, cycle_id, module_id)
+                id_field = ENTITY_ID_FIELD_MAP.get(entity_type)
+                if id_field and id_field in original_tool_args and id_field not in tool_args:
+                    tool_args[id_field] = original_tool_args[id_field]
+                    log.debug(f"Preserved {id_field}={original_tool_args[id_field]} for {entity_type} update")
+
+                # Also preserve project_id if it's not in the edited data
+                # (many update tools require it as context even though it's not being changed)
+                if "project_id" in original_tool_args and "project_id" not in tool_args:
+                    tool_args["project_id"] = original_tool_args["project_id"]
+                    log.info(f"Preserved project_id={original_tool_args["project_id"]} for {entity_type} update")
         else:
+            # Use original planned tool arguments
             tool_args = artifact.data.get("tool_args_raw", {})
+
         planned_actions.append({
             "artifact_id": str(artifact.id),
             "tool_name": artifact.data.get("planning_data", {}).get("tool_name", ""),
             "args": tool_args,
-            "entity_type": artifact.data.get("planning_data", {}).get("artifact_type", ""),
-            "action": artifact.data.get("planning_data", {}).get("action", ""),
+            "entity_type": entity_type,
+            "action": action,
         })
 
     return planned_actions, original_query, conversation_context

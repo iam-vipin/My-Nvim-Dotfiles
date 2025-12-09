@@ -160,9 +160,9 @@ class PlaneSDKAdapter:
                 data["description_html"] = description_html
             if priority is not None:
                 data["priority"] = priority
-            # Map legacy "state" to new "state_id" if looks like an id
+            # Use 'state' field - CreateWorkItem pydantic model has 'state' field, not 'state_id'
             if state is not None:
-                data["state_id"] = state
+                data["state"] = state
             if assignees:
                 data["assignees"] = assignees
             if labels:

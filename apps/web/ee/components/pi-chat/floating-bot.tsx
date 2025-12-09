@@ -9,6 +9,7 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
+import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 
 const getEntityData = (
   params: Record<string, string | undefined>
@@ -60,7 +61,8 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot() {
   const isSidePanelOpen = searchParams.get("pi_sidebar_open");
   const chatId = searchParams.get("chat_id");
   const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
-  const shouldRenderPiChat = !pathName.includes(`/${workspaceSlug?.toString()}/pi-chat/`) && (projectId || workItem);
+  const shouldRenderPiChat =
+    isPiAllowed(pathName, workspaceSlug?.toString() ?? "") && isPiEnabled && (projectId || workItem);
   useEffect(() => {
     if (!isPiEnabled || !isSidePanelOpen) return;
     // initialize chat

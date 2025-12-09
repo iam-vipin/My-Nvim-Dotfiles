@@ -12,25 +12,8 @@ export const showFloatingBot = () => {
   }
 };
 
-const ALLOWED_PATHS = [
-  "/projects/:projectId/cycles/:cycleId/",
-  "/projects/:projectId/modules/:moduleId/",
-  "/projects/:projectId/pages/",
-  "/projects/:projectId/issues/",
-  "/projects/:projectId/epics/",
-  "/browse/:issueIdentifier/",
-];
-
-// Convert a path like "/projects/:projectId/pages/" to a regex
-const pathToRegex = (path: string) =>
-  new RegExp(
-    "^" +
-      path
-        .replace(/:[^/]+/g, "[^/]+") // Replace :param with wildcard
-        .replace(/\/$/, "") + // Remove trailing slash for matching consistency
-      "/?$" // Allow optional trailing slash
-  );
-
-const regexList = ALLOWED_PATHS.map(pathToRegex);
-
-export const isPiAllowed = (pathname: string): boolean => regexList.some((regex) => regex.test(pathname));
+export const isPiAllowed = (pathname: string, workspaceSlug: string): boolean => {
+  if (pathname.includes(`/${workspaceSlug?.toString()}/pi-chat/`)) return false;
+  if (pathname.includes(`/${workspaceSlug?.toString()}/settings/`)) return false;
+  return true;
+};

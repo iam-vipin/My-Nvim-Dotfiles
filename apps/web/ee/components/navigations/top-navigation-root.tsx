@@ -26,6 +26,7 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { DesktopHeaderProvider } from "../desktop/root";
 import { WorkspaceAppSwitcher } from "../workspace/app-switcher";
 import { TopNavSearch } from "./top-nav-search";
+import { isPiAllowed } from "@/plane-web/helpers/pi-chat.helper";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // store hooks
@@ -55,7 +56,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   const shouldRenderPiChat =
     useFlag(workspaceSlug?.toString() ?? "", E_FEATURE_FLAGS.PI_CHAT) &&
-    !pathname.includes(`/${workspaceSlug?.toString()}/pi-chat/`) &&
+    isPiAllowed(pathname, workspaceSlug?.toString() ?? "") &&
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
     (projectId || workItem);
 

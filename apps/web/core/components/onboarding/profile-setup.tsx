@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
@@ -430,7 +430,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border-[0.5px] border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-[0.5px] border-custom-border-100 pr-12 placeholder:text-custom-text-400"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                             autoComplete="on"
@@ -473,7 +473,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-custom-border-100 pr-12 placeholder:text-custom-text-400"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff

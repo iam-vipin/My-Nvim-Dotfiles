@@ -227,7 +227,10 @@ export default {
   something_went_wrong_please_try_again: "Что-то пошло не так. Пожалуйста, попробуйте еще раз.",
   load_more: "Загрузить еще",
   select_or_customize_your_interface_color_scheme: "Выберите или настройте цветовую схему интерфейса.",
+  select_the_cursor_motion_style_that_feels_right_for_you:
+    "Выберите стиль движения курсора, который подходит именно вам.",
   theme: "Тема",
+  smooth_cursor: "Плавный курсор",
   system_preference: "Системные настройки",
   light: "Светлая",
   dark: "Темная",
@@ -2590,6 +2593,8 @@ export default {
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "Выберите View Logs из setup.sh и логов Docker, чтобы убедиться.",
   },
+  no_of: "Количество {entity}",
+
   page_navigation_pane: {
     tabs: {
       outline: {
@@ -2623,6 +2628,36 @@ export default {
           title: "Отсутствуют изображения",
           description: "Добавьте изображения, чтобы увидеть их здесь.",
         },
+      },
+    },
+    toasts: {
+      errors: {
+        wrong_name: "Название стикера не может быть длиннее 100 символов.",
+        already_exists: "Стикер без описания уже существует",
+      },
+      created: {
+        title: "Стикер создан",
+        message: "Стикер успешно создан",
+      },
+      not_created: {
+        title: "Ошибка создания стикера",
+        message: "Не удалось создать стикер",
+      },
+      updated: {
+        title: "Стикер обновлён",
+        message: "Стикер успешно обновлён",
+      },
+      not_updated: {
+        title: "Ошибка обновления",
+        message: "Не удалось обновить стикер",
+      },
+      removed: {
+        title: "Стикер удалён",
+        message: "Стикер успешно удалён",
+      },
+      not_removed: {
+        title: "Ошибка удаления",
+        message: "Не удалось удалить стикер",
       },
     },
     open_button: "Открыть панель навигации",

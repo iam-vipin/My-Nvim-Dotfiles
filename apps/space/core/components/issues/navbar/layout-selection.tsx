@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
+import { BoardLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";

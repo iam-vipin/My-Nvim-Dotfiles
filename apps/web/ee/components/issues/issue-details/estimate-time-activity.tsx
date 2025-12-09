@@ -1,0 +1,44 @@
+import type { FC } from "react";
+import { observer } from "mobx-react";
+// hooks
+import { EstimatePropertyIcon } from "@plane/propel/icons";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
+import {
+  IssueActivityBlockComponent,
+  IssueLink,
+} from "@/components/issues/issue-detail/issue-activity/activity/actions";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// components
+
+type TIssueEstimateTimeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
+
+export const IssueEstimateTimeActivity = observer(function IssueEstimateTimeActivity(
+  props: TIssueEstimateTimeActivity
+) {
+  const { activityId, showIssue = true, ends } = props;
+  // hooks
+  const {
+    activity: { getActivityById },
+  } = useIssueDetail();
+
+  const activity = getActivityById(activityId);
+
+  if (!activity) return <></>;
+
+  return (
+    <IssueActivityBlockComponent
+      icon={<EstimatePropertyIcon height={14} width={14} className="text-custom-text-200" aria-hidden="true" />}
+      activityId={activityId}
+      ends={ends}
+    >
+      <>
+        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
+        {activity.new_value
+          ? convertMinutesToHoursMinutesString(Number(activity.new_value))
+          : convertMinutesToHoursMinutesString(Number(activity?.old_value))}
+        {showIssue && (activity.new_value ? ` to ` : ` from `)}
+        {showIssue && <IssueLink activityId={activityId} />}.
+      </>
+    </IssueActivityBlockComponent>
+  );
+});

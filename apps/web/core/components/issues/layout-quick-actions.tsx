@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -13,7 +11,7 @@ type Props = {
   storeType: "PROJECT" | "EPIC";
 };
 
-export const LayoutQuickActions: React.FC<Props> = observer((props) => {
+export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
 
   const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;

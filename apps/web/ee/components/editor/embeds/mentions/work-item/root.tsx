@@ -62,9 +62,9 @@ export const EditorWorkItemMention = observer(function EditorWorkItemMention(pro
   const workItemDetails = savedWorkItemDetails || fetchedWorkItemDetails;
 
   return (
-    <div className="not-prose !inline px-1 py-0.5 rounded bg-custom-primary-100/10 border border-custom-border-400 no-underline cursor-pointer">
+    <div className="not-prose !inline px-1 py-0.5 rounded bg-custom-primary-100/10 border border-custom-border-400 no-underline cursor-pointer max-w-full truncate">
       <Popover delay={100} openOnHover>
-        <Popover.Button>
+        <Popover.Button className="truncate" nativeButton={false}>
           {workItemDetails && !errorFetchingWorkItemDetails ? (
             <EditorWorkItemMentionContent workItemDetails={workItemDetails} />
           ) : (

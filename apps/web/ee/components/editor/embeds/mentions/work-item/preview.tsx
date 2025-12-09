@@ -32,7 +32,7 @@ export const EditorWorkItemMentionPreview = observer(function EditorWorkItemMent
         </div>
       </div>
       <div>
-        <h6 className="text-sm">{workItemDetails.name}</h6>
+        <h6 className="text-sm break-words">{workItemDetails.name}</h6>
       </div>
     </>
   );

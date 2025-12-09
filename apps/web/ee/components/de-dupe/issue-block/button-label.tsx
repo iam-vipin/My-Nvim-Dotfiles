@@ -1,6 +1,6 @@
 import type { FC } from "react";
 // plane imports
-import { ChevronRightIcon, PlaneAIIcon } from "@plane/propel/icons";
+import { PiIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {
@@ -20,7 +20,7 @@ export function DeDupeIssueButtonLabel(props: TDeDupeIssueButtonLabelProps) {
       )}
     >
       <div className="flex-shrink-0 mt-1">
-        <PlaneAIIcon className="size-4" />
+        <PiIcon className="size-4" />
       </div>
       <span className="flex items-baseline">
         <p className="text-sm text-custom-text-200">{buttonLabel}</p>

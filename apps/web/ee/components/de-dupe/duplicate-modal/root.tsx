@@ -1,6 +1,6 @@
 import type { FC } from "react";
 // plane imports
-import { CloseIcon, PlaneAIIcon } from "@plane/propel/icons";
+import { PiIcon, CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDeDupeIssue } from "@plane/types";
 // local-imports
@@ -27,7 +27,7 @@ export function DuplicateModalRoot(props: TDuplicateModalRootProps) {
           </Tooltip>
         </div>
         <div className="flex gap-1.5 w-80 flex-shrink-0">
-          <PlaneAIIcon className="size-4 flex-shrink-0" />
+          <PiIcon className="size-4 flex-shrink-0" />
           <p className="text-left text-xs text-custom-text-200 flex-grow">
             {`Below are the listed work items that seem${issues?.length > 1 ? "" : "s"} to be similar or are duplicate of work item that you are trying to create.`}
           </p>

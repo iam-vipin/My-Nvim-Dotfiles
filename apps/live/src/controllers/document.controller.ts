@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
-import { Controller, Post } from "@plane/decorators";
+import { Controller, Middleware, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
+import { requireSecretKey } from "@/lib/auth-middleware";
+import { AppError } from "@/lib/errors";
 import type { TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation
@@ -20,6 +22,7 @@ const convertDocumentSchema = z.object({
 @Controller("/convert-document")
 export class DocumentController {
   @Post("/")
+  @Middleware(requireSecretKey)
   async convertDocument(req: Request, res: Response) {
     try {
       // Validate request body
@@ -53,7 +56,8 @@ export class DocumentController {
           },
         });
       } else {
-        logger.error("DOCUMENT_CONTROLLER: Internal server error", error);
+        const appError = new AppError(error);
+        logger.error("DOCUMENT_CONTROLLER: Internal server error", appError);
         return res.status(500).json({
           message: `Internal server error.`,
         });

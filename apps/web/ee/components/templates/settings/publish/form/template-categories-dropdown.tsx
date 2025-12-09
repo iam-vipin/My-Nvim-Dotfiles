@@ -1,0 +1,60 @@
+import { useMemo } from "react";
+import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { MultiSelectDropdown } from "@plane/ui";
+import { cn, joinWithConjunction } from "@plane/utils";
+// plane web imports
+import { useTemplateHelper } from "@/plane-web/hooks/store/templates/use-template-helper";
+type TSelectCategoriesProps = {
+  value: string[];
+  handleChange: (value: string[]) => void;
+  buttonContainerClassName?: string;
+};
+
+export const TemplateCategoriesDropdown = observer(function TemplateCategoriesDropdown(props: TSelectCategoriesProps) {
+  const { value, handleChange, buttonContainerClassName } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { sortedActiveTemplateCategories, getTemplateCategoryById } = useTemplateHelper();
+  // derived values
+  const options = sortedActiveTemplateCategories.map((category) => ({
+    data: category.id,
+    value: category.name,
+  }));
+  const selectedCategoriesNames = useMemo(
+    () => value.map((categoryId) => getTemplateCategoryById(categoryId)?.name ?? "").filter(Boolean),
+    [value, getTemplateCategoryById]
+  );
+
+  return (
+    <MultiSelectDropdown
+      value={value}
+      options={options}
+      onChange={(value) => handleChange(value)}
+      keyExtractor={(option) => option.data}
+      containerClassName="h-auto"
+      buttonContainerClassName={buttonContainerClassName}
+      buttonContent={(isOpen) => (
+        <span
+          className={cn("flex items-center justify-between gap-1 text-sm w-full truncate", {
+            "text-custom-text-400": selectedCategoriesNames.length === 0,
+          })}
+        >
+          <span className="truncate">
+            {selectedCategoriesNames.length > 0
+              ? joinWithConjunction(selectedCategoriesNames)
+              : t("templates.settings.form.publish.category.placeholder")}
+          </span>
+          <ChevronDownIcon
+            height={16}
+            width={16}
+            className={cn("transition-all duration-300 flex-shrink-0", isOpen ? "rotate-180" : "rotate-0")}
+          />
+        </span>
+      )}
+    />
+  );
+});

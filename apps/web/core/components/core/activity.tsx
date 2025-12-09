@@ -5,8 +5,6 @@ import { useParams } from "next/navigation";
 // icons
 import {
   TagIcon,
-  CopyPlus,
-  Calendar,
   Link2Icon,
   Users2Icon,
   ArchiveIcon,
@@ -18,9 +16,10 @@ import {
   UsersIcon,
 } from "lucide-react";
 import {
-  BlockedIcon,
   BlockerIcon,
+  CalendarLayoutIcon,
   CycleIcon,
+  DuplicatePropertyIcon,
   EpicIcon,
   IntakeIcon,
   ModuleIcon,
@@ -634,7 +633,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <BlockedIcon height="12" width="12" className="text-custom-text-200" />,
+    icon: <BlockerIcon height="12" width="12" className="text-custom-text-200" />,
   },
   duplicate: {
     message: (activity, showIssue) => {
@@ -653,7 +652,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <CopyPlus size={12} className="text-custom-text-200" />,
+    icon: <DuplicatePropertyIcon height={12} width={12} className="text-custom-text-200" />,
   },
   state: {
     message: (activity, showIssue) => (
@@ -699,7 +698,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CalendarLayoutIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -730,7 +729,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CalendarLayoutIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   inbox: {
     message: (activity, showIssue) => (

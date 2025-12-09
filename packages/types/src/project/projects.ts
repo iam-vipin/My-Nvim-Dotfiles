@@ -3,6 +3,7 @@ import type { TUserPermissions } from "../enums";
 import type { TStateGroups } from "../state";
 import type { IUser, IUserLite } from "../users";
 import type { IWorkspace } from "../workspace";
+import type { TProjectExtended, TProjectIssuesSearchParamsExtended } from "./projects-extended";
 
 export enum EUserProjectRoles {
   ADMIN = 20,
@@ -143,7 +144,7 @@ export interface GithubRepositoriesResponse {
   total_count: number;
 }
 
-export type TProjectIssuesSearchParams = {
+export type TProjectIssuesSearchParams = TProjectIssuesSearchParamsExtended & {
   search: string;
   parent?: boolean;
   issue_relation?: boolean;
@@ -173,4 +174,4 @@ export interface ISearchIssueResponse {
 
 export type TPartialProject = IPartialProject;
 
-export type TProject = TPartialProject & IProject;
+export type TProject = TPartialProject & IProject & TProjectExtended;

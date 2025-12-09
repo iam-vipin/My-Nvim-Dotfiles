@@ -106,6 +106,8 @@ class Adapter:
         return True
 
     def get_avatar_download_headers(self):
+        if self.token_data and self.token_data.get("access_token") and self.provider in ["oidc", "saml"]:
+            return {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
         return {}
 
     def download_and_upload_avatar(self, avatar_url, user):

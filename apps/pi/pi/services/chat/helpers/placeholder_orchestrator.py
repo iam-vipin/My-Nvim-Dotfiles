@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from pydantic import Field
 
 from pi import logger
+from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
 
 log = logger.getChild(__name__)
 
@@ -152,7 +153,7 @@ class PlaceholderOrchestrator:
 
     async def _partition_by_readiness(self, actions: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
-        Split actions into ready (can execute now) vs blocked (has unresolved placeholders).
+        Split actions into ready (can execute now) vs blocked (has unresolved placeholders or pending implicit dependencies).
 
         Args:
             actions: List of actions to partition
@@ -163,13 +164,45 @@ class PlaceholderOrchestrator:
         ready = []
         blocked = []
 
+        # Get list of tool names currently pending execution (including the ones we're checking)
+        pending_tool_names: List[str] = [tool_name for a in actions if (tool_name := a.get("tool_name")) is not None]
+
         for action in actions:
+            is_blocked = False
+
+            # 1. Check for unresolved placeholders
             if await self._has_unresolved_placeholders(action):
+                is_blocked = True
+
+            # 2. Check for implicit dependencies on other PENDING actions
+            # If an action depends on a tool that is still in the 'actions' list (not executed yet),
+            # it should be blocked.
+            elif self._has_pending_implicit_dependency(action, pending_tool_names):
+                is_blocked = True
+
+            if is_blocked:
                 blocked.append(action)
             else:
                 ready.append(action)
 
         return ready, blocked
+
+    def _has_pending_implicit_dependency(self, action: Dict[str, Any], pending_tool_names: List[str]) -> bool:
+        """
+        Check if action has an implicit dependency on a tool that is yet to be executed.
+        """
+        tool_name = action.get("tool_name")
+
+        for prerequisite, dependent in IMPLICIT_DEPENDENCY_RULES:
+            if tool_name == dependent:
+                # If this is a dependent tool, check if its prerequisite is still pending
+                if prerequisite in pending_tool_names:
+                    # Special case: don't block if we are checking against ourselves (rare but possible)
+                    # or if there are multiple instances of same tool (handled by loop logic)
+                    log.info(f"Action '{tool_name}' blocked by pending implicit dependency '{prerequisite}'")
+                    return True
+
+        return False
 
     async def _has_unresolved_placeholders(self, action: Dict[str, Any]) -> bool:
         """

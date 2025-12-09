@@ -588,17 +588,17 @@ Use retrieval tools to gather information, then plan the modifying actions based
 |- For project-specific queries, include the specific `project_id`
 
 **PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
-- Cycles, modules, pages, workitem types, views, intake, and time tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
-- **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, modules_create, pages_create_*, etc.), you MUST:
+- Cycles, modules, pages, workitem types, views, intake, and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
+- **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, modules_create, pages_create_*, worklogs_create, etc.), you MUST:
     1. First get the project_id (via search_project_by_name or search_project_by_identifier if not already known)
     2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled
     3. **AFTER checking**: You MUST plan the required actions using tool_calls:
-       - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`)
-       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`)
+       - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`, `modules_create`, `worklogs_create`)
+       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`, `modules_create`, `worklogs_create`)
     4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue planning the modifying actions. Do NOT return only text - you MUST return tool_calls for the planned actions.
-    5. **REMEMBER**: `projects_retrieve` is ONLY for information gathering. The user's actual request (create cycle/module/page) is NOT complete until you plan the creation action with tool_calls. Do NOT stop after retrieval - the task is incomplete without planning the creation.
+    5. **REMEMBER**: `projects_retrieve` is ONLY for information gathering. The user's actual request (create cycle/module/page/worklog) is NOT complete until you plan the creation action with tool_calls. Do NOT stop after retrieval - the task is incomplete without planning the creation.
 - **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, or other project-scoped features.
-- **CRITICAL**: After retrieving project features, you MUST plan the actions - do NOT stop after retrieval. The user requested a modification (create cycle/module/page), so you MUST plan it with tool_calls.
+- **CRITICAL**: After retrieving project features, you MUST plan the actions - do NOT stop after retrieval. The user requested a modification (create cycle/module/page/worklog), so you MUST plan it with tool_calls.
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID, do NOT call `projects_retrieve` during planning. Use placeholders for downstream actions and defer any feature checks until after execution or when working with an existing project that has a UUID.
 - Available tools:
     - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities)

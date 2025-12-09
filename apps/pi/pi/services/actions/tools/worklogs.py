@@ -22,8 +22,6 @@ def get_worklog_tools(method_executor, context):
         issue_id: str,
         description: str,
         duration: int,
-        created_by: Optional[str] = None,
-        updated_by: Optional[str] = None,
         project_id: Optional[str] = None,
         workspace_slug: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -33,8 +31,6 @@ def get_worklog_tools(method_executor, context):
             issue_id: Issue ID (required)
             description: Worklog description (required)
             duration: Duration in minutes (required)
-            created_by: User ID who created the worklog
-            updated_by: User ID who updated the worklog
             project_id: Project ID (optional, auto-filled from context)
             workspace_slug: Workspace slug (optional, auto-filled from context)
         """
@@ -50,8 +46,6 @@ def get_worklog_tools(method_executor, context):
             issue_id=issue_id,
             description=description,
             duration=duration,
-            created_by=created_by,
-            updated_by=updated_by,
             project_id=project_id,
             workspace_slug=workspace_slug,
         )

@@ -15,6 +15,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_slug
 from pi.services.actions import MethodExecutor
 from pi.services.actions import PlaneActionsExecutor
 from pi.services.chat.chat import PlaneChatBot
+from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
 from pi.services.chat.helpers.action_execution_helpers import format_response
 from pi.services.chat.helpers.action_execution_helpers import load_artifacts
 from pi.services.chat.helpers.action_execution_helpers import update_flow_steps
@@ -190,9 +191,41 @@ class BuildModeToolExecutor:
             return any(self._has_placeholder(v) for v in value)
         return False
 
+    def _has_implicit_dependency(self, planned_actions: List[Dict]) -> bool:
+        """
+        Check if actions have implicit dependencies that require sequential execution.
+
+        Returns True if any action depends on state changes from a prior action.
+        """
+        tool_names = [action.get("tool_name") for action in planned_actions]
+        log.info(f"Checking implicit dependencies for tools: {tool_names}")
+
+        # Check if any dependency pattern exists in the planned actions
+        for prerequisite, dependent in IMPLICIT_DEPENDENCY_RULES:
+            if prerequisite in tool_names and dependent in tool_names:
+                # Check order - if dependent comes after prerequisite, there's a dependency
+                # OR if they are both present regardless of order (safer for parallel execution check)
+                prereq_idx = tool_names.index(prerequisite)
+                dep_idx = tool_names.index(dependent)
+
+                log.info(f"Found potential dependency: {dependent} (idx {dep_idx}) depends on {prerequisite} (idx {prereq_idx})")
+
+                # If dependent is NOT strictly before prerequisite, we assume dependency exists
+                # (Even if dependent is before, parallel execution is dangerous, so we should serialize)
+                log.info(f"Detected implicit dependency: {dependent} depends on {prerequisite}, " f"forcing sequential execution")
+                return True
+
+        return False
+
     def _are_actions_independent(self, planned_actions: List[Dict]) -> bool:
-        """Check if all planned actions are independent (no placeholders)."""
+        """Check if all planned actions are independent (no placeholders or implicit dependencies)."""
+        # Check for placeholder dependencies
         for action in planned_actions:
             if self._has_placeholder(action.get("args", {})):
                 return False
+
+        # Check for implicit dependencies
+        if self._has_implicit_dependency(planned_actions):
+            return False
+
         return True

@@ -764,7 +764,22 @@ class PlaneSDKAdapter:
             resp = self.client.modules.create(workspace_slug, project_id, data=data_model)
             return cast(Dict[str, Any], self._model_to_dict(resp))
         except HttpError as e:
-            log.error(f"Failed to create module: {e} ({getattr(e, "status_code", None)})")
+            # Log detailed error information
+            error_details = ""
+            try:
+                if hasattr(e, "response") and e.response:
+                    # Generic response object (requests/httpx style)
+                    if hasattr(e.response, "text"):
+                        error_details = f", response_text={e.response.text}"
+                    elif hasattr(e.response, "content"):
+                        error_details = f", response_content={e.response.content}"
+
+                    if hasattr(e.response, "status_code"):
+                        error_details += f", status={e.response.status_code}"
+            except Exception:
+                pass
+
+            log.error(f"Failed to create module: {e} " f"(status_code={getattr(e, "status_code", None)}" f"{error_details})")
             raise
         except Exception as e:
             log.error(f"Failed to create module: {str(e)}")

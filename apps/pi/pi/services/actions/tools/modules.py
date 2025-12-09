@@ -45,7 +45,7 @@ def get_module_tools(method_executor, context):
             description: Module description
             start_date: Start date (YYYY-MM-DD format)
             target_date: Target completion date (YYYY-MM-DD format)
-            status: Module status (backlog, unstarted, started, completed, cancelled, paused)
+            status: Module status (Input should be one of 'backlog', 'planned', 'in-progress', 'paused', 'completed' or 'cancelled' )
             lead: Module lead user ID
             members: List of member user IDs
             external_id: External system identifier (optional)

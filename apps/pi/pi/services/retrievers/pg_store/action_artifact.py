@@ -230,12 +230,8 @@ async def update_action_artifact_execution_status(
                         flow_step.execution_error = None
                     else:
                         flow_step.execution_success = ExecutionStatus.FAILED
-                        error_msg = (
-                            execution_result
-                            if execution_result and "error" in execution_result.lower()
-                            else f"Execution failed: {execution_result or "Unknown error"}"
-                        )
-                        flow_step.execution_error = error_msg
+                        # Store user-friendly error message as-is (already formatted by tools)
+                        flow_step.execution_error = execution_result or "Unknown error"
 
                     # Update execution_data
                     current_execution_data = flow_step.execution_data or {}

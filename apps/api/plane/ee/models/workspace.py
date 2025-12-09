@@ -234,7 +234,8 @@ class WorkspaceMemberActivity(BaseModel):
         ROLE_CHANGED = "ROLE_CHANGED", "Role Changed"
         INVITED = "INVITED", "Invited"
         INVITATION_DELETED = "INVITATION_DELETED", "Invitation Deleted"
-        ACCEPTED_INVITATION = "ACCEPTED_INVITATION", "Accepted Invitation"
+        SEATS_ADDED = "SEATS_ADDED", "Seats Added"
+        SEATS_REMOVED = "SEATS_REMOVED", "Seats Removed"
 
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="member_activities")
     actor = models.ForeignKey(

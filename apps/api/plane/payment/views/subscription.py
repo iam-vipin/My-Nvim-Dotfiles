@@ -3,6 +3,7 @@ import requests
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -18,6 +19,8 @@ from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
     is_on_trial,
 )
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
+from plane.db.models.workspace import ROLE
 
 
 class SubscriptionEndpoint(BaseAPIView):
@@ -119,9 +122,8 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
-            workspace_license = WorkspaceLicense.objects.filter(
-                workspace=workspace
-            ).first()
+            workspace_license = WorkspaceLicense.objects.filter(workspace=workspace).first()
+            workspace_seats = workspace_license.purchased_seats
 
             if not workspace_license:
                 return Response(
@@ -141,17 +143,17 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     is_active=True,
                     member__is_bot=False,
-                    role__lte=10,
+                    role=ROLE.GUEST.value,
                 ).count(),
             )
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gte=ROLE.MEMBER.value
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gt=10
+                workspace__slug=slug, role__gte=ROLE.MEMBER.value
             ).count()
 
             # Check if the quantity is less than the active paid users in the workspace
@@ -185,15 +187,23 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                 response = response.json()
 
                 # Fetch the workspace subcription
-                workspace_license = WorkspaceLicense.objects.filter(
-                    workspace=workspace
-                ).first()
+                workspace_license = WorkspaceLicense.objects.filter(workspace=workspace).first()
 
                 # Update the seat count
                 if workspace_license:
                     # Update the seat count
                     workspace_license.purchased_seats = response["seats"]
                     workspace_license.save()
+
+                    workspace_members_activity.delay(
+                        type="workspace_member.activity.seats_added",
+                        requested_data={"quantity": quantity},
+                        current_instance={"current_available_seats": workspace_seats},
+                        actor_id=request.user.id,
+                        workspace_id=workspace.id,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                    )
 
                 # Return the response
                 return Response({"seats": response["seats"]}, status=status.HTTP_200_OK)
@@ -219,9 +229,9 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
-            workspace_license = WorkspaceLicense.objects.filter(
-                workspace=workspace
-            ).first()
+            workspace_license = WorkspaceLicense.objects.filter(workspace=workspace).first()
+
+            purchased_seats = workspace_license.purchased_seats
 
             # If the workspace license is not found then resync the workspace license
             if not workspace_license:
@@ -239,17 +249,15 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
+                workspace__slug=slug, is_active=True, member__is_bot=False, role__gte=ROLE.MEMBER.value
             ).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gt=10
+                workspace__slug=slug, role__gte=ROLE.MEMBER.value
             ).count()
 
             # Fetch the workspace subcription
-            workspace_license = WorkspaceLicense.objects.filter(
-                workspace=workspace
-            ).first()
+            workspace_license = WorkspaceLicense.objects.filter(workspace=workspace).first()
 
             # Check the required seats
             required_seats = workspace_member_count + invited_member_count
@@ -287,6 +295,16 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
                     # Update the seat count
                     workspace_license.purchased_seats = response["seats"]
                     workspace_license.save()
+
+                    workspace_members_activity.delay(
+                        type="workspace_member.activity.removed_unused_seats",
+                        requested_data={"required_seats": required_seats},
+                        current_instance={"purchased_seats": purchased_seats},
+                        actor_id=request.user.id,
+                        workspace_id=workspace.id,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                    )
 
                 # Return the response
                 return Response({"seats": response["seats"]}, status=status.HTTP_200_OK)

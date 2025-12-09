@@ -24,6 +24,8 @@ import { TeamspaceRootStore } from "@/plane-web/store/teamspace";
 import { TimeLineStore } from "@/plane-web/store/timeline";
 import type { IWorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
 import { WorkspaceFeatureStore } from "@/plane-web/store/workspace-feature.store";
+import type { IWorkspaceMembersActivityStore } from "@/plane-web/store/workspace-members-activity.store";
+import { WorkspaceMembersActivityStore } from "@/plane-web/store/workspace-members-activity.store";
 import type { IProjectFilterStore, IWorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import { ProjectFilterStore, WorkspaceProjectStatesStore } from "@/plane-web/store/workspace-project-states";
 import type { IWorkspaceWorklogStore, IWorkspaceWorklogDownloadStore } from "@/plane-web/store/workspace-worklog";
@@ -111,6 +113,7 @@ export class RootStore extends CoreRootStore {
   workspacePages: IWorkspacePageStore;
   publishPage: IPublishPageStore;
   workspaceSubscription: IWorkspaceSubscriptionStore;
+  workspaceMembersActivityStore: IWorkspaceMembersActivityStore;
   workspaceWorklogs: IWorkspaceWorklogStore;
   workspaceWorklogDownloads: IWorkspaceWorklogDownloadStore;
   featureFlags: IFeatureFlagsStore;
@@ -175,6 +178,7 @@ export class RootStore extends CoreRootStore {
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
+    this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this);
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore(this);
@@ -241,6 +245,7 @@ export class RootStore extends CoreRootStore {
     this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.workspaceSubscription = new WorkspaceSubscriptionStore(this);
+    this.workspaceMembersActivityStore = new WorkspaceMembersActivityStore(this);
     this.workspaceWorklogs = new WorkspaceWorklogStore(this);
     this.workspaceWorklogDownloads = new WorkspaceWorklogDownloadStore(this);
     this.featureFlags = new FeatureFlagsStore(this);

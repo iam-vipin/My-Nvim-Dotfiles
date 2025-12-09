@@ -2,6 +2,7 @@
 import pytz
 from typing import Optional, Any
 from uuid import UUID
+from enum import Enum
 
 # Django imports
 from django.conf import settings
@@ -17,6 +18,12 @@ from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+
+
+class ROLE(Enum):
+    ADMIN = 20
+    MEMBER = 15
+    GUEST = 5
 
 
 def get_default_props():

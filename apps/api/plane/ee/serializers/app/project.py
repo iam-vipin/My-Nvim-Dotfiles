@@ -97,22 +97,16 @@ class ProjectLinkSerializer(BaseSerializer):
         if ProjectLink.objects.filter(
             url=validated_data.get("url"), project_id=validated_data.get("project_id")
         ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Project"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Project"})
         return ProjectLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            ProjectLink.objects.filter(
-                url=validated_data.get("url"), project_id=instance.project_id
-            )
+            ProjectLink.objects.filter(url=validated_data.get("url"), project_id=instance.project_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Project"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Project"})
 
         return super().update(instance, validated_data)
 

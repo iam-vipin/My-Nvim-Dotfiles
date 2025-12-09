@@ -1,7 +1,11 @@
+# Python imports
+import json
+
 # Django imports
 from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
 from django.utils import timezone
 from django.db.models.functions import Coalesce
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party modules
 from rest_framework import status
@@ -29,6 +33,7 @@ from plane.ee.models import TeamspaceMember, PageUser
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.payment.utils.member_payment_count import workspace_member_check
 from .. import BaseViewSet
+from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
@@ -109,8 +114,21 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
 
+        current_instance = json.dumps(WorkSpaceMemberSerializer(workspace_member).data, cls=DjangoJSONEncoder)
+
         if serializer.is_valid():
             serializer.save()
+
+            workspace_members_activity.delay(
+                type="workspace_member.activity.updated",
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                workspace_id=workspace_member.workspace_id,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                workspace_member_id=workspace_member.id,
+            )
             # Sync workspace members
             member_sync_task.delay(slug)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -166,6 +184,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
         ).update(is_active=False, updated_at=timezone.now())
 
+        removed_member_name = workspace_member.member.display_name
         workspace_member.is_active = False
         workspace_member.save()
 
@@ -177,6 +196,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Sync workspace members
         member_sync_task.delay(slug)
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.removed",
+            requested_data={"name": removed_member_name},
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member.workspace_id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -242,6 +271,17 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Sync workspace members
         member_sync_task.delay(slug)
+
+        workspace_members_activity.delay(
+            type="workspace_member.activity.left",
+            requested_data=None,
+            current_instance=None,
+            actor_id=request.user.id,
+            workspace_id=workspace_member.workspace_id,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -122,6 +122,8 @@ export enum E_FEATURE_FLAGS {
   RICH_FILTERS = "RICH_FILTERS",
   // intake type form
   WORKITEM_TYPE_INTAKE_FORM = "WORKITEM_TYPE_INTAKE_FORM",
+  // workspace members activity
+  WORKSPACE_MEMBER_ACTIVITY = "WORKSPACE_MEMBER_ACTIVITY",
 }
 
 /**

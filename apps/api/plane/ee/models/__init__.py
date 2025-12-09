@@ -33,6 +33,7 @@ from .workspace import (
     WorkspaceFeature,
     WorkspaceLicense,
     WorkspaceActivity,
+    WorkspaceMemberActivity,
     WorkspaceCredential,
     WorkspaceConnection,
     WorkspaceEntityConnection,

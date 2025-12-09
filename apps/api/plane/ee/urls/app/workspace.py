@@ -19,7 +19,7 @@ from plane.ee.views import (
     WorkspaceIssueBulkUpdateDateEndpoint,
     WorkspaceIssueRetrieveEndpoint,
 )
-
+from plane.ee.views.app.workspace import WorkspaceMemberActivityEndpoint
 
 urlpatterns = [
     path(
@@ -125,5 +125,11 @@ urlpatterns = [
         "workspaces/<str:slug>/issues/<uuid:issue_id>/",
         WorkspaceIssueRetrieveEndpoint.as_view(),
         name="workspace-issue-retrieve",
+    ),
+    # Workspace member activity
+    path(
+        "workspaces/<str:slug>/members/history/",
+        WorkspaceMemberActivityEndpoint.as_view(),
+        name="workspace-member-activity",
     ),
 ]

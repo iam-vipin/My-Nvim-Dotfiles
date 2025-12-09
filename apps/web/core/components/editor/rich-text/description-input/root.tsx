@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
@@ -97,13 +98,13 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     entityId,
     fileAssetType,
     initialValue,
+    issueSequenceId,
     onSubmit,
     placeholder,
     projectId,
     setIsSubmitting,
     swrDescription,
     workspaceSlug,
-    issueSequenceId,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState<TFormData>({
@@ -190,6 +191,19 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     []
   );
 
+  const { getProjectIdentifierById } = useProject();
+  const originUrl = useMemo(() => {
+    const projectIdentifier = getProjectIdentifierById(projectId);
+
+    if (!projectIdentifier || !issueSequenceId) {
+      if (entityId && window.location.href.includes("initiatives")) {
+        return `${window.location.href}${entityId}`;
+      }
+      return undefined;
+    }
+    return `${window.location.origin}/${workspaceSlug}/browse/${projectIdentifier}-${issueSequenceId}/`;
+  }, [projectId, workspaceSlug, issueSequenceId, getProjectIdentifierById, entityId]);
+
   if (!workspaceDetails) return null;
 
   return (
@@ -203,7 +217,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               editable={!disabled}
               ref={editorRef}
               id={entityId}
-              issueSequenceId={issueSequenceId}
+              originUrl={originUrl}
               disabledExtensions={disabledExtensions}
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}

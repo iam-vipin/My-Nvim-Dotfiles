@@ -17,7 +17,6 @@ from plane.app.views import (
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
-    BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
@@ -27,6 +26,7 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    IssueCommentRepliesEndpoint,
 )
 
 urlpatterns = [
@@ -90,11 +90,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
         name="project-issues-bulk",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-archive-issues/",
-        BulkArchiveIssuesEndpoint.as_view(),
-        name="bulk-archive-issues",
     ),
     ##
     path(
@@ -167,6 +162,13 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     ## End IssueComments
+    ## Issue comment reply
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/replies/",
+        IssueCommentRepliesEndpoint.as_view(),
+        name="issue-comment-replies",
+    ),
+    ## End Issue comment reply
     # Issue Subscribers
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-subscribers/",

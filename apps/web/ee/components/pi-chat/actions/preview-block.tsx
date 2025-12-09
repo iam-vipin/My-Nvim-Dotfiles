@@ -1,0 +1,65 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { CycleIcon, ModuleIcon, LayersIcon, PageIcon, ProjectIcon, ViewsIcon, EpicIcon } from "@plane/propel/icons";
+import { cn } from "@plane/utils";
+import type { TArtifact } from "@/plane-web/types";
+
+export const getIcon = (type: string, color?: string, defaultRender: "text" | "icon" = "icon", className?: string) => {
+  switch (type) {
+    case "project":
+      return <ProjectIcon width={16} height={16} />;
+    case "workitem":
+      return <LayersIcon width={16} height={16} />;
+    case "page":
+      return <PageIcon width={16} height={16} />;
+    case "cycle":
+      return <CycleIcon width={16} height={16} />;
+    case "module":
+      return <ModuleIcon width={16} height={16} />;
+    case "view":
+      return <ViewsIcon width={16} height={16} />;
+    case "epic":
+      return <EpicIcon width={16} height={16} className="text-custom-text-200" />;
+    default:
+      return defaultRender === "icon" ? (
+        <div
+          className={cn("size-3 rounded", { "bg-custom-background-80": !color })}
+          style={{ backgroundColor: color }}
+        />
+      ) : (
+        <div
+          className={cn(
+            "bg-custom-background-90 rounded-full py-0.5 px-2 capitalize text-xs text-custom-text-200 font-medium",
+            className
+          )}
+        >
+          {type}
+        </div>
+      );
+  }
+};
+export function PreviewBlock(props: { type: string; name: string; url?: string | null; data?: TArtifact }) {
+  const { type, name, url, data } = props;
+  return (
+    <Link
+      target="_blank"
+      href={url || ""}
+      className="group flex flex-col items-start gap-2 p-3 rounded-xl bg-custom-background-100 border-[0.5px] border-custom-border-200 hover:shadow-sm overflow-hidden text-custom-text-200"
+    >
+      <div className="flex items-center gap-2 justify-between w-full">
+        <div className="flex gap-2 items-center">
+          <div>{getIcon(type, "", "text")}</div>
+          {(type === "workitem" || type === "project") && data && (
+            <div className="text-sm font-medium text-custom-text-350">
+              {data.issue_identifier || data.project_identifier || data.parameters?.project?.identifier}
+            </div>
+          )}
+        </div>
+        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 size-4 bg-custom-background-90 rounded-full flex items-center justify-center p-0.5">
+          <ArrowUpRight className="" strokeWidth={2.5} />
+        </div>
+      </div>
+      <div className="text-sm font-medium line-clamp-2 text-start">{name}</div>
+    </Link>
+  );
+}

@@ -45,6 +45,9 @@ export const useEditor = (props: TEditorHookProps) => {
     value,
   } = props;
 
+  // Force editor recreation when Y.Doc changes (provider.document.guid)
+  const docKey = provider?.document?.guid ?? id;
+
   const editor = useTiptapEditor(
     {
       editable,
@@ -88,7 +91,7 @@ export const useEditor = (props: TEditorHookProps) => {
       onDestroy: () => handleEditorReady?.(false),
       onFocus: onEditorFocus,
     },
-    [editable]
+    [editable, docKey]
   );
 
   // Effect for syncing SWR data

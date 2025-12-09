@@ -1,0 +1,26 @@
+import type { FC } from "react";
+import React from "react";
+import { observer } from "mobx-react";
+import { RequestAttachmentsList } from "@/plane-web/components/customers";
+
+type Props = {
+  workspaceSlug: string;
+  requestId: string;
+  customerId: string;
+  disabled: boolean;
+};
+
+export const RequestAttachmentsCollapsibleContent = observer(function RequestAttachmentsCollapsibleContent(
+  props: Props
+) {
+  const { workspaceSlug, requestId, disabled, customerId } = props;
+  return (
+    <RequestAttachmentsList
+      workspaceSlug={workspaceSlug}
+      requestId={requestId}
+      disabled={disabled}
+      customerId={customerId}
+      isCollapsible
+    />
+  );
+});

@@ -12,6 +12,9 @@
     handle /auth/* {
         reverse_proxy api:8000
     }
+	handle /static/* {
+		reverse_proxy api:8000
+	}
     handle /spaces/* {
         reverse_proxy space:3000
     }

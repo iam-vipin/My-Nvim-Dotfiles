@@ -12,9 +12,7 @@ urlpatterns = [
     path("import-jobs/<uuid:pk>/", ImportJobAPIView.as_view(), name="import-job"),
     # Report endpoints
     path("import-reports/", ImportReportAPIView.as_view(), name="import-reports"),
-    path(
-        "import-reports/<uuid:pk>/", ImportReportAPIView.as_view(), name="import-report"
-    ),
+    path("import-reports/<uuid:pk>/", ImportReportAPIView.as_view(), name="import-report"),
     path(
         "import-reports/<uuid:pk>/count-increment/",
         ImportReportCountIncrementAPIView.as_view(),

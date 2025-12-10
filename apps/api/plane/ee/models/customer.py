@@ -41,9 +41,7 @@ class Customer(BaseModel):
     stage = models.CharField(max_length=255, blank=True, null=True)
     contract_status = models.CharField(max_length=255, blank=True, null=True)
     revenue = models.CharField(blank=True, null=True)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="customers"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customers")
 
     @property
     def logo_url(self):
@@ -86,9 +84,7 @@ class CustomerProperty(BaseModel):
     logo_props = models.JSONField(blank=True, default=dict)
     sort_order = models.FloatField(default=65535)
     property_type = models.CharField(max_length=255, choices=PropertyTypeEnum.choices)
-    relation_type = models.CharField(
-        max_length=255, blank=True, null=True, choices=RelationTypeEnum.choices
-    )
+    relation_type = models.CharField(max_length=255, blank=True, null=True, choices=RelationTypeEnum.choices)
     is_required = models.BooleanField(default=False)
     default_value = ArrayField(models.TextField(), blank=True, default=list)
     settings = models.JSONField(blank=True, default=dict)
@@ -97,9 +93,7 @@ class CustomerProperty(BaseModel):
     validation_rules = models.JSONField(blank=True, default=dict)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="customer_property"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_property")
 
     class Meta:
         ordering = ["sort_order"]
@@ -119,9 +113,7 @@ class CustomerProperty(BaseModel):
         self.name = slugify(self.display_name)
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = CustomerProperty.objects.aggregate(
-                largest=models.Max("sort_order")
-            )["largest"]
+            last_id = CustomerProperty.objects.aggregate(largest=models.Max("sort_order"))["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -135,15 +127,11 @@ class CustomerProperty(BaseModel):
 class CustomerPropertyOption(BaseModel):
     name = models.CharField(max_length=255)
     sort_order = models.FloatField(default=65535)
-    property = models.ForeignKey(
-        CustomerProperty, on_delete=models.CASCADE, related_name="options"
-    )
+    property = models.ForeignKey(CustomerProperty, on_delete=models.CASCADE, related_name="options")
     description = models.TextField(blank=True)
     logo_props = models.JSONField(blank=True, default=dict)
     is_active = models.BooleanField(default=True)
-    parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, related_name="children", null=True, blank=True
-    )
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="children", null=True, blank=True)
     is_default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
@@ -170,9 +158,9 @@ class CustomerPropertyOption(BaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = CustomerPropertyOption.objects.filter(
-                project=self.project, property=self.property
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            last_id = CustomerPropertyOption.objects.filter(project=self.project, property=self.property).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -187,12 +175,8 @@ class CustomerPropertyOption(BaseModel):
 
 
 class CustomerPropertyValue(BaseModel):
-    customer = models.ForeignKey(
-        "ee.Customer", on_delete=models.CASCADE, related_name="properties"
-    )
-    property = models.ForeignKey(
-        CustomerProperty, on_delete=models.CASCADE, related_name="values"
-    )
+    customer = models.ForeignKey("ee.Customer", on_delete=models.CASCADE, related_name="properties")
+    property = models.ForeignKey(CustomerProperty, on_delete=models.CASCADE, related_name="values")
     value_text = models.TextField(blank=True)
     value_boolean = models.BooleanField(default=False)
     value_decimal = models.FloatField(default=0)
@@ -207,9 +191,7 @@ class CustomerPropertyValue(BaseModel):
     )
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="customer_property_value"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_property_value")
 
     class Meta:
         verbose_name = "Customer Property Value"
@@ -227,13 +209,9 @@ class CustomerRequest(BaseModel):
     description_html = models.TextField(blank=True, null=True)
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
-    customer = models.ForeignKey(
-        "ee.Customer", on_delete=models.CASCADE, related_name="requests"
-    )
+    customer = models.ForeignKey("ee.Customer", on_delete=models.CASCADE, related_name="requests")
     link = models.URLField(blank=True, null=True)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="customer_requests"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_requests")
 
     def save(self, *args, **kwargs):
         # Strip the html tags using html parser
@@ -263,15 +241,9 @@ class CustomerRequestIssue(BaseModel):
         blank=True,
         null=True,
     )
-    customer = models.ForeignKey(
-        "ee.Customer", on_delete=models.CASCADE, related_name="customer_request_issues"
-    )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="customer_request_issues"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="customer_request_issues"
-    )
+    customer = models.ForeignKey("ee.Customer", on_delete=models.CASCADE, related_name="customer_request_issues")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="customer_request_issues")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="customer_request_issues")
 
     class Meta:
         verbose_name = "Customer Request Issue"

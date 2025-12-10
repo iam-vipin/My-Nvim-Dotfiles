@@ -29,19 +29,17 @@ class InitiativeUpdateViewSet(BaseAPIView):
         update_status = request.query_params.get("search", None)
 
         if update_status not in EntityUpdates.UpdatesEnum.values:
-            return Response(
-                {"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
         # Get all project IDs linked to the initiative in the workspace
-        project_ids = InitiativeProject.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("project_id", flat=True)
+        project_ids = InitiativeProject.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
+            "project_id", flat=True
+        )
 
         # also get the epics which are part of the initiative
         initiative_epics = list(
-            InitiativeEpic.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            ).values_list("epic_id", flat=True)
+            InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
+                "epic_id", flat=True
+            )
         )
 
         latest_updates = (
@@ -103,9 +101,9 @@ class InitiativeUpdateCommentsViewSet(BaseAPIView):
     def get(self, request, slug, initiative_id, update_id):
         update_reactions_qs = UpdateReaction.objects.select_related("actor")
 
-        updates = EntityUpdates.objects.filter(
-            workspace__slug=slug, parent_id=update_id
-        ).prefetch_related(Prefetch("update_reactions", queryset=update_reactions_qs))
+        updates = EntityUpdates.objects.filter(workspace__slug=slug, parent_id=update_id).prefetch_related(
+            Prefetch("update_reactions", queryset=update_reactions_qs)
+        )
 
         serializer = UpdatesSerializer(updates, many=True)
 
@@ -115,15 +113,11 @@ class InitiativeUpdateCommentsViewSet(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug, initiative_id, update_id):
         workspace = Workspace.objects.get(slug=slug)
-        parent_update = EntityUpdates.objects.select_related("project", "epic").get(
-            pk=update_id, workspace__slug=slug
-        )
+        parent_update = EntityUpdates.objects.select_related("project", "epic").get(pk=update_id, workspace__slug=slug)
 
         entity_type_and_id = {
             "entity_type": parent_update.entity_type,
-            "epic_id": (
-                parent_update.epic_id if parent_update.entity_type == "EPIC" else None
-            ),
+            "epic_id": (parent_update.epic_id if parent_update.entity_type == "EPIC" else None),
             "project_id": parent_update.project_id,
         }
 
@@ -144,9 +138,7 @@ class InitiativeUpdatesReactionViewSet(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug, initiative_id, update_id):
-        update = EntityUpdates.objects.select_related("project", "epic").get(
-            id=update_id, workspace__slug=slug
-        )
+        update = EntityUpdates.objects.select_related("project", "epic").get(id=update_id, workspace__slug=slug)
 
         serializer = UpdateReactionSerializer(data=request.data)
 

@@ -14,9 +14,7 @@ urlpatterns = [
         ViewsMetaDataEndpoint.as_view(),
         name="views-public-meta",
     ),
-    path(
-        "anchor/<str:anchor>/views/", ViewsPublicEndpoint.as_view(), name="views-public"
-    ),
+    path("anchor/<str:anchor>/views/", ViewsPublicEndpoint.as_view(), name="views-public"),
     path(
         "anchor/<str:anchor>/view-issues/",
         IssueViewsPublicEndpoint.as_view(),

@@ -51,21 +51,11 @@ class ImportJob(BaseModel):
         null=True,
         related_name="jobs",
     )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, null=True, related_name="jobs"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="jobs"
-    )
-    initiator = models.ForeignKey(
-        "db.User", on_delete=models.SET_NULL, null=True, related_name="initiated_jobs"
-    )
-    report = models.ForeignKey(
-        "ee.ImportReport", on_delete=models.SET_NULL, null=True, related_name="reports"
-    )
-    status = models.CharField(
-        max_length=20, choices=JobStatus.choices, default=JobStatus.CREATED
-    )
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, null=True, related_name="jobs")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="jobs")
+    initiator = models.ForeignKey("db.User", on_delete=models.SET_NULL, null=True, related_name="initiated_jobs")
+    report = models.ForeignKey("ee.ImportReport", on_delete=models.SET_NULL, null=True, related_name="reports")
+    status = models.CharField(max_length=20, choices=JobStatus.choices, default=JobStatus.CREATED)
     with_issue_types = models.BooleanField(default=False)
     cancelled_at = models.DateTimeField(null=True)
     success_metadata = models.JSONField(default=dict)

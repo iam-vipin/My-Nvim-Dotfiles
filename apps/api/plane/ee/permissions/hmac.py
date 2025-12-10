@@ -66,9 +66,7 @@ class HMACPermission(BasePermission):
             payload = f"{request.method}:{request.path}:{timestamp}"
 
             # Use a secure secret key from settings
-            secret_key_name = self._get_service_key_name(
-                request.headers.get(self.HMAC_HEADER_SERVICE)
-            )
+            secret_key_name = self._get_service_key_name(request.headers.get(self.HMAC_HEADER_SERVICE))
             secret_key = getattr(settings, secret_key_name, None)
 
             if not secret_key:

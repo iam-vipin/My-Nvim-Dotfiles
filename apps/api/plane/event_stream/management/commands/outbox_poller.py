@@ -37,12 +37,8 @@ POOL_MAX_SIZE = int(os.environ.get("OUTBOX_POLLER_POOL_MAX_SIZE", 10))
 POOL_TIMEOUT = float(os.environ.get("OUTBOX_POLLER_POOL_TIMEOUT", 30.0))
 POOL_MAX_IDLE = float(os.environ.get("OUTBOX_POLLER_POOL_MAX_IDLE", 300.0))
 POOL_MAX_LIFETIME = float(os.environ.get("OUTBOX_POLLER_POOL_MAX_LIFETIME", 3600.0))
-POOL_RECONNECT_TIMEOUT = float(
-    os.environ.get("OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT", 5.0)
-)
-POOL_HEALTH_CHECK_INTERVAL = int(
-    os.environ.get("OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL", 60)
-)
+POOL_RECONNECT_TIMEOUT = float(os.environ.get("OUTBOX_POLLER_POOL_RECONNECT_TIMEOUT", 5.0))
+POOL_HEALTH_CHECK_INTERVAL = int(os.environ.get("OUTBOX_POLLER_POOL_HEALTH_CHECK_INTERVAL", 60))
 
 # Configuration
 RESTART_EXIT_CODE = 100
@@ -201,10 +197,7 @@ class DatabaseConnectionPool:
         # If DATABASE_URL is not set, use the default database settings
         if not dsn:
             db = settings.DATABASES["default"]
-            dsn = (
-                f"postgresql://{quote(db['USER'])}:{quote(db['PASSWORD'])}"
-                f"@{db['HOST']}:{db['PORT']}/{db['NAME']}"
-            )
+            dsn = f"postgresql://{quote(db['USER'])}:{quote(db['PASSWORD'])}@{db['HOST']}:{db['PORT']}/{db['NAME']}"
 
         # If the DSN starts with postgres://, replace it with postgresql://
         if dsn.startswith("postgres://"):
@@ -307,8 +300,7 @@ class DatabaseConnectionPool:
             stats = {
                 "pool_size": pool_stats.get("pool_size", 0),
                 "available_connections": pool_stats.get("pool_available", 0),
-                "used_connections": pool_stats.get("pool_size", 0)
-                - pool_stats.get("pool_available", 0),
+                "used_connections": pool_stats.get("pool_size", 0) - pool_stats.get("pool_available", 0),
                 "waiting_requests": pool_stats.get("requests_waiting", 0),
                 "timestamp": timezone.now().isoformat(),
             }
@@ -344,9 +336,7 @@ class DatabaseConnectionPool:
                     error_stats.update(
                         {
                             "pool_size": pool_stats.get("pool_size", 0),
-                            "available_connections": pool_stats.get(
-                                "pool_available", 0
-                            ),
+                            "available_connections": pool_stats.get("pool_available", 0),
                         }
                     )
                 except Exception:
@@ -516,9 +506,7 @@ class OutboxPoller:
                 log.exception(f"Error in handler '{handler.__name__}': {e}")
 
         if handler_errors:
-            log.error(
-                f"Event {event.event_id} had {len(handler_errors)} handler errors: {handler_errors}"
-            )
+            log.error(f"Event {event.event_id} had {len(handler_errors)} handler errors: {handler_errors}")
             return False
 
         return True
@@ -538,7 +526,6 @@ class OutboxPoller:
         try:
             # Initialize database connection pool
             async with DatabaseConnectionPool() as db_pool:
-
                 # Log initial pool health
                 health_status = await db_pool.health_check()
                 log.info("Initial pool health check", extra=health_status)
@@ -573,9 +560,7 @@ class OutboxPoller:
 
                         # Use asyncio.wait_for with timeout to check for shutdown or restart
                         shutdown_tasks = [
-                            asyncio.create_task(
-                                self.shutdown_handler.wait_for_shutdown()
-                            ),
+                            asyncio.create_task(self.shutdown_handler.wait_for_shutdown()),
                             asyncio.create_task(memory_monitor.wait_for_restart()),
                         ]
 
@@ -601,9 +586,7 @@ class OutboxPoller:
                                     log.info("Shutdown signal received during sleep")
                                     break
                                 elif memory_monitor.restart_requested():
-                                    log.warning(
-                                        "Memory limit exceeded during sleep - initiating restart"
-                                    )
+                                    log.warning("Memory limit exceeded during sleep - initiating restart")
                                     break
 
                         except asyncio.TimeoutError:
@@ -629,13 +612,9 @@ class OutboxPoller:
                     for i, row in enumerate(rows):
                         # Check for shutdown signal periodically during processing
                         if i % 10 == 0 and self.shutdown_handler.shutdown_requested():
-                            log.info(
-                                "Shutdown signal received during processing, finishing current batch..."
-                            )
+                            log.info("Shutdown signal received during processing, finishing current batch...")
 
-                        log.info(
-                            "Processing row %s with event type %s.", row[0], row[2]
-                        )
+                        log.info("Processing row %s with event type %s.", row[0], row[2])
 
                         # Process event through all handlers
                         success = await self._process_event(row)
@@ -644,9 +623,7 @@ class OutboxPoller:
                         if success:
                             processed_ids.append(row[0])
                         else:
-                            log.warning(
-                                f"Skipping event {row[0]} due to handler errors"
-                            )
+                            log.warning(f"Skipping event {row[0]} due to handler errors")
 
                     if processed_ids:
                         await db_pool.mark_processed(processed_ids)
@@ -681,9 +658,7 @@ class OutboxPoller:
             log.info("Exiting for restart due to memory limit")
             sys.exit(RESTART_EXIT_CODE)
         elif self.shutdown_handler.shutdown_requested():
-            log.info(
-                f"Exiting gracefully due to {self.shutdown_handler.signal_received}"
-            )
+            log.info(f"Exiting gracefully due to {self.shutdown_handler.signal_received}")
             sys.exit(0)
 
 
@@ -789,9 +764,7 @@ class Command(BaseCommand):
                 sys.exit(e.code)
         except KeyboardInterrupt:
             # This should be rare now since we handle SIGINT properly
-            self.stdout.write(
-                self.style.WARNING("Keyboard interrupt received, shutting down...")
-            )
+            self.stdout.write(self.style.WARNING("Keyboard interrupt received, shutting down..."))
             sys.exit(0)
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Unexpected error: {e}"))

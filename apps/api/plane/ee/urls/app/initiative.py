@@ -85,9 +85,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/comments/<uuid:pk>/",
-        InitiativeCommentViewSet.as_view(
-            {"patch": "partial_update", "delete": "destroy"}
-        ),
+        InitiativeCommentViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
         name="initiative-comments",
     ),
     # End Initiative Comment
@@ -191,6 +189,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/progress/",
         InitiativeProgressEndpoint.as_view(),
-        name="initiative-progress"
-    )
+        name="initiative-progress",
+    ),
 ]

@@ -99,9 +99,7 @@ def cache_function_result(timeout=300, key_prefix="cached_func"):
         def wrapper(*args, **kwargs):
             try:
                 # Build a consistent, hashable cache key from arguments
-                key_data = json.dumps(
-                    {"args": args, "kwargs": kwargs}, sort_keys=True, default=str
-                )
+                key_data = json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True, default=str)
             except TypeError:
                 raise ValueError("Arguments must be serializable to JSON")
 

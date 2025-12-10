@@ -23,9 +23,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/links/<uuid:pk>/",
-        ProjectLinkViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-links",
     ),
     path(
@@ -35,16 +33,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/",
-        ProjectUpdatesViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        ProjectUpdatesViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-updates",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/",
-        ProjectUpdatesViewSet.as_view(
-            {"get": "comments_list", "post": "comments_create"}
-        ),
+        ProjectUpdatesViewSet.as_view({"get": "comments_list", "post": "comments_create"}),
         name="project-updates-comments",
     ),
     path(

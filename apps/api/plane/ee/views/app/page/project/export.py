@@ -19,9 +19,7 @@ class ProjectPageExportViewSet(BaseViewSet):
     def create(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug)
         if not page:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # run a celery task to export the page and all the sub pages
         page_export_task.delay(
@@ -34,8 +32,6 @@ class ProjectPageExportViewSet(BaseViewSet):
         )
 
         return Response(
-            {
-                "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
-            },
+            {"message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"},
             status=status.HTTP_200_OK,
         )

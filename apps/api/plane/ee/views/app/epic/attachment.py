@@ -82,9 +82,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -99,9 +97,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     @check_feature_flag(FeatureFlag.EPICS)
     def delete(self, request, slug, project_id, epic_id, pk):
-        epic_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+        epic_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         epic_attachment.is_deleted = True
         epic_attachment.deleted_at = timezone.now()
         epic_attachment.save()
@@ -125,9 +121,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, epic_id, pk=None):
         if pk:
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=pk, workspace__slug=slug, project_id=project_id
-            )
+            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
 
             # Check if the asset is uploaded
             if not asset.is_uploaded:
@@ -159,9 +153,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_id, pk):
-        epic_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+        epic_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         serializer = EpicAttachmentSerializer(epic_attachment)
 
         # Send this activity only if the attachment is not uploaded before

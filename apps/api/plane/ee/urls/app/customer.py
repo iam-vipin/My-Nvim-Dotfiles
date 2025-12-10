@@ -17,9 +17,7 @@ from plane.ee.views.app.customer import (
 
 urlpatterns = [
     # Customer
-    path(
-        "workspaces/<str:slug>/customers/", CustomerEndpoint.as_view(), name="customer"
-    ),
+    path("workspaces/<str:slug>/customers/", CustomerEndpoint.as_view(), name="customer"),
     path(
         "workspaces/<str:slug>/customers/<uuid:pk>/",
         CustomerEndpoint.as_view(),

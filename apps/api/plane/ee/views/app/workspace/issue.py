@@ -301,7 +301,6 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
 
 
 class WorkspaceIssueRetrieveEndpoint(BaseAPIView):
-
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, issue_id):
         issue = (

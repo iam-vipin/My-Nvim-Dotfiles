@@ -28,8 +28,7 @@ class ProjectCyclesEndpoint(BaseAPIView):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=timezone.now(), then=Value("UPCOMING")),

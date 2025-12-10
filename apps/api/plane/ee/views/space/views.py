@@ -45,20 +45,14 @@ class ViewsMetaDataEndpoint(BaseAPIView):
         try:
             deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="view")
         except DeployBoard.DoesNotExist:
-            return Response(
-                {"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND)
 
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug):
             try:
                 issue_view_id = deploy_board.entity_identifier
                 issue_view = IssueView.objects.get(id=issue_view_id)
             except IssueView.DoesNotExist:
-                return Response(
-                    {"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND)
 
             serializer = ViewsPublicMetaSerializer(issue_view)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -79,9 +73,7 @@ class ViewsPublicEndpoint(BaseAPIView):
         # Get the deploy board object
         deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="view")
         # Check if the workspace has access to feature
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug):
             # Get the views object
             views = IssueView.objects.get(pk=deploy_board.entity_identifier)
             serializer = ViewsPublicSerializer(views)
@@ -133,36 +125,26 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
+            .prefetch_related(Prefetch("votes", queryset=IssueVote.objects.select_related("actor")))
         )
 
     def get(self, request, anchor):
         # Get the deploy board object
         deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="view")
         if not deploy_board:
-            return Response(
-                {"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "View is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check if the workspace has access to feature
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
-        ):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug):
             project_id = deploy_board.project_id
             slug = deploy_board.workspace.slug
 
             # Get the views object
-            view = IssueView.objects.get(
-                pk=deploy_board.entity_identifier, project_id=project_id
-            )
+            view = IssueView.objects.get(pk=deploy_board.entity_identifier, project_id=project_id)
             filters = issue_filters(request.query_params, "GET")
             order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project_id
-            )
+            issue_queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
 
             if view.rich_filters:
                 issue_queryset = ComplexFilterBackend().filter_queryset(
@@ -197,9 +179,7 @@ class IssueViewsPublicEndpoint(BaseAPIView):
                 if sub_group_by:
                     if group_by == sub_group_by:
                         return Response(
-                            {
-                                "error": "Group by and sub group by cannot have same parameters"
-                            },
+                            {"error": "Group by and sub group by cannot have same parameters"},
                             status=status.HTTP_400_BAD_REQUEST,
                         )
                     else:

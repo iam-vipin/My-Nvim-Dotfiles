@@ -17,9 +17,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/dashboards/<uuid:pk>/",
-        DashboardViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        DashboardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-dashboard",
     ),
     path(

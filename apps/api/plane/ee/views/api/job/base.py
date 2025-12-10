@@ -73,19 +73,11 @@ class ImportJobAPIView(BaseServiceAPIView):
             if "order_by" in request.query_params:
                 order_by = request.query_params["order_by"]
 
-            import_jobs = (
-                ImportJob.objects.filter(**filters)
-                .order_by(order_by)
-                .select_related("workspace", "report")
-            )
+            import_jobs = ImportJob.objects.filter(**filters).order_by(order_by).select_related("workspace", "report")
             serializer = ImportJobAPISerializer(import_jobs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        import_job = (
-            ImportJob.objects.filter(pk=pk)
-            .select_related("workspace", "report")
-            .first()
-        )
+        import_job = ImportJob.objects.filter(pk=pk).select_related("workspace", "report").first()
         serializer = ImportJobAPISerializer(import_job)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -95,13 +87,9 @@ class ImportJobAPIView(BaseServiceAPIView):
             import_job = ImportJob.objects.select_for_update().filter(pk=pk).first()
 
             if not import_job:
-                return Response(
-                    {"error": "Import job not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Import job not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer = ImportJobAPISerializer(
-                import_job, data=request.data, partial=True
-            )
+            serializer = ImportJobAPISerializer(import_job, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()

@@ -12,16 +12,19 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ProjectViewExportEndpoint(BaseAPIView):
-
     """
     Export view from a project view endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, project_id, view_id):
-
         # Get the provider
         provider = request.data.get("provider", False)
 
@@ -68,15 +71,19 @@ class ProjectViewExportEndpoint(BaseAPIView):
 
 
 class WorkspaceViewExportEndpoint(BaseAPIView):
-
     """
     Export view from a workspace view endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,], level="WORKSPACE")
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
+    )
     def post(self, request, slug, view_id):
-
         # Get the provider
         provider = request.data.get("provider", False)
 

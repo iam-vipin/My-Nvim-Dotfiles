@@ -19,9 +19,7 @@ class OauthApplicationWorkspacePermission(BasePermission):
 
         oauth2authenticated = False
         if is_authenticated:
-            oauth2authenticated = isinstance(
-                request.successful_authenticator, OAuth2Authentication
-            )
+            oauth2authenticated = isinstance(request.successful_authenticator, OAuth2Authentication)
 
         # If not OAuth2 authenticated, allow only if user is authenticated
         if not oauth2authenticated:

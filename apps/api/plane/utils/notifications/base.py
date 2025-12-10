@@ -14,6 +14,7 @@ from plane.graphql.bgtasks.push_notifications import issue_push_notifications
 @dataclass
 class ActivityData:
     """Represents a single activity/event"""
+
     id: str
     verb: str
     field: str
@@ -49,6 +50,7 @@ class ActivityData:
 @dataclass
 class NotificationContext:
     """Context data for notification processing"""
+
     entity_id: str
     project_id: Optional[str]
     workspace_id: str
@@ -63,6 +65,7 @@ class NotificationContext:
 @dataclass
 class NotificationPayload:
     """Container for processed notification data"""
+
     in_app_notifications: List[Notification] = field(default_factory=list)
     email_logs: List[EmailNotificationLog] = field(default_factory=list)
     push_notifications: List[Dict[str, Any]] = field(default_factory=list)
@@ -73,6 +76,7 @@ class NotificationPayload:
 @dataclass
 class MentionData:
     """Data related to mentions in entity"""
+
     new_mentions: List[str] = field(default_factory=list)
     removed_mentions: List[str] = field(default_factory=list)
 
@@ -129,6 +133,7 @@ class BaseNotificationHandler(ABC):
         self.active_members = []
         self.actor = None
         self.payload = NotificationPayload()
+
     def process(self) -> NotificationPayload:
         """
         Main entry point to process notifications for an entity.
@@ -195,22 +200,27 @@ class BaseNotificationHandler(ABC):
     def load_entity(self):
         """Load the main entity (issue, initiative, teamspace, etc.)"""
         pass
+
     @abstractmethod
     def get_entity_display_name(self) -> str:
         """Get display name for the entity"""
         pass
+
     @abstractmethod
     def get_active_members(self) -> List[UUID]:
         """Get list of active members who can receive notifications"""
         pass
+
     @abstractmethod
     def get_subscribers(self, exclude_users: List[str]) -> SubscriberData:
         """Get subscribers for this entity"""
         pass
+
     @abstractmethod
     def create_subscribers(self, mentions: List[str]) -> List:
         """Create new subscribers for mentions"""
         pass
+
     @abstractmethod
     def process_entity_mentions(self) -> Dict[str, Dict[str, Any]]:
         """
@@ -231,6 +241,7 @@ class BaseNotificationHandler(ABC):
             }
         """
         pass
+
     @abstractmethod
     def update_all_mentions(self, mention_results: Dict[str, Dict[str, Any]]):
         """Update mention records for this entity (usually only description mentions)"""
@@ -530,18 +541,17 @@ class BaseNotificationHandler(ABC):
         """Send an email notification"""
         pass
 
-
     def send_push_notifications(self):
         """Send push notifications"""
         if self.payload.in_app_notifications:
-                serialized_notifications = NotificationSerializer(self.payload.in_app_notifications, many=True).data
+            serialized_notifications = NotificationSerializer(self.payload.in_app_notifications, many=True).data
 
-                # converting the uuid to string
-                for notification in serialized_notifications:
-                    if notification is not None:
-                        for key in ["id", "workspace", "project", "receiver"]:
-                            if key in notification:
-                                notification[key] = str(notification[key])
-                        if "triggered_by_details" in notification:
-                            notification["triggered_by_details"]["id"] = str(notification["triggered_by_details"]["id"])
-                        issue_push_notifications.delay(notification)
+            # converting the uuid to string
+            for notification in serialized_notifications:
+                if notification is not None:
+                    for key in ["id", "workspace", "project", "receiver"]:
+                        if key in notification:
+                            notification[key] = str(notification[key])
+                    if "triggered_by_details" in notification:
+                        notification["triggered_by_details"]["id"] = str(notification["triggered_by_details"]["id"])
+                    issue_push_notifications.delay(notification)

@@ -27,15 +27,13 @@ def backfill_issue_type_task(projects):
     # Update the issue type for all existing issues
     issue_types = {
         str(issue_type["project_id"]): str(issue_type["id"])
-        for issue_type in IssueType.objects.filter(
-            project_id__in=[project["id"] for project in projects]
-        ).values("id", "project_id")
+        for issue_type in IssueType.objects.filter(project_id__in=[project["id"] for project in projects]).values(
+            "id", "project_id"
+        )
     }
     # Update the issue type for all existing issues
     bulk_issues = []
-    for issue in Issue.objects.filter(
-        project_id__in=[project["id"] for project in projects]
-    ):
+    for issue in Issue.objects.filter(project_id__in=[project["id"] for project in projects]):
         issue.type_id = issue_types[str(issue.project_id)]
         bulk_issues.append(issue)
 

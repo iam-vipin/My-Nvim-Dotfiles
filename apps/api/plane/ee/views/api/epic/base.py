@@ -7,8 +7,19 @@ from plane.ee.serializers.api import EpicSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import epic_docs
-from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, FIELDS_PARAMETER, CURSOR_PARAMETER, PER_PAGE_PARAMETER
-from plane.utils.openapi.responses import INVALID_REQUEST_RESPONSE, UNAUTHORIZED_RESPONSE, NOT_FOUND_RESPONSE, create_paginated_response
+from plane.utils.openapi.parameters import (
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    FIELDS_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+)
+from plane.utils.openapi.responses import (
+    INVALID_REQUEST_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
+    NOT_FOUND_RESPONSE,
+    create_paginated_response,
+)
 from plane.utils.openapi.examples import SAMPLE_EPIC
 
 from drf_spectacular.utils import OpenApiResponse, OpenApiExample
@@ -33,7 +44,7 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=self.kwargs["slug"],
             project_id=self.kwargs["project_id"],
         ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
-    
+
     @check_feature_flag(FeatureFlag.EPICS)
     @epic_docs(
         operation_id="list_epics",
@@ -62,6 +73,7 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
             on_results=lambda x: EpicSerializer(x, many=True).data,
         )
 
+
 class EpicDetailAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieve` on epic level
@@ -76,7 +88,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
             workspace__slug=self.kwargs["slug"],
             project_id=self.kwargs["project_id"],
         ).filter(Q(type__isnull=False) & Q(type__is_epic=True))
-    
+
     @check_feature_flag(FeatureFlag.EPICS)
     @epic_docs(
         operation_id="retrieve_epic",
@@ -89,9 +101,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             200: OpenApiResponse(
-                description="Epic",
-                response=EpicSerializer,
-                examples=[OpenApiExample(name="Epic", value=SAMPLE_EPIC)]
+                description="Epic", response=EpicSerializer, examples=[OpenApiExample(name="Epic", value=SAMPLE_EPIC)]
             ),
             400: INVALID_REQUEST_RESPONSE,
             401: UNAUTHORIZED_RESPONSE,

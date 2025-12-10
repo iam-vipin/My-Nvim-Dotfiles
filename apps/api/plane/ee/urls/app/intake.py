@@ -5,8 +5,6 @@ from django.urls import path
 from plane.ee.views.app.intake import ProjectInTakePublishViewSet, IntakeSettingEndpoint
 from plane.ee.views.app.intake import IntakeResponsibilityEndpoint
 from plane.ee.views.app.intake import (
-    ProjectInTakePublishViewSet,
-    IntakeSettingEndpoint,
     IntakeFormWorkitemTypeEndpoint,
     IntakeFormRegenerateViewSet,
 )

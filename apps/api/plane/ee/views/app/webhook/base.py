@@ -82,9 +82,7 @@ class InternalWebhookEndpoint(BaseAPIView):
         #     return Response({"url": "URL domain or its subdomain is not allowed."})
 
         try:
-            existing_webhooks = Webhook.objects.filter(
-                workspace_id=workspace.id, url=url
-            ).first()
+            existing_webhooks = Webhook.objects.filter(workspace_id=workspace.id, url=url).first()
 
             if existing_webhooks is not None:
                 return Response(
@@ -93,9 +91,7 @@ class InternalWebhookEndpoint(BaseAPIView):
                 )
 
             webhook = Webhook.objects.create(workspace_id=workspace.id, **request.data)
-            return Response(
-                {"id": webhook.id, "is_connected": True}, status=status.HTTP_200_OK
-            )
+            return Response({"id": webhook.id, "is_connected": True}, status=status.HTTP_200_OK)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(

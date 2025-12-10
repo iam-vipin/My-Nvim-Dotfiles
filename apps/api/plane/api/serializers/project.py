@@ -25,7 +25,7 @@ from plane.ee.models import WorkitemTemplate, ProjectFeature
 from plane.payment.flags.flag import FeatureFlag
 
 
-class  ProjectCreateSerializer(BaseSerializer):
+class ProjectCreateSerializer(BaseSerializer):
     """
     Serializer for creating projects with workspace validation.
 

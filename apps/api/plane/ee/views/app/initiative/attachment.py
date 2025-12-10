@@ -113,9 +113,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset, level="WORKSPACE")
     def delete(self, request, slug, initiative_id, pk):
-        initiative_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, entity_identifier=initiative_id
-        )
+        initiative_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, entity_identifier=initiative_id)
         initiative_attachment.is_deleted = True
         initiative_attachment.deleted_at = timezone.now()
         initiative_attachment.save()
@@ -146,9 +144,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
     def get(self, request, slug, initiative_id, pk=None):
         if pk:
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=pk, workspace__slug=slug, entity_identifier=initiative_id
-            )
+            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, entity_identifier=initiative_id)
 
             # Check if the asset is uploaded
             if not asset.is_uploaded:
@@ -189,9 +185,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
         level="WORKSPACE",
     )
     def patch(self, request, slug, initiative_id, pk):
-        initiative_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, entity_identifier=initiative_id
-        )
+        initiative_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, entity_identifier=initiative_id)
         serializer = InitiativeAttachmentSerializer(initiative_attachment)
 
         # Send this activity only if the attachment is not uploaded before

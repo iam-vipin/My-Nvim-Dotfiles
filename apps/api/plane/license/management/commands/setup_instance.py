@@ -57,9 +57,7 @@ class Command(BaseCommand):
             )
 
             if not created:
-                self.stdout.write(
-                    self.style.WARNING("given email is already an instance admin")
-                )
+                self.stdout.write(self.style.WARNING("given email is already an instance admin"))
 
             self.stdout.write(self.style.SUCCESS("Successful"))
         except Exception as e:

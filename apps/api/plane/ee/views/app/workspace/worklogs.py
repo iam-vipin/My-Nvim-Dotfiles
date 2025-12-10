@@ -42,9 +42,7 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=(issue_worklogs),
-            on_results=lambda issue_worklogs: IssueWorkLogSerializer(
-                issue_worklogs, many=True
-            ).data,
+            on_results=lambda issue_worklogs: IssueWorkLogSerializer(issue_worklogs, many=True).data,
         )
 
 
@@ -84,15 +82,13 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def get(self, request, slug):
-        exporter_history = ExporterHistory.objects.filter(
-            workspace__slug=slug, type="issue_worklogs"
-        ).select_related("workspace", "initiated_by")
+        exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_worklogs").select_related(
+            "workspace", "initiated_by"
+        )
 
         return self.paginate(
             order_by=request.GET.get("order_by", "-created_at"),
             request=request,
             queryset=exporter_history,
-            on_results=lambda exporter_history: ExporterHistorySerializer(
-                exporter_history, many=True
-            ).data,
+            on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
         )

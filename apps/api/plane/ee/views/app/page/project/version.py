@@ -16,16 +16,12 @@ class PageVersionExtendedEndpoint(BaseAPIView):
         # Check if pk is provided
         if pk:
             # Return a single page version
-            page_version = PageVersion.objects.get(
-                workspace__slug=slug, page_id=page_id, pk=pk
-            )
+            page_version = PageVersion.objects.get(workspace__slug=slug, page_id=page_id, pk=pk)
             # Serialize the page version
             serializer = PageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return all page versions
-        page_versions = PageVersion.objects.filter(
-            workspace__slug=slug, page_id=page_id
-        )
+        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
         # Serialize the page versions
         serializer = PageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

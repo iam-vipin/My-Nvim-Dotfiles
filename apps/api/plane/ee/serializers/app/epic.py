@@ -60,16 +60,12 @@ class EpicCreateSerializer(BaseSerializer):
         required=False,
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
-    initiative_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False, write_only=True
-    )
+    initiative_ids = serializers.ListField(child=serializers.UUIDField(), required=False, write_only=True)
     initiative_id_resp = serializers.SerializerMethodField(read_only=True)
 
     def get_initiative_id_resp(self, obj):
         if obj.initiative_epics.all():
-            return [
-                initiative.initiative_id for initiative in obj.initiative_epics.all()
-            ]
+            return [initiative.initiative_id for initiative in obj.initiative_epics.all()]
         return []
 
     class Meta:
@@ -110,9 +106,7 @@ class EpicCreateSerializer(BaseSerializer):
 
         epic_id = self.context["type_id"]
         # Create Issue
-        issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type_id=epic_id
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type_id=epic_id)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -164,18 +158,14 @@ class EpicCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if initiative_ids is not None:
-            current_initiatives = InitiativeEpic.objects.filter(
-                epic=instance
-            ).values_list("initiative_id", flat=True)
+            current_initiatives = InitiativeEpic.objects.filter(epic=instance).values_list("initiative_id", flat=True)
 
             # Get the initiatives to add and initiatives to remove from both the current and the new initiatives
             initiatives_to_add = list(set(initiative_ids) - set(current_initiatives))
             initiatives_to_remove = list(set(current_initiatives) - set(initiative_ids))
 
             # Delete the initiatives to remove
-            InitiativeEpic.objects.filter(
-                epic=instance, initiative_id__in=initiatives_to_remove
-            ).delete()
+            InitiativeEpic.objects.filter(epic=instance, initiative_id__in=initiatives_to_remove).delete()
 
             # Create the initiatives to add
             try:
@@ -197,9 +187,7 @@ class EpicCreateSerializer(BaseSerializer):
                 pass
 
         if assignees is not None:
-            current_assignee_ids = IssueAssignee.objects.filter(
-                issue=instance
-            ).values_list("assignee_id", flat=True)
+            current_assignee_ids = IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
 
             assignee_ids = [assignee.id for assignee in assignees]
 
@@ -208,9 +196,7 @@ class EpicCreateSerializer(BaseSerializer):
             assignees_to_remove = list(set(current_assignee_ids) - set(assignee_ids))
 
             # Delete the assignees to remove
-            IssueAssignee.objects.filter(
-                issue=instance, assignee_id__in=assignees_to_remove
-            ).delete()
+            IssueAssignee.objects.filter(issue=instance, assignee_id__in=assignees_to_remove).delete()
 
             # Create the assignees to add
             try:
@@ -233,9 +219,7 @@ class EpicCreateSerializer(BaseSerializer):
                 pass
 
         if labels is not None:
-            current_label_ids = IssueLabel.objects.filter(issue=instance).values_list(
-                "label_id", flat=True
-            )
+            current_label_ids = IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
 
             requested_label_ids = [label.id for label in labels]
 
@@ -244,9 +228,7 @@ class EpicCreateSerializer(BaseSerializer):
             labels_to_remove = list(set(current_label_ids) - set(requested_label_ids))
 
             # Delete the labels to remove
-            IssueLabel.objects.filter(
-                issue=instance, label_id__in=labels_to_remove
-            ).delete()
+            IssueLabel.objects.filter(issue=instance, label_id__in=labels_to_remove).delete()
 
             # Create the labels to add
             try:
@@ -286,12 +268,8 @@ class EpicActivitySerializer(BaseSerializer):
 
 class EpicRelationSerializer(BaseSerializer):
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="related_issue.project_id", read_only=True
-    )
-    sequence_id = serializers.IntegerField(
-        source="related_issue.sequence_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
 
@@ -303,9 +281,7 @@ class EpicRelationSerializer(BaseSerializer):
 
 class RelatedIssueSerializer(BaseSerializer):
     id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="issue.project_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
@@ -352,25 +328,17 @@ class EpicLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if IssueLink.objects.filter(url=validated_data.get("url"), issue_id=validated_data.get("issue_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            IssueLink.objects.filter(
-                url=validated_data.get("url"), issue_id=instance.issue_id
-            )
+            IssueLink.objects.filter(url=validated_data.get("url"), issue_id=instance.issue_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
@@ -443,9 +411,7 @@ class EpicDetailSerializer(EpicSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
     customer_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    customer_request_ids = serializers.ListField(
-        child=serializers.UUIDField(), required=False
-    )
+    customer_request_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     initiative_ids = serializers.ListField(read_only=True)
     milestone_id = serializers.UUIDField(read_only=True)
 

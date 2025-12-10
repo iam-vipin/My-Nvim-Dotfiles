@@ -35,9 +35,7 @@ class EpicIssuesEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -66,10 +64,7 @@ class EpicIssuesEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -107,9 +102,7 @@ class EpicIssuesEndpoint(BaseAPIView):
         group_by = request.GET.get("group_by", False)
 
         if order_by_param:
-            epic_issues, order_by_param = order_issue_queryset(
-                epic_issues, order_by_param
-            )
+            epic_issues, order_by_param = order_issue_queryset(epic_issues, order_by_param)
 
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
@@ -146,9 +139,7 @@ class EpicIssuesEndpoint(BaseAPIView):
             "type_id",
         )
         datetime_fields = ["created_at", "updated_at"]
-        epic_issues = user_timezone_converter(
-            epic_issues, datetime_fields, request.user.user_timezone
-        )
+        epic_issues = user_timezone_converter(epic_issues, datetime_fields, request.user.user_timezone)
         if group_by:
             result_dict = defaultdict(list)
 
@@ -181,9 +172,7 @@ class EpicIssuesEndpoint(BaseAPIView):
         issue_ids = request.data.get("sub_issue_ids", [])
 
         if not len(issue_ids):
-            return Response(
-                {"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         issue_ids = Issue.issue_objects.filter(id__in=issue_ids)
 

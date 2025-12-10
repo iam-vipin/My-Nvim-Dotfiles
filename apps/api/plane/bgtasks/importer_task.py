@@ -71,8 +71,7 @@ def service_importer(service, importer_id):
                 email__in=[
                     user.get("email").strip().lower()
                     for user in users
-                    if user.get("import", False) == "invite"
-                    or user.get("import", False) == "map"
+                    if user.get("import", False) == "invite" or user.get("import", False) == "map"
                 ]
             )
 
@@ -144,9 +143,7 @@ def service_importer(service, importer_id):
             GithubRepository.objects.filter(project_id=importer.project_id).delete()
 
             # Create a Label for github
-            label = Label.objects.filter(
-                name="GitHub", project_id=importer.project_id
-            ).first()
+            label = Label.objects.filter(name="GitHub", project_id=importer.project_id).first()
 
             if label is None:
                 label = Label.objects.create(

@@ -33,6 +33,4 @@ class ProjectWorklogSummarySerializer(serializers.Serializer):
     """Serializer for project worklog summary with aggregated duration per issue"""
 
     issue_id = serializers.UUIDField(help_text="ID of the work item")
-    duration = serializers.IntegerField(
-        help_text="Total duration logged for this work item in seconds"
-    )
+    duration = serializers.IntegerField(help_text="Total duration logged for this work item in seconds")

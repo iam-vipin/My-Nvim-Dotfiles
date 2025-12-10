@@ -123,9 +123,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
         # EE start
         if request.data.get("state_id"):
-            workflow_state_manager = WorkflowStateManager(
-                project_id=request.data.get("project_id", None), slug=slug
-            )
+            workflow_state_manager = WorkflowStateManager(project_id=request.data.get("project_id", None), slug=slug)
             if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"),
                 user_id=request.user.id,
@@ -186,12 +184,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
 
         # EE start
         # Check if state is updated then is the transition allowed
-        workflow_state_manager = WorkflowStateManager(
-            project_id=issue.project_id, slug=slug
-        )
-        if request.data.get(
-            "state_id"
-        ) and not workflow_state_manager.validate_state_transition(
+        workflow_state_manager = WorkflowStateManager(project_id=issue.project_id, slug=slug)
+        if request.data.get("state_id") and not workflow_state_manager.validate_state_transition(
             issue=issue,
             new_state_id=request.data.get("state_id"),
             user_id=request.user.id,
@@ -351,9 +345,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 draft_issue_id=None,
             )
 
-            draft_issue_property_values = DraftIssuePropertyValue.objects.filter(
-                draft_issue=draft_issue
-            )
+            draft_issue_property_values = DraftIssuePropertyValue.objects.filter(draft_issue=draft_issue)
             IssuePropertyValue.objects.bulk_create(
                 [
                     IssuePropertyValue(

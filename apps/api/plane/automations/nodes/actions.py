@@ -45,16 +45,11 @@ class AddCommentParams(BaseModel):
 
     comment_text: str = Field(
         ...,
-        description=(
-            "Comment text to add (supports template variables like {{payload.data.priority}})"
-        ),
+        description=("Comment text to add (supports template variables like {{payload.data.priority}})"),
         examples=[
             "Issue priority changed to {{payload.data.priority}}",
             "Issue assigned to user ID: {{payload.data.assignee_ids.0}}",
-            (
-                "State changed from {{payload.previous_attributes.state_id}} "
-                "to {{payload.data.state_id}}"
-            ),
+            ("State changed from {{payload.previous_attributes.state_id}} to {{payload.data.state_id}}"),
         ],
     )
 
@@ -166,9 +161,7 @@ class AddCommentAction(ActionNode):
                 }
 
             # Render the comment template
-            rendered_comment = self.render_template(
-                self.params.comment_text, event, context
-            )
+            rendered_comment = self.render_template(self.params.comment_text, event, context)
 
             if not rendered_comment.strip():
                 return {
@@ -202,17 +195,19 @@ class AddCommentAction(ActionNode):
                 requested_data = IssueCommentSerializer(comment).data
 
                 # Ensure the activity fires only AFTER the commit
-                transaction.on_commit(lambda: issue_activity.delay(
-                    type="comment.activity.created",
-                    requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
-                    actor_id=str(automation_user_id),
-                    issue_id=str(issue_id),
-                    project_id=str(issue.project_id),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=True,
-                    origin=None,
-                ))
+                transaction.on_commit(
+                    lambda: issue_activity.delay(
+                        type="comment.activity.created",
+                        requested_data=json.dumps(requested_data, cls=DjangoJSONEncoder),
+                        actor_id=str(automation_user_id),
+                        issue_id=str(issue_id),
+                        project_id=str(issue.project_id),
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=None,
+                    )
+                )
 
             return {
                 "success": True,
@@ -230,9 +225,7 @@ class AddCommentAction(ActionNode):
                 "action": "add_comment",
             }
 
-    def _get_assets_for_comment(
-        self, issue: Issue, context: dict, automation_user_id: str
-    ) -> None:
+    def _get_assets_for_comment(self, issue: Issue, context: dict, automation_user_id: str) -> None:
         """
         Step 1: Extract asset ids from the FileAsset model
         Step 2: Duplicate the assets
@@ -258,9 +251,7 @@ class AddCommentAction(ActionNode):
             )
 
             if duplicated_assets:
-                external_data = sync_with_external_service(
-                    "automation_comment", duplicated_assets
-                )
+                external_data = sync_with_external_service("automation_comment", duplicated_assets)
 
                 return {
                     "comment_html": external_data.get("comment_html"),
@@ -323,10 +314,7 @@ class ChangePropertyParams(BaseModel):
         }
 
         if v not in allowed_properties:
-            raise ValueError(
-                f"Property '{v}' is not allowed. "
-                f"Allowed properties: {allowed_properties}"
-            )
+            raise ValueError(f"Property '{v}' is not allowed. Allowed properties: {allowed_properties}")
         return v
 
 
@@ -402,9 +390,7 @@ class ChangePropertyAction(ActionNode):
 
         return rendered
 
-    def _handle_priority_property(
-        self, issue: Issue, change_type: str, values: List[Any]
-    ) -> Any:
+    def _handle_priority_property(self, issue: Issue, change_type: str, values: List[Any]) -> Any:
         """Handle priority property changes."""
         valid_priorities = ["urgent", "high", "medium", "low", "none"]
 
@@ -414,10 +400,7 @@ class ChangePropertyAction(ActionNode):
 
             new_priority = str(values[0]) if values[0] is not None else None
             if new_priority and new_priority not in valid_priorities:
-                raise ValueError(
-                    f"Invalid priority '{new_priority}'. "
-                    f"Must be one of: {valid_priorities}"
-                )
+                raise ValueError(f"Invalid priority '{new_priority}'. Must be one of: {valid_priorities}")
             return new_priority
 
         elif change_type == "remove":
@@ -425,9 +408,7 @@ class ChangePropertyAction(ActionNode):
 
         return issue.priority
 
-    def _handle_state_property(
-        self, issue: Issue, change_type: str, values: List[Any]
-    ) -> Any:
+    def _handle_state_property(self, issue: Issue, change_type: str, values: List[Any]) -> Any:
         """Handle state property changes."""
         if change_type in ["update", "add"]:
             if not values:
@@ -455,13 +436,9 @@ class ChangePropertyAction(ActionNode):
 
         return issue.state
 
-    def _handle_assignees_property(
-        self, issue: Issue, change_type: str, values: List[Any]
-    ) -> Any:
+    def _handle_assignees_property(self, issue: Issue, change_type: str, values: List[Any]) -> Any:
         """Handle assignees property changes."""
-        current_assignees = [
-            str(a) for a in issue.assignees.values_list("id", flat=True)
-        ]
+        current_assignees = [str(a) for a in issue.assignees.values_list("id", flat=True)]
         current_set = set(current_assignees)
         provided_set = {str(v) for v in values if v is not None}
 
@@ -477,9 +454,7 @@ class ChangePropertyAction(ActionNode):
             "assignee_ids_to_remove": assignee_ids_to_remove,
         }
 
-    def _handle_labels_property(
-        self, issue: Issue, change_type: str, values: List[Any]
-    ) -> Any:
+    def _handle_labels_property(self, issue: Issue, change_type: str, values: List[Any]) -> Any:
         """Handle labels property changes."""
         current_labels = list(issue.labels.values_list("id", flat=True))
 
@@ -492,9 +467,7 @@ class ChangePropertyAction(ActionNode):
         elif change_type == "remove":
             # Remove specified labels
             labels_to_remove = [str(v) for v in values if v is not None]
-            remaining_labels = [
-                label for label in current_labels if str(label) not in labels_to_remove
-            ]
+            remaining_labels = [label for label in current_labels if str(label) not in labels_to_remove]
             return remaining_labels
 
         elif change_type == "update":
@@ -504,9 +477,7 @@ class ChangePropertyAction(ActionNode):
 
         return current_labels
 
-    def _handle_date_property(
-        self, issue: Issue, change_type: str, values: List[Any], property_name: str
-    ) -> Any:
+    def _handle_date_property(self, issue: Issue, change_type: str, values: List[Any], property_name: str) -> Any:
         """Handle date property changes (start_date, due_date)."""
         if change_type in ["update", "add"]:
             if not values:
@@ -524,19 +495,12 @@ class ChangePropertyAction(ActionNode):
                         parsed_date = datetime.strptime(date_value, "%Y-%m-%d").date()
                         return parsed_date
                     else:  # ISO datetime
-                        parsed_date = datetime.fromisoformat(
-                            date_value.replace("Z", "+00:00")
-                        ).date()
+                        parsed_date = datetime.fromisoformat(date_value.replace("Z", "+00:00")).date()
                         return parsed_date
                 except ValueError:
-                    raise ValueError(
-                        f"Invalid date format '{date_value}'. "
-                        "Use YYYY-MM-DD or ISO datetime"
-                    )
+                    raise ValueError(f"Invalid date format '{date_value}'. Use YYYY-MM-DD or ISO datetime")
             else:
-                logging.info(
-                    f"Date value is not string, returning as-is: {date_value} (type: {type(date_value)})"
-                )
+                logging.info(f"Date value is not string, returning as-is: {date_value} (type: {type(date_value)})")
 
             return date_value
 
@@ -559,10 +523,7 @@ class ChangePropertyAction(ActionNode):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -610,9 +571,7 @@ class ChangePropertyAction(ActionNode):
                     "action": "change_property",
                 }
 
-            automation_bot_user_id = Automation.objects.get(
-                id=context.get("automation_id")
-            ).bot_user_id
+            automation_bot_user_id = Automation.objects.get(id=context.get("automation_id")).bot_user_id
             issue.updated_by_id = automation_bot_user_id
 
             # Render property values if they contain templates
@@ -639,25 +598,19 @@ class ChangePropertyAction(ActionNode):
 
             # Dispatch to appropriate property handler
             if property_name == "priority":
-                new_value = self._handle_priority_property(
-                    issue, self.params.change_type, rendered_values
-                )
+                new_value = self._handle_priority_property(issue, self.params.change_type, rendered_values)
                 issue.priority = new_value
                 update_fields = ["priority", "updated_at"]
 
             elif property_name == "state_id":
-                new_state = self._handle_state_property(
-                    issue, self.params.change_type, rendered_values
-                )
+                new_state = self._handle_state_property(issue, self.params.change_type, rendered_values)
                 # Set the state object, not just the ID
                 issue.state = new_state
                 new_value = str(new_state.id) if new_state else None
                 update_fields = ["state_id", "updated_at"]
 
             elif property_name == "assignee_ids":
-                changes = self._handle_assignees_property(
-                    issue, self.params.change_type, rendered_values
-                )
+                changes = self._handle_assignees_property(issue, self.params.change_type, rendered_values)
                 assignees_to_add = set(changes.get("assignee_ids_to_add", []))
                 assignees_to_remove = set(changes.get("assignee_ids_to_remove", []))
                 current_assignees_set = {str(a) for a in (old_value or [])}
@@ -684,18 +637,14 @@ class ChangePropertyAction(ActionNode):
                         ignore_conflicts=True,
                     )
 
-                final_assignees = list(
-                    (current_assignees_set - assignees_to_remove) | assignees_to_add
-                )
+                final_assignees = list((current_assignees_set - assignees_to_remove) | assignees_to_add)
 
                 old_value = str(old_value) if old_value else None
                 new_value = str(final_assignees) if final_assignees else None
                 update_fields = ["updated_at"]
 
             elif property_name == "label_ids":
-                new_label_ids = self._handle_labels_property(
-                    issue, self.params.change_type, rendered_values
-                )
+                new_label_ids = self._handle_labels_property(issue, self.params.change_type, rendered_values)
 
                 current_label_ids_set = {str(l) for l in (old_value or [])}
                 desired_label_ids_set = {str(l) for l in (new_label_ids or [])}
@@ -704,9 +653,7 @@ class ChangePropertyAction(ActionNode):
                 labels_to_add = list(desired_label_ids_set - current_label_ids_set)
 
                 if labels_to_remove:
-                    IssueLabel.objects.using("default").filter(
-                        issue=issue, label_id__in=labels_to_remove
-                    ).delete()
+                    IssueLabel.objects.using("default").filter(issue=issue, label_id__in=labels_to_remove).delete()
 
                 if labels_to_add:
                     IssueLabel.objects.bulk_create(
@@ -726,24 +673,18 @@ class ChangePropertyAction(ActionNode):
                     )
 
                 old_value = str(old_value) if old_value else None
-                new_value = (
-                    str(list(desired_label_ids_set)) if desired_label_ids_set else None
-                )
+                new_value = str(list(desired_label_ids_set)) if desired_label_ids_set else None
                 update_fields = ["updated_at"]
 
             elif property_name == "start_date":
-                new_value = self._handle_date_property(
-                    issue, self.params.change_type, rendered_values, property_name
-                )
+                new_value = self._handle_date_property(issue, self.params.change_type, rendered_values, property_name)
                 issue.start_date = new_value
                 old_value = str(old_value) if old_value else None
                 new_value = str(new_value) if new_value else None
                 update_fields = ["start_date", "updated_at"]
 
             elif property_name == "target_date":
-                new_value = self._handle_date_property(
-                    issue, self.params.change_type, rendered_values, property_name
-                )
+                new_value = self._handle_date_property(issue, self.params.change_type, rendered_values, property_name)
                 issue.target_date = new_value
                 old_value = str(old_value) if old_value else None
                 new_value = str(new_value) if new_value else None

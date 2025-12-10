@@ -16,12 +16,8 @@ from plane.utils.url import contains_url
 
 class TemplateSerializer(BaseSerializer):
     attachments_urls = serializers.SerializerMethodField()
-    attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(), many=True, required=False
-    )
-    categories = serializers.PrimaryKeyRelatedField(
-        queryset=TemplateCategory.objects.all(), many=True, required=False
-    )
+    attachments = serializers.PrimaryKeyRelatedField(queryset=FileAsset.objects.all(), many=True, required=False)
+    categories = serializers.PrimaryKeyRelatedField(queryset=TemplateCategory.objects.all(), many=True, required=False)
 
     class Meta:
         model = Template
@@ -47,7 +43,6 @@ class WorkitemTemplateSerializer(BaseSerializer):
     class Meta:
         model = WorkitemTemplate
         fields = "__all__"
-
 
 
 class WorkitemTemplateDataSerializer(BaseSerializer):
@@ -171,12 +166,8 @@ class TemplateDataSerializer(BaseSerializer):
     template_data = serializers.SerializerMethodField()
     attachments_urls = serializers.SerializerMethodField()
     cover_image_url = serializers.SerializerMethodField()
-    attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(), many=True, required=False
-    )
-    categories = serializers.PrimaryKeyRelatedField(
-        queryset=TemplateCategory.objects.all(), many=True, required=False
-    )
+    attachments = serializers.PrimaryKeyRelatedField(queryset=FileAsset.objects.all(), many=True, required=False)
+    categories = serializers.PrimaryKeyRelatedField(queryset=TemplateCategory.objects.all(), many=True, required=False)
 
     class Meta:
         model = Template

@@ -70,21 +70,12 @@ class InitiativeCommentViewSet(BaseViewSet):
         level="WORKSPACE",
     )
     def partial_update(self, request, slug, initiative_id, pk):
-        initiative_comment = InitiativeComment.objects.get(
-            workspace__slug=slug, initiative_id=initiative_id, pk=pk
-        )
+        initiative_comment = InitiativeComment.objects.get(workspace__slug=slug, initiative_id=initiative_id, pk=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(
-            InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder
-        )
-        serializer = InitiativeCommentSerializer(
-            initiative_comment, data=request.data, partial=True
-        )
+        current_instance = json.dumps(InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder)
+        serializer = InitiativeCommentSerializer(initiative_comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != initiative_comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != initiative_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
 
             initiative_activity.delay(
@@ -109,12 +100,8 @@ class InitiativeCommentViewSet(BaseViewSet):
         level="WORKSPACE",
     )
     def destroy(self, request, slug, initiative_id, pk):
-        initiative_comment = InitiativeComment.objects.get(
-            workspace__slug=slug, initiative_id=initiative_id, pk=pk
-        )
-        current_instance = json.dumps(
-            InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder
-        )
+        initiative_comment = InitiativeComment.objects.get(workspace__slug=slug, initiative_id=initiative_id, pk=pk)
+        current_instance = json.dumps(InitiativeCommentSerializer(initiative_comment).data, cls=DjangoJSONEncoder)
         initiative_comment.delete()
         initiative_activity.delay(
             type="comment.activity.deleted",

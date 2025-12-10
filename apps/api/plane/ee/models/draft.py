@@ -7,12 +7,8 @@ from plane.ee.models import IssueProperty, IssuePropertyOption
 
 
 class DraftIssuePropertyValue(WorkspaceBaseModel):
-    draft_issue = models.ForeignKey(
-        "db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_properties"
-    )
-    property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="draft_issue_values"
-    )
+    draft_issue = models.ForeignKey("db.DraftIssue", on_delete=models.CASCADE, related_name="draft_issue_properties")
+    property = models.ForeignKey(IssueProperty, on_delete=models.CASCADE, related_name="draft_issue_values")
     value_text = models.TextField(blank=True)
     value_boolean = models.BooleanField(default=False)
     value_decimal = models.FloatField(default=0)

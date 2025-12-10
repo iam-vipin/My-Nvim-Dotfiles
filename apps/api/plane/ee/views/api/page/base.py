@@ -37,7 +37,9 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
 
     def get_queryset(self):
         return Page.objects.filter(
-            workspace__slug=self.kwargs["slug"], projects__id=self.kwargs["project_id"], project_pages__deleted_at__isnull=True
+            workspace__slug=self.kwargs["slug"],
+            projects__id=self.kwargs["project_id"],
+            project_pages__deleted_at__isnull=True,
         )
 
     @page_docs(
@@ -74,9 +76,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not page.owned_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this page"},
@@ -122,9 +122,7 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return DeployBoard.objects.filter(
-            entity_name="page", anchor=self.kwargs["anchor"]
-        )
+        return DeployBoard.objects.filter(entity_name="page", anchor=self.kwargs["anchor"])
 
     @page_docs(
         operation_id="get_published_page_detail",
@@ -143,14 +141,9 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
     )
     def get(self, request, anchor):
         deploy_board = self.get_queryset().get(anchor=anchor)
-        is_page_anchor = (
-            deploy_board.entity_name == "page"
-            and deploy_board.entity_identifier is not None
-        )
+        is_page_anchor = deploy_board.entity_name == "page" and deploy_board.entity_identifier is not None
         if not deploy_board or not is_page_anchor:
-            return Response(
-                {"detail": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"detail": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         page = Page.objects.get(id=deploy_board.entity_identifier)
         serializer = self.serializer_class(page)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -174,9 +167,7 @@ class ProjectPageAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         description_html = request.data.get("description_html", "<p></p>")
-        external_data = sync_with_external_service(
-            entity_name="PAGE", description_html=description_html
-        )
+        external_data = sync_with_external_service(entity_name="PAGE", description_html=description_html)
         workspace = Workspace.objects.get(slug=slug)
 
         serializer = PageCreateAPISerializer(
@@ -186,13 +177,9 @@ class ProjectPageAPIEndpoint(BaseAPIView):
                 "project_id": project_id,
                 "owned_by_id": request.user.id,
                 "description_binary": (
-                    base64.b64decode(external_data.get("description_binary"))
-                    if external_data
-                    else None
+                    base64.b64decode(external_data.get("description_binary")) if external_data else None
                 ),
-                "description": (
-                    external_data.get("description", {}) if external_data else {}
-                ),
+                "description": (external_data.get("description", {}) if external_data else {}),
             },
         )
 
@@ -240,22 +227,16 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         description_html = request.data.get("description_html", "<p></p>")
-        external_data = sync_with_external_service(
-            entity_name="PAGE", description_html=description_html
-        )
+        external_data = sync_with_external_service(entity_name="PAGE", description_html=description_html)
         serializer = PageCreateAPISerializer(
             data=request.data,
             context={
                 "workspace_id": workspace.id,
                 "owned_by_id": request.user.id,
                 "description_binary": (
-                    base64.b64decode(external_data.get("description_binary"))
-                    if external_data
-                    else None
+                    base64.b64decode(external_data.get("description_binary")) if external_data else None
                 ),
-                "description": (
-                    external_data.get("description", {}) if external_data else {}
-                ),
+                "description": (external_data.get("description", {}) if external_data else {}),
             },
         )
 

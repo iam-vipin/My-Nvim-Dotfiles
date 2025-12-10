@@ -28,9 +28,7 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
         if request.query_params.get("id"):
             filters["id"] = request.query_params.get("id")
 
-        workspace_applications = WorkspaceAppInstallation.objects.filter(
-            application=application, **filters
-        )
+        workspace_applications = WorkspaceAppInstallation.objects.filter(application=application, **filters)
 
         # Always filter those workspaces where user is a member
         workspace_applications = workspace_applications.filter(
@@ -42,9 +40,5 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
                 workspace=token.workspace,
             )
 
-        workspace_applications_serializer = WorkspaceAppInstallationSerializer(
-            workspace_applications, many=True
-        )
-        return Response(
-            workspace_applications_serializer.data, status=status.HTTP_200_OK
-        )
+        workspace_applications_serializer = WorkspaceAppInstallationSerializer(workspace_applications, many=True)
+        return Response(workspace_applications_serializer.data, status=status.HTTP_200_OK)

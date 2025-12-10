@@ -35,36 +35,37 @@ def stack_email_notification():
     email_notifications = EmailNotificationLog.objects.filter(processed_at__isnull=True).order_by("receiver").values()
 
     # Group by receiver_id AND entity_name to handle different entity types separately
-    receivers_entities = list(set([
-        (str(notification.get("receiver_id")), notification.get("entity_name")) 
-        for notification in email_notifications
-    ]))
-    
+    receivers_entities = list(
+        set(
+            [
+                (str(notification.get("receiver_id")), notification.get("entity_name"))
+                for notification in email_notifications
+            ]
+        )
+    )
+
     processed_notifications = []
 
     for receiver_id, entity_name in receivers_entities:
         # Get notifications for this specific receiver AND entity_name combination
         receiver_notifications = [
-            notification for notification in email_notifications 
-            if str(notification.get("receiver_id")) == receiver_id 
-            and notification.get("entity_name") == entity_name
+            notification
+            for notification in email_notifications
+            if str(notification.get("receiver_id")) == receiver_id and notification.get("entity_name") == entity_name
         ]
-        
+
         # Create payload for this entity type only
         payload = {}
         entity_notification_ids = {}
-
 
         for receiver_notification in receiver_notifications:
             entity_identifier = receiver_notification.get("entity_identifier")
             payload.setdefault(receiver_notification.get("entity_identifier"), {}).setdefault(
                 str(receiver_notification.get("triggered_by_id")), []
             ).append(receiver_notification.get("data"))
-            
+
             # Track processed notifications and IDs
-            entity_notification_ids.setdefault(entity_identifier, []).append(
-                receiver_notification.get("id")
-            )
+            entity_notification_ids.setdefault(entity_identifier, []).append(receiver_notification.get("id"))
 
             # Track processed notifications for this entity
             processed_notifications.append(receiver_notification.get("id"))
@@ -97,6 +98,7 @@ def stack_email_notification():
 
     # Update the email notification log
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
+
 
 def create_payload(notification_data, entity_name):
     # return format {"actor_id":  { "key": { "old_value": [], "new_value": [] } }}
@@ -365,8 +367,6 @@ def send_workspace_level_email_notification(
         except (Teamspace.DoesNotExist, Initiative.DoesNotExist):
             logging.getLogger("plane.worker").warning(f"Entity not found: {entity_id} for entity name: {entity_name}")
             return
-
-
 
         actors_involved = []
         template_data = []

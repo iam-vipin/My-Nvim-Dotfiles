@@ -193,9 +193,7 @@ def issue_group_values(
         return list(queryset) + ["None"]
 
     if field == "milestone_id":
-        queryset = Milestone.objects.filter(workspace__slug=slug).values_list(
-            "id", flat=True
-        )
+        queryset = Milestone.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         if project_id:
             return list(queryset.filter(project_id=project_id)) + ["None"]
         return list(queryset) + ["None"]

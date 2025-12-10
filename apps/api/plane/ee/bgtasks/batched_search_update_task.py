@@ -59,9 +59,7 @@ def process_batched_opensearch_updates():
                             f"OpenSearch batch processed {chunk_processed} {model_name} instances with registry-powered cascades"
                         )
                     except Exception as e:
-                        logger.error(
-                            f"Error processing chunk {chunk_info['chunk_number']} for {model_name}: {e}"
-                        )
+                        logger.error(f"Error processing chunk {chunk_info['chunk_number']} for {model_name}: {e}")
                         # Continue processing other chunks even if one fails
 
                 total_processed += model_processed

@@ -125,6 +125,7 @@ def remove_pages_from_workspace_level(page_ids: List[str], workspace_id: str, us
         updated_at=timezone.now(),
     )
 
+
 # ====================
 # Unified Entity Move Operations
 # ====================
@@ -237,15 +238,12 @@ def move_page_entities(
     ).delete()
 
 
-
 # ====================
 # move entities to project, workspace, teamspace
 # ====================
 
 
-def move_entities_to_project(
-    page_ids: List[str], slug: str, user_id: str, project_id: str
-) -> None:
+def move_entities_to_project(page_ids: List[str], slug: str, user_id: str, project_id: str) -> None:
     """Move all entities for multiple pages to a project (bulk operation)."""
     move_page_entities(page_ids, "project", slug, user_id, project_id=project_id)
 

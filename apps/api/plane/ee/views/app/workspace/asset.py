@@ -17,9 +17,7 @@ class WorkspaceBulkAssetEndpoint(BaseAPIView):
         asset_ids = request.data.get("asset_ids", [])
 
         if not asset_ids:
-            return Response(
-                {"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug)
 

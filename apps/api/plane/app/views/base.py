@@ -29,6 +29,7 @@ from plane.utils.core.mixins import ReadReplicaControlMixin
 
 logger = logging.getLogger("plane.api")
 
+
 class TimezoneMixin:
     """
     This enables timezone conversion according
@@ -88,8 +89,8 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                     extra={
                         "error_code": "VALIDATION_ERROR",
                         "error_message": str(e),
-                    }
-                )                
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -101,7 +102,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                     extra={
                         "error_code": "OBJECT_DOES_NOT_EXIST",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required object does not exist."},
@@ -114,7 +115,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                     extra={
                         "error_code": "KEY_ERROR",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required key does not exist."},
@@ -205,8 +206,8 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                     extra={
                         "error_code": "VALIDATION_ERROR",
                         "error_message": str(e),
-                    }
-                )                
+                    },
+                )
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -218,7 +219,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                     extra={
                         "error_code": "OBJECT_DOES_NOT_EXIST",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required object does not exist."},
@@ -231,7 +232,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                     extra={
                         "error_code": "KEY_ERROR",
                         "error_message": str(e),
-                    }
+                    },
                 )
                 return Response(
                     {"error": "The required key does not exist."},

@@ -73,9 +73,7 @@ class EpicCommentViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not epic.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(
-                request.user.id, slug, project_id
-            )
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to comment on the epic"},
@@ -101,21 +99,12 @@ class EpicCommentViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     @check_feature_flag(FeatureFlag.EPICS)
     def partial_update(self, request, slug, project_id, epic_id, pk):
-        epic_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
-        )
+        epic_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(
-            EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder
-        )
-        serializer = EpicCommentSerializer(
-            epic_comment, data=request.data, partial=True
-        )
+        current_instance = json.dumps(EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder)
+        serializer = EpicCommentSerializer(epic_comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != epic_comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != epic_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
 
         if serializer.is_valid():
@@ -137,12 +126,8 @@ class EpicCommentViewSet(BaseViewSet):
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
     @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, pk):
-        epic_comment = IssueComment.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
-        )
-        current_instance = json.dumps(
-            EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder
-        )
+        epic_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)
+        current_instance = json.dumps(EpicCommentSerializer(epic_comment).data, cls=DjangoJSONEncoder)
         epic_comment.delete()
         issue_activity.delay(
             type="comment.activity.deleted",

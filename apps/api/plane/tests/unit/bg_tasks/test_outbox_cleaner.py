@@ -66,9 +66,7 @@ def recent_outbox_records(db, workspace, project):
 class TestFlushToMongoAndDelete:
     """Test the flush_to_mongo_and_delete function"""
 
-    def test_flush_to_mongo_and_delete_success(
-        self, mock_mongo_collection, workspace, project
-    ):
+    def test_flush_to_mongo_and_delete_success(self, mock_mongo_collection, workspace, project):
         """Test successful MongoDB insert and PostgreSQL deletion"""
         # Arrange
         buffer = [
@@ -105,9 +103,7 @@ class TestFlushToMongoAndDelete:
         """Test handling of MongoDB bulk write error"""
         # Arrange
         buffer = [{"event_id": str(uuid.uuid4()), "event_type": "issue.created"}]
-        mock_mongo_collection.bulk_write.side_effect = BulkWriteError(
-            results=MagicMock()
-        )
+        mock_mongo_collection.bulk_write.side_effect = BulkWriteError(results=MagicMock())
 
         # Act & Assert - should not raise exception
         flush_to_mongo_and_delete(mock_mongo_collection, buffer, [1])
@@ -115,9 +111,7 @@ class TestFlushToMongoAndDelete:
         # Verify MongoDB was still called
         mock_mongo_collection.bulk_write.assert_called_once()
 
-    def test_flush_to_mongo_and_delete_with_real_records(
-        self, db, mock_mongo_collection, workspace, project
-    ):
+    def test_flush_to_mongo_and_delete_with_real_records(self, db, mock_mongo_collection, workspace, project):
         """Test with actual Outbox records in database"""
         # Arrange
         outbox = Outbox.objects.create(

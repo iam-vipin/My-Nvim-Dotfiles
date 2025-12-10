@@ -86,9 +86,9 @@ def get_github_repo_details(access_tokens_url, owner, repo):
         "Authorization": "Bearer " + oauth_token,
         "Accept": "application/vnd.github+json",
     }
-    open_issues = requests.get(
-        f"https://api.github.com/repos/{owner}/{repo}", headers=headers
-    ).json()["open_issues_count"]
+    open_issues = requests.get(f"https://api.github.com/repos/{owner}/{repo}", headers=headers).json()[
+        "open_issues_count"
+    ]
 
     total_labels = 0
 

@@ -34,16 +34,12 @@ class AssetCopyEndpoint(BaseAPIView):
         entity_type = request.data.get("entity_type")
 
         if not asset_ids:
-            return Response(
-                {"error": "No asset IDs provided"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "No asset IDs provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         template_type = self.get_template_type(entity_type)
         # Validate input
         if not template_type:
-            return Response(
-                {"error": "Invalid entity type"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid entity type"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get all the assets from templates
         template_assets = FileAsset.objects.filter(

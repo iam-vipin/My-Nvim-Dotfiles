@@ -76,6 +76,7 @@ def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=
     # Return the flag
     return flag
 
+
 @cache_function_result(timeout=300, key_prefix="workspace_feature_flags")
 def get_all_workspace_feature_flags(slug) -> dict:
     """Function to get all feature flags for a workspace"""

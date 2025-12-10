@@ -86,8 +86,7 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
 
         return list(
             WorkspaceMember.objects.filter(
-                workspace_id=self.context.workspace_id, is_active=True,
-                member__is_bot=False
+                workspace_id=self.context.workspace_id, is_active=True, member__is_bot=False
             ).values_list("member_id", flat=True)
         )
 
@@ -98,9 +97,9 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
             TeamspaceMember.objects.filter(
                 team_space_id=self.context.entity_id,
                 member__in=Subquery(
-                    WorkspaceMember.objects.filter(
-                        workspace_id=self.context.workspace_id, is_active=True
-                    ).values("member_id")
+                    WorkspaceMember.objects.filter(workspace_id=self.context.workspace_id, is_active=True).values(
+                        "member_id"
+                    )
                 ),
             )
             .exclude(member_id__in=exclude_users)
@@ -111,11 +110,7 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
         subscribers = list(set(subscribers))
 
         # Remove actor from the list
-        subscribers = [
-            subscriber
-            for subscriber in subscribers
-            if subscriber != UUID(self.context.actor_id)
-        ]
+        subscribers = [subscriber for subscriber in subscribers if subscriber != UUID(self.context.actor_id)]
 
         return SubscriberData(
             subscribers=subscribers,
@@ -148,9 +143,7 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
             )
 
             # Get all current mentions
-            current_mentions = self.extract_mentions(
-                requested_data.get("description_html", "")
-            )
+            current_mentions = self.extract_mentions(requested_data.get("description_html", ""))
 
             if description_mentions.new_mentions or current_mentions:
                 results["description"] = {
@@ -197,9 +190,7 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
 
     # ==================== Email Preferences ====================
 
-    def should_send_email(
-        self, preference: UserNotificationPreference, activity: ActivityData
-    ) -> bool:
+    def should_send_email(self, preference: UserNotificationPreference, activity: ActivityData) -> bool:
         """
         Determine if email should be sent based on user preferences and activity type.
         """
@@ -230,18 +221,12 @@ class TeamspaceNotificationHandler(BaseNotificationHandler):
                 "actor": str(activity.actor_id),
                 "new_value": str(activity.new_value),
                 "old_value": str(activity.old_value),
-                "old_identifier": (
-                    str(activity.old_identifier) if activity.old_identifier else None
-                ),
-                "new_identifier": (
-                    str(activity.new_identifier) if activity.new_identifier else None
-                ),
+                "old_identifier": (str(activity.old_identifier) if activity.old_identifier else None),
+                "new_identifier": (str(activity.new_identifier) if activity.new_identifier else None),
             },
         }
 
-    def build_email_data(
-        self, activity: ActivityData, field_override: Optional[str] = None
-    ) -> Dict[str, Any]:
+    def build_email_data(self, activity: ActivityData, field_override: Optional[str] = None) -> Dict[str, Any]:
         """Build email data with additional workspace info"""
         data = super().build_email_data(activity, field_override)
 

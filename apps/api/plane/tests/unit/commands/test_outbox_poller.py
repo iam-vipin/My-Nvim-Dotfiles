@@ -84,9 +84,7 @@ class TestOutboxPoller:
         assert outbox_poller.handlers[0] == mock_handler
 
     @pytest.mark.asyncio
-    async def test_process_event_success(
-        self, outbox_poller, mock_handler, workspace, project
-    ):
+    async def test_process_event_success(self, outbox_poller, mock_handler, workspace, project):
         """Test successful event processing"""
         outbox_poller.add_handler(mock_handler)
 
@@ -119,9 +117,7 @@ class TestOutboxPoller:
         assert call_args.project_id == project.id
 
     @pytest.mark.asyncio
-    async def test_process_event_handler_error(
-        self, outbox_poller, mock_handler, workspace, project
-    ):
+    async def test_process_event_handler_error(self, outbox_poller, mock_handler, workspace, project):
         """Test event processing when handler raises an exception"""
         # Make the handler raise an exception
         mock_handler.side_effect = Exception("Handler error")
@@ -147,9 +143,7 @@ class TestOutboxPoller:
         mock_handler.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_process_event_lambda_handler_error(
-        self, outbox_poller, workspace, project
-    ):
+    async def test_process_event_lambda_handler_error(self, outbox_poller, workspace, project):
         """Test event processing when lambda handler raises an exception"""
         # Lambda function that raises an exception
         lambda_handler = lambda x: (_ for _ in ()).throw(Exception("Lambda error"))
@@ -201,9 +195,7 @@ class TestOutboxPoller:
         assert result is True
 
     @pytest.mark.asyncio
-    async def test_process_event_multiple_handlers(
-        self, outbox_poller, workspace, project
-    ):
+    async def test_process_event_multiple_handlers(self, outbox_poller, workspace, project):
         """Test processing event with multiple handlers"""
         handler1 = MagicMock()
         handler1.__name__ = "handler1"
@@ -234,9 +226,7 @@ class TestOutboxPoller:
         handler2.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_process_event_mixed_handler_types(
-        self, outbox_poller, mock_handler, workspace, project
-    ):
+    async def test_process_event_mixed_handler_types(self, outbox_poller, mock_handler, workspace, project):
         """Test processing event with mixed handler types (normal, lambda, mock)"""
 
         def normal_handler(event_data):
@@ -274,9 +264,7 @@ class TestDatabaseConnectionPool:
         delete_outbox_records(processed=False)
 
         # Create unprocessed outbox records
-        create_outbox_records(
-            processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id
-        )
+        create_outbox_records(processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id)
 
         async with DatabaseConnectionPool() as db_pool:
             # Fetch unprocessed records using the real connection
@@ -299,9 +287,7 @@ class TestDatabaseConnectionPool:
                     "issue_id": f"issue-{i}",
                     "status": "pending",
                 }  # payload
-                assert (
-                    row[6] is None
-                )  # processed_at should be None for unprocessed records
+                assert row[6] is None  # processed_at should be None for unprocessed records
                 assert row[7] is not None  # created_at
                 assert row[9] == workspace.id  # workspace_id
                 assert row[10] == project.id  # project_id
@@ -317,9 +303,7 @@ class TestDatabaseConnectionPool:
         delete_outbox_records(processed=False)
 
         # Create unprocessed outbox records
-        create_outbox_records(
-            processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id
-        )
+        create_outbox_records(processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id)
 
         # Get the IDs of unprocessed records
         record_ids = [record.id for record in Outbox.objects.all()]
@@ -345,9 +329,7 @@ class TestDatabaseConnectionPool:
         delete_outbox_records(processed=False)
 
         # Create unprocessed outbox records
-        create_outbox_records(
-            processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id
-        )
+        create_outbox_records(processed_at=None, count=3, workspace_id=workspace.id, project_id=project.id)
 
         async with DatabaseConnectionPool() as db_pool:
             # Request only 2 records when we have 3 unprocessed records
@@ -364,9 +346,7 @@ class TestDatabaseConnectionPool:
         delete_outbox_records(processed=False)
 
     @pytest.mark.asyncio
-    async def test_fetch_and_lock_rows_empty_when_all_processed(
-        self, workspace, project
-    ):
+    async def test_fetch_and_lock_rows_empty_when_all_processed(self, workspace, project):
         """Test that fetch_and_lock_rows returns empty when all records are processed"""
         delete_outbox_records(processed=True)
 

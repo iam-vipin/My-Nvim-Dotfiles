@@ -49,9 +49,7 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         Log time spent on a work item with description and duration.
         Requires time tracking to be enabled on the project.
         """
-        project_feature = Project.objects.filter(
-            workspace__slug=slug, pk=project_id
-        ).first()
+        project_feature = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
         if not project_feature.is_time_tracking_enabled:
             return Response(
                 {"message": "Worklog is not enabled for the project"},
@@ -59,9 +57,7 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
             )
         serializer = IssueWorkLogAPISerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, issue_id=issue_id, logged_by=request.user
-            )
+            serializer.save(project_id=project_id, issue_id=issue_id, logged_by=request.user)
             # Get the issue to update
             issue = Issue.objects.get(pk=issue_id)
             issue.updated_at = timezone.now()
@@ -90,9 +86,7 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         Retrieve all worklog entries for a specific work item.
         Returns time tracking history with descriptions and durations.
         """
-        project_feature = Project.objects.filter(
-            workspace__slug=slug, pk=project_id
-        ).first()
+        project_feature = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
         if not project_feature.is_time_tracking_enabled:
             return Response(
                 {"message": "Worklog is not enabled for the project"},
@@ -120,9 +114,7 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
                 response=IssueWorkLogAPISerializer,
             ),
             400: OpenApiResponse(description="Invalid request data"),
-            404: OpenApiResponse(
-                description="Worklog not found or time tracking disabled"
-            ),
+            404: OpenApiResponse(description="Worklog not found or time tracking disabled"),
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
@@ -133,17 +125,13 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         Modify an existing worklog entry's description or duration.
         Only updates specified fields (partial update).
         """
-        project_feature = Project.objects.filter(
-            workspace__slug=slug, pk=project_id
-        ).first()
+        project_feature = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
         if not project_feature.is_time_tracking_enabled:
             return Response(
                 {"message": "Worklog is not enabled for the project"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        worklog = IssueWorkLog.objects.get(
-            pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug
-        )
+        worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         serializer = IssueWorkLogAPISerializer(worklog, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -162,9 +150,7 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         description="Delete a worklog entry",
         responses={
             204: OpenApiResponse(description="Worklog deleted successfully"),
-            404: OpenApiResponse(
-                description="Worklog not found or time tracking disabled"
-            ),
+            404: OpenApiResponse(description="Worklog not found or time tracking disabled"),
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
@@ -175,17 +161,13 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         Permanently remove a worklog entry from a work item.
         This action cannot be undone.
         """
-        project_feature = Project.objects.filter(
-            workspace__slug=slug, pk=project_id
-        ).first()
+        project_feature = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
         if not project_feature.is_time_tracking_enabled:
             return Response(
                 {"message": "Worklog is not enabled for the project"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        worklog = IssueWorkLog.objects.get(
-            pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug
-        )
+        worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         worklog.delete()
 
         # Get the issue to update
@@ -221,9 +203,7 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
         Retrieve aggregated worklog duration for each work item in the project.
         Returns total time logged per issue for project time tracking analytics.
         """
-        project_feature = Project.objects.filter(
-            workspace__slug=slug, pk=project_id
-        ).first()
+        project_feature = Project.objects.filter(workspace__slug=slug, pk=project_id).first()
         if not project_feature.is_time_tracking_enabled:
             return Response(
                 {"message": "Worklog is not enabled for the project"},

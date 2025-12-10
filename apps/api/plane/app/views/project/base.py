@@ -3,18 +3,15 @@ import json
 from typing import Dict, Any, List
 import uuid
 
-import boto3
 
 # Django imports
-from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Subquery
 from django.utils import timezone
 
 # Third Party imports
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
@@ -28,7 +25,6 @@ from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
-    UserFavorite,
     DeployBoard,
     Intake,
     IssueUserProperty,
@@ -43,7 +39,6 @@ from plane.db.models import (
     WorkspaceMember,
     APIToken,
 )
-from plane.utils.cache import cache_response
 from plane.utils.host import base_host
 
 # EE imports

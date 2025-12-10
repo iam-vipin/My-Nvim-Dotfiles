@@ -49,9 +49,7 @@ class Command(BaseCommand):
         if project_id == "":
             raise CommandError("Project ID is required")
 
-        project = Project.objects.filter(
-            id=project_id, workspace__slug=workspace_slug
-        ).first()
+        project = Project.objects.filter(id=project_id, workspace__slug=workspace_slug).first()
 
         if not project:
             raise CommandError("Project does not exists")
@@ -87,9 +85,7 @@ class Command(BaseCommand):
         )
 
         # Get the maximum sequence_id
-        last_id = IssueSequence.objects.filter(project=project).aggregate(
-            largest=Max("sequence")
-        )["largest"]
+        last_id = IssueSequence.objects.filter(project=project).aggregate(largest=Max("sequence"))["largest"]
 
         last_id = 1 if last_id is None else last_id + 1
 
@@ -98,9 +94,7 @@ class Command(BaseCommand):
             project=project, state_id=states[random.randint(0, len(states) - 1)]
         ).aggregate(largest=Max("sort_order"))["largest"]
 
-        largest_sort_order = (
-            65535 if largest_sort_order is None else largest_sort_order + 10000
-        )
+        largest_sort_order = 65535 if largest_sort_order is None else largest_sort_order + 10000
         fake = Faker()
         Faker.seed(0)
         issues = []
@@ -113,9 +107,7 @@ class Command(BaseCommand):
                     workspace=workspace,
                     name=sentence[:254],
                     sequence_id=last_id,
-                    priority=["urgent", "high", "medium", "low", "none"][
-                        random.randint(0, 4)
-                    ],
+                    priority=["urgent", "high", "medium", "low", "none"][random.randint(0, 4)],
                     created_by_id=project.created_by_id,
                 )
             )
@@ -123,9 +115,7 @@ class Command(BaseCommand):
             largest_sort_order = largest_sort_order + random.randint(0, 1000)
             last_id = last_id + 1
 
-        issues = Issue.objects.bulk_create(
-            issues, ignore_conflicts=True, batch_size=1000
-        )
+        issues = Issue.objects.bulk_create(issues, ignore_conflicts=True, batch_size=1000)
         # Sequences
         IssueSequence.objects.bulk_create(
             [
@@ -140,12 +130,7 @@ class Command(BaseCommand):
             batch_size=100,
         )
         CycleIssue.objects.bulk_create(
-            [
-                CycleIssue(
-                    issue=issue, cycle=cycle, project=project, workspace=workspace
-                )
-                for issue in issues
-            ],
+            [CycleIssue(issue=issue, cycle=cycle, project=project, workspace=workspace) for issue in issues],
             batch_size=100,
         )
 

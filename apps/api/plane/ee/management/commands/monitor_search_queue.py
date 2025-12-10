@@ -66,9 +66,7 @@ class Command(BaseCommand):
         )
 
         # Status sub-command (default)
-        status_parser = subparsers.add_parser(
-            "status", help="Show current queue status (default)"
-        )
+        status_parser = subparsers.add_parser("status", help="Show current queue status (default)")
         status_parser.add_argument(
             "--detailed",
             action="store_true",
@@ -105,9 +103,7 @@ class Command(BaseCommand):
         )
 
         # Cleanup sub-command
-        cleanup_parser = subparsers.add_parser(
-            "cleanup", help="Clean up stale queues for all models"
-        )
+        cleanup_parser = subparsers.add_parser("cleanup", help="Clean up stale queues for all models")
 
         # Force-drain sub-command
         force_drain_parser = subparsers.add_parser(
@@ -122,11 +118,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if not getattr(settings, "OPENSEARCH_ENABLED", False):
-            self.stderr.write(
-                self.style.ERROR(
-                    "OpenSearch is not enabled. Set OPENSEARCH_ENABLED=true."
-                )
-            )
+            self.stderr.write(self.style.ERROR("OpenSearch is not enabled. Set OPENSEARCH_ENABLED=true."))
             return
 
         subcommand = options.get("subcommand", "status")  # Default to status
@@ -157,9 +149,7 @@ class Command(BaseCommand):
 
             # Filter by specific models if requested
             if options.get("models"):
-                queue_stats = self._filter_queue_stats_by_models(
-                    queue_stats, options["models"]
-                )
+                queue_stats = self._filter_queue_stats_by_models(queue_stats, options["models"])
 
             if not queue_stats:
                 self.stdout.write(self.style.WARNING("No queue statistics available"))
@@ -178,9 +168,7 @@ class Command(BaseCommand):
         interval = options.get("interval", 5)
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Watching queues (refreshing every {interval}s, press Ctrl+C to stop)..."
-            )
+            self.style.SUCCESS(f"Watching queues (refreshing every {interval}s, press Ctrl+C to stop)...")
         )
 
         try:
@@ -202,11 +190,7 @@ class Command(BaseCommand):
 
     def handle_cleanup(self, options):
         """Handle the cleanup sub-command."""
-        self.stdout.write(
-            self.style.WARNING(
-                "Running enhanced cleanup (1-hour age limit, 10k size limit)..."
-            )
-        )
+        self.stdout.write(self.style.WARNING("Running enhanced cleanup (1-hour age limit, 10k size limit)..."))
 
         try:
             all_models = get_all_search_relevant_models()
@@ -221,18 +205,12 @@ class Command(BaseCommand):
 
             for model_name in all_models:
                 try:
-                    cleanup_stats = cleanup_stale_queue_for_model(
-                        model_name, max_age_hours=1, max_queue_size=10000
-                    )
+                    cleanup_stats = cleanup_stale_queue_for_model(model_name, max_age_hours=1, max_queue_size=10000)
 
                     total_stats["models_processed"] += 1
                     total_stats["total_stale_removed"] += cleanup_stats["removed_stale"]
-                    total_stats["total_invalid_removed"] += cleanup_stats[
-                        "removed_invalid"
-                    ]
-                    total_stats["total_excess_removed"] += cleanup_stats[
-                        "removed_excess"
-                    ]
+                    total_stats["total_invalid_removed"] += cleanup_stats["removed_invalid"]
+                    total_stats["total_excess_removed"] += cleanup_stats["removed_excess"]
 
                     if cleanup_stats["queue_deleted"]:
                         total_stats["queues_deleted"] += 1
@@ -249,21 +227,13 @@ class Command(BaseCommand):
                         if cleanup_stats["removed_stale"]:
                             details.append(f"{cleanup_stats['removed_stale']} stale")
                         if cleanup_stats["removed_invalid"]:
-                            details.append(
-                                f"{cleanup_stats['removed_invalid']} invalid"
-                            )
+                            details.append(f"{cleanup_stats['removed_invalid']} invalid")
                         if cleanup_stats["removed_excess"]:
                             details.append(f"{cleanup_stats['removed_excess']} excess")
 
-                        style = (
-                            self.style.WARNING
-                            if total_removed > 100
-                            else self.style.SUCCESS
-                        )
+                        style = self.style.WARNING if total_removed > 100 else self.style.SUCCESS
                         self.stdout.write(
-                            style(
-                                f"  {model_name}: Removed {total_removed} items ({', '.join(details)})"
-                            )
+                            style(f"  {model_name}: Removed {total_removed} items ({', '.join(details)})")
                         )
 
                         if total_removed > 100:
@@ -271,14 +241,10 @@ class Command(BaseCommand):
 
                     if cleanup_stats["errors"]:
                         for error in cleanup_stats["errors"]:
-                            self.stderr.write(
-                                self.style.ERROR(f"  {model_name}: {error}")
-                            )
+                            self.stderr.write(self.style.ERROR(f"  {model_name}: {error}"))
 
                 except Exception as e:
-                    self.stderr.write(
-                        self.style.ERROR(f"  {model_name}: Failed to cleanup - {e}")
-                    )
+                    self.stderr.write(self.style.ERROR(f"  {model_name}: Failed to cleanup - {e}"))
 
             # Show summary
             total_cleaned = (
@@ -299,9 +265,7 @@ class Command(BaseCommand):
                 )
 
                 if total_stats["queues_deleted"]:
-                    self.stdout.write(
-                        f"Deleted {total_stats['queues_deleted']} empty queues"
-                    )
+                    self.stdout.write(f"Deleted {total_stats['queues_deleted']} empty queues")
 
                 # Warn about problematic models
                 if total_stats["problematic_models"]:
@@ -313,9 +277,7 @@ class Command(BaseCommand):
                         )
                     )
             else:
-                self.stdout.write(
-                    self.style.SUCCESS("✅ No stale items found - queues are healthy")
-                )
+                self.stdout.write(self.style.SUCCESS("✅ No stale items found - queues are healthy"))
 
         except Exception as e:
             log_exception(e)
@@ -328,15 +290,9 @@ class Command(BaseCommand):
         if not force_drain_models:  # Empty list means drain all
             force_drain_models = get_all_search_relevant_models()
 
+        self.stdout.write(self.style.ERROR(f"⚠️  EMERGENCY FORCE DRAIN of {len(force_drain_models)} models"))
         self.stdout.write(
-            self.style.ERROR(
-                f"⚠️  EMERGENCY FORCE DRAIN of {len(force_drain_models)} models"
-            )
-        )
-        self.stdout.write(
-            self.style.WARNING(
-                "This will completely empty the queues - all pending updates will be lost!"
-            )
+            self.style.WARNING("This will completely empty the queues - all pending updates will be lost!")
         )
 
         # Ask for confirmation
@@ -353,14 +309,9 @@ class Command(BaseCommand):
                 try:
                     drain_stats = force_drain_queue_for_model(model_name)
 
-                    if (
-                        drain_stats["force_drained"]
-                        and drain_stats["removed_excess"] > 0
-                    ):
+                    if drain_stats["force_drained"] and drain_stats["removed_excess"] > 0:
                         self.stdout.write(
-                            self.style.ERROR(
-                                f"  {model_name}: FORCE DRAINED {drain_stats['removed_excess']} items"
-                            )
+                            self.style.ERROR(f"  {model_name}: FORCE DRAINED {drain_stats['removed_excess']} items")
                         )
                         total_drained += drain_stats["removed_excess"]
                     elif drain_stats["queue_deleted"]:
@@ -368,31 +319,19 @@ class Command(BaseCommand):
 
                     if drain_stats["errors"]:
                         for error in drain_stats["errors"]:
-                            self.stderr.write(
-                                self.style.ERROR(f"  {model_name}: {error}")
-                            )
+                            self.stderr.write(self.style.ERROR(f"  {model_name}: {error}"))
 
                 except Exception as e:
-                    self.stderr.write(
-                        self.style.ERROR(f"  {model_name}: Failed to force drain - {e}")
-                    )
+                    self.stderr.write(self.style.ERROR(f"  {model_name}: Failed to force drain - {e}"))
 
             if total_drained > 0:
                 self.stdout.write("")
+                self.stdout.write(self.style.ERROR(f"⚠️  FORCE DRAIN COMPLETED: {total_drained} total items removed"))
                 self.stdout.write(
-                    self.style.ERROR(
-                        f"⚠️  FORCE DRAIN COMPLETED: {total_drained} total items removed"
-                    )
-                )
-                self.stdout.write(
-                    self.style.WARNING(
-                        "These updates are permanently lost. Check worker status and restart if needed."
-                    )
+                    self.style.WARNING("These updates are permanently lost. Check worker status and restart if needed.")
                 )
             else:
-                self.stdout.write(
-                    self.style.SUCCESS("✅ All queues were already empty")
-                )
+                self.stdout.write(self.style.SUCCESS("✅ All queues were already empty"))
 
         except Exception as e:
             log_exception(e)
@@ -405,9 +344,7 @@ class Command(BaseCommand):
 
             # Filter by specific models if requested
             if options.get("models"):
-                queue_stats = self._filter_queue_stats_by_models(
-                    queue_stats, options["models"]
-                )
+                queue_stats = self._filter_queue_stats_by_models(queue_stats, options["models"])
 
             if not queue_stats:
                 self.stdout.write(self.style.WARNING("No queue statistics available"))
@@ -428,9 +365,7 @@ class Command(BaseCommand):
             if model in queue_stats:
                 filtered_stats[model] = queue_stats[model]
             else:
-                self.stderr.write(
-                    self.style.WARNING(f"Model '{model}' not found in queue stats")
-                )
+                self.stderr.write(self.style.WARNING(f"Model '{model}' not found in queue stats"))
         return filtered_stats
 
     def _display_queue_summary(self, queue_stats):
@@ -441,9 +376,7 @@ class Command(BaseCommand):
             if isinstance(stats, dict) and "queue_length" in stats
         )
         active_models = sum(
-            1
-            for stats in queue_stats.values()
-            if isinstance(stats, dict) and stats.get("queue_length", 0) > 0
+            1 for stats in queue_stats.values() if isinstance(stats, dict) and stats.get("queue_length", 0) > 0
         )
 
         self.stdout.write(f"Total queued items: {total_queued}")
@@ -459,9 +392,7 @@ class Command(BaseCommand):
             queue_length = stats.get("queue_length", 0)
             style, status = self._get_model_status_style(stats, options, queue_length)
 
-            self.stdout.write(
-                f"{model_name:20} {style(f'{queue_length:>6} items')} [{status}]"
-            )
+            self.stdout.write(f"{model_name:20} {style(f'{queue_length:>6} items')} [{status}]")
 
             if options.get("detailed", False) and queue_length > 0:
                 self._display_detailed_model_info(stats)
@@ -515,16 +446,10 @@ class Command(BaseCommand):
         self.stdout.write("Health Indicators:")
 
         # Check for backing up queues
-        backing_up = [
-            model
-            for model, stats in queue_stats.items()
-            if stats["queue_length"] > 1000
-        ]
+        backing_up = [model for model, stats in queue_stats.items() if stats["queue_length"] > 1000]
 
         if backing_up:
-            self.stdout.write(
-                self.style.ERROR(f"⚠️  Large queues detected: {', '.join(backing_up)}")
-            )
+            self.stdout.write(self.style.ERROR(f"⚠️  Large queues detected: {', '.join(backing_up)}"))
         else:
             self.stdout.write(self.style.SUCCESS("✅ All queues healthy"))
 
@@ -545,10 +470,6 @@ class Command(BaseCommand):
                                 stale_models.append(f"{model} ({age:.0f}s)")
 
             if stale_models:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"⚠️  Stale items detected: {', '.join(stale_models)}"
-                    )
-                )
+                self.stdout.write(self.style.WARNING(f"⚠️  Stale items detected: {', '.join(stale_models)}"))
             else:
                 self.stdout.write(self.style.SUCCESS("✅ No stale items detected"))

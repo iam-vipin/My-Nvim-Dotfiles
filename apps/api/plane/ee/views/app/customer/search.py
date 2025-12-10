@@ -36,16 +36,14 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
                 q |= Q(**{f"{field}__icontains": query})
 
         # Get all customer request IDs for the customer in a single query
-        customer_request_ids = CustomerRequest.objects.filter(
-            customer_id=customer_id
-        ).values_list("id", flat=True)
+        customer_request_ids = CustomerRequest.objects.filter(customer_id=customer_id).values_list("id", flat=True)
 
         # Filter issues that are already added to the given customer_request_id
         # or have been directly added to the customer
 
-        issue_ids_to_exclude = CustomerRequestIssue.objects.filter(
-            customer_request_id=customer_request_id
-        ).values_list("issue_id", flat=True)
+        issue_ids_to_exclude = CustomerRequestIssue.objects.filter(customer_request_id=customer_request_id).values_list(
+            "issue_id", flat=True
+        )
 
         # Filter work items that is already added to the customer requests of the customer
         if customer_request_id is None:
@@ -66,10 +64,7 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
                 | Q(issue_intake__status=2)
                 | Q(issue_intake__isnull=True)
             )
-            .exclude(
-                Q(type__is_epic=True)
-                & Q(project__project_projectfeature__is_epic_enabled=False)
-            )
+            .exclude(Q(type__is_epic=True) & Q(project__project_projectfeature__is_epic_enabled=False))
             .exclude(id__in=issue_ids_to_exclude)
             .accessible_to(request.user.id, slug)
         )

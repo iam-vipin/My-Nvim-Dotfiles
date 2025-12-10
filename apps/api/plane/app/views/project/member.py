@@ -26,7 +26,6 @@ from plane.app.serializers import (
 from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.db.models.user import BotTypeEnum
-from plane.db.models.project import get_default_preferences
 from plane.ee.models import TeamspaceMember, TeamspaceProject, PageUser
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host

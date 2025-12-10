@@ -22,11 +22,7 @@ class TeamspaceDocument(BaseDocument):
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
     class Index(BaseDocument.Index):
-        name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_teamspaces"
-            if settings.OPENSEARCH_INDEX_PREFIX
-            else "teamspaces"
-        )
+        name = f"{settings.OPENSEARCH_INDEX_PREFIX}_teamspaces" if settings.OPENSEARCH_INDEX_PREFIX else "teamspaces"
 
     class Django:
         model = Teamspace

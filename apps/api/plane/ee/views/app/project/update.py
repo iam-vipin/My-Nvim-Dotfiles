@@ -89,9 +89,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         workspace = Workspace.objects.get(slug=slug)
-        project_issues = Issue.issue_objects.filter(
-            workspace__slug=slug, project_id=project_id
-        )
+        project_issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
         total_issues = project_issues.count()
         completed_issues = (
             project_issues.filter(state__group="completed").count()
@@ -101,9 +99,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
         update_status = None
 
         if request.data.get("parent"):
-            parent_update = EntityUpdates.objects.get(
-                pk=request.data.get("parent"), entity_type="PROJECT"
-            )
+            parent_update = EntityUpdates.objects.get(pk=request.data.get("parent"), entity_type="PROJECT")
             update_status = parent_update.status
 
         serializer = UpdatesSerializer(data=request.data)
@@ -140,9 +136,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def partial_update(self, request, slug, project_id, pk):
-        project_update = EntityUpdates.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        project_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         serializer = UpdatesSerializer(project_update, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -152,8 +146,6 @@ class ProjectUpdatesViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def destroy(self, request, slug, project_id, pk):
-        project_update = EntityUpdates.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        project_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project_update.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

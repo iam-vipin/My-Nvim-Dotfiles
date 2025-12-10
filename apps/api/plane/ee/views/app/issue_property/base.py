@@ -67,9 +67,7 @@ class IssuePropertyEndpoint(BaseAPIView):
                     pk=option["id"],
                     property__issue_type__is_epic=False,
                 )
-                option_serializer = IssuePropertyOptionSerializer(
-                    issue_property_option, data=option, partial=True
-                )
+                option_serializer = IssuePropertyOptionSerializer(issue_property_option, data=option, partial=True)
                 option_serializer.is_valid(raise_exception=True)
                 option_serializer.save()
 
@@ -100,9 +98,7 @@ class IssuePropertyEndpoint(BaseAPIView):
 
         except IntegrityError:
             return Response(
-                {
-                    "error": "An option with the same name already exists in this property"
-                },
+                {"error": "An option with the same name already exists in this property"},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -127,9 +123,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         ).values_list("id", flat=True)
 
         # Save the default value
-        issue_property.default_value = [
-            str(option) for option in issue_property_options
-        ]
+        issue_property.default_value = [str(option) for option in issue_property_options]
         issue_property.save()
 
     def get_options_response(self, issue_property, slug, project_id):
@@ -197,14 +191,9 @@ class IssuePropertyEndpoint(BaseAPIView):
                 request.data["is_active"] = False
 
             # Check defaults
-            if (
-                not request.data.get("is_multi")
-                and len(request.data.get("default_value", [])) > 1
-            ):
+            if not request.data.get("is_multi") and len(request.data.get("default_value", [])) > 1:
                 return Response(
-                    {
-                        "error": "Default value must be a single value for non-multi properties"
-                    },
+                    {"error": "Default value must be a single value for non-multi properties"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -239,9 +228,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             return Response(response, status=status.HTTP_201_CREATED)
         except IntegrityError:
             return Response(
-                {
-                    "error": "A Property with the same name already exists in this work item type"
-                },
+                {"error": "A Property with the same name already exists in this work item type"},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -259,21 +246,14 @@ class IssuePropertyEndpoint(BaseAPIView):
         options = request.data.pop("options", [])
 
         if (
-            request.data.get("property_type")
-            or request.data.get("is_multi")
-            or request.data.get("settings")
+            request.data.get("property_type") or request.data.get("is_multi") or request.data.get("settings")
         ) and Issue.objects.filter(type_id=issue_type_id).exists():
             return Response(
-                {
-                    "error": "Some fields cannot be updated as issues exist with this property"
-                },
+                {"error": "Some fields cannot be updated as issues exist with this property"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # if property type is being changed, reset the defaults
-        if (
-            request.data.get("property_type")
-            and request.data.get("property_type") != issue_property.property_type
-        ):
+        if request.data.get("property_type") and request.data.get("property_type") != issue_property.property_type:
             defaults = {
                 "relation_type": None,
                 "default_value": [],
@@ -286,14 +266,9 @@ class IssuePropertyEndpoint(BaseAPIView):
                 request.data.setdefault(field, default_value)
 
         # Check defaults
-        if (
-            not request.data.get("is_multi", issue_property.is_multi)
-            and len(request.data.get("default_value", [])) > 1
-        ):
+        if not request.data.get("is_multi", issue_property.is_multi) and len(request.data.get("default_value", [])) > 1:
             return Response(
-                {
-                    "error": "Default value must be a single value for non-multi properties"
-                },
+                {"error": "Default value must be a single value for non-multi properties"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -301,9 +276,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         if request.data.get("is_required", issue_property.is_required) is True:
             request.data["default_value"] = []
 
-        serializer = IssuePropertySerializer(
-            issue_property, data=request.data, partial=True
-        )
+        serializer = IssuePropertySerializer(issue_property, data=request.data, partial=True)
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data

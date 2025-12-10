@@ -54,9 +54,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:pk>/",
-        EpicViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        EpicViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-epics",
     ),
     # Epic links
@@ -67,9 +65,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/links/<uuid:pk>/",
-        EpicLinkViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        EpicLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="project-epic-links",
     ),
     # End Epic links
@@ -153,9 +149,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:pk>/archive/",
-        EpicArchiveViewSet.as_view(
-            {"get": "retrieve", "post": "archive", "delete": "unarchive"}
-        ),
+        EpicArchiveViewSet.as_view({"get": "retrieve", "post": "archive", "delete": "unarchive"}),
         name="project-epic-archive-unarchive",
     ),
     # Issue Reactions
@@ -212,9 +206,7 @@ urlpatterns = [
     # Epic Subscribers
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/subscribe/",
-        EpicSubscriberViewSet.as_view(
-            {"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}
-        ),
+        EpicSubscriberViewSet.as_view({"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}),
         name="project-epic-subscribers",
     ),
     ## End epic Subscribers

@@ -63,9 +63,7 @@ class Automation(ProjectBaseModel):
         choices=AutomationStatusChoices.choices,
         default=AutomationStatusChoices.DRAFT,
     )
-    is_enabled = models.BooleanField(
-        default=False, help_text="Whether automation is active"
-    )
+    is_enabled = models.BooleanField(default=False, help_text="Whether automation is active")
 
     # Version tracking
     current_version = models.ForeignKey(
@@ -77,9 +75,7 @@ class Automation(ProjectBaseModel):
     )
 
     # Metadata
-    run_count = models.PositiveIntegerField(
-        default=0, help_text="Total number of executions"
-    )
+    run_count = models.PositiveIntegerField(default=0, help_text="Total number of executions")
     last_run_at = models.DateTimeField(null=True, blank=True)
 
     # Bot User
@@ -92,21 +88,14 @@ class Automation(ProjectBaseModel):
         help_text="The bot user for this automation",
     )
 
-
     def can_execute(self):
         """Check if automation can be executed"""
-        return (
-            self.is_enabled
-            and self.status == AutomationStatusChoices.PUBLISHED
-            and self.current_version is not None
-        )
+        return self.is_enabled and self.status == AutomationStatusChoices.PUBLISHED and self.current_version is not None
 
     def create_new_version(self):
         """Create a new version for this automation"""
         latest_version = self.versions.order_by("-version_number").first()
-        new_version_number = (
-            (latest_version.version_number + 1) if latest_version else 1
-        )
+        new_version_number = (latest_version.version_number + 1) if latest_version else 1
 
         return AutomationVersion.objects.create(
             automation=self,
@@ -215,9 +204,7 @@ class Automation(ProjectBaseModel):
 class AutomationVersion(ProjectBaseModel):
     """Immutable snapshot of automation configuration"""
 
-    automation = models.ForeignKey(
-        Automation, on_delete=models.CASCADE, related_name="versions"
-    )
+    automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="versions")
     version_number = models.PositiveIntegerField(help_text="Sequential version number")
 
     # Snapshot of configuration at this version
@@ -267,9 +254,7 @@ class AutomationVersion(ProjectBaseModel):
 class AutomationNode(ProjectBaseModel):
     """Individual node (trigger/action/condition) in automation graph"""
 
-    version = models.ForeignKey(
-        AutomationVersion, on_delete=models.CASCADE, related_name="nodes"
-    )
+    version = models.ForeignKey(AutomationVersion, on_delete=models.CASCADE, related_name="nodes")
 
     # Node identification
     name = models.CharField(max_length=255, help_text="Display name for the node")
@@ -284,9 +269,7 @@ class AutomationNode(ProjectBaseModel):
         max_length=100,
         help_text="Name of the handler class (e.g., 'record_created', 'send_email')",
     )
-    config = models.JSONField(
-        default=dict, help_text="Node-specific configuration and parameters"
-    )
+    config = models.JSONField(default=dict, help_text="Node-specific configuration and parameters")
 
     # Execution metadata
     is_enabled = models.BooleanField(default=True)
@@ -305,9 +288,7 @@ class AutomationNode(ProjectBaseModel):
                 condition=models.Q(node_type="trigger"),
                 name="autonode_trig_part_idx",
             ),
-            GinIndex(
-                fields=["config"], name="autonode_cfg_gin", opclasses=["jsonb_path_ops"]
-            ),
+            GinIndex(fields=["config"], name="autonode_cfg_gin", opclasses=["jsonb_path_ops"]),
         ]
 
     def __str__(self):
@@ -317,17 +298,11 @@ class AutomationNode(ProjectBaseModel):
 class AutomationEdge(ProjectBaseModel):
     """Simple directed connection between automation nodes"""
 
-    version = models.ForeignKey(
-        AutomationVersion, on_delete=models.CASCADE, related_name="edges"
-    )
+    version = models.ForeignKey(AutomationVersion, on_delete=models.CASCADE, related_name="edges")
 
     # Edge endpoints
-    source_node = models.ForeignKey(
-        AutomationNode, on_delete=models.CASCADE, related_name="outgoing_edges"
-    )
-    target_node = models.ForeignKey(
-        AutomationNode, on_delete=models.CASCADE, related_name="incoming_edges"
-    )
+    source_node = models.ForeignKey(AutomationNode, on_delete=models.CASCADE, related_name="outgoing_edges")
+    target_node = models.ForeignKey(AutomationNode, on_delete=models.CASCADE, related_name="incoming_edges")
 
     # Execution metadata
     execution_order = models.PositiveIntegerField(
@@ -362,17 +337,11 @@ class AutomationEdge(ProjectBaseModel):
 class AutomationRun(ProjectBaseModel):
     """Individual execution instance of an automation"""
 
-    automation = models.ForeignKey(
-        Automation, on_delete=models.CASCADE, related_name="runs"
-    )
-    version = models.ForeignKey(
-        AutomationVersion, on_delete=models.CASCADE, related_name="runs"
-    )
+    automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="runs")
+    version = models.ForeignKey(AutomationVersion, on_delete=models.CASCADE, related_name="runs")
 
     # Trigger information
-    trigger_event = models.JSONField(
-        default=dict, help_text="The event that triggered this automation run"
-    )
+    trigger_event = models.JSONField(default=dict, help_text="The event that triggered this automation run")
     trigger_source = models.CharField(
         max_length=100,
         blank=True,
@@ -396,9 +365,7 @@ class AutomationRun(ProjectBaseModel):
         blank=True,
         help_text="Overall result and summary of the automation run",
     )
-    error_message = models.TextField(
-        blank=True, help_text="Error message if the run failed"
-    )
+    error_message = models.TextField(blank=True, help_text="Error message if the run failed")
     entity_type = models.CharField(
         max_length=255,
         blank=True,
@@ -422,9 +389,7 @@ class AutomationRun(ProjectBaseModel):
     @classmethod
     def active(cls):
         """Get runs that are currently active (pending or running)"""
-        return cls.objects.filter(
-            status__in=[RunStatusChoices.PENDING, RunStatusChoices.RUNNING]
-        )
+        return cls.objects.filter(status__in=[RunStatusChoices.PENDING, RunStatusChoices.RUNNING])
 
     @classmethod
     def completed(cls):
@@ -461,9 +426,7 @@ class AutomationRun(ProjectBaseModel):
                 name="autorun_trig_gin",
                 opclasses=["jsonb_path_ops"],
             ),
-            GinIndex(
-                fields=["result"], name="autorun_res_gin", opclasses=["jsonb_path_ops"]
-            ),
+            GinIndex(fields=["result"], name="autorun_res_gin", opclasses=["jsonb_path_ops"]),
         ]
 
     def __str__(self):
@@ -480,12 +443,8 @@ class AutomationRun(ProjectBaseModel):
 class NodeExecution(ProjectBaseModel):
     """Execution record for individual nodes within an automation run"""
 
-    run = models.ForeignKey(
-        AutomationRun, on_delete=models.CASCADE, related_name="node_executions"
-    )
-    node = models.ForeignKey(
-        AutomationNode, on_delete=models.CASCADE, related_name="executions"
-    )
+    run = models.ForeignKey(AutomationRun, on_delete=models.CASCADE, related_name="node_executions")
+    node = models.ForeignKey(AutomationNode, on_delete=models.CASCADE, related_name="executions")
 
     # Execution status
     status = models.CharField(
@@ -499,17 +458,11 @@ class NodeExecution(ProjectBaseModel):
     completed_at = models.DateTimeField(null=True, blank=True)
 
     # Input/Output
-    input_data = models.JSONField(
-        default=dict, help_text="Input data provided to the node"
-    )
-    output_data = models.JSONField(
-        default=dict, blank=True, help_text="Output data produced by the node"
-    )
+    input_data = models.JSONField(default=dict, help_text="Input data provided to the node")
+    output_data = models.JSONField(default=dict, blank=True, help_text="Output data produced by the node")
 
     # Error handling
-    error_message = models.TextField(
-        blank=True, help_text="Error message if node execution failed"
-    )
+    error_message = models.TextField(blank=True, help_text="Error message if node execution failed")
     retry_count = models.PositiveIntegerField(
         default=0,
         validators=[MaxValueValidator(5)],
@@ -571,9 +524,7 @@ class NodeExecution(ProjectBaseModel):
 class AutomationActivity(ProjectBaseModel):
     """Activity record for automation"""
 
-    automation = models.ForeignKey(
-        Automation, on_delete=models.CASCADE, related_name="activities"
-    )
+    automation = models.ForeignKey(Automation, on_delete=models.CASCADE, related_name="activities")
     automation_version = models.ForeignKey(
         AutomationVersion,
         on_delete=models.SET_NULL,
@@ -613,9 +564,7 @@ class AutomationActivity(ProjectBaseModel):
     )
 
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
 
@@ -649,9 +598,7 @@ class ProcessedAutomationEvent(models.Model):
     """
 
     # Event identification
-    event_id = models.UUIDField(
-        unique=True, help_text="Unique identifier from the outbox event"
-    )
+    event_id = models.UUIDField(unique=True, help_text="Unique identifier from the outbox event")
     event_type = models.CharField(
         max_length=255,
         help_text="Type of event (e.g., 'issue.created', 'issue.updated')",
@@ -681,20 +628,12 @@ class ProcessedAutomationEvent(models.Model):
     )
 
     # Processing timestamps
-    started_at = models.DateTimeField(
-        null=True, blank=True, help_text="When processing started"
-    )
-    completed_at = models.DateTimeField(
-        null=True, blank=True, help_text="When processing completed"
-    )
+    started_at = models.DateTimeField(null=True, blank=True, help_text="When processing started")
+    completed_at = models.DateTimeField(null=True, blank=True, help_text="When processing completed")
 
     # Error tracking
-    error_message = models.TextField(
-        blank=True, help_text="Error message if processing failed"
-    )
-    retry_count = models.PositiveIntegerField(
-        default=0, help_text="Number of times processing was retried"
-    )
+    error_message = models.TextField(blank=True, help_text="Error message if processing failed")
+    retry_count = models.PositiveIntegerField(default=0, help_text="Number of times processing was retried")
 
     # Metadata
     workspace_id = models.UUIDField(null=True)
@@ -716,9 +655,7 @@ class ProcessedAutomationEvent(models.Model):
             # Status-based queries for monitoring
             models.Index(fields=["status", "created_at"], name="proc_evt_status_idx"),
             # Event type analysis
-            models.Index(
-                fields=["event_type", "status"], name="proc_evt_type_status_idx"
-            ),
+            models.Index(fields=["event_type", "status"], name="proc_evt_type_status_idx"),
             # Task tracking
             models.Index(fields=["task_id"], name="proc_evt_task_id_idx"),
             # Performance monitoring queries
@@ -731,9 +668,7 @@ class ProcessedAutomationEvent(models.Model):
 
         constraints = [
             # Ensure event_id uniqueness for race condition safety
-            models.UniqueConstraint(
-                fields=["event_id"], name="processed_event_unique_event_id"
-            ),
+            models.UniqueConstraint(fields=["event_id"], name="processed_event_unique_event_id"),
         ]
 
     def __str__(self):
@@ -760,14 +695,10 @@ class ProcessedAutomationEvent(models.Model):
         """Mark an event as successfully processed."""
         from django.utils import timezone
 
-        return cls.objects.filter(event_id=event_id).update(
-            status="completed", completed_at=timezone.now()
-        )
+        return cls.objects.filter(event_id=event_id).update(status="completed", completed_at=timezone.now())
 
     @classmethod
-    def mark_failed(
-        cls, event_id: str, error_message: str = None, increment_retry: bool = True
-    ):
+    def mark_failed(cls, event_id: str, error_message: str = None, increment_retry: bool = True):
         """Mark an event as failed with optional error message."""
         from django.utils import timezone
         from django.db.models import F

@@ -6,7 +6,6 @@ from plane.db.models import ProjectBaseModel
 
 
 class CycleSettings(ProjectBaseModel):
-
     # Fields for automated cycle configuration
     title = models.CharField(max_length=255, verbose_name="Automated Cycle Title")
     cycle_duration = models.PositiveIntegerField(
@@ -82,9 +81,7 @@ class AutomatedCycleLog(ProjectBaseModel):
 
     # Timing
     scheduled_at = models.DateTimeField(help_text="When the action was scheduled")
-    executed_at = models.DateTimeField(
-        auto_now_add=True, help_text="When the action was executed"
-    )
+    executed_at = models.DateTimeField(auto_now_add=True, help_text="When the action was executed")
 
     class Meta:
         verbose_name = "Automated Cycle Log"

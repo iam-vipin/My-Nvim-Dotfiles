@@ -13,29 +13,19 @@ class Command(BaseCommand):
         if not instance_admin:
             self.stdout.write(self.style.ERROR("No instance admin found"))
             return
-        self.stdout.write(
-            f"Resetting marketplace application secrets for instance admin: {instance_admin.user.id}"
-        )
+        self.stdout.write(f"Resetting marketplace application secrets for instance admin: {instance_admin.user.id}")
         try:
             applications = APPLICATIONS.keys()
             applications_keys = [f"x-{appkey}-*" for appkey in applications]
-            self.stdout.write(
-                f"Deleting application secrets for applications: {applications_keys}"
-            )
+            self.stdout.write(f"Deleting application secrets for applications: {applications_keys}")
 
             # delete existing application secrets for marketplace applications
             for appkey in applications_keys:
-                app_query_set = ApplicationSecret.objects.all().filter(
-                    key__regex=appkey
-                )
-                self.stdout.write(
-                    f"Deleting application secrets for applications {appkey}: {app_query_set.count()}"
-                )
+                app_query_set = ApplicationSecret.objects.all().filter(key__regex=appkey)
+                self.stdout.write(f"Deleting application secrets for applications {appkey}: {app_query_set.count()}")
                 app_query_set.delete(soft=False)
             # create new applications secrets
-            self.stdout.write(
-                f"Creating new applications secrets for applications: {applications}"
-            )
+            self.stdout.write(f"Creating new applications secrets for applications: {applications}")
             create_applications(instance_admin.user.id)
             self.stdout.write(
                 f"Successfully reset marketplace application secrets for instance admin: {instance_admin.user.id}"

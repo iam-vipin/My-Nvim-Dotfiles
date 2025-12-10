@@ -23,7 +23,6 @@ from ..mixins import TimeAuditModel
 from plane.utils.color import get_random_color
 
 
-
 def get_default_onboarding():
     return {
         "profile_complete": False,

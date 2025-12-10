@@ -76,9 +76,7 @@ class TemplateBaseEndpoint(BaseAPIView):
 
         validation_errors = {}
         for field_name, model_class in validation_map.items():
-            is_valid, errors = self.validate_field(
-                template_data, field_name, model_class
-            )
+            is_valid, errors = self.validate_field(template_data, field_name, model_class)
             if not is_valid:
                 if isinstance(errors, dict):
                     validation_errors.update(errors)
@@ -101,9 +99,7 @@ class TemplateBaseEndpoint(BaseAPIView):
 
         validation_errors = {}
         for field_name, model_class in validation_map.items():
-            is_valid, errors = self.validate_field(
-                template_date, field_name, model_class
-            )
+            is_valid, errors = self.validate_field(template_date, field_name, model_class)
 
             if not is_valid:
                 if isinstance(errors, dict):
@@ -136,9 +132,7 @@ class TemplateBaseEndpoint(BaseAPIView):
 
         validation_errors = {}
         for field_name, model_class in validation_map.items():
-            is_valid, errors = self.validate_field(
-                template_date, field_name, model_class
-            )
+            is_valid, errors = self.validate_field(template_date, field_name, model_class)
 
             if not is_valid:
                 if isinstance(errors, dict):

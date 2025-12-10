@@ -8,8 +8,8 @@ from .extended import (
     ExtendedWorkItemNotificationHandler as WorkItemNotificationHandler,  # noqa: F811
     InitiativeNotificationHandler,
     TeamspaceNotificationHandler,
-
 )
+
 __all__ = [
     "NotificationContext",
     "WorkItemNotificationHandler",

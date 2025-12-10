@@ -63,9 +63,7 @@ class IssueSerializer(BaseSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
-    parent = serializers.PrimaryKeyRelatedField(
-        queryset=Issue.objects.all(), required=False, allow_null=True
-    )
+    parent = serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Issue
@@ -243,9 +241,7 @@ class IssueSerializer(BaseSerializer):
 
         if assignees is not None:
             # Get the current assignees
-            current_assignees = IssueAssignee.objects.filter(
-                issue=instance
-            ).values_list("assignee_id", flat=True)
+            current_assignees = IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
 
             # Get the assignees to add
             assignees_to_add = list(set(assignees) - set(current_assignees))
@@ -254,9 +250,7 @@ class IssueSerializer(BaseSerializer):
             assignees_to_remove = list(set(current_assignees) - set(assignees))
 
             # Delete the assignees to remove
-            IssueAssignee.objects.filter(
-                issue=instance, assignee_id__in=assignees_to_remove
-            ).delete()
+            IssueAssignee.objects.filter(issue=instance, assignee_id__in=assignees_to_remove).delete()
 
             try:
                 IssueAssignee.objects.bulk_create(
@@ -279,9 +273,7 @@ class IssueSerializer(BaseSerializer):
 
         if labels is not None:
             # Get the current labels
-            current_labels = IssueLabel.objects.filter(issue=instance).values_list(
-                "label_id", flat=True
-            )
+            current_labels = IssueLabel.objects.filter(issue=instance).values_list("label_id", flat=True)
 
             # Get the labels to add
             labels_to_add = list(set(labels) - set(current_labels))
@@ -290,9 +282,7 @@ class IssueSerializer(BaseSerializer):
             labels_to_remove = list(set(current_labels) - set(labels))
 
             # Delete the labels to remove
-            IssueLabel.objects.filter(
-                issue=instance, label_id__in=labels_to_remove
-            ).delete()
+            IssueLabel.objects.filter(issue=instance, label_id__in=labels_to_remove).delete()
 
             # Create the labels to add
             try:
@@ -848,18 +838,12 @@ class IssueRelationSerializer(BaseSerializer):
     """
 
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="related_issue.project_id", read_only=True
-    )
-    sequence_id = serializers.IntegerField(
-        source="related_issue.sequence_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
     type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
-    is_epic = serializers.BooleanField(
-        source="related_issue.type.is_epic", read_only=True
-    )
+    is_epic = serializers.BooleanField(source="related_issue.type.is_epic", read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
 
@@ -899,9 +883,7 @@ class RelatedIssueSerializer(BaseSerializer):
     """
 
     id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="issue.project_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
     type_id = serializers.UUIDField(source="issue.type.id", read_only=True)

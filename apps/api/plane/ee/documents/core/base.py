@@ -29,15 +29,9 @@ class BaseDocument(Document):
             "index.indexing.slowlog.threshold.index.warn": "5s",
             "index.indexing.slowlog.threshold.index.info": "2s",
             "analysis": {
-                "normalizer": {
-                    "lowercase_normalizer": lowercase_normalizer.get_definition()
-                },
-                "tokenizer": {
-                    "edge_ngram_tokenizer": edge_ngram_tokenizer.get_definition()
-                },
-                "analyzer": {
-                    "edge_ngram_analyzer": edge_ngram_analyzer.get_definition()
-                },
+                "normalizer": {"lowercase_normalizer": lowercase_normalizer.get_definition()},
+                "tokenizer": {"edge_ngram_tokenizer": edge_ngram_tokenizer.get_definition()},
+                "analyzer": {"edge_ngram_analyzer": edge_ngram_analyzer.get_definition()},
             },
         }
 
@@ -64,9 +58,7 @@ class BaseDocument(Document):
         is not already set, default to False to preserve existing embeddings.
         """
         # Set default for update actions (upsert equivalent) if not already set
-        if action == "update" and not hasattr(
-            object_instance, "_semantic_fields_changed"
-        ):
+        if action == "update" and not hasattr(object_instance, "_semantic_fields_changed"):
             object_instance._semantic_fields_changed = False
 
         # Get the base action dictionary

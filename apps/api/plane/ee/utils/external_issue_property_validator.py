@@ -91,9 +91,7 @@ class PropertyValidator:
         # Validate the UUID
         self.is_valid_uuid(value)
 
-        if not IssuePropertyOption.objects.filter(
-            property=self.issue_property, id=value
-        ).exists():
+        if not IssuePropertyOption.objects.filter(property=self.issue_property, id=value).exists():
             raise ValidationError(f"{value} is not a valid option")
 
     # validate for relation
@@ -103,9 +101,7 @@ class PropertyValidator:
 
         # Validate the issue relation
         if self.issue_property.relation_type == RelationTypeEnum.ISSUE:
-            issue = Issue.objects.filter(
-                workspace_id=self.issue_property.workspace_id, id=value
-            )
+            issue = Issue.objects.filter(workspace_id=self.issue_property.workspace_id, id=value)
             if not issue.exists():
                 raise ValidationError(f"{value} is not a valid issue")
         # Validate the issue relation
@@ -116,9 +112,7 @@ class PropertyValidator:
             if not workspace_member.exists():
                 raise ValidationError(f"{value} is not a valid user")
         else:
-            raise ValidationError(
-                f"{self.issue_property.relation_type} is not a valid relation type"
-            )
+            raise ValidationError(f"{self.issue_property.relation_type} is not a valid relation type")
 
 
 class PropertySaver:
@@ -208,9 +202,7 @@ def externalIssuePropertyValueValidator(issue_property, value):
     validator = get_property_validator(issue_property)
 
     if not validator:
-        raise ValidationError(
-            f"{issue_property.property_type} is not a valid property type"
-        )
+        raise ValidationError(f"{issue_property.property_type} is not a valid property type")
 
     # Check if the property is required
     if issue_property.is_required and not value:
@@ -232,9 +224,7 @@ def externalIssuePropertyValueSaver(
     external_source,
 ):
     # property saver initialization
-    property_saver = PropertySaver(
-        workspace_id, project_id, issue_id, issue_property, external_id, external_source
-    )
+    property_saver = PropertySaver(workspace_id, project_id, issue_id, issue_property, external_id, external_source)
     PROPERTY_SAVER_MAPPER = {
         PropertyTypeEnum.TEXT: property_saver.save_text,
         PropertyTypeEnum.DATETIME: property_saver.save_datetime,
@@ -251,9 +241,7 @@ def externalIssuePropertyValueSaver(
     saver = PROPERTY_SAVER_MAPPER.get(issue_property.property_type)
 
     if not saver:
-        raise ValidationError(
-            f"{issue_property.property_type} is not a valid property type"
-        )
+        raise ValidationError(f"{issue_property.property_type} is not a valid property type")
 
     # Save the value
     return saver(value)

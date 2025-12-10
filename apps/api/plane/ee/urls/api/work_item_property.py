@@ -20,25 +20,19 @@ old_url_patterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-types/<uuid:type_id>/issue-properties/<uuid:property_id>/",
-        IssuePropertyDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssuePropertyDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="external-issue-property-detail",
     ),
     # ======================== issue properties ends ========================
     # ======================== issue property options start ========================
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:property_id>/options/",
-        IssuePropertyOptionListCreateAPIEndpoint.as_view(
-            http_method_names=["get", "post"]
-        ),
+        IssuePropertyOptionListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="external-issue-property-option",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:property_id>/options/<uuid:option_id>/",
-        IssuePropertyOptionDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssuePropertyOptionDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="external-issue-property-option-detail",
     ),
     # ======================== issue property options ends ========================
@@ -72,16 +66,12 @@ work_item_property_patterns = [
 work_item_property_option_patterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-properties/<uuid:property_id>/options/",
-        IssuePropertyOptionListCreateAPIEndpoint.as_view(
-            http_method_names=["get", "post"]
-        ),
+        IssuePropertyOptionListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="external-work-item-property-option",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-item-properties/<uuid:property_id>/options/<uuid:option_id>/",
-        IssuePropertyOptionDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IssuePropertyOptionDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="external-work-item-property-option-detail",
     ),
 ]
@@ -89,9 +79,7 @@ work_item_property_option_patterns = [
 work_item_property_value_patterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/work-item-properties/<uuid:property_id>/values/",
-        WorkItemPropertyValueAPIEndpoint.as_view(
-            http_method_names=["get", "post", "patch", "delete"]
-        ),
+        WorkItemPropertyValueAPIEndpoint.as_view(http_method_names=["get", "post", "patch", "delete"]),
         name="external-work-item-property-value",
     ),
     path(

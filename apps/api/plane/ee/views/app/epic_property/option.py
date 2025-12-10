@@ -135,9 +135,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IssuePropertyOptionSerializer(
-            epic_property_option, data=request.data, partial=True
-        )
+        serializer = IssuePropertyOptionSerializer(epic_property_option, data=request.data, partial=True)
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data

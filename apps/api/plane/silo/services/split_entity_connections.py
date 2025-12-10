@@ -28,9 +28,7 @@ def split_github_entity_connections(
     logger.info("Splitting GitHub entity connections...")
 
     # Get the workspace entity connection model
-    workspace_entity_connection_model = (
-        workspace_entity_connection_model or WorkspaceEntityConnection
-    )
+    workspace_entity_connection_model = workspace_entity_connection_model or WorkspaceEntityConnection
 
     logger.info(
         f"Getting GitHub entity connections from {workspace_entity_connection_model.objects.count()} workspace entity connections..."
@@ -38,9 +36,7 @@ def split_github_entity_connections(
 
     # Get the entity connections that have already been split
     entity_connections_ids_not_split, entity_connections_ids_already_split = (
-        get_github_entity_connections_ids_split_and_not_split(
-            workspace_entity_connection_model
-        )
+        get_github_entity_connections_ids_split_and_not_split(workspace_entity_connection_model)
     )
 
     github_entity_connections = workspace_entity_connection_model.objects.filter(
@@ -56,17 +52,13 @@ def split_github_entity_connections(
             id__in=unsplit_entity_connection_ids,
         )
 
-    logger.info(
-        f"Found {github_entity_connections.count()} GitHub entity connections for splitting..."
-    )
+    logger.info(f"Found {github_entity_connections.count()} GitHub entity connections for splitting...")
 
     new_entity_connections = []
     with transaction.atomic():
         for ws_entity_connection in github_entity_connections:
             if ws_entity_connection.id in entity_connections_ids_already_split:
-                logger.info(
-                    f"Skipping {ws_entity_connection.id} because it has already been split..."
-                )
+                logger.info(f"Skipping {ws_entity_connection.id} because it has already been split...")
                 continue
             # Create the project issue sync entity connection
             project_issue_sync_entity_connection = workspace_entity_connection_model(
@@ -98,16 +90,12 @@ def split_github_entity_connections(
 
             # Bulk create the entity connections in batches of 100
             if len(new_entity_connections) >= 100:
-                workspace_entity_connection_model.objects.bulk_create(
-                    new_entity_connections, batch_size=100
-                )
+                workspace_entity_connection_model.objects.bulk_create(new_entity_connections, batch_size=100)
                 new_entity_connections = []
 
         # Create the remaining entity connections in a single batch
         if len(new_entity_connections) > 0:
-            workspace_entity_connection_model.objects.bulk_create(
-                new_entity_connections, batch_size=100
-            )
+            workspace_entity_connection_model.objects.bulk_create(new_entity_connections, batch_size=100)
 
     logger.info("GitHub entity connections split successfully...")
 
@@ -121,11 +109,9 @@ def get_github_entity_connections_ids_split_and_not_split(
     Get the GitHub entity connections that have been split and not split
     """
     # get all duplicate check entity connections
-    duplicate_check_entity_connections = (
-        workspace_entity_connection_model.objects.filter(
-            entity_type__in=ENTITY_TYPE_FOR_DUPLICATE_CHECK,
-            deleted_at__isnull=True,
-        )
+    duplicate_check_entity_connections = workspace_entity_connection_model.objects.filter(
+        entity_type__in=ENTITY_TYPE_FOR_DUPLICATE_CHECK,
+        deleted_at__isnull=True,
     )
 
     # Get the entity connections that have been split
@@ -134,9 +120,7 @@ def get_github_entity_connections_ids_split_and_not_split(
     )
 
     # Get the type null entity connections
-    type_null_entity_connections = duplicate_check_entity_connections.filter(
-        type__isnull=True, deleted_at__isnull=True
-    )
+    type_null_entity_connections = duplicate_check_entity_connections.filter(type__isnull=True, deleted_at__isnull=True)
 
     entity_connections_ids_not_split = []
     entity_connections_ids_already_split = []

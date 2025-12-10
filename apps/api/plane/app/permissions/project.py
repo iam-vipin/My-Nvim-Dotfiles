@@ -37,9 +37,7 @@ def check_teamspace_membership(view, request: Request) -> bool:
         ).values_list("team_space_id", flat=True)
 
         # return True if the user is a member of any of the teamspace
-        return TeamspaceMember.objects.filter(
-            member=request.user, team_space_id__in=teamspace_ids
-        ).exists()
+        return TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists()
     return False
 
 

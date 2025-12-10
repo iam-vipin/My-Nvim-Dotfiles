@@ -53,38 +53,26 @@ class Command(BaseCommand):
             except Workspace.DoesNotExist:
                 raise CommandError(f"Workspace '{workspace_slug}' not found")
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Found workspace: {workspace.name} ({workspace.slug})"
-                )
-            )
+            self.stdout.write(self.style.SUCCESS(f"Found workspace: {workspace.name} ({workspace.slug})"))
 
             # Get projects based on whether project_id is provided
             if project_id:
                 # Process only the specified project
                 try:
-                    projects = Project.objects.filter(
-                        workspace=workspace, id=project_id
-                    )
+                    projects = Project.objects.filter(workspace=workspace, id=project_id)
                     if not projects.exists():
-                        raise CommandError(
-                            f"Project with ID '{project_id}' not found in workspace '{workspace_slug}'"
-                        )
+                        raise CommandError(f"Project with ID '{project_id}' not found in workspace '{workspace_slug}'")
                     self.stdout.write(
                         f"Processing specific project: {projects.first().name} ({projects.first().identifier})"
                     )
                 except Project.DoesNotExist:
-                    raise CommandError(
-                        f"Project with ID '{project_id}' not found in workspace '{workspace_slug}'"
-                    )
+                    raise CommandError(f"Project with ID '{project_id}' not found in workspace '{workspace_slug}'")
             else:
                 # Get all projects in the workspace
                 projects = Project.objects.filter(workspace=workspace).order_by("name")
 
                 if not projects.exists():
-                    self.stdout.write(
-                        self.style.WARNING("No projects found in this workspace!")
-                    )
+                    self.stdout.write(self.style.WARNING("No projects found in this workspace!"))
                     return
 
                 self.stdout.write(f"Found {projects.count()} projects in workspace")
@@ -95,16 +83,10 @@ class Command(BaseCommand):
             # Loop through each project
             for project in projects:
                 self.stdout.write("\n" + "=" * 60)
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Processing project: {project.name} ({project.identifier})"
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f"Processing project: {project.name} ({project.identifier})"))
 
                 # Process this project
-                project_updated_count = self.process_project(
-                    project, dry_run, auto_confirm
-                )
+                project_updated_count = self.process_project(project, dry_run, auto_confirm)
 
                 if project_updated_count > 0:
                     total_projects_processed += 1
@@ -132,9 +114,7 @@ class Command(BaseCommand):
         )
 
         if not duplicate_sequences:
-            self.stdout.write(
-                self.style.SUCCESS("  ✓ No duplicate sequences found in this project!")
-            )
+            self.stdout.write(self.style.SUCCESS("  ✓ No duplicate sequences found in this project!"))
             return 0
 
         self.stdout.write(
@@ -148,9 +128,7 @@ class Command(BaseCommand):
         total_duplicates = 0
 
         for sequence_id in duplicate_sequences:
-            issues = Issue.objects.filter(
-                project=project, sequence_id=sequence_id
-            ).order_by(
+            issues = Issue.objects.filter(project=project, sequence_id=sequence_id).order_by(
                 "created_at"
             )  # Order by creation time, keep the oldest
 
@@ -159,20 +137,12 @@ class Command(BaseCommand):
 
             self.stdout.write(f"    Sequence {sequence_id}: {len(issues)} issues")
             for issue in issues:
-                self.stdout.write(
-                    f"      - {issue.name} (ID: {issue.id}, Created: {issue.created_at})"
-                )
+                self.stdout.write(f"      - {issue.name} (ID: {issue.id}, Created: {issue.created_at})")
 
-        self.stdout.write(
-            self.style.WARNING(
-                f"  Total issues to be updated in this project: {total_duplicates}"
-            )
-        )
+        self.stdout.write(self.style.WARNING(f"  Total issues to be updated in this project: {total_duplicates}"))
 
         if dry_run:
-            self.stdout.write(
-                self.style.SUCCESS("  DRY RUN: No changes were made for this project.")
-            )
+            self.stdout.write(self.style.SUCCESS("  DRY RUN: No changes were made for this project."))
             return 0
 
         # Ask for confirmation unless auto-confirm is enabled
@@ -202,10 +172,7 @@ class Command(BaseCommand):
 
             # Get the current maximum sequence for the project
             last_sequence = (
-                IssueSequence.objects.filter(project=project).aggregate(
-                    largest=Max("sequence")
-                )["largest"]
-                or 0
+                IssueSequence.objects.filter(project=project).aggregate(largest=Max("sequence"))["largest"] or 0
             )
 
             # Prepare bulk updates
@@ -214,10 +181,7 @@ class Command(BaseCommand):
             new_sequence = last_sequence
 
             # Get all issue sequences for this project for efficient lookup
-            issue_sequence_map = {
-                isq.issue_id: isq
-                for isq in IssueSequence.objects.filter(project=project)
-            }
+            issue_sequence_map = {isq.issue_id: isq for isq in IssueSequence.objects.filter(project=project)}
 
             updated_count = 0
 
@@ -226,9 +190,7 @@ class Command(BaseCommand):
                 # Keep the first issue (oldest), update the rest
                 issues_to_update = issues[1:]  # Skip the first one
 
-                self.stdout.write(
-                    f"    Keeping issue '{issues[0].name}' with sequence {sequence_id}"
-                )
+                self.stdout.write(f"    Keeping issue '{issues[0].name}' with sequence {sequence_id}")
 
                 for issue in issues_to_update:
                     new_sequence += 1
@@ -243,9 +205,7 @@ class Command(BaseCommand):
                         sequence_obj.sequence = new_sequence
                         bulk_issue_sequences.append(sequence_obj)
 
-                    self.stdout.write(
-                        f"      Updating '{issue.name}': {old_sequence} -> {new_sequence}"
-                    )
+                    self.stdout.write(f"      Updating '{issue.name}': {old_sequence} -> {new_sequence}")
 
             # Perform bulk updates
             if bulk_issues:
@@ -254,14 +214,10 @@ class Command(BaseCommand):
 
             if bulk_issue_sequences:
                 IssueSequence.objects.bulk_update(bulk_issue_sequences, ["sequence"])
-                self.stdout.write(
-                    f"    Updated {len(bulk_issue_sequences)} issue sequences"
-                )
+                self.stdout.write(f"    Updated {len(bulk_issue_sequences)} issue sequences")
 
         self.stdout.write(
-            self.style.SUCCESS(
-                f"  ✓ Successfully fixed duplicate sequences! Updated {updated_count} issues."
-            )
+            self.style.SUCCESS(f"  ✓ Successfully fixed duplicate sequences! Updated {updated_count} issues.")
         )
 
         return updated_count

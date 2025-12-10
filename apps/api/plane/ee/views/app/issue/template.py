@@ -19,9 +19,7 @@ class SubWorkitemTemplateEndpoint(BaseAPIView):
     """Subworkitem template endpoint"""
 
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
-    def post(
-        self, request: Request, slug: str, project_id: uuid.UUID, workitem_id: uuid.UUID
-    ):
+    def post(self, request: Request, slug: str, project_id: uuid.UUID, workitem_id: uuid.UUID):
         """Get subworkitem template"""
         template_id = request.data.get("template_id", None)
 

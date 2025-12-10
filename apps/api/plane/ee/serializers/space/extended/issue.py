@@ -15,6 +15,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import IntakeResponsibility, IntakeResponsibilityTypeChoices
 from plane.ee.serializers.space.issue import IssueCreateSerializer
 
+
 class ExtendedIssueCreateSerializer(IssueCreateSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -36,9 +37,7 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
             ).first()
             issue_type = issue_type
 
-        triage_state = State.triage_objects.filter(
-            project_id=project_id, workspace_id=workspace_id
-        ).first()
+        triage_state = State.triage_objects.filter(project_id=project_id, workspace_id=workspace_id).first()
         if not triage_state:
             triage_state = State.objects.create(
                 name="Triage",

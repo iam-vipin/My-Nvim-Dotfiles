@@ -308,11 +308,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
 
         # Check the scores (only for TONE task)
         if task == Task.TONE.value:
-            if (
-                casual_score + formal_score != 10
-                or casual_score < 0
-                or formal_score < 0
-            ):
+            if casual_score + formal_score != 10 or casual_score < 0 or formal_score < 0:
                 return Response(
                     {
                         "error": "Invalid scores. casual_score and formal_score must sum to 10 and both must be non-negative."

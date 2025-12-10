@@ -142,11 +142,7 @@ def handle_multi_properties(
             return
 
         # Case 2: If the existing value is not empty and the requested value is not empty
-        if (
-            existing_value
-            and requested_value
-            and existing_value[0] != requested_value[0]
-        ):
+        if existing_value and requested_value and existing_value[0] != requested_value[0]:
             bulk_property_activity.append(
                 IssuePropertyActivity(
                     workspace_id=property.workspace_id,
@@ -367,9 +363,7 @@ def track_property_file(
 
 
 @shared_task
-def issue_property_activity(
-    existing_values, requested_values, issue_id, user_id, epoch
-):
+def issue_property_activity(existing_values, requested_values, issue_id, user_id, epoch):
     """
     This function is used to create an activity for the issue property changes.
     """

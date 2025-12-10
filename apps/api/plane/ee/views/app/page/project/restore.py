@@ -33,11 +33,7 @@ class ProjectPageRestoreEndpoint(BaseAPIView):
 
         # Get the version's sub pages data
         version_sub_pages = page_version.sub_pages_data
-        version_sub_page_ids = [
-            str(sub_page["id"])
-            for sub_page in version_sub_pages
-            if sub_page["deleted_at"] is None
-        ]
+        version_sub_page_ids = [str(sub_page["id"]) for sub_page in version_sub_pages if sub_page["deleted_at"] is None]
 
         # Find pages that need to be restored (in old version but deleted in latest)
         pages_to_restore = set(version_sub_page_ids) - set(latest_sub_pages)
@@ -89,9 +85,7 @@ class ProjectPageRestoreEndpoint(BaseAPIView):
                 PageVersion.all_objects.filter(
                     page_id__in=page_ids,
                     workspace__slug=slug,
-                ).update(
-                    deleted_at=None, updated_at=timezone.now(), updated_by=request.user
-                )
+                ).update(deleted_at=None, updated_at=timezone.now(), updated_by=request.user)
 
         # delete the pages that need to be deleted
         if pages_to_delete:
@@ -129,9 +123,7 @@ class ProjectPageRestoreEndpoint(BaseAPIView):
             project_id=project_id,
             user_id=request.user.id,
             extra={
-                "deleted_page_ids": [
-                    str(deleted_page) for deleted_page in pages_to_delete
-                ],
+                "deleted_page_ids": [str(deleted_page) for deleted_page in pages_to_delete],
             },
         )
 

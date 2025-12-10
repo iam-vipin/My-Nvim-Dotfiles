@@ -16,9 +16,7 @@ class StateChoices(models.TextChoices):
 
 
 class Initiative(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="initiatives"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiatives")
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     description_html = models.TextField(blank=True, null=True)
@@ -34,9 +32,7 @@ class Initiative(BaseModel):
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     logo_props = models.JSONField(default=dict)
-    state = models.CharField(
-        max_length=100, choices=StateChoices.choices, default=StateChoices.DRAFT
-    )
+    state = models.CharField(max_length=100, choices=StateChoices.choices, default=StateChoices.DRAFT)
     labels = models.ManyToManyField(
         "ee.InitiativeLabel",
         through="InitiativeLabelAssociation",
@@ -52,12 +48,8 @@ class Initiative(BaseModel):
 
 
 class InitiativeProject(BaseModel):
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="projects"
-    )
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="initiatives"
-    )
+    initiative = models.ForeignKey("ee.Initiative", on_delete=models.CASCADE, related_name="projects")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="initiatives")
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -116,9 +108,9 @@ class InitiativeLabel(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_id = InitiativeLabel.objects.filter(
-                workspace=self.workspace
-            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            last_id = InitiativeLabel.objects.filter(workspace=self.workspace).aggregate(
+                largest=models.Max("sort_order")
+            )["largest"]
 
             if last_id is not None:
                 self.sort_order = last_id + 10000
@@ -165,13 +157,9 @@ class InitiativeLabelAssociation(BaseModel):
 class InitiativeLink(BaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     url = models.TextField()
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_link"
-    )
+    initiative = models.ForeignKey("ee.Initiative", on_delete=models.CASCADE, related_name="initiative_link")
     metadata = models.JSONField(default=dict)
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_links"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiative_links")
 
     class Meta:
         verbose_name = "Initiative Link"
@@ -184,17 +172,13 @@ class InitiativeLink(BaseModel):
 
 
 class InitiativeReaction(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_reactions"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiative_reactions")
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="initiative_reactions",
     )
-    initiative = models.ForeignKey(
-        Initiative, on_delete=models.CASCADE, related_name="initiative_reactions"
-    )
+    initiative = models.ForeignKey(Initiative, on_delete=models.CASCADE, related_name="initiative_reactions")
     reaction = models.CharField(max_length=20)
 
     class Meta:
@@ -216,15 +200,11 @@ class InitiativeReaction(BaseModel):
 
 
 class InitiativeComment(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_comments"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiative_comments")
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_comments"
-    )
+    initiative = models.ForeignKey("ee.Initiative", on_delete=models.CASCADE, related_name="initiative_comments")
     # System can also create comment
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -242,9 +222,7 @@ class InitiativeComment(BaseModel):
     edited_at = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = (
-            strip_tags(self.comment_html) if self.comment_html != "" else ""
-        )
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         return super(InitiativeComment, self).save(*args, **kwargs)
 
     class Meta:
@@ -300,9 +278,7 @@ class InitiativeActivity(BaseModel):
         related_name="initiative_activities",
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)
@@ -369,15 +345,9 @@ class InitiativeUserProperty(BaseModel):
 
 
 class InitiativeEpic(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="initiative_epics"
-    )
-    initiative = models.ForeignKey(
-        "ee.Initiative", on_delete=models.CASCADE, related_name="initiative_epics"
-    )
-    epic = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="initiative_epics"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="initiative_epics")
+    initiative = models.ForeignKey("ee.Initiative", on_delete=models.CASCADE, related_name="initiative_epics")
+    epic = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="initiative_epics")
     sort_order = models.FloatField(default=65535)
 
     class Meta:

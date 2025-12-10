@@ -76,6 +76,4 @@ class IssueConvertEndpoint(BaseAPIView):
                 current_instance=None,
             )
 
-        return Response(
-            {"message": "Converted Successfully"}, status=status.HTTP_200_OK
-        )
+        return Response({"message": "Converted Successfully"}, status=status.HTTP_200_OK)

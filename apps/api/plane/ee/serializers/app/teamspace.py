@@ -193,9 +193,7 @@ class TeamspaceCommentReactionSerializer(BaseSerializer):
 
 
 class TeamspaceCommentSerializer(BaseSerializer):
-    comment_reactions = TeamspaceCommentReactionSerializer(
-        read_only=True, many=True, source="team_space_reactions"
-    )
+    comment_reactions = TeamspaceCommentReactionSerializer(read_only=True, many=True, source="team_space_reactions")
 
     class Meta:
         model = TeamspaceComment

@@ -105,12 +105,8 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
             project_id=project_id,
             workspace__slug=slug,
         )
-        current_instance = json.dumps(
-            AutomationNodeReadSerializer(node).data, cls=DjangoJSONEncoder
-        )
-        serializer = AutomationNodeWriteSerializer(
-            node, data=request.data, partial=True
-        )
+        current_instance = json.dumps(AutomationNodeReadSerializer(node).data, cls=DjangoJSONEncoder)
+        serializer = AutomationNodeWriteSerializer(node, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
 
@@ -164,9 +160,7 @@ class AutomationNodeEndpoint(AutomationBaseEndpoint):
         # Delete node activity
         automation_activity.delay(
             type="automation.node.activity.deleted",
-            requested_data=json.dumps(
-                {"id": str(pk), "node_type": node.node_type}, cls=DjangoJSONEncoder
-            ),
+            requested_data=json.dumps({"id": str(pk), "node_type": node.node_type}, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             automation_id=str(automation_id),
             project_id=str(project_id),

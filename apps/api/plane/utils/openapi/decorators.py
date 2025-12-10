@@ -470,6 +470,7 @@ def teamspace_docs(**kwargs):
 
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
+
 def teamspace_entity_docs(**kwargs):
     """Decorator for teamspace entity management endpoints"""
     defaults = {

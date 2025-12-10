@@ -31,9 +31,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
     def get(self, request, slug, customer_request_id, pk=None):
         if pk:
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=pk, workspace__slug=slug, entity_identifier=customer_request_id
-            )
+            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, entity_identifier=customer_request_id)
 
             if not asset.is_uploaded:
                 return Response(
@@ -117,9 +115,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
         storage = S3Storage(request=request)
 
         # Generate a presigned URl to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
 
         # Return presigned URL
         return Response(
@@ -136,9 +132,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
     def patch(self, request, slug, customer_request_id):
         attachment_ids = request.data.get("attachment_ids")
 
-        attachments = FileAsset.objects.filter(
-            pk__in=attachment_ids, workspace__slug=slug
-        )
+        attachments = FileAsset.objects.filter(pk__in=attachment_ids, workspace__slug=slug)
 
         for attachment in attachments:
             attachment.entity_identifier = customer_request_id
@@ -148,9 +142,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
             if not attachment.storage_metadata:
                 get_asset_object_metadata.delay(str(attachment.id))
 
-        FileAsset.objects.bulk_update(
-            attachments, ["entity_identifier", "is_uploaded"], batch_size=100
-        )
+        FileAsset.objects.bulk_update(attachments, ["entity_identifier", "is_uploaded"], batch_size=100)
 
         serializer = self.serializer_class(attachments, many=True)
 

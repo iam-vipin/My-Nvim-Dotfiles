@@ -19,15 +19,11 @@ class WorkflowActivityEndpoint(BaseAPIView):
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
         issue_activities = (
-            WorkflowTransitionActivity.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            )
+            WorkflowTransitionActivity.objects.filter(workspace__slug=slug, project_id=project_id)
             .filter(**filters)
             .select_related("actor", "workspace", "project")
         ).order_by("created_at")
 
-        issue_activities = WorkflowTransitionActivitySerializer(
-            issue_activities, many=True
-        ).data
+        issue_activities = WorkflowTransitionActivitySerializer(issue_activities, many=True).data
 
         return Response(issue_activities, status=status.HTTP_200_OK)

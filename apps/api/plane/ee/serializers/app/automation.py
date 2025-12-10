@@ -260,9 +260,7 @@ class NodeExecutionReadSerializer(BaseSerializer):
 
 
 class AutomationRunLiteSerializer(BaseSerializer):
-    work_item_sequence_id = serializers.IntegerField(
-        source="work_item.sequence_id", read_only=True
-    )
+    work_item_sequence_id = serializers.IntegerField(source="work_item.sequence_id", read_only=True)
 
     class Meta:
         model = AutomationRun

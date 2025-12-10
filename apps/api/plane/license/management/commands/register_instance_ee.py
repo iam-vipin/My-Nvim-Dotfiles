@@ -60,9 +60,7 @@ class Command(BaseCommand):
         if not machine_signature:
             raise CommandError("Machine signature is required")
 
-        data = self.get_instance_from_prime(
-            machine_signature=machine_signature, prime_host=prime_host
-        )
+        data = self.get_instance_from_prime(machine_signature=machine_signature, prime_host=prime_host)
 
         # If instance is None then register this instance
         if instance is None:
@@ -84,9 +82,7 @@ class Command(BaseCommand):
             # Update the instance
             instance.instance_id = data.get("instance_id", instance.instance_id)
             instance.current_version = app_version
-            instance.latest_version = data.get(
-                "latest_version", instance.latest_version
-            )
+            instance.latest_version = data.get("latest_version", instance.latest_version)
             instance.edition = InstanceEdition.PLANE_COMMERCIAL.value
             instance.last_checked_at = timezone.now()
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"

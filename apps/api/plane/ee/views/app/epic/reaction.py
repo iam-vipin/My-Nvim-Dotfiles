@@ -74,9 +74,7 @@ class EpicReactionViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}
-            ),
+            current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

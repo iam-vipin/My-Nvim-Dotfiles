@@ -24,9 +24,7 @@ edge_ngram_tokenizer = analysis.tokenizer(
     token_chars=["letter", "digit"],
 )
 
-edge_ngram_analyzer = analysis.analyzer(
-    "edge_ngram_analyzer", tokenizer=edge_ngram_tokenizer, filter=["lowercase"]
-)
+edge_ngram_analyzer = analysis.analyzer("edge_ngram_analyzer", tokenizer=edge_ngram_tokenizer, filter=["lowercase"])
 
 
 class JsonKeywordField(fields.KeywordField):

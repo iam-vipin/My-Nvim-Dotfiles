@@ -30,19 +30,11 @@ def get_y_axis_filter(y_axis: str) -> Dict[str, Any]:
     today = timezone.now().date()
     filter_mapping = {
         Widget.YAxisMetricEnum.WORK_ITEM_COUNT: {"id": F("id")},
-        Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT: {
-            "estimate_point__value": F("estimate_point__value")
-        },
-        Widget.YAxisMetricEnum.IN_PROGRESS_WORK_ITEM_COUNT: {
-            "state__group__in": ["unstarted", "started"]
-        },
+        Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT: {"estimate_point__value": F("estimate_point__value")},
+        Widget.YAxisMetricEnum.IN_PROGRESS_WORK_ITEM_COUNT: {"state__group__in": ["unstarted", "started"]},
         Widget.YAxisMetricEnum.COMPLETED_WORK_ITEM_COUNT: {"state__group": "completed"},
-        Widget.YAxisMetricEnum.PENDING_WORK_ITEM_COUNT: {
-            "state__group__in": ["unstarted", "started", "backlog"]
-        },
-        Widget.YAxisMetricEnum.BLOCKED_WORK_ITEM_COUNT: {
-            "issue_relation__relation_type": "blocked_by"
-        },
+        Widget.YAxisMetricEnum.PENDING_WORK_ITEM_COUNT: {"state__group__in": ["unstarted", "started", "backlog"]},
+        Widget.YAxisMetricEnum.BLOCKED_WORK_ITEM_COUNT: {"issue_relation__relation_type": "blocked_by"},
         Widget.YAxisMetricEnum.WORK_ITEM_DUE_TODAY_COUNT: {"target_date": today},
         Widget.YAxisMetricEnum.WORK_ITEM_DUE_THIS_WEEK_COUNT: {
             "target_date__gte": today - timezone.timedelta(days=today.weekday()),
@@ -100,11 +92,7 @@ def process_grouped_data(
         if key not in response:
             response[key] = {
                 "key": key if key else "none",
-                "name": (
-                    item.get("display_name", key)
-                    if item.get("display_name", key)
-                    else "None"
-                ),
+                "name": (item.get("display_name", key) if item.get("display_name", key) else "None"),
                 "count": 0,
             }
         group_key = str(item["group_key"]) if item["group_key"] else "none"
@@ -136,9 +124,7 @@ def apply_date_grouping(
     return queryset, id_field, name_field
 
 
-def fill_missing_dates(
-    response: List[Dict[str, Any]], start_date: date, end_date: date, date_grouping: str
-) -> None:
+def fill_missing_dates(response: List[Dict[str, Any]], start_date: date, end_date: date, date_grouping: str) -> None:
     current_date = start_date
     delta = timezone.timedelta(days=1)
 
@@ -166,9 +152,7 @@ def build_number_chart_response(
     y_axis: str,
     aggregate_func: Aggregate,
 ) -> List[Dict[str, Any]]:
-    count = (
-        queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
-    )
+    count = queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
     return [{"key": y_axis, "name": y_axis, "count": count}]
 
 
@@ -254,12 +238,8 @@ def build_widget_chart(
     field_mapping = get_x_axis_field()
     y_axis_filter = get_y_axis_filter(y_axis)
 
-    id_field, name_field, additional_filter = field_mapping.get(
-        x_axis, (None, None, {})
-    )
-    group_field, group_name_field, group_additional_filter = field_mapping.get(
-        group_by, (None, None, {})
-    )
+    id_field, name_field, additional_filter = field_mapping.get(x_axis, (None, None, {}))
+    group_field, group_name_field, group_additional_filter = field_mapping.get(group_by, (None, None, {}))
 
     if x_axis == "EPICS" or group_by == "EPICS":
         # Get all epic IDs
@@ -308,9 +288,7 @@ def build_widget_chart(
 
     if chart_type == "NUMBER":
         return {
-            "data": build_number_chart_response(
-                queryset, y_axis_filter, y_axis, aggregate_func
-            ),
+            "data": build_number_chart_response(queryset, y_axis_filter, y_axis, aggregate_func),
             "schema": {},
         }
 
@@ -320,9 +298,7 @@ def build_widget_chart(
         "CREATED_AT",
         "COMPLETED_AT",
     ]:
-        queryset, id_field, name_field = apply_date_grouping(
-            queryset, x_axis, x_axis_date_grouping, id_field
-        )
+        queryset, id_field, name_field = apply_date_grouping(queryset, x_axis, x_axis_date_grouping, id_field)
 
     if group_field:
         response, schema = build_grouped_chart_response(
@@ -334,9 +310,7 @@ def build_widget_chart(
             aggregate_func,
         )
     else:
-        response = build_simple_chart_response(
-            queryset, id_field, name_field, aggregate_func
-        )
+        response = build_simple_chart_response(queryset, id_field, name_field, aggregate_func)
         schema = {}
 
     return {"data": response, "schema": schema}

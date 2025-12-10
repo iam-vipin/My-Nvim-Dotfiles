@@ -20,11 +20,7 @@ class ProjectDocument(BaseDocument):
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
     class Index(BaseDocument.Index):
-        name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_projects"
-            if settings.OPENSEARCH_INDEX_PREFIX
-            else "projects"
-        )
+        name = f"{settings.OPENSEARCH_INDEX_PREFIX}_projects" if settings.OPENSEARCH_INDEX_PREFIX else "projects"
 
     class Django:
         model = Project
@@ -59,9 +55,7 @@ class ProjectDocument(BaseDocument):
         if hasattr(instance, "active_members"):
             members = instance.active_members
         else:
-            members = instance.project_projectmember.filter(is_active=True).only(
-                "member_id"
-            )
+            members = instance.project_projectmember.filter(is_active=True).only("member_id")
         return [member.member_id for member in members]
 
     def prepare_is_archived(self, instance):

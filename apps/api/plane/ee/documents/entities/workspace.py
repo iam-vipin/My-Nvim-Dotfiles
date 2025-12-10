@@ -15,11 +15,7 @@ class WorkspaceDocument(BaseDocument):
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
     class Index(BaseDocument.Index):
-        name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_workspaces"
-            if settings.OPENSEARCH_INDEX_PREFIX
-            else "workspaces"
-        )
+        name = f"{settings.OPENSEARCH_INDEX_PREFIX}_workspaces" if settings.OPENSEARCH_INDEX_PREFIX else "workspaces"
 
     class Django:
         model = Workspace

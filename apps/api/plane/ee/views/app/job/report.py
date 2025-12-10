@@ -17,9 +17,7 @@ class ImportReportView(BaseAPIView):
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug, pk=None):
         if not pk:
-            import_reports = ImportReport.objects.filter(
-                **request.query_params
-            ).order_by("-created_at")
+            import_reports = ImportReport.objects.filter(**request.query_params).order_by("-created_at")
             serializer = ImportReportSerializer(import_reports, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         import_report = ImportReport.objects.filter(pk=pk).first()
@@ -30,13 +28,9 @@ class ImportReportView(BaseAPIView):
     def patch(self, request, slug, pk):
         import_report = ImportReport.objects.filter(pk=pk).first()
 
-        serializer = ImportReportSerializer(
-            import_report, data=request.data, partial=True
-        )
+        serializer = ImportReportSerializer(import_report, data=request.data, partial=True)
 
         if serializer.is_valid():
             updated_report = serializer.save()
-            return Response(
-                ImportReportSerializer(updated_report).data, status=status.HTTP_200_OK
-            )
+            return Response(ImportReportSerializer(updated_report).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

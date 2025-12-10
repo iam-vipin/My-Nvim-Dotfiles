@@ -25,15 +25,14 @@ class ApplicationLinksSerializer(serializers.Serializer):
             "url": instance.get("url", ""),
         }
 
+
 class ApplicationSerializer(BaseSerializer):
     is_owned = serializers.BooleanField(read_only=True)
     is_installed = serializers.BooleanField(read_only=True)
     installation_id = serializers.UUIDField(read_only=True, required=False)
     logo_url = serializers.CharField(read_only=True)
     attachments_urls = serializers.SerializerMethodField()
-    attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(), many=True, required=False
-    )
+    attachments = serializers.PrimaryKeyRelatedField(queryset=FileAsset.objects.all(), many=True, required=False)
     categories = serializers.PrimaryKeyRelatedField(
         queryset=ApplicationCategory.objects.all(), many=True, required=False
     )

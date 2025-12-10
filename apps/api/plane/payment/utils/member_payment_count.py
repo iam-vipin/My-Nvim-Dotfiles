@@ -9,13 +9,9 @@ from plane.payment.utils.workspace_license_request import resync_workspace_licen
 
 def count_member_payments(members_list):
     # Calculate the quantity of admin and member users based on the members list that is roles greater than 10
-    admin_member_users = len(
-        [member for member in members_list if member.get("user_role") > 10]
-    )
+    admin_member_users = len([member for member in members_list if member.get("user_role") > 10])
     # Calculate the quantity of viewers and guest users based on the members list that is roles less than or equal to 10
-    viewers_guest_users = len(
-        [member for member in members_list if member.get("user_role") <= 10]
-    )
+    viewers_guest_users = len([member for member in members_list if member.get("user_role") <= 10])
 
     # Get the workspace paid quantity that is the quantity of admin and member users
     workspace_paid_quantity = admin_member_users
@@ -40,15 +36,10 @@ def handle_free_plan_invite_case(slug, requested_invite_list, workspace_license)
     ).count()
 
     # Get the current total invited users in the workspace
-    current_invited_users = WorkspaceMemberInvite.objects.filter(
-        workspace__slug=slug
-    ).count()
+    current_invited_users = WorkspaceMemberInvite.objects.filter(workspace__slug=slug).count()
 
     # Check if the total
-    if (
-        current_active_users + current_invited_users + total_requested_invite_count
-        <= workspace_license.free_seats
-    ):
+    if current_active_users + current_invited_users + total_requested_invite_count <= workspace_license.free_seats:
         return True, 0, 0
     else:
         return False, 0, 0
@@ -74,14 +65,10 @@ def handle_member_update_case(requested_role, slug, workspace_license, current_r
     ).count()
 
     # Get the requested invite emails
-    invited_admin_members = WorkspaceMemberInvite.objects.filter(
-        workspace__slug=slug, role__gt=10
-    ).count()
+    invited_admin_members = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
     # Get the requested invited guest viewers
-    invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
-        workspace__slug=slug, role__lte=10
-    ).count()
+    invited_guest_viewers = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__lte=10).count()
 
     # total admin member seats
     total_admin_member_seats = active_admin_member_count + invited_admin_members
@@ -122,13 +109,9 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
     """Handle the member invite case for the workspace"""
     # Case 2b i.
     # Get the requested invite emails
-    requested_invited_admin_members = len(
-        [invite for invite in requested_invite_list if invite.get("role") > 10]
-    )
+    requested_invited_admin_members = len([invite for invite in requested_invite_list if invite.get("role") > 10])
     # Case the requested invite emails
-    requested_invited_guest_viewers = len(
-        [invite for invite in requested_invite_list if invite.get("role") <= 10]
-    )
+    requested_invited_guest_viewers = len([invite for invite in requested_invite_list if invite.get("role") <= 10])
 
     # Get the current invited emails for the admin members
     check_admin_members = bool(requested_invited_admin_members)
@@ -142,9 +125,7 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
             workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
         ).count()
         # Get the current invited admin members
-        invited_admin_members = WorkspaceMemberInvite.objects.filter(
-            workspace__slug=slug, role__gt=10
-        ).count()
+        invited_admin_members = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
         # Get the current guest and viewer count
         active_guest_viewer_count = WorkspaceMember.objects.filter(
@@ -152,33 +133,19 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
         ).count()
 
         # Get the  current invited guest viewers
-        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
-            workspace__slug=slug, role__lte=10
-        ).count()
+        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__lte=10).count()
 
         # Get the total admin member seats
-        total_admin_member_seats = (
-            active_admin_member_count
-            + invited_admin_members
-            + requested_invited_admin_members
-        )
+        total_admin_member_seats = active_admin_member_count + invited_admin_members + requested_invited_admin_members
 
         # Get the total guest viewer seats
-        total_guest_viewer_seats = (
-            active_guest_viewer_count
-            + invited_guest_viewers
-            + requested_invited_guest_viewers
-        )
+        total_guest_viewer_seats = active_guest_viewer_count + invited_guest_viewers + requested_invited_guest_viewers
 
         # Allowed admin members and guest viewers
-        allowed_admin_members = (
-            total_admin_member_seats <= workspace_license.purchased_seats
-        )
+        allowed_admin_members = total_admin_member_seats <= workspace_license.purchased_seats
 
         # Allowed guest viewers
-        allowed_guest_viewers = (
-            total_guest_viewer_seats <= 5 * workspace_license.purchased_seats
-        )
+        allowed_guest_viewers = total_guest_viewer_seats <= 5 * workspace_license.purchased_seats
 
         # Return the allowed admin members and guest viewers
         return bool(allowed_admin_members and allowed_guest_viewers), 0, 0
@@ -190,16 +157,10 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
             workspace__slug=slug, is_active=True, member__is_bot=False, role__gt=10
         ).count()
         # Get the current invited admin members
-        invited_admin_members = WorkspaceMemberInvite.objects.filter(
-            workspace__slug=slug, role__gt=10
-        ).count()
+        invited_admin_members = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
         # Get the total admin member seats
-        total_admin_member_seats = (
-            active_admin_member_count
-            + invited_admin_members
-            + requested_invited_admin_members
-        )
+        total_admin_member_seats = active_admin_member_count + invited_admin_members + requested_invited_admin_members
 
         if total_admin_member_seats <= workspace_license.purchased_seats:
             return True, 0, 0
@@ -214,16 +175,10 @@ def handle_member_invite_case(requested_invite_list, slug, workspace_license):
         ).count()
 
         # Get the  current invited guest viewers
-        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
-            workspace__slug=slug, role__lte=10
-        ).count()
+        invited_guest_viewers = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__lte=10).count()
 
         # Get the total guest viewer seats
-        total_guest_viewer_seats = (
-            active_guest_viewer_count
-            + invited_guest_viewers
-            + requested_invited_guest_viewers
-        )
+        total_guest_viewer_seats = active_guest_viewer_count + invited_guest_viewers + requested_invited_guest_viewers
 
         if total_guest_viewer_seats <= 5 * workspace_license.purchased_seats:
             return True, 0, 0
@@ -242,25 +197,18 @@ def handle_invite_check_case(slug, workspace_license):
     ).count()
 
     # Get the current workspace invite count
-    current_invited_admin_members = WorkspaceMemberInvite.objects.filter(
-        workspace__slug=slug, role__gt=10
-    ).count()
+    current_invited_admin_members = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
 
-    current_invited_guest_viewers = WorkspaceMemberInvite.objects.filter(
-        workspace__slug=slug, role__lte=10
-    ).count()
+    current_invited_guest_viewers = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__lte=10).count()
 
     # Get the total admin member seats
     purchased_seats = workspace_license.purchased_seats
 
-    allowed_admin_members = max(
-        0, purchased_seats - (active_admin_member_count + current_invited_admin_members)
-    )
+    allowed_admin_members = max(0, purchased_seats - (active_admin_member_count + current_invited_admin_members))
 
     allowed_guest_viewers = max(
         0,
-        5 * purchased_seats
-        - (active_guest_viewer_count + current_invited_guest_viewers),
+        5 * purchased_seats - (active_guest_viewer_count + current_invited_guest_viewers),
     )
 
     return (
@@ -270,9 +218,7 @@ def handle_invite_check_case(slug, workspace_license):
     )
 
 
-def handle_cloud_payments(
-    slug, requested_invite_list, requested_role, workspace_license, current_role
-):
+def handle_cloud_payments(slug, requested_invite_list, requested_role, workspace_license, current_role):
     """
     Case1: Free Plan and Trial Plan
         a. Invitation case - requested_role is None and requested_invite_list is a list of invite emails with roles
@@ -325,14 +271,10 @@ def handle_cloud_payments(
             )
 
         if not requested_invite_list and not requested_role:
-            return handle_invite_check_case(
-                slug=slug, workspace_license=workspace_license
-            )
+            return handle_invite_check_case(slug=slug, workspace_license=workspace_license)
 
 
-def handle_self_managed_payments(
-    slug, requested_invite_list, requested_role, workspace_license, current_role
-):
+def handle_self_managed_payments(slug, requested_invite_list, requested_role, workspace_license, current_role):
     """
     Handle the self managed payment cases
     """
@@ -378,9 +320,7 @@ def handle_self_managed_payments(
             )
 
         if not requested_invite_list and not requested_role:
-            return handle_invite_check_case(
-                slug=slug, workspace_license=workspace_license
-            )
+            return handle_invite_check_case(slug=slug, workspace_license=workspace_license)
 
 
 def workspace_member_check(slug, requested_invite_list, requested_role, current_role):
@@ -394,9 +334,7 @@ def workspace_member_check(slug, requested_invite_list, requested_role, current_
     if not workspace_license:
         resync_workspace_license(workspace_slug=slug)
         # Fetch the workspace license
-        workspace_license = WorkspaceLicense.objects.filter(
-            workspace__slug=slug
-        ).first()
+        workspace_license = WorkspaceLicense.objects.filter(workspace__slug=slug).first()
 
     # Get the workspace license
     if settings.IS_MULTI_TENANT:

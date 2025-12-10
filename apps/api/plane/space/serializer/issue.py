@@ -309,18 +309,12 @@ class IssueCreateSerializer(BaseSerializer):
 
         if issue_type_id:
             # Check if issue type is valid
-            issue_type = IssueType.objects.filter(
-                project_issue_types__project_id=project_id, id=issue_type_id
-            ).first()
+            issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, id=issue_type_id).first()
         else:
             # Get default issue type
-            issue_type = IssueType.objects.filter(
-                project_issue_types__project_id=project_id, is_default=True
-            ).first()
+            issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
 
-        issue = Issue.objects.create(
-            **validated_data, project_id=project_id, type=issue_type
-        )
+        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

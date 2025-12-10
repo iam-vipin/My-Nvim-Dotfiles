@@ -12,13 +12,17 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ProjectIntakeExportEndpoint(BaseAPIView):
-
     """
     Export intake from a project intake endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, project_id):
         # Get the provider

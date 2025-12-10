@@ -50,23 +50,15 @@ def get_issue_custom_properties_dict(
             case PropertyTypeEnum.DECIMAL:
                 value = prop_value.value_decimal
             case PropertyTypeEnum.DATETIME:
-                value = (
-                    prop_value.value_datetime.isoformat()
-                    if prop_value.value_datetime
-                    else None
-                )
+                value = prop_value.value_datetime.isoformat() if prop_value.value_datetime else None
             case PropertyTypeEnum.OPTION:
-                value = (
-                    prop_value.value_option.name if prop_value.value_option else None
-                )
+                value = prop_value.value_option.name if prop_value.value_option else None
             case PropertyTypeEnum.RELATION | PropertyTypeEnum.FILE:
                 value = str(prop_value.value_uuid) if prop_value.value_uuid else None
             case _:
                 value = None
 
-        custom_properties_dict[prop_value.issue_id][
-            prop_value.property.display_name
-        ] = value
+        custom_properties_dict[prop_value.issue_id][prop_value.property.display_name] = value
 
     return custom_properties_dict
 

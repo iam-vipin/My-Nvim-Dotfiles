@@ -28,10 +28,6 @@ class Command(BaseCommand):
             if len(kwargs.get("entity_connections_ids_not_split", "")) == 0
             else kwargs.get("entity_connections_ids_not_split", "").split(",")
         )
-        self.stdout.write(
-            f"Entity connections that have not been split: {entity_connections_ids_not_split}"
-        )
-        split_github_entity_connections(
-            WorkspaceEntityConnection, entity_connections_ids_not_split
-        )
+        self.stdout.write(f"Entity connections that have not been split: {entity_connections_ids_not_split}")
+        split_github_entity_connections(WorkspaceEntityConnection, entity_connections_ids_not_split)
         self.stdout.write("Successfully split remaining GitHub entity connections")

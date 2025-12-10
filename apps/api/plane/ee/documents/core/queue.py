@@ -167,9 +167,7 @@ def get_queue_stats_for_model(model_name):
         return {"error": str(e)}
 
 
-def cleanup_stale_queue_for_model(
-    model_name, max_age_hours=1, max_queue_size=10000, force_drain=False
-):
+def cleanup_stale_queue_for_model(model_name, max_age_hours=1, max_queue_size=10000, force_drain=False):
     """
     Robust cleanup for model queues with multiple safety mechanisms:
 
@@ -204,9 +202,7 @@ def cleanup_stale_queue_for_model(
             redis_client.delete(batch_key)
             stats["force_drained"] = True
             stats["removed_excess"] = queue_length
-            logger.warning(
-                f"FORCE DRAINED {model_name} queue: {queue_length} items removed"
-            )
+            logger.warning(f"FORCE DRAINED {model_name} queue: {queue_length} items removed")
             return stats
 
         # If queue is empty, just delete the key
@@ -249,14 +245,9 @@ def cleanup_stale_queue_for_model(
                         item_data = json.loads(item_json)
 
                         # Check if item has valid structure
-                        if (
-                            not isinstance(item_data, dict)
-                            or "timestamp" not in item_data
-                        ):
+                        if not isinstance(item_data, dict) or "timestamp" not in item_data:
                             stats["removed_invalid"] += 1
-                            logger.debug(
-                                f"Removed invalid item from {model_name}: missing timestamp"
-                            )
+                            logger.debug(f"Removed invalid item from {model_name}: missing timestamp")
                             continue
 
                         # Check age
@@ -266,15 +257,11 @@ def cleanup_stale_queue_for_model(
                             )
                             if now - item_time > max_age:
                                 stats["removed_stale"] += 1
-                                logger.debug(
-                                    f"Removed stale item from {model_name}: {item_time}"
-                                )
+                                logger.debug(f"Removed stale item from {model_name}: {item_time}")
                                 continue
                         except (ValueError, TypeError) as e:
                             stats["removed_invalid"] += 1
-                            logger.debug(
-                                f"Removed item with invalid timestamp from {model_name}: {e}"
-                            )
+                            logger.debug(f"Removed item with invalid timestamp from {model_name}: {e}")
                             continue
 
                         # Item is valid and not stale

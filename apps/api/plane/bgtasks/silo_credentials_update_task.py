@@ -19,9 +19,7 @@ class CredentialsUpdate(DatabaseMigration):
     def update_credentials(self):
         print("Updating credentials...")
 
-        total_count = self._execute_with_error_handling(
-            "SELECT COUNT(*) as count FROM silo.credentials"
-        )[0]["count"]
+        total_count = self._execute_with_error_handling("SELECT COUNT(*) as count FROM silo.credentials")[0]["count"]
 
         total_batches = (total_count + self.batch_size - 1) // self.batch_size
         records_processed = 0

@@ -40,9 +40,7 @@ class WorkflowStateManager:
             ).values_list("approver_id", flat=True)
         )
 
-    def validate_state_transition(
-        self, issue: Issue, new_state_id: int, user_id: int
-    ) -> bool:
+    def validate_state_transition(self, issue: Issue, new_state_id: int, user_id: int) -> bool:
         """
         Validate if a state transition is allowed for the given issue and user.
 
@@ -61,15 +59,11 @@ class WorkflowStateManager:
         new_state_id = uuid.UUID(new_state_id)
 
         # Check if the feature is available for the workspace
-        if not check_workspace_feature_flag(
-            slug=self.slug, feature_key=FeatureFlag.WORKFLOWS, user_id=user_id
-        ):
+        if not check_workspace_feature_flag(slug=self.slug, feature_key=FeatureFlag.WORKFLOWS, user_id=user_id):
             return True
 
         # Check if the feature is enabled if not return true
-        if not ProjectFeature.objects.filter(
-            is_workflow_enabled=True, project_id=self.project_id
-        ).exists():
+        if not ProjectFeature.objects.filter(is_workflow_enabled=True, project_id=self.project_id).exists():
             return True
 
         # If the issue doesn't have a current state, any state is valid
@@ -112,21 +106,15 @@ class WorkflowStateManager:
             state_id = State.objects.get(project_id=self.project_id, default=True).id
 
         # Check if the feature is available for the workspace
-        if not check_workspace_feature_flag(
-            slug=self.slug, feature_key=FeatureFlag.WORKFLOWS, user_id=user_id
-        ):
+        if not check_workspace_feature_flag(slug=self.slug, feature_key=FeatureFlag.WORKFLOWS, user_id=user_id):
             return False
 
         # Check if the feature is enabled
-        if not ProjectFeature.objects.filter(
-            is_workflow_enabled=True, project_id=self.project_id
-        ).exists():
+        if not ProjectFeature.objects.filter(is_workflow_enabled=True, project_id=self.project_id).exists():
             return False
 
         # check if the issue creation is allowed
-        if Workflow.objects.filter(
-            state_id=state_id, project_id=self.project_id, allow_issue_creation=False
-        ).exists():
+        if Workflow.objects.filter(state_id=state_id, project_id=self.project_id, allow_issue_creation=False).exists():
             return True
 
         return False

@@ -67,8 +67,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=active_cycles,
-            on_results=lambda active_cycles: WorkspaceActiveCycleSerializer(
-                active_cycles, many=True
-            ).data,
+            on_results=lambda active_cycles: WorkspaceActiveCycleSerializer(active_cycles, many=True).data,
             default_per_page=int(request.GET.get("per_page", 3)),
         )

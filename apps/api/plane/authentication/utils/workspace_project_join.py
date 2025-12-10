@@ -74,10 +74,7 @@ def process_workspace_project_invitations(user):
     )
 
     # Sync workspace members
-    [
-        member_sync_task.delay(project_member_invite.workspace.slug)
-        for project_member_invite in project_member_invites
-    ]
+    [member_sync_task.delay(project_member_invite.workspace.slug) for project_member_invite in project_member_invites]
 
     # Delete all the invites
     workspace_member_invites.delete()

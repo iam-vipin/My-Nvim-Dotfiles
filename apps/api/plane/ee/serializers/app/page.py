@@ -269,9 +269,7 @@ class PageCommentSerializer(BaseSerializer):
 
         if description_data:
             if instance.description:
-                serializer = DescriptionSerializer(
-                    instance.description, data=description_data, partial=True
-                )
+                serializer = DescriptionSerializer(instance.description, data=description_data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 description = serializer.save()
             else:

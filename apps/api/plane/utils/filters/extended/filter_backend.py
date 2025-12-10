@@ -50,9 +50,9 @@ class ExtendedComplexFilterBackend(ComplexFilterBackend):
                     lookup = match.group(2)
 
                     # Check if the value is separated by ','
-                    value = value.split(',') if isinstance(value, str) and ',' in value and lookup == "in" else value
+                    value = value.split(",") if isinstance(value, str) and "," in value and lookup == "in" else value
                     if isinstance(value, list) and len(value) > 1:
-                        transformed[f"customproperty_value__{lookup}"] = ','.join([f"{property_id};{v}" for v in value])
+                        transformed[f"customproperty_value__{lookup}"] = ",".join([f"{property_id};{v}" for v in value])
                     else:
                         transformed[f"customproperty_value__{lookup}"] = f"{property_id};{value}"
                 else:

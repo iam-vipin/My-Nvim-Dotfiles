@@ -177,6 +177,8 @@ class PageLiteSerializer(BaseSerializer):
             "is_shared",
             "sort_order",
         ]
+
+
 class PageVersionSerializer(BaseSerializer):
     class Meta:
         model = PageVersion

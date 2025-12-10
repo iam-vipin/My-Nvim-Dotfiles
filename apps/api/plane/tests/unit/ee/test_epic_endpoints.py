@@ -9,9 +9,7 @@ class TestEpicEndpoints:
     def test_get_epic(self, api_key_client, workspace, project, epic, create_user):
         """Test that an epic can be retrieved"""
         # Add user as project member to fix 403 error
-        ProjectMember.objects.create(
-            project=project, member=create_user, role=20, is_active=True
-        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
         url = reverse(
             "epic-detail",
@@ -21,14 +19,10 @@ class TestEpicEndpoints:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == epic.id
 
-    def test_get_epic_by_identifier(
-        self, api_key_client, workspace, project, epic, create_user
-    ):
+    def test_get_epic_by_identifier(self, api_key_client, workspace, project, epic, create_user):
         """Test that an epic can be retrieved by identifier"""
         # Add user as project member to fix 403 error
-        ProjectMember.objects.create(
-            project=project, member=create_user, role=20, is_active=True
-        )
+        ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
         url = reverse(
             "issue-by-identifier",

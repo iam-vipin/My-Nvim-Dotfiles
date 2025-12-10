@@ -13,6 +13,7 @@ from plane.settings.storage import S3Storage
 from plane.ee.views.api.base import BaseServiceAPIView
 from plane.utils.exception_logger import log_exception
 
+
 class ImportAssetEndpoint(BaseServiceAPIView):
     """This endpoint is used to upload generic assets that can be later bound to entities."""
 
@@ -27,9 +28,7 @@ class ImportAssetEndpoint(BaseServiceAPIView):
             workspace = Workspace.objects.get(slug=slug)
 
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=asset_id, workspace_id=workspace.id, is_deleted=False
-            )
+            asset = FileAsset.objects.get(id=asset_id, workspace_id=workspace.id, is_deleted=False)
 
             # Check if the asset exists and is uploaded
             if not asset.is_uploaded:
@@ -57,13 +56,9 @@ class ImportAssetEndpoint(BaseServiceAPIView):
             )
 
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
         except FileAsset.DoesNotExist:
-            return Response(
-                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             log_exception(e)
             return Response(
@@ -142,9 +137,7 @@ class ImportAssetEndpoint(BaseServiceAPIView):
 
         # Get the presigned URL
         storage = S3Storage(request=request, is_server=True)
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
 
         return Response(
             {
@@ -163,9 +156,7 @@ class ImportAssetEndpoint(BaseServiceAPIView):
         and trigger metadata extraction.
         """
         try:
-            asset = FileAsset.objects.get(
-                id=asset_id, workspace__slug=slug, is_deleted=False
-            )
+            asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
 
             # Update is_uploaded status
             asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)
@@ -178,6 +169,4 @@ class ImportAssetEndpoint(BaseServiceAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except FileAsset.DoesNotExist:
-            return Response(
-                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)

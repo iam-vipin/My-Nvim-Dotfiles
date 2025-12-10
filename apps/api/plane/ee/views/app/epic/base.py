@@ -61,7 +61,6 @@ from plane.ee.serializers import (
 )
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
-    check_workspace_feature_flag,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import issue_group_values, issue_on_results
@@ -802,12 +801,14 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
 
             total_issues = issues.filter(id__in=issue_ids, project_id=project_id, workspace__slug=slug).count()
 
-            result.append({
-                "epic_id": epic_id,
-                "total_issues": total_issues,
-                "completed_issues": completed_issues,
-                "cancelled_issues": cancelled_issues,
-            })
+            result.append(
+                {
+                    "epic_id": epic_id,
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                    "cancelled_issues": cancelled_issues,
+                }
+            )
 
         return Response(result, status=status.HTTP_200_OK)
 

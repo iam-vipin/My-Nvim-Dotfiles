@@ -35,9 +35,7 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.TextField(
-        fields={"keyword": fields.KeywordField(ignore_above=1024)}
-    )
+    pretty_sequence = fields.TextField(fields={"keyword": fields.KeywordField(ignore_above=1024)})
     is_deleted = fields.BooleanField()
     name = fields.TextField(
         analyzer=edge_ngram_analyzer,
@@ -85,9 +83,7 @@ class IssueDocument(BaseDocument):
             "index": {"knn": True},
         }
         name = (
-            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_issues"
-            if django_settings.OPENSEARCH_INDEX_PREFIX
-            else "issues"
+            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_issues" if django_settings.OPENSEARCH_INDEX_PREFIX else "issues"
         )
 
     class Django:
@@ -172,9 +168,7 @@ class IssueDocument(BaseDocument):
         if hasattr(instance.project, "active_project_members"):
             members = instance.project.active_project_members
         else:
-            members = instance.project.project_projectmember.filter(
-                is_active=True
-            ).only("member_id")
+            members = instance.project.project_projectmember.filter(is_active=True).only("member_id")
         return [member.member_id for member in members]
 
     def prepare_pretty_sequence(self, instance):
@@ -194,9 +188,7 @@ class IssueDocument(BaseDocument):
 
         # Use prefetched duplicate relations if available
         if hasattr(instance, "duplicate_relations"):
-            duplicate_of_ids.extend(
-                [relation.related_issue_id for relation in instance.duplicate_relations]
-            )
+            duplicate_of_ids.extend([relation.related_issue_id for relation in instance.duplicate_relations])
         else:
             # Fallback to database query if prefetch not available
             duplicate_of_ids.extend(
@@ -208,9 +200,7 @@ class IssueDocument(BaseDocument):
 
         # Use prefetched reverse duplicate relations if available
         if hasattr(instance, "duplicate_relations_reverse"):
-            duplicate_of_ids.extend(
-                [relation.issue_id for relation in instance.duplicate_relations_reverse]
-            )
+            duplicate_of_ids.extend([relation.issue_id for relation in instance.duplicate_relations_reverse])
         else:
             # Fallback to database query if prefetch not available
             duplicate_of_ids.extend(
@@ -342,9 +332,7 @@ class IssueCommentDocument(BaseDocument):
         if hasattr(instance.project, "active_project_members"):
             members = instance.project.active_project_members
         else:
-            members = instance.project.project_projectmember.filter(
-                is_active=True
-            ).only("member_id")
+            members = instance.project.project_projectmember.filter(is_active=True).only("member_id")
         return [member.member_id for member in members]
 
     def prepare_is_deleted(self, instance):

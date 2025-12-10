@@ -53,20 +53,12 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def patch(self, request, slug, view_id):
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id, entity_name="view", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=view_id, entity_name="view", workspace__slug=slug)
         data = {
-            "is_comments_enabled": request.data.get(
-                "is_comments_enabled", deploy_board.is_comments_enabled
-            ),
-            "is_reactions_enabled": request.data.get(
-                "is_reactions_enabled", deploy_board.is_reactions_enabled
-            ),
+            "is_comments_enabled": request.data.get("is_comments_enabled", deploy_board.is_comments_enabled),
+            "is_reactions_enabled": request.data.get("is_reactions_enabled", deploy_board.is_reactions_enabled),
             "intake": request.data.get("intake", deploy_board.intake),
-            "is_votes_enabled": request.data.get(
-                "is_votes_enabled", deploy_board.is_votes_enabled
-            ),
+            "is_votes_enabled": request.data.get("is_votes_enabled", deploy_board.is_votes_enabled),
             "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 
@@ -79,17 +71,13 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def get(self, request, slug, view_id):
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id, entity_name="view", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=view_id, entity_name="view", workspace__slug=slug)
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def delete(self, request, slug, view_id):
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=view_id, entity_name="view", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=view_id, entity_name="view", workspace__slug=slug)
         deploy_board.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -100,9 +88,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
     def post(self, request, slug, project_id, pk):
         # Fetch the view
-        issue_view = IssueView.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+        issue_view = IssueView.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
 
         if request.user != issue_view.owned_by:
             return Response(
@@ -145,16 +131,10 @@ class IssueViewsPublishEndpoint(BaseAPIView):
             project_id=project_id,
         )
         data = {
-            "is_comments_enabled": request.data.get(
-                "is_comments_enabled", deploy_board.is_comments_enabled
-            ),
-            "is_reactions_enabled": request.data.get(
-                "is_reactions_enabled", deploy_board.is_reactions_enabled
-            ),
+            "is_comments_enabled": request.data.get("is_comments_enabled", deploy_board.is_comments_enabled),
+            "is_reactions_enabled": request.data.get("is_reactions_enabled", deploy_board.is_reactions_enabled),
             "intake": request.data.get("intake", deploy_board.intake),
-            "is_votes_enabled": request.data.get(
-                "is_votes_enabled", deploy_board.is_votes_enabled
-            ),
+            "is_votes_enabled": request.data.get("is_votes_enabled", deploy_board.is_votes_enabled),
             "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 

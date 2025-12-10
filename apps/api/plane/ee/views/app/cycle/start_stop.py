@@ -29,13 +29,9 @@ class CycleStartStopEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            cycle = Cycle.objects.get(
-                workspace__slug=slug, project_id=project_id, id=cycle_id
-            )
+            cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, id=cycle_id)
             if cycle is None:
-                return Response(
-                    {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND)
 
             current_datetime = convert_to_utc_with_timestamp(project_id, current_date)
 
@@ -50,9 +46,7 @@ class CycleStartStopEndpoint(BaseAPIView):
                         project_id=project_id,
                         project__archived_at__isnull=True,
                     )
-                    .filter(
-                        start_date__lte=timezone.now(), end_date__gte=timezone.now()
-                    )
+                    .filter(start_date__lte=timezone.now(), end_date__gte=timezone.now())
                     .accessible_to(request.user.id, slug)
                 )
 
@@ -81,10 +75,7 @@ class CycleStartStopEndpoint(BaseAPIView):
 
                 upcoming_first_cycle = upcoming_cycles.first()
 
-                if (
-                    upcoming_first_cycle is not None
-                    and cycle_id != upcoming_first_cycle.id
-                ):
+                if upcoming_first_cycle is not None and cycle_id != upcoming_first_cycle.id:
                     return Response(
                         {"error": "Cycle is not the next upcoming cycle."},
                         status=status.HTTP_400_BAD_REQUEST,
@@ -96,6 +87,4 @@ class CycleStartStopEndpoint(BaseAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

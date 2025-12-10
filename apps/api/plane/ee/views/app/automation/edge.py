@@ -25,7 +25,6 @@ from plane.ee.bgtasks.automation_activity_task import automation_activity
 
 
 class AutomationEdgeEndpoint(AutomationBaseEndpoint):
-
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     def get(
@@ -104,12 +103,8 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
             project_id=project_id,
             workspace__slug=slug,
         )
-        current_instance = json.dumps(
-            AutomationEdgeReadSerializer(edge).data, cls=DjangoJSONEncoder
-        )
-        serializer = AutomationEdgeWriteSerializer(
-            edge, data=request.data, partial=True, context={"version": version}
-        )
+        current_instance = json.dumps(AutomationEdgeReadSerializer(edge).data, cls=DjangoJSONEncoder)
+        serializer = AutomationEdgeWriteSerializer(edge, data=request.data, partial=True, context={"version": version})
         if serializer.is_valid():
             serializer.save()
             automation_activity.delay(

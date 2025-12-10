@@ -42,23 +42,21 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
                 IssueView.objects.filter(pk=pk, workspace__slug=slug)
                 .annotate(is_favorite=Exists(subquery))
                 .annotate(
-                    team=TeamspaceView.objects.filter(
-                        view_id=OuterRef("pk"), team_space_id=team_space_id
-                    ).values("team_space_id")
+                    team=TeamspaceView.objects.filter(view_id=OuterRef("pk"), team_space_id=team_space_id).values(
+                        "team_space_id"
+                    )
                 )
                 .first()
             )
             if not issue_view:
-                return Response(
-                    {"error": "View not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "View not found"}, status=status.HTTP_404_NOT_FOUND)
             serializer = TeamspaceViewSerializer(issue_view)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all the views that are part of the team space
-        team_space_views = TeamspaceView.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        ).values_list("view_id", flat=True)
+        team_space_views = TeamspaceView.objects.filter(workspace__slug=slug, team_space_id=team_space_id).values_list(
+            "view_id", flat=True
+        )
         team_issue_views = (
             IssueView.objects.filter(pk__in=team_space_views, workspace__slug=slug)
             .annotate(
@@ -72,9 +70,9 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
                 )
             )
             .annotate(
-                team=TeamspaceView.objects.filter(
-                    view_id=OuterRef("pk"), team_space_id=team_space_id
-                ).values("team_space_id")
+                team=TeamspaceView.objects.filter(view_id=OuterRef("pk"), team_space_id=team_space_id).values(
+                    "team_space_id"
+                )
             )
         )
         serializer = TeamspaceViewSerializer(team_issue_views, many=True)
@@ -117,14 +115,12 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
             )
             # Get the view
             issue_view = (
-                IssueView.objects.filter(
-                    pk=serializer.data.get("id"), workspace__slug=slug
-                )
+                IssueView.objects.filter(pk=serializer.data.get("id"), workspace__slug=slug)
                 .annotate(is_favorite=Exists(subquery))
                 .annotate(
-                    team=TeamspaceView.objects.filter(
-                        view_id=OuterRef("pk"), team_space_id=team_space_id
-                    ).values("team_space_id")
+                    team=TeamspaceView.objects.filter(view_id=OuterRef("pk"), team_space_id=team_space_id).values(
+                        "team_space_id"
+                    )
                 )
                 .first()
             )
@@ -136,24 +132,18 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def patch(self, request, slug, team_space_id, pk):
         # Check if the view is part of the team
-        if not TeamspaceView.objects.filter(
-            view_id=pk, team_space_id=team_space_id
-        ).exists():
+        if not TeamspaceView.objects.filter(view_id=pk, team_space_id=team_space_id).exists():
             return Response(
                 {"error": "View does not belong to the team"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         with transaction.atomic():
-            issue_view = IssueView.objects.select_for_update().get(
-                pk=pk, workspace__slug=slug
-            )
+            issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
 
             # Check if the view is locked
             if issue_view.is_locked:
-                return Response(
-                    {"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Only update the view if owner is updating
             if issue_view.owned_by_id != request.user.id:
@@ -163,9 +153,7 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
                 )
 
             # Update the view
-            serializer = TeamspaceViewSerializer(
-                issue_view, data=request.data, partial=True
-            )
+            serializer = TeamspaceViewSerializer(issue_view, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -174,9 +162,7 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
         # Check if the views if of the team or project
-        team_space_view = TeamspaceView.objects.filter(
-            view_id=pk, team_space_id=team_space_id
-        ).first()
+        team_space_view = TeamspaceView.objects.filter(view_id=pk, team_space_id=team_space_id).first()
         if team_space_view:
             issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug)
             issue_view_details = issue_view.get()

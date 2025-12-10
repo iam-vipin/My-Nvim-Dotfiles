@@ -36,4 +36,3 @@ class DescriptionSerializer(BaseSerializer):
 
         # Return sanitized HTML if available, otherwise return original
         return sanitized_html if sanitized_html is not None else value
-

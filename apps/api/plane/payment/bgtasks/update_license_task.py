@@ -20,9 +20,7 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
         owner_email = Workspace.objects.get(slug=workspace_slug).owner.email
         # Get all active workspace members
         workspace_members = (
-            WorkspaceMember.objects.filter(
-                workspace_id=workspace_id, is_active=True, member__is_bot=False
-            )
+            WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
@@ -61,29 +59,17 @@ def save_workspace_license(workspace_license, response):
     workspace_license.free_seats = response.get("free_seats", 12)
     workspace_license.purchased_seats = response.get("purchased_seats", 0)
     workspace_license.current_period_end_date = response.get("current_period_end_date")
-    workspace_license.current_period_start_date = response.get(
-        "current_period_start_date"
-    )
+    workspace_license.current_period_start_date = response.get("current_period_start_date")
     workspace_license.recurring_interval = response.get("interval")
     workspace_license.plan = response.get("plan")
     workspace_license.is_offline_payment = response.get("is_offline_payment", False)
     workspace_license.trial_end_date = response.get("trial_end_date")
-    workspace_license.has_activated_free_trial = response.get(
-        "has_activated_free_trial", False
-    )
-    workspace_license.has_added_payment_method = response.get(
-        "has_added_payment_method", False
-    )
+    workspace_license.has_activated_free_trial = response.get("has_activated_free_trial", False)
+    workspace_license.has_added_payment_method = response.get("has_added_payment_method", False)
     workspace_license.subscription = response.get("subscription")
-    workspace_license.last_verified_at = response.get(
-        "last_verified_at", timezone.now()
-    )
-    workspace_license.last_payment_failed_date = response.get(
-        "last_payment_failed_date", None
-    )
-    workspace_license.last_payment_failed_count = response.get(
-        "last_payment_failed_count", 0
-    )
+    workspace_license.last_verified_at = response.get("last_verified_at", timezone.now())
+    workspace_license.last_payment_failed_date = response.get("last_payment_failed_date", None)
+    workspace_license.last_payment_failed_count = response.get("last_payment_failed_count", 0)
 
     return workspace_license
 
@@ -103,9 +89,7 @@ def update_licenses():
         if response is None:
             continue
 
-        updated_workspace_licenses.append(
-            save_workspace_license(workspace_license, response)
-        )
+        updated_workspace_licenses.append(save_workspace_license(workspace_license, response))
 
     try:
         WorkspaceLicense.objects.bulk_update(

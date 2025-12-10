@@ -10,14 +10,19 @@ from plane.bgtasks.export_task import issue_export_task
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
-class ProjectEpicExportEndpoint(BaseAPIView):
 
+class ProjectEpicExportEndpoint(BaseAPIView):
     """
     Export epics from a project epic endpoint.
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER,])
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ]
+    )
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, project_id):
         # Get the provider

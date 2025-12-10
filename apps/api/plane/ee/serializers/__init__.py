@@ -135,7 +135,7 @@ from .space.page import (
 )
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
-from .space.extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer # noqa: F811
+from .space.extended.issue import ExtendedIssueCreateSerializer as IssueCreateSerializer  # noqa: F811
 from .space.intake_form import (
     IntakeFormSettingsSerializer,
     IntakeFormFieldSerializer,

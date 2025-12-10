@@ -64,11 +64,7 @@ class Command(BaseCommand):
 
         for field in required_fields:
             value = getattr(template, field, None)
-            if (
-                value is None
-                or value == ""
-                or (isinstance(value, list) and len(value) == 0)
-            ):
+            if value is None or value == "" or (isinstance(value, list) and len(value) == 0):
                 missing_fields.append(field)
 
         return missing_fields
@@ -99,40 +95,24 @@ class Command(BaseCommand):
                     return
 
                 # Ask user if the template should be marked as is_verified
-                is_verified_input = (
-                    input("Should the template be marked as is_verified? (y/n): ")
-                    .strip()
-                    .lower()
-                )
+                is_verified_input = input("Should the template be marked as is_verified? (y/n): ").strip().lower()
                 if is_verified_input == "y":
                     template.is_verified = True
                 elif is_verified_input == "n":
                     template.is_verified = False
                 else:
-                    self.stdout.write(
-                        self.style.ERROR(
-                            "Invalid input for is_verified. Please enter 'y' or 'n'."
-                        )
-                    )
+                    self.stdout.write(self.style.ERROR("Invalid input for is_verified. Please enter 'y' or 'n'."))
                     return
 
                 template.is_published = True
                 template.save()
 
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Template {template_id} published successfully."
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f"Template {template_id} published successfully."))
             elif action == "unpublish":
                 template.is_published = False
                 template.save()
 
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Template {template_id} unpublished successfully."
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f"Template {template_id} unpublished successfully."))
 
         except Template.DoesNotExist:
             raise CommandError(f"Template with id {template_id} does not exist")

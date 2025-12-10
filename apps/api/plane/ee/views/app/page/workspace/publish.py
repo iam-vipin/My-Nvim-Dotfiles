@@ -22,9 +22,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         page = Page.objects.get(pk=page_id, workspace__slug=slug)
 
         if not page:
-            return Response(
-                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if page.archived_at:
             return Response(
@@ -58,20 +56,12 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def patch(self, request, slug, page_id):
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         data = {
-            "is_comments_enabled": request.data.get(
-                "is_comments_enabled", deploy_board.is_comments_enabled
-            ),
-            "is_reactions_enabled": request.data.get(
-                "is_reactions_enabled", deploy_board.is_reactions_enabled
-            ),
+            "is_comments_enabled": request.data.get("is_comments_enabled", deploy_board.is_comments_enabled),
+            "is_reactions_enabled": request.data.get("is_reactions_enabled", deploy_board.is_reactions_enabled),
             "intake": request.data.get("intake", deploy_board.intake),
-            "is_votes_enabled": request.data.get(
-                "is_votes_enabled", deploy_board.is_votes_enabled
-            ),
+            "is_votes_enabled": request.data.get("is_votes_enabled", deploy_board.is_votes_enabled),
             "view_props": request.data.get("view_props", deploy_board.view_props),
         }
 
@@ -84,18 +74,14 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def get(self, request, slug, page_id):
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def delete(self, request, slug, page_id):
         # Get the deploy board and un publish all the sub page as well.
-        deploy_board = DeployBoard.objects.get(
-            entity_identifier=page_id, entity_name="page", workspace__slug=slug
-        )
+        deploy_board = DeployBoard.objects.get(entity_identifier=page_id, entity_name="page", workspace__slug=slug)
         # Delete the deploy board
         deploy_board.delete()
 

@@ -36,6 +36,4 @@ class TeamspaceMemberProjectPermission(BasePermission):
         ).values_list("team_space_id", flat=True)
 
         # Check if the user is a member of the team space
-        return TeamspaceMember.objects.filter(
-            team_space_id__in=teamspace_ids, member_id=request.user.id
-        ).exists()
+        return TeamspaceMember.objects.filter(team_space_id__in=teamspace_ids, member_id=request.user.id).exists()

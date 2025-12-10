@@ -63,9 +63,7 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def subscribe(self, request, slug, project_id, issue_id):
         if (
-            IssueSubscriber.objects.filter(
-                Q(issue__type__is_epic=False) | Q(issue__type__isnull=True)
-            )
+            IssueSubscriber.objects.filter(Q(issue__type__is_epic=False) | Q(issue__type__isnull=True))
             .filter(
                 issue_id=issue_id,
                 subscriber=request.user,

@@ -21,7 +21,6 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class PageTemplateEndpoint(TemplateBaseEndpoint):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def get(self, request, slug, pk=None):
@@ -45,9 +44,7 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         templates = (
-            Template.objects.filter(
-                workspace__slug=slug, template_type=Template.TemplateType.PAGE
-            )
+            Template.objects.filter(workspace__slug=slug, template_type=Template.TemplateType.PAGE)
             .prefetch_related(
                 Prefetch(
                     "page_templates",
@@ -75,13 +72,9 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
         # create a new template only after validation is successful
         template_serializer = TemplateSerializer(data=request.data)
         if template_serializer.is_valid():
-            template = template_serializer.save(
-                workspace=workspace, template_type=Template.TemplateType.PAGE
-            )
+            template = template_serializer.save(workspace=workspace, template_type=Template.TemplateType.PAGE)
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = {
             "template": str(template.id),
@@ -113,20 +106,14 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def patch(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk)
         template_data = request.data.pop("template_data", {})
 
-        template_serializer = TemplateSerializer(
-            template, data=request.data, partial=True
-        )
+        template_serializer = TemplateSerializer(template, data=request.data, partial=True)
         if template_serializer.is_valid():
             template_serializer.save()
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # validate template data
         if template_data:
@@ -134,18 +121,12 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
             if not success:
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-            page_template = PageTemplate.objects.get(
-                workspace__slug=slug, template_id=pk
-            )
-            page_serializer = PageTemplateSerializer(
-                page_template, data=template_data, partial=True
-            )
+            page_template = PageTemplate.objects.get(workspace__slug=slug, template_id=pk)
+            page_serializer = PageTemplateSerializer(page_template, data=template_data, partial=True)
             if page_serializer.is_valid():
                 page_serializer.save()
             else:
-                return Response(
-                    page_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(page_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Fetch the template and work item
         template = (
             Template.objects.filter(pk=pk)
@@ -164,15 +145,12 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def delete(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk)
         template.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def get(self, request, slug, project_id):
@@ -183,9 +161,7 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
         ).prefetch_related(
             Prefetch(
                 "page_templates",
-                queryset=PageTemplate.objects.filter(
-                    workspace__slug=slug, project_id=project_id
-                ),
+                queryset=PageTemplate.objects.filter(workspace__slug=slug, project_id=project_id),
                 to_attr="template_data",
             )
         )
@@ -226,9 +202,7 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
                 .prefetch_related(
                     Prefetch(
                         "page_templates",
-                        queryset=PageTemplate.objects.filter(
-                            workspace__slug=slug, project_id=project_id
-                        ),
+                        queryset=PageTemplate.objects.filter(workspace__slug=slug, project_id=project_id),
                         to_attr="template_data",
                     )
                 )
@@ -252,15 +226,11 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
         )
         template_data = request.data.pop("template_data", {})
 
-        template_serializer = TemplateSerializer(
-            template, data=request.data, partial=True
-        )
+        template_serializer = TemplateSerializer(template, data=request.data, partial=True)
         if template_serializer.is_valid():
             template_serializer.save()
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # validate template data
         if template_data:
@@ -268,18 +238,12 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
             if not success:
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-            page_template = PageTemplate.objects.get(
-                workspace__slug=slug, template_id=pk
-            )
-            page_serializer = PageTemplateSerializer(
-                page_template, data=template_data, partial=True
-            )
+            page_template = PageTemplate.objects.get(workspace__slug=slug, template_id=pk)
+            page_serializer = PageTemplateSerializer(page_template, data=template_data, partial=True)
             if page_serializer.is_valid():
                 page_serializer.save()
             else:
-                return Response(
-                    page_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(page_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Fetch the template and work item
         template = (
             Template.objects.filter(pk=pk)

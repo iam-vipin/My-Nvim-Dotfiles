@@ -38,9 +38,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
                 property_id=issue_property_id,
                 property__issue_type__is_epic=False,
             )
-            serializer = IssuePropertyOptionSerializer(
-                issue_property_options, many=True
-            )
+            serializer = IssuePropertyOptionSerializer(issue_property_options, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Get all issue property options for the project_id in the form of property_id: options[]
@@ -137,9 +135,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IssuePropertyOptionSerializer(
-            issue_property_option, data=request.data, partial=True
-        )
+        serializer = IssuePropertyOptionSerializer(issue_property_option, data=request.data, partial=True)
         # Validate the data
         serializer.is_valid(raise_exception=True)
         # Save the data

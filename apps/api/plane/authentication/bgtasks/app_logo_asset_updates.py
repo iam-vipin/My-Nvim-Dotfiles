@@ -1,5 +1,6 @@
 from celery import shared_task
 
+
 @shared_task
 def app_logo_asset_updates(application_id: str):
     from plane.authentication.models import Application, WorkspaceAppInstallation

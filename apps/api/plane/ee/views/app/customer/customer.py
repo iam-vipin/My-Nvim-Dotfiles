@@ -35,9 +35,7 @@ class CustomerEndpoint(BaseAPIView):
         cursor = request.GET.get("cursor", None)
 
         customers = Customer.objects.filter(workspace__slug=slug).annotate(
-            customer_request_count=CustomerRequest.objects.filter(
-                customer_id=OuterRef("id")
-            )
+            customer_request_count=CustomerRequest.objects.filter(customer_id=OuterRef("id"))
             .order_by()
             .annotate(count=Func(F("id"), function="count"))
             .values("count")
@@ -69,9 +67,7 @@ class CustomerEndpoint(BaseAPIView):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_CUSTOMER_ENABLED):
             workspace = Workspace.objects.get(slug=slug)
 
-            customer = Customer.objects.filter(
-                workspace_id=workspace.id, name=request.data["name"]
-            )
+            customer = Customer.objects.filter(workspace_id=workspace.id, name=request.data["name"])
 
             if customer:
                 return Response(

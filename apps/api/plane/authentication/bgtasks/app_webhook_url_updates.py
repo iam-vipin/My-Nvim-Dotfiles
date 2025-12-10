@@ -11,9 +11,7 @@ def app_webhook_url_updates(application_id: str):
     application = Application.objects.get(id=application_id)
     if not application:
         return
-    app_installations = WorkspaceAppInstallation.objects.filter(
-        application_id=application_id
-    )
+    app_installations = WorkspaceAppInstallation.objects.filter(application_id=application_id)
     if not application.webhook_url:
         # Delete webhooks for all app installations
         for app_installation in app_installations:

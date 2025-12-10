@@ -21,7 +21,6 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.exception_logger import log_exception
-from plane.ee.bgtasks.move_page import move_page
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids

@@ -13,8 +13,6 @@ class WorkspaceFeatureContext(Enum):
 def check_workspace_feature(slug, feature: WorkspaceFeatureContext):
     # Dynamically build the filter using the feature's value
     filter_kwargs = {"workspace__slug": slug, feature.value: True}
-    is_workspace_feature_enabled = WorkspaceFeature.objects.filter(
-        **filter_kwargs
-    ).exists()
+    is_workspace_feature_enabled = WorkspaceFeature.objects.filter(**filter_kwargs).exists()
 
     return is_workspace_feature_enabled

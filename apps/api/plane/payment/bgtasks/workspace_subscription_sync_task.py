@@ -25,9 +25,9 @@ def workspace_billing_task(batch_size=5000, batch_countdown=300, offset=0):
     end_offset = min(offset + batch_size, total_workspaces)
 
     # Get the workspaces that are not free
-    workspace_licenses = WorkspaceLicense.objects.filter(~Q(plan="FREE"))[
-        offset:end_offset
-    ].values("workspace_id", "workspace__slug")
+    workspace_licenses = WorkspaceLicense.objects.filter(~Q(plan="FREE"))[offset:end_offset].values(
+        "workspace_id", "workspace__slug"
+    )
 
     # Loop through the workspace licenses
     for workspace_license in workspace_licenses:
@@ -39,9 +39,7 @@ def workspace_billing_task(batch_size=5000, batch_countdown=300, offset=0):
 
             # Get all active workspace members
             workspace_members = (
-                WorkspaceMember.objects.filter(
-                    workspace_id=workspace_id, is_active=True, member__is_bot=False
-                )
+                WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),

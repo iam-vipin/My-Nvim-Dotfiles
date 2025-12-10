@@ -13,9 +13,5 @@ class Command(BaseCommand):
         update_licenses.delay()
 
         # Print the success message
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Successfully triggered the sync license on startup task"
-            )
-        )
+        self.stdout.write(self.style.SUCCESS("Successfully triggered the sync license on startup task"))
         return

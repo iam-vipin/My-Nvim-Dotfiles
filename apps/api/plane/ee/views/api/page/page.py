@@ -37,8 +37,17 @@ def validate_list_input(data):
 def get_valid_update_fields():
     """Get list of fields that can be updated"""
     return [
-        "name", "description", "description_html", "description_binary",
-        "access", "color", "title", "parent_id", "is_favorite", "logo_props", "view_props"
+        "name",
+        "description",
+        "description_html",
+        "description_binary",
+        "access",
+        "color",
+        "title",
+        "parent_id",
+        "is_favorite",
+        "logo_props",
+        "view_props",
     ]
 
 
@@ -76,6 +85,7 @@ def queue_common_background_tasks(pages_data, pages, slug, user_id, project_id=N
 
 class WikiBulkOperationAPIView(BaseServiceAPIView):
     """Global wiki pages bulk operations"""
+
     serializer_class = PageSerializer
     model = Page
 
@@ -99,10 +109,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         created_pages = []
         errors = []
@@ -146,10 +153,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
 
             # Queue background tasks
             execute_tasks = queue_common_background_tasks(
-                [page_data for _, _, page_data in valid_pages],
-                pages,
-                slug,
-                request.user.id
+                [page_data for _, _, page_data in valid_pages], pages, slug, request.user.id
             )
             transaction.on_commit(execute_tasks)
 
@@ -166,10 +170,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         updated_pages = []
         errors = []
@@ -179,31 +180,33 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
         # Get page IDs and fetch existing pages
         page_ids = [page_data.get("id") for page_data in request.data if page_data.get("id")]
         existing_pages = {
-            str(page.id): page
-            for page in Page.objects.filter(id__in=page_ids, workspace=workspace, is_global=True)
+            str(page.id): page for page in Page.objects.filter(id__in=page_ids, workspace=workspace, is_global=True)
         }
 
         # Validate all updates
         for index, page_data in enumerate(request.data):
             page_id = page_data.get("id")
             if not page_id:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": ["Page ID is required for updates"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": ["Page ID is required for updates"]},
+                    }
+                )
                 continue
 
             page = existing_pages.get(str(page_id))
             if not page:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": [f"Page with ID {page_id} not found"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": [f"Page with ID {page_id} not found"]},
+                    }
+                )
                 continue
 
             serializer = PageDetailSerializer(
-                page, data=page_data, partial=True,
-                context={"slug": slug, "user_id": request.user.id}
+                page, data=page_data, partial=True, context={"slug": slug, "user_id": request.user.id}
             )
 
             if serializer.is_valid():
@@ -225,8 +228,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
                 update_fields.update(page_data.keys())
 
             valid_update_fields = [
-                field for field in update_fields
-                if field in get_valid_update_fields() and field != "id"
+                field for field in update_fields if field in get_valid_update_fields() and field != "id"
             ]
 
             if pages_to_update and valid_update_fields:
@@ -240,7 +242,7 @@ class WikiBulkOperationAPIView(BaseServiceAPIView):
                 [page_data for _, _, _, page_data in valid_pages],
                 [page for _, page, _, _ in valid_pages],
                 slug,
-                request.user.id
+                request.user.id,
             )
             transaction.on_commit(execute_tasks)
 
@@ -262,10 +264,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(id=project_id, workspace=workspace)
         except (Workspace.DoesNotExist, Project.DoesNotExist):
-            return Response(
-                {"error": "Workspace or project not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace or project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         created_pages = []
         errors = []
@@ -305,16 +304,18 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
             pages = Page.objects.bulk_create([Page(**data) for data in valid_data])
 
             # Create project page associations
-            ProjectPage.objects.bulk_create([
-                ProjectPage(
-                    workspace_id=page.workspace_id,
-                    project_id=project.id,
-                    page_id=page.id,
-                    created_by_id=page.created_by_id,
-                    updated_by_id=page.updated_by_id,
-                )
-                for page in pages
-            ])
+            ProjectPage.objects.bulk_create(
+                [
+                    ProjectPage(
+                        workspace_id=page.workspace_id,
+                        project_id=project.id,
+                        page_id=page.id,
+                        created_by_id=page.created_by_id,
+                        updated_by_id=page.updated_by_id,
+                    )
+                    for page in pages
+                ]
+            )
 
             # Prepare responses
             for page in pages:
@@ -322,11 +323,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
 
             # Queue background tasks
             execute_tasks = queue_common_background_tasks(
-                [page_data for _, _, page_data in valid_pages],
-                pages,
-                slug,
-                request.user.id,
-                project.id
+                [page_data for _, _, page_data in valid_pages], pages, slug, request.user.id, project.id
             )
             transaction.on_commit(execute_tasks)
 
@@ -344,10 +341,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(id=project_id, workspace=workspace)
         except (Workspace.DoesNotExist, Project.DoesNotExist):
-            return Response(
-                {"error": "Workspace or project not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace or project not found"}, status=status.HTTP_404_NOT_FOUND)
 
         updated_pages = []
         errors = []
@@ -358,34 +352,33 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
         page_ids = [page_data.get("id") for page_data in request.data if page_data.get("id")]
         existing_pages = {
             str(page.id): page
-            for page in Page.objects.filter(
-                id__in=page_ids,
-                workspace=workspace,
-                project_pages__project=project
-            )
+            for page in Page.objects.filter(id__in=page_ids, workspace=workspace, project_pages__project=project)
         }
 
         # Validate all updates
         for index, page_data in enumerate(request.data):
             page_id = page_data.get("id")
             if not page_id:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": ["Page ID is required for updates"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": ["Page ID is required for updates"]},
+                    }
+                )
                 continue
 
             page = existing_pages.get(str(page_id))
             if not page:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": [f"Page with ID {page_id} not found"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": [f"Page with ID {page_id} not found"]},
+                    }
+                )
                 continue
 
             serializer = PageDetailSerializer(
-                page, data=page_data, partial=True,
-                context={"slug": slug, "user_id": request.user.id}
+                page, data=page_data, partial=True, context={"slug": slug, "user_id": request.user.id}
             )
 
             if serializer.is_valid():
@@ -407,8 +400,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
                 update_fields.update(page_data.keys())
 
             valid_update_fields = [
-                field for field in update_fields
-                if field in get_valid_update_fields() and field != "id"
+                field for field in update_fields if field in get_valid_update_fields() and field != "id"
             ]
 
             if pages_to_update and valid_update_fields:
@@ -423,7 +415,7 @@ class ProjectPageBulkOperationAPIView(BaseServiceAPIView):
                 [page for _, page, _, _ in valid_pages],
                 slug,
                 request.user.id,
-                project.id
+                project.id,
             )
             transaction.on_commit(execute_tasks)
 
@@ -445,10 +437,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
             workspace = Workspace.objects.get(slug=slug)
             teamspace = Teamspace.objects.get(id=team_space_id, workspace=workspace)
         except (Workspace.DoesNotExist, Teamspace.DoesNotExist):
-            return Response(
-                {"error": "Workspace or teamspace not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace or teamspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         created_pages = []
         errors = []
@@ -490,15 +479,17 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
             pages = Page.objects.bulk_create([Page(**data) for data in valid_data])
 
             # Create teamspace page associations
-            TeamspacePage.objects.bulk_create([
-                TeamspacePage(
-                    workspace=workspace,
-                    page=page,
-                    team_space_id=team_space_id,
-                    sort_order=random.randint(0, 65535),
-                )
-                for page in pages
-            ])
+            TeamspacePage.objects.bulk_create(
+                [
+                    TeamspacePage(
+                        workspace=workspace,
+                        page=page,
+                        team_space_id=team_space_id,
+                        sort_order=random.randint(0, 65535),
+                    )
+                    for page in pages
+                ]
+            )
 
             # Prepare responses
             for page in pages:
@@ -508,10 +499,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
             def execute_tasks():
                 # Common tasks
                 common_execute = queue_common_background_tasks(
-                    [page_data for _, _, page_data in valid_pages],
-                    pages,
-                    slug,
-                    request.user.id
+                    [page_data for _, _, page_data in valid_pages], pages, slug, request.user.id
                 )
                 common_execute()
 
@@ -520,10 +508,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
                     team_space_activity.delay(
                         type="page.activity.created",
                         slug=slug,
-                        requested_data=json.dumps(
-                            {"name": str(page.name), "id": str(page.id)},
-                            cls=DjangoJSONEncoder
-                        ),
+                        requested_data=json.dumps({"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder),
                         actor_id=str(request.user.id),
                         team_space_id=str(team_space_id),
                         current_instance={},
@@ -546,10 +531,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
             workspace = Workspace.objects.get(slug=slug)
             teamspace = Teamspace.objects.get(id=team_space_id, workspace=workspace)
         except (Workspace.DoesNotExist, Teamspace.DoesNotExist):
-            return Response(
-                {"error": "Workspace or teamspace not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace or teamspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         updated_pages = []
         errors = []
@@ -561,9 +543,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
         existing_pages = {
             str(page.id): page
             for page in Page.objects.filter(
-                id__in=page_ids,
-                workspace=workspace,
-                team_spaces__team_space_id=team_space_id
+                id__in=page_ids, workspace=workspace, team_spaces__team_space_id=team_space_id
             )
         }
 
@@ -571,23 +551,26 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
         for index, page_data in enumerate(request.data):
             page_id = page_data.get("id")
             if not page_id:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": ["Page ID is required for updates"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": ["Page ID is required for updates"]},
+                    }
+                )
                 continue
 
             page = existing_pages.get(str(page_id))
             if not page:
-                errors.append({
-                    "index": index,
-                    "errors": {"id": [f"Page with ID {page_id} not found"]},
-                })
+                errors.append(
+                    {
+                        "index": index,
+                        "errors": {"id": [f"Page with ID {page_id} not found"]},
+                    }
+                )
                 continue
 
             serializer = TeamspacePageDetailSerializer(
-                page, data=page_data, partial=True,
-                context={"slug": slug, "user_id": request.user.id}
+                page, data=page_data, partial=True, context={"slug": slug, "user_id": request.user.id}
             )
 
             if serializer.is_valid():
@@ -609,8 +592,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
                 update_fields.update(page_data.keys())
 
             valid_update_fields = [
-                field for field in update_fields
-                if field in get_valid_update_fields() and field != "id"
+                field for field in update_fields if field in get_valid_update_fields() and field != "id"
             ]
 
             if pages_to_update and valid_update_fields:
@@ -626,7 +608,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
                     [page_data for _, _, _, page_data in valid_pages],
                     [page for _, page, _, _ in valid_pages],
                     slug,
-                    request.user.id
+                    request.user.id,
                 )
                 common_execute()
 
@@ -635,10 +617,7 @@ class TeamspacePageBulkOperationAPIView(BaseServiceAPIView):
                     team_space_activity.delay(
                         type="page.activity.updated",
                         slug=slug,
-                        requested_data=json.dumps(
-                            {"name": str(page.name), "id": str(page.id)},
-                            cls=DjangoJSONEncoder
-                        ),
+                        requested_data=json.dumps({"name": str(page.name), "id": str(page.id)}, cls=DjangoJSONEncoder),
                         actor_id=str(request.user.id),
                         team_space_id=str(team_space_id),
                         current_instance={},

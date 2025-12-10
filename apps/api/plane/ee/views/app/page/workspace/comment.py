@@ -54,18 +54,14 @@ class WorkspacePageCommentViewSet(BaseViewSet):
         else:
             # fetch all the latest child comments
             latest_child_comments = (
-                PageComment.objects.filter(
-                    workspace__slug=slug, page_id=page_id, parent__isnull=False
-                )
+                PageComment.objects.filter(workspace__slug=slug, page_id=page_id, parent__isnull=False)
                 .order_by("parent_id", "-created_at")
                 .distinct("parent_id")
                 .values_list("id", flat=True)
             )
 
             page_comments = (
-                PageComment.objects.filter(
-                    Q(id__in=latest_child_comments) | Q(parent__isnull=True)
-                )
+                PageComment.objects.filter(Q(id__in=latest_child_comments) | Q(parent__isnull=True))
                 .filter(workspace__slug=slug, page_id=page_id)
                 .select_related("created_by", "updated_by", "workspace", "page")
                 .prefetch_related(
@@ -91,9 +87,7 @@ class WorkspacePageCommentViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def create(self, request, slug, page_id):
         workspace = Workspace.objects.get(slug=slug)
-        serializer = PageCommentSerializer(
-            data=request.data, context={"workspace_id": workspace.id}
-        )
+        serializer = PageCommentSerializer(data=request.data, context={"workspace_id": workspace.id})
         if serializer.is_valid():
             serializer.save(page_id=page_id, workspace_id=workspace.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -101,17 +95,10 @@ class WorkspacePageCommentViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def partial_update(self, request, slug, page_id, comment_id):
-        page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=comment_id
-        )
-        serializer = PageCommentSerializer(
-            page_comment, data=request.data, partial=True
-        )
+        page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
+        serializer = PageCommentSerializer(page_comment, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                "comment_html" in request.data
-                and request.data["comment_html"] != page_comment.comment_html
-            ):
+            if "comment_html" in request.data and request.data["comment_html"] != page_comment.comment_html:
                 serializer.save(edited_at=timezone.now())
             else:
                 serializer.save()
@@ -121,9 +108,7 @@ class WorkspacePageCommentViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def destroy(self, request, slug, page_id, comment_id):
-        page_comment = PageComment.objects.get(
-            workspace__slug=slug, page_id=page_id, pk=comment_id
-        )
+        page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
         page_comment.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -174,9 +159,7 @@ class WorkspacePageCommentViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def replies(self, request, slug, page_id, comment_id):
         page_replies = (
-            PageComment.objects.filter(
-                workspace__slug=slug, page_id=page_id, parent_id=comment_id
-            )
+            PageComment.objects.filter(workspace__slug=slug, page_id=page_id, parent_id=comment_id)
             .select_related("created_by", "updated_by", "workspace", "page")
             .prefetch_related(
                 Prefetch(
@@ -245,8 +228,10 @@ class WorkspacePageLiveServerEndpoint(BaseViewSet):
         if page is None:
             return Response({"error": "Page not found"}, status=404)
 
-        page_comments = PageComment.objects.filter(
-            workspace__slug=slug, page_id=page_id
-        ).filter(parent__isnull=True).values_list("id", flat=True)
+        page_comments = (
+            PageComment.objects.filter(workspace__slug=slug, page_id=page_id)
+            .filter(parent__isnull=True)
+            .values_list("id", flat=True)
+        )
 
         return Response(page_comments, status=status.HTTP_200_OK)

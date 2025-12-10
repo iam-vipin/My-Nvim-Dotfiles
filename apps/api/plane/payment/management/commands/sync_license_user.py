@@ -17,8 +17,6 @@ class Command(BaseCommand):
 
         # Print the success message
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Successfully triggered the member sync task for workspace: {workspace_slug}"
-            )
+            self.style.SUCCESS(f"Successfully triggered the member sync task for workspace: {workspace_slug}")
         )
         return

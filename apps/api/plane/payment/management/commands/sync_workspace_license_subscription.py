@@ -15,12 +15,8 @@ class Command(BaseCommand):
         batch_countdown = input("Enter the batch countdown: ")
 
         # Trigger the member sync task with the workspace slug
-        schedule_workspace_billing_task.delay(
-            batch_size=int(batch_size), batch_countdown=int(batch_countdown)
-        )
+        schedule_workspace_billing_task.delay(batch_size=int(batch_size), batch_countdown=int(batch_countdown))
 
         # Print the success message
-        self.stdout.write(
-            self.style.SUCCESS("Successfully triggered the license seat sync task")
-        )
+        self.stdout.write(self.style.SUCCESS("Successfully triggered the license seat sync task"))
         return

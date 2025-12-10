@@ -38,9 +38,7 @@ from plane.ee.views.app.teamspace import (
 )
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/teamspaces/", TeamspaceEndpoint.as_view(), name="teams"
-    ),
+    path("workspaces/<str:slug>/teamspaces/", TeamspaceEndpoint.as_view(), name="teams"),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/",
         TeamspaceEndpoint.as_view(),

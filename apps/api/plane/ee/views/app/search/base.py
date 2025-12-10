@@ -199,10 +199,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         # Access control OR filter - simplified approach:
         # (access = 0 AND user in active_member_user_ids) OR (owned_by_id = user)
         # This handles both public pages accessible to workspace members AND any page owned by user
-        access_filter = (
-            Q("term", access=0)
-            & Q("term", active_member_user_ids=str(self.request.user.id))
-        ) | Q("term", owned_by_id=str(self.request.user.id))
+        access_filter = (Q("term", access=0) & Q("term", active_member_user_ids=str(self.request.user.id))) | Q(
+            "term", owned_by_id=str(self.request.user.id)
+        )
 
         # Combine base filters with access control
         custom_filter = base_filter & access_filter

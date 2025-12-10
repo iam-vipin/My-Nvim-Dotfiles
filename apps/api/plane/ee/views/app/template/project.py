@@ -57,9 +57,7 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         templates = (
-            Template.objects.filter(
-                workspace__slug=slug, template_type=Template.TemplateType.PROJECT
-            )
+            Template.objects.filter(workspace__slug=slug, template_type=Template.TemplateType.PROJECT)
             .prefetch_related(
                 Prefetch(
                     "project_templates",
@@ -97,13 +95,9 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         # create a new template only after validation is successful
         template_serializer = TemplateSerializer(data=request.data)
         if template_serializer.is_valid():
-            template = template_serializer.save(
-                workspace=workspace, template_type=Template.TemplateType.PROJECT
-            )
+            template = template_serializer.save(workspace=workspace, template_type=Template.TemplateType.PROJECT)
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = {
             "template": str(template.id),
@@ -163,23 +157,17 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
     def patch(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk)
         template_data = request.data.pop("template_data", {})
 
         # pop the workitem data
         workitem_data = template_data.pop("workitems", [])
 
-        template_serializer = TemplateSerializer(
-            template, data=request.data, partial=True
-        )
+        template_serializer = TemplateSerializer(template, data=request.data, partial=True)
         if template_serializer.is_valid():
             template_serializer.save()
         else:
-            return Response(
-                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(template_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # validate template data
         if template_data:
@@ -193,21 +181,15 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
                 if not success:
                     return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-            project_template = ProjectTemplate.objects.get(
-                workspace__slug=slug, template_id=pk
-            )
-            project_serializer = ProjectTemplateSerializer(
-                project_template, data=template_data, partial=True
-            )
+            project_template = ProjectTemplate.objects.get(workspace__slug=slug, template_id=pk)
+            project_serializer = ProjectTemplateSerializer(project_template, data=template_data, partial=True)
             if project_serializer.is_valid():
                 project_serializer.save()
 
                 try:
                     with transaction.atomic():
                         # delete the existing workitem templates
-                        WorkitemTemplate.objects.filter(
-                            project_template_id=project_template.id
-                        ).delete(soft=False)
+                        WorkitemTemplate.objects.filter(project_template_id=project_template.id).delete(soft=False)
 
                         workitem_template = []
                         for workitem in workitem_data:
@@ -233,9 +215,7 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             else:
-                return Response(
-                    project_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Fetch the template and work item
         template = (
             Template.objects.filter(pk=pk)
@@ -254,9 +234,7 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
     def delete(self, request, slug, pk):
-        template = Template.objects.get(
-            workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk
-        )
+        template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk)
         template.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -284,13 +262,9 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         new_template: Template = self._create_new_template(template, workspace)
         _ = self._create_new_project_template(project_template, new_template, workspace)
 
-        return Response(
-            data={"template_id": new_template.id}, status=status.HTTP_201_CREATED
-        )
+        return Response(data={"template_id": new_template.id}, status=status.HTTP_201_CREATED)
 
-    def _get_source_template(
-        self, template_id: str
-    ) -> Tuple[Optional[Template], Optional[ProjectTemplate]]:
+    def _get_source_template(self, template_id: str) -> Tuple[Optional[Template], Optional[ProjectTemplate]]:
         """Get and validate the source template and project template."""
         template: Optional[Template] = Template.objects.filter(
             pk=template_id,
@@ -301,15 +275,11 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         if not template:
             return None, None
 
-        project_template: Optional[ProjectTemplate] = ProjectTemplate.objects.filter(
-            template=template
-        ).first()
+        project_template: Optional[ProjectTemplate] = ProjectTemplate.objects.filter(template=template).first()
 
         return template, project_template
 
-    def _create_new_template(
-        self, source_template: Template, workspace: Workspace
-    ) -> Template:
+    def _create_new_template(self, source_template: Template, workspace: Workspace) -> Template:
         """Create a new template based on the source template."""
         # Check if a template with the same name already exists, then add (copy) to the name
         recent_matching_template = (
@@ -340,9 +310,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
     ) -> ProjectTemplate:
         """Create a new project template based on the source project template."""
         # Copy the source project template
-        new_project_template: ProjectTemplate = self._copy_project_template(
-            source_project_template, workspace
-        )
+        new_project_template: ProjectTemplate = self._copy_project_template(source_project_template, workspace)
         new_project_template.template = new_template
         new_project_template.workspace = workspace
         new_project_template.created_by = self.request.user
@@ -352,25 +320,17 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
 
         # Process workitem types and epics to clear relation options
         if source_project_template.workitem_types:
-            new_project_template.workitem_types = self._clean_workitem_types(
-                source_project_template.workitem_types
-            )
+            new_project_template.workitem_types = self._clean_workitem_types(source_project_template.workitem_types)
         if source_project_template.epics:
-            new_project_template.epics = self._clean_epics(
-                source_project_template.epics
-            )
+            new_project_template.epics = self._clean_epics(source_project_template.epics)
 
         # Copy the cover asset
-        new_project_template.cover_asset = self._copy_cover_asset(
-            workspace, source_project_template
-        )
+        new_project_template.cover_asset = self._copy_cover_asset(workspace, source_project_template)
 
         new_project_template.save()
         return new_project_template
 
-    def _copy_project_template(
-        self, source_project_template: ProjectTemplate, workspace: Workspace
-    ) -> ProjectTemplate:
+    def _copy_project_template(self, source_project_template: ProjectTemplate, workspace: Workspace) -> ProjectTemplate:
         """Create a copy of the project template without saving it."""
         # Use model_to_dict to get all field values, then create a new instance
 
@@ -392,15 +352,11 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
             .first()
         )
         if latest_matching_project_template:
-            new_project_template.name = (
-                f"{latest_matching_project_template.name} (copy)"
-            )
+            new_project_template.name = f"{latest_matching_project_template.name} (copy)"
 
         return new_project_template
 
-    def _clean_workitem_types(
-        self, workitem_types: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+    def _clean_workitem_types(self, workitem_types: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Clean workitem types by removing relation options."""
         # Deep copy to avoid modifying the original
         cleaned_workitem_types: List[Dict[str, Any]] = copy.deepcopy(workitem_types)
@@ -432,9 +388,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         if is_valid_url(source_project_template.cover_asset):
             return source_project_template.cover_asset
 
-        asset_id: Optional[str] = self._validate_and_extract_asset_id(
-            source_project_template.cover_asset
-        )
+        asset_id: Optional[str] = self._validate_and_extract_asset_id(source_project_template.cover_asset)
         if asset_id:
             storage: S3Storage = S3Storage(request=self.request)
             new_asset_key: str = f"{workspace.id}/{uuid.uuid4().hex}"
@@ -463,9 +417,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         Returns:
             Optional[str]: None if the URL is invalid, otherwise the extracted asset ID.
         """
-        url_pattern: str = (
-            r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"  # noqa: E501
-        )
+        url_pattern: str = r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"  # noqa: E501
 
         pattern_match = re.match(url_pattern, url)
         if not pattern_match:

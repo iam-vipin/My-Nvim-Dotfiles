@@ -50,14 +50,8 @@ def track_description(
     project_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get(
-        "description_html"
-    ):
-        last_activity = (
-            WorkspaceActivity.objects.filter(project_id=project_id)
-            .order_by("-created_at")
-            .first()
-        )
+    if current_instance.get("description_html") != requested_data.get("description_html"):
+        last_activity = WorkspaceActivity.objects.filter(project_id=project_id).order_by("-created_at").first()
         if (
             last_activity is not None
             and last_activity.field == "description_html"
@@ -158,15 +152,9 @@ def track_target_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("target_date")
-                    if current_instance.get("target_date") is not None
-                    else ""
+                    current_instance.get("target_date") if current_instance.get("target_date") is not None else ""
                 ),
-                new_value=(
-                    requested_data.get("target_date")
-                    if requested_data.get("target_date") is not None
-                    else ""
-                ),
+                new_value=(requested_data.get("target_date") if requested_data.get("target_date") is not None else ""),
                 field="target_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
@@ -192,15 +180,9 @@ def track_start_date(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=(
-                    current_instance.get("start_date")
-                    if current_instance.get("start_date") is not None
-                    else ""
+                    current_instance.get("start_date") if current_instance.get("start_date") is not None else ""
                 ),
-                new_value=(
-                    requested_data.get("start_date")
-                    if requested_data.get("start_date") is not None
-                    else ""
-                ),
+                new_value=(requested_data.get("start_date") if requested_data.get("start_date") is not None else ""),
                 field="start_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
@@ -384,9 +366,7 @@ def track_deploy_board(
             WorkspaceActivity(
                 actor_id=actor_id,
                 workspace_id=workspace_id,
-                verb="published"
-                if requested_data.get("deploy_board")
-                else "unpublished",
+                verb="published" if requested_data.get("deploy_board") else "unpublished",
                 old_value=current_instance.get("deploy_board"),
                 new_value=requested_data.get("deploy_board"),
                 field="deploy_board",
@@ -421,9 +401,7 @@ def track_members(
                     workspace_id=workspace_id,
                     old_identifier=None,
                     new_identifier=member.id,
-                    comment="joined the project"
-                    if requested_data.get("joined", None)
-                    else "added the member",
+                    comment="joined the project" if requested_data.get("joined", None) else "added the member",
                     epoch=epoch,
                 )
             )
@@ -443,9 +421,7 @@ def track_members(
                     workspace_id=workspace_id,
                     old_identifier=member.id,
                     new_identifier=None,
-                    comment="removed the members"
-                    if current_instance.get("removed")
-                    else "left the project",
+                    comment="removed the members" if current_instance.get("removed") else "left the project",
                     epoch=epoch,
                 )
             )
@@ -604,9 +580,7 @@ def update_project_activity(
     ]
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for key in requested_data:
         func = project_activity_MAPPER.get(key)
@@ -666,9 +640,7 @@ def create_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
         WorkspaceActivity(
@@ -695,9 +667,7 @@ def update_comment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         project_activities.append(
@@ -750,9 +720,7 @@ def create_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
         WorkspaceActivity(
@@ -779,9 +747,7 @@ def update_link_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if current_instance.get("url") != requested_data.get("url"):
         project_activities.append(
@@ -810,9 +776,7 @@ def delete_link_activity(
     project_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
         WorkspaceActivity(
@@ -839,9 +803,7 @@ def create_attachment_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     project_activities.append(
         WorkspaceActivity(
@@ -927,9 +889,7 @@ def delete_project_reaction_activity(
     project_activities,
     epoch,
 ):
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
     if current_instance and current_instance.get("reaction") is not None:
         project_activities.append(
             WorkspaceActivity(
@@ -969,11 +929,7 @@ def create_comment_reaction_activity(
             .first()
         )
         comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
-        if (
-            comment is not None
-            and comment_reaction_id is not None
-            and comment_id is not None
-        ):
+        if comment is not None and comment_reaction_id is not None and comment_id is not None:
             project_activities.append(
                 WorkspaceActivity(
                     actor_id=actor_id,

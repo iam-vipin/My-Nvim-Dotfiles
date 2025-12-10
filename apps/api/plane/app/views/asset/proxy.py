@@ -34,9 +34,7 @@ class ProxyUploadEndpoint(BaseAPIView):
             # Decode the original S3 URL (we don't actually use it, just for validation)
             _ = base64.urlsafe_b64decode(encoded_s3_url.encode()).decode()
         except Exception:
-            return Response(
-                {"error": "Invalid S3 URL"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid S3 URL"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get the uploaded file and form data
         try:
@@ -48,9 +46,7 @@ class ProxyUploadEndpoint(BaseAPIView):
 
             # Validate required fields
             if not all([object_key, content_type, policy]):
-                return Response(
-                    {"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
             # Upload directly to S3 using boto3
             storage = S3Storage(is_server=True)
 
@@ -120,9 +116,7 @@ class ProxyDownloadEndpoint(BaseAPIView):
             # Get object metadata first
             metadata = storage.get_object_metadata(object_name)
             if not metadata:
-                return Response(
-                    {"error": "File not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Stream the file from S3
             def stream_from_s3():
@@ -150,9 +144,7 @@ class ProxyDownloadEndpoint(BaseAPIView):
             disposition = params.get("disposition", "inline")
             filename = params.get("filename")
             if filename:
-                response["Content-Disposition"] = (
-                    f'{disposition}; filename="{filename}"'
-                )
+                response["Content-Disposition"] = f'{disposition}; filename="{filename}"'
             else:
                 response["Content-Disposition"] = disposition
 

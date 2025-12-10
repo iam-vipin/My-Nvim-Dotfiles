@@ -78,17 +78,19 @@ class IntakeForm(ProjectBaseModel):
         # Add new fields
         if fields_to_add:
             try:
-                IntakeFormField.objects.bulk_create([
-                    IntakeFormField(
-                        intake_form=self,
-                        work_item_property_id=field_id,
-                        project_id=self.project_id,
-                        workspace_id=self.workspace_id,
-                        created_by_id=user_id or self.created_by_id,
-                        updated_by_id=user_id or self.updated_by_id,
-                    )
-                    for field_id in fields_to_add
-                ])
+                IntakeFormField.objects.bulk_create(
+                    [
+                        IntakeFormField(
+                            intake_form=self,
+                            work_item_property_id=field_id,
+                            project_id=self.project_id,
+                            workspace_id=self.workspace_id,
+                            created_by_id=user_id or self.created_by_id,
+                            updated_by_id=user_id or self.updated_by_id,
+                        )
+                        for field_id in fields_to_add
+                    ]
+                )
             except IntegrityError:
                 raise IntegrityError("Error creating intake form fields")
 

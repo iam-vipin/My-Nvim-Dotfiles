@@ -66,11 +66,8 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
                 "page_url": page_url,
                 "workspace": workspace,
                 "page_name": page.name,
-                "page_description": page.description_stripped
-                or "No description available",
-                "shared_by_name": f"{user.first_name} {user.last_name}".strip()
-                or user.display_name
-                or user.email,
+                "page_description": page.description_stripped or "No description available",
+                "shared_by_name": f"{user.first_name} {user.last_name}".strip() or user.display_name or user.email,
                 "shared_to_name": (
                     f"{newly_shared_user.first_name} {newly_shared_user.last_name}".strip()  # noqa: E501
                     or newly_shared_user.display_name
@@ -82,9 +79,7 @@ def share_page_notification(page_id, user_id, newly_shared_user_ids, slug):
 
             # Create email subject and content
             subject = f"{context['shared_by_name']} shared a page with you"
-            html_content = render_to_string(
-                "emails/notifications/share_page.html", context
-            )
+            html_content = render_to_string("emails/notifications/share_page.html", context)
             text_content = strip_tags(html_content)
 
             # Configure email connection

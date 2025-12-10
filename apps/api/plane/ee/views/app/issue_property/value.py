@@ -88,9 +88,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
                 property__issue_type__is_epic=False,
             )
 
-            issue_property_value = self.query_annotator(issue_property_value).values(
-                "property_id", "value"
-            )
+            issue_property_value = self.query_annotator(issue_property_value).values("property_id", "value")
 
             return Response(issue_property_value, status=status.HTTP_200_OK)
 
@@ -104,9 +102,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        issue_property_values = self.query_annotator(issue_property_values).values(
-            "property_id", "values"
-        )
+        issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
 
         # Create dictionary of property_id and values
         response = {
@@ -134,9 +130,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # Get issue
             issue = Issue.objects.get(pk=issue_id)
@@ -175,20 +169,13 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Delete the old values
-            existing_prop_queryset.filter(
-                property_id__in=issue_property_ids, issue__type_id=issue_type_id
-            ).delete()
+            existing_prop_queryset.filter(property_id__in=issue_property_ids, issue__type_id=issue_type_id).delete()
             # Bulk create the issue property values
-            IssuePropertyValue.objects.bulk_create(
-                bulk_issue_property_values, batch_size=10
-            )
+            IssuePropertyValue.objects.bulk_create(bulk_issue_property_values, batch_size=10)
 
             # Log the activity
             issue_property_activity.delay(
-                existing_values={
-                    str(prop["property_id"]): prop["values"]
-                    for prop in existing_prop_values
-                },
+                existing_values={str(prop["property_id"]): prop["values"] for prop in existing_prop_values},
                 requested_values=issue_property_values,
                 issue_id=issue_id,
                 user_id=str(request.user.id),
@@ -225,23 +212,16 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all issue property values
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # existing values
-            existing_values = {
-                str(prop["property_id"]): prop["values"]
-                for prop in existing_prop_values
-            }
+            existing_values = {str(prop["property_id"]): prop["values"] for prop in existing_prop_values}
 
             # Get the value
             values = request.data.get("values", [])
 
             # Check if the property is required
-            if issue_property.is_required and (
-                not values or not [v for v in values if v]
-            ):
+            if issue_property.is_required and (not values or not [v for v in values if v]):
                 return Response(
                     {"error": issue_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,

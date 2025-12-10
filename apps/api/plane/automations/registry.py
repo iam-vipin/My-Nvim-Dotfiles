@@ -48,9 +48,7 @@ class NodeRegistry:
     # ---------------------------------------------------------------------
     # API
     # ---------------------------------------------------------------------
-    def register(
-        self, name: str, node_type: str, handler: Callable, schema: Type[BaseModel]
-    ):
+    def register(self, name: str, node_type: str, handler: Callable, schema: Type[BaseModel]):
         if name in self._registry:
             raise ValueError(f"Node '{name}' already registered")
         self._registry[name] = NodeMeta(name, node_type, handler, schema)

@@ -700,7 +700,6 @@ class IssueLabelProxy(IssueLabel):
 
 
 class IssueCommentProxy(IssueComment):
-
     class Meta:
         proxy = True
         triggers = [
@@ -1149,7 +1148,6 @@ class IssueLinkProxy(IssueLink):
 
 
 class IssueAttachmentProxy(FileAsset):
-
     class Meta:
         proxy = True
         triggers = [

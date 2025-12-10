@@ -13,20 +13,14 @@ CHART_VALIDATION_RULES = {
     "STANDARD": {"AREA_CHART": {"group_by": "required"}},
     "COMPARISON": {"AREA_CHART": {"group_by": "required"}},
     "PROGRESS": {"DONUT_CHART": {"x_axis_date_grouping": None, "group_by": None}},
-    None: {
-        "NUMBER": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}
-    },
+    None: {"NUMBER": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}},
 }
 
 
 def validate_chart_config(chart_model, chart_type, config):
     rules = CHART_VALIDATION_RULES.get(chart_model, {}).get(chart_type, {})
 
-    validated_config = {
-        key: value
-        for key, value in config.items()
-        if key not in rules or rules[key] is not None
-    }
+    validated_config = {key: value for key, value in config.items() if key not in rules or rules[key] is not None}
 
     # Add missing keys with None if defined in rules
     for key, value in rules.items():

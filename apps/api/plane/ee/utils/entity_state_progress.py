@@ -79,9 +79,7 @@ def calculate_entity_issue_state_progress(
             for cycle_id in cycle_ids:
                 activities = cycle_activities.get(cycle_id, [])
                 total_issues: int = len(activities)
-                total_estimate_points: float = sum(
-                    activity["estimate_value"] or 0 for activity in activities
-                )
+                total_estimate_points: float = sum(activity["estimate_value"] or 0 for activity in activities)
 
                 # Count issues and estimate points by state group
                 state_groups: List[str] = [

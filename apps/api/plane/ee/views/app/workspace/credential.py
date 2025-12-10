@@ -23,9 +23,7 @@ class WorkspaceCredentialView(BaseAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         if not credential:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = WorkspaceCredentialSerializer(
-            credential, data={"is_active": False}, partial=True
-        )
+        serializer = WorkspaceCredentialSerializer(credential, data={"is_active": False}, partial=True)
         if serializer.is_valid():
             serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -54,9 +52,7 @@ class VerifyWorkspaceCredentialView(BaseAPIView):
         elif source == "jira":
             is_oauth_enabled = getattr(settings, "JIRA_OAUTH_ENABLED", "0") == "1"
         elif source == "jira_server":
-            is_oauth_enabled = (
-                getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
-            )
+            is_oauth_enabled = getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
         elif source == "asana":
             is_oauth_enabled = getattr(settings, "ASANA_OAUTH_ENABLED", "0") == "1"
 
@@ -77,9 +73,7 @@ class VerifyWorkspaceCredentialView(BaseAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         token = request.data.get("token", None)
 
-        serializer = WorkspaceCredentialSerializer(
-            credential, data={"token": token}, partial=True
-        )
+        serializer = WorkspaceCredentialSerializer(credential, data={"token": token}, partial=True)
 
         if serializer.is_valid():
             serializer.save()

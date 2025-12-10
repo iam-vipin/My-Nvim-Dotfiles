@@ -26,6 +26,7 @@ from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.bgtasks.notification_task import process_workitem_notifications
 
+
 # Track changes in issue labels
 def track_labels(
     requested_data,
@@ -75,14 +76,10 @@ def track_assignees(
     epoch,
 ):
     requested_assignees = (
-        set([str(asg) for asg in requested_data.get("assignee_ids", [])])
-        if requested_data is not None
-        else set()
+        set([str(asg) for asg in requested_data.get("assignee_ids", [])]) if requested_data is not None else set()
     )
     current_assignees = (
-        set([str(asg) for asg in current_instance.get("assignee_ids", [])])
-        if current_instance is not None
-        else set()
+        set([str(asg) for asg in current_instance.get("assignee_ids", [])]) if current_instance is not None else set()
     )
 
     added_assignees = requested_assignees - current_assignees
@@ -117,9 +114,7 @@ def track_assignees(
         )
 
     # Create assignees subscribers to the issue and ignore if already
-    IssueSubscriber.objects.bulk_create(
-        bulk_subscribers, batch_size=10, ignore_conflicts=True
-    )
+    IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
 
 
 def create_cycle_issue_activity(
@@ -133,9 +128,7 @@ def create_cycle_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     if requested_data.get("cycle_id") and current_instance.get("cycle_id"):
         new_cycle = Cycle.objects.filter(pk=requested_data.get("cycle_id")).first()
@@ -190,9 +183,7 @@ def delete_cycle_issue_activity(
 ) -> List[IssueActivity]:
     """Create a cycle activity when a cycle is removed from an issue"""
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # If the issue has a cycle, create a cycle activity
     if current_instance.get("cycle_id"):
@@ -229,9 +220,7 @@ def update_issue_activity(
     ISSUE_ACTIVITY_MAPPER = {"label_ids": track_labels, "assignee_ids": track_assignees}
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key)
@@ -307,13 +296,7 @@ def bulk_issue_activity(
         if len(issue_activities_created):
             for activity in issue_activities_created:
                 webhook_activity.delay(
-                    event=(
-                        "issue_comment"
-                        if activity.field == "comment"
-                        else "inbox_issue"
-                        if inbox
-                        else "issue"
-                    ),
+                    event=("issue_comment" if activity.field == "comment" else "inbox_issue" if inbox else "issue"),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
@@ -322,15 +305,9 @@ def bulk_issue_activity(
                         else activity.issue_id
                     ),
                     verb=activity.verb,
-                    field=(
-                        "description" if activity.field == "comment" else activity.field
-                    ),
-                    old_value=(
-                        activity.old_value if activity.old_value != "" else None
-                    ),
-                    new_value=(
-                        activity.new_value if activity.new_value != "" else None
-                    ),
+                    field=("description" if activity.field == "comment" else activity.field),
+                    old_value=(activity.old_value if activity.old_value != "" else None),
+                    new_value=(activity.new_value if activity.new_value != "" else None),
                     actor_id=activity.actor_id,
                     current_site=origin,
                     slug=activity.workspace.slug,

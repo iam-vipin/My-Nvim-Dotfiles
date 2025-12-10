@@ -1,5 +1,4 @@
 # Python imports
-import json
 
 # Django imports
 from django.utils import timezone

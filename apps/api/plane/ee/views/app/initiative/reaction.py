@@ -61,9 +61,7 @@ class InitiativeReactionViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
-            return Response(
-                {"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")

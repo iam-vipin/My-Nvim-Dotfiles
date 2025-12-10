@@ -58,9 +58,7 @@ class ProjectEpicTypeEndpoint(BaseAPIView):
             ).annotate(
                 project_ids=Coalesce(
                     Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
+                        ProjectIssueType.objects.filter(issue_type=OuterRef("pk"), workspace__slug=slug)
                         .values("issue_type")
                         .annotate(project_ids=ArrayAgg("project_id", distinct=True))
                         .values("project_ids")

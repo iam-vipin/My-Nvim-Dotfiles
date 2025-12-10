@@ -22,12 +22,8 @@ class InitiativeUserPropertiesEndpoint(BaseAPIView):
 
     def patch(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
-        initiative_user_properties = InitiativeUserProperty.objects.get(
-            user=request.user, workspace=workspace
-        )
-        initiative_user_properties.filters = request.data.get(
-            "filters", initiative_user_properties.filters
-        )
+        initiative_user_properties = InitiativeUserProperty.objects.get(user=request.user, workspace=workspace)
+        initiative_user_properties.filters = request.data.get("filters", initiative_user_properties.filters)
 
         initiative_user_properties.display_filters = request.data.get(
             "display_filters", initiative_user_properties.display_filters

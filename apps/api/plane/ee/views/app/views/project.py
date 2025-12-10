@@ -18,18 +18,14 @@ class IssueViewEEViewSet(BaseViewSet):
     permission_classes = [ProjectEntityPermission]
 
     def lock(self, request, slug, project_id, pk):
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         issue_view.is_locked = True
         issue_view.save(update_fields=["is_locked"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, pk):
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         issue_view.is_locked = False
         issue_view.save(update_fields=["is_locked"])
@@ -40,9 +36,7 @@ class IssueViewEEViewSet(BaseViewSet):
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 1)
 
-        issue_view = IssueView.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        ).first()
+        issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug, project_id=project_id).first()
 
         if issue_view.owned_by != request.user:
             return Response(

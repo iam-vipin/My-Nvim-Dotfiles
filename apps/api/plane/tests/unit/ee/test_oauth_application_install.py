@@ -3,6 +3,7 @@ from rest_framework import status
 from plane.authentication.models import WorkspaceAppInstallation
 from plane.db.models import WorkspaceMember, ProjectMember
 
+
 class TestOAuthApplicationInstallEndpoint:
     """Test cases for OAuthApplicationInstallEndpoint"""
 
@@ -105,9 +106,7 @@ class TestOAuthApplicationInstallEndpoint:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_install_application_unauthenticated(
-        self, api_client, workspace, workspace_app_installation
-    ):
+    def test_install_application_unauthenticated(self, api_client, workspace, workspace_app_installation):
         """Test installation without authentication"""
         url = reverse(
             "application-install",
@@ -174,9 +173,7 @@ class TestOAuthApplicationInstallEndpoint:
         response = session_client.delete(url)
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
-    def test_install_application_idempotency(
-        self, session_client, workspace, oauth_application
-    ):
+    def test_install_application_idempotency(self, session_client, workspace, oauth_application):
         """Test that workspace app installation is reused when reinstalling the same app"""
         # Install the application
         url = reverse(

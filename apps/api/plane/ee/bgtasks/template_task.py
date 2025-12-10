@@ -101,12 +101,8 @@ def _get_property_value_data(
     property_type_handlers = {
         PropertyTypeEnum.TEXT: lambda v: {"value_text": str(v)},
         PropertyTypeEnum.BOOLEAN: lambda v: {"value_boolean": bool(v)},
-        PropertyTypeEnum.DECIMAL: lambda v: {
-            "value_decimal": float(v) if v is not None else 0.0
-        },
-        PropertyTypeEnum.DATETIME: lambda v: {
-            "value_datetime": _parse_datetime_value(v)
-        },
+        PropertyTypeEnum.DECIMAL: lambda v: {"value_decimal": float(v) if v is not None else 0.0},
+        PropertyTypeEnum.DATETIME: lambda v: {"value_datetime": _parse_datetime_value(v)},
         PropertyTypeEnum.URL: lambda v: {"value_text": str(v)},
         PropertyTypeEnum.EMAIL: lambda v: {"value_text": str(v)},
         PropertyTypeEnum.RELATION: lambda v: {"value_uuid": uuid.UUID(str(v))},
@@ -146,9 +142,7 @@ def _get_property_value_data(
         return {"value_text": str(value)}
 
     except (ValueError, TypeError) as e:
-        logger.warning(
-            f"Failed to process value {value} for property {property_obj.id}: {e}"
-        )
+        logger.warning(f"Failed to process value {value} for property {property_obj.id}: {e}")
         return None
 
 
@@ -322,9 +316,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
                 is_multi=property.get("is_multi", False),
             )
             created_issue_property.save(created_by_id=user_id)
-            workitem_property_map[str(property.get("id"))] = str(
-                created_issue_property.id
-            )
+            workitem_property_map[str(property.get("id"))] = str(created_issue_property.id)
             logger.info(f"Issue property created: {created_issue_property.id}")
             # create options
             if created_issue_property.property_type == PropertyTypeEnum.OPTION:
@@ -340,12 +332,8 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
                         project_id=project_id,
                     )
                     created_issue_property_option.save(created_by_id=user_id)
-                    workitem_property_option_map[str(value.get("id"))] = str(
-                        created_issue_property_option.id
-                    )
-                    logger.info(
-                        f"Issue property option created: {created_issue_property_option.id}"
-                    )
+                    workitem_property_option_map[str(value.get("id"))] = str(created_issue_property_option.id)
+                    logger.info(f"Issue property option created: {created_issue_property_option.id}")
     return workitem_type_map, workitem_property_map, workitem_property_option_map
 
 
@@ -370,9 +358,7 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
     )
     issue_type.save(created_by_id=user_id)
     logger.info(f"Epic created: {issue_type.id}")
-    created_project_issue_type = ProjectIssueType(
-        project_id=project_id, issue_type=issue_type, level=1
-    )
+    created_project_issue_type = ProjectIssueType(project_id=project_id, issue_type=issue_type, level=1)
     created_project_issue_type.save(created_by_id=user_id)
     logger.info(f"Epic project issue type created: {created_project_issue_type.id}")
     for property in epic_data.get("properties", []):
@@ -487,9 +473,7 @@ def create_issue_property_values(
 
     # Log the activity
     issue_property_activity.delay(
-        existing_values={
-            str(prop["property_id"]): prop["values"] for prop in existing_prop_values
-        },
+        existing_values={str(prop["property_id"]): prop["values"] for prop in existing_prop_values},
         requested_values=converted_properties,
         issue_id=issue.id,
         user_id=user_id,
@@ -530,7 +514,6 @@ def create_workitems(
     created_workitems = []
     # Create workitems
     for blueprint in workitem_blueprints:
-
         # Check if the state is present in the state map
         if blueprint.state and state_map:
             state_id = state_map.get(str(blueprint.state.get("id")))
@@ -593,9 +576,7 @@ def create_workitems(
             created_by_id=user_id,
         )
         logger.info(f"Issue activity created: {new_issue_id}")
-        requested_data = json.dumps(
-            IssueDetailSerializer(new_issue).data, cls=DjangoJSONEncoder
-        )
+        requested_data = json.dumps(IssueDetailSerializer(new_issue).data, cls=DjangoJSONEncoder)
         slug = Workspace.objects.get(id=workspace_id).slug
 
         # trigger the webhook
@@ -616,9 +597,7 @@ def create_workitems(
             user_id=user_id,
             is_creating=True,
         )
-        logger.info(
-            f"triggered the workitem description version for the workitem: {new_issue_id}"
-        )
+        logger.info(f"triggered the workitem description version for the workitem: {new_issue_id}")
 
         # Create the assignees
         IssueAssignee.objects.bulk_create(
@@ -633,9 +612,7 @@ def create_workitems(
                 for member_id in ProjectMember.objects.filter(
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    member_id__in=[
-                        str(assignee.get("id")) for assignee in blueprint.assignees
-                    ],
+                    member_id__in=[str(assignee.get("id")) for assignee in blueprint.assignees],
                 ).values_list("member_id", flat=True)
             ],
             batch_size=BULK_CREATE_BATCH_SIZE,
@@ -681,9 +658,7 @@ def create_workitems(
 
 
 @shared_task
-def create_project_from_template(
-    template_id, project_id, user_id, state_map, origin=None
-):
+def create_project_from_template(template_id, project_id, user_id, state_map, origin=None):
     try:
         """
         Create a project from a template and copy the workitems, labels, estimates, etc.
@@ -707,22 +682,16 @@ def create_project_from_template(
 
         # create estimates
         if project_template.estimates:
-            estimate_point_map = create_estimates(
-                project_template.estimates, project_id, project, user_id
-            )
+            estimate_point_map = create_estimates(project_template.estimates, project_id, project, user_id)
 
         # create labels
         if project_template.labels:
-            label_map = create_labels(
-                project_template.labels, project_id, workspace_id, user_id
-            )
+            label_map = create_labels(project_template.labels, project_id, workspace_id, user_id)
 
         # create workitem types
         if project_template.workitem_types:
-            workitem_type_map, workitem_property_map, workitem_property_option_map = (
-                create_workitem_types(
-                    project_template.workitem_types, project_id, workspace_id, user_id
-                )
+            workitem_type_map, workitem_property_map, workitem_property_option_map = create_workitem_types(
+                project_template.workitem_types, project_id, workspace_id, user_id
             )
 
         # create epics
@@ -884,9 +853,7 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                                 "created_by_id": user_id,
                             }
                         )
-                        property_values_to_create.append(
-                            IssuePropertyValue(**property_value_data)
-                        )
+                        property_values_to_create.append(IssuePropertyValue(**property_value_data))
 
             if property_values_to_create:
                 IssuePropertyValue.objects.bulk_create(

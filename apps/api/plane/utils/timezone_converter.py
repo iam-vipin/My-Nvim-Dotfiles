@@ -148,9 +148,7 @@ def convert_to_utc_with_timestamp(project_id, date):
 
     # Parse the string into a date object
     current_date = datetime.strptime(date, "%Y-%m-%d").date()
-    local_datetime = datetime.combine(
-        current_date, get_current_time(project.timezone).time()
-    )
+    local_datetime = datetime.combine(current_date, get_current_time(project.timezone).time())
 
     # Get the project's timezone
     local_tz = pytz.timezone(project_timezone)

@@ -47,9 +47,7 @@ class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
             .prefetch_related(
                 Prefetch(
                     "issue_cycle__issue__assignees",
-                    queryset=User.objects.only(
-                        "avatar_asset", "first_name", "id"
-                    ).distinct(),
+                    queryset=User.objects.only("avatar_asset", "first_name", "id").distinct(),
                 )
             )
             .prefetch_related(
@@ -129,8 +127,7 @@ class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=timezone.now()) & Q(end_date__gte=timezone.now()),
                         then=Value("CURRENT"),
                     ),
                     When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
@@ -149,11 +146,7 @@ class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
                         "issue_cycle__issue__assignees__id",
                         distinct=True,
                         filter=~Q(issue_cycle__issue__assignees__id__isnull=True)
-                        & (
-                            Q(
-                                issue_cycle__issue__issue_assignee__deleted_at__isnull=True
-                            )
-                        ),
+                        & (Q(issue_cycle__issue__issue_assignee__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
@@ -164,9 +157,9 @@ class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id):
-        project_ids = TeamspaceProject.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        ).values_list("project_id", flat=True)
+        project_ids = TeamspaceProject.objects.filter(workspace__slug=slug, team_space_id=team_space_id).values_list(
+            "project_id", flat=True
+        )
 
         queryset = (
             self.get_queryset()

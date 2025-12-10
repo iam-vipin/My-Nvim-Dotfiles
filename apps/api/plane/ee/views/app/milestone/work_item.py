@@ -32,15 +32,13 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.MILESTONES)
     def get(self, request, slug, project_id, milestone_id):
         # Return updated work items list using serializer
-        workitem_ids = MilestoneIssue.objects.filter(
-            milestone_id=milestone_id, deleted_at__isnull=True
-        ).values_list("issue_id", flat=True)
+        workitem_ids = MilestoneIssue.objects.filter(milestone_id=milestone_id, deleted_at__isnull=True).values_list(
+            "issue_id", flat=True
+        )
 
         # Base queryset with basic filters
         issue_queryset = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-            )
+            Issue.issue_and_epics_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=workitem_ids)
             .select_related("type")
             .prefetch_related("labels", "assignees")
         )
@@ -59,9 +57,7 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
         ).first()
 
         if not milestone:
-            return Response(
-                {"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Use dedicated work item serializer to handle work items update
         serializer = MilestoneWorkItemSerializer(
@@ -103,15 +99,13 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
             )
 
         # Return updated work items list using serializer
-        workitem_ids = MilestoneIssue.objects.filter(
-            milestone_id=milestone_id, deleted_at__isnull=True
-        ).values_list("issue_id", flat=True)
+        workitem_ids = MilestoneIssue.objects.filter(milestone_id=milestone_id, deleted_at__isnull=True).values_list(
+            "issue_id", flat=True
+        )
 
         # Base queryset with basic filters
         issue_queryset = (
-            Issue.issue_and_epics_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=workitem_ids
-            )
+            Issue.issue_and_epics_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=workitem_ids)
             .select_related("type")
             .prefetch_related("labels", "assignees")
         )
@@ -124,7 +118,6 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.MILESTONES)
     def post(self, request, slug, project_id, work_item_id):
-
         milestone_id = request.data.get("milestone_id")
 
         if not milestone_id:
@@ -139,9 +132,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not workspace:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Validate the work item exists
         work_item = Issue.objects.filter(
@@ -152,9 +143,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not work_item:
-            return Response(
-                {"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Validate the new milestone exists
         new_milestone = Milestone.objects.filter(
@@ -165,9 +154,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not new_milestone:
-            return Response(
-                {"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Milestone not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check for existing milestone association
         milestone_work_item = (
@@ -226,9 +213,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not workspace:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
 
         work_item = Issue.objects.filter(
             id=work_item_id,
@@ -238,9 +223,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         ).first()
 
         if not work_item:
-            return Response(
-                {"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Work item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         milestone_work_item = MilestoneIssue.objects.filter(
             issue_id=work_item_id,

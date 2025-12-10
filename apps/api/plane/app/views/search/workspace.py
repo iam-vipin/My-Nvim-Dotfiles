@@ -39,9 +39,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
         return (
-            Page.objects.filter(
-                q, workspace__slug=slug, archived_at__isnull=True, is_global=True
-            )
+            Page.objects.filter(q, workspace__slug=slug, archived_at__isnull=True, is_global=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .distinct()
             .values("name", "id", "workspace__slug")

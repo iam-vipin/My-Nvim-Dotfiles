@@ -40,8 +40,7 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
                 issue.estimate_point.value
                 if issue.estimate_point
                 and issue.estimate_point.estimate
-                and getattr(issue.estimate_point.estimate, "type", None)
-                in ["points", "time"]
+                and getattr(issue.estimate_point.estimate, "type", None) in ["points", "time"]
                 else None
             )
 
@@ -62,9 +61,7 @@ def entity_issue_state_activity_task(issue_cycle_data, user_id, slug, action):
             )
 
         if activity_records:
-            EntityIssueStateActivity.objects.bulk_create(
-                activity_records, batch_size=10
-            )
+            EntityIssueStateActivity.objects.bulk_create(activity_records, batch_size=10)
 
     except Exception as e:
         log_exception(e)

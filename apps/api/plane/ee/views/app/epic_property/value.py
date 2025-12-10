@@ -88,9 +88,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 property__issue_type__is_epic=True,
             )
 
-            epic_property_value = self.query_annotator(epic_property_value).values(
-                "property_id", "value"
-            )
+            epic_property_value = self.query_annotator(epic_property_value).values("property_id", "value")
 
             return Response(epic_property_value, status=status.HTTP_200_OK)
 
@@ -104,9 +102,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
         )
 
         # Annotate the query
-        epic_property_values = self.query_annotator(epic_property_values).values(
-            "property_id", "values"
-        )
+        epic_property_values = self.query_annotator(epic_property_values).values("property_id", "values")
 
         # Create dictionary of property_id and values
         response = {
@@ -134,9 +130,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all epic property values
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # Get epic
             issue = Issue.objects.get(pk=epic_id)
@@ -175,20 +169,13 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             )
 
             # Delete the old values
-            existing_prop_queryset.filter(
-                property_id__in=epic_property_ids, issue__type_id=epic_type_id
-            ).delete()
+            existing_prop_queryset.filter(property_id__in=epic_property_ids, issue__type_id=epic_type_id).delete()
             # Bulk create the epic property values
-            IssuePropertyValue.objects.bulk_create(
-                bulk_epic_property_values, batch_size=10
-            )
+            IssuePropertyValue.objects.bulk_create(bulk_epic_property_values, batch_size=10)
 
             # Log the activity
             issue_property_activity.delay(
-                existing_values={
-                    str(prop["property_id"]): prop["values"]
-                    for prop in existing_prop_values
-                },
+                existing_values={str(prop["property_id"]): prop["values"] for prop in existing_prop_values},
                 requested_values=epic_property_values,
                 issue_id=epic_id,
                 user_id=str(request.user.id),
@@ -224,23 +211,16 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             )
 
             # Get all epic property values
-            existing_prop_values = self.query_annotator(existing_prop_queryset).values(
-                "property_id", "values"
-            )
+            existing_prop_values = self.query_annotator(existing_prop_queryset).values("property_id", "values")
 
             # existing values
-            existing_values = {
-                str(prop["property_id"]): prop["values"]
-                for prop in existing_prop_values
-            }
+            existing_values = {str(prop["property_id"]): prop["values"] for prop in existing_prop_values}
 
             # Get the value
             values = request.data.get("values", [])
 
             # Check if the property is required
-            if epic_property.is_required and (
-                not values or not [v for v in values if v]
-            ):
+            if epic_property.is_required and (not values or not [v for v in values if v]):
                 return Response(
                     {"error": epic_property.display_name + " is a required property"},
                     status=status.HTTP_400_BAD_REQUEST,

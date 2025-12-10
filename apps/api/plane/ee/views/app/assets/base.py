@@ -63,23 +63,17 @@ class DuplicateAssetEndpoint(BaseAPIView):
         entity_type = request.data.get("entity_type", None)
 
         if not asset_ids:
-            return Response(
-                {"error": "asset_ids is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "asset_ids is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         workspace = Workspace.objects.get(slug=slug)
         if project_id:
             # check if project exists in the workspace
             if not Project.objects.filter(id=project_id, workspace=workspace).exists():
-                return Response(
-                    {"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
         duplicated_assets = {}
 
         storage = S3Storage()
-        original_assets = FileAsset.objects.filter(
-            workspace=workspace, id__in=asset_ids
-        )
+        original_assets = FileAsset.objects.filter(workspace=workspace, id__in=asset_ids)
         for original_asset in original_assets:
             destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
             duplicated_asset = FileAsset.objects.create(
@@ -95,17 +89,13 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 entity_type=entity_type,
                 project_id=project_id if project_id else None,
                 storage_metadata=original_asset.storage_metadata,
-                **self.get_entity_id_field(
-                    entity_type=entity_type, entity_id=entity_id
-                ),
+                **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_id),
             )
             storage.copy_object(original_asset.asset, destination_key)
             duplicated_assets[str(original_asset.id)] = str(duplicated_asset.id)
 
         if duplicated_assets:
             # Update the is_uploaded field for all newly created assets
-            FileAsset.objects.filter(id__in=duplicated_assets.values()).update(
-                is_uploaded=True
-            )
+            FileAsset.objects.filter(id__in=duplicated_assets.values()).update(is_uploaded=True)
 
         return Response(duplicated_assets, status=status.HTTP_200_OK)

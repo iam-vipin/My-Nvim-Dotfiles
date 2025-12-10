@@ -102,20 +102,12 @@ class EventStreamPublisher:
                 port=port,
                 virtual_host=vhost,
                 credentials=credentials,
-                heartbeat=int(
-                    os.environ.get("RABBITMQ_HEARTBEAT", 600)
-                ),  # 10 minutes heartbeat
-                blocked_connection_timeout=int(
-                    os.environ.get("RABBITMQ_BLOCKED_CONNECTION_TIMEOUT", 300)
-                ),  # 5 minutes
-                connection_attempts=int(
-                    os.environ.get("RABBITMQ_CONNECTION_ATTEMPTS", 3)
-                ),
+                heartbeat=int(os.environ.get("RABBITMQ_HEARTBEAT", 600)),  # 10 minutes heartbeat
+                blocked_connection_timeout=int(os.environ.get("RABBITMQ_BLOCKED_CONNECTION_TIMEOUT", 300)),  # 5 minutes
+                connection_attempts=int(os.environ.get("RABBITMQ_CONNECTION_ATTEMPTS", 3)),
                 retry_delay=self.retry_delay,
             )
-            logger.debug(
-                f"[{self.instance_id}] Using individual settings for connection: {host}:{port}"
-            )
+            logger.debug(f"[{self.instance_id}] Using individual settings for connection: {host}:{port}")
 
     def _connect(self) -> None:
         """
@@ -141,19 +133,14 @@ class EventStreamPublisher:
                 # Setup exchange only
                 self._setup_exchange()
 
-                logger.info(
-                    f"[{self.instance_id}] Successfully connected to RabbitMQ. "
-                    f"Exchange: {self.exchange_name}"
-                )
+                logger.info(f"[{self.instance_id}] Successfully connected to RabbitMQ. Exchange: {self.exchange_name}")
 
             except AMQPConnectionError as e:
                 logger.error(f"[{self.instance_id}] Failed to connect to RabbitMQ: {e}")
                 self._disconnect_unsafe()
                 raise
             except Exception as e:
-                logger.error(
-                    f"[{self.instance_id}] Unexpected error during connection setup: {e}"
-                )
+                logger.error(f"[{self.instance_id}] Unexpected error during connection setup: {e}")
                 self._disconnect_unsafe()
                 raise
 
@@ -173,9 +160,7 @@ class EventStreamPublisher:
                 durable=True,
                 auto_delete=False,
             )
-            logger.debug(
-                f"[{self.instance_id}] Exchange '{self.exchange_name}' declared"
-            )
+            logger.debug(f"[{self.instance_id}] Exchange '{self.exchange_name}' declared")
 
         except AMQPChannelError as e:
             # This can happen if there's a configuration mismatch
@@ -185,9 +170,7 @@ class EventStreamPublisher:
             self._disconnect_unsafe()
             raise
         except Exception as e:
-            logger.error(
-                f"[{self.instance_id}] Unexpected error during exchange setup: {e}"
-            )
+            logger.error(f"[{self.instance_id}] Unexpected error during exchange setup: {e}")
             self._disconnect_unsafe()
             raise
 
@@ -223,9 +206,7 @@ class EventStreamPublisher:
             self._connect()
             yield
         except (ConnectionClosed, AMQPConnectionError, AMQPChannelError) as e:
-            logger.warning(
-                f"[{self.instance_id}] Connection lost, attempting to reconnect: {e}"
-            )
+            logger.warning(f"[{self.instance_id}] Connection lost, attempting to reconnect: {e}")
             with self._connection_lock:
                 self._disconnect_unsafe()
                 self._connect()
@@ -247,15 +228,10 @@ class EventStreamPublisher:
                 last_exception = e
                 if attempt < self.max_retries - 1:
                     delay = self.retry_delay * (2**attempt)  # Exponential backoff
-                    logger.warning(
-                        f"[{self.instance_id}] Attempt {attempt + 1} failed: {e}. "
-                        f"Retrying in {delay}s..."
-                    )
+                    logger.warning(f"[{self.instance_id}] Attempt {attempt + 1} failed: {e}. Retrying in {delay}s...")
                     time.sleep(delay)
                 else:
-                    logger.error(
-                        f"[{self.instance_id}] All {self.max_retries} attempts failed"
-                    )
+                    logger.error(f"[{self.instance_id}] All {self.max_retries} attempts failed")
 
         raise last_exception
 
@@ -347,16 +323,11 @@ class EventStreamPublisher:
 
             self._retry_operation(_publish)
 
-            logger.debug(
-                f"[{self.instance_id}] Successfully published message: "
-                f"{message.get('event_type', 'unknown')}"
-            )
+            logger.debug(f"[{self.instance_id}] Successfully published message: {message.get('event_type', 'unknown')}")
             return True
 
         except Exception as e:
-            logger.error(
-                f"[{self.instance_id}] Failed to publish message after all retries: {e}"
-            )
+            logger.error(f"[{self.instance_id}] Failed to publish message after all retries: {e}")
             return False
 
     def publish_outbox_event(self, outbox_event: OutboxEvent) -> bool:
@@ -383,10 +354,7 @@ class EventStreamPublisher:
             return self.publish(event_data, event_metadata=metadata)
 
         except Exception as e:
-            logger.error(
-                f"[{self.instance_id}] Failed to publish outbox event "
-                f"{outbox_event.id}: {e}"
-            )
+            logger.error(f"[{self.instance_id}] Failed to publish outbox event {outbox_event.id}: {e}")
             return False
 
     def close(self) -> None:
@@ -428,9 +396,7 @@ def get_publisher(instance_id: Optional[str] = None) -> EventStreamPublisher:
             instance_id = str(uuid.uuid4())
 
         if instance_id not in _publisher_instances:
-            _publisher_instances[instance_id] = EventStreamPublisher(
-                instance_id=instance_id
-            )
+            _publisher_instances[instance_id] = EventStreamPublisher(instance_id=instance_id)
 
         return _publisher_instances[instance_id]
 

@@ -32,9 +32,7 @@ class ExtendedLegacyToRichFiltersConverter(LegacyToRichFiltersConverter):
 
         return max(dates) if direction == "after" else min(dates)
 
-    def _convert_date_value(
-        self, field_name: str, values: List[str], strict: bool = False
-    ) -> Dict[str, Any]:
+    def _convert_date_value(self, field_name: str, values: List[str], strict: bool = False) -> Dict[str, Any]:
         """
         Convert legacy date values to rich filter format with extended operators.
 
@@ -53,9 +51,7 @@ class ExtendedLegacyToRichFiltersConverter(LegacyToRichFiltersConverter):
         # Base converter skipped it - handle extended functionality
         return self._convert_extended_date_value(field_name, values, strict)
 
-    def _convert_extended_date_value(
-        self, field_name: str, values: List[str], strict: bool = False
-    ) -> Dict[str, Any]:
+    def _convert_extended_date_value(self, field_name: str, values: List[str], strict: bool = False) -> Dict[str, Any]:
         """
         Handle extended date conversion for cases the base converter skips.
 
@@ -85,12 +81,8 @@ class ExtendedLegacyToRichFiltersConverter(LegacyToRichFiltersConverter):
                 lte_dates.append(converted["value"])
 
         # Handle multiple directional dates of the same type
-        gte_date = self._handle_multiple_directional_dates(
-            gte_dates, "after", field_name, strict
-        )
-        lte_date = self._handle_multiple_directional_dates(
-            lte_dates, "before", field_name, strict
-        )
+        gte_date = self._handle_multiple_directional_dates(gte_dates, "after", field_name, strict)
+        lte_date = self._handle_multiple_directional_dates(lte_dates, "before", field_name, strict)
 
         # Create filters based on bounds
         result = {}
@@ -103,9 +95,7 @@ class ExtendedLegacyToRichFiltersConverter(LegacyToRichFiltersConverter):
 
         return result
 
-    def _parse_extended_date_value(
-        self, value: str, strict: bool = False
-    ) -> Dict[str, Any]:
+    def _parse_extended_date_value(self, value: str, strict: bool = False) -> Dict[str, Any]:
         """Parse a date value for extended functionality only.
 
         Only handles directional dates that the base converter doesn't support.
@@ -136,9 +126,7 @@ class ExtendedLegacyToRichFiltersConverter(LegacyToRichFiltersConverter):
         # Validate the date part
         if not self._validate_date(date_part):
             if strict:
-                raise ValueError(
-                    f"Invalid date format in directional date: {date_part}"
-                )
+                raise ValueError(f"Invalid date format in directional date: {date_part}")
             return None
 
         # Handle individual directional operations (base converter handles ranges)

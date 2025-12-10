@@ -3,19 +3,7 @@ from rest_framework import status
 from typing import Dict, List, Any
 
 from django.db import models
-from django.db.models import (
-    QuerySet,
-    Q,
-    Count,
-    Case,
-    When,
-    Value,
-    F,
-    CharField,
-    Max,
-    OuterRef,
-    Subquery
-)
+from django.db.models import QuerySet, Q, Count, Case, When, Value, F, CharField, Max, OuterRef, Subquery
 from django.http import HttpRequest
 from django.db.models.functions import TruncMonth, Cast, Concat, Coalesce
 from django.utils import timezone
@@ -34,7 +22,7 @@ from plane.db.models import (
     Workspace,
     ProjectMember,
     User,
-    Page
+    Page,
 )
 from plane.ee.models import EntityUpdates, ProjectAttribute
 from plane.utils.build_chart import build_analytics_chart
@@ -395,34 +383,18 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         projects_qs = (
             Project.objects.filter(id__in=project_ids)
             .annotate(
-                total_work_items=Coalesce(
-                    Subquery(issue_subquery.values("total_work_items")[:1]), Value(0)
-                ),
+                total_work_items=Coalesce(Subquery(issue_subquery.values("total_work_items")[:1]), Value(0)),
                 completed_work_items=Coalesce(
                     Subquery(issue_subquery.values("completed_work_items")[:1]),
                     Value(0),
                 ),
-                total_epics=Coalesce(
-                    Subquery(issue_subquery.values("total_epics")[:1]), Value(0)
-                ),
-                total_intake=Coalesce(
-                    Subquery(issue_subquery.values("total_intake")[:1]), Value(0)
-                ),
-                total_cycles=Coalesce(
-                    Subquery(cycle_subquery.values("total_cycles")[:1]), Value(0)
-                ),
-                total_modules=Coalesce(
-                    Subquery(module_subquery.values("total_modules")[:1]), Value(0)
-                ),
-                total_members=Coalesce(
-                    Subquery(member_subquery.values("total_members")[:1]), Value(0)
-                ),
-                total_pages=Coalesce(
-                    Subquery(page_subquery.values("total_pages")[:1]), Value(0)
-                ),
-                total_views=Coalesce(
-                    Subquery(view_subquery.values("total_views")[:1]), Value(0)
-                ),
+                total_epics=Coalesce(Subquery(issue_subquery.values("total_epics")[:1]), Value(0)),
+                total_intake=Coalesce(Subquery(issue_subquery.values("total_intake")[:1]), Value(0)),
+                total_cycles=Coalesce(Subquery(cycle_subquery.values("total_cycles")[:1]), Value(0)),
+                total_modules=Coalesce(Subquery(module_subquery.values("total_modules")[:1]), Value(0)),
+                total_members=Coalesce(Subquery(member_subquery.values("total_members")[:1]), Value(0)),
+                total_pages=Coalesce(Subquery(page_subquery.values("total_pages")[:1]), Value(0)),
+                total_views=Coalesce(Subquery(view_subquery.values("total_views")[:1]), Value(0)),
             )
             .values(
                 "id",

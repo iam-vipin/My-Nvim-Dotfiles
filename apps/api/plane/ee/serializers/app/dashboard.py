@@ -29,9 +29,7 @@ class DashboardSerializer(BaseSerializer):
         owned_by_id = self.context["owned_by_id"]
 
         # Create dashboard
-        dashboard = Dashboard.objects.create(
-            **validated_data, workspace_id=workspace_id, owned_by_id=owned_by_id
-        )
+        dashboard = Dashboard.objects.create(**validated_data, workspace_id=workspace_id, owned_by_id=owned_by_id)
 
         created_by_id = dashboard.created_by_id
         updated_by_id = dashboard.updated_by_id
@@ -128,9 +126,7 @@ class WidgetSerializer(BaseSerializer):
 
         # Only update DashboardWidget if there are fields to update
         if update_data:
-            DashboardWidget.objects.filter(
-                widget=instance, dashboard_id=dashboard_id
-            ).update(**update_data)
+            DashboardWidget.objects.filter(widget=instance, dashboard_id=dashboard_id).update(**update_data)
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()

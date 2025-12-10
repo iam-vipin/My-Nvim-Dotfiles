@@ -48,9 +48,7 @@ urlpatterns = [
         UpgradeSubscriptionEndpoint.as_view(),
         name="subscription",
     ),
-    path(
-        "workspaces/<str:slug>/flags/", FeatureFlagProxyEndpoint.as_view(), name="flags"
-    ),
+    path("workspaces/<str:slug>/flags/", FeatureFlagProxyEndpoint.as_view(), name="flags"),
     path(
         "workspaces/<str:slug>/license-refresh/",
         WorkspaceLicenseRefreshEndpoint.as_view(),

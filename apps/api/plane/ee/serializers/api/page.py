@@ -36,7 +36,6 @@ class PageAPISerializer(BaseSerializer):
 
 
 class PageCreateAPISerializer(BaseSerializer):
-
     class Meta:
         model = Page
         fields = [

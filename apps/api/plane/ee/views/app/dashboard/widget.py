@@ -59,18 +59,14 @@ class WidgetEndpoint(BaseAPIView):
     def patch(self, request, slug, dashboard_id, pk):
         widget = Widget.objects.filter(id=pk, workspace__slug=slug).first()
         if not widget:
-            return Response(
-                {"error": "Widget not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Widget not found"}, status=status.HTTP_404_NOT_FOUND)
 
         chart_model = request.data.get("chart_model")
         chart_type = request.data.get("chart_type")
 
         if chart_model and chart_type:
             mutable_data = request.data.copy()
-            validated_data = validate_chart_config(
-                chart_model, chart_type, mutable_data
-            )
+            validated_data = validate_chart_config(chart_model, chart_type, mutable_data)
         else:
             validated_data = request.data
 
@@ -128,12 +124,8 @@ class WidgetListEndpoint(BaseAPIView):
         group_by = request.query_params.get("group_by", widget.group_by)
         # quick_filter = request.query_params.get("quick_filter", None)
         y_axis_metric = request.query_params.get("y_axis_metric", widget.y_axis_metric)
-        x_axis_property = request.query_params.get(
-            "x_axis_property", widget.x_axis_property
-        )
-        x_axis_date_grouping = request.query_params.get(
-            "x_axis_date_grouping", widget.x_axis_date_grouping
-        )
+        x_axis_property = request.query_params.get("x_axis_property", widget.x_axis_property)
+        x_axis_date_grouping = request.query_params.get("x_axis_date_grouping", widget.x_axis_date_grouping)
 
         if (
             widget.y_axis_metric == Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT
@@ -156,9 +148,7 @@ class WidgetListEndpoint(BaseAPIView):
         # get the widget filter
         if dashboard_widget.filters:
             # use the complex filter backend using dashboard widget filters
-            issues = ComplexFilterBackend().filter_queryset(
-                request, issues, self, dashboard_widget.filters
-            )
+            issues = ComplexFilterBackend().filter_queryset(request, issues, self, dashboard_widget.filters)
 
         issues = (
             issues.filter(
@@ -177,10 +167,7 @@ class WidgetListEndpoint(BaseAPIView):
             )
         )
 
-        if (
-            x_axis_property == Widget.PropertyEnum.EPICS
-            or group_by == Widget.PropertyEnum.EPICS
-        ):
+        if x_axis_property == Widget.PropertyEnum.EPICS or group_by == Widget.PropertyEnum.EPICS:
             issues = issues.filter(Q(type__isnull=False) & Q(type__is_epic=True))
         else:
             issues = issues.filter(Q(type__is_epic=False) | Q(type__isnull=True))
@@ -188,14 +175,10 @@ class WidgetListEndpoint(BaseAPIView):
         issues = issues.accessible_to(request.user.id, slug)
 
         if not x_axis_property and widget.chart_type != "NUMBER":
-            return Response(
-                {"message": "x axis is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"message": "x axis is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not y_axis_metric:
-            return Response(
-                {"message": "y axis is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"message": "y axis is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # build the graph
         response = build_widget_chart(
@@ -244,8 +227,6 @@ class BulkWidgetEndpoint(BaseAPIView):
 
         # Bulk update
         if updated_widgets:
-            DashboardWidget.objects.bulk_update(
-                updated_widgets, ["height", "width", "x_axis_coord", "y_axis_coord"]
-            )
+            DashboardWidget.objects.bulk_update(updated_widgets, ["height", "width", "x_axis_coord", "y_axis_coord"])
 
         return Response(status=status.HTTP_204_NO_CONTENT)

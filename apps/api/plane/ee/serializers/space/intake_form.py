@@ -126,25 +126,17 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
         field_ids = IntakeFormField.objects.filter(
             intake_form__intake_id=intake_id, intake_form_id=intake_form_id
         ).values_list("work_item_property_id", flat=True)
-        property_objs = IssueProperty.objects.filter(
-            id__in=field_ids, project_id=project_id
-        )
+        property_objs = IssueProperty.objects.filter(id__in=field_ids, project_id=project_id)
 
         for property_obj in property_objs:
             property_value = value.get(str(property_obj.id))
 
             # Check if required
             if property_obj.is_required and not property_value:
-                raise serializers.ValidationError(
-                    f"{property_obj.display_name} is required"
-                )
+                raise serializers.ValidationError(f"{property_obj.display_name} is required")
 
             # If value is empty and not required, no further validation needed
-            if (
-                not property_value
-                and property_value != 0
-                and property_value is not False
-            ):
+            if not property_value and property_value != 0 and property_value is not False:
                 continue
 
             property_type = property_obj.property_type
@@ -162,9 +154,7 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 try:
                     url_validator(property_value)
                 except DjangoValidationError:
-                    raise serializers.ValidationError(
-                        "Must be a valid URL (e.g., https://example.com)"
-                    )
+                    raise serializers.ValidationError("Must be a valid URL (e.g., https://example.com)")
 
             # EMAIL - must be valid email format
             elif property_type == PropertyTypeEnum.EMAIL:
@@ -173,9 +163,7 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 try:
                     validate_email(property_value)
                 except DjangoValidationError:
-                    raise serializers.ValidationError(
-                        "Must be a valid email address (e.g., user@example.com)"
-                    )
+                    raise serializers.ValidationError("Must be a valid email address (e.g., user@example.com)")
 
             # DATETIME - accepts YYYY-MM-DD or YYYY-MM-DD HH:MM:SS
             elif property_type == PropertyTypeEnum.DATETIME:
@@ -205,9 +193,7 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
             # BOOLEAN - must be a boolean
             elif property_type == PropertyTypeEnum.BOOLEAN:
                 if not isinstance(property_value, bool):
-                    raise serializers.ValidationError(
-                        "Must be a boolean (true or false)"
-                    )
+                    raise serializers.ValidationError("Must be a boolean (true or false)")
 
             # FILE - accepts any string (file path/URL)
             elif property_type == PropertyTypeEnum.FILE:
@@ -220,24 +206,18 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 if property_obj.is_multi:
                     if isinstance(property_value, list):
                         if not property_value:
-                            raise serializers.ValidationError(
-                                "List cannot be empty for multi-value property"
-                            )
+                            raise serializers.ValidationError("List cannot be empty for multi-value property")
                         # Validate each UUID in the list
                         uuid_list = []
                         for v in property_value:
                             print(v)
                             if not isinstance(v, str):
-                                raise serializers.ValidationError(
-                                    "Each value in list must be a string (UUID)"
-                                )
+                                raise serializers.ValidationError("Each value in list must be a string (UUID)")
                             try:
                                 uuid_obj = uuid.UUID(str(v), version=4)
                                 uuid_list.append(uuid_obj)
                             except (ValueError, AttributeError):
-                                raise serializers.ValidationError(
-                                    f"Invalid UUID format: {v}"
-                                )
+                                raise serializers.ValidationError(f"Invalid UUID format: {v}")
 
                         # Check if all options exist for this property
                         existing_count = IssuePropertyOption.objects.filter(
@@ -252,20 +232,12 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                         try:
                             uuid_obj = uuid.UUID(str(property_value), version=4)
                         except (ValueError, AttributeError):
-                            raise serializers.ValidationError(
-                                "Must be a valid UUID for a property option"
-                            )
+                            raise serializers.ValidationError("Must be a valid UUID for a property option")
 
-                        if not IssuePropertyOption.objects.filter(
-                            property=property_obj, id=uuid_obj
-                        ).exists():
-                            raise serializers.ValidationError(
-                                "Selected option does not exist for this property"
-                            )
+                        if not IssuePropertyOption.objects.filter(property=property_obj, id=uuid_obj).exists():
+                            raise serializers.ValidationError("Selected option does not exist for this property")
                     else:
-                        raise serializers.ValidationError(
-                            "Must be a string (UUID) or list of UUIDs"
-                        )
+                        raise serializers.ValidationError("Must be a string (UUID) or list of UUIDs")
                 else:
                     # Single value only
                     value_to_validate = property_value
@@ -281,22 +253,14 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                     try:
                         uuid_obj = uuid.UUID(str(value_to_validate), version=4)
                     except (ValueError, AttributeError):
-                        raise serializers.ValidationError(
-                            "Must be a valid UUID for a property option"
-                        )
+                        raise serializers.ValidationError("Must be a valid UUID for a property option")
 
-                    if not IssuePropertyOption.objects.filter(
-                        property=property_obj, id=uuid_obj
-                    ).exists():
-                        raise serializers.ValidationError(
-                            "Selected option does not exist for this property"
-                        )
+                    if not IssuePropertyOption.objects.filter(property=property_obj, id=uuid_obj).exists():
+                        raise serializers.ValidationError("Selected option does not exist for this property")
 
             # Unknown property type
             else:
-                raise serializers.ValidationError(
-                    f"Unsupported property type: {property_type}"
-                )
+                raise serializers.ValidationError(f"Unsupported property type: {property_type}")
 
         return value
 
@@ -389,18 +353,12 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
         property_values = validated_data.get("values") or {}
 
         # Get all the field ids
-        intake_form_field_qs = IntakeFormField.objects.filter(
-            intake_form_id=intake_form_id or 0
-        )
+        intake_form_field_qs = IntakeFormField.objects.filter(intake_form_id=intake_form_id or 0)
         if not intake_form_field_qs.exists():
-            intake_form_field_qs = IntakeFormField.objects.filter(
-                intake_form__intake_id=intake_id
-            )
+            intake_form_field_qs = IntakeFormField.objects.filter(intake_form__intake_id=intake_id)
 
         field_ids = intake_form_field_qs.values_list("work_item_property_id", flat=True)
-        property_objs = IssueProperty.objects.filter(
-            id__in=field_ids, project_id=project_id
-        )
+        property_objs = IssueProperty.objects.filter(id__in=field_ids, project_id=project_id)
 
         property_value_objs = []
 
@@ -412,16 +370,9 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 continue
 
             # Handle multi-value OPTION and RELATION properties
-            if (
-                property_type in [PropertyTypeEnum.OPTION, PropertyTypeEnum.RELATION]
-                and property_obj.is_multi
-            ):
+            if property_type in [PropertyTypeEnum.OPTION, PropertyTypeEnum.RELATION] and property_obj.is_multi:
                 # Normalize to list
-                values = (
-                    property_value
-                    if isinstance(property_value, list)
-                    else [property_value]
-                )
+                values = property_value if isinstance(property_value, list) else [property_value]
 
                 # Create multiple property value records
                 for v in values:
@@ -455,18 +406,10 @@ class IntakeWorkItemTypeFormCreateSerializer(serializers.Serializer):
                 elif property_type == PropertyTypeEnum.BOOLEAN:
                     params["value_boolean"] = property_value
                 elif property_type == PropertyTypeEnum.OPTION:
-                    value_to_store = (
-                        property_value[0]
-                        if isinstance(property_value, list)
-                        else property_value
-                    )
+                    value_to_store = property_value[0] if isinstance(property_value, list) else property_value
                     params["value_option_id"] = value_to_store
                 elif property_type == PropertyTypeEnum.RELATION:
-                    value_to_store = (
-                        property_value[0]
-                        if isinstance(property_value, list)
-                        else property_value
-                    )
+                    value_to_store = property_value[0] if isinstance(property_value, list) else property_value
                     params["value_uuid"] = value_to_store
 
                 # Create and save the property value

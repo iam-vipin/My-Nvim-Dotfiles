@@ -1,8 +1,4 @@
-from .page import (
-    WikiBulkOperationAPIView,
-    ProjectPageBulkOperationAPIView,
-    TeamspacePageBulkOperationAPIView
-)
+from .page import WikiBulkOperationAPIView, ProjectPageBulkOperationAPIView, TeamspacePageBulkOperationAPIView
 
 from .base import (
     ProjectPageDetailAPIEndpoint,

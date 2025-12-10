@@ -18,7 +18,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class AutomationRunEndpoint(AutomationBaseEndpoint):
-
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     def get(

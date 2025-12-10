@@ -21,9 +21,7 @@ class IssueCustomerEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, work_item_id):
         customer_ids = (
-            CustomerRequestIssue.objects.filter(
-                issue_id=work_item_id, workspace__slug=slug
-            )
+            CustomerRequestIssue.objects.filter(issue_id=work_item_id, workspace__slug=slug)
             .order_by("customer_id")
             .distinct("customer_id")
         ).values_list("customer_id", flat=True)
@@ -40,15 +38,12 @@ class IssueCustomerRequestEndpoint(BaseAPIView):
 
         customer_requests = (
             CustomerRequest.objects.filter(
-                Q(customer_request_issues__issue_id=work_item_id)
-                & Q(customer_request_issues__deleted_at__isnull=True),
+                Q(customer_request_issues__issue_id=work_item_id) & Q(customer_request_issues__deleted_at__isnull=True),
                 workspace__slug=slug,
             ).annotate(
                 attachment_count=Subquery(
                     FileAsset.objects.filter(
-                        entity_identifier=Cast(
-                            OuterRef("id"), output_field=CharField()
-                        ),
+                        entity_identifier=Cast(OuterRef("id"), output_field=CharField()),
                         entity_type=FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT,
                     )
                     .order_by()

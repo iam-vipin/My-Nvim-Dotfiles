@@ -27,6 +27,4 @@ class AutomationConfig(AppConfig):
                         importlib.import_module(f"{self.name}.nodes.{module_name}")
                     except ImportError as e:
                         # Log the error but don't fail startup
-                        print(
-                            f"Warning: Failed to import automation node module {module_name}: {e}"
-                        )
+                        print(f"Warning: Failed to import automation node module {module_name}: {e}")

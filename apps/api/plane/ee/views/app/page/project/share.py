@@ -42,15 +42,11 @@ class ProjectPageUserViewSet(BaseViewSet):
 
         # remove owner from the requested users
         requested_user_map = {
-            str(user["user_id"]): user["access"]
-            for user in request.data
-            if str(user["user_id"]) != str(owner_id)
+            str(user["user_id"]): user["access"] for user in request.data if str(user["user_id"]) != str(owner_id)
         }
         requested_user_ids = set(requested_user_map.keys())
 
-        existing_users = PageUser.objects.filter(
-            page_id=pk, project_id=project_id, workspace__slug=slug
-        )
+        existing_users = PageUser.objects.filter(page_id=pk, project_id=project_id, workspace__slug=slug)
         existing_user_map = {str(pu.user_id): pu for pu in existing_users}
         existing_user_ids = set(existing_user_map.keys())
 
@@ -94,9 +90,7 @@ class ProjectPageUserViewSet(BaseViewSet):
                 users_to_update.append(existing)
 
         if users_to_update:
-            PageUser.objects.bulk_update(
-                users_to_update, ["access", "updated_by", "updated_at"]
-            )
+            PageUser.objects.bulk_update(users_to_update, ["access", "updated_by", "updated_at"])
 
         # Fire shared and unshared events if needed
         if users_to_create or users_to_update:
@@ -122,9 +116,7 @@ class ProjectPageUserViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
     def list(self, request, slug, project_id, pk):
-        shared_pages = PageUser.objects.filter(
-            page_id=pk, workspace__slug=slug, project_id=project_id
-        )
+        shared_pages = PageUser.objects.filter(page_id=pk, workspace__slug=slug, project_id=project_id)
         serializer = PageUserSerializer(shared_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

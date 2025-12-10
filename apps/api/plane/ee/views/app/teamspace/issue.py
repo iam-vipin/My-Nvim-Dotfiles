@@ -43,9 +43,7 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         return (
             issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -69,9 +67,7 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-            )
+            .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )
 
     def get(self, request, slug, team_space_id):
@@ -80,12 +76,12 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id, workspace__slug=slug
         ).values_list("project_id", flat=True)
         # Get work items for team space
-        team_member_ids = TeamspaceMember.objects.filter(
-            team_space_id=team_space_id
-        ).values_list("member_id", flat=True)
-        issue_ids = IssueAssignee.objects.filter(
-            workspace__slug=slug, assignee_id__in=team_member_ids
-        ).values_list("issue_id", flat=True)
+        team_member_ids = TeamspaceMember.objects.filter(team_space_id=team_space_id).values_list(
+            "member_id", flat=True
+        )
+        issue_ids = IssueAssignee.objects.filter(workspace__slug=slug, assignee_id__in=team_member_ids).values_list(
+            "issue_id", flat=True
+        )
 
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
@@ -117,17 +113,13 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -199,9 +191,7 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
                 request=request,
                 queryset=issue_queryset,
                 total_count_queryset=filtered_issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
 
@@ -213,12 +203,8 @@ class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
             user=request.user, team_space_id=team_space_id, workspace__slug=slug
         )
 
-        team_space_properties.filters = request.data.get(
-            "filters", team_space_properties.filters
-        )
-        team_space_properties.rich_filters = request.data.get(
-            "rich_filters", team_space_properties.rich_filters
-        )
+        team_space_properties.filters = request.data.get("filters", team_space_properties.filters)
+        team_space_properties.rich_filters = request.data.get("rich_filters", team_space_properties.rich_filters)
         team_space_properties.display_filters = request.data.get(
             "display_filters", team_space_properties.display_filters
         )

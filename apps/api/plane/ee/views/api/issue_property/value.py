@@ -109,9 +109,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             property_id=property_id,
             property__issue_type__is_epic=False,
         )
-        issue_property_values = self.query_annotator(issue_property_values).values(
-            "property_id", "values"
-        )
+        issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
         return Response(issue_property_values, status=status.HTTP_200_OK)
 
     # create issue property option
@@ -165,9 +163,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
         issue_property_values = request.data.get("values", [])
 
         if not issue_property_values:
-            return Response(
-                {"error": "Value is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Value is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # validate the property value
         bulk_external_issue_property_values = []
@@ -176,9 +172,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             property_value = value.get("value", None)
 
             if property_value:
-                externalIssuePropertyValueValidator(
-                    issue_property=issue_property, value=property_value
-                )
+                externalIssuePropertyValueValidator(issue_property=issue_property, value=property_value)
 
                 # check if issue property with the same external id and external source already exists
                 property_external_id = value.get("external_id", None)
@@ -201,9 +195,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
         existing_issue_property_values.delete()
 
         # Bulk create the issue property values
-        self.model.objects.bulk_create(
-            bulk_external_issue_property_values, batch_size=10
-        )
+        self.model.objects.bulk_create(bulk_external_issue_property_values, batch_size=10)
 
         # fetching the created issue property values
         issue_property_values = self.model.objects.filter(
@@ -213,9 +205,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             property=issue_property,
             property__issue_type__is_epic=False,
         )
-        issue_property_values = self.query_annotator(issue_property_values).values(
-            "property_id", "values"
-        )
+        issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
 
         return Response(issue_property_values, status=status.HTTP_201_CREATED)
 
@@ -243,11 +233,8 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
         },
     )
     def get(self, request, slug, project_id, issue_id):
-
         # get the issue
-        issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, id=issue_id
-        )
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, id=issue_id)
 
         # list of issue properties values
         issue_property_values = self.model.objects.filter(
@@ -257,9 +244,7 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
             property__issue_type__is_epic=False,
             property__issue_type_id=issue.type_id,
         )
-        issue_property_values = self.query_annotator(issue_property_values).values(
-            "property_id", "values"
-        )
+        issue_property_values = self.query_annotator(issue_property_values).values("property_id", "values")
         return Response(issue_property_values, status=status.HTTP_200_OK)
 
 
@@ -303,9 +288,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 description="Work item property value(s)",
                 response=WorkItemPropertyValueResponseSerializer,
             ),
-            404: OpenApiResponse(
-                description="Property value not set for this work item"
-            ),
+            404: OpenApiResponse(description="Property value not set for this work item"),
         },
     )
     def get(self, request, slug, project_id, work_item_id, property_id):
@@ -332,9 +315,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
         first_value = property_values.first()
         if first_value.property.is_multi:
             # Return list for multi-value properties
-            serializer = WorkItemPropertyValueResponseSerializer(
-                property_values, many=True
-            )
+            serializer = WorkItemPropertyValueResponseSerializer(property_values, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             # Return single value for non-multi properties
@@ -467,19 +448,13 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
                 # Fetch fresh instances from DB
-                property_value_objs = self.model.objects.filter(
-                    id__in=[obj.id for obj in result]
-                )
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    property_value_objs, many=True
-                )
+                property_value_objs = self.model.objects.filter(id__in=[obj.id for obj in result])
+                response_serializer = WorkItemPropertyValueResponseSerializer(property_value_objs, many=True)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
             else:
                 # Single value property
                 property_value_obj = self.model.objects.get(id=result.id)
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    property_value_obj
-                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(property_value_obj)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
         else:
             # Create new value(s)
@@ -500,24 +475,14 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
                 # Fetch fresh instances from DB
-                property_value_objs = self.model.objects.filter(
-                    id__in=[obj.id for obj in result]
-                )
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    property_value_objs, many=True
-                )
-                return Response(
-                    response_serializer.data, status=status.HTTP_201_CREATED
-                )
+                property_value_objs = self.model.objects.filter(id__in=[obj.id for obj in result])
+                response_serializer = WorkItemPropertyValueResponseSerializer(property_value_objs, many=True)
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
             else:
                 # Single value property
                 property_value_obj = self.model.objects.get(id=result.id)
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    property_value_obj
-                )
-                return Response(
-                    response_serializer.data, status=status.HTTP_201_CREATED
-                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(property_value_obj)
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     @issue_property_value_docs(
@@ -569,9 +534,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
                 response=WorkItemPropertyValueResponseSerializer,
             ),
             400: OpenApiResponse(description="Invalid value"),
-            404: OpenApiResponse(
-                description="Workspace, property, or property value not found"
-            ),
+            404: OpenApiResponse(description="Workspace, property, or property value not found"),
         },
     )
     def patch(self, request, slug, project_id, work_item_id, property_id):
@@ -621,19 +584,13 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             # Handle multi-value properties (returns list)
             if isinstance(result, list):
                 # Fetch fresh instances from DB
-                property_value_objs = self.model.objects.filter(
-                    id__in=[obj.id for obj in result]
-                )
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    property_value_objs, many=True
-                )
+                property_value_objs = self.model.objects.filter(id__in=[obj.id for obj in result])
+                response_serializer = WorkItemPropertyValueResponseSerializer(property_value_objs, many=True)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
             else:
                 # Single value property
                 updated_property_value = self.model.objects.get(id=result.id)
-                response_serializer = WorkItemPropertyValueResponseSerializer(
-                    updated_property_value
-                )
+                response_serializer = WorkItemPropertyValueResponseSerializer(updated_property_value)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
 
         except Workspace.DoesNotExist:
@@ -651,10 +608,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
     @issue_property_value_docs(
         operation_id="delete_work_item_property_value",
         summary="Delete work item property value",
-        description=(
-            "Delete the property value(s) for a work item. "
-            "For multi-value properties, deletes all values."
-        ),
+        description=("Delete the property value(s) for a work item. For multi-value properties, deletes all values."),
         responses={
             204: OpenApiResponse(description="Property value(s) deleted successfully"),
             404: OpenApiResponse(description="Property value not found"),

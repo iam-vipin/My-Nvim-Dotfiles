@@ -21,9 +21,7 @@ def sync_workspace_license_free_seats(batch_size=5000, offset=0, batch_countdown
     end_offset = min(offset + batch_size, total_workspaces)
 
     # Loop through the workspace licenses
-    for workspace_license in WorkspaceLicense.objects.order_by("-last_synced_at").all()[
-        offset:end_offset
-    ]:
+    for workspace_license in WorkspaceLicense.objects.order_by("-last_synced_at").all()[offset:end_offset]:
         # Get the workspace member count
         workspace_member_count = WorkspaceMember.objects.filter(
             workspace_id=workspace_license.workspace_id,
@@ -76,6 +74,4 @@ def sync_workspace_license_free_seats(batch_size=5000, offset=0, batch_countdown
 
 @shared_task
 def schedule_workspace_license_free_seats(batch_size=5000, batch_countdown=300):
-    sync_workspace_license_free_seats.delay(
-        batch_size=batch_size, batch_countdown=batch_countdown
-    )
+    sync_workspace_license_free_seats.delay(batch_size=batch_size, batch_countdown=batch_countdown)

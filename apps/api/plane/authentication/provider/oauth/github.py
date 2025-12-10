@@ -128,10 +128,11 @@ class GitHubOAuthProvider(OauthAdapter):
             return email
         except requests.RequestException:
             logger.warning(
-                "Error getting email from Github", extra={
+                "Error getting email from Github",
+                extra={
                     "error_code": AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                     "error_message": "GITHUB_OAUTH_PROVIDER_ERROR",
-                }
+                },
             )
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],

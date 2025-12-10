@@ -25,9 +25,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueWorkLogSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, issue_id=issue_id, logged_by=request.user
-            )
+            serializer.save(project_id=project_id, issue_id=issue_id, logged_by=request.user)
             # Get the issue to update
             issue = Issue.objects.get(pk=issue_id)
             issue.updated_at = timezone.now()
@@ -48,9 +46,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def patch(self, request, slug, project_id, issue_id, pk):
-        worklog = IssueWorkLog.objects.get(
-            pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug
-        )
+        worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         serializer = IssueWorkLogSerializer(worklog, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -65,9 +61,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def delete(self, request, slug, project_id, issue_id, pk):
-        worklog = IssueWorkLog.objects.get(
-            pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug
-        )
+        worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         worklog.delete()
 
         # Get the issue to update
@@ -87,8 +81,6 @@ class IssueTotalWorkLogEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).accessible_to(request.user.id, slug)
 
-        total_worklog = (
-            total_worklog.aggregate(total_worklog=Sum("duration"))["total_worklog"] or 0
-        )
+        total_worklog = total_worklog.aggregate(total_worklog=Sum("duration"))["total_worklog"] or 0
 
         return Response({"total_worklog": total_worklog}, status=status.HTTP_200_OK)

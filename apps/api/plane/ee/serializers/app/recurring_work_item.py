@@ -11,9 +11,7 @@ from plane.utils.timezone_converter import convert_to_utc
 
 
 class RecurringWorkItemTaskLogSerializer(BaseSerializer):
-    workitem_sequence_id = serializers.IntegerField(
-        source="workitem.sequence_id", allow_null=True, required=False
-    )
+    workitem_sequence_id = serializers.IntegerField(source="workitem.sequence_id", allow_null=True, required=False)
 
     class Meta:
         model = RecurringWorkitemTaskLog
@@ -31,7 +29,6 @@ class RecurringWorkItemTaskActivitySerializer(BaseSerializer):
 
 
 class RecurringWorkItemSerializer(BaseSerializer):
-
     workitem_blueprint = WorkitemTemplateSerializer(read_only=True)
 
     class Meta:
@@ -71,9 +68,7 @@ class RecurringWorkItemSerializer(BaseSerializer):
 
         project_id = self._get_project_id()
         if not project_id:
-            raise serializers.ValidationError(
-                "Project ID is required for timezone conversion"
-            )
+            raise serializers.ValidationError("Project ID is required for timezone conversion")
 
         # Convert start_at to UTC using the project's timezone
         data["start_at"] = convert_to_utc(
@@ -84,6 +79,4 @@ class RecurringWorkItemSerializer(BaseSerializer):
 
     def _get_project_id(self):
         """Get project ID from context or instance"""
-        return self.context.get("project_id") or (
-            self.instance and self.instance.project_id
-        )
+        return self.context.get("project_id") or (self.instance and self.instance.project_id)

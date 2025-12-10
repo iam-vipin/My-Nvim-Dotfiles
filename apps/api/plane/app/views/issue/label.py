@@ -43,16 +43,12 @@ class LabelViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
-            serializer = LabelSerializer(
-                data=request.data, context={"project_id": project_id}
-            )
+            serializer = LabelSerializer(data=request.data, context={"project_id": project_id})
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
                 project_activity.delay(
                     type="project.activity.updated",
-                    requested_data=json.dumps(
-                        {"label": serializer.data.get("id")}, cls=DjangoJSONEncoder
-                    ),
+                    requested_data=json.dumps({"label": serializer.data.get("id")}, cls=DjangoJSONEncoder),
                     actor_id=str(request.user.id),
                     project_id=str(project_id),
                     current_instance=json.dumps({"label": None}, cls=DjangoJSONEncoder),
@@ -104,9 +100,7 @@ class LabelViewSet(BaseViewSet):
             requested_data=json.dumps({"label": None}, cls=DjangoJSONEncoder),
             actor_id=str(request.user.id),
             project_id=str(project_id),
-            current_instance=json.dumps(
-                {"label": pk, "label_name": label.name}, cls=DjangoJSONEncoder
-            ),
+            current_instance=json.dumps({"label": pk, "label_name": label.name}, cls=DjangoJSONEncoder),
             epoch=int(timezone.now().timestamp()),
             notification=True,
             origin=request.META.get("HTTP_ORIGIN"),

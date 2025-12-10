@@ -137,8 +137,10 @@ class InstanceAdminSignUpEndpoint(View):
                 },
             )
             url = urljoin(
-                base_host(request=request, is_admin=True, ),
-                
+                base_host(
+                    request=request,
+                    is_admin=True,
+                ),
                 "?" + urlencode(exc.get_error_dict()),
             )
             return HttpResponseRedirect(url)

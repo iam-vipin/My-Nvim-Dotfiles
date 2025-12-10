@@ -56,18 +56,14 @@ class InitiativeActivityEndpoint(BaseAPIView):
             filters = {"created_at__gt": request.GET.get("created_at__gt")}
 
         initiative_activities = (
-            InitiativeActivity.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            )
+            InitiativeActivity.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
             .filter(~Q(field__in=["comment", "vote", "reaction", "draft"]))
             .filter(**filters)
             .select_related("actor", "workspace", "initiative")
         ).order_by("created_at")
 
         initiative_comments = (
-            InitiativeComment.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            )
+            InitiativeComment.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
             .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "initiative", "workspace")
@@ -78,12 +74,8 @@ class InitiativeActivityEndpoint(BaseAPIView):
                 )
             )
         )
-        initiative_activities = InitiativeActivitySerializer(
-            initiative_activities, many=True
-        ).data
-        initiative_comments = InitiativeCommentSerializer(
-            initiative_comments, many=True
-        ).data
+        initiative_activities = InitiativeActivitySerializer(initiative_activities, many=True).data
+        initiative_comments = InitiativeCommentSerializer(initiative_comments, many=True).data
 
         if request.GET.get("activity_type", None) == "initiative-property":
             return Response(initiative_activities, status=status.HTTP_200_OK)

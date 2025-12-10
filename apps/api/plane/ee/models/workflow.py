@@ -7,9 +7,7 @@ from plane.db.models import ProjectBaseModel
 
 
 class Workflow(ProjectBaseModel):
-    state = models.ForeignKey(
-        "db.State", on_delete=models.CASCADE, related_name="workflows"
-    )
+    state = models.ForeignKey("db.State", on_delete=models.CASCADE, related_name="workflows")
     allow_issue_creation = models.BooleanField(default=True)
 
     class Meta:
@@ -27,9 +25,7 @@ class Workflow(ProjectBaseModel):
 
 
 class WorkflowTransition(ProjectBaseModel):
-    workflow = models.ForeignKey(
-        Workflow, on_delete=models.CASCADE, related_name="workflow_transitions"
-    )
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_transitions")
     transition_state = models.ForeignKey(
         "db.State",
         on_delete=models.CASCADE,
@@ -56,9 +52,7 @@ class WorkflowTransition(ProjectBaseModel):
 class WorkflowTransitionApprover(ProjectBaseModel):
     """Defines who can approve a particular workflow transition"""
 
-    workflow = models.ForeignKey(
-        Workflow, on_delete=models.CASCADE, related_name="workflow_approvers"
-    )
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_approvers")
     workflow_transition = models.ForeignKey(
         WorkflowTransition,
         on_delete=models.CASCADE,
@@ -87,17 +81,13 @@ class WorkflowTransitionApprover(ProjectBaseModel):
 class WorkflowTransitionApproval(ProjectBaseModel):
     """Records approvals/rejections for specific issues"""
 
-    workflow = models.ForeignKey(
-        Workflow, on_delete=models.CASCADE, related_name="workflow_approvals"
-    )
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="workflow_approvals")
     workflow_transition = models.ForeignKey(
         WorkflowTransition,
         on_delete=models.CASCADE,
         related_name="workflow_approvals",
     )
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="workflow_approvals"
-    )
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="workflow_approvals")
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -136,9 +126,7 @@ class WorkflowTransitionActivity(ProjectBaseModel):
         blank=True,
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
-    field = models.CharField(
-        max_length=255, verbose_name="Field Name", blank=True, null=True
-    )
+    field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
     new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
     comment = models.TextField(verbose_name="Comment", blank=True)

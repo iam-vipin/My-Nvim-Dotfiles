@@ -92,9 +92,7 @@ class BaseServiceAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
         except Exception as exc:
             response = self.handle_exception(exc)

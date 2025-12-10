@@ -22,7 +22,7 @@ from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     TEAMSPACE_ID_PARAMETER,
     CURSOR_PARAMETER,
-    PER_PAGE_PARAMETER
+    PER_PAGE_PARAMETER,
 )
 
 
@@ -160,15 +160,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="add_teamspace_projects",
         summary="Add projects to a teamspace",
         description="Add projects to a teamspace",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "project_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -203,15 +208,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="remove_teamspace_projects",
         summary="Remove projects from a teamspace",
         description="Remove projects from a teamspace by its ID",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "project_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "project_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -256,15 +266,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="add_teamspace_members",
         summary="Add members to a teamspace",
         description="Add members to a teamspace",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "member_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "member_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,
@@ -297,15 +312,20 @@ class TeamspaceViewSet(BaseViewSet):
         operation_id="remove_teamspace_members",
         summary="Delete members from a teamspace",
         description="Delete members from a teamspace by its ID",
-        request=OpenApiRequest(request={"type": "object", "properties": {
-            "member_ids": {
-                "type": "array",
-                "items": {
-                    "type": "string",
-                    "format": "uuid",
+        request=OpenApiRequest(
+            request={
+                "type": "object",
+                "properties": {
+                    "member_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    },
                 },
-            },
-        }}),
+            }
+        ),
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             TEAMSPACE_ID_PARAMETER,

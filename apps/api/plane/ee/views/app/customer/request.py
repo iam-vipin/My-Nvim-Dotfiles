@@ -31,9 +31,7 @@ class CustomerRequestEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id, pk=None):
         customer_requests = (
-            CustomerRequest.objects.filter(
-                customer_id=customer_id, workspace__slug=slug
-            )
+            CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=slug)
             .annotate(
                 work_item_ids=Coalesce(
                     Subquery(
@@ -44,10 +42,7 @@ class CustomerRequestEndpoint(BaseAPIView):
                             customer_request_issues__customer_request_id=OuterRef("pk"),
                             archived_at__isnull=True,
                         )
-                        .exclude(
-                            Q(type__is_epic=True)
-                            & Q(project__project_projectfeature__is_epic_enabled=False)
-                        )
+                        .exclude(Q(type__is_epic=True) & Q(project__project_projectfeature__is_epic_enabled=False))
                         .values("customer_request_issues__customer_id")
                         .annotate(arr=ArrayAgg("id", distinct=True))
                         .values("arr")
@@ -58,9 +53,7 @@ class CustomerRequestEndpoint(BaseAPIView):
             .annotate(
                 attachment_count=Subquery(
                     FileAsset.objects.filter(
-                        entity_identifier=Cast(
-                            OuterRef("id"), output_field=CharField()
-                        ),
+                        entity_identifier=Cast(OuterRef("id"), output_field=CharField()),
                         entity_type=FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT,
                     )
                     .order_by()
@@ -96,9 +89,7 @@ class CustomerRequestEndpoint(BaseAPIView):
             serializer = CustomerRequestSerializer(data=request.data)
 
             if serializer.is_valid():
-                customer_request_issue = serializer.save(
-                    workspace_id=workspace.id, customer_id=customer.id
-                )
+                customer_request_issue = serializer.save(workspace_id=workspace.id, customer_id=customer.id)
 
                 issues = Issue.objects.filter(
                     customer_request_issues__customer_request_id=customer_request_issue.id
@@ -125,17 +116,13 @@ class CustomerRequestEndpoint(BaseAPIView):
                 return Response(response_data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {"error": "Customer doesn't exist"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Customer doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def patch(self, request, slug, pk, customer_id=None):
         customer_request = CustomerRequest.objects.get(pk=pk, workspace__slug=slug)
 
-        serializer = CustomerRequestSerializer(
-            customer_request, data=request.data, partial=True
-        )
+        serializer = CustomerRequestSerializer(customer_request, data=request.data, partial=True)
 
         serializer.is_valid(raise_exception=True)
 
@@ -149,9 +136,9 @@ class CustomerRequestEndpoint(BaseAPIView):
 
         customer_request.delete()
 
-        customer_request_issues = CustomerRequestIssue.objects.filter(
-            customer_request=pk
-        ).prefetch_related("customer", "customer_request")
+        customer_request_issues = CustomerRequestIssue.objects.filter(customer_request=pk).prefetch_related(
+            "customer", "customer_request"
+        )
 
         for customer_request_issue in customer_request_issues:
             issue_activity.delay(
@@ -191,18 +178,13 @@ class CustomerIssuesEndpoint(BaseAPIView):
                 customer_request_issues__customer_id=customer_id,
                 archived_at__isnull=True,
             )
-            .exclude(
-                Q(type__is_epic=True)
-                & Q(project__project_projectfeature__is_epic_enabled=False)
-            )
+            .exclude(Q(type__is_epic=True) & Q(project__project_projectfeature__is_epic_enabled=False))
             .annotate(assignee_ids=ArrayAgg("assignees__id", distinct=True))
         )
 
         # list issues of the given customer request
         if customer_request_id:
-            issues = issues.filter(
-                customer_request_issues__customer_request_id=customer_request_id
-            )
+            issues = issues.filter(customer_request_issues__customer_request_id=customer_request_id)
 
         # Filtering linked work items based on various fields
         filters = issue_filters(request.query_params, "GET")
@@ -258,9 +240,7 @@ class CustomerIssuesEndpoint(BaseAPIView):
             )
 
         # Bulk create the new issues
-        issues = CustomerRequestIssue.objects.bulk_create(
-            customer_request_issues, batch_size=10, ignore_conflicts=True
-        )
+        issues = CustomerRequestIssue.objects.bulk_create(customer_request_issues, batch_size=10, ignore_conflicts=True)
 
         if customer_request_id is not None:
             name = CustomerRequest.objects.get(pk=customer_request_id).name
@@ -334,9 +314,9 @@ class CustomerIssuesEndpoint(BaseAPIView):
         if customer_request_id:
             filters["customer_request_id"] = customer_request_id
 
-        customer_request_issues = CustomerRequestIssue.objects.filter(
-            **filters
-        ).prefetch_related("customer_request", "customer")
+        customer_request_issues = CustomerRequestIssue.objects.filter(**filters).prefetch_related(
+            "customer_request", "customer"
+        )
 
         customer_request_issue = customer_request_issues.first()
 

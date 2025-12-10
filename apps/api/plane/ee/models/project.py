@@ -18,16 +18,12 @@ class GroupChoices(models.TextChoices):
 
 
 class ProjectState(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="project_states"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_states")
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     color = models.CharField(max_length=255)
     sequence = models.FloatField(default=65535)
-    group = models.CharField(
-        max_length=20, choices=GroupChoices.choices, default=GroupChoices.DRAFT
-    )
+    group = models.CharField(max_length=20, choices=GroupChoices.choices, default=GroupChoices.DRAFT)
     default = models.BooleanField(default=False)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
@@ -53,9 +49,9 @@ class ProjectState(BaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = ProjectState.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Max("sequence")
-            )["largest"]
+            last_id = ProjectState.objects.filter(workspace=self.workspace).aggregate(largest=models.Max("sequence"))[
+                "largest"
+            ]
             # if last_id is not None
             if last_id is not None:
                 self.sequence = last_id + 15000
@@ -72,9 +68,7 @@ class PriorityChoices(models.TextChoices):
 
 
 class ProjectAttribute(ProjectBaseModel):
-    priority = models.CharField(
-        max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE
-    )
+    priority = models.CharField(max_length=50, choices=PriorityChoices.choices, default=PriorityChoices.NONE)
     state = models.ForeignKey(
         ProjectState,
         on_delete=models.SET_NULL,
@@ -170,9 +164,7 @@ class ProjectComment(ProjectBaseModel):
     edited_at = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = (
-            strip_tags(self.comment_html) if self.comment_html != "" else ""
-        )
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         return super(ProjectComment, self).save(*args, **kwargs)
 
     class Meta:
@@ -188,9 +180,7 @@ class ProjectComment(ProjectBaseModel):
 
 class ProjectCommentReaction(ProjectBaseModel):
     reaction = models.CharField(max_length=255)
-    comment = models.ForeignKey(
-        "ee.ProjectComment", on_delete=models.CASCADE, related_name="project_reactions"
-    )
+    comment = models.ForeignKey("ee.ProjectComment", on_delete=models.CASCADE, related_name="project_reactions")
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -243,9 +233,7 @@ class ProjectMemberActivityModel(ProjectBaseModel):
         related_name="activities",
         null=True,
     )
-    type = models.CharField(
-        max_length=255, default=ProjectMemberActivityType.PROJECT_JOINED
-    )
+    type = models.CharField(max_length=255, default=ProjectMemberActivityType.PROJECT_JOINED)
     old_value = models.TextField(blank=True, null=True)
     new_value = models.TextField(blank=True, null=True)
     epoch = models.FloatField(null=True)

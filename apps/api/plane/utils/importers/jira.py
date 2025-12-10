@@ -54,54 +54,30 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             hostname,
             f"/rest/api/3/search?jql=project={project_key} AND issuetype!=Epic",
         )
-        issue_response = requests.request(
-            "GET", issue_url, headers=headers, auth=auth
-        ).json()["total"]
+        issue_response = requests.request("GET", issue_url, headers=headers, auth=auth).json()["total"]
 
         # modules
-        module_url = generate_url(
-            hostname, f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic"
-        )
-        module_response = requests.request(
-            "GET", module_url, headers=headers, auth=auth
-        ).json()["total"]
+        module_url = generate_url(hostname, f"/rest/api/3/search?jql=project={project_key} AND issuetype=Epic")
+        module_response = requests.request("GET", module_url, headers=headers, auth=auth).json()["total"]
 
         # status
-        status_url = generate_url(
-            hostname, f"/rest/api/3/project/${project_key}/statuses"
-        )
-        status_response = requests.request(
-            "GET", status_url, headers=headers, auth=auth
-        ).json()
+        status_url = generate_url(hostname, f"/rest/api/3/project/${project_key}/statuses")
+        status_response = requests.request("GET", status_url, headers=headers, auth=auth).json()
 
         # labels
-        labels_url = generate_url(
-            hostname, f"/rest/api/3/label/?jql=project={project_key}"
-        )
-        labels_response = requests.request(
-            "GET", labels_url, headers=headers, auth=auth
-        ).json()["total"]
+        labels_url = generate_url(hostname, f"/rest/api/3/label/?jql=project={project_key}")
+        labels_response = requests.request("GET", labels_url, headers=headers, auth=auth).json()["total"]
 
         # users
-        users_url = generate_url(
-            hostname, f"/rest/api/3/users/search?jql=project={project_key}"
-        )
-        users_response = requests.request(
-            "GET", users_url, headers=headers, auth=auth
-        ).json()
+        users_url = generate_url(hostname, f"/rest/api/3/users/search?jql=project={project_key}")
+        users_response = requests.request("GET", users_url, headers=headers, auth=auth).json()
 
         return {
             "issues": issue_response,
             "modules": module_response,
             "labels": labels_response,
             "states": len(status_response),
-            "users": (
-                [
-                    user
-                    for user in users_response
-                    if user.get("accountType") == "atlassian"
-                ]
-            ),
+            "users": ([user for user in users_response if user.get("accountType") == "atlassian"]),
         }
     except Exception:
         return {"error": "Something went wrong could not fetch information from jira"}

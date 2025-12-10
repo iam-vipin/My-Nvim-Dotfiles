@@ -34,7 +34,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
-from plane.db.models import State, IssueAssignee, IssueActivity
+from plane.db.models import IssueAssignee, IssueActivity
 from plane.utils.filters import ComplexFilterBackend, InitiativeFilterSet
 
 

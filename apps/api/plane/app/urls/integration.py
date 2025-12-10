@@ -21,9 +21,7 @@ urlpatterns = [
     ),
     path(
         "integrations/<uuid:pk>/",
-        IntegrationViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        IntegrationViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="integrations",
     ),
     path(

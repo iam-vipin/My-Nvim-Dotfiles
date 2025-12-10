@@ -16,9 +16,7 @@ class TestIssueDuplicateEndpointContrasts:
     @pytest.fixture
     def base_setup(self, session_client, create_user):
         """Base setup for all tests"""
-        workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=create_user
-        )
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=create_user)
 
         source_project = Project.objects.create(
             name="Source Project",
@@ -53,15 +51,11 @@ class TestIssueDuplicateEndpointContrasts:
 
             return wrapper
 
-        with patch(
-            "plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator
-        ) as mock:
+        with patch("plane.payment.flags.flag_decorator.check_feature_flag", new=mock_decorator) as mock:
             yield mock
 
     @pytest.mark.django_db
-    def test_contrast_issue_duplicate(
-        self, session_client, base_setup, mock_feature_flag
-    ):
+    def test_contrast_issue_duplicate(self, session_client, base_setup, mock_feature_flag):
         """
         Contrast test between duplicating issues
         """

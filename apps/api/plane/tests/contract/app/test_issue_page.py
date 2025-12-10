@@ -15,14 +15,10 @@ class TestIssuePageViewSet:
         self.user = create_user
         session_client.force_authenticate(user=self.user)
         # Create workspace
-        self.workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=self.user
-        )
+        self.workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=self.user)
 
         # Create project
-        self.project = Project.objects.create(
-            name="Test Project", workspace=self.workspace, created_by=self.user
-        )
+        self.project = Project.objects.create(name="Test Project", workspace=self.workspace, created_by=self.user)
 
         self.project_member = ProjectMember.objects.create(
             workspace=self.workspace,
@@ -82,9 +78,7 @@ class TestIssuePageViewSet:
 
             return wrapper
 
-        with patch(
-            "plane.payment.flags.flag_decorator.check_feature_flag", mock_decorator
-        ):
+        with patch("plane.payment.flags.flag_decorator.check_feature_flag", mock_decorator):
             yield
 
         return mock_decorator
@@ -163,9 +157,7 @@ class TestIssuePageViewSet:
         assert not WorkItemPage.objects.filter(id=work_item_page.id).exists()
 
     @pytest.mark.contract
-    def test_link_pages_to_issue_activity_tracking(
-        self, setup_data, session_client, mock_feature_flag
-    ):
+    def test_link_pages_to_issue_activity_tracking(self, setup_data, session_client, mock_feature_flag):
         # Arrange
         url = reverse(
             "issue-pages",
@@ -178,9 +170,7 @@ class TestIssuePageViewSet:
         payload = {"pages_ids": [str(self.global_page.id), str(self.project_page.id)]}
 
         # Act
-        with patch(
-            "plane.bgtasks.issue_activities_task.issue_activity.delay"
-        ) as mock_activity:
+        with patch("plane.bgtasks.issue_activities_task.issue_activity.delay") as mock_activity:
             response = session_client.post(url, payload, format="json")
 
         # Assert
@@ -200,9 +190,7 @@ class TestIssuePageViewSet:
         assert "origin" in activity_kwargs
 
     @pytest.mark.contract
-    def test_unlink_page_activity_tracking(
-        self, setup_data, session_client, mock_feature_flag
-    ):
+    def test_unlink_page_activity_tracking(self, setup_data, session_client, mock_feature_flag):
         # Arrange
         work_item_page = WorkItemPage.objects.create(
             workspace=self.workspace,
@@ -222,9 +210,7 @@ class TestIssuePageViewSet:
         )
 
         # Act
-        with patch(
-            "plane.bgtasks.issue_activities_task.issue_activity.delay"
-        ) as mock_activity:
+        with patch("plane.bgtasks.issue_activities_task.issue_activity.delay") as mock_activity:
             response = session_client.delete(url)
 
         # Assert
@@ -254,14 +240,10 @@ class TestPageSearchViewSet:
         session_client.force_authenticate(user=self.user)
 
         # Create workspace
-        self.workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=self.user
-        )
+        self.workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=self.user)
 
         # Create project
-        self.project = Project.objects.create(
-            name="Test Project", workspace=self.workspace, created_by=self.user
-        )
+        self.project = Project.objects.create(name="Test Project", workspace=self.workspace, created_by=self.user)
 
         self.project_member = ProjectMember.objects.create(
             workspace=self.workspace,
@@ -312,9 +294,7 @@ class TestPageSearchViewSet:
 
             return wrapper
 
-        with patch(
-            "plane.payment.flags.flag_decorator.check_feature_flag", mock_decorator
-        ):
+        with patch("plane.payment.flags.flag_decorator.check_feature_flag", mock_decorator):
             yield
 
     @pytest.mark.contract
@@ -354,9 +334,7 @@ class TestPageSearchViewSet:
         assert len(response.data) == 2
 
     @pytest.mark.contract
-    def test_search_pages_with_query(
-        self, setup_data, session_client, mock_feature_flag
-    ):
+    def test_search_pages_with_query(self, setup_data, session_client, mock_feature_flag):
         # Arrange
         url = (
             reverse(

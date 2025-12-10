@@ -8,4 +8,3 @@ urlpatterns = [
         name="workspace-features",
     ),
 ]
-

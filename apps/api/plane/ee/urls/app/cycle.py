@@ -23,9 +23,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/updates/<uuid:pk>/",
-        CycleUpdatesViewSet.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
-        ),
+        CycleUpdatesViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="cycle-updates",
     ),
     path(

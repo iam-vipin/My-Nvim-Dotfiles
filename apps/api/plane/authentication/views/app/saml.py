@@ -48,9 +48,7 @@ class SAMLAuthInitiateEndpoint(View):
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(next_path)
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
-            )
+            url = urljoin(base_host(request=request, is_app=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 

@@ -27,14 +27,10 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
         if credential.target_access_token and not credential.target_authorization_type:
             try:
                 # Check existing token
-                api_token = APIToken.objects.filter(
-                    token=credential.target_access_token, is_active=True
-                ).first()
+                api_token = APIToken.objects.filter(token=credential.target_access_token, is_active=True).first()
 
                 # Generate new token if current token is invalid or expired
-                if not api_token or (
-                    api_token.expired_at and api_token.expired_at <= timezone.now()
-                ):
+                if not api_token or (api_token.expired_at and api_token.expired_at <= timezone.now()):
                     # Create new API token
                     new_api_token = APIToken.objects.create(
                         description=f"Refreshed service token for {credential.target_access_token}",
@@ -75,18 +71,14 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
                     print(f"Error processing credential {credential.id}: {e}")
                     # Optionally, you can choose to skip or handle the error differently
 
-            serializer = WorkspaceCredentialAPISerializer(
-                refreshed_credentials, many=True
-            )
+            serializer = WorkspaceCredentialAPISerializer(refreshed_credentials, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Case 2: Retrieve specific credential
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
 
         if not credential:
-            return Response(
-                {"error": "Credential not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Credential not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # Refresh token for specific credential
         try:
@@ -100,9 +92,7 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
     def patch(self, request, pk):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
 
-        serializer = WorkspaceCredentialAPISerializer(
-            credential, data=request.data, partial=True
-        )
+        serializer = WorkspaceCredentialAPISerializer(credential, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -129,9 +119,7 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
         if not credential:
             serializer = WorkspaceCredentialAPISerializer(data={**request.data})
         else:
-            serializer = WorkspaceCredentialAPISerializer(
-                credential, data=request.data, partial=True
-            )
+            serializer = WorkspaceCredentialAPISerializer(credential, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -142,9 +130,7 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         if not credential:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        serializer = WorkspaceCredentialAPISerializer(
-            credential, data={"is_active": False}, partial=True
-        )
+        serializer = WorkspaceCredentialAPISerializer(credential, data={"is_active": False}, partial=True)
         if serializer.is_valid():
             serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -169,9 +155,7 @@ class VerifyWorkspaceCredentialAPIView(BaseServiceAPIView):
         elif source == "jira":
             is_oauth_enabled = getattr(settings, "JIRA_OAUTH_ENABLED", "0") == "1"
         elif source == "jira_server":
-            is_oauth_enabled = (
-                getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
-            )
+            is_oauth_enabled = getattr(settings, "JIRA_SERVER_OAUTH_ENABLED", "0") == "1"
         elif source == "asana":
             is_oauth_enabled = getattr(settings, "ASANA_OAUTH_ENABLED", "0") == "1"
 
@@ -191,9 +175,7 @@ class VerifyWorkspaceCredentialAPIView(BaseServiceAPIView):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         token = request.data.get("token", None)
 
-        serializer = WorkspaceCredentialAPISerializer(
-            credential, data={"token": token}, partial=True
-        )
+        serializer = WorkspaceCredentialAPISerializer(credential, data={"token": token}, partial=True)
 
         if serializer.is_valid():
             serializer.save()

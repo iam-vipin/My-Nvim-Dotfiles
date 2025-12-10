@@ -26,7 +26,6 @@ from plane.db.models import (
     Page,
     PageLog,
     Issue,
-    WorkspaceMember,
     ProjectPage,
     User,
 )

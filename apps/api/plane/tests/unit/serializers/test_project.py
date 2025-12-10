@@ -18,19 +18,13 @@ class TestProjectSerializer:
     def test_project_serializer_fields(self, db):
         """Test that the serializer includes the correct fields"""
 
-        test_user = User.objects.create(
-            email="test_user@example.com", first_name="Test", last_name="User"
-        )
+        test_user = User.objects.create(email="test_user@example.com", first_name="Test", last_name="User")
 
-        workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=test_user
-        )
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=test_user)
 
         WorkspaceMember.objects.create(member=test_user, role=15, workspace=workspace)
 
-        project = Project.objects.create(
-            name="Test Project", identifier="test-project", workspace=workspace
-        )
+        project = Project.objects.create(name="Test Project", identifier="test-project", workspace=workspace)
 
         serializer = ProjectSerializer(project).data
 
@@ -41,19 +35,13 @@ class TestProjectSerializer:
     def test_project_serializer_create_with_duplicated_name(self, db):
         """Test that the serializer raises an error when the identifier is incorrect"""
 
-        test_user = User.objects.create(
-            email="test_user@example.com", first_name="Test", last_name="User"
-        )
+        test_user = User.objects.create(email="test_user@example.com", first_name="Test", last_name="User")
 
-        workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=test_user
-        )
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=test_user)
 
         WorkspaceMember.objects.create(member=test_user, role=15, workspace=workspace)
 
-        Project.objects.create(
-            name="Test Project", identifier="TEST-PROJECT", workspace=workspace
-        )
+        Project.objects.create(name="Test Project", identifier="TEST-PROJECT", workspace=workspace)
 
         project_with_duplicated_name_serializer = ProjectSerializer(
             data={
@@ -71,19 +59,13 @@ class TestProjectSerializer:
     def test_project_serializer_initiative_ids(self, db):
         """Test that the serializer properly handles initiative_ids updates"""
 
-        test_user = User.objects.create(
-            email="test_user@example.com", first_name="Test", last_name="User"
-        )
+        test_user = User.objects.create(email="test_user@example.com", first_name="Test", last_name="User")
 
-        workspace = Workspace.objects.create(
-            name="Test Workspace", slug="test-workspace", owner=test_user
-        )
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=test_user)
 
         WorkspaceMember.objects.create(member=test_user, role=15, workspace=workspace)
 
-        project = Project.objects.create(
-            name="Test Project", identifier="TEST-PROJECT", workspace=workspace
-        )
+        project = Project.objects.create(name="Test Project", identifier="TEST-PROJECT", workspace=workspace)
 
         # Create some initiatives
         initiative_1 = Initiative.objects.create(
@@ -111,12 +93,8 @@ class TestProjectSerializer:
 
         # Verify initiatives were linked
         assert InitiativeProject.objects.filter(project=project).count() == 2
-        assert InitiativeProject.objects.filter(
-            project=project, initiative=initiative_1
-        ).exists()
-        assert InitiativeProject.objects.filter(
-            project=project, initiative=initiative_2
-        ).exists()
+        assert InitiativeProject.objects.filter(project=project, initiative=initiative_1).exists()
+        assert InitiativeProject.objects.filter(project=project, initiative=initiative_2).exists()
 
         # Test removing one initiative
         serializer = ProjectSerializer(
@@ -131,12 +109,8 @@ class TestProjectSerializer:
 
         # Verify one initiative was removed
         assert InitiativeProject.objects.filter(project=project).count() == 1
-        assert InitiativeProject.objects.filter(
-            project=project, initiative=initiative_1
-        ).exists()
-        assert not InitiativeProject.objects.filter(
-            project=project, initiative=initiative_2
-        ).exists()
+        assert InitiativeProject.objects.filter(project=project, initiative=initiative_1).exists()
+        assert not InitiativeProject.objects.filter(project=project, initiative=initiative_2).exists()
 
         # Test removing all initiatives
         serializer = ProjectSerializer(

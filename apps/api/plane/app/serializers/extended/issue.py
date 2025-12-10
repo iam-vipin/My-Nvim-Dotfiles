@@ -70,7 +70,8 @@ class ExtendedIssueCreateSerializer(IssueCreateSerializer):
                 )
             ):
                 intake_responsibilities = IntakeResponsibility.objects.filter(
-                    project_id=project_id, intake=intake_id,
+                    project_id=project_id,
+                    intake=intake_id,
                     type=IntakeResponsibilityTypeChoices.ASSIGNEE,
                 ).values_list("user_id", flat=True)
                 try:

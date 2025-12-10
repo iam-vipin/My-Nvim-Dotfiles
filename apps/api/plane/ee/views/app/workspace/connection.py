@@ -18,9 +18,7 @@ class WorkspaceConnectionView(BaseAPIView):
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug, pk=None):
         if not pk:
-            connections = WorkspaceConnection.objects.filter(
-                **request.query_params
-            ).order_by("-created_at")
+            connections = WorkspaceConnection.objects.filter(**request.query_params).order_by("-created_at")
             serializer = WorkspaceConnectionSerializer(connections, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         connection = WorkspaceConnection.objects.filter(id=pk).first()
@@ -45,9 +43,7 @@ class WorkspaceUserConnectionView(BaseAPIView):
         connections = WorkspaceConnection.objects.filter(workspace=workspace)
 
         # Fetch all workspace credentials for the given workspace and user
-        credentials = WorkspaceCredential.objects.filter(
-            workspace=workspace, user_id=user_id
-        )
+        credentials = WorkspaceCredential.objects.filter(workspace=workspace, user_id=user_id)
 
         # Create a map of credential sources for quick lookup
         credential_map = {credential.source: credential for credential in credentials}

@@ -17,9 +17,7 @@ class ImportJobView(BaseAPIView):
     @check_feature_flag(FeatureFlag.SILO)
     def get(self, request, slug, pk=None):
         if not pk:
-            import_jobs = ImportJob.objects.filter(**request.query_params).order_by(
-                "-created_at"
-            )
+            import_jobs = ImportJob.objects.filter(**request.query_params).order_by("-created_at")
             serializer = ImportJobSerializer(import_jobs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         import_job = ImportJob.objects.filter(pk=pk).first()

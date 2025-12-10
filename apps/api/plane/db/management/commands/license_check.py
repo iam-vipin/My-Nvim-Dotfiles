@@ -37,9 +37,7 @@ class Command(BaseCommand):
 
             # Check if status code is 204
             if response.status_code == 204:
-                self.stdout.write(
-                    self.style.SUCCESS("License key verified successfully")
-                )
+                self.stdout.write(self.style.SUCCESS("License key verified successfully"))
                 return
 
             elif response.status_code == 400:
@@ -58,9 +56,7 @@ class Command(BaseCommand):
                         },
                     )
                     response.raise_for_status()
-                    self.stdout.write(
-                        self.style.SUCCESS("Instance created successfully")
-                    )
+                    self.stdout.write(self.style.SUCCESS("Instance created successfully"))
 
                     return
                 else:

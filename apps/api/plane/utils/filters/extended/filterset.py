@@ -254,9 +254,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
 
             # Use a subquery to find matching issue IDs
             # This ensures each custom property filter is independent
-            matching_issues = IssuePropertyValue.objects.filter(
-                **base_filters
-            ).values_list("issue_id", flat=True)
+            matching_issues = IssuePropertyValue.objects.filter(**base_filters).values_list("issue_id", flat=True)
 
             # Return Q object with pk__in subquery
             return Q(pk__in=matching_issues)
@@ -264,7 +262,7 @@ class ExtendedIssueFilterSet(IssueFilterSet):
         except Exception as e:
             log_exception(e)
             return Q()
-    
+
     def filter_milestone_id(self, queryset, name, value):
         """Filter by milestone ID, excluding soft deleted milestones"""
         return Q(

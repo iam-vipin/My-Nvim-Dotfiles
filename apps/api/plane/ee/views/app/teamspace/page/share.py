@@ -42,9 +42,7 @@ class TeamspacePageUserEndpoint(BaseAPIView):
 
         # remove owner from the requested users
         requested_user_map = {
-            str(user["user_id"]): user["access"]
-            for user in request.data
-            if str(user["user_id"]) != str(owner_id)
+            str(user["user_id"]): user["access"] for user in request.data if str(user["user_id"]) != str(owner_id)
         }
         requested_user_ids = set(requested_user_map.keys())
 
@@ -90,9 +88,7 @@ class TeamspacePageUserEndpoint(BaseAPIView):
                 users_to_update.append(existing)
 
         if users_to_update:
-            PageUser.objects.bulk_update(
-                users_to_update, ["access", "updated_by", "updated_at"]
-            )
+            PageUser.objects.bulk_update(users_to_update, ["access", "updated_by", "updated_at"])
 
         # Fire shared and unshared events if needed
         if users_to_create or users_to_update:

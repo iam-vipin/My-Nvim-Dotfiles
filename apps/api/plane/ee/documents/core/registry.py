@@ -86,9 +86,7 @@ def fetch_optimized_queryset_by_model_and_ids(model_name, obj_ids):
                     queryset = doc_class().apply_related_to_queryset(queryset)
                     break  # Use the first document class's optimization
                 except Exception as e:
-                    logger.warning(
-                        f"Error applying queryset optimization for {doc_class.__name__}: {e}"
-                    )
+                    logger.warning(f"Error applying queryset optimization for {doc_class.__name__}: {e}")
                     continue
 
         return queryset
@@ -127,16 +125,12 @@ def process_updates_group_with_registry(updates_list, model_name, action):
                         # Need instances for built-in update_related() cascade processing
                         instances = list(queryset)
                         doc_class().update(instances, action=action)
-                        logger.info(
-                            f"OpenSearch {action}: {len(instances)} {model_name} documents"
-                        )
+                        logger.info(f"OpenSearch {action}: {len(instances)} {model_name} documents")
                         return instances
                     else:
                         # No cascades: use queryset directly for maximum efficiency
                         doc_class().update(queryset, action=action)
-                        logger.info(
-                            f"OpenSearch {action}: {model_name} documents (queryset)"
-                        )
+                        logger.info(f"OpenSearch {action}: {model_name} documents (queryset)")
                         return []
 
         return []
@@ -166,14 +160,10 @@ def process_cascade_updates_with_registry(all_instances, already_processed):
             # Use built-in registry.update_related() for cascade processing
             # This automatically finds all related documents and updates them
             registry.update_related(instance, action="update")
-            logger.debug(
-                f"OpenSearch cascade: processed {instance.__class__.__name__}({instance.id})"
-            )
+            logger.debug(f"OpenSearch cascade: processed {instance.__class__.__name__}({instance.id})")
         except Exception as e:
             log_exception(e)
-            logger.error(
-                f"Error processing cascade updates for {instance.__class__.__name__}({instance.id}): {e}"
-            )
+            logger.error(f"Error processing cascade updates for {instance.__class__.__name__}({instance.id}): {e}")
 
 
 def _track_processed_instances(instances, already_processed):
@@ -214,9 +204,7 @@ def process_model_batch_with_registry(model_name, batch_updates, already_process
 
         if is_cascade_only:
             # Handle cascade-only models (no direct documents)
-            logger.debug(
-                f"Model {model_name} is cascade-only, processing cascades directly"
-            )
+            logger.debug(f"Model {model_name} is cascade-only, processing cascades directly")
 
             obj_ids = [update["obj_id"] for update in batch_updates]
             queryset = fetch_optimized_queryset_by_model_and_ids(model_name, obj_ids)
@@ -231,9 +219,7 @@ def process_model_batch_with_registry(model_name, batch_updates, already_process
             process_cascade_updates_with_registry(instances, already_processed)
             _track_processed_instances(instances, already_processed)
 
-            logger.debug(
-                f"Processed {len(instances)} cascade-only {model_name} instances"
-            )
+            logger.debug(f"Processed {len(instances)} cascade-only {model_name} instances")
             return instances
 
         else:
@@ -264,27 +250,17 @@ def process_model_batch_with_registry(model_name, batch_updates, already_process
                     )
                     if semantic_instances:
                         processed_instances.extend(semantic_instances)
-                        processed_ids.update(
-                            instance.id for instance in semantic_instances
-                        )
-                        _track_processed_instances(
-                            semantic_instances, already_processed
-                        )
-                        logger.debug(
-                            f"Processed {len(semantic_instances)} semantic {model_name} updates"
-                        )
+                        processed_ids.update(instance.id for instance in semantic_instances)
+                        _track_processed_instances(semantic_instances, already_processed)
+                        logger.debug(f"Processed {len(semantic_instances)} semantic {model_name} updates")
                 except Exception as e:
-                    logger.error(
-                        f"Error processing semantic updates for {model_name}: {e}"
-                    )
+                    logger.error(f"Error processing semantic updates for {model_name}: {e}")
 
             # Process non-semantic updates (excluding already processed)
             if non_semantic_updates:
                 # Filter out already processed instances in this batch
                 non_semantic_filtered = [
-                    update
-                    for update in non_semantic_updates
-                    if update["obj_id"] not in processed_ids
+                    update for update in non_semantic_updates if update["obj_id"] not in processed_ids
                 ]
 
                 if non_semantic_filtered:
@@ -294,30 +270,18 @@ def process_model_batch_with_registry(model_name, batch_updates, already_process
                         )
                         if non_semantic_instances:
                             processed_instances.extend(non_semantic_instances)
-                            _track_processed_instances(
-                                non_semantic_instances, already_processed
-                            )
-                            logger.debug(
-                                f"Processed {len(non_semantic_instances)} non-semantic {model_name} updates"
-                            )
+                            _track_processed_instances(non_semantic_instances, already_processed)
+                            logger.debug(f"Processed {len(non_semantic_instances)} non-semantic {model_name} updates")
                     except Exception as e:
-                        logger.error(
-                            f"Error processing non-semantic updates for {model_name}: {e}"
-                        )
+                        logger.error(f"Error processing non-semantic updates for {model_name}: {e}")
 
             # Process cascade updates for all instances
             if processed_instances:
                 try:
-                    process_cascade_updates_with_registry(
-                        processed_instances, already_processed
-                    )
-                    logger.debug(
-                        f"Processed cascades for {len(processed_instances)} {model_name} instances"
-                    )
+                    process_cascade_updates_with_registry(processed_instances, already_processed)
+                    logger.debug(f"Processed cascades for {len(processed_instances)} {model_name} instances")
                 except Exception as e:
-                    logger.error(
-                        f"Error processing cascade updates for {model_name}: {e}"
-                    )
+                    logger.error(f"Error processing cascade updates for {model_name}: {e}")
 
             return processed_instances
 

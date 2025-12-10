@@ -33,23 +33,15 @@ class CustomerSerializer(BaseSerializer):
             if self.instance:
                 # Update case - exclude current instance from check
                 if (
-                    Customer.objects.filter(
-                        workspace_id=workspace_id, name=value, deleted_at__isnull=True
-                    )
+                    Customer.objects.filter(workspace_id=workspace_id, name=value, deleted_at__isnull=True)
                     .exclude(id=self.instance.id)
                     .exists()
                 ):
-                    raise serializers.ValidationError(
-                        "Customer with this name already exists in workspace"
-                    )
+                    raise serializers.ValidationError("Customer with this name already exists in workspace")
             else:
                 # Create case - check if name exists
-                if Customer.objects.filter(
-                    workspace_id=workspace_id, name=value, deleted_at__isnull=True
-                ).exists():
-                    raise serializers.ValidationError(
-                        "Customer with this name already exists in workspace"
-                    )
+                if Customer.objects.filter(workspace_id=workspace_id, name=value, deleted_at__isnull=True).exists():
+                    raise serializers.ValidationError("Customer with this name already exists in workspace")
 
         return value
 

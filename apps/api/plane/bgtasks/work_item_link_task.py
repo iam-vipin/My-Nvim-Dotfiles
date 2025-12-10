@@ -14,11 +14,10 @@ from typing import Optional
 from plane.db.models import IssueLink, ModuleLink
 from plane.utils.exception_logger import log_exception
 from plane.ee.models import InitiativeLink, ProjectLink
-from typing import Literal, Type, Union
+from typing import Literal
 
 
 # Django imports
-from django.apps import apps
 
 logger = logging.getLogger("plane.worker")
 

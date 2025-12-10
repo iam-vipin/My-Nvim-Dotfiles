@@ -23,9 +23,7 @@ class Command(BaseCommand):
             creator = input("Your email: ")
 
             if creator == "" or not User.objects.filter(email=creator).exists():
-                raise CommandError(
-                    "User email is required and should be existing in Database"
-                )
+                raise CommandError("User email is required and should be existing in Database")
 
             user = User.objects.get(email=creator)
 
@@ -37,9 +35,7 @@ class Command(BaseCommand):
             module_count = int(input("Number of modules to be created: "))
 
             # Create workspace
-            workspace = Workspace.objects.create(
-                slug=workspace_slug, name=workspace_name, owner=user
-            )
+            workspace = Workspace.objects.create(slug=workspace_slug, name=workspace_name, owner=user)
             # Create workspace member
             WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
 

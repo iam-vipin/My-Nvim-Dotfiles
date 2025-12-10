@@ -145,7 +145,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     "slug": deploy_board.workspace.slug,
                     "intake_id": intake.id,
                     "user_id": api_token.user_id,
-                    "allow_triage_state": True
+                    "allow_triage_state": True,
                 },
             )
 

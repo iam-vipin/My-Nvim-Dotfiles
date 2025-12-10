@@ -35,7 +35,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
   const currentProjectDetails = getProjectById(projectId);
   const projectFeatures = getProjectFeatures(projectId);
 
-  const handleSubmit = async (featureKey: string, featureProperty: string) => {
+  const handleSubmit = (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
 
     // making the request to update the project feature

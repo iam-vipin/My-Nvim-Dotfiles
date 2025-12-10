@@ -53,8 +53,14 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     };
 
     let baseUrl: string | undefined;
+    let clientId: string | undefined;
+    let clientSecret: string | undefined;
+
     if (data.isEnterprise) {
-      baseUrl = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig?.baseUrl;
+      const appConfig = (workspaceConnection as TGitlabWorkspaceConnection).connection_data?.appConfig;
+      baseUrl = appConfig?.baseUrl;
+      clientId = appConfig?.clientId;
+      clientSecret = appConfig?.clientSecret;
     }
 
     const gitlabService = new GitlabIntegrationService(
@@ -62,7 +68,9 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
       credentials.source_refresh_token!,
       refreshTokenCallback,
       baseUrl,
-      data.project.id.toString()
+      data.project.id.toString(),
+      clientId,
+      clientSecret
     );
 
     const pullRequestBehaviour = new PullRequestBehaviour(

@@ -11,9 +11,18 @@ export class GitlabIntegrationService implements IPullRequestService {
     refresh_token: string,
     refresh_callback: (access_token: string, refresh_token: string) => Promise<void>,
     baseUrl: string = "https://gitlab.com",
-    projectId: string
+    projectId: string,
+    clientId?: string,
+    clientSecret?: string
   ) {
-    this.apiService = new GitLabAPIService(access_token, refresh_token, refresh_callback, baseUrl);
+    this.apiService = new GitLabAPIService(
+      access_token,
+      refresh_token,
+      refresh_callback,
+      baseUrl,
+      clientId,
+      clientSecret
+    );
     this.projectId = projectId;
   }
 

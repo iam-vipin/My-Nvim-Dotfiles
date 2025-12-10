@@ -7,6 +7,11 @@ export class GitLabService {
   baseUrl: string;
   private clientId: string;
   private clientSecret: string;
+  private refreshToken: string;
+  private refreshCallback: (access_token: string, refresh_token: string) => Promise<void>;
+  private isRefreshing: boolean = false;
+  private refreshPromise: Promise<string> | null = null;
+
   constructor(
     access_token: string,
     refresh_token: string,
@@ -18,6 +23,9 @@ export class GitLabService {
     this.baseUrl = baseUrl;
     this.clientId = clientId || process.env.GITLAB_CLIENT_ID || "";
     this.clientSecret = clientSecret || process.env.GITLAB_CLIENT_SECRET || "";
+    this.refreshToken = refresh_token;
+    this.refreshCallback = refresh_callback;
+
     this.client = axios.create({
       baseURL: baseUrl + "/api/v4",
       headers: {
@@ -28,23 +36,66 @@ export class GitLabService {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
-          const response = await axios.post(`${this.baseUrl}/oauth/token`, {
-            client_id: this.clientId,
-            client_secret: this.clientSecret,
-            refresh_token: refresh_token,
-            grant_type: "refresh_token",
-          });
+        const originalRequest = error.config;
 
-          await refresh_callback(response.data.access_token, response.data.refresh_token);
+        // Only attempt refresh for 401 errors that haven't been retried yet
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          console.log("[GitLab] 401 received, attempting token refresh...");
 
-          const new_access_token = response.data.access_token;
-          this.client.defaults.headers.Authorization = `Bearer ${new_access_token}`;
-          return this.client.request(error.config);
+          try {
+            // If already refreshing, wait for the existing refresh to complete
+            if (this.isRefreshing && this.refreshPromise) {
+              console.log("[GitLab] Refresh already in progress, waiting...");
+              const newAccessToken = await this.refreshPromise;
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+              return this.client.request(originalRequest);
+            }
+
+            // Start the refresh process
+            this.isRefreshing = true;
+            this.refreshPromise = this.performTokenRefresh();
+
+            const newAccessToken = await this.refreshPromise;
+            console.log("[GitLab] Token refresh successful, retrying original request...");
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return this.client.request(originalRequest);
+          } catch (refreshError: any) {
+            // Token refresh failed - reject with the original 401 error for clarity
+            console.error("[GitLab] Token refresh failed:", refreshError?.message || refreshError);
+            return Promise.reject(error);
+          } finally {
+            this.isRefreshing = false;
+            this.refreshPromise = null;
+          }
         }
+
         return Promise.reject(error);
       }
     );
+  }
+
+  private async performTokenRefresh(): Promise<string> {
+    const response = await axios.post(`${this.baseUrl}/oauth/token`, {
+      client_id: this.clientId,
+      client_secret: this.clientSecret,
+      refresh_token: this.refreshToken,
+      grant_type: "refresh_token",
+    });
+
+    const newAccessToken = response.data.access_token;
+    const newRefreshToken = response.data.refresh_token;
+
+    // Update the stored refresh token for future refreshes
+    this.refreshToken = newRefreshToken;
+
+    // Update the default Authorization header for future requests
+    this.client.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+
+    // Persist the new tokens via callback
+    await this.refreshCallback(newAccessToken, newRefreshToken);
+
+    return newAccessToken;
   }
 
   async createMergeRequestComment(projectId: number, mergeRequestIid: number, body: string) {

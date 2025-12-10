@@ -5,8 +5,7 @@ import { Check } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
 import { MilestoneIcon } from "@plane/propel/icons";
-import { cn } from "@plane/utils";
-import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
+import { cn, getMilestoneIconProps } from "@plane/utils";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 type Props = {
@@ -47,7 +46,7 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
         query: "None",
         content: (
           <div className="flex items-center gap-1">
-            <MilestoneIcon className="h-4 w-4 flex-shrink-0" variant="default" />
+            <MilestoneIcon className="h-4 w-4 flex-shrink-0 text-custom-text-100" />
             <span className="flex-grow truncate text-left">No milestone</span>
           </div>
         ),
@@ -63,7 +62,7 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
             <div className="flex items-center gap-1">
               <MilestoneIcon
                 className="h-4 w-4 flex-shrink-0"
-                variant={getMilestoneVariant(milestone!.progress_percentage)}
+                {...getMilestoneIconProps(milestone!.progress_percentage)}
               />
               <span className="flex-grow truncate text-left">{milestone!.title}</span>
             </div>
@@ -97,7 +96,7 @@ export const MilestonesDropdown = observer(function MilestonesDropdown(props: Pr
               {value && (
                 <MilestoneIcon
                   className="h-4 w-4 flex-shrink-0"
-                  variant={getMilestoneVariant(selectedMilestone.progress_percentage)}
+                  {...getMilestoneIconProps(selectedMilestone.progress_percentage)}
                 />
               )}
               <span className="flex-grow truncate">{selectedMilestone.query}</span>

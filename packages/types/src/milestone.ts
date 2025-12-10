@@ -1,5 +1,13 @@
 import type { TDescription } from "./common";
 
+export type TMilestoneIconVariant =
+  | "default"
+  | "done"
+  | "in_progress"
+  | "not_started_yet"
+  | "started_no_progress"
+  | "custom";
+
 export type TMilestoneProgress = {
   total_items: number;
   completed_items: number;

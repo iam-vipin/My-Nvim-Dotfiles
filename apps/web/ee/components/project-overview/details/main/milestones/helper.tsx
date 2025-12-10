@@ -94,14 +94,6 @@ export const useMilestonesWorkItemOperations = (
   return issueOperations;
 };
 
-// Utils
-export const getMilestoneVariant = (progress: number) => {
-  if (progress === 100) return "done";
-  if (progress === 0) return "not_started_yet";
-  if (progress > 0 && progress < 100) return "in_progress";
-  return "started_no_progress";
-};
-
 // Components
 type MilestoneQuickActionButtonProps = {
   milestoneId: string;

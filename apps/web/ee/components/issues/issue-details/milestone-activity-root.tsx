@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { MilestoneIcon } from "@plane/propel/icons";
 import { IssueActivityBlockComponent } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -20,7 +19,7 @@ export function MilestoneActivity(props: TMilestoneActivityProps) {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<MilestoneIcon variant="custom" className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
+      icon={<MilestoneIcon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
       activityId={activityId}
       ends={ends}
     >

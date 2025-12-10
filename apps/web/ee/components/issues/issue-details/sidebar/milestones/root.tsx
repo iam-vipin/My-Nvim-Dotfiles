@@ -48,7 +48,7 @@ export const WorkItemSideBarMilestoneItem = observer(function WorkItemSideBarMil
         <div
           className={cn("flex flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300", isPeekView ? "w-1/4" : "w-2/5")}
         >
-          <MilestoneIcon variant="custom" className="h-4 w-4 flex-shrink-0" />
+          <MilestoneIcon className="h-4 w-4 flex-shrink-0" />
           <span>Milestone</span>
         </div>
         <div className="h-full min-h-8 w-3/5 flex flex-wrap gap-2 items-center px-1">

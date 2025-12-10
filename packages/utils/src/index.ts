@@ -18,6 +18,7 @@ export * from "./initiatives";
 export * from "./intake";
 export * from "./loader";
 export * from "./math";
+export * from "./milestone";
 export * from "./mobile";
 export * from "./module";
 export * from "./notification";

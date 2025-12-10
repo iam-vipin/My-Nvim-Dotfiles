@@ -15,6 +15,7 @@ import type {
 import { EWorkItemTypeEntity } from "@plane/types";
 import {
   getMilestoneFilterConfig,
+  getMilestoneIconProps,
   getTeamspaceProjectFilterConfig,
   getTextPropertyFilterConfig,
   getWorkItemTypeFilterConfig,
@@ -31,7 +32,6 @@ import { useWorkItemFiltersConfig as useCoreWorkItemFiltersConfig } from "@/ce/h
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { IssueTypeLogo } from "@/plane-web/components/issue-types/common/issue-type-logo";
-import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
 import { useCustomPropertyFiltersConfig } from "@/plane-web/hooks/rich-filters/use-custom-property-filters-config";
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types";
@@ -222,9 +222,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getMilestoneFilterConfig<TWorkItemFilterProperty>("milestone_id")({
         isEnabled: isMilestonesEnabled,
-        filterIcon: (props) => <MilestoneIcon {...props} variant="custom" />,
+        filterIcon: MilestoneIcon,
         getOptionIcon: (milestone) => (
-          <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-3.5" />
+          <MilestoneIcon {...getMilestoneIconProps(milestone.progress_percentage)} className="size-3.5" />
         ),
         milestones: milestones ?? [],
         ...operatorConfigs,

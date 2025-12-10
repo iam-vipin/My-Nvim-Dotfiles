@@ -104,7 +104,7 @@ export const PROJECT_OTHER_FEATURES_LIST: TOtherFeatureList = {
     property: "is_milestone_enabled",
     title: "Milestones",
     description: "Milestones provide a layer to align work items toward shared completion dates.",
-    icon: <MilestoneIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" variant="custom" />,
+    icon: <MilestoneIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: true,
     isEnabled: true,
   },

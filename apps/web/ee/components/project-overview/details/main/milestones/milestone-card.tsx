@@ -8,11 +8,11 @@ import { Pill, EPillSize } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Button, CircularProgressIndicator, cn, Collapsible, CollapsibleButton } from "@plane/ui";
-import { renderFormattedPayloadDate } from "@plane/utils";
+import { getMilestoneIconProps, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
-import { getMilestoneVariant, MilestoneQuickActionButton } from "./helper";
+import { MilestoneQuickActionButton } from "./helper";
 import { MilestoneWorkItemsList } from "./milestone-work-items";
 import { MilestoneWorkItemActionButton } from "./quick-action-button";
 
@@ -62,7 +62,7 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center overflow-hidden">
           <div className="size-4">
-            <MilestoneIcon variant={getMilestoneVariant(milestone.progress_percentage)} className="size-4" />
+            <MilestoneIcon {...getMilestoneIconProps(milestone.progress_percentage)} className="size-4" />
           </div>
           <span className="text-base text-custom-text-100 font-medium truncate flex-shrink">{milestone.title}</span>
         </div>

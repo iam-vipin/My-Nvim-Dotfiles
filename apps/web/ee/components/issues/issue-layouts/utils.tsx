@@ -12,6 +12,7 @@ import type {
   TIssueGroupByOptions,
   TSpreadsheetColumn,
 } from "@plane/types";
+import { getMilestoneIconProps } from "@plane/utils";
 // components
 import type { TGetScopeMemberIdsResult } from "@/ce/components/issues/issue-layouts/utils";
 import {
@@ -25,7 +26,6 @@ import {
   SpreadsheetCustomerColumn,
   SpreadSheetCustomerRequestColumn,
 } from "@/plane-web/components/issues/issue-layouts/spreadsheet";
-import { getMilestoneVariant } from "@/plane-web/components/project-overview/details/main/milestones/helper";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 
 export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns): TGetScopeMemberIdsResult => {
@@ -93,7 +93,7 @@ export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
     {
       id: "None",
       name: "None",
-      icon: <MilestoneIcon className="w-4 h-4" variant={"default"} />,
+      icon: <MilestoneIcon className="w-4 h-4 text-custom-text-100" />,
       payload: {},
     },
   ];
@@ -104,7 +104,7 @@ export const getMilestoneColumns = (): IGroupByColumn[] | undefined => {
     milestoneColumns.push({
       id: milestone.id,
       name: milestone.title,
-      icon: <MilestoneIcon className="w-4 h-4" variant={getMilestoneVariant(milestone.progress_percentage)} />,
+      icon: <MilestoneIcon className="w-4 h-4" {...getMilestoneIconProps(milestone.progress_percentage)} />,
       payload: { milestone_id: milestone.id },
     });
   });

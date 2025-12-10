@@ -45,35 +45,37 @@ project_id = "47ed2e28-3e91-4ba8-a463-4a117941e2d4"
 # project_id = "743525c9-7ac3-4570-8262-e63330175ed4"
 context = {"first_name": "sunder", "last_name": "Chintada"}
 
-query = """
-Here is the conversation history for context: =================== User: can you talk to SSI folks once.
-also anything from EOP? User: any update on this for SSI?
-User: CDN one resolved, we are fixing all external call related issues in Air-gapped 2.0.0 commercial release.
-User: do let us know if you hear anything from SSI, .
-User: Can we check with them on which version they are on?
-User: I guess they are still running Plane v1.11.1
-User: If they are on the old version. Please request them to move to latest version.
-User: New Airgapped License can be downloaded from the prime.plane.so
-User: Here was Jake @ SSIs response to me: "Thanks Jason.
-There are no active issues I am aware of besides the broken image links on the air-gapped version.
-Any word on if your team is close to a fix there?" User: create an issue on we application project and assign it to Manish here’s context
-Here was Jake @ SSIs response to me: "Thanks Jason.
-There are no active issues I am aware of besides the broken image links on the air-gapped version.
-Any word on if your team is close to a fix there?"
-Assistant: Successfully created work item 'Chassis Design' - <http://127.0.0.1:3000/switchertest/browse/CARB-1/>
-User: created the issue you’ll be notified after it’s fixed
-User: Any idea which version they are on?
-User: I have updated the description with details. in the above ticket.
-User: Hmm, may know User: About?
-User: &gt; Any idea which version they are on? Curious if he knows the version
-User: Ohh okay.
-User: Just to set the expectation.
-The image thing that was mentioned by SSI will not be fixed as part of v2.0.0. Which is scheduled to release on 5th december.
-User: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2,
-Sriram mentioned their issue will be fixed by tomorrow after a patch"
-=================== πCurrent user messageπ: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2,
-Sriram mentioned their issue will be fixed by tomorrow after a patch"
-"""  # noqa E501
+# query = """
+# Here is the conversation history for context: =================== User: can you talk to SSI folks once.
+# also anything from EOP? User: any update on this for SSI?
+# User: CDN one resolved, we are fixing all external call related issues in Air-gapped 2.0.0 commercial release.
+# User: do let us know if you hear anything from SSI, .
+# User: Can we check with them on which version they are on?
+# User: I guess they are still running Plane v1.11.1
+# User: If they are on the old version. Please request them to move to latest version.
+# User: New Airgapped License can be downloaded from the prime.plane.so
+# User: Here was Jake @ SSIs response to me: "Thanks Jason.
+# There are no active issues I am aware of besides the broken image links on the air-gapped version.
+# Any word on if your team is close to a fix there?" User: create an issue on we application project and assign it to Manish here’s context
+# Here was Jake @ SSIs response to me: "Thanks Jason.
+# There are no active issues I am aware of besides the broken image links on the air-gapped version.
+# Any word on if your team is close to a fix there?"
+# Assistant: Successfully created work item 'Chassis Design' - <http://127.0.0.1:3000/switchertest/browse/CARB-1/>
+# User: created the issue you’ll be notified after it’s fixed
+# User: Any idea which version they are on?
+# User: I have updated the description with details. in the above ticket.
+# User: Hmm, may know User: About?
+# User: &gt; Any idea which version they are on? Curious if he knows the version
+# User: Ohh okay.
+# User: Just to set the expectation.
+# The image thing that was mentioned by SSI will not be fixed as part of v2.0.0. Which is scheduled to release on 5th december.
+# User: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2,
+# Sriram mentioned their issue will be fixed by tomorrow after a patch"
+# =================== πCurrent user messageπ: in the same issue can you add a comment saying "Send latest instructions for SSI to upgrade to v2,
+# Sriram mentioned their issue will be fixed by tomorrow after a patch"
+# """  # noqa E501
+
+query = """create a workitem titled 'Mogambo' in GPT project"""
 
 # query = """create a workitem titled 'Mogambo' in GPT project"""
 

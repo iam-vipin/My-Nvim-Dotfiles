@@ -52,9 +52,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, paylo
 	if record.Error != nil {
 		fmt.Println("Error fetching license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
@@ -64,27 +62,21 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, paylo
 	if record.Error != nil {
 		fmt.Println("Error fetching user license", record.Error)
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
 
 	if !userLicense.IsActive {
 		ctx.JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
 
 	if license.ProductType == "FREE" {
 		ctx.JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
@@ -96,9 +88,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, paylo
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
@@ -112,9 +102,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, paylo
 	}, &decryptedFlags)
 	if err != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
@@ -122,17 +110,13 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, paylo
 	flagValue, ok := decryptedFlags[payload.FeatureKey]
 	if !ok {
 		ctx.JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
 
 	ctx.JSON(fiber.Map{
-		"values": map[string]interface{}{
-			payload.FeatureKey: flagValue,
-		},
+		"value": flagValue,
 	})
 	return nil
 }
@@ -212,9 +196,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, 
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": map[string]bool{
-				payload.FeatureKey: false,
-			},
+			"value": false,
 		})
 		return nil
 	}
@@ -225,7 +207,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, 
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
 	if record.Error != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": false,
+			"value": false,
 		})
 		return nil
 	}
@@ -239,7 +221,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, 
 	}, &decryptedFlags)
 	if err != nil {
 		ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"values": false,
+			"value": false,
 		})
 		return nil
 	}
@@ -247,13 +229,13 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, 
 	flagValue, ok := decryptedFlags[payload.FeatureKey]
 	if !ok {
 		ctx.JSON(fiber.Map{
-			"values": false,
+			"value": false,
 		})
 		return nil
 	}
 
 	ctx.JSON(fiber.Map{
-		"values": flagValue,
+		"value": flagValue,
 	})
 	return nil
 }

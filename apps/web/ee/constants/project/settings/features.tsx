@@ -1,20 +1,16 @@
-import { ListTodo, Mail, Users, Zap } from "lucide-react";
+import { ListTodo, Mail, Timer, Users, Zap } from "lucide-react";
 // plane imports
 import { MilestoneIcon } from "@plane/propel/icons";
-import type {
-  TProperties,
-  TProjectOtherFeatureKeys as CE_TProjectOtherFeatureKeys,
-} from "@/ce/constants/project/settings/features";
+import type { TProperties } from "@/ce/constants/project/settings/features";
 import {
   PROJECT_BASE_FEATURES_LIST as CE_PROJECT_BASE_FEATURES_LIST,
-  PROJECT_OTHER_FEATURES_LIST as CE_PROJECT_OTHER_FEATURES_LIST,
   PROJECT_FEATURES_LIST as CE_PROJECT_FEATURES_LIST,
 } from "@/ce/constants/project/settings/features";
 
 export type TIntakeFeatureKeys = "in_app" | "email" | "form";
 export type TIntakeResponsibilityKeys = "notify_assignee";
 
-type TProjectOtherFeatureKeys = CE_TProjectOtherFeatureKeys | "is_milestone_enabled";
+type TProjectOtherFeatureKeys = "is_time_tracking_enabled" | "is_milestone_enabled";
 
 export type TIntakeFeatureList = {
   [key in TIntakeFeatureKeys]: TProperties & {
@@ -93,9 +89,12 @@ type TOtherFeatureList = {
 };
 
 export const PROJECT_OTHER_FEATURES_LIST: TOtherFeatureList = {
-  ...CE_PROJECT_OTHER_FEATURES_LIST,
   is_time_tracking_enabled: {
-    ...CE_PROJECT_OTHER_FEATURES_LIST.is_time_tracking_enabled,
+    key: "time_tracking",
+    property: "is_time_tracking_enabled",
+    title: "Time Tracking",
+    description: "Log time, see timesheets, and download full CSVs for your entire workspace.",
+    icon: <Timer className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isEnabled: true,
     isPro: true,
   },
@@ -117,7 +116,9 @@ export const PROJECT_FEATURES_LIST = {
     featureList: PROJECT_BASE_FEATURES_LIST,
   },
   project_others: {
-    ...CE_PROJECT_FEATURES_LIST.project_others,
+    key: "work_management",
+    title: "Work management",
+    description: "Available only on some plans as indicated by the label next to the feature below.",
     featureList: PROJECT_OTHER_FEATURES_LIST,
   },
 };

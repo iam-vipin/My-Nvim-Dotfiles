@@ -541,95 +541,6 @@ async def get_recent_user_threads(
     return JSONResponse(content={"results": results})
 
 
-@router.get("/get-chat-history/")  # deprecated. To be removed
-async def get_chat_history(
-    chat_id: UUID4,
-    workspace_id: Optional[UUID4] = None,
-    workspace_slug: Optional[str] = None,
-    session: str = Depends(cookie_schema),
-    db: AsyncSession = Depends(get_async_session),
-):
-    try:
-        auth = await is_valid_session(session)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating session: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid Session"})
-    try:
-        log.info(f"chat history retrieve request received for chat_id: {chat_id}")
-        results: dict[str, Any] = await retrieve_chat_history(chat_id=chat_id, db=db, user_id=user_id)
-
-        error_type = results.get("error")
-        if error_type == "not_found":
-            return JSONResponse(
-                status_code=404,
-                content={
-                    "detail": results["detail"],
-                    "results": {
-                        "title": results.get("title", ""),
-                        "dialogue": results.get("dialogue", []),
-                        "llm": results.get("llm", ""),
-                        "feedback": results.get("feedback", ""),
-                        "reasoning": results.get("reasoning", ""),
-                        "is_focus_enabled": results.get("is_focus_enabled", False),
-                        "focus_entity_type": results.get("focus_entity_type", None),
-                        "focus_entity_id": results.get("focus_entity_id", None),
-                        "focus_project_id": results.get("focus_project_id", None),
-                        "focus_workspace_id": results.get("focus_workspace_id", None),
-                        "mode": results.get("mode", "ask"),
-                    },
-                },
-            )
-        elif error_type == "unauthorized":
-            return JSONResponse(
-                status_code=403,
-                content={
-                    "detail": results["detail"],
-                    "results": {
-                        "title": results.get("title", ""),
-                        "dialogue": results.get("dialogue", []),
-                        "llm": results.get("llm", ""),
-                        "feedback": results.get("feedback", ""),
-                        "reasoning": results.get("reasoning", ""),
-                        "is_focus_enabled": results.get("is_focus_enabled", False),
-                        "focus_entity_type": results.get("focus_entity_type", None),
-                        "focus_entity_id": results.get("focus_entity_id", None),
-                        "focus_project_id": results.get("focus_project_id", None),
-                        "focus_workspace_id": results.get("focus_workspace_id", None),
-                        "mode": results.get("mode", "ask"),
-                    },
-                },
-            )
-
-        return JSONResponse(
-            content={
-                "results": {
-                    "title": results["title"],
-                    "dialogue": results["dialogue"],
-                    "llm": results["llm"],
-                    "feedback": results["feedback"],
-                    "reasoning": results.get("reasoning", ""),
-                    "is_focus_enabled": results.get("is_focus_enabled", False),
-                    "focus_entity_type": results.get("focus_entity_type", None),
-                    "focus_entity_id": results.get("focus_entity_id", None),
-                    "focus_project_id": results.get("focus_project_id", None),
-                    "focus_workspace_id": results.get("focus_workspace_id", None),
-                    "mode": results.get("mode", "ask"),
-                }
-            }
-        )
-
-    except ValueError as ve:
-        log.error(f"An error occurred during retrieval: {ve!s}")
-        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-    except Exception as e:
-        log.error(f"An error occurred during retrieval: {e!s}")
-        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
-
 @router.get("/get-chat-history-object/")
 async def get_chat_history_object(
     chat_id: UUID4,
@@ -655,8 +566,6 @@ async def get_chat_history_object(
             return JSONResponse(status_code=404, content={"detail": results["detail"]})
         elif error_type == "unauthorized":
             return JSONResponse(status_code=403, content={"detail": results["detail"]})
-
-        results["dialogue"]
 
         return JSONResponse(
             content={

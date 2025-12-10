@@ -513,7 +513,9 @@ async def plan_action_and_prepare_outputs(
         tool_args["project_id"] = project_id
         _tool_args["project_id"] = project_id
 
-    if workspace_slug and "workspace_slug" not in tool_args:
+    if workspace_slug:
+        # Always inject workspace_slug if we have it
+        # This fixes the issue where LLM passes workspace_id as workspace_slug
         tool_args["workspace_slug"] = workspace_slug
         _tool_args["workspace_slug"] = workspace_slug
 

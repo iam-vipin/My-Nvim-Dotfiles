@@ -4,17 +4,23 @@ from plane.api.views import (
     ProjectMemberListCreateAPIEndpoint,
     ProjectMemberDetailAPIEndpoint,
     WorkspaceMemberAPIEndpoint,
+    ProjectMemberSiloEndpoint,
 )
 
 urlpatterns = [
     # Project members
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
+        ProjectMemberSiloEndpoint.as_view(http_method_names=["get", "post"]),
+        name="project-members",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
         ProjectMemberListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="project-members",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/<uuid:pk>/",
         ProjectMemberDetailAPIEndpoint.as_view(http_method_names=["patch", "delete", "get"]),
         name="project-member",
     ),

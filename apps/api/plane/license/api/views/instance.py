@@ -48,6 +48,10 @@ class InstanceEndpoint(BaseAPIView):
             DISABLE_WORKSPACE_CREATION,
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
+            IS_OIDC_ENABLED,
+            OIDC_PROVIDER_NAME,
+            IS_SAML_ENABLED,
+            SAML_PROVIDER_NAME,
             GITHUB_APP_NAME,
             IS_GITLAB_ENABLED,
             IS_GITEA_ENABLED,
@@ -61,6 +65,8 @@ class InstanceEndpoint(BaseAPIView):
             LLM_API_KEY,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
+            SILO_BASE_URL,
+            OPENSEARCH_ENABLED,
         ) = get_configuration_value(
             [
                 {
@@ -78,6 +84,22 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "IS_GITHUB_ENABLED",
                     "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
+                },
+                {
+                    "key": "IS_OIDC_ENABLED",
+                    "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                },
+                {
+                    "key": "OIDC_PROVIDER_NAME",
+                    "default": os.environ.get("OIDC_PROVIDER_NAME", ""),
+                },
+                {
+                    "key": "IS_SAML_ENABLED",
+                    "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                },
+                {
+                    "key": "SAML_PROVIDER_NAME",
+                    "default": os.environ.get("SAML_PROVIDER_NAME", ""),
                 },
                 {
                     "key": "GITHUB_APP_NAME",
@@ -129,6 +151,14 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "INTERCOM_APP_ID",
                     "default": os.environ.get("INTERCOM_APP_ID", ""),
                 },
+                {
+                    "key": "SILO_BASE_URL",
+                    "default": os.environ.get("SILO_BASE_URL", ""),
+                },
+                {
+                    "key": "OPENSEARCH_ENABLED",
+                    "default": os.environ.get("OPENSEARCH_ENABLED", "0"),
+                },
             ]
         )
 
@@ -142,6 +172,10 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
+        data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"
+        data["oidc_provider_name"] = OIDC_PROVIDER_NAME
+        data["is_saml_enabled"] = IS_SAML_ENABLED == "1"
+        data["saml_provider_name"] = SAML_PROVIDER_NAME
 
         # Github app name
         data["github_app_name"] = str(GITHUB_APP_NAME)
@@ -173,9 +207,23 @@ class InstanceEndpoint(BaseAPIView):
         data["admin_base_url"] = settings.ADMIN_BASE_URL
         data["space_base_url"] = settings.SPACE_BASE_URL
         data["app_base_url"] = settings.APP_BASE_URL
+        #
+        data["payment_server_base_url"] = (
+            settings.PAYMENT_SERVER_BASE_URL if settings.IS_MULTI_TENANT else ""
+        )
+        data["prime_server_base_url"] = settings.PRIME_SERVER_BASE_URL
+        data["feature_flag_server_base_url"] = settings.FEATURE_FLAG_SERVER_BASE_URL
+        data["silo_base_url"] = SILO_BASE_URL
+        data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
         data["is_self_managed"] = settings.IS_SELF_MANAGED
+
+        data["is_opensearch_enabled"] = OPENSEARCH_ENABLED == "1"
+
+        # Airgapped mode
+        data["is_airgapped"] = settings.IS_AIRGAPPED
+
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

@@ -1,0 +1,15 @@
+from pi.app.schemas.attachment import AttachmentCompleteRequest
+from pi.app.schemas.attachment import AttachmentDeleteRequest
+from pi.app.schemas.attachment import AttachmentDetailResponse
+from pi.app.schemas.attachment import AttachmentResponse
+from pi.app.schemas.attachment import AttachmentUploadRequest
+from pi.app.schemas.attachment import AttachmentUploadResponse
+from pi.app.schemas.attachment import S3UploadData
+
+AttachmentCompleteRequestMobile = AttachmentCompleteRequest
+AttachmentDeleteRequestMobile = AttachmentDeleteRequest
+AttachmentDetailResponseMobile = AttachmentDetailResponse
+AttachmentResponseMobile = AttachmentResponse
+AttachmentUploadRequestMobile = AttachmentUploadRequest
+AttachmentUploadResponseMobile = AttachmentUploadResponse
+S3UploadDataMobile = S3UploadData

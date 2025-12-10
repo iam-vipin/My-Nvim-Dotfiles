@@ -3,7 +3,7 @@ import type { EditorRefApi, CollaborationState } from "@plane/editor";
 // plane editor
 import { convertBinaryDataToBase64String, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane propel
-import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 // plane types
 import type { TDocumentPayload } from "@plane/types";
 // hooks

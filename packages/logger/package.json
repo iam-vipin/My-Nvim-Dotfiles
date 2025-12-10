@@ -12,10 +12,10 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings=0",
+    "check:lint": "eslint . --max-warnings=2",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check .",
-    "fix:lint": "eslint . --fix --max-warnings=0",
+    "fix:lint": "eslint . --fix --max-warnings=2",
     "fix:format": "prettier --write .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },

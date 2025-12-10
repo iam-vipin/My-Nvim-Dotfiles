@@ -33,6 +33,7 @@ export default defineConfig([
     "**/dist/**",
     "**/node_modules/**",
     "**/public/**",
+    "**/storybook-static/**",
   ]),
   eslint.configs.recommended,
   // @ts-expect-error promise plugin has no flat type definitions

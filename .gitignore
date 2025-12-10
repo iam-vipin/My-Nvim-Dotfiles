@@ -87,6 +87,7 @@ tmp/
 
 ## packages
 dist
+.flatfile
 .temp/
 deploy/selfhost/plane-app/
 
@@ -100,15 +101,25 @@ dev-editor
 *.rdb.gz
 
 storybook-static
+# Monitor
+monitor/prime.key
+monitor/prime.key.pub
+monitor.db
 
+.cursorrules
+.cursor
+claude.md
+agents.md
 CLAUDE.md
-
-build/
-.react-router/
 AGENTS.md
 
 build/
 .react-router/
-AGENTS.md
+
 temp/
+
+# Ignore any test results JSON files
+*test_results*.json
+apps/pi/tests/test_results.json
+
 scripts/

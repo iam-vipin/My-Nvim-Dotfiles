@@ -57,7 +57,7 @@ export type TBaseLayoutType = "list" | "kanban" | "gantt";
 export interface IBaseLayoutConfig {
   key: TBaseLayoutType;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  label: string;
+  i18n_title: string;
 }
 
 // Base Layout Props

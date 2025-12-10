@@ -1,19 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 // plane imports
 import type { CollaborationState, EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, updateToast } from "@plane/propel/toast";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
 import { usePageFallback } from "@/hooks/use-page-fallback";
 // plane web import
 import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
-import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
+import { NestedPagesDownloadBanner } from "@/plane-web/components/wiki/nested-pages-download-banner";
+import { useExtendedEditorProps, usePagesPaneExtensions } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageNavigationPaneRoot } from "../navigation-pane";
+import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
 import { ContentLimitBanner } from "./content-limit-banner";
@@ -43,7 +48,7 @@ type TPageRootProps = {
   customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
-export const PageRoot = observer((props: TPageRootProps) => {
+export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const {
     config,
     handlers,
@@ -60,10 +65,13 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
+  // store hooks
+  const { isNestedPagesEnabled } = usePageStore(storeType);
   // derived values
   const {
     isContentEditable,
     editor: { setEditorRef },
+    fetchEmbedsAndMentions,
   } = page;
   // page fallback
   const { isFetchingFallbackBinary } = usePageFallback({
@@ -82,7 +90,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
     },
     [page.editor.editorRef, setEditorRef]
   );
-
+  // init editor ref
   useEffect(() => {
     setTimeout(() => {
       setEditorRef(editorRef.current);
@@ -114,6 +122,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
     customRealtimeEventHandlers?.error?.(params);
   };
 
+  // Merge custom event handlers with content too large handler
   const mergedCustomEventHandlers: TCustomEventHandlers = {
     ...customRealtimeEventHandlers,
     error: errorHandler,
@@ -129,22 +138,34 @@ export const PageRoot = observer((props: TPageRootProps) => {
     extensionHandlers: editorExtensionHandlers,
     projectId,
   });
-
+  // version history
+  const searchParams = useSearchParams();
+  const version = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   const handleRestoreVersion = useCallback(
     async (descriptionHTML: string) => {
-      editorRef.current?.clearEditor();
-      editorRef.current?.setEditorValue(descriptionHTML);
+      if (version && isNestedPagesEnabled(workspaceSlug.toString())) {
+        page.setVersionToBeRestored(version, descriptionHTML);
+        page.setRestorationStatus(true);
+        updateToast("restoring-version", { type: TOAST_TYPE.LOADING_TOAST, title: "Restoring version..." });
+        if (page.id) {
+          await handlers.restoreVersion(page.id, version);
+        }
+      } else {
+        editorRef.current?.clearEditor();
+        editorRef.current?.setEditorValue(descriptionHTML);
+      }
     },
-    [editorRef]
+    [version, workspaceSlug, page, handlers, editorRef, isNestedPagesEnabled]
   );
-
-  // reset editor ref on unmount
+  // cleanup
   useEffect(
     () => () => {
       setEditorRef(null);
     },
     [setEditorRef]
   );
+  // fetch embeds and mentions
+  useSWR(page.id ? `PAGE_EMBEDS_AND_MENTIONS_${page.id}` : null, page.id ? fetchEmbedsAndMentions : null);
 
   return (
     <div className="relative size-full overflow-hidden flex transition-all duration-300 ease-in-out">
@@ -157,6 +178,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
           restoreEnabled={isContentEditable}
           storeType={storeType}
         />
+        <NestedPagesDownloadBanner page={page} storeType={storeType} workspaceSlug={workspaceSlug} />
         <PageEditorToolbarRoot
           handleOpenNavigationPane={handleOpenNavigationPane}
           isNavigationPaneOpen={isNavigationPaneOpen}

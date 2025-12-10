@@ -9,11 +9,13 @@ import { CORE_EDITOR_META } from "@/constants/meta";
 import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
+// plane editor imports
+import { SmoothCursorExtension } from "@/plane-editor/extensions/smooth-cursor";
 // types
-import type { IEditorPropsExtended, IEditorProps } from "@/types";
-import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps } from "@/types/editor";
+import type { IEditorPropsExtended } from "@/types";
+import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "@/types/editor";
 
-type Props = {
+export type TUseTitleEditorProps = {
   editable?: boolean;
   provider: HocuspocusProvider;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
@@ -25,30 +27,35 @@ type Props = {
   id: string;
   extendedEditorProps?: IEditorPropsExtended;
   getEditorMetaData?: IEditorProps["getEditorMetaData"];
+  onFocus?: () => void;
 };
 
 /**
  * A hook that creates a title editor with collaboration features
  * Uses the same Y.Doc as the main editor but a different field
  */
-export const useTitleEditor = (props: Props) => {
+export const useTitleEditor = (props: TUseTitleEditorProps) => {
   const {
     editable = true,
     id,
     initialValue = "",
+    extendedEditorProps,
     extensions,
+    onFocus,
     provider,
     updatePageProperties,
     titleRef,
-    getEditorMetaData,
   } = props;
+
+  const { isSmoothCursorEnabled } = extendedEditorProps ?? {};
 
   // Force editor recreation when Y.Doc changes (provider.document.guid)
   const docKey = provider?.document?.guid ?? id;
 
   const editor = useEditor(
     {
-      onUpdate: ({ editor }) => {
+      onFocus,
+      onUpdate: () => {
         updatePageProperties?.(id, "property_updated", { name: editor?.getText() });
       },
       editable,
@@ -57,6 +64,7 @@ export const useTitleEditor = (props: Props) => {
       extensions: [
         ...TitleExtensions,
         ...(extensions ?? []),
+        ...(isSmoothCursorEnabled ? [SmoothCursorExtension] : []),
         Placeholder.configure({
           placeholder: () => "Untitled",
           includeChildren: true,
@@ -72,7 +80,10 @@ export const useTitleEditor = (props: Props) => {
     ...getEditorRefHelpers({
       editor,
       provider,
-      getEditorMetaData: getEditorMetaData ?? (() => ({ file_assets: [], user_mentions: [] })),
+      getEditorMetaData: () => ({
+        file_assets: [],
+        user_mentions: [],
+      }),
     }),
     clearEditor: (emitUpdate = false) => {
       editor

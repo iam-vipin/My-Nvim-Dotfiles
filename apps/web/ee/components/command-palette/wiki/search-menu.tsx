@@ -1,0 +1,109 @@
+import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+// plane imports
+import { cn } from "@plane/utils";
+// components
+import type { TPowerKContext, TPowerKPageType } from "@/components/power-k/core/types";
+// hooks
+import { usePowerK } from "@/hooks/store/use-power-k";
+import useDebounce from "@/hooks/use-debounce";
+// plane web imports
+import { PowerKModalNoSearchResultsCommand } from "@/plane-web/components/command-palette/power-k/search/no-results-command";
+import { AppService } from "@/plane-web/services/app.service";
+import type { IAppSearchResults } from "@/plane-web/types";
+// local imports
+import { WikiAppPowerKModalSearchResults } from "./search-results";
+// services init
+const appService = new AppService();
+
+type Props = {
+  activePage: TPowerKPageType | null;
+  context: TPowerKContext;
+  isWorkspaceLevel: boolean;
+  searchTerm: string;
+  updateSearchTerm: (value: string) => void;
+};
+
+export function WikiAppPowerKModalSearchMenu(props: Props) {
+  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
+  // states
+  const [resultsCount, setResultsCount] = useState(0);
+  const [isSearching, setIsSearching] = useState(false);
+  const [results, setResults] = useState<IAppSearchResults>({
+    results: {
+      workspace: [],
+      page: [],
+    },
+  });
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  // navigation
+  const { workspaceSlug, projectId } = useParams();
+  // store hooks
+  const { togglePowerKModal } = usePowerK();
+
+  useEffect(() => {
+    if (activePage || !workspaceSlug) return;
+    setIsSearching(true);
+
+    if (debouncedSearchTerm) {
+      appService
+        .searchApp(workspaceSlug.toString(), {
+          search: debouncedSearchTerm,
+        })
+        .then((results) => {
+          setResults(results);
+          const count = Object.keys(results.results).reduce(
+            (accumulator, key) => results.results[key as keyof typeof results.results]?.length + accumulator,
+            0
+          );
+          setResultsCount(count);
+        })
+        .finally(() => setIsSearching(false));
+    } else {
+      setResults({
+        results: {
+          workspace: [],
+          page: [],
+        },
+      });
+      setIsSearching(false);
+    }
+  }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, activePage]);
+
+  if (activePage) return null;
+
+  return (
+    <>
+      {searchTerm.trim() !== "" && (
+        <div className="flex items-center justify-between gap-2 mt-4 px-4">
+          <h5
+            className={cn("text-xs text-custom-text-100", {
+              "animate-pulse": isSearching,
+            })}
+          >
+            Search results for{" "}
+            <span className="font-medium">
+              {'"'}
+              {searchTerm}
+              {'"'}
+            </span>{" "}
+            in {isWorkspaceLevel ? "workspace" : "project"}:
+          </h5>
+        </div>
+      )}
+
+      {/* Show empty state only when not loading and no results */}
+      {!isSearching && resultsCount === 0 && searchTerm.trim() !== "" && debouncedSearchTerm.trim() !== "" && (
+        <PowerKModalNoSearchResultsCommand
+          context={context}
+          searchTerm={searchTerm}
+          updateSearchTerm={updateSearchTerm}
+        />
+      )}
+
+      {searchTerm.trim() !== "" && (
+        <WikiAppPowerKModalSearchResults closePalette={() => togglePowerKModal(false)} results={results} />
+      )}
+    </>
+  );
+}

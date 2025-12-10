@@ -112,15 +112,18 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
   const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({
-        elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({
+          elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

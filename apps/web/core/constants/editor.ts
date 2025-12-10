@@ -16,9 +16,9 @@ import {
   Heading6,
   Image,
   Italic,
-  List,
   ListOrdered,
   ListTodo,
+  Paperclip,
   Strikethrough,
   Table,
   TextQuote,
@@ -26,7 +26,8 @@ import {
 } from "lucide-react";
 // plane imports
 import type { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
-import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { ListLayoutIcon, MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/propel/icons";
 import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
@@ -40,7 +41,7 @@ export type ToolbarMenuItem<T extends TEditorCommands = TEditorCommands> = {
   itemKey: T;
   renderKey: string;
   name: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   shortcut?: string[];
   editors: TEditorTypes[];
   extraProps?: ExtraPropsForCommand<T>;
@@ -140,7 +141,7 @@ const LIST_ITEMS: ToolbarMenuItem<"bulleted-list" | "numbered-list" | "to-do-lis
     itemKey: "bulleted-list",
     renderKey: "bulleted-list",
     name: "Bulleted list",
-    icon: List,
+    icon: ListLayoutIcon,
     shortcut: ["Cmd", "Shift", "8"],
     editors: ["lite", "document"],
   },
@@ -168,9 +169,19 @@ export const IMAGE_ITEM = {
   extraProps: {},
 } as ToolbarMenuItem<"image">;
 
-const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image">[] = [
+export const ATTACHMENT_ITEM = {
+  itemKey: "attachment",
+  renderKey: "attachment",
+  name: "Attachment",
+  icon: Paperclip,
+  editors: ["lite", "document"],
+  extraProps: {},
+} as ToolbarMenuItem<"attachment">;
+
+const COMPLEX_ITEMS: ToolbarMenuItem<"table" | "image" | "attachment">[] = [
   { itemKey: "table", renderKey: "table", name: "Table", icon: Table, editors: ["document"] },
   IMAGE_ITEM,
+  ATTACHMENT_ITEM,
 ];
 
 export const TOOLBAR_ITEMS: {

@@ -14,6 +14,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import status
 from rest_framework.response import Response
 
+
 # Module imports
 from ..base import BaseViewSet
 from plane.app.permissions import allow_permission, ROLE
@@ -47,6 +48,14 @@ from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
 from plane.db.models.intake import SourceType
+from plane.ee.models import IntakeSetting
+from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.ee.models import IntakeResponsibility
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IntakeViewSet(BaseViewSet):
@@ -99,6 +108,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 project_id=self.kwargs.get("project_id"),
                 workspace__slug=self.kwargs.get("slug"),
             )
+            .filter(Q(type__isnull=True) | Q(type__is_epic=False))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .prefetch_related(
@@ -206,6 +216,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             intake_issue = intake_issue.filter(created_by=request.user)
         return self.paginate(
@@ -218,6 +229,18 @@ class IntakeIssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
+
+        intake_settings = IntakeSetting.objects.filter(
+            workspace__slug=slug, project_id=project_id, intake=intake
+        ).first()
+
+        if intake_settings is not None and not intake_settings.is_in_app_enabled:
+            return Response(
+                {"error": "Creating intake issues is disabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
@@ -253,8 +276,23 @@ class IntakeIssueViewSet(BaseViewSet):
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
                 "allow_triage_state": True,
+                "user_id": request.user.id,
+                "slug": slug,
+                "intake_id": str(intake.id),
             },
         )
+        # EE start
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if workflow_state_manager.validate_issue_creation(
+            state_id=request.data.get("issue", None).get("state_id", None),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "You cannot create a intake issue in this state"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # EE end
+
         if serializer.is_valid():
             serializer.save()
             intake_id = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
@@ -278,6 +316,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
             )
+
             # updated issue description version
             issue_description_version_task.delay(
                 updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
@@ -390,6 +429,21 @@ class IntakeIssueViewSet(BaseViewSet):
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
 
+            # EE start
+            # Check if state is updated then is the transition allowed
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+            if issue_data.get("state_id", None) and not workflow_state_manager.validate_state_transition(
+                issue=issue,
+                new_state_id=issue_data.get("state_id", None),
+                user_id=request.user.id,
+            ):
+                return Response(
+                    {"error": "State transition is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            # EE end
+
+            # Only allow guests to edit name and description
             if project_member and project_member.role <= ROLE.GUEST.value:
                 issue_data = {
                     "name": issue_data.get("name", issue.name),
@@ -401,7 +455,15 @@ class IntakeIssueViewSet(BaseViewSet):
             issue_requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True, context={"project_id": project_id, "allow_triage_state": True}
+                issue,
+                data=issue_data,
+                partial=True,
+                context={
+                    "project_id": project_id,
+                    "allow_triage_state": True,
+                    "user_id": request.user.id,
+                    "slug": slug,
+                },
             )
 
             if not issue_serializer.is_valid():
@@ -530,6 +592,7 @@ class IntakeIssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not intake_issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -582,6 +645,7 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

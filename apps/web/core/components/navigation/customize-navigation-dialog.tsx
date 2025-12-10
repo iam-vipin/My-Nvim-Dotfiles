@@ -17,6 +17,7 @@ import {
 } from "@/hooks/use-navigation-preferences";
 // helpers
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 // types
 import type { TPersonalNavigationItemKey } from "@/types/navigation-preferences";
 
@@ -70,7 +71,10 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   const [projectCountInput, setProjectCountInput] = useState(projectPreferences.limitedProjectsCount.toString());
 
   // Filter personal items by feature flags
-  const filteredPersonalItems = PERSONAL_ITEMS;
+  const filteredPersonalItems = useMemo(
+    () => PERSONAL_ITEMS.filter((item) => isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "")),
+    [workspaceSlug]
+  );
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const workspaceItems = useMemo(() => {
@@ -81,7 +85,9 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
         EUserPermissionsLevel.WORKSPACE,
         workspaceSlug?.toString() || ""
       );
-      return hasPermission;
+      // Feature flag check
+      const isFeatureEnabled = isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "");
+      return hasPermission && isFeatureEnabled;
     }).map((item) => {
       // Get pinned status and sort order from localStorage
       const preference = workspacePreferences.items[item.key];

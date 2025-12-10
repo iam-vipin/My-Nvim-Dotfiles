@@ -2,10 +2,16 @@
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": [".npmrc"],
   "globalEnv": [
+    "API_BASE_URL",
+    "APP_BASE_URL",
+    "APP_ENV",
     "APP_VERSION",
     "DEV",
+    "GITLAB_CLIENT_ID",
+    "GITLAB_CLIENT_SECRET",
     "LOG_LEVEL",
     "NODE_ENV",
+    "REQUEST_INTERVAL",
     "SENTRY_DSN",
     "SENTRY_ENVIRONMENT",
     "SENTRY_TRACES_SAMPLE_RATE",
@@ -17,6 +23,8 @@
     "VITE_ENABLE_SESSION_RECORDER",
     "VITE_LIVE_BASE_PATH",
     "VITE_LIVE_BASE_URL",
+    "VITE_PI_BASE_PATH",
+    "VITE_PI_BASE_URL",
     "VITE_POSTHOG_DEBUG",
     "VITE_POSTHOG_HOST",
     "VITE_POSTHOG_KEY",
@@ -28,12 +36,15 @@
     "VITE_SENTRY_SEND_DEFAULT_PII",
     "VITE_SENTRY_TRACES_SAMPLE_RATE",
     "VITE_SESSION_RECORDER_KEY",
+    "VITE_SILO_BASE_PATH",
+    "VITE_SILO_BASE_URL",
     "VITE_SPACE_BASE_PATH",
     "VITE_SPACE_BASE_URL",
     "VITE_SUPPORT_EMAIL",
     "VITE_WEB_BASE_PATH",
     "VITE_WEB_BASE_URL",
-    "VITE_WEBSITE_URL"
+    "VITE_WEBSITE_URL",
+    "WEB_BASE_URL"
   ],
   "remoteCache": {
     "enabled": false

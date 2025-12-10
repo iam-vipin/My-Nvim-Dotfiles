@@ -62,11 +62,11 @@ export function WorkItemSelectionPage(props: Props) {
       .searchEntity(workspaceSlug.toString(), {
         count: 10,
         query: debouncedSearchTerm,
-        query_type: ["issue"],
+        query_type: ["issue_mention"],
         ...(!isWorkspaceLevel && projectId ? { project_id: projectId.toString() } : {}),
       })
       .then((res) => {
-        setIssueResults(res.issue || []);
+        setIssueResults(res.issue_mention || []);
       })
       .catch(() => setIssueResults([]));
   }, [debouncedSearchTerm, workspaceSlug, projectId, isWorkspaceLevel]);
